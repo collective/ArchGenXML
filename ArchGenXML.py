@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.69.2.1 2004/01/17 18:29:50 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.69.2.2 2004/01/18 11:33:10 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -483,6 +483,7 @@ class ArchetypesGenerator:
         """
 
     def generateMethods(self,outfile,element):
+
         print >> outfile
 
         print >> outfile,'    #Methods'
@@ -490,6 +491,11 @@ class ArchetypesGenerator:
             self.generateMethod(outfile,m,element)
             
         method_names=[m.getName() for m in element.getMethodDefs()]
+        
+        #if __init__ has to be generated for tools i want _not_ __init__ to be preserved
+        #if it is added to method_names it wont be recognized as a manual method (hacky but works)
+        if element.getStereoType() in self.portal_tools and '__init__' not in method_names:
+            method_names.append('__init__')
             
         if self.method_preservation:
             cl=self.parsed_class_sources.get(element.getName(),None)
@@ -900,9 +906,18 @@ from Products.CMFCore.utils import UniqueObject
                         for c in mod.classes.values():
                             #print 'found class:',c.name
                             self.parsed_class_sources[c.name]=c
+                        
                     except IOError:
                         #print 'no source found'
                         pass
+                    except :
+                        print
+                        print '***'
+                        print '***Error while reparsing the file '+outfilepath
+                        print '***'
+                        print
+                        
+                        raise
                     
                 outfile=makeFile(outfilepath)
                 self.generateHeader(outfile, i18n=self.i18n_support and element.isI18N())
