@@ -8,7 +8,7 @@
 #
 # Created:     2003/16/04
 # RCS-ID:      $Id$
-# Copyright:   (c) 2003 BlueDynamics
+# Copyright:   (c) 2003-2005, BlueDynamics, Austria
 # Licence:     GPL
 #-----------------------------------------------------------------------------
 
@@ -19,7 +19,8 @@ ACT_TEMPL="""
         'id':          '%(action_id)s',
         'name':        '%(action_label)s',
         'permissions': (%(permission)s,),
-        'condition'  : '%(condition)s'},
+        'condition'  : '%(condition)s'
+       },
         """
 
 MODIFY_FTI = """\
@@ -32,52 +33,53 @@ def modify_fti(fti):
 """
 
 ACTIONS_START = """
-    actions= %s (
-        """
+    actions = %s (
+"""
 
 ACTIONS_END = """
-          )
-        """
+    )
+"""
 
 DEFAULT_ACTIONS = """
-           {'action': 'string:${object_url}/portal_form/base_edit',
-          'category': 'object',
-          'id': 'edit',
-          'name': 'Edit',
-          'permissions': ('Manage portal content',)},
+       {'action': 'string:${object_url}/portal_form/base_edit',
+        'category': 'object',
+        'id': 'edit',
+        'name': 'Edit',
+        'permissions': ('Manage portal content',),
+       },
 
-           {'action': 'string:${object_url}/base_view',
-          'category': 'object',
-          'id': 'view',
-          'name': 'View',
-          'permissions': ('View',)},
+       {'action': 'string:${object_url}/base_view',
+        'category': 'object',
+        'id': 'view',
+        'name': 'View',
+        'permissions': ('View',),
+       },
 
         """
 
 DEFAULT_ACTIONS_FOLDERISH ="""
-           {'action': 'folder_listing',
-          'category': 'object',
-          'id': 'folder_listing',
-          'name': 'Folder Listing',
-          'permissions': ('View',)},
+           {'action':       'folder_listing',
+            'category':     'object',
+            'id':           'folder_listing',
+            'name':         'Folder Listing',
+            'permissions':  ('View',)
+           },
 
-        """
+"""
 
-FTI_TEMPL="""
+FTI_TEMPL='''\
+    filter_content_types       = %(filter_content_types)d
+    global_allow               = %(global_allow)d
+    allow_discussion           = %(discussion)s
+    %(has_content_icon)scontent_icon               = '%(content_icon)s'
+    immediate_view             = '%(immediate_view)s'
+'''
 
-    # uncomment lines below when you need
-    factory_type_information={
-        'allowed_content_types':allowed_content_types,
-        'allow_discussion': %(discussion)s,
-        %(has_content_icon)s'content_icon':'%(content_icon)s',
-        'immediate_view':'%(immediate_view)s',
-        'global_allow':%(global_allow)d,
-        'filter_content_types':%(filter_content_types)d,
-        }
+CLASS_SCHEMA = """\
+    schema= %(prefix)s + schema %(postfix)s
+"""
 
-        """
-
-SCHEMA_START_DEFAULT = """    schema=%s + Schema(("""
+SCHEMA_START       = """schema= Schema(("""
 
 SCHEMA_TOOL = """\
         # a tool does not need be editable in id and title
@@ -100,7 +102,6 @@ SCHEMA_TOOL = """\
 TEMPL_APE_HEADER = """
 from Products.Archetypes.ApeSupport import constructGateway,constructSerializer
 
-
 def ApeGateway():
     return constructGateway(%(class_name)s)
 
@@ -114,11 +115,11 @@ from Products.CMFCore.utils import UniqueObject
 
     """
 
-CLASS_PORTAL_TYPE    = """    portal_type = meta_type = '%s' """
-CLASS_ARCHETYPE_NAME = """    archetype_name = '%s'   #this name appears in the 'add' box """
+CLASS_PORTAL_TYPE    = """    portal_type = meta_type    = '%s' """
+CLASS_ARCHETYPE_NAME = """    archetype_name             = '%s' #this name appears in the 'add' box """
 CLASS_IMPLEMENTS     = """    __implements__ = %(baseclass_interfaces)s + (%(realizations)s,)"""
 CLASS_IMPLEMENTS_BASE= """    __implements__ = %(baseclass_interfaces)s"""
-CLASS_ALLOWED_CONTENT_TYPES = '''    allowed_content_types = %s %s'''
+CLASS_ALLOWED_CONTENT_TYPES = '''    allowed_content_types      = %s %s'''
 CLASS_ALLOWED_CONTENT_INTERFACES = '''    allowed_content_interfaces = %s %s'''
 
 REGISTER_ARCHTYPE    = """registerType(%s)\n"""
@@ -169,44 +170,6 @@ TEMPL_TOOLINIT="""
                 product_name = PROJECTNAME,
                 icon='tool.gif'
                 ).initialize( context )"""
-
-TEMPL_CONFIGLET_INSTALL="""
-    portal_control_panel.registerConfiglet( '%(tool_name)s' #id of your Product
-        , '%(configlet_title)s' # Title of your Product
-        , 'string:${portal_url}/%(configlet_url)s/'
-        , '%(configlet_condition)s' # a condition
-        , 'Manage portal' # access permission
-        , '%(configlet_section)s' # section to which the configlet should be added: (Plone,Products,Members)
-        , 1 # visibility
-        , '%(tool_name)sID'
-        , '%(configlet_icon)s' # icon in control_panel
-        , '%(configlet_description)s'
-        , None
-        )
-    # set title of tool:
-    tool=getToolByName(self, '%(tool_instance)s')
-    tool.title='%(configlet_title)s'
-
-    # dont allow tool listed as content in navtree
-    try:
-        idx=self.portal_properties.navtree_properties.metaTypesNotToList.index('%(tool_name)s')
-        self.portal_properties.navtree_properties._p_changed=1
-    except ValueError:
-        self.portal_properties.navtree_properties.metaTypesNotToList.append('%(tool_name)s')
-    except:
-        raise"""
-
-TEMPL_CONFIGLET_UNINSTALL="""
-    portal_control_panel.unregisterConfiglet('%(tool_name)s')
-
-    # remove prodcut from navtree properties
-    try:
-        self.portal_properties.navtree_properties.metaTypesNotToList.remove('%(tool_name)s')
-        self.portal_properties.navtree_properties._p_changed=1
-    except ValueError:
-        pass
-    except:
-        raise"""
 
 TEMPL_DETAILLED_CREATION_PERMISSIONS="""
     # and now give it some extra permissions so that i
@@ -275,3 +238,38 @@ This skin layer has low priority, put unique templates and scripts here.
 
 I.e. if you to want to create own unique views or forms for your product, this
 is the right place."""
+
+CMFMEMBER_IMPORTS = """\
+# imports needed by CMFMember
+from Products.CMFMember import Member as BaseMember
+from Products.CMFMember.MemberPermissions import \\
+        VIEW_PUBLIC_PERMISSION, EDIT_ID_PERMISSION, \\
+        EDIT_PROPERTIES_PERMISSION, VIEW_OTHER_PERMISSION,  \\
+        VIEW_SECURITY_PERMISSION, EDIT_PASSWORD_PERMISSION, \\
+        EDIT_SECURITY_PERMISSION, MAIL_PASSWORD_PERMISSION, \\
+        ADD_MEMBER_PERMISSION
+from Products.Archetypes.Schema import FieldList
+from AccessControl import ModuleSecurityInfo
+"""
+
+CMFMEMBER_ADD = """\
+
+# Generate the add%(prefix)s%(name)s method ourselves so we can do some extra
+# initialization, i.e. so we can set an initial password
+security = ModuleSecurityInfo('Products.%(module)s.%(prefix)s%(name)s')
+
+security.declareProtected(ADD_MEMBER_PERMISSION, 'add%(prefix)s%(name)s')
+def add%(prefix)s%(name)s(self, id, **kwargs):
+    o = %(prefix)s%(name)s(id)
+    self._setObject(id, o)
+    o = getattr(self, id)
+    o.initializeArchetype(**kwargs)
+    o.getUser()
+    o._setPassword(o._generatePassword())
+
+"""
+CMFMEMBER_SETUP_IMPORT = """\
+from Products.CMFMember.Extensions.toolbox import SetupMember
+"""
+CMFMEMBER_SETUP_INSTALL = """\
+"""

@@ -1,5 +1,5 @@
 ArchGenXML - generate Plone/Archetypes apps
-out of XMI and XSD files
+out of XMI files
 
 Authors and Credits see the file CREDITS
 
@@ -117,12 +117,13 @@ There is more information on PyXML at:
     http://pyxml.sourceforge.net/
     http://www.python.org/sigs/xml-sig/
 
+
 ================
 More Documention
 ================
 
-See docs/archgenxml-manual.rst - you can convert it to HTML or
-LaTeX using DocUtils http://docutils.sf.net/
+See http://plone.org/documentation/tutorials
+
 
 ===========
 features
@@ -140,19 +141,20 @@ generation of associations using ArcheType's
 ReferenceEngine
 Generalization
 
+State-Diagrams
+
+
 ===========
 Planned/ToDo
 ===========
 
 code cleaning, documentation
 
-
 Support for Umbrello the KDE UML tool,
 currently generation of classes/attributes/methods is supported, but not yet
 the handling of associations
 
 
-creating interface classes
 ============
 Limitations
 ============
@@ -161,12 +163,12 @@ the XSDParser will be fully overhauled. the current impl. is
  just a design study
 
 
-
 =======
 License
 =======
 (c) Philipp Auersperg, phil at bluedynamics.com
 GPL
+
 
 =======
 Credits

@@ -6,7 +6,7 @@
 #
 # Created:     2003/16/04
 # RCS-ID:      $Id$
-# Copyright:   (c) 2003 BlueDynamics
+# Copyright:   (c) 2003-2005 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
 
@@ -20,26 +20,31 @@ from types import StringTypes
 # AGX-specific imports
 import XSDParser, XMIParser, PyParser
 from documenttemplate.documenttemplate import HTML
+
 from codesnippets import *
+import utils
 from utils import makeFile, readFile, makeDir,mapName, wrap, indent, getExpression, \
     isTGVTrue, isTGVFalse, readTemplate, getFileHeaderInfo
 
 from BaseGenerator import BaseGenerator
 from WorkflowGenerator import WorkflowGenerator
 
-has_i18ndude = 1
 _marker=[]
 
 try:
     from i18ndude import catalog as msgcatalog
 except ImportError:
-    has_i18ndude = 0
+    has_i18ndude = False
+else:
+    has_i18ndude = True
 
-has_enhanced_strip_support=1
 try:
     "abca".strip('a')
 except:
-    has_enhanced_strip_support=0
+    has_enhanced_strip_support= False
+else:
+    has_enhanced_strip_support= True
+
 
 #
 # Global variables etc.
@@ -98,6 +103,7 @@ class ArchetypesGenerator(BaseGenerator):
         'integer','java::lang::int','java::lang::string','java::lang::long','java::lang::float','java::lang::void'] # Enterprise Architect and other automagically created crap Dummy Class
     vocabulary_item_stereotype = ['vocabulary_item']
     vocabulary_container_stereotype = ['vocabulary']
+    cmfmember_stereotype = ['CMFMember', 'member']
     left_slots=[]
     right_slots=[]
     force_plugin_root=1 #should be 'Products.' be prepended to all absolute paths?
@@ -216,6 +222,21 @@ class ArchetypesGenerator(BaseGenerator):
                     viewTemplate=open(os.path.join(templdir,'action_view.pt')).read()
                     f.write(viewTemplate % code)
 
+            elif m.hasStereoType(['portlet_view','portlet']):
+                view_name=m.getTaggedValue('view').strip() or m.getName()
+                autoinstall=m.getTaggedValue('autoinstall')
+                portlet='here/%s/macros/portlet' % view_name
+                if autoinstall=='left':
+                    self.left_slots.append(portlet)
+                if autoinstall=='right':
+                    self.right_slots.append(portlet)
+
+                f=self.makeFile(os.path.join(self.getSkinPath(klass),view_name+'.pt'),0)
+                if f:
+                    templdir=os.path.join(sys.path[0],'templates')
+                    viewTemplate=open(os.path.join(templdir,'portlet_template.pt')).read()
+                    f.write(viewTemplate % {'method_name':m.getName()})
+
         res=outfile.getvalue()
         return res
 
@@ -225,37 +246,37 @@ class ArchetypesGenerator(BaseGenerator):
         if not hide_actions:
             return ''
         hide_actions=', '.join(["'"+a.strip()+"'" for a in hide_actions.split('\n')])
-
-        #print 'hide actions: ', hide_actions
-
         return MODIFY_FTI % {'hideactions':hide_actions, }
 
 
-    def generateFti(self,element,subtypes):
-        ''' '''
+    def generateFti(self, element, subtypes):
+        ''' generates Factory Type Information related attributes on the class'''
 
+        hasActions=False
         actTempl=ACTIONS_START
         base_actions=element.getTaggedValue('base_actions', '').strip()
         if base_actions:
+            hasActions=True
             base_actions += ' + '
             actTempl = actTempl % base_actions
         else:
             actTempl = actTempl % ''
 
         if self.generateDefaultActions or element.getTaggedValue('default_actions'):
+            hasActions=True
             actTempl += DEFAULT_ACTIONS
             if subtypes:
                 actTempl=actTempl+DEFAULT_ACTIONS_FOLDERISH
 
         method_actions=self.generateMethodActions(element)
-        actTempl +=method_actions
+        if method_actions.strip():
+            hasActions=True
+            actTempl +=method_actions
         actTempl+=ACTIONS_END
 
         ftiTempl=FTI_TEMPL
-        if self.generateActions:
+        if self.generateActions and hasActions:
             ftiTempl += actTempl
-
-        #collect the allowed_subtypes from the parents
 
         immediate_view=element.getTaggedValue('immediate_view') or 'base_view'
 
@@ -270,6 +291,7 @@ class ArchetypesGenerator(BaseGenerator):
 
             if element.hasStereoType(self.portal_tools) or \
                element.hasStereoType(self.vocabulary_item_stereotype) or \
+               element.hasStereoType(self.cmfmember_stereotype) or \
                element.isAbstract():
                 global_allow = 0
 
@@ -625,7 +647,7 @@ class ArchetypesGenerator(BaseGenerator):
                 'vocabulary':"NamedVocabulary('''%s''')" % vocaboptions['name']
             } )
 
-            # remeber this vocab-name and if set its meta_type
+            # remember this vocab-name and if set its meta_type
             package = classelement.getPackage()
             currentproduct = package.getProductName()
             if not currentproduct in self.vocabularymap.keys():
@@ -661,7 +683,9 @@ class ArchetypesGenerator(BaseGenerator):
         name=rel.toEnd.getName()
         relname=rel.getName()
         #field=rel.getTaggedValue('reference_field') or self.typeMap['reference']['field'] #the relation can override the field
-        field=rel.getTaggedValue('reference_field') or rel.toEnd.getTaggedValue('reference_field') or self.typeMap['reference']['field'] #the relation can override the field
+        field=rel.getTaggedValue('reference_field') or \
+              rel.toEnd.getTaggedValue('reference_field') or \
+              self.typeMap['reference']['field'] #the relation can override the field
 
         if obj.isAbstract():
             allowed_types= tuple(obj.getGenChildrenNames())
@@ -734,29 +758,8 @@ class ArchetypesGenerator(BaseGenerator):
 
     # Generate get/set/add member functions.
     def generateArcheSchema(self, outfile, element, base_schema):
-        parent_schema=["getattr(%s,'schema',Schema(()))" % p.getCleanName() for p in element.getGenParents()]
 
-        overrule_base_schema = element.getTaggedValue('base_schema', None)
-        base_schema =  overrule_base_schema or base_schema
-
-        schema = [base_schema] + parent_schema
-
-        #if it's a derived class check if parent has stereotype 'archetype'
-        parent_is_archetype = False
-        for p in element.getGenParents():
-            parent_is_archetype=parent_is_archetype or p.hasStereoType(self.archetype_stereotype)
-
-        if self.i18n_content_support in self.i18n_at and element.isI18N():
-            schema[0] = "I18NBaseSchema"
-
-        if parent_is_archetype:
-            schema=len(schema)>1 and schema[1:] or []
-
-        schemastmt = SCHEMA_START_DEFAULT % " + ".join(schema)
-
-        #print schemastmt
-
-        print >>outfile, schemastmt
+        print >>outfile, SCHEMA_START
         aggregatedClasses=[]
 
         for attrDef in element.getAttributeDefs():
@@ -767,7 +770,7 @@ class ArchetypesGenerator(BaseGenerator):
 
             #print attrDef
 
-            print >> outfile, indent(self.getFieldStringFromAttribute(attrDef, element),2)
+            print >> outfile, indent(self.getFieldStringFromAttribute(attrDef, element),1)
 
         for child in element.getChildren():
             name = child.getCleanName()
@@ -778,7 +781,7 @@ class ArchetypesGenerator(BaseGenerator):
                 aggregatedClasses.append(str(child.getRef()))
 
             if child.isIntrinsicType():
-                print >> outfile, indent(self.getFieldString(child, element),2)
+                print >> outfile, indent(self.getFieldString(child, element),1)
 
         #print 'rels:',element.getName(),element.getFromAssociations()
         # and now the associations
@@ -791,7 +794,7 @@ class ArchetypesGenerator(BaseGenerator):
                 if name in self.reservedAtts:
                     continue
                 print >> outfile
-                print >> outfile, indent(self.getFieldStringFromAssociation(rel, element),2)
+                print >> outfile, indent(self.getFieldStringFromAssociation(rel, element),1)
 
         if self.backreferences_support or self.getOption('backreferences_support',element,'0')=='1':
             for rel in element.getToAssociations():
@@ -802,15 +805,15 @@ class ArchetypesGenerator(BaseGenerator):
                     if name in self.reservedAtts:
                         continue
                     print >> outfile
-                    print >> outfile, indent(self.getFieldStringFromBackAssociation(rel, element),2)
+                    print >> outfile, indent(self.getFieldStringFromBackAssociation(rel, element),1)
 
 
-        print >> outfile,'    ),'
+        print >> outfile,'),'
         marshaller=element.getTaggedValue('marshaller') or element.getTaggedValue('marshall')
         if marshaller:
-            print >> outfile, '    marshall='+marshaller
+            print >> outfile, 'marshall='+marshaller
 
-        print >> outfile,'    )'
+        print >> outfile,')\n'
 
     def generateMethods(self,outfile,element,mode='class'):
 
@@ -859,27 +862,7 @@ class ArchetypesGenerator(BaseGenerator):
     def generateMethod(self,outfile,m,klass,mode='class'):
         #ignore actions and views here because they are
         #generated separately
-        if m.hasStereoType(['action','view','form']):
-            return
-
-        #print 'generatemethod:',m.getStereoType(),m.getName()
-        if m.hasStereoType('portlet_view'):
-            view_name=m.getTaggedValue('view').strip() or m.getName()
-            #print 'generating portlet:',view_name
-            autoinstall=m.getTaggedValue('autoinstall')
-            #print 'autoinstall:',autoinstall,m.getTaggedValues()
-            portlet='here/%s/macros/portlet' % view_name
-            #print 'portlet:',portlet
-            if autoinstall=='left':
-                self.left_slots.append(portlet)
-            if autoinstall=='right':
-                self.right_slots.append(portlet)
-
-            f=self.makeFile(os.path.join(self.getSkinPath(klass),view_name+'.pt'),0)
-            if f:
-                templdir=os.path.join(sys.path[0],'templates')
-                viewTemplate=open(os.path.join(templdir,'portlet_template.pt')).read()
-                f.write(viewTemplate % {'method_name':m.getName()})
+        if m.hasStereoType(['action','view','form','portlet_view']):
             return
 
 
@@ -999,24 +982,37 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateClass(self, outfile, element, delayed):
         print 'Generating class:',element.getName()
+
+        name = element.getCleanName()
+
         wrt = outfile.write
         wrt('\n')
 
         parentnames = [p.getCleanName() for p in element.getGenParents()]
         self.generateDependentImports(outfile,element)
 
-        additionalImports=self.getOption('imports',element,None,True)
-        if additionalImports:
-            wrt('# additional imports\n')
-            wrt(additionalImports)
-            wrt('\n')
+        # imports needed for CMFMember subclassing
+        if element.hasStereoType(self.cmfmember_stereotype):
+            wrt(CMFMEMBER_IMPORTS)
 
-        #optional support for SQLStorage
+        # imports needed for optional support of SQLStorage
         if isTGVTrue(self.getOption('sql_storage_support',element,0)):
             wrt('from Products.Archetypes.SQLStorage import *\n')
 
-        self.generateProtectedSection(outfile,element,'module-header')
+        # imports by tagged values
+        additionalImports=self.getOption('imports',element,None,True)
+        if additionalImports:
+            wrt("# additional imports from tagged value 'import'\n")
+            wrt(additionalImports)
+            wrt('\n')
 
+        # CMFMember needs a special factory method
+        if element.hasStereoType(self.cmfmember_stereotype):
+            wrt(CMFMEMBER_ADD % {'module':element.getRootPackage().getProductModuleName(),
+                                 'prefix':self.prefix,
+                                 'name': name})
+
+        # check and collect Aggregation
         aggregatedClasses = element.getRefs() + element.getSubtypeNames(recursive=1,filter=['class'])
         aggregatedInterfaces = element.getRefs() + element.getSubtypeNames(recursive=1,filter=['interface'])
 
@@ -1029,68 +1025,84 @@ class ArchetypesGenerator(BaseGenerator):
             baseaggregatedClasses.extend(b.getRefs())
             baseaggregatedClasses.extend(b.getSubtypeNames(recursive=1))
 
-        #also check if the parent classes can have subobjects
+        #also check if the interfaces used can have subobjects
         baseaggregatedInterfaces=[]
         for b in element.getGenParents(recursive=1):
             baseaggregatedInterfaces.extend(b.getSubtypeNames(recursive=1,filter=['interface']))
-
-
-        if not element.isComplex():
-            return
-        if element.getType() in AlreadyGenerated:
-            return
-
-        AlreadyGenerated.append(element.getType())
-        name = element.getCleanName()
-
-        wrt('\n')
 
         additionalParents=element.getTaggedValue('additional_parents')
         if additionalParents:
             parentnames=list(parentnames)+additionalParents.split(',')
 
-        baseclass='BaseContent'
-        baseschema='BaseSchema'
-        if aggregatedClasses or baseaggregatedClasses or isTGVTrue(element.getTaggedValue('folderish')) or element.hasStereoType('folder'):
+        isFolderish = aggregatedClasses or baseaggregatedClasses or \
+                      isTGVTrue(element.getTaggedValue('folderish')) or \
+                      element.hasStereoType('folder')
+        if isFolderish:
             # folderish
-            baseclass='BaseFolder'
+            baseclass ='BaseFolder'
             baseschema='BaseFolderSchema'
 
             if self.i18n_content_support in self.i18n_at and element.isI18N():
                 baseclass='I18NBaseFolder'
                 baseschema='I18NBaseFolderSchema'
 
-            #tagged vaues for base-schema overrule
-            userdefined_base_class=element.getTaggedValue('base_class') or element.getTaggedValue('folder_base_class') # folder_base_class is deprecated and for backward compability only
-            if userdefined_base_class:
-                baseclass=userdefined_base_class
-
-
+            if element.getTaggedValue('folder_base_class'):
+                raise ValueError, "DEPRECATED: Usage of Tagged Value "\
+                      "folder_base_class' in class %s" % element.getCleanName
         else:
-            #contentish
+            # contentish
+            baseclass ='BaseContent'
+            baseschema='BaseSchema'
             if self.i18n_content_support in self.i18n_at and element.isI18N():
-                baseclass='I18NBaseContent'
+                baseclass ='I18NBaseContent'
                 baseschema='I18NBaseSchema'
 
-            #tagged values for base-schema overrule
-            content_base_class=element.getTaggedValue('base_class')
-            if content_base_class:
-                baseclass=content_base_class
+        # CMFMember support
+        if element.hasStereoType(self.cmfmember_stereotype):
+            baseclass = 'BaseMember.Member'
+            baseschema= 'BaseMember.id_schema'
+
+        ## however: tagged values have priority
+        # tagged values for base-class overrule
+        if element.getTaggedValue('base_class'):
+            baseclass=element.getTaggedValue('base_class')
+
+        # tagged values for base-schema overrule
+        if element.getTaggedValue('base_schema'):
+            baseschema =  element.getTaggedValue('base_schema')
 
         # normally a one of the Archetypes base classes are set.
         # if you dont want it set the TGV to zero '0'
         if not isTGVFalse(element.getTaggedValue('base_class')):
             parentnames.insert(0,baseclass)
 
-        if element.hasStereoType(self.variable_schema):
+        # Remark: CMFMember support include VariableSchema support
+        if element.hasStereoType(self.variable_schema) and \
+             not element.hasStereoType(self.stereotype_cmfmember):
             parentnames.insert(0,'VariableSchemaSupport')
 
+        # a tool needs to be a unique object
         if element.hasStereoType(self.portal_tools):
             print >>outfile,TEMPL_TOOL_HEADER
             parentnames.insert(0,'UniqueObject')
 
-
         parents=','.join(parentnames)
+
+        # here comes the schema
+        self.generateArcheSchema(outfile,element,baseschema)
+
+        # protected section
+        self.generateProtectedSection(outfile,element,'module-header')
+
+
+        if not element.isComplex():
+            print "stop complex"
+            return
+        if element.getType() in AlreadyGenerated:
+            print "stop alredy gen"
+            return
+        AlreadyGenerated.append(element.getType())
+
         if self.ape_support:
             print >>outfile,TEMPL_APE_HEADER % {'class_name':name}
 
@@ -1103,6 +1115,19 @@ class ArchetypesGenerator(BaseGenerator):
 
         print >>outfile,indent('security = ClassSecurityInfo()',1)
 
+        # "__implements__" line -> handle realization parents
+        reparents=element.getRealizationParents()
+        reparentnames=[p.getName() for p in reparents]
+        if reparents:
+            print >> outfile, CLASS_IMPLEMENTS % \
+                    {'baseclass_interfaces' : ' + '.join(["getattr(%s,'__implements__',())" % i for i in parents.split(',')]),
+                     'realizations' : ','.join(reparentnames)}
+        else:
+            print >> outfile, CLASS_IMPLEMENTS_BASE % \
+                    {'baseclass_interfaces' : ' + '.join(["getattr(%s,'__implements__',())" % i for i in parents.split(',')]),
+                     'realizations' : ','.join(reparentnames)}
+
+        print >>outfile
         header=element.getTaggedValue('class_header')
         if header:
             print >>outfile,indent(header, 1)
@@ -1125,28 +1150,45 @@ class ArchetypesGenerator(BaseGenerator):
             parentAggregatedInterfaces = '+ ' + ' + '.join(tuple(['getattr('+p.getCleanName()+",'allowed_content_interfaces',[])" for p in element.getGenParents()]))
 
         if aggregatedInterfaces or baseaggregatedInterfaces:
-            print >> outfile, CLASS_ALLOWED_CONTENT_INTERFACES % (repr(aggregatedInterfaces),parentAggregatedInterfaces)
+            print >> outfile, CLASS_ALLOWED_CONTENT_INTERFACES % \
+                  (repr(aggregatedInterfaces),parentAggregatedInterfaces)
 
-        #handle realization parents
-        reparents=element.getRealizationParents()
 
-        reparentnames=[p.getName() for p in reparents]
+        # FTI as attributes on class
+        fti=self.generateFti(element,aggregatedClasses)
+        print >> outfile,fti
 
-        print >> outfile
-        if reparents:
-            print >> outfile, CLASS_IMPLEMENTS % \
-                    {'baseclass_interfaces' : ' + '.join(["getattr(%s,'__implements__',())" % i for i in parents.split(',')]),
-                     'realizations' : ','.join(reparentnames)}
+        # prepare schema as class atrribute
+        parent_schema=["getattr(%s,'schema',Schema(()))" % p.getCleanName() \
+                       for p in element.getGenParents()]
+
+        # if it's a derived class check if parent has stereotype 'archetype'
+        parent_is_archetype = False
+        for p in element.getGenParents():
+            parent_is_archetype=parent_is_archetype or \
+            p.hasStereoType(self.archetype_stereotype)
+
+        if parent_is_archetype and \
+           not element.hasStereoType(self.cmfmember_stereotype):
+            schema = parent_schema
         else:
-            print >> outfile, CLASS_IMPLEMENTS_BASE % \
-                    {'baseclass_interfaces' : ' + '.join(["getattr(%s,'__implements__',())" % i for i in parents.split(',')]),
-                     'realizations' : ','.join(reparentnames)}
+            schema = [baseschema] + parent_schema
 
-        print >>outfile
+        # own schema overrules base and parents
+        schema += ['schema']
+
+        if element.hasStereoType(self.cmfmember_stereotype):
+            for addschema in ['contact_schema','plone_schema',
+                              'security_schema','login_info_schema']:
+                if isTGVTrue(element.getTaggedValue(addschema, '1')):
+                    schema.append('BaseMember.%s' % addschema)
+
+        print >> outfile, indent('schema = ' + ' + \\\n         '.join(schema),1)
+        print >> outfile
 
         self.generateProtectedSection(outfile,element,'class-header',1)
-        self.generateArcheSchema(outfile,element,baseschema)
 
+        # tool __init__
         if element.hasStereoType(self.portal_tools):
             tool_instance_name=element.getTaggedValue('tool_instance_name') or 'portal_'+element.getName().lower()
             print >> outfile,TEMPL_CONSTR_TOOL % (baseclass,tool_instance_name)
@@ -1154,11 +1196,6 @@ class ArchetypesGenerator(BaseGenerator):
             print >> outfile
 
         self.generateMethods(outfile,element)
-
-        #generateGettersAndSetters(outfile, element)
-        fti=self.generateFti(element,aggregatedClasses)
-        print >> outfile,fti
-
 
         print >> outfile, self.generateModifyFti(element)
 
@@ -1224,18 +1261,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         wrt('# end of class %s\n'   % name)
 
-    def getHeaderInfo(self, element):
-        #deal with multiline docstring
-        purposeline=('\n').join( \
-            (element.getDocumentation(striphtml=self.striphtml,wrap=79) or 'unknown').split('\n') )
-
-        copyright = COPYRIGHT % \
-            (str(time.localtime()[0]),
-             self.getOption('copyright', element, self.copyright) or self.author)
-
-        licence = ('\n# ').join( \
-            wrap(self.getOption('license', element, GPLTEXT),77).split('\n') )
-
+    def getAuthors(self, element):
         authors = self.getOption('author', element, self.author) or 'unknown'
         authors = authors.split(',')
         authors = [i.strip() for i in authors]
@@ -1252,6 +1278,22 @@ class ArchetypesGenerator(BaseGenerator):
                 authoremail.append("%s <unknown>" % author)
 
         authorline = wrap(", ".join(authoremail),77)
+
+        return authors, emails, authorline
+
+    def getHeaderInfo(self, element):
+        #deal with multiline docstring
+        purposeline=('\n').join( \
+            (element.getDocumentation(striphtml=self.striphtml,wrap=79) or 'unknown').split('\n') )
+
+        copyright = COPYRIGHT % \
+            (str(time.localtime()[0]),
+             self.getOption('copyright', element, self.copyright) or self.author)
+
+        licence = ('\n# ').join( \
+            wrap(self.getOption('license', element, GPLTEXT),77).split('\n') )
+
+        authors, emails, authorline = self.getAuthors(element)
 
         moduleinfo = {  'purpose':      purposeline,
                         'authors':      ', '.join(authors),
@@ -1333,19 +1375,51 @@ class ArchetypesGenerator(BaseGenerator):
         print >>of,version,
         of.close()
 
+    def generateInstallPy(self, package):
+        """ generates: Extensions/Install.py """
+
+        # create Extension directory
+        installTemplate=open(os.path.join(sys.path[0],'templates','Install.py')).read()
+        extDir=os.path.join(package.getFilePath(),'Extensions')
+        self.makeDir(extDir)
+
+        # make __init__.py
+        ipy=self.makeFile(os.path.join(extDir,'__init__.py'))
+        ipy.write('# make me a python module\n')
+        ipy.close()
+
+        # prepare (d)TML varibles
+        d={'package'    : package,
+           'generator'  : self,
+           'builtins'   : __builtins__,
+           'utils'       :utils,
+        }
+        d.update(__builtins__)
+
+        templ=readTemplate('Install.py')
+        dtml=HTML(templ,d)
+        res=dtml()
+
+        of=self.makeFile(os.path.join(extDir,'Install.py'))
+        of.write(res)
+        of.close()
+
+        return
+
     def generateStdFilesForProduct(self, target,package):
+        # generates __init__.py,  and the skins directory
+        # calls generateInstallPy
+        # the result is a QuickInstaller installable product
+
         generatedModules=package.generatedModules
-        #generates __init__.py, Extensions/Install.py and the skins directory
-        #the result is a QuickInstaller installable product
-        #print 'standard-files for ',package.getName()
-        #remove trailing slash
+        # remove trailing slash
         if target[-1] in ('/','\\'):
             target=target[:-1]
 
         templdir=os.path.join(sys.path[0],'templates')
         initTemplate=open(os.path.join(templdir,'__init__.py')).read()
         imports_packages='\n'.join(['    import '+m.getModuleName() for m in package.generatedPackages])
-        imports_classes='\n'.join(['    import '+m.getModuleName() for m in generatedModules])
+        imports_classes ='\n'.join(['    import '+m.getModuleName() for m in generatedModules])
 
         imports=imports_packages+'\n\n'+imports_classes
         tool_classes=self.getGeneratedTools(package)
@@ -1354,6 +1428,12 @@ class ArchetypesGenerator(BaseGenerator):
 
         if tool_classes:
             toolinit=TEMPL_TOOLINIT % ','.join([c.getQualifiedName(package) for c in self.getGeneratedClasses(package) if c.hasStereoType(self.portal_tools)])
+            # copy tool.gif
+            toolgif=open(os.path.join(templdir,'tool.gif')).read()
+            of=self.makeFile(os.path.join(package.getFilePath(),'tool.gif'))
+            of.write(initTemplate)
+            of.close()
+
         else: toolinit=''
 
         add_content_permission = self.creation_permission or 'Add %s content' % productname
@@ -1383,84 +1463,8 @@ class ArchetypesGenerator(BaseGenerator):
                 cp=HTML(cpTemplate,d)()
                 of.write(cp)
                 of.close()
+        self.generateInstallPy(package)
 
-
-        installTemplate=open(os.path.join(templdir,'Install.py')).read()
-        extDir=os.path.join(package.getFilePath(),'Extensions')
-        self.makeDir(extDir)
-        of=self.makeFile(os.path.join(extDir,'Install.py'))
-
-        #handling of hide_folder_tabs
-        hide_folder_tabs=''
-        for c in [cn for cn in self.getGeneratedClasses(package) if cn.getTaggedValue('hide_folder_tabs',None)]:
-            hide_folder_tabs+="'"+c.getName()+"', "
-
-        #handling of tools
-        all_tools=[c.getName() \
-            for c in self.getGeneratedClasses(package) \
-            if c.hasStereoType(self.portal_tools)  ]
-
-        autoinstall_tools=[c.getName() \
-            for c in self.getGeneratedClasses(package) \
-            if c.hasStereoType(self.portal_tools) and isTGVTrue(c.getTaggedValue('autoinstall')) ]
-
-        if self.getGeneratedTools(package):
-            copy(os.path.join(templdir,'tool.gif'), os.path.join(self.targetRoot,package.getFilePath(),'tool.gif') )
-
-        #handling of tools with configlets
-        register_configlets='\n'
-        unregister_configlets='\n'
-        for c in [cn for cn in self.getGeneratedClasses(package)
-                            if cn.hasStereoType(self.portal_tools) and
-                               isTGVTrue(cn.getTaggedValue('autoinstall','0') ) and
-                               cn.getTaggedValue('configlet', None)
-                 ]:
-            configlet_title=    c.getTaggedValue('configlet:title',c.getName())
-            configlet_section=  c.getTaggedValue('configlet:section', 'Products')
-            if not configlet_section in ['Plone','Products','Members']:
-                configlet_section='Products'
-
-            configlet_condition=c.getTaggedValue('configlet:condition','')
-            configlet_icon=     c.getTaggedValue('configlet:icon','site_icon.gif')
-            configlet_view=     '/'+c.getTaggedValue('configlet:view')
-            configlet_descr=    c.getTaggedValue('configlet:description',
-                                                 'ArchGenXML generated Configlet "'+configlet_title+'" in Tool "'+c.getName()+'".')
-
-            tool_instance_name = c.getTaggedValue('tool_instance_name', 'portal_'+ c.getName().lower() )
-            register_configlets+=TEMPL_CONFIGLET_INSTALL % {
-                'tool_name':c.getName(),
-                'tool_instance': tool_instance_name,
-                'configlet_title':configlet_title,
-                'configlet_url':tool_instance_name+configlet_view,
-                'configlet_condition':configlet_condition,
-                'configlet_section':configlet_section,
-                'configlet_icon':configlet_icon,
-                'configlet_description':configlet_descr,
-                } + '\n'
-
-            unregister_configlets+=TEMPL_CONFIGLET_UNINSTALL % {
-                'tool_name':c.getName()
-                } + '\n'
-        # ATVM integration
-        # if needed build empty vocabularies
-        setup_vocabs = '\n'
-        if productname in self.vocabularymap.keys():
-            #map=self.vocabularymap[productname]
-            #for (vname,vcontainer,vitem) in map:
-            pass
-        # end ATVM integration
-
-        of.write(installTemplate % {'project_dir':package.getProductModuleName(),
-                                    'no_use_of_folder_tabs':'['+hide_folder_tabs+']',
-                                    'all_tools':repr(all_tools),
-                                    'autoinstall_tools':repr(autoinstall_tools),
-                                    'register_configlets':register_configlets,
-                                    'unregister_configlets':unregister_configlets,
-                                    'setup_vocabularies':setup_vocabs,
-                                    'left_slots':repr(self.left_slots),
-                                    'right_slots':repr(self.right_slots)
-                                   })
-        of.close()
 
 
     def generateApeConf(self, target,package):

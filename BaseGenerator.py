@@ -16,8 +16,8 @@ class BaseGenerator:
     """ abstract base class for the different concrete generators """
 
     def getOption(self,option,element,default=_marker,aggregate=False):
-        ''' query a certain option for an element including 'aquisition' :
-            search the lement, then the packages upwards, then global options'''
+        ''' query a certain option for an element including 'acquisition' :
+            search the element, then the packages upwards, then global options'''
 
         if element:
             o=element
