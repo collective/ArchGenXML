@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.24 2004/05/29 09:03:45 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.25 2004/06/02 20:34:47 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -1161,15 +1161,15 @@ class ArchetypesGenerator:
                                isTGVTrue(cn.getTaggedValue('autoinstall','0') ) and
                                cn.getTaggedValue('configlet', None)
                  ]:
-            configlet_title=    c.getTaggedValue('configlet_title',c.getName())
-            configlet_section=  c.getTaggedValue('configlet_section', 'Products')
+            configlet_title=    c.getTaggedValue('configlet:title',c.getName())
+            configlet_section=  c.getTaggedValue('configlet:section', 'Products')
             if not configlet_section in ['Plone','Products','Members']:
                 configlet_section='Products'
 
-            configlet_condition=c.getTaggedValue('configlet_condition','')
-            configlet_icon=     c.getTaggedValue('configlet_icon','site_icon.gif')
-            configlet_view=     '/'+c.getTaggedValue('configlet_view')
-            configlet_descr=    c.getTaggedValue('configlet_description',
+            configlet_condition=c.getTaggedValue('configlet:condition','')
+            configlet_icon=     c.getTaggedValue('configlet:icon','site_icon.gif')
+            configlet_view=     '/'+c.getTaggedValue('configlet:view')
+            configlet_descr=    c.getTaggedValue('configlet:description',
                                                  'ArchGenXML generated Configlet "'+configlet_title+'" in Tool "'+c.getName()+'".')
 
             tool_instance_name = c.getTaggedValue('tool_instance_name', 'portal_'+ c.getName().lower() )
