@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.140 2004/04/21 15:12:40 yenzenz Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.141 2004/04/21 15:16:14 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -455,7 +455,7 @@ def modify_fti(fti):
         
         modulename= elementclass.getPackage().getProductName()
         check_map = {
-            'label':            "'%s'" % fieldname,
+            'label':            "'%s'" % fieldname.capitalize(),
             'label_msgid':      "'%s_label_%s'" % (modulename,fieldname),
             'description_msgid':"'%s_help_%s'" % (modulename,fieldname),
             'description':      "'Enter a value for %s.'" % fieldname,
@@ -1010,7 +1010,7 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchGenXML.py,v 1.140 2004/04/21 15:12:40 yenzenz Exp $
+RCS-ID $Id: ArchGenXML.py,v 1.141 2004/04/21 15:16:14 yenzenz Exp $
 \"""
 # Copyright: (c) %(year)s by %(copyright)s
 #
