@@ -50,7 +50,7 @@ else:
 #
 # Global variables etc.
 #
-DelayedElements = []
+Elements = []
 AlreadyGenerated = []
 Force = 0
 
@@ -105,6 +105,8 @@ class ArchetypesGenerator(BaseGenerator):
     vocabulary_item_stereotype = ['vocabulary_item']
     vocabulary_container_stereotype = ['vocabulary']
     cmfmember_stereotype = ['CMFMember', 'member']
+    python_stereotype = ['python', 'python_class']
+
     left_slots=[]
     right_slots=[]
     force_plugin_root=1 #should be 'Products.' be prepended to all absolute paths?
@@ -972,111 +974,17 @@ class ArchetypesGenerator(BaseGenerator):
 
 
 
-    def generateDependentImports(self,outfile,element):
-        package=element.getPackage()
-
-        #imports for stub-association classes
-        importLines=[]
-
-        parents  = element.getGenParents()
-        parents += element.getRealizationParents()
-        for p in parents:
-            if p.hasStereoType(self.stub_stereotypes) and \
-                p.getTaggedValue('import_from',None):
-                print >> outfile,'from %s import %s' % \
-                    (p.getTaggedValue('import_from'), p.getName())
-            else:
-                print >> outfile,'from %s import %s' % (
-                    p.getQualifiedModuleName(
-                        package,forcePluginRoot=self.force_plugin_root
-                    ),
-                    p.getName())
-
-        assocs = element.getFromAssociations()
-        hasAssocClass=0
-        for p in assocs:
-            if getattr(p,'isAssociationClass',0):
-                # get import_from and add it to importLines
-                #import pdb; pdb.set_trace()
-                module = p.getTaggedValue('import_from', None)
-                if module:
-                    importLine = 'from %s import %s' % (module, p.getName())
-                    importLines.append(importLine)
-                hasAssocClass=1
-                break
-
-        if self.backreferences_support:
-            bassocs = element.getToAssociations()
-            for p in bassocs:
-                if getattr(p,'isAssociationClass',0):
-                    hasAssocClass=1
-                    break
-
-        if hasAssocClass:
-            for line in importLines:
-                print >> outfile, line
-
-            print >> outfile,'from Products.Archetypes.ReferenceEngine import ContentReferenceCreator'
-
-        if element.hasStereoType(self.variable_schema):
-            print >> outfile,'from Products.Archetypes.VariableSchemaSupport import VariableSchemaSupport'
-
-        # ATVocabularyManager imports
-        if element.hasStereoType(self.vocabulary_item_stereotype):
-            print >> outfile, 'from Products.ATVocabularyManager.VocabularyTool import registerVocabularyItem'
-        if element.hasStereoType(self.vocabulary_container_stereotype):
-            print >> outfile, 'from Products.ATVocabularyManager.VocabularyTool import registerVocabulary'
-        if element.hasAttributeWithTaggedValue('vocabulary:type','ATVocabularyManager'):
-            print >> outfile, 'from Products.ATVocabularyManager.NamedVocabulary import NamedVocabulary'
-
-        print >> outfile, ''
 
 
-    def parsePythonModule(self, packagePath, fileName):
-        """Parse a python module and return the module object. This can then
-        be passed to getProtectedSection() to generate protected sections
-        """
-
-        targetPath = os.path.join(self.targetRoot, packagePath, fileName)
-        parsed = None
-
-        if self.method_preservation:
-            try:
-                parsed = PyParser.PyModule(targetPath)
-            except IOError:
-                pass
-            except :
-                print
-                print '***'
-                print '***Error while reparsing the file', targetPath
-                print '***'
-                print
-                raise
-
-        return parsed
-
-
-    def getProtectedSection(self, parsed, section, ind=0):
-        """Given a parsed python module and a section name, return a string
-        with the protected code-section to be included in the generated module.
-        """
-
-        outstring = indent(PyParser.PROTECTED_BEGIN, ind) + ' ' + \
-                            section +' #fill in your manual code here\n'
-        if parsed:
-            sectioncode=parsed.getProtectedSection(section)
-            if sectioncode:
-                outstring += sectioncode + '\n'
-
-        outstring += indent(PyParser.PROTECTED_END,ind) + ' ' + section + '\n'
-        return outstring
-
-    def generateProtectedSection(self,outfile,element,section,indent=0):
-        parsed = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.getName(),None)
-        print >> outfile, self.getProtectedSection(parsed,section,indent)
-
-    def generateClass(self, outfile, element, delayed):
+    def generateClass(self, element):
         print indent('generating class: '+element.getName(),self.infoind)
+        
+        if element.hasStereoType(self.python_stereotype):
+            return BaseGenerator.generateClass(self,element)
+        
+        
+        outfile=StringIO()
+        print >>outfile, self.generateHeader(element)
 
         name = element.getCleanName()
 
@@ -1084,7 +992,7 @@ class ArchetypesGenerator(BaseGenerator):
         wrt('\n')
 
         parentnames = [p.getCleanName() for p in element.getGenParents()]
-        self.generateDependentImports(outfile,element)
+        print >>outfile,self.generateDependentImports(element)
 
         # imports needed for CMFMember subclassing
         if element.hasStereoType(self.cmfmember_stereotype):
@@ -1207,10 +1115,10 @@ class ArchetypesGenerator(BaseGenerator):
 
         if not element.isComplex():
             print "I: stop complex: ", element.getName()
-            return
+            return outfile.getvalue()
         if element.getType() in AlreadyGenerated:
             print "I: stop already generated:", element.getName()
-            return
+            return outfile.getvalue()
         AlreadyGenerated.append(element.getType())
 
         if self.ape_support:
@@ -1231,40 +1139,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         print >>outfile,indent('security = ClassSecurityInfo()',1)
 
-        # "__implements__" line -> handle realization parents
-        reparents=element.getRealizationParents()
-        reparentnames=[p.getName() for p in reparents]
-        if reparents:
-
-            # [optilude] Add extra () around getattr() call, in case the
-            # base __implements__ is a single interface, not a tuple. Arbitrary
-            # nesting of tuples in interface declaration is permitted.
-            # Also, handle now-possible case where parentnames is empty
-
-            if parentnames:
-                parentInterfacesConcatenation = \
-                    ' + '.join(["(getattr(%s,'__implements__',()),)" % i for i in parentnames])
-            else:
-                parentInterfacesConcatenation = '()'
-
-            realizationsConcatenation = ','.join(reparentnames)
-
-            print >> outfile, CLASS_IMPLEMENTS % \
-                    {'baseclass_interfaces' : parentInterfacesConcatenation,
-                     'realizations' : realizationsConcatenation, }
-        else:
-
-            # [optilude] Same as above
-
-            if parentnames:
-                parentInterfacesConcatenation = \
-                    ' + '.join(["(getattr(%s,'__implements__',()),)" % i for i in parentnames])
-            else:
-                parentInterfacesConcatenation = '()'
-
-            print >> outfile, CLASS_IMPLEMENTS_BASE % \
-                    {'baseclass_interfaces' : parentInterfacesConcatenation,}
-
+        print >>outfile,self.generateImplements(element,parentnames)
         print >>outfile
         header=element.getTaggedValue('class_header')
         if header:
@@ -1371,15 +1246,17 @@ class ArchetypesGenerator(BaseGenerator):
         wrt('# end of class %s\n\n'   % name)
 
         self.generateProtectedSection(outfile,element,'module-footer')
+        
+        return outfile.getvalue()
 
-    def generateInterface(self, outfile, element, delayed):
+    def generateInterface(self, outfile, element):
         wrt = outfile.write
 ##        print 'Interface:',element.getName()
 ##        print 'parents:',element.getGenParents()
 
         parentnames = [p.getCleanName() for p in element.getGenParents()]
 
-        self.generateDependentImports(outfile,element)
+        print >>outfile,self.generateDependentImports(element)
 
         print >> outfile, IMPORT_INTERFACE
 
@@ -1415,6 +1292,7 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateMethods(outfile,element,mode='interface')
 
         wrt('# end of class %s\n'   % name)
+        
 
     def getAuthors(self, element):
         authors = self.getOption('author', element, self.author) or 'unknown'
@@ -1482,8 +1360,8 @@ class ArchetypesGenerator(BaseGenerator):
         fileheaderinfo.update({'filename': modulename+'.py'})
         outfile.write(MODULE_INFO_HEADER % fileheaderinfo)
 
-    def generateHeader(self, outfile, element):
-
+    def generateHeader(self, element):
+        outfile=StringIO()
         i18ncontent = self.getOption('i18ncontent',element,
                                         self.i18n_content_support)
 
@@ -1495,6 +1373,8 @@ class ArchetypesGenerator(BaseGenerator):
             s1 = TEMPLATE_HEADER
 
         outfile.write(s1)
+        
+        return outfile.getvalue()
 
     def getGeneratedTools(self,package):
         """ returns a list of  generated tools """
@@ -1793,7 +1673,6 @@ class ArchetypesGenerator(BaseGenerator):
                     for c in mod.classes.values():
                         #print 'parse module:',c.name
                         self.parsed_class_sources[package.getFilePath()+'/'+c.name]=c
-
                 except IOError:
                     #print 'no source found'
                     pass
@@ -1808,15 +1687,15 @@ class ArchetypesGenerator(BaseGenerator):
 
             try:
                 outfile=StringIO()
+                element.parsed_class=self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name,None)
                 self.generateModuleInfoHeader(outfile, module, element)
                 if not element.isInterface():
-                    self.generateHeader(outfile, element)
-                    self.generateClass(outfile, element, 0)
+                    print >>outfile, self.generateClass(element)
                     generated_classes = package.getAnnotation('generatedClasses') or []
                     generated_classes.append(element)
                     package.annotate('generatedClasses', generated_classes)
                 else:
-                    self.generateInterface(outfile,element,0)
+                    self.generateInterface(outfile,element)
 
                 classfile=self.makeFile(outfilepath)
                 buf=outfile.getvalue()

@@ -30,7 +30,7 @@ from Products.CMFMember.Extensions.toolbox import SetupMember
 from Products.<dtml-var "package.getProductModuleName()"> import PROJECTNAME
 from Products.<dtml-var "package.getProductModuleName()"> import product_globals as GLOBALS
 
-from zExceptions import NotFound
+from zExceptions import NotFound, BadRequest
 
 from StringIO import StringIO
 import sys
@@ -80,6 +80,8 @@ def install(self):
     for t in <dtml-var "repr(autoinstall_tools)">:
         try:
             portal.manage_addProduct[PROJECTNAME].manage_addTool(t)
+        except BadRequest:
+            pass
         except:
             # if an instance with the same name already exists this error will
             # be swallowed. Zope raises in an unelegant manner a 'Bad Request' error

@@ -16,7 +16,9 @@ Authors:
        testing and bug fixing and more bugfixing. Fabiano is our workflow 
        hero: He wrote several code generation improvements for workflow 
        definition.
-
+    
+    Martin Aspeli --
+       Improvements and important cleanups
 
 Sponsors:
     Xiru.org, Brazil (Fabiano Weimar dos Santos)
