@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.6 2004/05/09 17:04:50 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.7 2004/05/10 11:57:31 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -590,6 +590,10 @@ def modify_fti(fti):
         )
         map.update(self.getFieldAttributes(rel.toEnd))
         map.update( {'widget':self.getWidget('Reference', rel.toEnd, name, classelement)} )
+
+        if getattr(rel,'isAssociationClass',0):
+            map.update({'associationClass':rel.getName()})
+
         doc=rel.getDocumentation(striphtml=self.striphtml)                
         res=self.getFieldFormatted(name,field,map,doc)
         return res
@@ -799,6 +803,11 @@ from Products.CMFCore.utils import UniqueObject
         for p in reparents:
             print >> outfile,'from %s import %s' % (p.getQualifiedModuleName(package,forcePluginRoot=self.force_plugin_root),p.getName())
 
+        assocs = element.getFromAssociations()
+        for p in assocs:
+            if getattr(p,'isAssociationClass',0):
+                print >> outfile,'from %s import %s' % (p.getQualifiedModuleName(package,forcePluginRoot=self.force_plugin_root),p.getName())
+
     def generateProtectedSection(self,outfile,element,section,ind=0):
         print >> outfile,indent(PyParser.PROTECTED_BEGIN,ind),section,'#fill in your manual code here'
         cl=self.parsed_class_sources.get(element.getName(),None)
@@ -992,7 +1001,7 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchetypesGenerator.py,v 1.6 2004/05/09 17:04:50 zworkb Exp $
+RCS-ID $Id: ArchetypesGenerator.py,v 1.7 2004/05/10 11:57:31 zworkb Exp $
 \"""
 # %(copyright)s
 #

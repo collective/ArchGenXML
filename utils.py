@@ -58,6 +58,9 @@ def getExpression(s):
     if an exp starts with python: it will be not quoted
     '''
 
+    if s is None:
+        return ''
+    
     s=s.strip()
     if s=='':
         return s

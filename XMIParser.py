@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.75 2004/05/09 17:04:50 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.76 2004/05/10 11:57:31 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -1321,6 +1321,8 @@ class XMIAssociation (XMIElement):
         self.toEnd=XMIAssocEnd(ends[1])
 
 class XMIAssociationClass (XMIClass, XMIAssociation):
+    isAssociationClass=1
+    
     def initFromDOM(self,domElement=None):
         XMIClass.initFromDOM(self,domElement)
         self.calcEnds()
