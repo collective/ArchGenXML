@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.43.2.1 2004/04/01 07:51:05 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.43.2.2 2004/05/01 20:16:37 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -683,7 +683,7 @@ class XMIClass (XMIElement):
     def getGenChildren(self,recursive=0):
         ''' generalization children '''
 
-        res=self.genChildren
+        res=[c for c in self.genChildren]
 
         if recursive:
             for r in res:
