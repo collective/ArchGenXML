@@ -112,6 +112,8 @@ accessor -- Set the name of the accessor (getter) method. If you are overriding 
 
 mutator -- Similarly, set the name of the mutator (setter) method.
 
+searchable -- Whether or not the field should be searchable when performing a search in the portal. 
+
 Widget tagged values
 
   Similarly, tagged values with the prefix 'widget:' will be passed through as widget parameters. Consult the Archetypes documentation for details. The most common widget parameters are:
