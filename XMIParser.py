@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.20 2003/10/25 15:28:06 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.21 2003/10/26 16:59:05 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -425,7 +425,13 @@ class XMIElement:
     def getCleanName(self): return self.cleanName
     
     def getTaggedValue(self,name,default=''):
-        return self.taggedValues.get(name,default)
+        res=self.taggedValues.get(name,default)
+        if type(res) in (type(''),type(u'')):
+            res=res.strip()
+        return res
+    
+    def hasTaggedValue(self,name):
+        return self.taggedValues.has_key(name)
     
     def getTaggedValues(self):
         return self.taggedValues

@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.33 2003/10/25 15:28:06 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.34 2003/10/26 16:59:05 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -558,8 +558,10 @@ from Products.CMFCore.utils import UniqueObject
         extDir=os.path.join(target,'Extensions')
         makeDir(extDir)
         of=makeFile(os.path.join(extDir,'Install.py'))
+
+        autoinstall_tools=[c[0].getName() for c in self.generatedClasses if c[0].getStereoType()=='portal_tool' and c[0].getTaggedValue('autoinstall') == '1' ]
         
-        of.write(installTemplate % {'project_dir':os.path.split(target)[1]})
+        of.write(installTemplate % {'project_dir':os.path.split(target)[1],'autoinstall_tools':repr(autoinstall_tools)})
         of.close()
         
     TEMPL_APECONFIG_BEGIN='''<?xml version="1.0"?>

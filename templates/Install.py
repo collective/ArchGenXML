@@ -1,4 +1,4 @@
-from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.utils import getToolByName,manage_addTool
 from Products.CMFCore.DirectoryView import addDirectoryViews
 from Products.ExternalMethod.ExternalMethod import ExternalMethod
 
@@ -135,6 +135,7 @@ class PloneSkinRegistrar:
 # /class PloneSkinRegistrar
 
 def install(self):
+    portal=getToolByName(self,'portal_url').getPortalObject()
     out = StringIO()
     classes=listTypes(PROJECTNAME)
     installTypes(self, out,
@@ -157,6 +158,11 @@ def install(self):
             use_folder_tabs.append(cl['klass'].portal_type)
 
     props.use_folder_tabs=tuple(use_folder_tabs)
+    
+    #autoinstall tools
+    
+    for t in %(autoinstall_tools)s:
+        portal.manage_addProduct[PROJECTNAME].manage_addTool(t)
     
     #try to call a custom install method 
     #in 'AppInstall.py' method 'install'
