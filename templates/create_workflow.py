@@ -10,6 +10,8 @@ from Products.CMFCore.WorkflowTool import addWorkflowFactory
 from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
 from Products.ExternalMethod.ExternalMethod import ExternalMethod
 
+productname = '<dtml-var "package.getCleanName()">'
+
 def setup<dtml-var "statemachine.getCleanName()">(self, wf):
     """
     <dtml-var "statemachine.getCleanName()"> Workflow Definition
@@ -54,7 +56,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
     ##creation of workflow scripts
     wf_scriptname='<dtml-var "tran.getAction().getCleanName()">'
     if not wf_scriptname in wf.scripts.objectIds():
-        wf.scripts._setObject(wf_scriptname,ExternalMethod(wf_scriptname, wf_scriptname, productname,'<dtml-var "tran.getAction().getCleanName()">'))
+        wf.scripts._setObject(wf_scriptname,ExternalMethod(wf_scriptname, wf_scriptname, productname + '.<dtml-var "tran.getAction().getCleanName()">','<dtml-var "tran.getAction().getCleanName()">'))
     </dtml-if>
 
     tdef = wf.transitions['<dtml-var "tran.getCleanName()">']

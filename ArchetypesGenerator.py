@@ -1023,7 +1023,7 @@ class ArchetypesGenerator:
         print >> outfile
 
     def generateClass(self, outfile, element, delayed):
-        print 'generating class:',element.getName()
+        print 'Generating class:',element.getName()
         wrt = outfile.write
         wrt('\n')
 
@@ -1267,7 +1267,7 @@ class ArchetypesGenerator:
         licence = ('\n# ').join( \
             wrap(self.getOption('license', element, GPLTEXT),77).split('\n') )
 
-        email=self.getOption('email', element, self.email) or ['unknown']
+        email=self.getOption('email', element, self.email) or 'unknown'
         email=email.split(',')
         email = [i.strip() for i in email]
         email ="<"+">, <".join([i.strip() for i in email])+">"
@@ -1604,9 +1604,8 @@ class ArchetypesGenerator:
             print 'skipping stub product:',root.getName()
             return
 
-        print
-        print 'generating product:',root.getName()
-        print '-------------------------'
+        print '\nGenerating product:',root.getName()
+        print "-" * 50
 
         #create the directories
         self.makeDir(root.getFilePath())

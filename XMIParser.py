@@ -968,7 +968,7 @@ class StateMachineContainer:
         if not ownedElement:
             return []
         statemachines=getElementsByTagName(ownedElement,XMI.STATEMACHINE)
-        print 'statemachines1:',statemachines
+        #print 'statemachines1:',statemachines
         return statemachines
 
     def buildStateMachines(self, recursive=1):
@@ -978,7 +978,7 @@ class StateMachineContainer:
         for m in statemachines:
             sm=XMIStateMachine(m)
             if sm.getName():
-                print 'StateMachine:',sm.getName(),sm.id
+                #print 'StateMachine:',sm.getName(),sm.id
                 #determine the correct product where it belongs
                 products=[c.getPackage().getProduct() for c in sm.getClasses()]
                 #associate the WF with the first product
@@ -1081,7 +1081,7 @@ class XMIPackage(XMIElement, StateMachineContainer):
             else:
                 xc=XMIClass(c,package=self)
             if xc.getName():
-                print 'Class:',xc.getName(),xc.id
+                #print 'Class:',xc.getName(),xc.id
                 self.addClass(xc)
 
         for p in self.getPackages():
@@ -1091,7 +1091,7 @@ class XMIPackage(XMIElement, StateMachineContainer):
         #print 'buildInterfaces:',self.getFilePath(includeRoot=1)
         ownedElement=XMI.getOwnedElement(self.domElement)
         if not ownedElement:
-            print 'Warning: epty package:',self.getName()
+            print 'warning: empty package:',self.getName()
             return
         classes=getElementsByTagName(ownedElement,XMI.INTERFACE)
         for c in classes:
@@ -1209,7 +1209,7 @@ class XMIModel(XMIPackage):
         statemachines=getElementsByTagName(self.content,XMI.STATEMACHINE)
         statemachines.extend(getElementsByTagName(self.model,XMI.STATEMACHINE))
 
-        print 'statemachines:',statemachines
+        #print 'statemachines:',statemachines
 
         ownedElement=XMI.getOwnedElement(self.domElement)
         statemachines.extend(getElementsByTagName(ownedElement,XMI.STATEMACHINE) )
@@ -1229,7 +1229,7 @@ class XMIClass (XMIElement, StateMachineContainer):
 
     def __init__(self,*args,**kw):
         self.setPackage(kw.get('package',None))
-        print 'package:',self,self.package
+        #print 'package:',self,self.package
         StateMachineContainer.__init__(self)
         XMIElement.__init__(self,*args,**kw)
         self.assocsTo=[]
@@ -1667,7 +1667,7 @@ class XMIStateMachine(XMIStateContainer):
     def __init__(self,*args,**kwargs):
         self.init()
         XMIStateContainer.__init__(self,*args,**kwargs)
-        print 'created statemachine:',self.getId()
+        #print 'created statemachine:',self.getId()
 
     def initFromDOM(self,domElement=None):
         XMIStateContainer.initFromDOM(self,domElement)
@@ -1680,7 +1680,7 @@ class XMIStateMachine(XMIStateContainer):
         clels=getSubElements(context)
         for clel in clels:
             clid=XMI.getIdRef(clel)
-            print 'CLID:',clel,clid
+            #print 'CLID:',clel,clid
             cl=allObjects[clid]
             self.addClass(cl)
 
@@ -1821,7 +1821,7 @@ class XMIAction(XMIElement):
     def initFromDOM(self,domElement=None):
         XMIElement.initFromDOM(self,domElement)
         self.expression=XMI.getExpressionBody(self.domElement,tagname=XMI.ACTION_EXPRESSION)
-        print '!!!ACTIONEX:',self.getExpressionBody()
+        #print '!!!ACTIONEX:',self.getExpressionBody()
 
     def getExpressionBody(self):
         return self.expression
@@ -1831,7 +1831,7 @@ class XMIGuard(XMIElement):
     def initFromDOM(self,domElement=None):
         XMIElement.initFromDOM(self,domElement)
         self.expression=XMI.getExpressionBody(self.domElement,tagname=XMI.BOOLEAN_EXPRESSION)
-        print '!!!GUARDEX:',self.getExpressionBody()
+        #print '!!!GUARDEX:',self.getExpressionBody()
 
     def getExpressionBody(self):
         return self.expression
@@ -1863,7 +1863,7 @@ class XMIState(XMIElement):
                 tran=allObjects[trid]
                 self.addIncomingTransition(tran)
 
-        print 'transitions:',self.getIncomingTransitions(),self.getOutgoingTransitions()
+        #print 'transitions:',self.getIncomingTransitions(),self.getOutgoingTransitions()
 
     def addIncomingTransition(self,tran):
         self.incomingTransitions.append(tran)
@@ -2027,7 +2027,7 @@ def buildHierarchy(doc,packagenames):
     buildStereoTypes(doc)
     res=XMIModel(doc)
 
-    print 'packagenames:', packagenames
+    #print 'packagenames:', packagenames
     packageElements=doc.getElementsByTagName(XMI.PACKAGE)
     if packagenames: #XXX: TODO support for more than one package
         packageElements=doc.getElementsByTagName(XMI.PACKAGE)

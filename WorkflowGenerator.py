@@ -22,13 +22,14 @@ class WorkflowGenerator:
         if not statemachines:
             return
         
-        print 'Generating Workflows for package '+ self.package.getName()
-        print '===================='
+        print 'Generating workflows for package '+ self.package.getName()
         
         d={'package':self.package,'generator':self,'builtins':__builtins__,'utils':utils}
         d.update(__builtins__)
         
+
         for sm in statemachines:
+
             extDir=os.path.join(self.package.getFilePath(),'Extensions')
             scriptpath=os.path.join(extDir,cleanName(sm.getName())+'.py')
 
@@ -38,7 +39,7 @@ class WorkflowGenerator:
             d['statemachine']=sm
             d['parsedModule']=parsedModule
             
-            print 'generating Workflow:', sm.getName()
+            print 'Generating workflow:', sm.getName()
             templ=readTemplate('create_workflow.py')
             dtml=HTML(templ,d)
             res=dtml()
@@ -47,6 +48,31 @@ class WorkflowGenerator:
             of=self.atgenerator.makeFile(scriptpath)
             of.write(res)
             of.close()
+
+            # generate workflow transition scripts
+        
+            s = {'package' : self.package,
+                 'generator' : self,
+                 'builtins' : __builtins__,
+                 'utils' : utils}
+            s.update(__builtins__)
+
+	    for t in sm.getTransitions(no_duplicates = 1):
+		if t.getCleanName() and t.getAction():
+		    wfscript = os.path.join(extDir, t.getAction().getCleanName() + '.py')
+
+                    s['script_name'] = t.getAction().getCleanName()
+            
+                    print 'Generating workflow script:', t.getAction().getCleanName()
+                    templ=readTemplate('create_workflow_script.py')
+                    dtml=HTML(templ,s)
+                    res=dtml()
+            
+                    self.atgenerator.makeDir(extDir)
+                    of=self.atgenerator.makeFile(wfscript, 0)
+                    if of:
+                        of.write(res)
+                        of.close()
 
         del d['statemachine']
         templ=readTemplate('InstallWorkflows.py')
@@ -61,4 +87,3 @@ class WorkflowGenerator:
         
     def cleanName(self,n):
         return cleanName(n)
-    
