@@ -91,7 +91,8 @@ class ArchetypesGenerator:
     portal_tools=['portal_tool']
     variable_schema='variable_schema'
     stub_stereotypes=['odStub','stub']
-    hide_classes=['EARootClass'] # Enterprise Architect Dummy Class
+    hide_classes=['EARootClass','int','float','boolean','long','bool','void'
+        'integer','java::lang::int','java::lang::string','java::lang::long','java::lang::float','java::lang::void'] # Enterprise Architect and other automagically created crap Dummy Class
     vocabulary_item_stereotype = ['vocabulary_item']
     vocabulary_container_stereotype = ['vocabulary']
     left_slots=[]
@@ -1020,6 +1021,7 @@ class ArchetypesGenerator:
         print >> outfile
 
     def generateClass(self, outfile, element, delayed):
+        print 'generating class:',element.getName()
         wrt = outfile.write
         wrt('\n')
 
@@ -1483,8 +1485,9 @@ class ArchetypesGenerator:
 
         package.generatedModules=[]
         package.generatedClasses=[]
-        if package.getName() == 'java':
+        if package.getName() == 'java' or package.getName().startswith('java'):
             #to suppress these unneccesary implicit created java packages (ArcgoUML and Poseidon)
+            print 'ignore package:',package.getName()
             return
         
         self.makeDir(package.getFilePath())
@@ -1492,8 +1495,9 @@ class ArchetypesGenerator:
         for element in package.getClasses()+package.getInterfaces():
             #skip stub and internal classes
             if element.isInternal() or element.hasStereoType(self.stub_stereotypes) or \
-               element.getName() in self.hide_classes: # Enterprise Architect fix!
-                continue
+               element.getName() in self.hide_classes or element.getName().startswith('java::'): # Enterprise Architect fix!
+                  print 'ignore class:',element.getName() 
+                  continue
 
             module=element.getModuleName()
             package.generatedModules.append(element)
