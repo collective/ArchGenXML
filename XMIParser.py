@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.80 2004/05/28 23:05:10 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.81 2004/06/18 12:48:23 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -1329,10 +1329,10 @@ class XMIAssocEnd (XMIElement):
             self.aggregation=XMI.getAssocEndAggregation(el)
         else:
             print 'Association end missing for association end:'+self.getId()
-        #print 'aggreg:',self.aggregation
+        
+    def getTarget(self):
+        return self.obj
 
-
-        #print 'mult;',self.mult,self.getName(),self.id
 
 class XMIAssociation (XMIElement):
     fromEnd=None
@@ -1352,6 +1352,14 @@ class XMIAssociation (XMIElement):
         self.fromEnd=XMIAssocEnd(ends[0])
         self.toEnd=XMIAssocEnd(ends[1])
 
+        self.fromEnd.setParent(self)
+        self.toEnd.setParent(self)
+
+    def getParent(self):
+        ''' '''
+        if self.fromEnd:
+            return self.fromEnd.getTarget()
+        
 class XMIAssociationClass (XMIClass, XMIAssociation):
     isAssociationClass=1
     
