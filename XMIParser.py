@@ -281,7 +281,7 @@ class XMI1_0:
                     par0=getElementByTagName   (ab,self.DEP_SUPPLIER,recursive=1)
                     par=objects[getSubElement(par0,ignoremult=1).getAttribute('xmi.idref')]
                 #    continue
-                except KeyError:
+                except (KeyError, IndexError):
                     print 'Warning: Parent Object not found for realization relation:%s, parent %s' % (XMI.getId(ab),XMI.getName(par0))
                     continue
 
@@ -290,9 +290,9 @@ class XMI1_0:
                     child0=getElementByTagName (ab,self.DEP_CLIENT,recursive=1)
                     child_xmid=getSubElement(child0,ignoremult=1).getAttribute('xmi.idref')
                     child=objects[child_xmid]
-                except KeyError:
-                    print 'Warning: Child element for realization relation not found, parent name + child xmi.id given:',par.getName()
-
+                except (KeyError,IndexError):
+                    print 'Warning: Child element for realization relation not found, parent name + relation xmi_id given:',par.getName(),XMI.getId(ab)
+                    
                 par.addRealizationChild(child)
                 child.addRealizationParent(par)
             except IndexError:
