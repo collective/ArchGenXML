@@ -496,6 +496,10 @@ class ArchetypesGenerator(BaseGenerator):
         for k in tgv.keys():
             if k not in noparams and not k.startswith('widget:'):
                 v=tgv[k]
+                if v is None:
+                    print 'Warning: empty tagged value for "%s" in field "%s"' %(k,element.getName())
+                    continue
+                    
                 if k not in self.nonstring_tgvs:
                     v=getExpression(v)
                 # [optilude] Permit python: if people forget they don't have to (I often do!)
@@ -1463,7 +1467,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         if i18ncontent in self.i18n_at and element.isI18N():
             s1 = TEMPLATE_HEADER_I18N_I18N_AT
-        elif self.i18n_content_support == 'linguaplone':
+        elif i18ncontent == 'linguaplone':
             s1 = TEMPLATE_HEADER_I18N_LINGUAPLONE
         else:
             s1 = TEMPLATE_HEADER
