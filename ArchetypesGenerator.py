@@ -257,13 +257,19 @@ class ArchetypesGenerator:
         
         immediate_view=element.getTaggedValue('immediate_view') or 'base_view'
 
-        global_allow=not element.isDependent() and \
-                     not element.hasStereoType('hidden')
-        #print 'dependent:',element.isDependent(),element.getName()
-        if element.hasStereoType(self.portal_tools) or \
-           element.hasStereoType(self.vocabulary_item_stereotype) or \
-           element.isAbstract():
-            global_allow=0
+        # global_allow
+        ga = element.getTaggedValue('global_allow')
+        if ga:
+            global_allow = int(ga)
+        else:
+
+            global_allow = not element.isDependent() and \
+                           not element.hasStereoType('hidden')
+
+            if element.hasStereoType(self.portal_tools) or \
+               element.hasStereoType(self.vocabulary_item_stereotype) or \
+               element.isAbstract():
+                global_allow = 0
 
         has_content_icon=''
         content_icon=element.getTaggedValue('content_icon')
