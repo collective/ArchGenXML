@@ -16,6 +16,7 @@ class XschemaElement:
         self.complex = 0
         self.type = 'NoneType'
         self.attributeDefs = []
+        self.taggedValues={}
 
     def addChild(self, element):
         self.children.append(element)
@@ -28,22 +29,36 @@ class XschemaElement:
     def getMaxOccurs(self): return self.maxOccurs
     def getType(self): return self.type
     def isComplex(self): return self.complex
-    def addAttributeDefs(self, attrs): 
+    def getGenParents(self):return []
+    def getGenChildren(self):return []
+    def addAttributeDefs(self, attrs):
         att=XschemaAttribute(attrs)
         self.attributeDefs.append(att)
     def getAttributeDefs(self): return self.attributeDefs
     def getRef(self):
         return getattr(self,'ref',None)
-    
+
     def getRefs(self):
         ''' return all referenced schema names '''
-        
+
         return [str(c.getRef()) for c in self.getChildren() if c.getRef()]
+
+    def getTaggedValue(self,name,default=''):
+        return self.taggedValues.get(name,default)
     
-    def getSubtypeNames(self):
+    def getDocumentation(self):
+        return self.getTaggedValue('documentation')
+    
+    def getSubtypeNames(self,recursive=0):
         ''' returns the non-intrinsic subtypes '''
         return [str(c.getType()) for c in self.getChildren() if not c.isIntrinsicType() ]
 
+    def getToAssociations(self):
+        return []
+    
+    def getFromAssociations(self):
+        return []
+    
     def show(self, outfile, level):
         showLevel(outfile, level)
         outfile.write('Name: %s  Type: %s\n' % (self.name, self.type))
@@ -60,7 +75,7 @@ class XschemaElement:
                 (key, self.attributeDefs[key]))
         for child in self.children:
             child.show(outfile, level + 1)
-            
+
     def annotate(self):
         # If there is a namespace, replace it with an underscore.
         trans=string.maketrans(':-.', '___')
@@ -68,7 +83,7 @@ class XschemaElement:
             self.unmappedCleanName = str(self.name).translate(trans)
         else:
             self.unmappedCleanName = ''
-            
+
         self.cleanName = mapName(self.unmappedCleanName)
         if 'maxOccurs' in self.attrs.keys():
             max = self.attrs['maxOccurs']
@@ -101,21 +116,24 @@ class XschemaElement:
         if self.type == 'NoneType' and self.name:
             self.type = self.name
         # Do it recursively for all descendents.
-        
-        # refs 
+
+        # refs
         if 'ref' in self.attrs.keys():
             self.ref=self.attrs['ref']
 
-            
+
         for child in self.children:
             child.annotate()
 
     #zworks extensions
     def isIntrinsicType(self):
         return str(self.getType()).startswith('xs:')
-    
+
     def getMethodDefs(self):
         return []
+    
+    def isAbstract(self):
+        return 0
 
 class XschemaAttribute(XschemaElement):
     def __init__(self,  attrs):
@@ -127,20 +145,20 @@ class XschemaAttribute(XschemaElement):
         self.complex = 0
         self.type = 'NoneType'
         self.attributeDefs = []
-        
+
         for k,v in attrs.items():
             setattr(self,str(k),v)
-    
+
     def __setitem__(self,k,v):
         setattr(self,k,v)
-        
+
     #def __getitem__(self,*args):
     #    """ """
     #    return self.__dict__.__getitem__(*args)
-    
+
     #def has_key(self,k):
     #    return self.__dict__.has_key(k)
-#   
+#
 # SAX handler
 #
 class XschemaHandler(handler.ContentHandler):
@@ -226,7 +244,7 @@ class XschemaHandler(handler.ContentHandler):
 
 def parse(xschemaFileName):
     """ """
-    
+
     parser = saxexts.make_parser("xml.sax.drivers2.drv_pyexpat")
     dh = XschemaHandler()
     parser.setContentHandler(dh)
