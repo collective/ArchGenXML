@@ -330,7 +330,7 @@ class ArchetypesGenerator:
         'richtext':  {
             'field': 'TextField',
             'map': {
-                'default_output_type':'text/html',
+                'default_output_type':"'text/html'",
                 'allowable_content_types': "('text/plain','text/structured','text/html','application/msword',)",
             },
         },
@@ -1257,19 +1257,23 @@ class ArchetypesGenerator:
         purposeline=('\n').join( \
             (element.getDocumentation(striphtml=self.striphtml,wrap=79) or 'unknown').split('\n') )
 
-        author= element.getTaggedValue('author',  self.author) or 'unknown'
+        author= element.getOption('author', element, self.author) or 'unknown'
 
         copyright = COPYRIGHT % \
             (str(time.localtime()[0]),
-             element.getTaggedValue('copyright', self.copyright) or author)
+             element.getOption('copyright', element, self.copyright) or author)
 
         licence = ('\n# ').join( \
             wrap(self.getOption('license', element, GPLTEXT),77).split('\n') )
 
+        email=element.Option('email', element, self.email) or ['unknown']
+        email=email.split(',')
+        email+="<"+">, <".join([i.strip() for i in email])+">"
+
         fileheaderinfo = {'filename': modulename+'.py',
                           'purpose':  purposeline,
                           'author':   author,
-                          'email':    element.getTaggedValue('email', self.email) or 'unknown',
+                          'email':    email,
                           'version':  self.version,
                           'date':     time.ctime(),
                           'copyright':'\n# '.join(wrap(copyright,77).split('\n')),
