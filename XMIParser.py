@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.24 2003/10/26 23:09:23 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.25 2003/10/27 18:19:43 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -92,7 +92,10 @@ class XMI1_0:
             return None
 
     def getAssocEndParticipantId(self,el):
-        return getElementByTagName(getElementByTagName(el,self.ASSOCENDTYPE),self.CLASSIFIER).getAttribute('xmi.idref')
+        assocend=getElementByTagName(el,self.ASSOCENDTYPE,None)
+        if not assocend:
+            return None
+        return getElementByTagName(assocend,self.CLASSIFIER,None).getAttribute('xmi.idref')
 
     def isAssocEndAggregation(self,el):
         aggs=el.getElementsByTagName(XMI.AGGREGATION)        
@@ -144,8 +147,12 @@ class XMI1_0:
             else: #its an assoc, lets model it as association
                 
                 assoc=XMIAssociation(rel)
-                assoc.fromEnd.obj.addAssocFrom(assoc)
-                assoc.toEnd.obj.addAssocTo(assoc)
+                if getattr(assoc.fromEnd,'obj',None) and getattr(assoc.toEnd,'obj',None):
+                    assoc.fromEnd.obj.addAssocFrom(assoc)
+                    assoc.toEnd.obj.addAssocTo(assoc)
+                else:
+                    print 'Warning:Association has no ends:',assoc.getId()
+                    
 
     def buildGeneralizations(self,doc,objects):
         gens=doc.getElementsByTagName(XMI.GENERALIZATION)
@@ -726,9 +733,12 @@ class XMIAssocEnd (XMIElement):
     def initFromDOM(self,el):
         XMIElement.initFromDOM(self,el)
         pid=XMI.getAssocEndParticipantId(el)
-        self.obj=allObjects[pid]
-        self.mult=XMI.getMultiplicity(el)
-        self.aggregation=XMI.getAssocEndAggregation(el)
+        if pid:
+            self.obj=allObjects[pid]
+            self.mult=XMI.getMultiplicity(el)
+            self.aggregation=XMI.getAssocEndAggregation(el)
+        else:
+            print 'Association end missing for association end:'+self.getId()
         #print 'aggreg:',self.aggregation
             
 
