@@ -1,5 +1,6 @@
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.DirectoryView import addDirectoryViews
+from Products.ExternalMethod.ExternalMethod import ExternalMethod
 
 
 from Products.Archetypes.Extensions.utils import installTypes
@@ -140,6 +141,23 @@ def install(self):
             use_folder_tabs.append(cl['klass'].portal_type)
 
     props.use_folder_tabs=tuple(use_folder_tabs)
+    
+    #try to call a custom install method 
+    #in 'AppInstall.py' method 'install'
+    try:
+        install = ExternalMethod('temp','temp',PROJECTNAME+'.AppInstall', 'install')
+    except:
+        install=None
+        
+    if install:
+        print >>out,'Custom Install:'
+        res=install(self)
+        if res:
+            print >>out,res
+        else:
+            print >>out,'no output'
+    else:
+        print >>out,'no custom install'
 
     return out.getvalue()
 
