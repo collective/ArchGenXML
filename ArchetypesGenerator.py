@@ -23,6 +23,7 @@ from documenttemplate.documenttemplate import HTML
 
 from codesnippets import *
 import utils
+from odict import odict
 from utils import makeFile, readFile, makeDir,mapName, wrap, indent, getExpression, \
     isTGVTrue, isTGVFalse, readTemplate, getFileHeaderInfo
 
@@ -494,9 +495,9 @@ class ArchetypesGenerator(BaseGenerator):
 
         """
         tgv=element.getTaggedValues()
-        widgetcode = type.capitalize()+'Widget('
-        widgetmap={}
-        custom = 0 # is there a custom setting for widget?
+        widgetcode = type.capitalize()+'Widget'
+        widgetmap=odict()
+        custom = False # is there a custom setting for widget?
         widgetoptions=[t for t in tgv.items() if t[0].startswith('widget:')]
 
         # check if a global default overrides a widget. setting defaults is
@@ -506,20 +507,20 @@ class ArchetypesGenerator(BaseGenerator):
         # as a tagged value on the package or model
         default_widget = self.getOption('default:widget:%s' % type, element, None)
         if default_widget:
-            widgetcode = default_widget+'('
+            widgetcode = default_widget+'(\n'
 
         modulename= elementclass.getPackage().getProductName()
-        check_map = {
-            'label':            "'%s'" % fieldname.capitalize(),
-            'label_msgid':      "'%s_label_%s'" % (modulename,fieldname),
-            'description_msgid':"'%s_help_%s'" % (modulename,fieldname),
-            'description':      "'Enter a value for %s.'" % fieldname,
-            'i18n_domain':      "'%s'" % modulename,
-        }
+        check_map=odict()
+        check_map['label']              = "'%s'" % fieldname.capitalize()
+        check_map['label_msgid']        = "'%s_label_%s'" % (modulename,fieldname)
+        check_map['description']        = "'Enter a value for %s.'" % fieldname
+        check_map['description_msgid']  = "'%s_help_%s'" % (modulename,fieldname)
+        check_map['i18n_domain']        = "'%s'" % modulename
 
+        wt={} # helper
         if tgv.has_key('widget'):
             # Custom widget defined in attributes
-            custom=1
+            custom = True
             formatted=''
             for line in tgv['widget'].split('\n'):
                 if formatted:
@@ -527,9 +528,13 @@ class ArchetypesGenerator(BaseGenerator):
                 formatted+=line+'\n'
             widgetcode =  formatted
 
+        elif [wt.update({t[0]:t[1]}) for t in widgetoptions if t[0] == u'widget:type']:
+            custom = True
+            widgetcode = wt['widget:type']
+
         elif self.widgetMap.has_key(type) and not default_widget:
             # default widget for this type found in widgetMap
-            custom=1
+            custom = True
             widgetcode = self.widgetMap[type]
 
         if ')' not in widgetcode: # XXX bad check *sigh*
@@ -537,6 +542,8 @@ class ArchetypesGenerator(BaseGenerator):
             for tup in widgetoptions:
                 key=tup[0][7:]
                 val=tup[1]
+                if key == 'type':
+                    continue
                 if key not in self.nonstring_tgvs:
                     val=getExpression(val)
                 # [optilude] Permit python: if people forget they don't have to (I often do!)
@@ -547,7 +554,7 @@ class ArchetypesGenerator(BaseGenerator):
                 widgetmap.update({key:val})
 
             if '(' not in widgetcode:
-                widgetcode += '('
+                widgetcode += '(\n'
 
             ## before update the widget mapping, try to make a
             ## better description based on the given label
@@ -570,13 +577,10 @@ class ArchetypesGenerator(BaseGenerator):
                     fieldname
                 )
 
-
-            map_keys=widgetmap.keys()
-            map_keys.sort()
             widgetcode += indent( \
-                ',\n'.join(['%s=%s' % (key,widgetmap[key]) for key in map_keys]),
+                ',\n'.join(['%s=%s' % (key,widgetmap[key]) for key in widgetmap]),
                 1,
-                skipFirstRow=1) \
+                skipFirstRow=0) \
                 + ',\n'
             widgetcode +=')'
 
@@ -590,10 +594,8 @@ class ArchetypesGenerator(BaseGenerator):
         if doc:
             res+=indent(doc,indent_level,'#')+'\n'+res
         res+=indent("%s('%s',\n" % (fieldtype % {'type':rawType.capitalize()},name), indent_level)
-        map_keys=map.keys()
-        map_keys.sort()
         res+=indent(',\n'.join(['%s=%s' % (key,map[key]) \
-                                for key in map_keys if key.find(':')<0 ]) ,
+                                for key in map if key.find(':')<0 ]) ,
                     indent_level+1) + ',\n'
         res+=indent('),\n',indent_level)
 

@@ -15,6 +15,7 @@ import getopt
 from utils import mapName,toBoolean
 from utils import wrap as doWrap
 from xml.dom import minidom
+from odict import odict
 
 has_stripogram=1
 try:
@@ -713,7 +714,7 @@ class XMIElement:
         self.attributeDefs = []
         self.methodDefs=[]
         self.id=''
-        self.taggedValues={}
+        self.taggedValues=odict()
         self.subTypes=[]
         self.stereoTypes=[]
 
