@@ -159,6 +159,11 @@ class XMI1_2 (XMI1_0):
     METHODPARAMETER="UML:Parameter"
     MULTRANGE='UML:MultiplicityRange'
 
+    GENERALIZATION="UML:Generalization"
+    GEN_CHILD="UML:Generalization.child"
+    GEN_PARENT="UML:Generalization.parent"
+    GEN_ELEMENT="UML:Class"
+
     def getName(self,domElement):
         return domElement.getAttribute('name')
 
