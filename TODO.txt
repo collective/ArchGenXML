@@ -21,5 +21,3 @@ http://plone.org/development/teams/developer/ArchGenXML
 * On Workflow definitions generation
 
   * Define how worklists would be represented using state diagrams
-
-  * Generate better suport for guards (roles, permissions) on transitions
