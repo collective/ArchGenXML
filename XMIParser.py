@@ -404,7 +404,6 @@ def buildHierarchy(doc):
     
     #try to get the name out of the model
     xmis=doc.getElementsByTagName(XMI.MODEL)
-    print 'xmis:',xmis
     if len(xmis)==1:
         print 'model name:',XMI.getName(xmis[0])
         res.setName(XMI.getName(xmis[0]))
