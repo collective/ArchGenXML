@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.45 2003/10/30 00:30:35 yenzenz Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.46 2003/10/30 09:21:21 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -513,8 +513,11 @@ from Products.CMFCore.utils import UniqueObject
         if header:
             print >>outfile,indent(header, 1)
             
+        archetype_name=element.getTaggedValue('archetype_name')
+        if not archetype_name: archetype_name=name
+            
         print >> outfile,'''    portal_type = meta_type = '%s' ''' % name
-        print >> outfile,'''    archetype_name = '%s'   #this name appears in the 'add' box ''' % name
+        print >> outfile,'''    archetype_name = '%s'   #this name appears in the 'add' box ''' %  archetype_name
         self.generateArcheSchema(outfile,element)
 
         if element.getStereoType() in self.portal_tools:
