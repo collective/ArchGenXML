@@ -1,9 +1,11 @@
+print 'Product %(project_name)s installed'
+
+
 try:
     import CustomizationPolicy
     print 'Customizationpolicy for %(project_name)s installed'
 except ImportError:
     CustomizationPolicy=None
-    print 'no Customizationpolicy for %(project_name)s installed'
 
 from Globals import package_home
 from Products.CMFCore import utils, CMFCorePermissions, DirectoryView
