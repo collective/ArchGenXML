@@ -1,7 +1,7 @@
 from Products.CMFCore.utils import getToolByName
 from Products.ExternalMethod.ExternalMethod import ExternalMethod
 
-def installWorkflows(self,out):
+def installWorkflows(self,package,out):
     ''' '''
     productname='<dtml-var "package.getCleanName()">'
     wft=getToolByName(self,'portal_workflow')
@@ -16,6 +16,6 @@ def installWorkflows(self,out):
     
     </dtml-let>
     </dtml-in>
-
-
+    
+    
     return wft

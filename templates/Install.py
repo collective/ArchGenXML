@@ -165,6 +165,21 @@ def install(self):
     else:
         print >>out,'no workflow install'
 
+    <dtml-if "[klass for klass in package.getClasses(recursive=1) if klass.getTaggedValue('use_workflow')]">
+    
+    #bind classes to workflows
+    wft=getToolByName(self,'portal_workflow')
+    <dtml-in "package.getClasses(recursive=1)">
+    <dtml-let klass="_['sequence-item']">
+    <dtml-if "klass.getTaggedValue('use_workflow')">
+
+    wft.setChainForPortalTypes( ['<dtml-var "klass.getCleanName()">'],'<dtml-var "klass.getTaggedValue('use_workflow')">')
+    </dtml-if>
+    </dtml-let>
+    </dtml-in>
+    </dtml-if>
+
+
     # try to call a custom install method
     # in 'AppInstall.py' method 'install'
     try:
