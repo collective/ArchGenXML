@@ -460,6 +460,7 @@ class ArchetypesGenerator(BaseGenerator):
     }
 
     hide_classes=['EARootClass','int','float','boolean','long','bool','void','string',
+        'dict','tuple','list',
         'integer','java::lang::int','java::lang::string','java::lang::long',
         'java::lang::float','java::lang::void']+\
         list(typeMap.keys())+list(coerceMap.keys()) # Enterprise Architect and other automagically created crap Dummy Class
