@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.19 2004/05/18 01:33:58 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.20 2004/05/20 11:48:30 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -209,7 +209,7 @@ class ArchetypesGenerator:
         
         immediate_view=element.getTaggedValue('immediate_view') or 'base_view'
 
-        global_allow=not element.isDependent()
+        global_allow=not element.isDependent() and not element.hasStereoType('hidden')
         #print 'dependent:',element.isDependent(),element.getName()
         if element.hasStereoType(self.portal_tools) or element.isAbstract():
             global_allow=0
