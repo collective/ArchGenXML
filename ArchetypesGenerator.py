@@ -1633,7 +1633,7 @@ class ArchetypesGenerator(BaseGenerator):
         toolNames = []
 
         if generatedTools:
-            toolNames = [c.getQualifiedName(package) for c in
+            toolNames = [c.getQualifiedName(package, includeRoot=0) for c in
                             self.getGeneratedClasses(package) if
                             c.hasStereoType(self.portal_tools)]
 
