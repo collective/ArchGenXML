@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.49 2004/04/03 12:22:38 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.50 2004/04/03 15:22:47 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -91,6 +91,9 @@ class XMI1_0:
     MODELELEMENT="Foundation.Core.ModelElement"
     ISABSTRACT="Foundation.Core.GeneralizableElement.isAbstract"
     INTERFACE="Foundation.Core.Interface"
+    ABSTRACTION="Foundation.Core.Abstraction"
+    DEP_CLIENT="Foundation.Core.Dependency.client"
+    DEP_SUPPLIER="Foundation.Core.Dependency.supplier"
     
     aggregates=['composite','aggregate']
 
@@ -222,6 +225,34 @@ class XMI1_0:
                 raise
                 pass
 
+    def buildRealizations(self,doc,objects):
+        abs=doc.getElementsByTagName(XMI.ABSTRACTION)
+
+        for ab in abs:
+            if not self.getId(ab):continue
+            abstraction=XMIAbstraction(ab)
+            if not abstraction.hasStereoType('realize'):
+                print 'skip dep:',abstraction.getStereoType()
+                continue
+            try:
+                par0=getElementByTagName   (ab,self.DEP_SUPPLIER,recursive=1)
+                child0=getElementByTagName (ab,self.DEP_CLIENT,recursive=1)
+                try:
+                    par=objects[getSubElement(par0).getAttribute('xmi.idref')]
+                except KeyError:
+                    print 'Warning: Parent Object not found for realization relation:%s, parent %s' % (XMI.getId(ab),XMI.getName(par0))
+                    continue
+                
+                #child=objects[getElementByTagName(child0,self.REALIZATION_ELEMENT).getAttribute('xmi.idref')]
+                child=objects[getSubElement(child0).getAttribute('xmi.idref')]
+
+                par.addRealizationChild(child)
+                child.addRealizationParent(par)
+            except IndexError:
+                print 'ab: index error for dependencies:%s'%self.getId(ab)
+                raise
+                pass
+
     def getExpressionBody(self,element):
         exp = getElementByTagName(element,XMI.EXPRESSION_BODY,recursive=1,default=None)
         if exp and exp.firstChild:
@@ -288,6 +319,12 @@ class XMI1_0:
         
     def getOwnedElement(self,el):
         return getElementByTagName(el,self.OWNED_ELEMENT)
+    
+    def getModel(self,doc):
+        content=getElementByTagName(doc,XMI.XMI_CONTENT,recursive=1)
+        model=getElementByTagName(content,XMI.MODEL,recursive=0)
+
+        return model
         
         
         
@@ -344,7 +381,11 @@ class XMI1_1 (XMI1_0):
     STEREOTYPE="UML:Stereotype"
     ISABSTRACT="UML:GeneralizableElement.isAbstract"
     INTERFACE="UML:Interface"
-    
+
+    ABSTRACTION="UML:Abstraction"
+    DEP_CLIENT="UML:Dependency.client"
+    DEP_SUPPLIER="UML:Dependency.supplier"
+        
     def getName(self,domElement):
         return domElement.getAttribute('name').strip()
 
@@ -410,7 +451,7 @@ class XMI1_2 (XMI1_1):
 
         sts=o.domElement.getElementsByTagName(self.STEREOTYPE)
         for st in sts:
-            id=st.getAttribute('xmi.idref')
+            id=st.getAttribute('xmi.idref').strip()
             if id:
                 st=stereotypes[id]
                 o.addStereoType(self.getName(st).strip())
@@ -842,8 +883,7 @@ class XMIModel(XMIPackage):
     
     def __init__(self,doc):
         self.document=doc
-        content=getElementByTagName(doc,XMI.XMI_CONTENT,recursive=1)
-        self.model=getElementByTagName(content,XMI.MODEL,recursive=0)
+        self.model=XMI.getModel(doc)
         XMIPackage.__init__(self,self.model)
         
 
@@ -857,6 +897,8 @@ class XMIClass (XMIElement):
         self.assocsFrom=[]
         self.genChildren=[]
         self.genParents=[]
+        self.realizationChildren=[]
+        self.realizationParents=[]
         self.internalOnly=0
         self.type=self.name
         #self.isabstract=0
@@ -890,9 +932,15 @@ class XMIClass (XMIElement):
         ''' returns the names of the generalization children '''
         return [o.getName() for o in self.getGenChildren(recursive=recursive) ]
 
-    def getGenParents(self):
+    def getGenParents(self,recursive=0):
         ''' generalization parents '''
-        return self.genParents
+        res=self.genParents
+
+        if recursive:
+            for r in res:
+                res.extend(r.getGenParents(1))
+        
+        return res
 
     def buildChildren(self,domElement):
         for el in domElement.getElementsByTagName(XMI.ATTRIBUTE):
@@ -959,6 +1007,38 @@ class XMIClass (XMIElement):
     
     def getRootPackage(self):
         return self.getPackage().getRootPackage()
+    
+    def isInterface(self):
+        #print 'interface:',self.getName(),self.getStereoType()
+        return self.isinterface  or self.getStereoType()=='interface' 
+        # the second branch is for older XMI engines where interface is just a stereotype of a class
+
+
+    # for relization stuff
+    def addRealizationChild(self,c):
+        self.realizationChildren.append(c)
+
+    def addRealizationParent(self,c):
+        self.realizationParents.append(c)
+
+    def getRealizationChildren(self,recursive=0):
+        ''' realization children '''
+
+        res=self.realizationChildren
+
+        if recursive:
+            for r in res:
+                res.extend(r.getRealizationChildren(1))
+
+        return res
+
+    def getRealizationChildrenNames(self, recursive=0):
+        ''' returns the names of the realization children '''
+        return [o.getName() for o in self.getRealizationChildren(recursive=recursive) ]
+
+    def getRealizationParents(self):
+        ''' generalization parents '''
+        return self.realizationParents
 
 
 class XMIInterface(XMIClass):
@@ -1089,6 +1169,8 @@ class XMIAssociation (XMIElement):
         self.fromEnd=XMIAssocEnd(ends[0])
         self.toEnd=XMIAssocEnd(ends[1])
 
+class XMIAbstraction(XMIElement):
+    pass
         
 def buildDataTypes(doc):
     global datatypes
@@ -1127,12 +1209,16 @@ def buildHierarchy(doc,packagenames):
     global datatypenames
     global packages
     
+    
     datatypes={}
     stereotypes={}
     datatypenames=[]
 
+    #doc=res.model
+
     buildDataTypes(doc)
     buildStereoTypes(doc)
+    res=XMIModel(doc)
 
     print 'packagenames:', packagenames
     packageElements=doc.getElementsByTagName(XMI.PACKAGE)
@@ -1148,7 +1234,6 @@ def buildHierarchy(doc,packagenames):
 
     buildDataTypes(doc)
 
-    res=XMIModel(doc)
     res.buildPackages()
     res.buildClassesAndInterfaces()
 
@@ -1164,6 +1249,7 @@ def buildHierarchy(doc,packagenames):
     res.annotate()
     XMI.buildRelations(doc,allObjects)
     XMI.buildGeneralizations(doc,allObjects)
+    XMI.buildRealizations(doc,allObjects)
     return res
 
 
