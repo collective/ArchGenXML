@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.47 2003/10/31 10:07:47 yenzenz Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.48 2003/11/03 18:51:25 dreamcatcher Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -52,13 +52,13 @@ class ArchetypesGenerator:
     generateActions=0
     prefix=''
     packages=[] #packages to scan for classes
-    noclass=0   # if set no module is reverse engineered, 
+    noclass=0   # if set no module is reverse engineered,
                 #just an empty project + skin is created
     ape_support=0 #generate ape config and serializers/gateways for APE
     reservedAtts=['id',]
     portal_tools=['portal_tool']
     stub_stereotypes=['odStub','stub']
-    
+
     def __init__(self,xschemaFileName,outfileName,**kwargs):
         self.outfileName=outfileName
         self.xschemaFileName=xschemaFileName
@@ -82,7 +82,7 @@ class ArchetypesGenerator:
                 dict['action_id']=m.getName()
                 dict['action_label']=m.getTaggedValue('action_label',m.getName())
                 dict['permission']=m.getTaggedValue('permission','View')
-                
+
                 print >>outfile,self.ACT_TEMPL % dict
 
             elif m.getTaggedValue('view') :
@@ -91,20 +91,20 @@ class ArchetypesGenerator:
                 dict['action_id']=m.getName()
                 dict['action_label']=m.getTaggedValue('action_label',m.getName())
                 dict['permission']=m.getTaggedValue('permission','View')
-                
+
                 f=makeFile(os.path.join(self.outfileName,'skins',self.outfileName,m.getTaggedValue('view')+'.pt'),0)
-                
+
                 if f:
                     templdir=os.path.join(sys.path[0],'templates')
                     viewTemplate=open(os.path.join(templdir,'action_view.pt')).read()
                     f.write(viewTemplate)
-                
-                
+
+
 
                 print >>outfile,self.ACT_TEMPL % dict
-                
+
         return outfile.getvalue()
-          
+
     def generateFti(self,element,subtypes):
         ''' '''
 
@@ -132,7 +132,7 @@ class ArchetypesGenerator:
           'permissions': ('View',)},
 
     '''
-        method_actions=self.generateMethodActions(element)   
+        method_actions=self.generateMethodActions(element)
         actTempl +=method_actions
 
         actTempl+='''
@@ -158,21 +158,21 @@ class ArchetypesGenerator:
         if element.getGenParents():
             parentsubtypes = '+ ' + ' + '.join(tuple([p.getCleanName()+".factory_type_information['allowed_content_types']" for p in element.getGenParents()]))
         immediate_view=element.getTaggedValue('immediate_view') or 'base_view'
-        
+
         global_allow=not element.isDependent()
         if element.getStereoType() in self.portal_tools or element.isAbstract():
             global_allow=0
 
         has_content_icon=''
         content_icon=element.getTaggedValue('content_icon')
-        if not content_icon:            
+        if not content_icon:
             has_content_icon='#'
             content_icon = element.getCleanName()+'.gif'
-            
-        res=ftiTempl % {'subtypes':repr(tuple(subtypes)), 
+
+        res=ftiTempl % {'subtypes':repr(tuple(subtypes)),
             'has_content_icon':has_content_icon,'content_icon':content_icon,
             'parentsubtypes':parentsubtypes,'global_allow':global_allow,'immediate_view':immediate_view}
-        
+
         return res
 
     typeMap={
@@ -192,7 +192,7 @@ class ArchetypesGenerator:
                         'text/html',),
                     %(other)s
                     ),''' ,
-                    
+
         'integer':'''IntegerField('%(name)s',
                     %(other)s
                     ),''',
@@ -278,14 +278,14 @@ class ArchetypesGenerator:
                 if k in convtostring:
                     v=repr(v)
                 lines.append('%s=%s'%(k,v))
-            
+
         if lines:
             res='\n'+',\n'.join(lines)
         else:
             res=''
-            
+
         return res
-            
+
     def getFieldString(self, element):
         ''' gets the schema field code '''
         typename=str(element.type)
@@ -296,7 +296,7 @@ class ArchetypesGenerator:
             ctype=self.coerceType(typename)
 
         templ=self.typeMap[ctype]
-        
+
         return templ % {'name':element.getCleanName(),'type':element.type,'other':''}
 
     def getFieldStringFromAttribute(self, attr):
@@ -311,7 +311,7 @@ class ArchetypesGenerator:
         defexp=''
         if attr.hasDefault():
             defexp='default='+attr.getDefault()+','
-            
+
         other_attributes=self.getFieldAttributes(attr)
         res = templ % {'name':attr.getName(),'type':attr.getType(),'other':defexp+indent(other_attributes,5)}
         doc=attr.getDocumentation()
@@ -319,7 +319,7 @@ class ArchetypesGenerator:
             res=indent(doc,2,'#')+'\n'+' '*8+res
         else:
             res=' '*8+res
-            
+
         return res
 
     def getFieldStringFromAssociation(self, rel):
@@ -331,18 +331,18 @@ class ArchetypesGenerator:
         obj=rel.toEnd.obj
         name=rel.toEnd.getName()
         relname=rel.getName()
-    
+
         if obj.isAbstract():
             allowed_types= tuple(obj.getGenChildrenNames())
         else:
             allowed_types=(obj.getName(), ) + tuple(obj.getGenChildrenNames())
-        
+
         if int(rel.toEnd.mult[1]) == -1:
             multiValued=1
-            
+
         if name == 'None':
             name=obj.getName()+'_ref'
-            
+
         return templ % {'name':name,'type':obj.getType(),
                 'allowed_types':repr(allowed_types),
                 'multiValued' : multiValued,
@@ -356,7 +356,7 @@ class ArchetypesGenerator:
             parent_schemata_expr=' + '+' + '.join(parent_schemata)
         else:
             parent_schemata_expr=''
-            
+
         print >> outfile,'    schema=BaseSchema %s + Schema((' % parent_schemata_expr
         refs=[]
 
@@ -384,61 +384,61 @@ class ArchetypesGenerator:
             #print 'rel:',rel
             if 1 or rel.toEnd.mult==1: #XXX: for mult==-1 a multiselection widget must come
                 name = rel.fromEnd.getName()
-                    
+
                 if name in self.reservedAtts:
                     continue
-    
+
                 print >> outfile, '    '*2 ,self.getFieldStringFromAssociation(rel)
-                
+
 
         print >> outfile,'    ),'
         marshaller=element.getTaggedValue('marshaller')
         if marshaller:
             print >> outfile, '    marshall='+marshaller
-            
+
         print >> outfile,'    )'
 
     TEMPL_CONSTR_TOOL="""
-    #toolconstructors have no id argument, the id is fixed 
+    #toolconstructors have no id argument, the id is fixed
     def __init__(self):
         %s.__init__(self,'%s')
         """
 
     def generateMethods(self,outfile,element):
         print >> outfile
-            
+
         print >> outfile,'    #Methods'
         for m in element.getMethodDefs():
             self.generateMethod(outfile,m)
-            
+
     def generateMethod(self,outfile,m):
             #ignore actions and views here because they are
             #generated separately
-            if m.getTaggedValue('action') or m.getTaggedValue('view'):
-                return
+        if m.getTaggedValue('action') or m.getTaggedValue('view'):
+            return
 
-            paramstr=''
-            params=m.getParamExpressions()
-            if params:
-                paramstr=','+','.join(params)
-                #print paramstr
-            print >> outfile
-            permission=m.getTaggedValue('permission')
-            if permission:
-                print >> outfile,indent("security.declareProtected(%s,'%s')" % (permission,m.getName()),1)
-            print >> outfile,'    def %s(self%s):' % (m.getName(),paramstr)
-            code=m.taggedValues.get('code','')
-            doc=m.taggedValues.get('documentation','')
-            if doc:
-                print >> outfile, indent("'''\n%s\n'''" % doc ,2)
-                
-            if code:
-                print >> outfile, indent('\n'+code,2)
-            else:
-                print >> outfile, indent('\n'+'pass',2)
-                
-            print >> outfile
-        
+        paramstr=''
+        params=m.getParamExpressions()
+        if params:
+            paramstr=','+','.join(params)
+            #print paramstr
+        print >> outfile
+        permission=m.getTaggedValue('permission')
+        if permission:
+            print >> outfile,indent("security.declareProtected(%s,'%s')" % (permission,m.getName()),1)
+        print >> outfile,'    def %s(self%s):' % (m.getName(),paramstr)
+        code=m.taggedValues.get('code','')
+        doc=m.taggedValues.get('documentation','')
+        if doc:
+            print >> outfile, indent("'''\n%s\n'''" % doc ,2)
+
+        if code:
+            print >> outfile, indent('\n'+code,2)
+        else:
+            print >> outfile, indent('\n'+'pass',2)
+
+        print >> outfile
+
     TEMPL_APE_HEADER='''
 from Products.Archetypes.ApeSupport import constructGateway,constructSerializer
 
@@ -450,10 +450,10 @@ def ApeSerializer():
     return constructSerializer(%(class_name)s)
 
 '''
-        
+
     TEMPL_TOOL_HEADER='''
-from Products.CMFCore.utils import UniqueObject    
-    
+from Products.CMFCore.utils import UniqueObject
+
     '''
     def generateClasses(self, outfile, element, delayed):
         wrt = outfile.write
@@ -466,7 +466,7 @@ from Products.CMFCore.utils import UniqueObject
         if additionalImports:
             wrt(additionalImports)
             wrt('\n')
-            
+
         refs = element.getRefs() + element.getSubtypeNames(recursive=1)
 
         if not element.isComplex():
@@ -482,7 +482,7 @@ from Products.CMFCore.utils import UniqueObject
         additionalParents=element.getTaggedValue('additional_parents')
         if additionalParents:
             parentnames=list(parentnames)+additionalParents.split(',')
-            
+
         baseclass='BaseContent'
         if refs :
             folder_base_class=element.getTaggedValue('folder_base_class')
@@ -491,17 +491,17 @@ from Products.CMFCore.utils import UniqueObject
             else:
                 baseclass='BaseFolder'
 
-        
+
         parentnames.insert(0,baseclass)
         if element.getStereoType() in self.portal_tools:
             print >>outfile,self.TEMPL_TOOL_HEADER
             parentnames.insert(0,'UniqueObject')
 
-            
+
         parents=','.join(parentnames)
         if self.ape_support:
             print >>outfile,self.TEMPL_APE_HEADER % {'class_name':name}
-            
+
         s1 = 'class %s%s(%s):\n' % (self.prefix, name, parents)
 
         wrt(s1)
@@ -510,14 +510,14 @@ from Products.CMFCore.utils import UniqueObject
             print >>outfile,indent("'''\n%s\n'''" % doc, 1)
 
         print >>outfile,indent('security = ClassSecurityInfo()',1)
-        
+
         header=element.getTaggedValue('class_header')
         if header:
             print >>outfile,indent(header, 1)
-            
+
         archetype_name=element.getTaggedValue('archetype_name')
         if not archetype_name: archetype_name=name
-            
+
         print >> outfile,'''    portal_type = meta_type = '%s' ''' % name
         print >> outfile,'''    archetype_name = '%s'   #this name appears in the 'add' box ''' %  archetype_name
         self.generateArcheSchema(outfile,element)
@@ -525,7 +525,7 @@ from Products.CMFCore.utils import UniqueObject
         if element.getStereoType() in self.portal_tools:
             print >> outfile,self.TEMPL_CONSTR_TOOL % (baseclass,'portal_'+element.getName().lower())
             print >> outfile
-        
+
         self.generateMethods(outfile,element)
 
         #generateGettersAndSetters(outfile, element)
@@ -541,7 +541,7 @@ from Products.CMFCore.utils import UniqueObject
         outfile.write(s1)
 
 
-    TEMPL_TOOLINIT='''    
+    TEMPL_TOOLINIT='''
     tools=[%s]
     utils.ToolInit( PROJECTNAME+' Tools',
                 tools = tools,
@@ -552,12 +552,12 @@ from Products.CMFCore.utils import UniqueObject
     TEMPL_CONFIGLET_INSTALL='''
     portal_control_panel.registerConfiglet( '%(tool_name)s' #id of your Product
         , '%(configlet_title)s' # Title of your Product
-        , 'string:${portal_url}/%(configlet_url)s/' 
-        , '%(configlet_condition)s' # a condition 
+        , 'string:${portal_url}/%(configlet_url)s/'
+        , '%(configlet_condition)s' # a condition
         , 'Manage portal' # access permission
-        , '%(configlet_section)s' # section to which the configlet should be added: (Plone,Products,Members) 
+        , '%(configlet_section)s' # section to which the configlet should be added: (Plone,Products,Members)
         , 1 # visibility
-        , '%(tool_name)sID'                                  
+        , '%(tool_name)sID'
         , '%(configlet_icon)s' # icon in control_panel
         , '%(configlet_description)s'
         , None
@@ -565,11 +565,11 @@ from Products.CMFCore.utils import UniqueObject
     # set title of tool:
     tool=getToolByName(self, '%(tool_instance)s')
     tool.title='%(configlet_title)s'
-        
+
     # dont allow tool listed as content in navtree
     try:
         idx=self.portal_properties.navtree_properties.metaTypesNotToList.index('%(tool_name)s')
-    except ValueError: 
+    except ValueError:
         self.portal_properties.navtree_properties.metaTypesNotToList.append('%(tool_name)s')
     except:
         raise'''
@@ -580,28 +580,28 @@ from Products.CMFCore.utils import UniqueObject
     # remove prodcut from navtree properties
     try:
         self.portal_properties.navtree_properties.metaTypesNotToList.remove('%(tool_name)s')
-    except ValueError:        
+    except ValueError:
         pass
     except:
         raise'''
-    
+
 
 
     def generateStdFiles(self, target,projectName,generatedModules):
         #generates __init__.py, Extensions/Install.py and the skins directory
         #the result is a QuickInstaller installable product
-        
+
         #remove trailing slash
         if target[-1] in ('/','\\'):
             target=target[:-1]
-            
+
         templdir=os.path.join(sys.path[0],'templates')
         initTemplate=open(os.path.join(templdir,'__init__.py')).read()
 
         imports='\n'.join(['    import '+m for m in generatedModules])
-        
+
         toolinit=self.TEMPL_TOOLINIT % ','.join([m+'.'+c.getName() for c,m in self.generatedClasses if c.getStereoType() in self.portal_tools])
-        
+
         initTemplate=initTemplate % {'project_name':projectName,'add_content_permission':'Add %s content' % projectName,'imports':imports, 'toolinit':toolinit }
         of=makeFile(os.path.join(target,'__init__.py'))
         of.write(initTemplate)
@@ -614,16 +614,16 @@ from Products.CMFCore.utils import UniqueObject
 
         #handling of tools
         autoinstall_tools=[c[0].getName() for c in self.generatedClasses if c[0].getStereoType() in self.portal_tools and c[0].getTaggedValue('autoinstall') == '1' ]
-        
+
         if autoinstall_tools:
             copy(os.path.join(templdir,'tool.gif'), os.path.join(target,'tool.gif') )
-        
+
         #handling of tools with configlets
         register_configlets='#auto build\n'
         unregister_configlets='#auto build\n'
-        for c in [cn[0] for cn in self.generatedClasses 
-                            if cn[0].getStereoType() in self.portal_tools and 
-                               cn[0].getTaggedValue('autoinstall') == '1' and 
+        for c in [cn[0] for cn in self.generatedClasses
+                            if cn[0].getStereoType() in self.portal_tools and
+                               cn[0].getTaggedValue('autoinstall') == '1' and
                                cn[0].getTaggedValue('configlet') != '0'
                  ]:
             configlet_title=c.getTaggedValue('configlet_title')
@@ -647,7 +647,7 @@ from Products.CMFCore.utils import UniqueObject
             configlet_descr=c.getTaggedValue('configlet_description')
             if not configlet_descr:
                 configlet_descr='ArchGenXML generated Configlet "'+configlet_title+'" in Tool "'+c.getName()+'".'
-                
+
             register_configlets+=self.TEMPL_CONFIGLET_INSTALL % {
                 'tool_name':c.getName(),
                 'tool_instance':'portal_'+c.getName().lower(),
@@ -658,18 +658,18 @@ from Products.CMFCore.utils import UniqueObject
                 'configlet_icon':configlet_icon,
                 'configlet_description':configlet_descr,
                 } + '\n'
-                
+
             unregister_configlets+=self.TEMPL_CONFIGLET_UNINSTALL % {
                 'tool_name':c.getName()
                 } + '\n'
-        
+
         of.write(installTemplate % {'project_dir':os.path.split(target)[1],
                                     'autoinstall_tools':repr(autoinstall_tools),
                                     'register_configlets':register_configlets,
                                     'unregister_configlets':unregister_configlets
                                    })
         of.close()
-        
+
     TEMPL_APECONFIG_BEGIN='''<?xml version="1.0"?>
 
 <!-- Basic Zope 2 configuration for Ape. -->
@@ -677,11 +677,11 @@ from Products.CMFCore.utils import UniqueObject
 <configuration>'''
     def generateApeConf(self, target,projectName):
         #generates apeconf.xml
-        
+
         #remove trailing slash
         if target[-1] in ('/','\\'):
             target=target[:-1]
-            
+
         templdir=os.path.join(sys.path[0],'templates')
         apeconfig_object=open(os.path.join(templdir,'apeconf_object.xml')).read()
         apeconfig_folder=open(os.path.join(templdir,'apeconf_folder.xml')).read()
@@ -694,7 +694,7 @@ from Products.CMFCore.utils import UniqueObject
                 print >>of,apeconfig_folder % {'project_name':projectName,'class_name':el.getCleanName()}
             else:
                 print >>of,apeconfig_object % {'project_name':projectName,'class_name':el.getCleanName()}
-                
+
         print >>of,'</configuration>'
         of.close()
 
@@ -741,12 +741,12 @@ from Products.CMFCore.utils import UniqueObject
             if dirMode:
                 generatedModules=self.generatedModules=[]
                 self.generatedClasses=[]
-                
+
                 for element in root.getChildren():
                     #skip tool classes
                     if element.getStereoType() in self.stub_stereotypes:
                         continue
-                    
+
                     module=element.getName()
                     generatedModules.append(module)
                     outfile=makeFile(os.path.join(self.outfileName,module+'.py'))
@@ -787,18 +787,18 @@ from Products.CMFCore.utils import UniqueObject
                 self.root=root=XMIParser.parse(xschema=buf,packages=self.packages)
             elif suff.lower() == '.xsd':
                 self.root=root=XSDParser.parse(self.xschemaFileName)
-    
+
             #if no output filename given, ry to guess it from the model
             if not self.outfileName:
                 self.outfileName=root.getName()
-    
+
             if not self.outfileName:
                 raise TypeError,'output filename not specified'
-    
+
             print 'outfile:',self.outfileName
         else:
             self.root=root=XMIParser.XMIElement() #create empty element
-            
+
         self.generate(root)
 
     TEMPLATE_HEADER = """\

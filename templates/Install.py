@@ -64,7 +64,7 @@ class PloneSkinRegistrar:
         except:
             # ugh, but i am in stress
             rpt += 'Warning: directory view "%%s" already added to portal_skins\n' %% self._skinsdir
-            
+
 
         # Insert the layer in all skins
         # XXX FIXME: Actually assumes only one layer directory with the name of the Product
@@ -72,7 +72,7 @@ class PloneSkinRegistrar:
 
         if not layerName:
             layerName = self._prodglobals['__name__'].split('.')[-1]
-            
+
         skins = skinstool.getSkinSelections()
 
         for skin in skins:
@@ -83,8 +83,8 @@ class PloneSkinRegistrar:
                     pos=layers.index(position)
                     if mode=='after': pos=pos+1
                 except ValueError:
-                    pos=len(layers) 
-                    
+                    pos=len(layers)
+
                 layers.insert(pos, layerName)
 
                 layers = ','.join(layers)
@@ -111,7 +111,7 @@ class PloneSkinRegistrar:
 
         if not layerName:
             layerName = self._prodglobals['__name__'].split('.')[-1]
-            
+
         if layerName in skinstool.objectIds():
             skinstool.manage_delObjects([layerName])
             rpt += 'Removed "%%s" directory view from portal_skins\n' %% layerName
@@ -158,14 +158,14 @@ def install(self):
             use_folder_tabs.append(cl['klass'].portal_type)
 
     props.use_folder_tabs=tuple(use_folder_tabs)
-    
-    #autoinstall tools    
+
+    #autoinstall tools
     for t in %(autoinstall_tools)s:
         portal.manage_addProduct[PROJECTNAME].manage_addTool(t)
-        # tools are not content. dont list it in navtree 
+        # tools are not content. dont list it in navtree
         try:
             self.portal_properties.navtree_properties.metaTypesNotToList.index(t)
-        except ValueError: 
+        except ValueError:
             self.portal_properties.navtree_properties.metaTypesNotToList.append(t)
         except:
             raise
@@ -173,15 +173,15 @@ def install(self):
     # register tool in control panel
     portal_control_panel=getToolByName(self,'portal_control_panel_actions')
     %(register_configlets)s
-        
-    
-    #try to call a custom install method 
+
+
+    #try to call a custom install method
     #in 'AppInstall.py' method 'install'
     try:
         install = ExternalMethod('temp','temp',PROJECTNAME+'.AppInstall', 'install')
     except:
         install=None
-        
+
     if install:
         print >>out,'Custom Install:'
         res=install(self)
@@ -210,28 +210,28 @@ def uninstall(self):
 
     props.use_folder_tabs=tuple(use_folder_tabs)
 
-    #autouninstall tools    
+    #autouninstall tools
     for t in %(autoinstall_tools)s:
-        # undo: tools are not content. dont list it in navtree 
+        # undo: tools are not content. dont list it in navtree
         try:
             self.portal_properties.navtree_properties.metaTypesNotToList.remove('PloneShop_Tool')
-        except ValueError:        
+        except ValueError:
             pass
         except:
-            raise    
+            raise
     # unregister tool in control panel
-    portal_control_panel=getToolByName(self,'portal_control_panel_actions')    
+    portal_control_panel=getToolByName(self,'portal_control_panel_actions')
     %(unregister_configlets)s
-    
-            
 
-    #try to call a custom uninstall method 
+
+
+    #try to call a custom uninstall method
     #in 'AppInstall.py' method 'uninstall'
     try:
         uninstall = ExternalMethod('temp','temp',PROJECTNAME+'.AppInstall', 'uninstall')
     except:
         uninstall=None
-        
+
     if uninstall:
         print >>out,'Custom Uninstall:'
         res=uninstall(self)
@@ -243,5 +243,3 @@ def uninstall(self):
         print >>out,'no custom uninstall'
 
     return out.getvalue()
-
-

@@ -30,13 +30,13 @@ def makeDir(outFileName,force=1):
     else:
         if not os.path.exists(outFileName):
             os.mkdir(outFileName)
-    
+
 
 
 def mapName(oldName):
     #global NameTable
     newName = oldName
-    
+
     if NameTable:
         if oldName in NameTable.keys():
             newName = NameTable[oldName]

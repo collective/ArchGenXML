@@ -12,7 +12,7 @@ try:
 except ImportError:
     CustomizationPolicy=None
     print 'no Customizationpolicy for %(project_name)s installed'
-        
+
 ADD_CONTENT_PERMISSION = '%(add_content_permission)s'
 PROJECTNAME = "%(project_name)s"
 
@@ -29,9 +29,9 @@ def initialize(context):
     content_types, constructors, ftis = process_types(
         listTypes(PROJECTNAME),
         PROJECTNAME)
-    
+
     %(toolinit)s
-    
+
     utils.ContentInit(
         PROJECTNAME + ' Content',
         content_types      = content_types,
@@ -51,7 +51,7 @@ def initialize(context):
             meta_type=meta_type,
             constructors = (
                             getattr(locals()[meta_type],'add'+capitalize(meta_type)),
-                               ) 
+                               )
             , permission = perm
             )
     if CustomizationPolicy:

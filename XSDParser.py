@@ -1,11 +1,11 @@
 #-----------------------------------------------------------------------------
 # Name:        XSDParser.py
-# Purpose:     
+# Purpose:
 #
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XSDParser.py,v 1.11 2003/10/26 16:59:05 zworkb Exp $
+# RCS-ID:      $Id: XSDParser.py,v 1.12 2003/11/03 18:51:25 dreamcatcher Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -56,23 +56,23 @@ class XschemaElement:
 
     def getTaggedValue(self,name,default=''):
         return self.taggedValues.get(name,default)
-    
+
     def hasTaggedValue(self,name):
         return self.taggedValues.has_key(name)
-    
+
     def getDocumentation(self):
         return self.getTaggedValue('documentation')
-    
+
     def getSubtypeNames(self,recursive=0):
         ''' returns the non-intrinsic subtypes '''
         return [str(c.getType()) for c in self.getChildren() if not c.isIntrinsicType() ]
 
     def getToAssociations(self):
         return []
-    
+
     def getFromAssociations(self):
         return []
-    
+
     def show(self, outfile, level):
         showLevel(outfile, level)
         outfile.write('Name: %s  Type: %s\n' % (self.name, self.type))
@@ -145,13 +145,13 @@ class XschemaElement:
 
     def getMethodDefs(self):
         return []
-    
+
     def isAbstract(self):
         return 0
-    
+
     def isDependent(self):
         return 0
-    
+
     def getStereoType(self):
         return None
 
@@ -181,14 +181,14 @@ class XschemaAttribute(XschemaElement):
     #    return self.__dict__.has_key(k)
 
     def hasDefault(self):
-         return 0
+        return 0
 
     def getDefault(self):
-         return None
+        return None
 
     def getTaggedValue(self,name,default=''):
         return self.taggedValues.get(name,default)
-    
+
     def hasTaggedValue(self,name):
         return self.taggedNames.has_key(name)
 
