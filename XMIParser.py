@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.95 2004/08/17 16:42:21 xiru Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.96 2004/08/20 20:20:38 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -667,6 +667,9 @@ class PseudoElement:
     def getName(self):
         return self.name
     
+    def getModuleName(self):
+        return self.getName()
+    
     
 class XMIElement:
     package=None
@@ -924,6 +927,9 @@ class XMIElement:
     def getPath(self):
         return [self.getName()]
 
+    def getModuleName(self):
+        ''' gets the name of the module the class is in '''
+        return self.getTaggedValue('module') or self.getTaggedValue('module_name') or self.getCleanName()
 
 class StateMachineContainer:
     def __init__(self):
@@ -1094,7 +1100,7 @@ class XMIPackage(XMIElement, StateMachineContainer):
         return res
 
     def getFilePath(self,includeRoot=1,absolute=0):
-        names=[p.getName() for p in self.getPath(includeRoot=includeRoot,absolute=absolute)]
+        names=[p.getModuleName() for p in self.getPath(includeRoot=includeRoot,absolute=absolute)]
         if not names:
             return ''
 
@@ -1118,6 +1124,10 @@ class XMIPackage(XMIElement, StateMachineContainer):
     def getProductName(self):
         return self.getProduct().getName()
 
+    def getProductModuleName(self):
+        return self.getProduct().getModuleName()
+
+
     def isSubPackageOf(self,parent):
         o=self
         #print 'isSubPackage:',self.getName(),parent.getName()
@@ -1131,7 +1141,7 @@ class XMIPackage(XMIElement, StateMachineContainer):
 
         return 0
 
-    def getQualifiedName(self,ref):
+    def getQualifiedName(self, ref):
         ''' returns the qualified name of tha package, depending of the
             reference package 'ref' it generates an absolute path or
             a relative path if the pack(self) is a subpack of 'ref' '''
@@ -1147,7 +1157,7 @@ class XMIModel(XMIPackage):
     diagramsByModel={}
 
     def __init__(self,doc):
-        self.document=doc
+        self.document=doc   
         self.content=XMI.getContent(doc)
         self.model=XMI.getModel(doc)
         XMIPackage.__init__(self,self.model)
@@ -1399,7 +1409,8 @@ class XMIClass (XMIElement, StateMachineContainer):
 
     def getQualifiedModuleName(self,ref,pluginRoot='Products',forcePluginRoot=0):
         path=self.getQualifiedModulePath(ref,pluginRoot=pluginRoot,forcePluginRoot=forcePluginRoot)
-        res= '.'.join([p.getName() for p in path if p])
+        
+        res= '.'.join([p.getModuleName() for p in path if p])
 
         return res
 

@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.39 2004/08/15 17:04:50 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.40 2004/08/20 20:20:38 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -112,7 +112,7 @@ class ArchetypesGenerator:
         return makeDir(ffn,force=force)
 
     def getSkinPath(self,element):
-        return os.path.join(element.getRootPackage().getFilePath(),'skins',element.getRootPackage().getName())
+        return os.path.join(element.getRootPackage().getFilePath(),'skins',element.getRootPackage().getModuleName())
 
     def getOption(self,option,element,default=_marker):
         ''' query a certain option for an element including 'aquisition' :
@@ -619,7 +619,7 @@ class ArchetypesGenerator:
 
     # Generate get/set/add member functions.
     def generateArcheSchema(self, outfile, element, base_schema):
-        parent_schemata=[p.getCleanName()+'.schema' for p in element.getGenParents()]
+        parent_schemata=["getattr(%s,'schema',Schema(()))" % p.getCleanName() for p in element.getGenParents()]
 
         base_schema = element.getTaggedValue('base_schema', base_schema)
         if parent_schemata:
@@ -1240,7 +1240,7 @@ class ArchetypesGenerator:
                 'tool_name':c.getName()
                 } + '\n'
 
-        of.write(installTemplate % {'project_dir':package.getProductName(),
+        of.write(installTemplate % {'project_dir':package.getProductModuleName(),
                                     'no_use_of_folder_tabs':'['+hide_folder_tabs+']',
                                     'all_tools':repr(all_tools),
                                     'autoinstall_tools':repr(autoinstall_tools),
@@ -1292,6 +1292,10 @@ class ArchetypesGenerator:
         return res
     
     def generatePackage(self,package,recursive=1):
+
+        if package.hasStereoType(self.stub_stereotypes):
+            return
+
         package.generatedModules=[]
         package.generatedClasses=[]
         if package.getName() == 'java':
@@ -1305,7 +1309,7 @@ class ArchetypesGenerator:
             if element.isInternal() or element.hasStereoType(self.stub_stereotypes):
                 continue
 
-            module=element.getName()
+            module=element.getModuleName()
             package.generatedModules.append(module)
             outfilepath=os.path.join(package.getFilePath(),module+'.py')
             #print 'writing class:',outfilepath
@@ -1358,9 +1362,6 @@ class ArchetypesGenerator:
             #print 'generating package:',p.getName()
             #print '================================'
             if p.isProduct():
-                print
-                print 'generating product:',p.getName()
-                print '-------------------------'
                 self.generateProduct(p)
             else:
                 self.generatePackage(p,recursive=1)
@@ -1373,23 +1374,30 @@ class ArchetypesGenerator:
         outfile=None
 
         dirMode=1        
+        if root.hasStereoType(self.stub_stereotypes):
+            print 'skipping stub product:',root.getName()
+            return
+
+        print
+        print 'generating product:',root.getName()
+        print '-------------------------'
 
         #create the directories
         self.makeDir(root.getFilePath())
         self.makeDir(os.path.join(root.getFilePath(),'skins'))
         self.makeDir(os.path.join(root.getFilePath(),'skins',
-            root.getProductName()))
+            root.getProductModuleName()))
         self.makeDir(os.path.join(root.getFilePath(),'skins',
-            root.getProductName()+'_public'))
+            root.getProductModuleName()+'_public'))
 
         of=self.makeFile(os.path.join(root.getFilePath(),'skins',
-            root.getProductName()+'_public','readme.txt')
+            root.getProductModuleName()+'_public','readme.txt')
         )
         print >> of, READMEHIGHEST % root.getProductName()
         of.close()
 
         of=self.makeFile(os.path.join(root.getFilePath(),'skins',
-                                root.getProductName(),'readme.txt'))
+                                root.getProductModuleName(),'readme.txt'))
         print >> of, READMELOWEST % root.getProductName()
         of.close()
 
