@@ -132,7 +132,7 @@ class ArchetypesGenerator:
 
         path=os.path.split(self.outfileName)
         self.targetRoot=path[0]
-        print 'targetRoot:',self.targetRoot
+        #print 'targetRoot:',self.targetRoot
         #os.chdir(self.targetRoot or '.')
 
         self.xschemaFileName=xschemaFileName
@@ -208,7 +208,7 @@ class ArchetypesGenerator:
             code=indent(m.getTaggedValue('code',''),1)
             if m.hasStereoType( ['action','view','form']):
                 action_name=m.getTaggedValue(m.getStereoType(), m.getName()).strip()
-                print 'generating ' + m.getStereoType()+':',action_name
+                #print 'generating ' + m.getStereoType()+':',action_name
                 dict={}
 
                 if not action_name.startswith('string:') and not action_name.startswith('python:'):
@@ -252,7 +252,7 @@ class ArchetypesGenerator:
             return ''
         hide_actions=', '.join(["'"+a.strip()+"'" for a in hide_actions.split('\n')])
 
-        print 'hide actions: ', hide_actions
+        #print 'hide actions: ', hide_actions
 
         return MODIFY_FTI % {'hideactions':hide_actions, }
 
@@ -778,7 +778,7 @@ class ArchetypesGenerator:
 
         schemastmt = SCHEMA_START_DEFAULT % " + ".join(schema)
 
-        print schemastmt
+        #print schemastmt
 
         print >>outfile, schemastmt
         aggregatedClasses=[]
@@ -789,7 +789,7 @@ class ArchetypesGenerator:
             #    continue
             mappedName = mapName(name)
 
-            print attrDef
+            #print attrDef
 
             print >> outfile, indent(self.getFieldStringFromAttribute(attrDef, element),2)
 
@@ -811,7 +811,7 @@ class ArchetypesGenerator:
             end=rel.fromEnd
 
             if 1 or rel.fromEnd.isNavigable:
-                print 'generating from assoc'
+                #print 'generating from assoc'
                 if name in self.reservedAtts:
                     continue
                 print >> outfile
@@ -822,7 +822,7 @@ class ArchetypesGenerator:
                 name = rel.fromEnd.getName()
 
                 if rel.fromEnd.isNavigable:
-                    print "backreference"
+                    #print "backreference"
                     if name in self.reservedAtts:
                         continue
                     print >> outfile
@@ -889,7 +889,7 @@ class ArchetypesGenerator:
         #print 'generatemethod:',m.getStereoType(),m.getName()
         if m.hasStereoType('portlet_view'):
             view_name=m.getTaggedValue('view').strip() or m.getName()
-            print 'generating portlet:',view_name
+            #print 'generating portlet:',view_name
             autoinstall=m.getTaggedValue('autoinstall')
             #print 'autoinstall:',autoinstall,m.getTaggedValues()
             portlet='here/%s/macros/portlet' % view_name
