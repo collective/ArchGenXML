@@ -141,8 +141,8 @@
       <sect2>
         <title>Preconditions</title>
 
-        <para>You need a working Python Version 2.1 or later, Version 2.3 is
-        recommended. </para>
+        <para>You need a working Python Version 2.1 or later. Version 2.3 is
+        recommended, with 2.1 some minor features are disabled.</para>
 
         <para>Also you need Plone 2 (choose latest stable release) and its
         dependencies to see your generated code in action.</para>
@@ -167,72 +167,263 @@
         <title>Installation</title>
 
         <para>Simply un-tar downloaded file to a place of your choice and
-        remember the path to <filename>ArchGenXML.py</filename>. </para>
+        remember the path to <filename>ArchGenXML.py</filename>.</para>
 
         <para>I suggest to give the file execution permissions and make a
-        symbolic link at a place mentioned in your PATH environment settings.
-        </para>
+        symbolic link at a place mentioned in your PATH environment
+        settings.</para>
 
         <para>Note: The installation will be handled bei dist-utils in one of
-        the next releases and will become much easier then. </para>
+        the next releases and will become much easier then.</para>
       </sect2>
 
       <sect2>
-        <title>Suggested modules</title>
+        <title>Additional Suggested Software</title>
 
         <para>The following modules are suggested for full featured default
         behaviour.</para>
 
-        <variablelist>
-          <varlistentry>
-            <term>i18ndude</term>
+        <sect3>
+          <title>Suggested for code generation process with ArchGenXML</title>
 
-            <listitem>
-              <para>Without it the generation of user interface i18n features
-              are disabled. Download and install <literal>i18ndude</literal>
-              from project <ulink
-              url="http://sourceforge.net/projects/plone-i18n">plone-i18n on
-              sourceforge.net</ulink>.</para>
-            </listitem>
-          </varlistentry>
+          <variablelist>
+            <varlistentry>
+              <term>i18ndude</term>
 
-          <varlistentry>
-            <term>I18NArchetypes</term>
+              <listitem>
+                <para>Without it the generation of user interface i18n
+                features are disabled. Download and install
+                <literal>i18ndude</literal> from project <ulink
+                url="http://sourceforge.net/projects/plone-i18n">plone-i18n on
+                sourceforge.net</ulink>.</para>
+              </listitem>
+            </varlistentry>
 
-            <listitem>
-              <para>XXX</para>
-            </listitem>
-          </varlistentry>
+            <varlistentry>
+              <term>stripogram</term>
 
-          <varlistentry>
-            <term>ATVocabularyManager</term>
+              <listitem>
+                <para>Some UML Tools are producing HTML documentation elements
+                in XMI. Stripogram converts them into plain text. Without
+                having stripogram installed this feature is disabled. Download
+                and install stripogram from project <ulink
+                url="http://sourceforge.net/project/showfiles.php?group_id=1083&amp;package_id=34645">squishdot
+                on sourceforge.net</ulink>.</para>
+              </listitem>
+            </varlistentry>
+          </variablelist>
+        </sect3>
 
-            <listitem>
-              <para>Enables usage of custom dynamic vocabularies. Download and
-              install <literal>ATVocabularyManager</literal> from <ulink
-              url="http://cvs.sourceforge.net/viewcvs.py/archetypes/ATVocabularyManager/">archetypes
-              CVS</ulink>.</para>
-            </listitem>
-          </varlistentry>
-        </variablelist>
+        <sect3>
+          <title>Suggested for running generated code</title>
+
+          <variablelist>
+            <varlistentry>
+              <term>I18NArchetypes</term>
+
+              <listitem>
+                <para>XXX TODO</para>
+              </listitem>
+            </varlistentry>
+
+            <varlistentry>
+              <term>ATVocabularyManager</term>
+
+              <listitem>
+                <para>Enables usage of custom dynamic vocabularies. Download
+                and install <literal>ATVocabularyManager</literal> from <ulink
+                url="http://cvs.sourceforge.net/viewcvs.py/archetypes/ATVocabularyManager/">archetypes
+                CVS</ulink>.</para>
+              </listitem>
+            </varlistentry>
+          </variablelist>
+        </sect3>
       </sect2>
-    </sect1>
-
-    <sect1>
-      <para></para>
     </sect1>
 
     <sect1>
       <title>UML Tools</title>
 
-      <para></para>
+      <para>ArchGenXML processes models stored in <ulink
+      url="???">XMI</ulink>. This XML format isn't intended to be written in a
+      plain text editor nor in a tree based XML editor. It's a good idea to
+      use a UML design tool. Here is more or less complete list of tools. If
+      you dear reader know another tool, have more detailed information or
+      have experience with a tool in combination with ArchGenXML please write
+      the author a short e-mail.</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Poseidon (by Gentleware)</term>
+
+          <listitem>
+            <para>Website and download: <ulink
+            url="http://www.gentleware.com/">gentleware.com</ulink></para>
+
+            <itemizedlist>
+              <listitem>
+                <para>commercial, Community Edition free available,</para>
+              </listitem>
+
+              <listitem>
+                <para>xmi version 1.2,</para>
+              </listitem>
+
+              <listitem>
+                <para>written in JAVA, runs on most platforms,</para>
+              </listitem>
+
+              <listitem>
+                <para>based on ArgoUML,</para>
+              </listitem>
+
+              <listitem>
+                <para>stores the model native as xmi + diagram information in
+                .zuml files (zip files),</para>
+              </listitem>
+
+              <listitem>
+                <para>some known, but non-critical bugs (see Appendix UML Tool
+                Tricks),</para>
+              </listitem>
+
+              <listitem>
+                <para>needs lots of memory and a fast CPU,</para>
+              </listitem>
+
+              <listitem>
+                <para>authors choice.</para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>ArgoUML</term>
+
+          <listitem>
+            <para>Website and download: <ulink
+            url="???">argouml.tigris.org</ulink></para>
+
+            <itemizedlist>
+              <listitem>
+                <para>free software</para>
+              </listitem>
+
+              <listitem>
+                <para>written in JAVA, runs on most platforms,</para>
+              </listitem>
+
+              <listitem>
+                <para>stores the model native as xmi + diagram information in
+                .zargo files (zip files),</para>
+              </listitem>
+
+              <listitem>
+                <para>some known, but non-critical bugs,</para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>ObjectDomain</term>
+
+          <listitem>
+            <para>Website and download: <ulink
+            url="???">objectdomain.com</ulink></para>
+
+            <itemizedlist>
+              <listitem>
+                <para>commercial, free demo for &lt;= 30 classes,</para>
+              </listitem>
+
+              <listitem>
+                <para>written in JAVA, runs on most platforms,</para>
+              </listitem>
+
+              <listitem>
+                <para>needs to export model. Stores in own text-based
+                format.</para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Powerdesigner (by Sybase)</term>
+
+          <listitem>
+            <para>Website and download: <ulink
+            url="???">sybase.com</ulink></para>
+
+            <itemizedlist>
+              <listitem>
+                <para>xmi version 1.1,</para>
+              </listitem>
+
+              <listitem>
+                <para>needs to export model. </para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Umbrello (KDE)</term>
+
+          <listitem>
+            <para>Website and download: <ulink
+            url="???">uml.sourceforge.net</ulink></para>
+
+            <itemizedlist>
+              <listitem>
+                <para>free software,</para>
+              </listitem>
+
+              <listitem>
+                <para>runs under Linux/KDE,</para>
+              </listitem>
+
+              <listitem>
+                <para>stores the model native as XMI,</para>
+              </listitem>
+
+              <listitem>
+                <para>at the time of testing it, Umbrello wasn't complete and
+                the XMI not 100% standard compliant.</para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>A much more complete list of UML tools can be found at <ulink
+      url="???">www.jeckle.de/umltools.htm</ulink>.</para>
     </sect1>
   </chapter>
 
   <chapter>
-    <title>Crash Course UML</title>
+    <title>UML </title>
 
-    <para></para>
+    <para>UML - the Unified Modelling Language is a graphical language
+    designed to describe software. To attain that goal this language has got
+    several different diagram-types defined.</para>
+
+    <para>This manual does not target in teaching you UML and object-oriented,
+    model-driven software developement. There are several other fine manuals
+    out in the WWW. A very good starting point is OMG's <ulink
+    url="???">UML&trade; Resource Page</ulink> including it's web-links to
+    tutorials.</para>
+
+    <para>For ArchGenXML are from interest: the class-diagramm and it's
+    different associations. In future versions of ArchGenXML it may be
+    possible to define the workflow with state diagrams.</para>
+
+    <para>With this language you're able to define object-oriented
+    data-models. A class is the outline of an object like a building-plan.
+    With ArchGenXML you define this plan. If a building can have relations to
+    an other kind of building you define this with associations.</para>
   </chapter>
 
   <chapter>
@@ -253,7 +444,7 @@
     </section>
 
     <section>
-      <title>Installaling and using the product</title>
+      <title>Installing and using the product</title>
 
       <para></para>
     </section>
@@ -271,7 +462,7 @@
     </section>
 
     <section>
-      <title>Fields</title>
+      <title>Fields (Attributes)</title>
 
       <para></para>
     </section>
@@ -283,7 +474,19 @@
     </section>
 
     <section>
-      <title>Contentish vs. Folderish</title>
+      <title>Methods</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Actions</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Folderish</title>
 
       <para></para>
     </section>
@@ -402,6 +605,12 @@
 
     <para></para>
   </chapter>
+
+  <appendix>
+    <title>UML Tool Tricks</title>
+
+    <para></para>
+  </appendix>
 
   <appendix>
     <title>License</title>
