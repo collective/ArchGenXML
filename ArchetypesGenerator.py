@@ -1095,7 +1095,10 @@ class ArchetypesGenerator(BaseGenerator):
 
         # normally a one of the Archetypes base classes are set.
         # if you dont want it set the TGV to zero '0'
-        if not isTGVFalse(element.getTaggedValue('base_class')):
+        
+        
+        # [optilude] Also - ignore the standard class if this is an abstract/mixin        
+        if not isTGVFalse(element.getTaggedValue('base_class')) and not element.isAbstract ():
             parentnames.insert(0,baseclass)
 
         # Remark: CMFMember support include VariableSchema support
@@ -1128,9 +1131,15 @@ class ArchetypesGenerator(BaseGenerator):
         if self.ape_support:
             print >>outfile,TEMPL_APE_HEADER % {'class_name':name}
 
-        s1 = 'class %s%s(%s):\n' % (self.prefix, name, parents)
+        # [optilude] It's possible parents may become empty now...
+        if parents:
+            parents = "(%s)" % (parents,)
+        else:
+            parents = ''
+        # [optilude] ... so we can't have () around the last %s
+        classDeclaration = 'class %s%s%s:\n' % (self.prefix, name, parents)
 
-        wrt(s1)
+        wrt(classDeclaration)
         doc=element.getDocumentation(striphtml=self.striphtml)
         if doc:
             print >>outfile,indent('"""\n%s\n"""' % doc, 1)
@@ -1138,16 +1147,38 @@ class ArchetypesGenerator(BaseGenerator):
         print >>outfile,indent('security = ClassSecurityInfo()',1)
 
         # "__implements__" line -> handle realization parents
-        reparents=element.getRealizationParents()
+        reparents=element.getRealizationParents()        
         reparentnames=[p.getName() for p in reparents]
         if reparents:
+
+            # [optilude] Add extra () around getattr() call, in case the
+            # base __implements__ is a single interface, not a tuple. Arbitrary
+            # nesting of tuples in interface declaration is permitted.
+            # Also, handle now-possible case where parentnames is empty
+            
+            if parentnames:
+                parentInterfacesConcatenation = \
+                    ' + '.join(["(getattr(%s,'__implements__',()),)" % i for i in parentnames])
+            else:
+                parentInterfacesConcatenation = '()'
+                
+            realizationsConcatenation = ','.join(reparentnames)
+            
             print >> outfile, CLASS_IMPLEMENTS % \
-                    {'baseclass_interfaces' : ' + '.join(["getattr(%s,'__implements__',())" % i for i in parents.split(',')]),
-                     'realizations' : ','.join(reparentnames)}
+                    {'baseclass_interfaces' : parentInterfacesConcatenation,
+                     'realizations' : realizationsConcatenation, }
         else:
+        
+            # [optilude] Same as above
+            
+            if parentnames:
+                parentInterfacesConcatenation = \
+                    ' + '.join(["(getattr(%s,'__implements__',()),)" % i for i in parentnames])
+            else:
+                parentInterfacesConcatenation = '()'
+        
             print >> outfile, CLASS_IMPLEMENTS_BASE % \
-                    {'baseclass_interfaces' : ' + '.join(["getattr(%s,'__implements__',())" % i for i in parents.split(',')]),
-                     'realizations' : ','.join(reparentnames)}
+                    {'baseclass_interfaces' : parentInterfacesConcatenation,}
 
         print >>outfile
         header=element.getTaggedValue('class_header')
@@ -1155,10 +1186,14 @@ class ArchetypesGenerator(BaseGenerator):
             print >>outfile,indent(header, 1)
 
         archetype_name=element.getTaggedValue('archetype_name') or element.getTaggedValue('label')
-        if not archetype_name: archetype_name=name
+        if not archetype_name: 
+            archetype_name=name
 
-        print >> outfile, CLASS_PORTAL_TYPE % name
-        print >> outfile, CLASS_ARCHETYPE_NAME %  archetype_name
+        # [optilude] Only output portal type and AT name if it's not an abstract
+        # mixin
+        if not element.isAbstract ():
+            print >> outfile, CLASS_PORTAL_TYPE % name
+            print >> outfile, CLASS_ARCHETYPE_NAME %  archetype_name
 
         #allowed_content_classes
         parentAggregates=''
@@ -1177,8 +1212,10 @@ class ArchetypesGenerator(BaseGenerator):
 
 
         # FTI as attributes on class
-        fti=self.generateFti(element,aggregatedClasses)
-        print >> outfile,fti
+        # [optilude] Don't generate FTI for abstract mixins
+        if not element.isAbstract ():
+            fti=self.generateFti(element,aggregatedClasses)
+            print >> outfile,fti
 
         # prepare schema as class atrribute
         parent_schema=["getattr(%s,'schema',Schema(()))" % p.getCleanName() \
@@ -1194,7 +1231,11 @@ class ArchetypesGenerator(BaseGenerator):
            not element.hasStereoType(self.cmfmember_stereotype):
             schema = parent_schema
         else:
-            schema = [baseschema] + parent_schema
+            # [optilude] Ignore baseschema in abstract mixin classes
+            if element.isAbstract ():
+                schema = parent_schema
+            else:
+                schema = [baseschema] + parent_schema
 
         # own schema overrules base and parents
         schema += ['schema']
@@ -1219,9 +1260,13 @@ class ArchetypesGenerator(BaseGenerator):
 
         self.generateMethods(outfile,element)
 
-        print >> outfile, self.generateModifyFti(element)
+        # [optilude] Don't do FTI for abstract mixins
+        if not element.isAbstract ():
+            print >> outfile, self.generateModifyFti(element)
 
-        wrt( REGISTER_ARCHTYPE % name)
+        # [optilude] Don't register type for abstract mixin
+        if not element.isAbstract ():
+            wrt( REGISTER_ARCHTYPE % name)
 
         # ATVocabularyManager: registration of class
         if element.hasStereoType(self.vocabulary_item_stereotype):
