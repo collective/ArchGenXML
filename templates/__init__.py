@@ -30,6 +30,8 @@ def initialize(context):
         listTypes(PROJECTNAME),
         PROJECTNAME)
     
+    %(toolinit)s
+    
     utils.ContentInit(
         PROJECTNAME + ' Content',
         content_types      = content_types,

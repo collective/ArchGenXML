@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.19 2003/10/17 08:27:18 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.20 2003/10/25 15:28:06 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -78,7 +78,9 @@ class XMI1_0:
     TAGGED_VALUE_VALUE="Foundation.Extension_Mechanisms.TaggedValue.value"
     
     ATTRIBUTE_INIT_VALUE="Foundation.Core.Attribute.initialValue"
-    
+    STEREOTYPE="Foundation.Extension_Mechanisms.Stereotype"
+    STEREOTYPE_MODELELEMENT="Foundation.Extension_Mechanisms.Stereotype.extendedElement"
+    MODELELEMENT="Foundation.Core.ModelElement"
     aggregates=['composite','aggregate']
 
     def getName(self,domElement):
@@ -175,6 +177,20 @@ class XMI1_0:
         ''' dummy function, only needed in xmi >=1.1'''
         pass
     
+    def calculateStereoType(self,o):
+        #in xmi its weird, because all objects to which a 
+        #stereotype applies are stored in the stereotype
+        #while in xmi 1.2 its opposite
+        for k in stereotypes:
+            st=stereotypes[k]
+            els=st.getElementsByTagName(self.MODELELEMENT)
+            for el in els:
+                if el.getAttribute('xmi.idref')==o.getId():
+                    name=self.getName(st)
+                    print 'Stereotype found:',name
+                    o.setStereoType(name)
+                
+    
 class XMI1_1 (XMI1_0):
     # XMI version specific stuff goes there
 
@@ -222,6 +238,8 @@ class XMI1_1 (XMI1_0):
     TAGGED_VALUE_TAG="UML:TaggedValue.tag"
     TAGGED_VALUE_VALUE="UML:TaggedValue.value"
 
+    MODELELEMENT="UML:ModelElement"
+    STEREOTYPE="UML:Stereotype"
     def getName(self,domElement):
         return domElement.getAttribute('name')
 
@@ -341,6 +359,7 @@ class XMIElement:
         self.id=''
         self.taggedValues={}
         self.subTypes=[]
+        self.stereoType=None
 
         if domElement:
             allObjects[domElement.getAttribute('xmi.id')]=self
@@ -348,6 +367,9 @@ class XMIElement:
         self.initFromDOM(domElement)
         self.buildChildren(domElement)
 
+    def getId(self):
+        return self.id
+    
     def parseTaggedValues(self):
         ''' '''
         tgvsm=getElementByTagName(self.domElement,XMI.TAGGED_VALUE_MODEL,default=None,recursive=0)
@@ -374,7 +396,7 @@ class XMIElement:
             self.name=XMI.getName(domElement)
             #print 'name:',self.name,self.id
             self.parseTaggedValues()
-            
+            self.calculateStereoType()
             mult=getElementByTagName(domElement,XMI.MULTIPLICITY,None)
             if mult:
                 maxNodes=mult.getElementsByTagName(XMI.MULT_MAX)
@@ -471,6 +493,15 @@ class XMIElement:
 
     def getMethodDefs(self):
         return self.methodDefs
+    
+    def calculateStereoType(self):
+        return XMI.calculateStereoType(self)
+       
+    def setStereoType(self,st):
+        self.stereoType=st
+        
+    def getStereoType(self):
+        return self.stereoType         
 
 class XMIClass (XMIElement):
     
@@ -695,13 +726,26 @@ def buildDataTypes(doc):
 
     XMI.collectTagDefinitions(doc)
 
+def buildStereoTypes(doc):
+    global stereotypes
+    sts=doc.getElementsByTagName(XMI.STEREOTYPE)
+
+    for st in sts:
+        id=st.getAttribute('xmi.id')
+        if not id:continue
+        stereotypes[str(id)]=st
+        #print 'stereotype:',id,XMI.getName(st)
+
 def buildHierarchy(doc,packagenames):
     """ builds Hierarchy out of the doc """
     global datatypes
+    global stereotypes
     datatypes={}
+    stereotypes={}
 
     buildDataTypes(doc)
-
+    buildStereoTypes(doc)
+    
     print 'packagenames:', packagenames
     if packagenames: #XXX: TODO support for more than one package
         packages=doc.getElementsByTagName(XMI.PACKAGE)

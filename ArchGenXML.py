@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.32 2003/10/17 08:46:49 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.33 2003/10/25 15:28:06 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -155,8 +155,12 @@ class ArchetypesGenerator:
             parentsubtypes = '+ ' + ' + '.join(tuple([p.getCleanName()+".factory_type_information['allowed_content_types']" for p in element.getGenParents()]))
         immediate_view=element.getTaggedValue('immediate_view') or 'base_view'
         
+        global_allow=not element.isDependent()
+        if element.getStereoType()=='portal_tool':
+            global_allow=0
+        
         res=ftiTempl % {'subtypes':repr(tuple(subtypes)),'type_name':element.getCleanName(),
-            'parentsubtypes':parentsubtypes,'global_allow':not element.isDependent(),'immediate_view':immediate_view}
+            'parentsubtypes':parentsubtypes,'global_allow':global_allow,'immediate_view':immediate_view}
         
         return res
 
@@ -379,8 +383,15 @@ class ArchetypesGenerator:
             
         print >> outfile,'    )'
 
+    TEMPL_CONSTR_TOOL="""
+    #toolconstructors have no id argument, the id is fixed 
+    def __init__(self):
+        %s.__init__(self,'%s')
+        """
+
     def generateMethods(self,outfile,element):
         print >> outfile
+            
         print >> outfile,'    #Methods'
         for m in element.getMethodDefs():
             self.generateMethod(outfile,m)
@@ -425,6 +436,10 @@ def ApeSerializer():
 
 '''
         
+    TEMPL_TOOL_HEADER='''
+from Products.CMFCore.utils import UniqueObject    
+    
+    '''
     def generateClasses(self, outfile, element, delayed):
         wrt = outfile.write
         wrt('\n')
@@ -455,7 +470,6 @@ def ApeSerializer():
         if additionalParents:
             parentnames=list(parentnames)+additionalParents.split(',')
             
-        parents=','.join(parentnames)
         baseclass='BaseContent'
         if refs :
             folder_base_class=element.getTaggedValue('folder_base_class')
@@ -463,11 +477,19 @@ def ApeSerializer():
                 baseclass=folder_base_class
             else:
                 baseclass='BaseFolder'
-                
+
+        
+        parentnames.insert(0,baseclass)
+        if element.getStereoType()=='portal_tool':
+            print >>outfile,self.TEMPL_TOOL_HEADER
+            parentnames.insert(0,'UniqueObject')
+
+            
+        parents=','.join(parentnames)
         if self.ape_support:
             print >>outfile,self.TEMPL_APE_HEADER % {'class_name':name}
             
-        s1 = 'class %s%s(%s,%s):\n' % (self.prefix, name, baseclass, parents)
+        s1 = 'class %s%s(%s):\n' % (self.prefix, name, parents)
 
         wrt(s1)
         doc=element.getDocumentation()
@@ -483,6 +505,11 @@ def ApeSerializer():
         print >> outfile,'''    portal_type = meta_type = '%s' ''' % name
         print >> outfile,'''    archetype_name = '%s'   #this name appears in the 'add' box ''' % name
         self.generateArcheSchema(outfile,element)
+
+        if element.getStereoType()=='portal_tool':
+            print >> outfile,self.TEMPL_CONSTR_TOOL % (baseclass,'portal_'+element.getName().lower())
+            print >> outfile
+        
         self.generateMethods(outfile,element)
 
         #generateGettersAndSetters(outfile, element)
@@ -498,6 +525,15 @@ def ApeSerializer():
         outfile.write(s1)
 
 
+    TEMPL_TOOLINIT='''    
+    tools=(%s,)
+    utils.ToolInit( PROJECTNAME+' Tools',
+                tools = tools,
+                product_name = PROJECTNAME,
+                icon=None #'tool.gif' 
+                ).initialize( context )'''
+
+
     def generateStdFiles(self, target,projectName,generatedModules):
         #generates __init__.py, Extensions/Install.py and the skins directory
         #the result is a QuickInstaller installable product
@@ -510,8 +546,10 @@ def ApeSerializer():
         initTemplate=open(os.path.join(templdir,'__init__.py')).read()
 
         imports='\n'.join(['    import '+m for m in generatedModules])
-
-        initTemplate=initTemplate % {'project_name':projectName,'add_content_permission':'Add %s content' % projectName,'imports':imports }
+        
+        toolinit=self.TEMPL_TOOLINIT % ','.join([m+'.'+c.getName() for c,m in self.generatedClasses if c.getStereoType()=='portal_tool'])
+        
+        initTemplate=initTemplate % {'project_name':projectName,'add_content_permission':'Add %s content' % projectName,'imports':imports, 'toolinit':toolinit }
         of=makeFile(os.path.join(target,'__init__.py'))
         of.write(initTemplate)
         of.close()
@@ -593,14 +631,16 @@ def ApeSerializer():
                 outfile.close()
 
             if dirMode:
-                generatedModules=[]
-
+                generatedModules=self.generatedModules=[]
+                self.generatedClasses=[]
+                
                 for element in root.getChildren():
                     module=element.getName()
                     generatedModules.append(module)
                     outfile=makeFile(os.path.join(self.outfileName,module+'.py'))
                     self.generateHeader(outfile)
                     self.generateClasses(outfile, element, 0)
+                    self.generatedClasses.append([element,module])
                     outfile.close()
 
                 while 1:

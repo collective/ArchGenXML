@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XSDParser.py,v 1.9 2003/10/03 17:01:12 zworkb Exp $
+# RCS-ID:      $Id: XSDParser.py,v 1.10 2003/10/25 15:28:06 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -148,6 +148,9 @@ class XschemaElement:
     
     def isDependent(self):
         return 0
+    
+    def getStereoType(self):
+        return None
 
 class XschemaAttribute(XschemaElement):
     def __init__(self,  attrs):
