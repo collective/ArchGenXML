@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.48 2004/04/03 02:15:10 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.49 2004/04/03 12:22:38 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -201,20 +201,25 @@ class XMI1_0:
         gens=doc.getElementsByTagName(XMI.GENERALIZATION)
 
         for gen in gens:
+            if not self.getId(gen):continue
             try:
-                par0=getElementByTagName   (gen,self.GEN_PARENT)
-                child0=getElementByTagName (gen,self.GEN_CHILD)
+                par0=getElementByTagName   (gen,self.GEN_PARENT,recursive=1)
+                child0=getElementByTagName (gen,self.GEN_CHILD,recursive=1)
                 try:
-                    par=objects[getElementByTagName(par0,self.GEN_ELEMENT).getAttribute('xmi.idref')]
+                    #par=objects[getElementByTagName(par0,self.GEN_ELEMENT).getAttribute('xmi.idref')]
+                    par=objects[getSubElement(par0).getAttribute('xmi.idref')]
                 except KeyError:
                     print 'Warning: Parent Object not found for generalization relation:%s, parent %s' % (XMI.getId(gen),XMI.getName(par0))
                     continue
                 
-                child=objects[getElementByTagName(child0,self.GEN_ELEMENT).getAttribute('xmi.idref')]
+                #child=objects[getElementByTagName(child0,self.GEN_ELEMENT).getAttribute('xmi.idref')]
+                child=objects[getSubElement(child0).getAttribute('xmi.idref')]
 
                 par.addGenChild(child)
                 child.addGenParent(par)
             except IndexError:
+                print 'gen: index error for generalization:%s'%self.getId(gen)
+                raise
                 pass
 
     def getExpressionBody(self,element):
@@ -440,6 +445,22 @@ _marker=[]
 
 allObjects={}
 
+def getSubElements(domElement):
+    return [e for e in domElement.childNodes if e.nodeType==e.ELEMENT_NODE]
+
+def getSubElement(domElement,default=_marker):
+    els=getSubElements(domElement)
+    if len(els) > 1:
+        raise TypeError,'more than 1 element found'
+
+    try:
+        return els[0]
+    except IndexError:
+        if default == _marker:
+            raise
+        else:
+            return default
+    
 
 def getElementByTagName(domElement,tagName,default=_marker, recursive=0):
     ''' returns a single element by name and throws an error if more than 1 exist'''
