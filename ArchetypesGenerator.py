@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.23 2004/05/24 09:11:32 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.24 2004/05/29 09:03:45 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -528,7 +528,7 @@ class ArchetypesGenerator:
             
         map=self.typeMap[ctype]['map'].copy()
         if attr.hasDefault():
-            map.update( {'default':attr.getDefault()} )       
+            map.update( {'default':getExpression(attr.getDefault())} )       
         map.update(self.getFieldAttributes(attr))
         map.update( {
             'widget': self.getWidget( \
