@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.67 2004/04/25 12:06:21 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.68 2004/04/27 21:55:09 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -452,8 +452,7 @@ class XMI1_2 (XMI1_1):
 
         for t in tagdefs:
             if t.hasAttribute('name'):
-                self.tagDefinitions[t.getAttribute('xmi.id')]=t#.getAttribute('name')
-
+                self.tagDefinitions[t.getAttribute('xmi.id')]=t
         
     def calculateStereoType(self,o):
         #in xmi its weird, because all objects to which a
@@ -602,12 +601,17 @@ class XMIElement:
             return
 
         tgvs=getElementsByTagName(tgvsm, XMI.TAGGED_VALUE, recursive=0)
-        try:
-            for tgv in tgvs:
-                tagname,tagvalue=XMI.getTaggedValue(tgv)
-                self.taggedValues[tagname]=tagvalue
-        except:
-            pass
+        for tgv in tgvs:
+            try:
+                tagname,tagvalue=XMI.getTaggedValue(tgv)                
+                if self.taggedValues.has_key(tagname):
+                    # poseidon multiline fix
+                    self.taggedValues[tagname]+='\n'+tagvalue
+                else:
+                    self.taggedValues[tagname]=tagvalue
+                print '\n-----\n', self.taggedValues[tagname]
+            except AttributeError:
+                pass
 
         #print 'taggedValues:',self.__class__,self.getName(),self.getTaggedValues()
 
