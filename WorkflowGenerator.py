@@ -4,17 +4,16 @@ from documenttemplate.documenttemplate import HTML
 
 from utils import readTemplate, cleanName
 import utils
-
 from PyParser import PyModule
+from BaseGenerator import BaseGenerator
 
-class WorkflowGenerator:
+class WorkflowGenerator(BaseGenerator):
     atgenerator=None
     package=None
 
     def __init__(self,package,atgenerator):
         self.package=package
         self.atgenerator=atgenerator
-
 
 
     def generateWorkflows(self):
@@ -24,7 +23,12 @@ class WorkflowGenerator:
 
         print 'Generating workflows for package '+ self.package.getName()
 
-        d={'package':self.package,'generator':self,'builtins':__builtins__,'utils':utils}
+        d={'package'    : self.package,
+           'generator'  : self,
+           'atgenerator': self.atgenerator,
+           'builtins'   : __builtins__,
+           'utils'       :utils,
+        }
         d.update(__builtins__)
 
 
@@ -53,6 +57,7 @@ class WorkflowGenerator:
 
             s = {'package' : self.package,
                  'generator' : self,
+                 'atgenerator': self.atgenerator,
                  'builtins' : __builtins__,
                  'utils' : utils}
             s.update(__builtins__)
@@ -84,6 +89,3 @@ class WorkflowGenerator:
         of=self.atgenerator.makeFile(os.path.join(extDir,'InstallWorkflows.py'))
         of.write(res)
         of.close()
-
-    def cleanName(self,n):
-        return cleanName(n)

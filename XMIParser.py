@@ -1658,6 +1658,9 @@ class XMIStateContainer(XMIElement):
     def getStateNames(self, no_duplicates = None):
         return [s.getName() for s in self.getStates(no_duplicates = no_duplicates) if s.getName()]
 
+    def getCleanStateNames(self, no_duplicates = None):
+        return [s.getCleanName() for s in self.getStates(no_duplicates = no_duplicates) if s.getName()]
+
 class XMIStateMachine(XMIStateContainer):
 
     def init(self):
@@ -1756,6 +1759,24 @@ class XMIStateMachine(XMIStateContainer):
                 res.append(t.getAction())
 
         return res
+
+    def getAllRoles(self, ignore=[]):
+        roles = []
+        for tran in self.getTransitions(no_duplicates = 1):
+            dummy = [roles.append(r) \
+                     for r in tran.getGuardRoles().split(';') \
+                     if not (r in roles or r in ignore)]
+
+        for state in self.getStates():
+            perms = state.getPermissionsDefinitions()
+            sroles = []
+            dummy = [[sroles.append(j) for j in i] \
+                     for i in [d['roles'] for d in perms] \
+                    ]
+            dummy = [roles.append(r) \
+                     for r in sroles \
+                     if not (r in roles or r in ignore)]
+        return roles
 
 class XMIStateTransition(XMIElement):
     targetState=None
@@ -1908,24 +1929,35 @@ class XMIState(XMIElement):
         return self.outgoingTransitions
 
     def getPermissionsDefinitions(self):
+        """ \
+        returns a list of dictionaries. Each dict contains a key
+        'permission' with a string value and a key 'roles' with a list of
+        strings as value.
+        """
 
-        permissions_mapping = {'Access' : 'Access contents information',
-                               'View' : 'View',
-                               'Modify' : 'Modify portal content'}
-
-        # list of tagged values that are NOT permissions
-        non_permissions = ['initial_state']
-
-        pm = permissions_mapping
+        # permissions_mapping (abbreviations for lazy guys)
+        # keys are case insensitive
+        pm = {'access' : 'Access contents information',
+              'view'   : 'View',
+              'modify' : 'Modify portal content'}
 
         tv = self.getTaggedValues()
 
         ret = []
+
+
         for k, v in tv.items():
+            # list of tagged values that are NOT permissions
+            non_permissions = ['initial_state']
             if k in non_permissions or not v:
                 continue
-            permission = pm.get(k, k)
+
+            # look up abbreviations if any
+            permission = pm.get(k.lower(), k)
+
+            # split roles-string into list
             roles =  [str(r.strip()) for r in v.split(',') if r.strip()]
+
             ret.append({'permission' : permission,
                         'roles' : roles})
 
@@ -1936,13 +1968,13 @@ class XMIState(XMIElement):
         has_view = 0
         v = {}
         for r in ret:
-            if r.get('permission', None) == pm['Access']:
+            if r.get('permission', None) == pm['access']:
                 has_access = 1
-            if r.get('permission', None) == pm['View']:
+            if r.get('permission', None) == pm['view']:
                 v = r
                 has_view = 1
         if has_view and not has_access:
-            ret.append({'permission' : pm['Access'],
+            ret.append({'permission' : pm['access'],
                         'roles' : v['roles']})
 
         # If not permissions were defined, uses the default values

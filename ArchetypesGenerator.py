@@ -22,8 +22,9 @@ import XSDParser, XMIParser, PyParser
 from documenttemplate.documenttemplate import HTML
 from codesnippets import *
 from utils import makeFile, readFile, makeDir,mapName, wrap, indent, getExpression, \
-    isTGVTrue, isTGVFalse, readTemplate
+    isTGVTrue, isTGVFalse, readTemplate, getFileHeaderInfo
 
+from BaseGenerator import BaseGenerator
 from WorkflowGenerator import WorkflowGenerator
 
 has_i18ndude = 1
@@ -67,7 +68,7 @@ class DummyModel:
     def isRoot(self):
         return 1
 
-class ArchetypesGenerator:
+class ArchetypesGenerator(BaseGenerator):
 
     force=1
     unknownTypesAsString=0
@@ -154,34 +155,6 @@ class ArchetypesGenerator:
     def getSkinPath(self,element):
         return os.path.join(element.getRootPackage().getFilePath(),'skins',element.getRootPackage().getModuleName())
 
-    def getOption(self,option,element,default=_marker,aggregate=False):
-        ''' query a certain option for an element including 'aquisition' :
-            search the lement, then the packages upwards, then global options'''
-
-        if element:
-            o=element
-
-            #climb up the hierarchy
-            aggregator=''
-            while o:
-                if o.hasTaggedValue(option):
-                    if aggregate:
-                        # create a multiline string
-                        aggregator+=o.getTaggedValue(option)+'\n'
-                    else:
-                        return o.getTaggedValue(option)
-                o=o.getParent()
-            if aggregator:
-                return aggregator
-
-        #look in the options
-        if hasattr(self,option):
-            return getattr(self,option)
-
-        if default != _marker:
-            return default
-        else:
-            raise ValueError,"option '%s' is mandatory for element '%s'" % (option,element and element.getName())
 
     def addMsgid(self,msgid,msgstr,element,fieldname):
         """add a msgid to the catalog if it not exists. if it exists and not
@@ -1251,16 +1224,10 @@ class ArchetypesGenerator:
 
         wrt('# end of class %s\n'   % name)
 
-
-    def generateModuleInfoHeader(self, outfile, modulename, element):
-        if not self.module_info_header:
-            return
-
+    def getHeaderInfo(self, element):
         #deal with multiline docstring
         purposeline=('\n').join( \
             (element.getDocumentation(striphtml=self.striphtml,wrap=79) or 'unknown').split('\n') )
-
-        author= self.getOption('author', element, self.author) or 'unknown'
 
         copyright = COPYRIGHT % \
             (str(time.localtime()[0]),
@@ -1269,20 +1236,40 @@ class ArchetypesGenerator:
         licence = ('\n# ').join( \
             wrap(self.getOption('license', element, GPLTEXT),77).split('\n') )
 
-        email=self.getOption('email', element, self.email) or 'unknown'
-        email=email.split(',')
-        email = [i.strip() for i in email]
-        email ="<"+">, <".join([i.strip() for i in email])+">"
+        authors = self.getOption('author', element, self.author) or 'unknown'
+        authors = authors.split(',')
+        authors = [i.strip() for i in authors]
 
-        fileheaderinfo = {'filename': modulename+'.py',
-                          'purpose':  purposeline,
-                          'author':   author,
-                          'email':    email,
-                          'version':  self.version,
-                          'date':     time.ctime(),
-                          'copyright':'\n# '.join(wrap(copyright,77).split('\n')),
-                          'licence':  licence,
+        emails = self.getOption('email', element, self.email) or 'unknown'
+        emails = emails.split(',')
+        emails = ['<%s>' % i.strip() for i in emails]
+
+        authoremail = []
+        for author in authors:
+            if authors.index(author) < len(emails):
+                authoremail.append("%s %s" % (author, emails[authors.index(author)]))
+            else:
+                authoremail.append("%s <unknown>" % author)
+
+        authorline = wrap(", ".join(authoremail),77)
+
+        moduleinfo = {  'purpose':      purposeline,
+                        'authors':      ', '.join(authors),
+                        'emails' :      ', '.join(emails),
+                        'authorline':   authorline,
+                        'version':      self.version,
+                        'date':         time.ctime(),
+                        'copyright':    '\n# '.join(wrap(copyright,77).split('\n')),
+                        'licence':      licence,
         }
+
+        return moduleinfo
+
+    def generateModuleInfoHeader(self, outfile, modulename, element):
+        if not self.module_info_header:
+            return
+        fileheaderinfo = self.getHeaderInfo(element)
+        fileheaderinfo.update({'filename': modulename+'.py'})
         outfile.write(MODULE_INFO_HEADER % fileheaderinfo)
 
     def generateHeader(self, outfile, i18n=0):
