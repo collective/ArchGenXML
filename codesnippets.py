@@ -139,7 +139,7 @@ RCS-ID $Id$
 #
 # %(licence)s
 #
-__author__  = '%(author)s %(email)s'
+__author__  = '''%(authorline)s'''
 __docformat__ = 'plaintext'
 
 """

@@ -35,7 +35,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
 
     wf.setProperties(title='<dtml-var "statemachine.getCleanName()">')
 
-    # worklists generations are not defined yet...
+    # generation of worklists is not defined yet...
     ### XXX :-(
 
     for s in <dtml-var "repr(statemachine.getCleanStateNames(no_duplicates = 1))">:
@@ -58,7 +58,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
 
 <dtml-in "[s for s in statemachine.getStates(no_duplicates = 1) if s.getCleanName()]">
     sdef = wf.states['<dtml-var "_['sequence-item'].getCleanName()">']
-    sdef.setProperties(title="""<dtml-var "_['sequence-item'].getDocumentation(striphtml=generator.atgenerator.striphtml) or _['sequence-item'].getCleanName()">""",
+    sdef.setProperties(title="""<dtml-var "_['sequence-item'].getDocumentation(striphtml=generator.atgenerator.striphtml) or _['sequence-item'].getName()">""",
                        transitions=<dtml-var "repr([t.getCleanName() for t in _['sequence-item'].getOutgoingTransitions()])">)
 <dtml-in "_['sequence-item'].getPermissionsDefinitions()">
     sdef.setPermission('<dtml-var "_['sequence-item'].get('permission')">', 0, <dtml-var "_['sequence-item'].get('roles')">)
@@ -82,7 +82,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
                        trigger_type=1,
                        script_name="""""",
                        after_script_name="""<dtml-var "tran.getActionName() or ''">""",
-                       actbox_name="""<dtml-var "tran.getTaggedValue('label') or tran.getCleanName()">""",
+                       actbox_name="""<dtml-var "tran.getTaggedValue('label') or tran.getName()">""",<dtml-call name="atgenerator.addMsgid(tran.getTaggedValue('label') or tran.getName())">
                        actbox_url="""""",
                        actbox_category="""workflow""",
                        props=<dtml-var "tran.getProps()">,

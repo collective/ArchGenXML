@@ -1740,8 +1740,9 @@ class XMIStateMachine(XMIStateContainer):
         for s in self.getStates():
             pd = s.getPermissionsDefinitions()
             for p in pd:
-                if p['permission'] not in ret:
-                    ret.append(p['permission'])
+                perm = p['permission'].strip()
+                if perm not in ret:
+                    ret.append(perm)
         return ret
 
     def getInitialState(self):
@@ -1811,7 +1812,7 @@ class XMIStateTransition(XMIElement):
 
     def getTargetStateName(self):
         if self.getTargetState():
-            return self.getTargetState().getName()
+            return self.getTargetState().getCleanName()
         else:
             return None
 
@@ -1935,6 +1936,12 @@ class XMIState(XMIElement):
         strings as value.
         """
 
+        ### for the records:
+        ### this method contains lots of generation logic. in fact this
+        ### should move over to the WorkflowGenerator.py and reduce here in
+        ### just deliver the pure data
+        ### the parser should really just parse to be as independent as possible
+
         # permissions_mapping (abbreviations for lazy guys)
         # keys are case insensitive
         pm = {'access' : 'Access contents information',
@@ -1951,6 +1958,8 @@ class XMIState(XMIElement):
             non_permissions = ['initial_state']
             if k in non_permissions or not v:
                 continue
+
+            k=k.strip()
 
             # look up abbreviations if any
             permission = pm.get(k.lower(), k)

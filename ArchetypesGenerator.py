@@ -916,7 +916,7 @@ class ArchetypesGenerator(BaseGenerator):
             code=m.taggedValues.get('code','')
             doc=m.getDocumentation(striphtml=self.striphtml)
             if doc is not None:
-                print >> outfile, indent("'''\n%s\n'''" % doc ,2)
+                print >> outfile, indent('"""\n%s\n"""' % doc ,2)
 
             if code and mode=='class':
                 print >> outfile, indent('\n'+code,2)
@@ -1099,7 +1099,7 @@ class ArchetypesGenerator(BaseGenerator):
         wrt(s1)
         doc=element.getDocumentation(striphtml=self.striphtml)
         if doc:
-            print >>outfile,indent("'''\n%s\n'''" % doc, 1)
+            print >>outfile,indent('"""\n%s\n"""' % doc, 1)
 
         print >>outfile,indent('security = ClassSecurityInfo()',1)
 
@@ -1214,7 +1214,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         wrt(s1)
         doc=element.getDocumentation(striphtml=self.striphtml)
-        print >>outfile,indent("'''\n%s\n'''" % doc, 1)
+        print >>outfile,indent('"""\n%s\n"""' % doc, 1)
 
         header=element.getTaggedValue('class_header')
         if header:
@@ -1272,8 +1272,11 @@ class ArchetypesGenerator(BaseGenerator):
         fileheaderinfo.update({'filename': modulename+'.py'})
         outfile.write(MODULE_INFO_HEADER % fileheaderinfo)
 
-    def generateHeader(self, outfile, i18n=0):
-        if self.i18n_content_support in self.i18n_at:
+    def generateHeader(self, outfile, element):
+
+        i18ncontent = self.getOption('i18ncontent',element, self.i18n_content_support)
+
+        if i18ncontent in self.i18n_at and element.isI18N():
             s1 = TEMPLATE_HEADER_I18N_I18N_AT
         elif self.i18n_content_support == 'linguaplone':
             s1 = TEMPLATE_HEADER_I18N_LINGUAPLONE
@@ -1551,7 +1554,7 @@ class ArchetypesGenerator(BaseGenerator):
                 outfile=StringIO()
                 self.generateModuleInfoHeader(outfile, module, element)
                 if not element.isInterface():
-                    self.generateHeader(outfile, i18n=self.i18n_content_support and element.isI18N())
+                    self.generateHeader(outfile, element)
                     self.generateClass(outfile, element, 0)
                     package.generatedClasses.append(element)
                 else:
