@@ -7,7 +7,7 @@
 
 
 <div metal:fill-slot="main">
-
+%s
 </div>
 
 </body>

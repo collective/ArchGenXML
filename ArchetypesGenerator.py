@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.36 2004/07/27 18:08:51 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.37 2004/07/29 08:12:26 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -153,6 +153,7 @@ class ArchetypesGenerator:
         outfile=StringIO()
         print >> outfile
         for m in element.getMethodDefs():
+            code=indent(m.getTaggedValue('code',''),1)
             if m.hasStereoType( ['action','view','form']):
                 action_name=m.getTaggedValue(m.getStereoType(), m.getName()).strip()
                 print 'generating ' + m.getStereoType()+':',action_name
@@ -180,14 +181,14 @@ class ArchetypesGenerator:
                 if f:
                     templdir=os.path.join(sys.path[0],'templates')
                     viewTemplate=open(os.path.join(templdir,'action_view.pt')).read()
-                    f.write(viewTemplate)
+                    f.write(viewTemplate % code)
 
             elif m.hasStereoType('form'):
                 f=self.makeFile(os.path.join(self.getSkinPath(element),action_name+'.cpt'),0)
                 if f:
                     templdir=os.path.join(sys.path[0],'templates')
                     viewTemplate=open(os.path.join(templdir,'action_view.pt')).read()
-                    f.write(viewTemplate)
+                    f.write(viewTemplate % code)
 
         res=outfile.getvalue()
         return res
