@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.23 2003/08/14 01:25:19 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.24 2003/08/23 14:20:06 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -48,14 +48,14 @@ from utils import indent
 class ArchetypesGenerator:
 
     force=1
-    unknownTypesAsString=1
+    unknownTypesAsString=0
     generateActions=0
     prefix=''
     packages=[] #packages to scan for classes
     noclass=0   # if set no module is reverse engineered, 
                 #just an empty project + skin is created
 
-    reservedAtts=['id','title']
+    reservedAtts=['id',]
 
     def __init__(self,xschemaFileName,outfileName,**kwargs):
         self.outfileName=outfileName
@@ -160,32 +160,25 @@ class ArchetypesGenerator:
 
     typeMap={
         'string':'''StringField('%(name)s',
-                    searchable=1,
                     %(other)s
                     ),''' ,
         'text':  '''StringField('%(name)s',
-                    searchable=1,
                     widget=TextAreaWidget(),
                     %(other)s
                     ),''' ,
         'integer':'''IntegerField('%(name)s',
-                    searchable=1,
                     %(other)s
                     ),''',
         'float':'''FloatField('%(name)s',
-                    searchable=1,
                     %(other)s
                     ),''',
         'boolean':'''BooleanField('%(name)s',
-                    searchable=1,
                     %(other)s
                     ),''',
         'lines':'''LinesField('%(name)s',
-                    searchable=1,
                     %(other)s
                     ),''',
         'date':'''DateTimeField('%(name)s',
-                    searchable=1,
                     %(other)s
                     ),''',
         'image':'''ImageField('%(name)s',
@@ -199,16 +192,16 @@ class ArchetypesGenerator:
                     %(other)s
                     ),''',
         'lines':'''LinesField('%(name)s',
-                    searchable=1,
                     %(other)s
                     ),''',
         'reference':'''ReferenceField('%(name)s',allowed_types=%(allowed_types)s,
-                    searchable=1,
                     multiValued=%(multiValued)d,
                     relationship='%(relationship)s',
                     %(other)s
                     ),''',
-
+        'computed':'''ComputedField('%(name)s',
+                    %(other)s
+                    ),''',
     }
 
     coerceMap={
@@ -227,6 +220,8 @@ class ArchetypesGenerator:
         'liste':'lines',
         'image':'image',
         'int':'integer',
+        '':'string',     #
+        None:'string',
     }
 
     def coerceType(self, typename):
@@ -242,6 +237,27 @@ class ArchetypesGenerator:
         #print ctype
         return ctype
 
+    def getFieldAttributes(self,element):
+        ''' converts the tagged values of a field into extended attributes for the archetypes field '''
+        noparams=['documentation',]
+        convtostring=['expression']
+        lines=[]
+        tgv=element.getTaggedValues()
+        #print element.getName(),tgv
+        for k in tgv.keys():
+            if k not in noparams:
+                v=tgv[k]
+                if k in convtostring:
+                    v=repr(v)
+                lines.append('%s=%s'%(k,v))
+            
+        if lines:
+            res='\n'+',\n'.join(lines)
+        else:
+            res=''
+            
+        return res
+            
     def getFieldString(self, element):
         ''' gets the schema field code '''
         typename=str(element.type)
@@ -252,7 +268,8 @@ class ArchetypesGenerator:
             ctype=self.coerceType(typename)
 
         templ=self.typeMap[ctype]
-        return templ % {'name':element.getCleanName(),'type':element.type}
+        
+        return templ % {'name':element.getCleanName(),'type':element.type,}
 
     def getFieldStringFromAttribute(self, attr):
         ''' gets the schema field code '''
@@ -265,9 +282,10 @@ class ArchetypesGenerator:
         templ=self.typeMap[ctype]
         defexp=''
         if attr.hasDefault():
-            defexp='default='+attr.getDefault()
+            defexp='default='+attr.getDefault()+','
             
-        res = templ % {'name':attr.getName(),'type':attr.getType(),'other':defexp}
+        other_attributes=self.getFieldAttributes(attr)
+        res = templ % {'name':attr.getName(),'type':attr.getType(),'other':defexp+indent(other_attributes,5)}
         doc=attr.getDocumentation()
         if doc:
             res=indent(doc,2,'#')+'\n'+' '*8+res
@@ -406,10 +424,15 @@ class ArchetypesGenerator:
             parentnames=list(parentnames)+additionalParents.split(',')
             
         parents=','.join(parentnames)
-        if refs:
-            s1 = 'class %s%s(BaseFolder,%s):\n' % (self.prefix, name, parents)
-        else:
-            s1 = 'class %s%s(BaseContent,%s):\n' % (self.prefix, name, parents)
+        baseclass='BaseContent'
+        if refs :
+            folder_base_class=element.getTaggedValue('folder_base_class')
+            if folder_base_class:
+                baseclass=folder_base_class
+            else:
+                baseclass='BaseFolder'
+        
+        s1 = 'class %s%s(%s,%s):\n' % (self.prefix, name, baseclass, parents)
 
         wrt(s1)
         doc=element.getDocumentation()

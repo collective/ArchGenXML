@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.15 2003/08/01 01:54:49 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.16 2003/08/23 14:20:06 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -384,6 +384,9 @@ class XMIElement:
     
     def getTaggedValue(self,name,default=''):
         return self.taggedValues.get(name,default)
+    
+    def getTaggedValues(self):
+        return self.taggedValues
     
     def getDocumentation(self):
         return self.getTaggedValue('documentation')

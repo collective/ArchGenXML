@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XSDParser.py,v 1.6 2003/07/19 11:47:03 zworkb Exp $
+# RCS-ID:      $Id: XSDParser.py,v 1.7 2003/08/23 14:20:06 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -56,6 +56,9 @@ class XschemaElement:
 
     def getTaggedValue(self,name,default=''):
         return self.taggedValues.get(name,default)
+    
+    def getTaggedValues(self):
+        return self.taggedValues
     
     def getDocumentation(self):
         return self.getTaggedValue('documentation')
