@@ -1113,12 +1113,14 @@ class ArchetypesGenerator(BaseGenerator):
 
         parents=','.join(parentnames)
 
+        # protected section
+        self.generateProtectedSection(outfile,element,'module-header')
+
         # here comes the schema
         self.generateArcheSchema(outfile,element,baseschema)
 
         # protected section
-        self.generateProtectedSection(outfile,element,'module-header')
-
+        self.generateProtectedSection(outfile,element,'after-schema')
 
         if not element.isComplex():
             print "stop complex"
