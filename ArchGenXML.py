@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.16 2003/07/20 18:47:38 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.17 2003/07/23 11:12:23 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -91,8 +91,9 @@ class ArchetypesGenerator:
         '''
         ftiTempl='''
 
+    # uncommant lines below when you need
     factory_type_information={
-        'allowed_content_types':%(subtypes)s,
+        'allowed_content_types':%(subtypes)s %(parentsubtypes)s,
         #'content_icon':'%(type_name)s.gif',
         'immediate_view':'base_view',
         #'global_allow':0,
@@ -103,7 +104,11 @@ class ArchetypesGenerator:
         if self.generateActions:
             ftiTempl += actTempl
 
-        res=ftiTempl % {'subtypes':repr(tuple(subtypes)),'type_name':element.getCleanName()}
+        #collect the allowed_subtypes from the parents
+        parentsubtypes=''
+        if element.getGenParents():
+            parentsubtypes = '+ ' + ' + '.join(tuple([p.getCleanName()+".factory_type_information['allowed_content_types']" for p in element.getGenParents()]))
+        res=ftiTempl % {'subtypes':repr(tuple(subtypes)),'type_name':element.getCleanName(),'parentsubtypes':parentsubtypes}
         return res
 
     typeMap={
