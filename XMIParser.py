@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.87 2004/07/26 01:06:35 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.88 2004/07/26 02:56:39 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -128,6 +128,9 @@ class XMI1_0:
 
     def getId(self,domElement):
         return domElement.getAttribute('xmi.id').strip()
+
+    def getIdRef(self,domElement):
+        return domElement.getAttribute('xmi.idref').strip()
 
     def getAssocEndParticipantId(self,el):
         assocend=getElementByTagName(el,self.ASSOCEND_PARTICIPANT,None)
@@ -352,7 +355,7 @@ class XMI1_0:
         return res
 
     def getOwnedElement(self,el):
-        return getElementByTagName(el,self.OWNED_ELEMENT)
+        return getElementByTagName(el,self.OWNED_ELEMENT, default=None)
 
     def getContent(self,doc):
         content=getElementByTagName(doc,XMI.XMI_CONTENT,recursive=1)
@@ -547,7 +550,10 @@ class XMI1_2 (XMI1_1):
 
 XMI=XMI1_0()
 
-_marker=[]
+class NoObject:
+    pass
+
+_marker=NoObject()
 
 allObjects={}
 
@@ -895,6 +901,8 @@ class StateMachineContainer:
         
     def findStateMachines(self):
         ownedElement=XMI.getOwnedElement(self.domElement)
+        if not ownedElement:
+            return []
         statemachines=getElementsByTagName(ownedElement,XMI.STATEMACHINE) 
         print 'statemachines1:',statemachines
         return statemachines
@@ -1515,8 +1523,8 @@ class XMIAbstraction(XMIElement):
 class XMIStateContainer(XMIElement):
     
     def __init__(self,*args,**kwargs):
-        XMIElement.__init__(self,*args,**kwargs)
         self.states=[]
+        XMIElement.__init__(self,*args,**kwargs)
         
         
     def addState(self, state):
@@ -1527,25 +1535,100 @@ class XMIStateMachine(XMIStateContainer):
     
     def init(self):
         self.transitions=[]
-        
+        self.classes=[]
+
     def __init__(self,*args,**kwargs):
-        XMIStateContainer.__init__(self,*args,**kwargs)
         self.init()
+        XMIStateContainer.__init__(self,*args,**kwargs)
         print 'created statemachine:',self.getId()
+
+    def initFromDOM(self,domElement=None):
+        XMIStateContainer.initFromDOM(self,domElement)
+        self.buildTransitions()
+        self.buildStates()
+        self.associateClasses()
+
+    def associateClasses(self):
+        context=getElementByTagName(self.domElement,XMI.STATEMACHINE_CONTEXT)
+        clels=getSubElements(context)
+        for clel in clels:
+            clid=XMI.getIdRef(clel)
+            print 'CLID:',clel,clid
+            cl=allObjects[clid]
+            self.addClass(cl)
         
     def addTransition(self, transition):
         self.transitions.append(transition)
         transition.setParent(self)
             
+    def buildStates(self):
+        sels=getElementsByTagName(self.domElement,XMI.SIMPLESTATE,recursive=1)
+        for sel in sels:
+            state=XMIState(sel)
+            self.addState(state)
 
+    def buildTransitions(self):
+        tels=getElementsByTagName(self.domElement,XMI.TRANSITION,recursive=1)
+        for tel in tels:
+            tran=XMIStateTransition(tel)
+            self.addTransition(tran)
+        
+    def getClasses(self):
+        return self.classes
+    
+    def addClass(self,cl):
+        self.classes.append(cl)
+        cl.setStateMachine(self)
+        
 class XMIStateTransition(XMIElement):
     def __init__(self,*args,**kwargs):
         XMIElement.__init__(self,*args,**kwargs)
 
+    def initFromDOM(self,domElement=None):
+        XMIElement.initFromDOM(self,domElement)
+        
+
+    
 
 class XMIState(XMIElement):
     def __init__(self,*args,**kwargs):
+        self.incomingTransitions=[]
+        self.outgoingTransitions=[]
         XMIElement.__init__(self,*args,**kwargs)
+
+    def initFromDOM(self,domElement=None):
+        XMIElement.initFromDOM(self,domElement)
+        self.associateTransitions()
+        
+    def associateTransitions(self):
+        
+        vertices=getElementByTagName(self.domElement,XMI.STATEVERTEX_OUTGOING,default=None)
+        if vertices:
+            for vertex in getSubElements(vertices):
+                trid=XMI.getIdRef(vertex)
+                tran=allObjects[trid]
+                self.addOutgoingTransition(tran)
+
+        vertices=getElementByTagName(self.domElement,XMI.STATEVERTEX_INCOMING,default=None)
+        if vertices:
+            for vertex in getSubElements(vertices):
+                trid=XMI.getIdRef(vertex)
+                tran=allObjects[trid]
+                self.addIncomingTransition(tran)
+        
+        
+    def addIncomingTransition(self,tran):
+        self.incomingTransitions.append(tran)
+
+    def addOutgoingTransition(self,tran):
+        self.outgoingTransitions.append(tran)
+        
+    def getIncomingTransitions(self):
+        return self.incomingTransitions
+
+    def getOutgoingTransitions(self):
+        return self.outgoingTransitions
+
 
 
 class XMICompositeState(XMIState):
