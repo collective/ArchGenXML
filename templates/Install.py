@@ -152,7 +152,7 @@ def install(self):
 
     # registers as CMFMember and update catalogs, workflow, ...
 <dtml-in "cmfmembers">
-    print >> out, SetupMember(self, member_type='<dtml-var "_['sequence-item'].getCleanName()">').finish()
+    print >> out, SetupMember(self, member_type='<dtml-var "_['sequence-item'].getCleanName()">', register=<dtml-var "str(_['sequence-item'].getTaggedValue('register', False))">).finish()
 </dtml-in>
 </dtml-if>
 </dtml-let>

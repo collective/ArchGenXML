@@ -37,28 +37,52 @@ DirectoryView.registerDirectory('skins/<dtml-var "product_name">',
 <dtml-var "protected_init_section_top">
 
 def initialize(context):
-    ##Import Types here to register them
-
+    # imports packages and types for registration
 <dtml-in "package_imports">
     import <dtml-var sequence-item>
 </dtml-in>
-
 <dtml-in "class_imports">
     import <dtml-var sequence-item>
 </dtml-in>
 
-    content_types, constructors, ftis = process_types(
-        listTypes(PROJECTNAME),
-        PROJECTNAME)
-
 <dtml-if "has_tools">
+    # initialize portal tools
     tools = [<dtml-var "','.join (tool_names)">]
     utils.ToolInit( PROJECTNAME +' Tools',
                 tools = tools,
                 product_name = PROJECTNAME,
                 icon='tool.gif'
                 ).initialize( context )
+
 </dtml-if>
+    # initialize portal content
+<dtml-if creation_permissions>
+    all_content_types, all_constructors, all_ftis = process_types(
+        listTypes(PROJECTNAME),
+        PROJECTNAME)
+
+    utils.ContentInit(
+        PROJECTNAME + ' Content',
+        content_types      = all_content_types,
+        permission         = DEFAULT_ADD_CONTENT_PERMISSION,
+        extra_constructors = all_constructors,
+        fti                = all_ftis,
+        ).initialize(context)
+
+    # give it some extra permissions to control them on a per class limit
+    for i in range(0,len(all_content_types)):
+        klassname=all_content_types[i].__name__
+        if not klassname in ADD_CONTENT_PERMISSIONS:
+            continue
+
+        context.registerClass(meta_type   = all_ftis[i]['meta_type'],
+                              constructors= (all_constructors[i],),
+                              permission  = ADD_CONTENT_PERMISSIONS[klassname])
+<dtml-else>
+    content_types, constructors, ftis = process_types(
+        listTypes(PROJECTNAME),
+        PROJECTNAME)
+
     utils.ContentInit(
         PROJECTNAME + ' Content',
         content_types      = content_types,
@@ -66,26 +90,9 @@ def initialize(context):
         extra_constructors = constructors,
         fti                = ftis,
         ).initialize(context)
-
-<dtml-if "creation_permissions">
-    for i in range(0,len(content_types)):
-        if not content_types[i] in ADD_CONTENT_PERMISSIONS:
-            continue
-
-        # Generate separate permissions for adding this content type
-        perm = ADD_CONTENT_PERMISSIONS[content_types[i]]
-        methname='add' + capitalize(ftis[i]['id'])
-        meta_type = ftis[i]['meta_type']
-
-        context.registerClass(
-            meta_type = meta_type,
-            constructors = (
-                getattr(locals()[meta_type],'add' + capitalize(meta_type)),
-            ),
-            permission = perm
-        )
 </dtml-if>
 
+    # apply customization-policy, if theres any
     if CustomizationPolicy and hasattr(CustomizationPolicy, 'register'):
         CustomizationPolicy.register(context)
         print 'Customization policy for <dtml-var "product_name"> installed'
