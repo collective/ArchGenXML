@@ -7,6 +7,9 @@
   <chapter>
     <title>Introduction</title>
 
+    <para><emphasis role="bold">This manual targets ArchGenXML Version
+    1.1.</emphasis></para>
+
     <sect1>
       <title>What is ArchGenXML?</title>
 
@@ -21,24 +24,32 @@
       Product. This new Product is available as a new item (document) type in
       the Plone userinterface.</para>
 
-      <para>This time the tool is not round-trip enabled: Generated code
-      can&#39;t be back-converted into XMI. But you can re-generate over
-      existing code: The Method bodys and some other protected sections are
-      kept.</para>
+      <para>This time the tool is not round-trip enabled: Generated code can't
+      be back-converted into XMI. But you can re-generate over existing code:
+      The Method bodys and some other protected sections are kept.</para>
+
+      <para>ArchGenXML is hosted at <ulink
+      url="http://sourceforge.net/projects/archetypes">sourceforge.net as a
+      subproject of the archetypes project</ulink>. It's under GNU General
+      Public Licence 2 or later.</para>
     </sect1>
 
     <sect1>
       <title>Why should I use ArchGenXML?</title>
 
-      <para>Major reasons: </para>
+      <para>Major reasons:</para>
 
       <itemizedlist>
+        <listitem>
+          <para>You want to save time,</para>
+        </listitem>
+
         <listitem>
           <para>You are a lazy programmer,</para>
         </listitem>
 
         <listitem>
-          <para>You want to save time for coding,</para>
+          <para>You don't like to reinvent the wheel,</para>
         </listitem>
 
         <listitem>
@@ -46,15 +57,25 @@
         </listitem>
 
         <listitem>
+          <para>You make heavy use of references and interfaces,</para>
+        </listitem>
+
+        <listitem>
           <para>You have big projects with many different custom types,</para>
         </listitem>
 
         <listitem>
-          <para>You don&#39;t like to reinvent the wheel,</para>
+          <para>You structured model- and pattern-driven software
+          development,</para>
         </listitem>
 
         <listitem>
-          <para>and much more other reasons.</para>
+          <para>You want to maintain your project also in future without
+          getting headache,</para>
+        </listitem>
+
+        <listitem>
+          <para>and many more good and odd other reasons.</para>
         </listitem>
       </itemizedlist>
     </sect1>
@@ -86,13 +107,11 @@
           <term>Sponsors</term>
 
           <listitem>
-            <para></para>
-
             <itemizedlist>
               <listitem>
                 <para>Xiru.org, Brazil (Fabiano Weimar dos Santos) sponsors a
                 valuable amount of money into workflow support (State diagrams
-                -&#62; DCWorkflow, will go into release 1.2),</para>
+                -&gt; DCWorkflow, will go into release 1.2),</para>
               </listitem>
 
               <listitem>
@@ -116,16 +135,95 @@
   <chapter>
     <title>Installation</title>
 
-    <para></para>
-
     <sect1>
       <title>ArchGenXML</title>
 
+      <sect2>
+        <title>Preconditions</title>
+
+        <para>You need a working Python Version 2.1 or later, Version 2.3 is
+        recommended. </para>
+
+        <para>Also you need Plone 2 (choose latest stable release) and its
+        dependencies to see your generated code in action.</para>
+      </sect2>
+
+      <sect2>
+        <title>Download</title>
+
+        <para>You need to download a release tar-ball from sourceforge. You'll
+        find it in the <ulink
+        url="http://sourceforge.net/project/showfiles.php?group_id=75272&amp;package_id=103241">releases
+        area of archetypes</ulink>. Choose the latest version of your flavor:
+        Final, or one of the cutting edge development releases.</para>
+
+        <para>Its also possible to fetch the code of cutting edge development
+        from CVS. How to check it out is described well in sourceforge's
+        manuals. Project name is <literal>archetypes</literal> and module name
+        is <literal>ArchGenXML</literal>.</para>
+      </sect2>
+
+      <sect2>
+        <title>Installation</title>
+
+        <para>Simply un-tar downloaded file to a place of your choice and
+        remember the path to <filename>ArchGenXML.py</filename>. </para>
+
+        <para>I suggest to give the file execution permissions and make a
+        symbolic link at a place mentioned in your PATH environment settings.
+        </para>
+
+        <para>Note: The installation will be handled bei dist-utils in one of
+        the next releases and will become much easier then. </para>
+      </sect2>
+
+      <sect2>
+        <title>Suggested modules</title>
+
+        <para>The following modules are suggested for full featured default
+        behaviour.</para>
+
+        <variablelist>
+          <varlistentry>
+            <term>i18ndude</term>
+
+            <listitem>
+              <para>Without it the generation of user interface i18n features
+              are disabled. Download and install <literal>i18ndude</literal>
+              from project <ulink
+              url="http://sourceforge.net/projects/plone-i18n">plone-i18n on
+              sourceforge.net</ulink>.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>I18NArchetypes</term>
+
+            <listitem>
+              <para>XXX</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>ATVocabularyManager</term>
+
+            <listitem>
+              <para>Enables usage of custom dynamic vocabularies. Download and
+              install <literal>ATVocabularyManager</literal> from <ulink
+              url="http://cvs.sourceforge.net/viewcvs.py/archetypes/ATVocabularyManager/">archetypes
+              CVS</ulink>.</para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+      </sect2>
+    </sect1>
+
+    <sect1>
       <para></para>
     </sect1>
 
     <sect1>
-      <title>UML Tools </title>
+      <title>UML Tools</title>
 
       <para></para>
     </sect1>
@@ -252,7 +350,7 @@
   </chapter>
 
   <chapter>
-    <title>Reference</title>
+    <title>Reference Manual</title>
 
     <para></para>
 
@@ -310,8 +408,9 @@
 
     <para>This work is licensed under the Creative Commons
     Attribution-NonCommercial-ShareAlike License. To view a copy of this
-    license, visit <ulink url="???">http://creativecommons.org/licenses/by-nc-sa/1.0/</ulink>
-    or send a letter to Creative Commons, 559 Nathan Abbott Way, Stanford,
+    license, visit <ulink
+    url="???">http://creativecommons.org/licenses/by-nc-sa/1.0/</ulink> or
+    send a letter to Creative Commons, 559 Nathan Abbott Way, Stanford,
     California 94305, USA.</para>
   </appendix>
 </book>
