@@ -1453,13 +1453,16 @@ class ArchetypesGenerator(BaseGenerator):
         """ generates: config.py """
 
         add_content_permission = self.creation_permission or 'Add %s content' % package.getProductName ()
-
+        configpath=os.path.join(package.getFilePath(),'config.py')
+        parsed_config=self.parsePythonModule(package.getFilePath(), 'config.py')
+        
         # prepare (d)TML varibles
         d={'package'                : package,
            'generator'              : self,
            'builtins'               : __builtins__,
            'utils'                  : utils,
            'add_content_permission' : getExpression(add_content_permission),
+           'parsed_config'          : parsed_config,
         }
         d.update(__builtins__)
 
@@ -1467,7 +1470,7 @@ class ArchetypesGenerator(BaseGenerator):
         dtml=HTML(templ,d)
         res=dtml()
 
-        of=self.makeFile(os.path.join(package.getFilePath(),'config.py'))
+        of=self.makeFile(configpath)
         of.write(res)
         of.close()
 

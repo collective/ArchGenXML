@@ -16,3 +16,6 @@ try:
     from Products.<dtml-var "package.getProductName ()">.AppConfig import *
 except ImportError:
     pass
+
+
+<dtml-var "generator.getProtectedSection(parsed_config,'config-bottom')">
