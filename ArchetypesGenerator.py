@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.3 2004/05/01 21:27:26 yenzenz Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.4 2004/05/06 10:32:46 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -63,7 +63,7 @@ class ArchetypesGenerator:
     left_slots=[]
     right_slots=[]
     creation_permission=None
-    detailled_creation_permissions=0
+    detailled_creation_permissions = 0
     
     parsed_class_sources={} #dict containing the parsed sources by class names (for preserving method codes)
     parsed_sources=[] #list of containing the parsed sources (for preserving method codes)
@@ -1001,7 +1001,7 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchetypesGenerator.py,v 1.3 2004/05/01 21:27:26 yenzenz Exp $
+RCS-ID $Id: ArchetypesGenerator.py,v 1.4 2004/05/06 10:32:46 yenzenz Exp $
 \"""
 # %(copyright)s
 #
@@ -1172,6 +1172,7 @@ You should have received a copy of the GNU General Public License along with thi
         init_params={'project_name':package.getProductName(),'add_content_permission': getExpression(add_content_permission),'imports':imports, 'toolinit':toolinit }
 
         if self.detailled_creation_permissions:
+            print "create detailled_creation_permissions", self.detailled_creation_permissions
             init_params['extra_perms']=self.TEMPL_DETAILLED_CREATION_PERMISSIONS
         else:
             init_params['extra_perms']=""

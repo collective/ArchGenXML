@@ -109,6 +109,9 @@ except:
 
     
 # key: (cmdlinekey?, shortcutkey?, cfg-file-key? -> 0 or section-name, internal settings-key, type)
+
+## FIXME: ALL THIS OPTIONS NEED A MAJOR CLEANUP!
+
 ALLOWED_OPTIONS_MAP = {
     'outfile':                          (0, 'o', 'GENERAL',       'outfilename', 'string'),
     'prefix':                           (0, 'p', 'GENERAL',       'prefix', 'string'),
@@ -120,9 +123,9 @@ ALLOWED_OPTIONS_MAP = {
     'no-actions':                       (1, 0,   None,            'generateActions', 'switchoff'),
     'generate-actions':                 (0, 0,   'CLASSES',       'generateActions', 'yesno'),
     'default-actions':                  (1, 0,   'CLASSES',       'generateDefaultActions', 'switchon'),
-    'creation-permission=':             (1, 0,   'CLASSES',       'creation_permissions', 'switchon'),
-    'detailled-creation-permissions':   (1, 0,   'CLASSES',       'detailled_creation_permissions', 'switchon'),
-    'no-detailled-creation-permissions':(1, 0,   None,            'detailled_creation_permissions', 'switchoff'),
+    'creation-permission=':             (1, 0,   'CLASSES',       'creation_permissions', 'switchon'), # UNUSED!
+    'detailled-creation-permissions':   (0, 0,   'CLASSES',       'detailled_creation_permissions', 'yesno'),
+    'detailled-creation-permissions=':  (1, 0,   None,            'detailled_creation_permissions', 'yesno'),
     'widget-enhancement':               (0, 0,   'CLASSES',       'widget_enhancement', 'switchon'),
     'no-widget-enhancement':            (1, 0,   None,            'widget_enhancement', 'switchoff'),
     'method-preservation':              (1, 0,   'CLASSES',       'method_preservation', 'switchon'),
@@ -144,6 +147,31 @@ ALLOWED_OPTIONS_MAP = {
     'project-configuration=':           (1, 0,   None,            None,'string'),                
 }
 
+def set_setting(okey, value, settings):
+    """ set one option """ 
+    yesno={'yes':1, 'y':1, 1:1, 'no':None, 'n':None, 0:None }
+    if ALLOWED_OPTIONS_MAP[okey][3]:
+        if ALLOWED_OPTIONS_MAP[okey][4] == 'switchon':
+            settings[ALLOWED_OPTIONS_MAP[okey][3]]= 1
+        elif ALLOWED_OPTIONS_MAP[okey][4] == 'switchoff':
+            settings[ALLOWED_OPTIONS_MAP[okey][3]]= None
+        elif ALLOWED_OPTIONS_MAP[okey][4] == 'yesno' and yesno.has_key(value):
+            settings[ALLOWED_OPTIONS_MAP[okey][3]]= yesno[value]
+        elif ALLOWED_OPTIONS_MAP[okey][4] == 'string':
+            settings[ALLOWED_OPTIONS_MAP[okey][3]]= value
+        print "set %s [%s] to %s" % (ALLOWED_OPTIONS_MAP[okey][3],ALLOWED_OPTIONS_MAP[okey][4], value)
+
+
+def modify_settings(key, value, settings, shortkey=0):
+    """ option is an 2-tuple, settings a dict """
+    okey= len(key)>2 and key[:2]=='--' and key[2:]    
+    if okey:
+        if not ALLOWED_OPTIONS_MAP.has_key(okey) and ALLOWED_OPTIONS_MAP.has_key(okey+'='):
+            okey+='='
+        if ALLOWED_OPTIONS_MAP.has_key(okey) and (ALLOWED_OPTIONS_MAP[okey][0] or shortkey):
+            set_setting(okey,value,settings)
+    return settings
+
 def read_project_configfile(filename,settings):
     cp = ConfigParser()
     try:
@@ -157,9 +185,9 @@ def read_project_configfile(filename,settings):
     fname.close()    
     
     for key in ALLOWED_OPTIONS_MAP.keys():
-        fkey = key[len(key)-1] == '=' and key[:len(key)-1] or key
-        if cp.has_option(ALLOWED_OPTIONS_MAP[key][2], fkey):            
-            settings[ALLOWED_OPTIONS_MAP[key][3]]=cp.get(ALLOWED_OPTIONS_MAP[key][2], fkey)                
+        #fkey = key[len(key)-1] == '=' and key[:len(key)-1] or key
+        if cp.has_option(ALLOWED_OPTIONS_MAP[key][2], key):
+            set_setting(key, cp.get(ALLOWED_OPTIONS_MAP[key][2], key), settings)
 
 ##    # print a ugly sample cfg
 ##    y=['['+ALLOWED_OPTIONS_MAP[key][2]+']\n'+(key[len(key)-1] == '=' and key[:len(key)-1] or key) for key in ALLOWED_OPTIONS_MAP.keys() if ALLOWED_OPTIONS_MAP[key][2]]
@@ -167,26 +195,7 @@ def read_project_configfile(filename,settings):
 ##    for x in y print x
 
     return settings
-
-def modify_settings(key, value, settings, shortkey=0):
-    """ option is an 2-tuple, settings a dict """
-    okey= len(key)>2 and key[:2]=='--' and key[2:]    
-    if okey:
-        if not ALLOWED_OPTIONS_MAP.has_key(okey) and ALLOWED_OPTIONS_MAP.has_key(okey+'='):
-            okey+='='
-        if ALLOWED_OPTIONS_MAP.has_key(okey) and (ALLOWED_OPTIONS_MAP[okey][0] or shortkey):
-            yesno={'yes':1,'y': 1, 'no':0, 'n':0, 1:1, 0:0 }
-            if ALLOWED_OPTIONS_MAP[okey][3]:
-                if ALLOWED_OPTIONS_MAP[okey][4] == 'switchon':
-                    settings[ALLOWED_OPTIONS_MAP[okey][3]]= 1
-                elif ALLOWED_OPTIONS_MAP[okey][4] == 'switchoff':
-                    settings[ALLOWED_OPTIONS_MAP[okey][3]]= 0
-                elif ALLOWED_OPTIONS_MAP[okey][4] == 'yesno' and yesno.has_key(value):
-                    settings[ALLOWED_OPTIONS_MAP[okey][3]]= yesno[option[1]]
-                elif ALLOWED_OPTIONS_MAP[okey][4] == 'string':
-                    settings[ALLOWED_OPTIONS_MAP[okey][3]]= value
-    return settings
-   
+  
 def read_project_settings(args):
     """ reads options from args and return options array"""   
     # this should use sometimes the new advenced python2.3 parser
@@ -216,6 +225,7 @@ def read_project_settings(args):
     # first run to get configfile
     for option in opts:
         if option[0] in ['--project-configuration','--cfg','-c'] and option[1]:
+            print "Use configfile", option[1]
             settings=read_project_configfile(option[1],settings)
 
     # second run to overide with commandline parameters
@@ -228,7 +238,7 @@ def read_project_settings(args):
                 
         if len(option[0])>1 and option[0][0]=='-' and shortdict.has_key(option[0][1:]):
             settings= modify_settings('--'+shortdict[option[0][1:]], option[1], settings, shortkey=1)
-     
+    
     return settings, args
 
 ARCHGENXML_VERSION_LINE = """\
@@ -285,8 +295,8 @@ OPTIONS:
         specifies which permission to create content default:Add [project] 
         content
 
-    --detailled-creation-permissions  
-        seperate creation permissions per class
+    --detailled-creation-permissions=<boolean>
+        seperate creation permissions per class, defaults to 'no'
 
     --no-module-info-header      
         do not generate module info header
