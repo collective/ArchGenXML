@@ -119,6 +119,7 @@ from Products.CMFCore.utils import UniqueObject
 CLASS_PORTAL_TYPE    = """    portal_type = meta_type = '%s' """
 CLASS_ARCHETYPE_NAME = """    archetype_name = '%s'   #this name appears in the 'add' box """
 CLASS_IMPLEMENTS     = """    __implements__ = %(baseclass_interfaces)s + (%(realizations)s,)"""
+CLASS_IMPLEMENTS_BASE= """    __implements__ = %(baseclass_interfaces)s"""
 CLASS_ALLOWED_CONTENT_TYPES = '''    allowed_content_types = %s %s'''
 CLASS_ALLOWED_CONTENT_INTERFACES = '''    allowed_content_interfaces = %s %s'''
 

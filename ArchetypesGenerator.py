@@ -983,14 +983,19 @@ class ArchetypesGenerator:
 
         #handle realization parents
         reparents=element.getRealizationParents()
-        if reparents:
-            reparentnames=[p.getName() for p in reparents]
+
+        reparentnames=[p.getName() for p in reparents]
             
-            print >> outfile
+        print >> outfile
+        if reparents:
             print >> outfile, CLASS_IMPLEMENTS % \
-                {'baseclass_interfaces' : ' + '.join(["getattr(%s,'__implements__',())" % i for i in parents.split(',')]),
-                 'realizations' : ','.join(reparentnames)}
-        
+                    {'baseclass_interfaces' : ' + '.join(["getattr(%s,'__implements__',())" % i for i in parents.split(',')]),
+                     'realizations' : ','.join(reparentnames)}
+        else:
+            print >> outfile, CLASS_IMPLEMENTS_BASE % \
+                    {'baseclass_interfaces' : ' + '.join(["getattr(%s,'__implements__',())" % i for i in parents.split(',')]),
+                     'realizations' : ','.join(reparentnames)}
+            
         print >>outfile
         
         self.generateProtectedSection(outfile,element,'class-header',1)    
