@@ -212,6 +212,24 @@ def install(self):
     else:
         print >>out,'no custom install'
 
+    #try to call a workflow install method
+    #in 'InstallWorkflows.py' method 'installWorkflows'
+    try:
+        installWorkflows = ExternalMethod('temp','temp',PROJECTNAME+'.InstallWorkflows', 'installWorkflows').__of__(self)
+    except:
+        raise
+        installWorkflows=None
+
+    if installWorkflows:
+        print >>out,'Workflow Install:'
+        res=installWorkflows(self,out)
+        if res:
+            print >>out,res
+        else:
+            print >>out,'no output'
+    else:
+        print >>out,'no workflow install'
+
     return out.getvalue()
 
 def uninstall(self):

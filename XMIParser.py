@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.89 2004/07/26 04:09:58 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.90 2004/07/27 02:42:53 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -1545,6 +1545,12 @@ class XMIStateContainer(XMIElement):
         self.states.append(state)
         state.setParent(self)
         
+    def getStates(self):
+        return self.states
+    
+    def getStateNames(self):
+        return [s.getName() for s in self.getStates() if s.getName()]
+        
 class XMIStateMachine(XMIStateContainer):
     
     def init(self):
@@ -1574,7 +1580,13 @@ class XMIStateMachine(XMIStateContainer):
     def addTransition(self, transition):
         self.transitions.append(transition)
         transition.setParent(self)
-            
+
+    def getTransitions(self):
+        return self.transitions
+    
+    def getTransitionNames(self):
+        return [t.getName() for t in self.getTransitions() if t.getName()]
+    
     def buildStates(self):
         sels=getElementsByTagName(self.domElement,XMI.SIMPLESTATE,recursive=1)
         for sel in sels:
@@ -1590,18 +1602,40 @@ class XMIStateMachine(XMIStateContainer):
     def getClasses(self):
         return self.classes
     
+    def getClassNames(self):
+        return [cl.getName() for cl in self.getClasses()]
+    
     def addClass(self,cl):
         self.classes.append(cl)
         cl.setStateMachine(self)
         
+    def getAllPermissionNames(self):
+        return []
+    
+    def getInitialState(self):
+        return self.getStates()[0]
+        
+        
 class XMIStateTransition(XMIElement):
+    targetState=None
+
     def __init__(self,*args,**kwargs):
         XMIElement.__init__(self,*args,**kwargs)
 
     def initFromDOM(self,domElement=None):
         XMIElement.initFromDOM(self,domElement)
         
+    def setTargetState(self,state):
+        self.targetState=state
 
+    def getTargetState(self):
+        return self.targetState
+
+    def getTargetStateName(self):
+        if self.getTargetState():
+            return self.getTargetState().getName()
+        else:
+            return None
     
 
 class XMIState(XMIElement):
@@ -1630,9 +1664,12 @@ class XMIState(XMIElement):
                 tran=allObjects[trid]
                 self.addIncomingTransition(tran)
         
+        print 'transitions:',self.getIncomingTransitions(),self.getOutgoingTransitions()
         
     def addIncomingTransition(self,tran):
         self.incomingTransitions.append(tran)
+        tran.setTargetState(self)
+        print 'TRAAAAAAAN:',tran.getName(),tran.getTargetState()
 
     def addOutgoingTransition(self,tran):
         self.outgoingTransitions.append(tran)

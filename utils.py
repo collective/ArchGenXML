@@ -42,6 +42,13 @@ def mapName(oldName):
             newName = NameTable[oldName]
     return newName.replace('-','_')
 
+def readTemplate(fn):
+    templdir=os.path.join(sys.path[0],'templates')
+    templ=open(os.path.join(templdir,fn)).read()
+    
+    return templ
+
+
 def indent(s,indent,prepend='',skipFirstRow=0):
     rows=s.split('\n')
     if skipFirstRow:
@@ -83,6 +90,9 @@ def isTGVFalse(tgv):
         
     return tgv in (0,'0','false')
 
+def cleanName(name):
+    return name.replace(' ','_').replace('.','_').replace('/','_')
+
 # begin code copy
 # copied from http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/148061 :
 def wrap(text, width):
@@ -101,6 +111,7 @@ def wrap(text, width):
                    word),
                   text.split(' ')
                  )
+    
 # end code copy
 
 try:

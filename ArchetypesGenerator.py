@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.34 2004/07/20 22:44:14 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.35 2004/07/27 02:42:53 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -21,6 +21,8 @@ import XSDParser, XMIParser, PyParser
 from codesnippets import *
 from utils import makeFile, makeDir,mapName, wrap, indent, getExpression, \
     isTGVTrue, isTGVFalse
+
+from WorkflowGenerator import WorkflowGenerator
 
 has_i18ndude = 1  
 _marker=[]
@@ -245,7 +247,7 @@ class ArchetypesGenerator:
             'has_content_icon':has_content_icon,'content_icon':content_icon,
             'discussion':element.getTaggedValue('allow_discussion','0'),
             'global_allow':global_allow,'immediate_view':immediate_view,
-            'filter_content_types': not isTGVFalse(element.getTaggedValue('filter_content_types'))}
+            'filter_content_types': not (isTGVFalse(element.getTaggedValue('filter_content_types')) or element.hasStereoType('folder'))}
 
         return res
 
@@ -894,7 +896,7 @@ class ArchetypesGenerator:
             
         baseclass='BaseContent'
         baseschema='BaseSchema'            
-        if aggregatedClasses or baseaggregatedClasses or isTGVTrue(element.getTaggedValue('folderish')):                
+        if aggregatedClasses or baseaggregatedClasses or isTGVTrue(element.getTaggedValue('folderish')) or element.hasStereoType('folder'):                
             # folderish
             baseclass='BaseFolder'
             baseschema='BaseFolderSchema'
@@ -1414,6 +1416,10 @@ class ArchetypesGenerator:
             of.close()
             
 
+        #start Workflow creation
+        wfg=WorkflowGenerator(package,self)
+        wfg.generateWorkflows()
+        
     def parseAndGenerate(self):
         
         # and now start off with the class files
