@@ -1181,7 +1181,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         # Remark: CMFMember support include VariableSchema support
         if element.hasStereoType(self.variable_schema) and \
-             not element.hasStereoType(self.stereotype_cmfmember):
+             not element.hasStereoType(self.cmfmember_stereotype):
             parentnames.insert(0,'VariableSchemaSupport')
 
         # a tool needs to be a unique object
