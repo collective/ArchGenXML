@@ -12,7 +12,7 @@
 
 import sys, os.path, time, string
 import getopt
-from utils import mapName
+from utils import mapName,toBoolean
 from utils import wrap as doWrap
 from xml.dom import minidom
 
@@ -628,6 +628,8 @@ def getElementByTagName(domElement,tagName,default=_marker, recursive=0):
 def getAttributeValue(domElement,tagName=None,default=_marker,recursive=0):
     el=domElement
     el.normalize()
+    
+    
     if tagName:
         try:
             el=getElementByTagName(domElement,tagName,recursive=recursive)
@@ -637,11 +639,25 @@ def getAttributeValue(domElement,tagName=None,default=_marker,recursive=0):
                 raise
             else:
                 return default
-        
+
+    if el.hasAttribute('xmi.value'):
+        return el.getAttribute('xmi.value')
+    
     if not el.firstChild and default != _marker:
         return default
         
     return el.firstChild.nodeValue
+
+def getAttributeOrElement(domElement,name,default=_marker,recursive=0):
+    ''' tries t get the value from an attribute, if not found, it tries to get 
+        it from a subelement that has the name {element.name}.{name}
+        '''
+    val=domElement.getAttribute(name)
+    
+    if not val:
+        val=getAttributeValue(domElement,domElement.tagName+'.'+name,default,recursive)
+
+    return val
 
 def getElementsByTagName(domElement,tagName, recursive=0):
     ''' returns elements by tag name , the only difference
@@ -1551,6 +1567,7 @@ class XMIAttribute (XMIElement):
 class XMIAssocEnd (XMIElement):
     def initFromDOM(self,el):
         XMIElement.initFromDOM(self,el)
+        self.isNavigable=toBoolean(getAttributeOrElement(el,'isNavigable',default=0))
         pid=XMI.getAssocEndParticipantId(el)
         if pid:
             self.obj=allObjects[pid]
@@ -1558,10 +1575,12 @@ class XMIAssocEnd (XMIElement):
             self.aggregation=XMI.getAssocEndAggregation(el)
         else:
             print 'Association end missing for association end:'+self.getId()
+            
+        print 'rel:%s navigable:%s' %(self.getName(),self.isNavigable)
         
     def getTarget(self):
         return self.obj
-
+    
 
 class XMIAssociation (XMIElement):
     fromEnd=None
@@ -1744,8 +1763,6 @@ class XMIStateTransition(XMIElement):
         guardel=getSubElement(el)
         self.guard=XMIGuard(guardel)
         
-        
-        
     def setTargetState(self,state):
         self.targetState=state
 
@@ -1774,7 +1791,6 @@ class XMIAction(XMIElement):
     expression=None
     def initFromDOM(self,domElement=None):
         XMIElement.initFromDOM(self,domElement)
-        #import pdb;pdb.set_trace()
         self.expression=XMI.getExpressionBody(self.domElement,tagname=XMI.ACTION_EXPRESSION)
         print '!!!ACTIONEX:',self.getExpressionBody()
         

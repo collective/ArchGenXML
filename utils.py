@@ -99,6 +99,12 @@ def isTGVFalse(tgv):
         
     return tgv in (0,'0','false')
 
+def toBoolean(v):
+    if type(v) in (type(''),type(u'')):
+        v=v.lower()
+
+    return v in (1,'1','true')
+    
 def cleanName(name):
     return name.replace(' ','_').replace('.','_').replace('/','_')
 
@@ -169,6 +175,7 @@ ALLOWED_OPTIONS_MAP = {
     'storage=':                         (1, 0,   'GENERAL',       'storage', 'string'),
     'sql-storage-support':              (1, 0,   'CLASSES',       'sql_storage_support', 'switchon'),
     'default-field-generation':         (1, 0,   'CLASSES',       'default_field_generation', 'switchon'),
+    'backreferences-support':           (1, 0,   'CLASSES',       'backreferences_support', 'switchon'),
     'customization-policy':             (1, 0,   'GENERAL',       'customization_policy','switchon'),
 }
 

@@ -78,6 +78,7 @@ class ArchetypesGenerator:
     force_plugin_root=1 #should be 'Products.' be prepended to all absolute paths?
     creation_permission=None ## unused!
     customization_policy=0
+    backreferences_support=0
     
     parsed_class_sources={} #dict containing the parsed sources by class names (for preserving method codes)
     parsed_sources=[] #list of containing the parsed sources (for preserving method codes)
@@ -314,6 +315,10 @@ class ArchetypesGenerator:
         },
         'reference': {
             'field': 'ReferenceField',
+            'map': {},
+        },
+        'backreference': {
+            'field': 'BackReferenceField',
             'map': {},
         },
         'boolean': {
@@ -589,8 +594,8 @@ class ArchetypesGenerator:
         obj=rel.toEnd.obj
         name=rel.toEnd.getName()
         relname=rel.getName()
-        field=rel.getTaggedValue('reference_field') or self.typeMap['reference']['field'] #the relation can override the field
-        field=rel.toEnd.getTaggedValue('reference_field') or self.typeMap['reference']['field'] #the relation can override the field
+        #field=rel.getTaggedValue('reference_field') or self.typeMap['reference']['field'] #the relation can override the field
+        field=rel.getTaggedValue('reference_field') or rel.toEnd.getTaggedValue('reference_field') or self.typeMap['reference']['field'] #the relation can override the field
 
         if obj.isAbstract():
             allowed_types= tuple(obj.getGenChildrenNames())
@@ -613,6 +618,41 @@ class ArchetypesGenerator:
 
         if getattr(rel,'isAssociationClass',0):
             map.update({'referenceClass':"ContentReferenceCreator('%s')" % rel.getName()})
+
+        doc=rel.getDocumentation(striphtml=self.striphtml)                
+        res=self.getFieldFormatted(name,field,map,doc)
+        return res
+
+    def getFieldStringFromBackAssociation(self, rel, classelement):
+        ''' gets the schema field code '''
+        multiValued=0
+        map=self.typeMap['backreference']['map'].copy()
+        obj=rel.fromEnd.obj
+        name=rel.fromEnd.getName()
+        relname=rel.getName()
+        field=rel.getTaggedValue('reference_field') or rel.toEnd.getTaggedValue('back_reference_field') or self.typeMap['backreference']['field'] #the relation can override the field
+
+        if obj.isAbstract():
+            allowed_types= tuple(obj.getGenChildrenNames())
+        else:
+            allowed_types=(obj.getName(), ) + tuple(obj.getGenChildrenNames())
+
+        if int(rel.fromEnd.mult[1]) == -1:
+            multiValued=1
+        if name == None:
+            name=obj.getName()+'_ref'
+
+        map.update({
+            'allowed_types': repr(allowed_types),
+            'multiValued':   multiValued,
+            'relationship':  "'%s'" % relname,
+            }
+        )
+        map.update(self.getFieldAttributes(rel.fromEnd))
+        map.update( {'widget':self.getWidget('BackReference', rel.fromEnd, name, classelement)} )
+
+##        if getattr(rel,'isAssociationClass',0):
+##            map.update({'referenceClass':"ContentReferenceCreator('%s')" % rel.getName()})
 
         doc=rel.getDocumentation(striphtml=self.striphtml)                
         res=self.getFieldFormatted(name,field,map,doc)
@@ -662,14 +702,25 @@ class ArchetypesGenerator:
         #print 'rels:',element.getName(),element.getFromAssociations()
         # and now the associations
         for rel in element.getFromAssociations():
-            #print 'rel:',rel
-            if 1 or rel.toEnd.mult==1: #XXX: for mult==-1 a multiselection widget must come
-                name = rel.fromEnd.getName()
+            name = rel.fromEnd.getName()
+            end=rel.fromEnd
 
+            if 1 or rel.fromEnd.isNavigable:
+                print 'generating from assoc'
                 if name in self.reservedAtts:
                     continue
                 print >> outfile
                 print >> outfile, indent(self.getFieldStringFromAssociation(rel, element),2)
+
+        if self.backreferences_support:
+            for rel in element.getToAssociations():
+                name = rel.fromEnd.getName()
+    
+                if rel.fromEnd.isNavigable:
+                    if name in self.reservedAtts:
+                        continue
+                    print >> outfile
+                    print >> outfile, indent(self.getFieldStringFromBackAssociation(rel, element),2)
 
 
         print >> outfile,'    ),'
