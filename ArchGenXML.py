@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.29 2003/10/11 12:07:35 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.30 2003/10/16 00:05:20 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -164,7 +164,7 @@ class ArchetypesGenerator:
         'string':'''StringField('%(name)s',
                     %(other)s
                     ),''' ,
-        'text':  '''StringField('%(name)s',
+        'text':  '''TextField('%(name)s',
                     widget=TextAreaWidget(),
                     %(other)s
                     ),''' ,
@@ -232,6 +232,7 @@ class ArchetypesGenerator:
         'liste':'lines',
         'image':'image',
         'int':'integer',
+        'bool':'boolean',
         '':'string',     #
         None:'string',
     }

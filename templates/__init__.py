@@ -2,6 +2,8 @@ from Globals import package_home
 from Products.CMFCore import utils, CMFCorePermissions, DirectoryView
 from Products.Archetypes.public import *
 from Products.Archetypes import listTypes
+from Products.Archetypes.utils import capitalize
+
 import os, os.path
 
 try:
@@ -18,6 +20,7 @@ product_globals=globals()
 
 DirectoryView.registerDirectory('skins', product_globals)
 DirectoryView.registerDirectory('skins/%(project_name)s', product_globals)
+
 
 def initialize(context):
     ##Import Types here to register them
@@ -38,14 +41,14 @@ def initialize(context):
     # and now give it some extra permissions so that i
     # can control them on a per class limit
     for i in range(0,len(content_types)):
-        perm='Add '+ ftis[i]['id'].capitalize()+'s'
-        methname='add'+ftis[i]['id'].capitalize()
+        perm='Add '+ capitalize(ftis[i]['id'])+'s'
+        methname='add'+capitalize(ftis[i]['id'])
         meta_type = ftis[i]['meta_type']
 
         context.registerClass(
             meta_type=meta_type,
             constructors = (
-                            getattr(locals()[meta_type],'add'+meta_type.capitalize()),
+                            getattr(locals()[meta_type],'add'+capitalize(meta_type)),
                                ) 
             , permission = perm
             )
