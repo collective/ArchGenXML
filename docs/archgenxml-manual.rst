@@ -5,8 +5,8 @@ ArchGenXML Manual - generating Archetypes using UML
 
 :Author ArchGenXML: Phil Auersperg <phil@bluedynamics.org>
 :Author Documentation: Jens W. Klein <jens.klein@jensquadrat.de>
-:Date: $Date: 2004/03/03 15:26:24 $
-:Version: $Revision: 1.4 $
+:Date: $Date: 2004/03/04 07:27:35 $
+:Version: $Revision: 1.5 $
 :Web site: http://sourceforge.net/projects/archetypes
 :Original URL: http://plone.org/documentation/archetypes/archgenxml-manual/
 
@@ -89,7 +89,7 @@ Install an UML-Tool on your local workstation.
 For our examples we used the ObjectDomain Evaluation Version.
 At the moment we tend to commend Poseidon CE.
 
-Get latest `ArchGenXML Release` or grab the latest developer sketch from CVS::
+Get latest `ArchGenXML Release`_ or grab the latest developer sketch from CVS::
 
     cvs -d :pserver:anonymous@cvs.sf.net:/cvsroot/archetypes co ArchGenXML
 
