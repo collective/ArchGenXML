@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.70 2004/05/01 20:07:47 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.71 2004/05/01 20:14:27 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -1007,7 +1007,7 @@ class XMIClass (XMIElement):
     def getGenChildren(self,recursive=0):
         ''' generalization children '''
 
-        res=self.genChildren
+        res=[c for c in self.genChildren]
 
         if recursive:
             for r in res:
@@ -1021,7 +1021,7 @@ class XMIClass (XMIElement):
 
     def getGenParents(self,recursive=0):
         ''' generalization parents '''
-        res=self.genParents
+        res=[c for c in self.genParents]
 
         if recursive:
             for r in res:
@@ -1111,7 +1111,7 @@ class XMIClass (XMIElement):
     def getRealizationChildren(self,recursive=0):
         ''' realization children '''
 
-        res=self.realizationChildren
+        res=[c for c in self.realizationChildren]
 
         if recursive:
             for r in res:
