@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.76 2004/05/10 11:57:31 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.77 2004/05/13 21:39:46 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -279,8 +279,11 @@ class XMI1_0:
 
     def getTaggedValue(self,el):
         #print 'getTaggedValue:',el
-        tagname=getAttributeValue(el,XMI.TAGGED_VALUE_TAG,recursive=0)
-        tagvalue=getAttributeValue(el,XMI.TAGGED_VALUE_VALUE,recursive=0)
+        tagname=getAttributeValue(el,XMI.TAGGED_VALUE_TAG,recursive=0,default=None)
+        if not tagname:
+            raise TypeError, 'element %s has empty taggedValue' % self.getId(el)
+         
+        tagvalue=getAttributeValue(el,XMI.TAGGED_VALUE_VALUE,recursive=0,default=None)
         return tagname,tagvalue
 
     def collectTagDefinitions(self,el):
@@ -632,7 +635,8 @@ class XMIElement:
                     self.taggedValues[tagname]+='\n'+tagvalue
                 else:
                     self.taggedValues[tagname]=tagvalue
-            except TypeError:
+            except TypeError,e:
+                print 'Warning: broken tagged value in xmi.id %s:' % XMI.getId(self.domElement)
                 pass
 
         #print 'taggedValues:',self.__class__,self.getName(),self.getTaggedValues()
