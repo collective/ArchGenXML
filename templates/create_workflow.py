@@ -12,7 +12,7 @@
 """
 Programmatically creates a workflow type
 """
-__version__ = "$Revision: 1.2 $"[11:-2]
+__version__ = "$Revision: 1.3 $"[11:-2]
 
 from Products.CMFCore.WorkflowTool import addWorkflowFactory
 
@@ -20,7 +20,7 @@ from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
 
 def setup<dtml-var "statemachine.getCleanName()">(wf):
     "..."
-    wf.setProperties(title='<dtml-var "statemachine.getName()">')
+    wf.setProperties(title='<dtml-var "statemachine.getCleanName()">')
 
     for s in <dtml-var "repr(statemachine.getStateNames())">:
         wf.states.addState(s)
@@ -37,14 +37,14 @@ def setup<dtml-var "statemachine.getCleanName()">(wf):
         
 
     ## Initial State
-    wf.states.setInitialState('<dtml-var "statemachine.getInitialState().getName()">')
+    wf.states.setInitialState('<dtml-var "statemachine.getInitialState().getCleanName()">')
 
     ## States initialization
     
-    <dtml-in "[s for s in statemachine.getStates() if s.getName()]">
+    <dtml-in "[s for s in statemachine.getStates() if s.getCleanName()]">
     
-    sdef = wf.states['<dtml-var "_['sequence-item'].getName()">']
-    sdef.setProperties(title="""<dtml-var "_['sequence-item'].getDocumentation(striphtml=generator.atgenerator.striphtml) or _['sequence-item'].getName()">""",
+    sdef = wf.states['<dtml-var "_['sequence-item'].getCleanName()">']
+    sdef.setProperties(title="""<dtml-var "_['sequence-item'].getDocumentation(striphtml=generator.atgenerator.striphtml) or _['sequence-item'].getCleanName()">""",
                        transitions=<dtml-var "repr([t.getCleanName() for t in _['sequence-item'].getOutgoingTransitions()])">)
     sdef.setPermission('Access contents information', 0, ['Manager', 'Owner'])
     sdef.setPermission('Modify portal content', 0, ['Manager', 'Owner'])
@@ -52,11 +52,11 @@ def setup<dtml-var "statemachine.getCleanName()">(wf):
     </dtml-in>
 
     ## Transitions initialization
-    <dtml-in "[t for t in statemachine.getTransitions() if t.getName()]">
+    <dtml-in "[t for t in statemachine.getTransitions() if t.getCleanName()]">
     <dtml-let tran="_['sequence-item']">
 
     tdef = wf.transitions['<dtml-var "tran.getCleanName()">']
-    tdef.setProperties(title="""<dtml-var "tran.getTaggedValue('label') or tran.getName()">""",
+    tdef.setProperties(title="""<dtml-var "tran.getTaggedValue('label') or tran.getCleanName()">""",
                        new_state_id="""<dtml-var "tran.getTargetStateName()">""",
                        trigger_type=1,
                        script_name="""""",
@@ -136,7 +136,7 @@ def create<dtml-var "statemachine.getCleanName()">(id):
     return ob
 
 addWorkflowFactory(create<dtml-var "statemachine.getCleanName()">,
-                   id='<dtml-var "statemachine.getName()">',
-                   title='<dtml-var "statemachine.getTaggedValue('label') or statemachine.getName()">')
+                   id='<dtml-var "statemachine.getCleanName()">',
+                   title='<dtml-var "statemachine.getTaggedValue('label') or statemachine.getCleanName()">')
 
     

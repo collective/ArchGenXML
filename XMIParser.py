@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.91 2004/07/27 10:10:15 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.92 2004/08/12 16:06:39 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -29,7 +29,7 @@ default_wrap_width = 64
 
 #tag constants
 
-clean_trans=string.maketrans(':-. /', '_____')
+clean_trans=string.maketrans(':-. /$', '______')
 
 class XMI1_0:
     XMI_CONTENT="XMI.content"
