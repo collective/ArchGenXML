@@ -285,6 +285,11 @@ class ArchetypesGenerator(BaseGenerator):
         hide_actions=element.getTaggedValue('hide_actions', '').strip()
         if not hide_actions:
             return ''
+            
+        # Also permit comma separation, since Poseidon doesn't like multi-line
+        # tagged values and specifying multiple tagged values is a pain
+        hide_actions = hide_actions.replace(',', '\n')
+        
         hide_actions=', '.join(["'"+a.strip()+"'" for a in hide_actions.split('\n')])
         return MODIFY_FTI % {'hideactions':hide_actions, }
 

@@ -29,7 +29,7 @@ view -- Generate an action as above, but also copy an empty page template to the
 
 form -- Generate an action as above, but also copy an empty controller page template to the skins directory with the same name as the method and set this up as the target of the action. If the template exists, it is not overwritten.
 
-portlet_view, portlet -- Create a simple portlet pgae template with the same name as the method. You can override the name by setting the 'view' tagged value on the method. If you add a tagged value 'autoinstall' and set it to 'left' or 'right', the portlet will be automatically installed with your product in either the left or the right slot. If the page template already exists, it will not be overwritten.
+portlet_view, portlet -- Create a simple portlet page template with the same name as the method. You can override the name by setting the 'view' tagged value on the method. If you add a tagged value 'autoinstall' and set it to 'left' or 'right', the portlet will be automatically installed with your product in either the left or the right slot. If the page template already exists, it will not be overwritten.
 
 Field stereotypes
 
