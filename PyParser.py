@@ -49,6 +49,9 @@ class PyCodeElement:
         
     def getSrc(self):
         return self.src
+    
+    def getName(self):
+        return self.name
 
 class PyFunction(PyCodeElement):
     typename='function'
@@ -105,6 +108,9 @@ class PyClass(PyCodeElement):
             
     def getProtectedSection(self,section):
         return self.module.getProtectedSection(section)
+    
+    def getMethodNames(self):
+        return self.methods.keys()
     
 class PyModule:
     filebuf=None
