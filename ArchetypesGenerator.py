@@ -1091,8 +1091,6 @@ class ArchetypesGenerator(BaseGenerator):
 
         if self.detailled_creation_permissions:
             creation_permission = "'Add %s Content'" % element.getCleanName()
-        elif self.detailled_creation_permissions:
-            creation_permission = "'Add %ss'" + ftis[i]['id'].capitalize()
         else:
             creation_permission = None
 
@@ -1872,6 +1870,9 @@ class ArchetypesGenerator(BaseGenerator):
                 package.annotate('generatedPackages',generatedPkg)
 
         self.generateStdFiles(package)
+
+        # after generate a package, we need go initialize the list of creation permissions
+        self.creation_permissions = []
 
     def generateProduct(self, root):
         dirMode=0
