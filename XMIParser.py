@@ -1737,7 +1737,12 @@ class XMIStateMachine(XMIStateContainer):
         return ret
 
     def getInitialState(self):
-        return self.getStates()[0]
+        states = self.getStates()
+        for s in states:
+            for k, v in s.getTaggedValues().items():
+                if k == 'initial_state':
+                    return s
+        return states[0]
 
     def getAllTransitionActions(self):
         res=[]
@@ -1883,12 +1888,18 @@ class XMIState(XMIElement):
         permissions_mapping = {'Access' : 'Access contents information',
                                'View' : 'View',
                                'Modify' : 'Modify portal content'}
+
+        # list of tagged values that are NOT permissions
+        non_permissions = ['initial_state']
+
         pm = permissions_mapping
 
         tv = self.getTaggedValues()
 
         ret = []
         for k, v in tv.items():
+            if k in non_permissions:
+                continue
             permission = pm.get(k, k)
             roles =  [str(r.strip()) for r in v.split(',') if r.strip()]
             ret.append({'permission' : permission,
