@@ -24,12 +24,20 @@ http://plone.org/development/teams/developer/ArchGenXML
 
   * Define custom initial state using a tagged value mark (to enable the correct 
     generation of initial state on workflow definitions, when the initial state 
-    is not the first state created on the model.) jensens: i think this is 
-    solved, using the UML-initial-state-symbol (solid circle).
+    is not the first state created on the model.) 
+
+      jensens: i think this is solved, using the UML-initial-state-symbol (solid circle).
+      
+      xiru: it is already supported using a tagged valued called initial_state on the 
+      state definition. However, support the UML initial state symbol would be ok too.
 
   * Test the transitions scripts generation
 
+      xiru: It is already supported, but the code is a bit ugly yet.
+
   * Add support for conditions on transitions
+
+      xiru: It is already supported too, but not documented :-P
 
 * Write documentation about workflow generation features (I think that only xiru knows all these features)
   Jensens: I created a sample model: InExWorkflow in collective CVS
