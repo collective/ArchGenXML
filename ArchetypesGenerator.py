@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.1 2004/04/27 12:25:07 yenzenz Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.2 2004/04/27 12:27:04 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -999,7 +999,7 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchetypesGenerator.py,v 1.1 2004/04/27 12:25:07 yenzenz Exp $
+RCS-ID $Id: ArchetypesGenerator.py,v 1.2 2004/04/27 12:27:04 yenzenz Exp $
 \"""
 # %(copyright)s
 #
