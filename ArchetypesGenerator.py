@@ -299,7 +299,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         hasActions=False
         actTempl=ACTIONS_START
-        base_actions=element.getTaggedValue('base_actions', '').strip()
+        base_actions=getExpression(element.getTaggedValue('base_actions', '')).strip()
         if base_actions:
             hasActions=True
             base_actions += ' + '
@@ -307,7 +307,7 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             actTempl = actTempl % ''
 
-        if self.generateDefaultActions or element.getTaggedValue('default_actions'):
+        if self.generateDefaultActions or getExpression(element.getTaggedValue('default_actions')):
             hasActions=True
             actTempl += DEFAULT_ACTIONS
             if subtypes:
@@ -323,8 +323,8 @@ class ArchetypesGenerator(BaseGenerator):
         if self.generateActions and hasActions:
             ftiTempl += actTempl
 
-        immediate_view = element.getTaggedValue('immediate_view') or 'base_view'
-        default_view = element.getTaggedValue('default_view') or immediate_view
+        immediate_view = getExpression(element.getTaggedValue('immediate_view')) or 'base_view'
+        default_view = getExpression(element.getTaggedValue('default_view')) or immediate_view
 
         # global_allow
         ga = self.getOption('global_allow', element, default=None)
@@ -342,7 +342,7 @@ class ArchetypesGenerator(BaseGenerator):
                 global_allow = 0
 
         has_content_icon=''
-        content_icon=element.getTaggedValue('content_icon')
+        content_icon=getExpression(element.getTaggedValue('content_icon'))
         if not content_icon:
             has_content_icon='#'
             content_icon = element.getCleanName()+'.gif'
@@ -353,13 +353,13 @@ class ArchetypesGenerator(BaseGenerator):
             ftiTempl += TOOL_FTI_TEMPL
 
         has_toolicon=''
-        toolicon = element.getTaggedValue('toolicon')
+        toolicon = getExpression(element.getTaggedValue('toolicon'))
         if not toolicon:
             has_toolicon='#'
             toolicon = element.getCleanName()+'.gif'
 
         # Allow discussion?
-        allow_discussion = element.getTaggedValue('allow_discussion','0')
+        allow_discussion = getExpression(element.getTaggedValue('allow_discussion','0'))
 
         # Filter content types?
         filter_content_types = not (isTGVFalse(
