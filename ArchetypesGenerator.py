@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.13 2004/05/16 22:15:00 yenzenz Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.14 2004/05/16 22:48:08 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -799,11 +799,26 @@ from Products.CMFCore.utils import UniqueObject
         
         parents = element.getGenParents()
         for p in parents:
-            print >> outfile,'from %s import %s' % (p.getQualifiedModuleName(package,forcePluginRoot=self.force_plugin_root),p.getName())
+            print p.hasStereoType(self.stub_stereotypes)
+            print p.getTaggedValue('import_from',None)
+            if p.hasStereoType(self.stub_stereotypes) and \
+                p.getTaggedValue('import_from',None):
+                print >> outfile,'from %s import %s' % \
+                    (p.getTaggedValue('import_from'), p.getName())
+            else:
+                print >> outfile,'from %s import %s' % (
+                    p.getQualifiedModuleName(
+                        package,forcePluginRoot=self.force_plugin_root
+                    ),
+                    p.getName())
 
         reparents = element.getRealizationParents()
         for p in reparents:
-            print >> outfile,'from %s import %s' % (p.getQualifiedModuleName(package,forcePluginRoot=self.force_plugin_root),p.getName())
+            print >> outfile,'from %s import %s' % (
+                    p.getQualifiedModuleName(
+                        package,forcePluginRoot=self.force_plugin_root
+                    ),
+                    p.getName())
 
         assocs = element.getFromAssociations()
         hasAssocClass=0
@@ -861,10 +876,10 @@ from Products.CMFCore.utils import UniqueObject
 
         wrt('\n')
 
-        additionalParents=element.getTaggedValue('additional_parents')
+        additionalParents=element.getTaggedValue('additional_parents')        
         if additionalParents:
             parentnames=list(parentnames)+additionalParents.split(',')
-
+            
         baseclass='BaseContent'
         baseschema='BaseSchema'            
         if refs or baserefs or isTGVTrue(element.getTaggedValue('folderish')):                
@@ -1012,7 +1027,7 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchetypesGenerator.py,v 1.13 2004/05/16 22:15:00 yenzenz Exp $
+RCS-ID $Id: ArchetypesGenerator.py,v 1.14 2004/05/16 22:48:08 yenzenz Exp $
 \"""
 # %(copyright)s
 #
