@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.32 2003/12/29 03:09:19 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.33 2003/12/29 05:04:57 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -96,15 +96,15 @@ class XMI1_0:
         return domElement.getAttribute('xmi.id')
 
     def getAssocEndParticipantId(self,el):
-        assocend=getElementByTagName(el,self.ASSOCENDTYPE,None)
+        assocend=getElementByTagName(el,self.ASSOCEND_PARTICIPANT,None)
         if not assocend:
             return None
 
         classifier=getElementByTagName(assocend,self.CLASSIFIER,None)
-	if not classifier:
+        if not classifier:
             classifier=getElementByTagName(assocend,self.CLASS,None)
 		
-	return classifier.getAttribute('xmi.idref')
+        return classifier.getAttribute('xmi.idref')
 
     def isAssocEndAggregation(self,el):
         aggs=el.getElementsByTagName(XMI.AGGREGATION)
@@ -313,8 +313,8 @@ class XMI1_1 (XMI1_0):
 class XMI1_2 (XMI1_1):
     # XMI version specific stuff goes there
 
-    def getAssocEndParticipantId(self,el):
-        return getElementByTagName(getElementByTagName(el,self.ASSOCEND_PARTICIPANT),self.CLASS).getAttribute('xmi.idref')
+    #def getAssocEndParticipantId(self,el):
+    #    return getElementByTagName(getElementByTagName(el,self.ASSOCEND_PARTICIPANT),self.CLASS).getAttribute('xmi.idref')
 
     def isAssocEndAggregation(self,el):
         return str(el.getAttribute('aggregation')) in self.aggregates
