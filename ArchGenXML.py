@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.55 2003/11/16 19:36:42 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.56 2003/11/24 12:54:12 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -607,6 +607,7 @@ from Products.CMFCore.utils import UniqueObject
     # dont allow tool listed as content in navtree
     try:
         idx=self.portal_properties.navtree_properties.metaTypesNotToList.index('%(tool_name)s')
+        self.portal_properties.navtree_properties._p_changed=1        
     except ValueError:
         self.portal_properties.navtree_properties.metaTypesNotToList.append('%(tool_name)s')
     except:
@@ -618,6 +619,7 @@ from Products.CMFCore.utils import UniqueObject
     # remove prodcut from navtree properties
     try:
         self.portal_properties.navtree_properties.metaTypesNotToList.remove('%(tool_name)s')
+        self.portal_properties.navtree_properties._p_changed=1        
     except ValueError:
         pass
     except:
