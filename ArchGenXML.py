@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.13 2003/07/19 08:03:58 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.14 2003/07/19 11:47:03 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -346,6 +346,11 @@ class ArchetypesGenerator:
     def generateStdFiles(self, target,projectName,generatedModules):
         #generates __init__.py, Extensions/Install.py and the skins directory
         #the result is a QuickInstaller installable product
+        
+        #remove trailing slash
+        if target[-1] in ('/','\\'):
+            target=target[:-1]
+            
         templdir=os.path.join(sys.path[0],'templates')
         initTemplate=open(os.path.join(templdir,'__init__.py')).read()
 
@@ -360,6 +365,7 @@ class ArchetypesGenerator:
         extDir=os.path.join(target,'Extensions')
         makeDir(extDir)
         of=makeFile(os.path.join(extDir,'Install.py'))
+        print 'target:',target
         of.write(installTemplate % {'project_dir':os.path.split(target)[1]})
         of.close()
 

@@ -1,3 +1,14 @@
+#-----------------------------------------------------------------------------
+# Name:        XSDParser.py
+# Purpose:     
+#
+# Author:      Philipp Auersperg
+#
+# Created:     2003/19/07
+# RCS-ID:      $Id: XSDParser.py,v 1.6 2003/07/19 11:47:03 zworkb Exp $
+# Copyright:   (c) 2003 BlueDynamics
+# Licence:     GPL
+#-----------------------------------------------------------------------------
 
 import sys, os.path, time, string
 import getopt
