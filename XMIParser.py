@@ -344,6 +344,10 @@ class XMI1_0:
         else:
             o.isabstract=0
 
+    def calcVisibility(self,o):
+        # visibility detection unimplemented for XMI 1.0
+        o.visibility=None
+
     def calcDatatype(self,att):
         global datatypes
         typeinfos=att.domElement.getElementsByTagName(XMI.TYPE)
@@ -573,6 +577,10 @@ class XMI1_2 (XMI1_1):
     def calcClassAbstract(self,o):
         o.isabstract=o.domElement.hasAttribute('isAbstract') and o.domElement.getAttribute('isAbstract')=='true'
         #print 'xmi12_calcabstract:',o.getName(),o.isAbstract()
+
+    def calcVisibility(self,o):
+        o.visibility=o.domElement.hasAttribute('visibility') and o.domElement.getAttribute('visibility')
+        #print 'xmi12_calcVisibility:',o.getName(),o.getVisibility()
 
     def calcDatatype(self,att):
         global datatypes
@@ -1266,11 +1274,15 @@ class XMIClass (XMIElement, StateMachineContainer):
     def initFromDOM(self,domElement):
         XMIElement.initFromDOM(self,domElement)
         XMI.calcClassAbstract(self)
+        XMI.calcVisibility(self)
         self.buildStateMachines(recursive=0)
 
     def isInternal(self):
         ''' internal class '''
         return self.internalOnly
+
+    def getVisibility(self):
+        return self.visibility
 
     def addGenChild(self,c):
         self.genChildren.append(c)
@@ -1540,8 +1552,12 @@ class XMIMethod (XMIElement):
 
     def initFromDOM(self,domElement):
         XMIElement.initFromDOM(self,domElement)
+        XMI.calcVisibility(self)
         if domElement:
             self.findParameters()
+
+    def getVisibility(self):
+        return self.visibility
 
     def getParams(self):
         return self.params
@@ -1581,6 +1597,7 @@ class XMIAttribute (XMIElement):
 
     def initFromDOM(self,domElement):
         XMIElement.initFromDOM(self,domElement)
+        XMI.calcVisibility(self)
         if domElement:
             self.calcType()
             self.findDefault()
@@ -1588,6 +1605,9 @@ class XMIAttribute (XMIElement):
     def isI18N(self):
         ''' with a stereotype 'i18N' or the taggedValue i18n=='1' an attribute is treated as i18n'''
         return self.getStereoType()=='i18n' or self.getTaggedValue('i18n') =='1'
+
+    def getVisibility(self):
+        return self.visibility
 
 
 class XMIAssocEnd (XMIElement):

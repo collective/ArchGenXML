@@ -973,7 +973,10 @@ class ArchetypesGenerator(BaseGenerator):
         if mode == 'class':
 
             # [optilude] Added check for permission:mode - public, private or protected (default)
-            permissionMode = m.getTaggedValue ('permission:mode', 'protected')
+            # [jensens]  You can also use the visibility value from UML (implemented for 1.2 only!)
+            # tgv overrides UML-mode!
+            permissionMode = m.getTaggedValue ('permission:mode', None) or m.getVisibility() or 'protected'
+
 
             if permissionMode == 'public':
                 print >> outfile,indent("security.declarePublic('%s')" % (m.getName(),),1)
