@@ -44,6 +44,12 @@ class XschemaElement:
         ''' returns the non-intrinsic subtypes '''
         return [str(c.getType()) for c in self.getChildren() if not c.isIntrinsicType() ]
 
+    def getToAssociations(self):
+        return []
+    
+    def getFromAssociations(self):
+        return []
+    
     def show(self, outfile, level):
         showLevel(outfile, level)
         outfile.write('Name: %s  Type: %s\n' % (self.name, self.type))

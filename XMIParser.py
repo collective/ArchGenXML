@@ -10,13 +10,14 @@ from xml.dom import minidom
 
 #tag constants
 
-def getAttributeValue(domElement,tagName=None):
+def getAttributeValue(domElement,tagName=None,recursive=0):
     el=domElement
     if tagName:
-        el=getElementByTagName(domElement,tagName)
+        el=getElementByTagName(domElement,tagName,recursive=recursive)
     return el.firstChild.nodeValue
 
 class XMI1_0:
+    # XMI version specific stuff goes there
     STATEMACHINE = 'Behavioral_Elements.State_Machines.StateMachine'
     STATE = 'Behavioral_Elements.State_Machines.State'
     TRANSITION='Behavioral_Elements.State_Machines.Transition'
@@ -44,12 +45,13 @@ class XMI1_0:
     CONTEXT = 'Behavioral_Elements.State_Machines.StateMachine.context'
     MODEL='Model_Management.Model'
     MULTIPLICITY='Foundation.Core.StructuralFeature.multiplicity'
+    MULT_MIN='Foundation.Data_Types.MultiplicityRange.lower'
     MULT_MAX='Foundation.Data_Types.MultiplicityRange.upper'
     ATTRIBUTE='Foundation.Core.Attribute'
     DATATYPE='Foundation.Core.DataType'
     FEATURE='Foundation.Core.Classifier.feature'
     TYPE='Foundation.Core.StructuralFeature.type'
-    CLASSIFIER='Foundation.Core.Classifier'
+    ASSOCEND_PARTICIPANT=CLASSIFIER='Foundation.Core.Classifier'
     ASSOCIATION='Foundation.Core.Association'
     AGGREGATION='Foundation.Core.AssociationEnd.aggregation'
     ASSOCEND='Foundation.Core.AssociationEnd'
@@ -58,12 +60,29 @@ class XMI1_0:
     METHOD="Foundation.Core.Operation"
     METHODPARAMETER="Foundation.Core.Parameter"
 
-    def getName(self,domElement):
-       return str(getAttributeValue(domElement,self.NAME))
+    aggregates=['composite','aggregate']
 
+    def getName(self,domElement):
+        try:
+            return str(getAttributeValue(domElement,self.NAME))
+        except:
+            return None
+
+    def getAssocEndParticipantId(self,el):
+        return getElementByTagName(getElementByTagName(el,self.ASSOCENDTYPE),self.CLASSIFIER).getAttribute('xmi.idref')
+
+    def isAssocEndAggregation(self,el):
+        aggs=el.getElementsByTagName(XMI.AGGREGATION)        
+        return aggs and aggs[0].getAttribute('xmi.value') in self.aggregates        
+    
+    def getMultiplicity(self,el):
+        mult_min=int(getAttributeValue(el,self.MULT_MIN,recursive=1))
+        mult_max=int(getAttributeValue(el,self.MULT_MAX,recursive=1))
+        return (mult_min,mult_max)
+        
     def buildRelations(self, doc, objects):
+        #XXX: needs refactoring
         rels=doc.getElementsByTagName(XMI.ASSOCIATION)
-        aggregates=['composite','aggregate']
         for rel in rels:
             master=None
             detail=None
@@ -73,24 +92,30 @@ class XMI1_0:
                 #print 'association with != 2 ends found'
                 continue
 
-            aggrs0=ends[0].getElementsByTagName(XMI.AGGREGATION)
-            if len(aggrs0) and aggrs0[0].getAttribute('xmi.value') in aggregates:
+            if self.isAssocEndAggregation(ends[0]) :
                 master=ends[0]
                 detail=ends[1]
-            aggrs1=ends[1].getElementsByTagName(XMI.AGGREGATION)
-            if len(aggrs1) and aggrs1[0].getAttribute('xmi.value') in aggregates:
+            if self.isAssocEndAggregation(ends[1]) :
                 master=ends[1]
                 detail=ends[0]
 
             if master: #ok weve found an aggregation
-                masterid=getElementByTagName(getElementByTagName(master,XMI.ASSOCENDTYPE),XMI.CLASSIFIER).getAttribute('xmi.idref')
-                detailid=getElementByTagName(getElementByTagName(detail,XMI.ASSOCENDTYPE),XMI.CLASSIFIER).getAttribute('xmi.idref')
+                masterid=self.getAssocEndParticipantId(master)
+                detailid=self.getAssocEndParticipantId(detail)
 
+                #print 'master,detail:',master,detail
                 m=objects[masterid]
                 d=objects[detailid]
                 m.addSubType(d)
+            else: #its an assoc, lets model it as association
+                
+                assoc=XMIAssociation(rel)
+                assoc.fromEnd.obj.addAssocTo(assoc)
+                assoc.toEnd.obj.addAssocFrom(assoc)
 
 class XMI1_2 (XMI1_0):
+    # XMI version specific stuff goes there
+
     NAME = 'UML:ModelElement.name'
     MODEL = 'UML:Model'
     #Collaboration stuff: a
@@ -111,40 +136,21 @@ class XMI1_2 (XMI1_0):
     ASSOCEND_PARTICIPANT='UML:AssociationEnd.participant'
     METHOD="UML:Operation"
     METHODPARAMETER="UML:Parameter"
+    MULTRANGE='UML:MultiplicityRange'
 
     def getName(self,domElement):
         return domElement.getAttribute('name')
 
-    def buildRelations(self, doc, objects):
-        rels=doc.getElementsByTagName(self.ASSOCIATION)
-        aggregates=['composite','aggregate']
-        for rel in rels:
-            master=None
-            detail=None
-            ends=rel.getElementsByTagName(self.ASSOCEND)
-            #assert len(ends)==2
-            #print 'ASSOC:',ends
-            if len(ends) != 2:
-                #print 'association with != 2 ends found'
-                continue
-
-            if str(ends[0].getAttribute('aggregation')) in aggregates:
-                master=ends[0]
-                detail=ends[1]
-            if str(ends[0].getAttribute('aggregation')) in aggregates:
-                master=ends[1]
-                detail=ends[0]
-
-            #print 'ASSOC:',master,detail
-            if master: #ok weve found an aggregation
-                masterid=getElementByTagName(getElementByTagName(master,self.ASSOCEND_PARTICIPANT),self.CLASS).getAttribute('xmi.idref')
-                detailid=getElementByTagName(getElementByTagName(detail,self.ASSOCEND_PARTICIPANT),self.CLASS).getAttribute('xmi.idref')
-
-                #print 'ASSOC:',masterid,detailid
-
-                m=objects[masterid]
-                d=objects[detailid]
-                m.addSubType(d)
+    def getAssocEndParticipantId(self,el):
+        return getElementByTagName(getElementByTagName(el,self.ASSOCEND_PARTICIPANT),self.CLASS).getAttribute('xmi.idref')
+    
+    def isAssocEndAggregation(self,el):
+        return str(el.getAttribute('aggregation')) in self.aggregates        
+    
+    def getMultiplicity(self,el):
+        mult_min=int(getElementByTagName(el,self.MULTRANGE,recursive=1).getAttribute('lower'))
+        mult_max=int(getElementByTagName(el,self.MULTRANGE,recursive=1).getAttribute('upper'))
+        return (mult_min,mult_max)
 
 XMI=XMI1_0()
 
@@ -153,9 +159,13 @@ _marker=[]
 allObjects={}
 
 
-def getElementByTagName(domElement,tagName,default=_marker):
+def getElementByTagName(domElement,tagName,default=_marker, recursive=0):
     ''' returns a single element by name and throws an error if more than 1 exist'''
-    els=[el for el in domElement.childNodes if str(getattr(el,'tagName',None)) == tagName]
+    if recursive:
+        els=domElement.getElementsByTagName(tagName)
+    else:
+        els=[el for el in domElement.childNodes if str(getattr(el,'tagName',None)) == tagName]
+        
     if len(els) > 1:
         raise TypeError,'more than 1 element found'
 
@@ -196,7 +206,10 @@ class XMIElement:
         self.initFromDOM(domElement)
         self.buildChildren(domElement)
 
-    def initFromDOM(self,domElement):
+    def initFromDOM(self,domElement=None):
+        if not domElement:
+            domElement=self.domElement
+            
         if domElement:
             self.name=XMI.getName(domElement)
             mult=getElementByTagName(domElement,XMI.MULTIPLICITY,None)
@@ -227,6 +240,7 @@ class XMIElement:
     def isComplex(self): return self.complex
     def addAttributeDefs(self, attrs): self.attributeDefs.append(attrs)
     def getAttributeDefs(self): return self.attributeDefs
+    
     def getRef(self):
         return None
 
@@ -310,7 +324,6 @@ class XMIElement:
         for child in self.children:
             child.annotate()
 
-    #zworks extensions
     def isIntrinsicType(self):
         return str(self.getType()).startswith('xs:')
 
@@ -321,8 +334,11 @@ class XMIElement:
         return self.methodDefs
 
 class XMIClass (XMIElement):
+    
     def __init__(self,*args,**kw):
         XMIElement.__init__(self,*args,**kw)
+        self.assocsTo=[]
+        self.assocsFrom=[]
         self.type=self.name
 
 
@@ -334,7 +350,20 @@ class XMIClass (XMIElement):
 
     def isComplex(self):
         return 1
+    
+    def addAssocFrom(self,a):
+        self.assocsFrom.append(a)
+        
+    def addAssocTo(self,a):
+        self.assocsTo.append(a)
 
+    def getToAssociations(self):
+        return self.assocsTo
+    
+    def getFromAssociations(self):
+        return self.assocsFrom
+    
+    
 class XMIMethodParameter(XMIElement):
     pass
 
@@ -380,6 +409,28 @@ class XMIAttribute (XMIElement):
         if domElement:
             self.calcType()
 
+class XMIAssocEnd (XMIElement):
+    def initFromDOM(self,el):
+        XMIElement.initFromDOM(self,el)
+        pid=XMI.getAssocEndParticipantId(el)
+        self.obj=allObjects[pid]
+        self.mult=XMI.getMultiplicity(el)
+        #print 'mult;',self.mult,self.getName()
+        
+class XMIAssociation (XMIElement):
+    fromEnd=None
+    toEnd=None
+
+    def initFromDOM(self,domElement=None):
+        XMIElement.initFromDOM(self,domElement)
+        ends=self.domElement.getElementsByTagName(XMI.ASSOCEND)
+        assert len(ends)==2
+        #if len(ends) != 2:
+
+        #print 'trying assoc'
+        self.fromEnd=XMIAssocEnd(ends[0])
+        self.toEnd=XMIAssocEnd(ends[1])
+    
 
 def buildDataTypes(doc):
     global datatypes
@@ -412,7 +463,9 @@ def buildHierarchy(doc):
     #print 'classes:',classes
     for c in classes:
         if hasClassFeatures(c):
-            res.addChild(XMIClass(c))
+            xc=XMIClass(c)
+            print 'Class:',xc.getName()
+            res.addChild(xc)
 
     res.annotate()
     XMI.buildRelations(doc,allObjects)

@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.3 2003/06/02 19:30:26 dreamcatcher Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.4 2003/06/11 02:34:10 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -141,6 +141,9 @@ class ArchetypesGenerator:
         'lines':'''LinesField('%(name)s',
                     searchable=1,
                     ),''',
+        'reference':'''ReferenceField('%(name)s',allowed_types=%(allowed_types)s,
+                    searchable=1,
+                    ),''',
 
     }
 
@@ -158,7 +161,8 @@ class ArchetypesGenerator:
         'datetime':'date',
         'list':'lines',
         'liste':'lines',
-        'image':'image'
+        'image':'image',
+        'int':'integer',
     }
 
     def coerceType(self, typename):
@@ -197,6 +201,18 @@ class ArchetypesGenerator:
         templ=self.typeMap[ctype]
         return templ % {'name':attr.getName(),'type':attr.getType()}
 
+    def getFieldStringFromAssociation(self, rel):
+        ''' gets the schema field code '''
+        #print 'getFieldStringFromAttribute:',attr.getName(),attr.type
+
+        templ=self.typeMap['reference']
+        obj=rel.toEnd.obj
+        name=rel.fromEnd.getName()
+        if name == 'None':
+            name=obj.getName()+'_ref'
+            
+        return templ % {'name':name,'type':obj.getType(),'allowed_types':repr((obj.getName(),))}
+
     # Generate get/set/add member functions.
     def generateArcheSchema(self, outfile, element):
         print >> outfile,'    schema=BaseSchema + Schema(('
@@ -220,7 +236,16 @@ class ArchetypesGenerator:
             if child.isIntrinsicType():
                 print >> outfile, '    '*2 ,self.getFieldString(child)
 
-
+        # and now the associations
+        for rel in element.getToAssociations():
+            if 1 or rel.toEnd.mult==1: #XXX: for mult==-1 a multiselection widget must come
+                name = rel.fromEnd.getName()
+                    
+                if name in self.reservedAtts:
+                    continue
+    
+                print >> outfile, '    '*2 ,self.getFieldStringFromAssociation(rel)
+                
 
         print >> outfile,'    ))'
 
