@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.154 2004/08/15 17:04:50 zworkb Exp $
+# RCS-ID:      $Id$
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------

@@ -46,6 +46,26 @@ DelayedElements = []
 AlreadyGenerated = []
 Force = 0       
 
+class DummyModel:
+    def __init__(self,name=''):
+        self.name=name
+    def getName(self):
+        return self.name
+    getFilePath=getName
+    getModuleFilePath=getName
+    getProductModuleName=getName
+    getProductName=getName
+    def hasStereoType(self,s):
+        return 0
+    
+    def getClasses(self):
+        return []
+    getInterfaces=getClasses
+    getPackages=getClasses
+    getStateMachines=getClasses
+    def isRoot(self):
+        return 1
+
 class ArchetypesGenerator:
 
     force=1
@@ -1624,8 +1644,7 @@ class ArchetypesGenerator:
 
             print 'outfile:',self.outfileName
         else:
-            self.root=root=XMIParser.XMIElement() #create empty element
-
+            self.root=root=DummyModel(self.outfileName) 
         print 'Generating...'
         print '=============='
         if self.method_preservation:

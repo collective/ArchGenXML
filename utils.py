@@ -177,6 +177,7 @@ ALLOWED_OPTIONS_MAP = {
     'default-field-generation':         (1, 0,   'CLASSES',       'default_field_generation', 'switchon'),
     'backreferences-support':           (1, 0,   'CLASSES',       'backreferences_support', 'switchon'),
     'customization-policy':             (1, 0,   'GENERAL',       'customization_policy','switchon'),
+    'noclass':                          (1, 0,   'GENERAL',       'noclass','switchon'),
 }
 
 def set_setting(okey, value, settings):
