@@ -71,6 +71,7 @@ class ArchetypesGenerator:
     portal_tools=['portal_tool']
     variable_schema='variable_schema'
     stub_stereotypes=['odStub','stub']
+    hide_classes=['EARootClass'] # Enterprise Architect Dummy Class
     vocabulary_item_stereotype = ['vocabulary_item']
     vocabulary_container_stereotype = ['vocabulary']
     left_slots=[]
@@ -1444,7 +1445,8 @@ class ArchetypesGenerator:
         
         for element in package.getClasses()+package.getInterfaces():
             #skip stub and internal classes
-            if element.isInternal() or element.hasStereoType(self.stub_stereotypes):
+            if element.isInternal() or element.hasStereoType(self.stub_stereotypes) or \
+               element.getName() in self.hide_classes: # Enterprise Architect fix!
                 continue
 
             module=element.getModuleName()
