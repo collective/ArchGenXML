@@ -15,6 +15,7 @@ import getopt, os.path, time, sys
 from zipfile import ZipFile
 from StringIO import StringIO
 from shutil import copy
+from types import StringTypes
 
 # AGX-specific imports
 import XSDParser, XMIParser, PyParser
@@ -1268,7 +1269,8 @@ class ArchetypesGenerator:
 
         email=self.getOption('email', element, self.email) or ['unknown']
         email=email.split(',')
-        email+="<"+">, <".join([i.strip() for i in email])+">"
+        email = [i.strip() for i in email]
+        email ="<"+">, <".join([i.strip() for i in email])+">"
 
         fileheaderinfo = {'filename': modulename+'.py',
                           'purpose':  purposeline,
