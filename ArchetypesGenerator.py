@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.4 2004/05/06 10:32:46 yenzenz Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.5 2004/05/06 11:52:38 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -62,8 +62,7 @@ class ArchetypesGenerator:
     stub_stereotypes=['odStub','stub']
     left_slots=[]
     right_slots=[]
-    creation_permission=None
-    detailled_creation_permissions = 0
+    creation_permission=None ## unused!
     
     parsed_class_sources={} #dict containing the parsed sources by class names (for preserving method codes)
     parsed_sources=[] #list of containing the parsed sources (for preserving method codes)
@@ -72,9 +71,9 @@ class ArchetypesGenerator:
     
     msgcatstack = []
     
-    def __init__(self,xschemaFileName,projectName=None, **kwargs):
+    def __init__(self,xschemaFileName, **kwargs):
         self.outfileName=kwargs['outfilename']
-
+        
         if self.outfileName[-1] in ('/','\\'):
             self.outfileName=self.outfileName[:-1]
 
@@ -83,15 +82,6 @@ class ArchetypesGenerator:
         print 'targetRoot:',self.targetRoot
         #os.chdir(self.targetRoot or '.')
         
-        if not projectName:
-            if path[1]:
-                self.projectName=path[1]
-            else:
-                #in case of trailing slash
-                self.projectName=os.path.split(path[0])[1]
-                
-        print 'projectName:',self.projectName
-
         self.xschemaFileName=xschemaFileName
         self.__dict__.update(kwargs)
 
@@ -1001,7 +991,7 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchetypesGenerator.py,v 1.4 2004/05/06 10:32:46 yenzenz Exp $
+RCS-ID $Id: ArchetypesGenerator.py,v 1.5 2004/05/06 11:52:38 yenzenz Exp $
 \"""
 # %(copyright)s
 #
@@ -1172,7 +1162,6 @@ You should have received a copy of the GNU General Public License along with thi
         init_params={'project_name':package.getProductName(),'add_content_permission': getExpression(add_content_permission),'imports':imports, 'toolinit':toolinit }
 
         if self.detailled_creation_permissions:
-            print "create detailled_creation_permissions", self.detailled_creation_permissions
             init_params['extra_perms']=self.TEMPL_DETAILLED_CREATION_PERMISSIONS
         else:
             init_params['extra_perms']=""

@@ -124,8 +124,7 @@ ALLOWED_OPTIONS_MAP = {
     'generate-actions':                 (0, 0,   'CLASSES',       'generateActions', 'yesno'),
     'default-actions':                  (1, 0,   'CLASSES',       'generateDefaultActions', 'switchon'),
     'creation-permission=':             (1, 0,   'CLASSES',       'creation_permissions', 'switchon'), # UNUSED!
-    'detailled-creation-permissions':   (0, 0,   'CLASSES',       'detailled_creation_permissions', 'yesno'),
-    'detailled-creation-permissions=':  (1, 0,   None,            'detailled_creation_permissions', 'yesno'),
+    'detailled-creation-permissions=':  (1, 0,   'CLASSES',       'detailled_creation_permissions', 'yesno'),
     'widget-enhancement':               (0, 0,   'CLASSES',       'widget_enhancement', 'switchon'),
     'no-widget-enhancement':            (1, 0,   None,            'widget_enhancement', 'switchoff'),
     'method-preservation':              (1, 0,   'CLASSES',       'method_preservation', 'switchon'),
@@ -149,7 +148,7 @@ ALLOWED_OPTIONS_MAP = {
 
 def set_setting(okey, value, settings):
     """ set one option """ 
-    yesno={'yes':1, 'y':1, 1:1, 'no':None, 'n':None, 0:None }
+    yesno={'yes':1, 'y':1, 1:1, '1':1, 'no':None, 'n':None, 0:None, '0':None}
     if ALLOWED_OPTIONS_MAP[okey][3]:
         if ALLOWED_OPTIONS_MAP[okey][4] == 'switchon':
             settings[ALLOWED_OPTIONS_MAP[okey][3]]= 1
@@ -169,8 +168,8 @@ def modify_settings(key, value, settings, shortkey=0):
         if not ALLOWED_OPTIONS_MAP.has_key(okey) and ALLOWED_OPTIONS_MAP.has_key(okey+'='):
             okey+='='
         if ALLOWED_OPTIONS_MAP.has_key(okey) and (ALLOWED_OPTIONS_MAP[okey][0] or shortkey):
-            set_setting(okey,value,settings)
-    return settings
+            settings=set_setting(okey,value,settings)
+
 
 def read_project_configfile(filename,settings):
     cp = ConfigParser()
@@ -185,16 +184,14 @@ def read_project_configfile(filename,settings):
     fname.close()    
     
     for key in ALLOWED_OPTIONS_MAP.keys():
-        #fkey = key[len(key)-1] == '=' and key[:len(key)-1] or key
-        if cp.has_option(ALLOWED_OPTIONS_MAP[key][2], key):
-            set_setting(key, cp.get(ALLOWED_OPTIONS_MAP[key][2], key), settings)
+        fkey = key[len(key)-1] == '=' and key[:len(key)-1] or key
+        if cp.has_option(ALLOWED_OPTIONS_MAP[key][2], fkey):
+            set_setting(key, cp.get(ALLOWED_OPTIONS_MAP[key][2], fkey), settings)
 
 ##    # print a ugly sample cfg
 ##    y=['['+ALLOWED_OPTIONS_MAP[key][2]+']\n'+(key[len(key)-1] == '=' and key[:len(key)-1] or key) for key in ALLOWED_OPTIONS_MAP.keys() if ALLOWED_OPTIONS_MAP[key][2]]
 ##    y.sort()
 ##    for x in y print x
-
-    return settings
   
 def read_project_settings(args):
     """ reads options from args and return options array"""   
@@ -208,6 +205,7 @@ def read_project_settings(args):
     settings['copyright'] = None
     settings['licence'] = None
     settings['module_info_header'] = 1
+    settings['detailled_creation_permissions'] = None
     settings['widget_enhancement'] = None    
     settings['outfilename'] = None
     
@@ -226,19 +224,18 @@ def read_project_settings(args):
     for option in opts:
         if option[0] in ['--project-configuration','--cfg','-c'] and option[1]:
             print "Use configfile", option[1]
-            settings=read_project_configfile(option[1],settings)
-
+            read_project_configfile(option[1],settings)
+            
     # second run to overide with commandline parameters
     for option in opts: 
-        settings= modify_settings(option[0], option[1], settings)
+        modify_settings(option[0], option[1], settings)
         shortdict = { }
         x=[shortdict.update({ALLOWED_OPTIONS_MAP[key][1]:key}) \
             for key in ALLOWED_OPTIONS_MAP.keys() \
             if ALLOWED_OPTIONS_MAP[key][1]]
                 
         if len(option[0])>1 and option[0][0]=='-' and shortdict.has_key(option[0][1:]):
-            settings= modify_settings('--'+shortdict[option[0][1:]], option[1], settings, shortkey=1)
-    
+            modify_settings('--'+shortdict[option[0][1:]], option[1], settings, shortkey=1)
     return settings, args
 
 ARCHGENXML_VERSION_LINE = """\

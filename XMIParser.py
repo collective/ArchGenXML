@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.71 2004/05/01 20:14:27 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.72 2004/05/06 11:52:38 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -609,7 +609,6 @@ class XMIElement:
                     self.taggedValues[tagname]+='\n'+tagvalue
                 else:
                     self.taggedValues[tagname]=tagvalue
-                print '\n-----\n', self.taggedValues[tagname]
             except:
                 pass
 
