@@ -135,9 +135,9 @@ def install(self):
 <dtml-if "package.getProductName() in generator.vocabularymap.keys()">
 
     # Create vocabularies in vocabulary lib
-    atvm = getToolByName(self, 'portal_vocabularies')
-    for vocab in <dtml-var "repr([])">:
-        pass
+    #atvm = getToolByName(self, 'portal_vocabularies')
+    #for vocab in <dtml-var "repr([])">:
+    #    pass
 </dtml-if>
 <dtml-let cmfmembers="[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.cmfmember_stereotype)]">
 <dtml-if "cmfmembers">

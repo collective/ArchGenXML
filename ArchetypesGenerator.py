@@ -42,9 +42,9 @@ else:
 try:
     "abca".strip('a')
 except:
-    has_enhanced_strip_support= False
+    has_enhanced_strip_support = False
 else:
-    has_enhanced_strip_support= True
+    has_enhanced_strip_support = True
 
 
 #
@@ -1322,9 +1322,11 @@ class ArchetypesGenerator(BaseGenerator):
 
         if element.hasStereoType(self.cmfmember_stereotype):
             for addschema in ['contact_schema','plone_schema',
-                              'security_schema','login_info_schema']:
+                              'security_schema','login_info_schema',]:
                 if isTGVTrue(element.getTaggedValue(addschema, '1')):
                     schema.append('BaseMember.%s' % addschema)
+            if isTGVTrue(element.getTaggedValue(addschema, '1')):
+                schema.append('ExtensibleMetadata.schema')
 
         print >> outfile, indent('schema = ' + ' + \\\n         '.join(schema),1)
         print >> outfile
@@ -1349,7 +1351,8 @@ class ArchetypesGenerator(BaseGenerator):
             wrt( REGISTER_ARCHTYPE % name)
 
         # ATVocabularyManager: registration of class
-        if element.hasStereoType(self.vocabulary_item_stereotype):
+        if element.hasStereoType(self.vocabulary_item_stereotype) and \
+           not element.isAbstract ():
             # FIXME XXX TODO: fetch container_class - needs to be refined:
             # check if parent has vocabulary_container_stereotype and use its
             # name as container
