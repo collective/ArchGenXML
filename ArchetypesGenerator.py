@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.31 2004/06/26 10:10:51 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.32 2004/06/27 22:03:43 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -226,9 +226,6 @@ class ArchetypesGenerator:
             ftiTempl += actTempl
 
         #collect the allowed_subtypes from the parents
-        parentsubtypes=''
-        if element.getGenParents():
-            parentsubtypes = '+ ' + ' + '.join(tuple([p.getCleanName()+".factory_type_information['allowed_content_types']" for p in element.getGenParents()]))
         
         immediate_view=element.getTaggedValue('immediate_view') or 'base_view'
 
@@ -246,7 +243,7 @@ class ArchetypesGenerator:
         res=ftiTempl % {'subtypes':repr(tuple(subtypes)),
             'has_content_icon':has_content_icon,'content_icon':content_icon,
             'discussion':element.getTaggedValue('allow_discussion','0'),
-            'parentsubtypes':parentsubtypes,'global_allow':global_allow,'immediate_view':immediate_view,
+            'global_allow':global_allow,'immediate_view':immediate_view,
             'filter_content_types': not isTGVFalse(element.getTaggedValue('filter_content_types'))}
 
         return res
@@ -630,7 +627,7 @@ class ArchetypesGenerator:
             schemastmt= SCHEMA_START_TGV % (base_schema, parent_schemata_expr)
             
         print >>outfile, schemastmt
-        refs=[]
+        aggregatedClasses=[]
 
         for attrDef in element.getAttributeDefs():
             name = attrDef.getName()
@@ -646,7 +643,7 @@ class ArchetypesGenerator:
                 continue
             unmappedName = child.getUnmappedCleanName()
             if child.getRef():
-                refs.append(str(child.getRef()))
+                aggregatedClasses.append(str(child.getRef()))
 
             if child.isIntrinsicType():
                 print >> outfile, indent(self.getFieldString(child, element),2)
@@ -859,17 +856,24 @@ class ArchetypesGenerator:
 
         self.generateProtectedSection(outfile,element,'module-header')
             
-        refs = element.getRefs() + element.getSubtypeNames(recursive=1)
-        
+        aggregatedClasses = element.getRefs() + element.getSubtypeNames(recursive=1,filter=['class'])
+        aggregatedInterfaces = element.getRefs() + element.getSubtypeNames(recursive=1,filter=['interface'])
+
         if element.getTaggedValue('allowed_content_types'):
-            refs=refs+element.getTaggedValue('allowed_content_types').split(',')
+            aggregatedClasses=aggregatedClasses+element.getTaggedValue('allowed_content_types').split(',')
             
         #also check if the parent classes can have subobjects
-        baserefs=[]
+        baseaggregatedClasses=[]
         for b in element.getGenParents():
-            baserefs.extend(b.getRefs())
-            baserefs.extend(b.getSubtypeNames(recursive=1))
+            baseaggregatedClasses.extend(b.getRefs())
+            baseaggregatedClasses.extend(b.getSubtypeNames(recursive=1))
+
+        #also check if the parent classes can have subobjects
+        baseaggregatedInterfaces=[]
+        for b in element.getGenParents(recursive=1):
+            baseaggregatedInterfaces.extend(b.getSubtypeNames(recursive=1,filter=['interface']))
             
+        
         if not element.isComplex():
             return
         if element.getType() in AlreadyGenerated:
@@ -886,7 +890,7 @@ class ArchetypesGenerator:
             
         baseclass='BaseContent'
         baseschema='BaseSchema'            
-        if refs or baserefs or isTGVTrue(element.getTaggedValue('folderish')):                
+        if aggregatedClasses or baseaggregatedClasses or isTGVTrue(element.getTaggedValue('folderish')):                
             # folderish
             baseclass='BaseFolder'
             baseschema='BaseFolderSchema'
@@ -945,7 +949,20 @@ class ArchetypesGenerator:
         print >> outfile, CLASS_PORTAL_TYPE % name
         print >> outfile, CLASS_ARCHETYPE_NAME %  archetype_name
         
+        #allowed_content_classes
+        parentAggregates=''
+        if element.getGenParents():
+            parentAggregates = '+ ' + ' + '.join(tuple([p.getCleanName()+".allowed_content_types" for p in element.getGenParents()]))
+        print >> outfile, CLASS_ALLOWED_CONTENT_TYPES % (repr(aggregatedClasses),parentAggregates)
         
+        #allowed_content_interfaces
+        parentAggregatedInterfaces=''
+        if element.getGenParents():
+            parentAggregatedInterfaces = '+ ' + ' + '.join(tuple(['getattr('+p.getCleanName()+",'allowed_content_interfaces',[])" for p in element.getGenParents()]))
+            
+        if aggregatedInterfaces or baseaggregatedInterfaces:    
+            print >> outfile, CLASS_ALLOWED_CONTENT_INTERFACES % (repr(aggregatedInterfaces),parentAggregatedInterfaces)
+
         #handle realization parents
         reparents=element.getRealizationParents()
         if reparents:
@@ -970,7 +987,7 @@ class ArchetypesGenerator:
         self.generateMethods(outfile,element)
 
         #generateGettersAndSetters(outfile, element)
-        fti=self.generateFti(element,refs)
+        fti=self.generateFti(element,aggregatedClasses)
         print >> outfile,fti 
         
         
@@ -1009,7 +1026,7 @@ class ArchetypesGenerator:
         if additionalImports:
             wrt(additionalImports)
 
-        refs = element.getRefs() + element.getSubtypeNames(recursive=1)
+        aggregatedClasses = element.getRefs() + element.getSubtypeNames(recursive=1)
 
         AlreadyGenerated.append(element.getType())
         name = element.getCleanName()

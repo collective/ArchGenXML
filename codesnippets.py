@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: codesnippets.py,v 1.5 2004/06/27 18:42:59 zworkb Exp $
+# RCS-ID:      $Id: codesnippets.py,v 1.6 2004/06/27 22:03:43 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -66,7 +66,6 @@ DEFAULT_ACTIONS_FOLDERISH ="""
 FTI_TEMPL="""
 
     # uncomment lines below when you need
-    allowed_content_types=%(subtypes)s %(parentsubtypes)s
     factory_type_information={
         'allowed_content_types':allowed_content_types,
         'allow_discussion': %(discussion)s,
@@ -120,6 +119,8 @@ from Products.CMFCore.utils import UniqueObject
 CLASS_PORTAL_TYPE    = """    portal_type = meta_type = '%s' """
 CLASS_ARCHETYPE_NAME = """    archetype_name = '%s'   #this name appears in the 'add' box """
 CLASS_IMPLEMENTS     = """    __implements__ = %(baseclass_interfaces)s + (%(realizations)s,)"""
+CLASS_ALLOWED_CONTENT_TYPES = '''    allowed_content_types = %s %s'''
+CLASS_ALLOWED_CONTENT_INTERFACES = '''    allowed_content_interfaces = %s %s'''
 
 REGISTER_ARCHTYPE    = """registerType(%s)\n"""
 
@@ -130,7 +131,7 @@ MODULE_INFO_HEADER = """\
 \"""\\
 %(purpose)s
 
-RCS-ID $Id: codesnippets.py,v 1.5 2004/06/27 18:42:59 zworkb Exp $
+RCS-ID $Id: codesnippets.py,v 1.6 2004/06/27 22:03:43 zworkb Exp $
 \"""
 # %(copyright)s
 #

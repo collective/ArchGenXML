@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.85 2004/06/27 18:42:59 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.86 2004/06/27 22:03:43 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -1172,15 +1172,16 @@ class XMIClass (XMIElement):
 
         return res
 
-    def getAggregatedClasses(self,recursive=0,filter=['XMIClass','XMIInterface']):
+    def getAggregatedClasses(self,recursive=0,filter=['class','interface'],**kw):
         ''' returns the non-intrinsic subtypes '''
 
-        res = [o for o in self.subTypes if not o.isAbstract() and o.__class__ in filter]
+        res = [o for o in self.subTypes if not o.isAbstract() ]
 
         if recursive:
             for sc in self.subTypes:
-                res.extend([o for o in sc.getGenChildren(recursive=1,**kw)])
+                res.extend([o for o in sc.getGenChildren(recursive=1)])
                 
+        res=[o for o in res if o.__class__.__name__ in ['XMI'+f.capitalize() for f in filter]]
         return res
 
     def isI18N(self):
