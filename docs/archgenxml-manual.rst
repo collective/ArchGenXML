@@ -4,8 +4,8 @@ ArchGenXML - generating Archetypes using UML
 
 :Author: Jens W. Klein (aka Jensens)
 :Contact: jens.klein@jensquadrat.de
-:Date: $Date: 2004/03/03 12:32:07 $
-:Version: $Revision: 1.1 $
+:Date: $Date: 2004/03/03 12:59:32 $
+:Version: $Revision: 1.2 $
 :Web site: http://sourceforge.net/projects/archetypes
 :Original URL: cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/plone-docs co Developers/Archetypes
 
@@ -104,11 +104,12 @@ See also README file in ArchGenXML!
 
 Usage
 -----
-::
 
-Usage: python ArchGenXML.py -o <target> [ options ] <xmi-source-file>
+The usage is::
 
-OPTIONS:
+  python ArchGenXML.py -o <target> [ options ] <xmi-source-file>
+
+  OPTIONS:
     -o <target>
         Output file directory path for data  representation classes. Last part
         is used for internal directory namings.
@@ -164,7 +165,7 @@ OPTIONS:
         set default licence string for module info-headers, taggedValue will
         override this
 
-Example
+Example::
 
     ./ArchGenXML.py -o MyNewProduct mynewproduct.xmi
 
