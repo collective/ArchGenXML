@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.34 2004/07/20 22:44:14 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.34.2.1 2004/07/27 18:44:28 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -245,7 +245,7 @@ class ArchetypesGenerator:
             'has_content_icon':has_content_icon,'content_icon':content_icon,
             'discussion':element.getTaggedValue('allow_discussion','0'),
             'global_allow':global_allow,'immediate_view':immediate_view,
-            'filter_content_types': not isTGVFalse(element.getTaggedValue('filter_content_types'))}
+            'filter_content_types': not (isTGVFalse(element.getTaggedValue('filter_content_types')) or element.hasStereoType('folder'))}
 
         return res
 
@@ -894,7 +894,7 @@ class ArchetypesGenerator:
             
         baseclass='BaseContent'
         baseschema='BaseSchema'            
-        if aggregatedClasses or baseaggregatedClasses or isTGVTrue(element.getTaggedValue('folderish')):                
+        if aggregatedClasses or baseaggregatedClasses or isTGVTrue(element.getTaggedValue('folderish')) or element.hasStereoType('folder'):
             # folderish
             baseclass='BaseFolder'
             baseschema='BaseFolderSchema'
@@ -959,7 +959,7 @@ class ArchetypesGenerator:
         #allowed_content_classes
         parentAggregates=''
         if element.getGenParents():
-            parentAggregates = '+ ' + ' + '.join(tuple([p.getCleanName()+".allowed_content_types" for p in element.getGenParents()]))
+            parentAggregates = '+ ' + ' + '.join(tuple(["getattr(%s,'allowed_content_types',[])"%p.getCleanName() for p in element.getGenParents()]))
         print >> outfile, CLASS_ALLOWED_CONTENT_TYPES % (repr(aggregatedClasses),parentAggregates)
         
         #allowed_content_interfaces
