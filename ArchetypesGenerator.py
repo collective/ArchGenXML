@@ -1336,7 +1336,8 @@ class ArchetypesGenerator(BaseGenerator):
             cpfromtgv = element.getTaggedValue('creation_permission', None)
             if cpfromtgv:
                 creation_permission= "'%s'" % cpfromtgv
-            if creation_permission:
+            ## abstract classes does not need an Add permission
+            if creation_permission and not element.isAbstract():
                 self.creation_permissions.append( [element.getCleanName(), creation_permission] )
 
         return outfile.getvalue()
