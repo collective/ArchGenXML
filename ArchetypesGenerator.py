@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.12 2004/05/16 12:05:35 yenzenz Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.13 2004/05/16 22:15:00 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -888,13 +888,16 @@ from Products.CMFCore.utils import UniqueObject
                 baseclass='I18NBaseContent'
                 baseschema='I18NBaseSchema'
             
-            #tagged vaues for base-schema overrule
+            #tagged values for base-schema overrule
             content_base_class=element.getTaggedValue('base_class')
             if content_base_class:
                 baseclass=content_base_class        
-
         
-        parentnames.insert(0,baseclass)
+        # normally a one of the Archetypes base classes are set. 
+        # if you dont want it set the TGV to zero '0'
+        if not isTGVFalse(element.getTaggedValue('base_class')):
+            parentnames.insert(0,baseclass)
+            
         if element.hasStereoType(self.portal_tools):
             print >>outfile,self.TEMPL_TOOL_HEADER
             parentnames.insert(0,'UniqueObject')
@@ -1009,7 +1012,7 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchetypesGenerator.py,v 1.12 2004/05/16 12:05:35 yenzenz Exp $
+RCS-ID $Id: ArchetypesGenerator.py,v 1.13 2004/05/16 22:15:00 yenzenz Exp $
 \"""
 # %(copyright)s
 #
