@@ -159,10 +159,21 @@ def install(self):
 
     props.use_folder_tabs=tuple(use_folder_tabs)
     
-    #autoinstall tools
-    
+    #autoinstall tools    
     for t in %(autoinstall_tools)s:
         portal.manage_addProduct[PROJECTNAME].manage_addTool(t)
+        # tools are not content. dont list it in navtree 
+        try:
+            self.portal_properties.navtree_properties.metaTypesNotToList.index(t)
+        except ValueError: 
+            self.portal_properties.navtree_properties.metaTypesNotToList.append(t)
+        except:
+            raise
+
+    # register tool in control panel
+    portal_control_panel=getToolByName(self,'portal_control_panel_actions')
+    %(register_configlets)s
+        
     
     #try to call a custom install method 
     #in 'AppInstall.py' method 'install'
@@ -198,6 +209,21 @@ def uninstall(self):
                 use_folder_tabs.remove(cl['klass'].portal_type)
 
     props.use_folder_tabs=tuple(use_folder_tabs)
+
+    #autouninstall tools    
+    for t in %(autoinstall_tools)s:
+        # undo: tools are not content. dont list it in navtree 
+        try:
+            self.portal_properties.navtree_properties.metaTypesNotToList.remove('PloneShop_Tool')
+        except ValueError:        
+            pass
+        except:
+            raise    
+    # unregister tool in control panel
+    portal_control_panel=getToolByName(self,'portal_control_panel_actions')    
+    %(unregister_configlets)s
+    
+            
 
     #try to call a custom uninstall method 
     #in 'AppInstall.py' method 'uninstall'

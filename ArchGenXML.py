@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.42 2003/10/29 13:09:49 yenzenz Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.43 2003/10/29 23:07:59 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -544,6 +544,24 @@ from Products.CMFCore.utils import UniqueObject
                 icon=None #'tool.gif' 
                 ).initialize( context )'''
 
+    TEMPL_CONFIGLET_INSTALL='''
+    portal_control_panel.registerConfiglet( '%(tool_name)s' #id of your Product
+        , '%(configlet_title)s' # Title of your Product
+        , 'string:${portal_url}/%(configlet_url)s/' 
+        , '%(configlet_condition)s' # a condition 
+        , 'Manage portal' # access permission
+        , '%(configlet_section)s' # section to which the configlet should be added: (Plone,Products,Members) 
+        , 1 # visibility
+        , '%(tool_name)sID'                                  
+        , '%(configlet_icon)s' # icon in control_panel
+        , '%(configlet_description)s'
+        , None
+        )'''
+
+    TEMPL_CONFIGLET_UNINSTALL='''
+    portal_control_panel.unregisterConfiglet('%(tool_name)s')'''
+    
+
 
     def generateStdFiles(self, target,projectName,generatedModules):
         #generates __init__.py, Extensions/Install.py and the skins directory
@@ -569,9 +587,57 @@ from Products.CMFCore.utils import UniqueObject
         extDir=os.path.join(target,'Extensions')
         makeDir(extDir)
         of=makeFile(os.path.join(extDir,'Install.py'))
-            
+
+        #handling of tools
         autoinstall_tools=[c[0].getName() for c in self.generatedClasses if c[0].getStereoType() in self.portal_tools and c[0].getTaggedValue('autoinstall') == '1' ]
-        of.write(installTemplate % {'project_dir':os.path.split(target)[1],'autoinstall_tools':repr(autoinstall_tools)})
+        
+        #handling of tools with configlets
+        register_configlets='#auto build\n'
+        unregister_configlets='#auto build\n'
+        for c in [cn[0] for cn in self.generatedClasses 
+                            if cn[0].getStereoType() in self.portal_tools and 
+                               cn[0].getTaggedValue('autoinstall') == '1' and 
+                               cn[0].getTaggedValue('configlet') != '0'
+                 ]:
+            configlet_title=c.getTaggedValue('configlet_title')
+            if not configlet_title:
+                configlet_title=c.getName()
+
+            configlet_section=c.getTaggedValue('configlet_section')
+            if not configlet_section or not configlet_section in ['Plone','Products','Members']:
+                configlet_section='Products'
+
+            configlet_condition=c.getTaggedValue('configlet_condition')
+            if not configlet_condition:
+                configlet_condition=''
+
+            configlet_icon=c.getTaggedValue('configlet_icon')
+            if not configlet_icon:
+                configlet_icon='plone_icon'
+
+            configlet_descr=c.getTaggedValue('configlet_description')
+            if not configlet_descr:
+                configlet_descr='ArchGenXML generated Configlet "'+configlet_title+'" in Tool "'+c.getName()+'".'
+                
+            register_configlets+=self.TEMPL_CONFIGLET_INSTALL % {
+                'tool_name':c.getName(),
+                'configlet_title':configlet_title,
+                'configlet_url':'portal_'+c.getName().lower(),
+                'configlet_condition':configlet_condition,
+                'configlet_section':configlet_section,
+                'configlet_icon':configlet_icon,
+                'configlet_description':configlet_descr,
+                } + '\n'
+                
+            unregister_configlets+=self.TEMPL_CONFIGLET_UNINSTALL % {
+                'tool_name':c.getName()
+                } + '\n'
+        
+        of.write(installTemplate % {'project_dir':os.path.split(target)[1],
+                                    'autoinstall_tools':repr(autoinstall_tools),
+                                    'register_configlets':register_configlets,
+                                    'unregister_configlets':unregister_configlets
+                                   })
         of.close()
         
     TEMPL_APECONFIG_BEGIN='''<?xml version="1.0"?>
