@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.10 2004/05/10 15:57:20 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.11 2004/05/16 03:31:37 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -594,7 +594,7 @@ def modify_fti(fti):
         map.update( {'widget':self.getWidget('Reference', rel.toEnd, name, classelement)} )
 
         if getattr(rel,'isAssociationClass',0):
-            map.update({'referenceClass':rel.getName()})
+            map.update({'referenceClass':"ContentReferenceCreator('%s')" % rel.getName()})
 
         doc=rel.getDocumentation(striphtml=self.striphtml)                
         res=self.getFieldFormatted(name,field,map,doc)
@@ -806,9 +806,14 @@ from Products.CMFCore.utils import UniqueObject
             print >> outfile,'from %s import %s' % (p.getQualifiedModuleName(package,forcePluginRoot=self.force_plugin_root),p.getName())
 
         assocs = element.getFromAssociations()
+        hasAssocClass=0
         for p in assocs:
             if getattr(p,'isAssociationClass',0):
-                print >> outfile,'from %s import %s' % (p.getQualifiedModuleName(package,forcePluginRoot=self.force_plugin_root),p.getName())
+                hasAssocClass=1
+                break
+            
+        if hasAssocClass:
+            print >> outfile,'from Products.Archetypes.ReferenceEngine import ContentReferenceCreator'
 
     def generateProtectedSection(self,outfile,element,section,ind=0):
         print >> outfile,indent(PyParser.PROTECTED_BEGIN,ind),section,'#fill in your manual code here'
@@ -1003,7 +1008,7 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchetypesGenerator.py,v 1.10 2004/05/10 15:57:20 zworkb Exp $
+RCS-ID $Id: ArchetypesGenerator.py,v 1.11 2004/05/16 03:31:37 zworkb Exp $
 \"""
 # %(copyright)s
 #
