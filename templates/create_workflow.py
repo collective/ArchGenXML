@@ -12,13 +12,13 @@
 """
 Programmatically creates a workflow type
 """
-__version__ = "$Revision: 1.1 $"[11:-2]
+__version__ = "$Revision: 1.2 $"[11:-2]
 
 from Products.CMFCore.WorkflowTool import addWorkflowFactory
 
 from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
 
-def setup<dtml-var "statemachine.getName()">(wf):
+def setup<dtml-var "statemachine.getCleanName()">(wf):
     "..."
     wf.setProperties(title='<dtml-var "statemachine.getName()">')
 
@@ -45,7 +45,7 @@ def setup<dtml-var "statemachine.getName()">(wf):
     
     sdef = wf.states['<dtml-var "_['sequence-item'].getName()">']
     sdef.setProperties(title="""<dtml-var "_['sequence-item'].getDocumentation(striphtml=generator.atgenerator.striphtml) or _['sequence-item'].getName()">""",
-                       transitions=<dtml-var "repr([t.getName() for t in _['sequence-item'].getOutgoingTransitions()])">)
+                       transitions=<dtml-var "repr([t.getCleanName() for t in _['sequence-item'].getOutgoingTransitions()])">)
     sdef.setPermission('Access contents information', 0, ['Manager', 'Owner'])
     sdef.setPermission('Modify portal content', 0, ['Manager', 'Owner'])
 
@@ -55,13 +55,13 @@ def setup<dtml-var "statemachine.getName()">(wf):
     <dtml-in "[t for t in statemachine.getTransitions() if t.getName()]">
     <dtml-let tran="_['sequence-item']">
 
-    tdef = wf.transitions['<dtml-var "tran.getName()">']
+    tdef = wf.transitions['<dtml-var "tran.getCleanName()">']
     tdef.setProperties(title="""<dtml-var "tran.getTaggedValue('label') or tran.getName()">""",
                        new_state_id="""<dtml-var "tran.getTargetStateName()">""",
                        trigger_type=1,
                        script_name="""""",
                        after_script_name="""""",
-                       actbox_name="""<dtml-var "tran.getTaggedValue('label') or tran.getName()">""",
+                       actbox_name="""<dtml-var "tran.getTaggedValue('label') or tran.getCleanName()">""",
                        actbox_url="""""",
                        actbox_category="""workflow""",
                        props={'guard_permissions': 'View', 'guard_roles': 'Anonymous; Owner; Manager'},
@@ -129,13 +129,13 @@ def setup<dtml-var "statemachine.getName()">(wf):
                        props={'guard_permissions': 'Review portal content', 'var_match_review_state': 'pending'})
 
 
-def create<dtml-var "statemachine.getName()">(id):
+def create<dtml-var "statemachine.getCleanName()">(id):
     "..."
     ob = DCWorkflowDefinition(id)
-    setup<dtml-var "statemachine.getName()">(ob)
+    setup<dtml-var "statemachine.getCleanName()">(ob)
     return ob
 
-addWorkflowFactory(create<dtml-var "statemachine.getName()">,
+addWorkflowFactory(create<dtml-var "statemachine.getCleanName()">,
                    id='<dtml-var "statemachine.getName()">',
                    title='<dtml-var "statemachine.getTaggedValue('label') or statemachine.getName()">')
 

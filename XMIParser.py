@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.90 2004/07/27 02:42:53 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.91 2004/07/27 10:10:15 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -29,6 +29,7 @@ default_wrap_width = 64
 
 #tag constants
 
+clean_trans=string.maketrans(':-. /', '_____')
 
 class XMI1_0:
     XMI_CONTENT="XMI.content"
@@ -716,6 +717,8 @@ class XMIElement:
                         self.maxOccurs=99999
 
                     #print 'maxOccurs:',self.maxOccurs
+                 
+            self.annotate()
 
 
     def addChild(self, element):
@@ -828,17 +831,15 @@ class XMIElement:
 
     def annotate(self):
         # If there is a namespace, replace it with an underscore.
-        trans=string.maketrans(':-.', '___')
-        if self.name:
-            self.unmappedCleanName = str(self.name).translate(trans)
+        if self.getName():
+            self.unmappedCleanName = str(self.getName()).translate(clean_trans)
         else:
             self.unmappedCleanName = ''
 
         self.cleanName = mapName(self.unmappedCleanName)
 
-
-        for child in self.getChildren():
-            child.annotate()
+##        for child in self.getChildren():
+##            child.annotate()
 
     def isIntrinsicType(self):
         return str(self.getType()).startswith('xs:')
@@ -1585,7 +1586,7 @@ class XMIStateMachine(XMIStateContainer):
         return self.transitions
     
     def getTransitionNames(self):
-        return [t.getName() for t in self.getTransitions() if t.getName()]
+        return [t.getCleanName() for t in self.getTransitions() if t.getName()]
     
     def buildStates(self):
         sels=getElementsByTagName(self.domElement,XMI.SIMPLESTATE,recursive=1)
@@ -1767,7 +1768,6 @@ def buildHierarchy(doc,packagenames):
             c.internalOnly=1
             print 'internal class (not generated):',c.getName()
 
-    res.annotate()
     XMI.buildRelations(doc,allObjects)
     XMI.buildGeneralizations(doc,allObjects)
     XMI.buildRealizations(doc,allObjects)
