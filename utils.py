@@ -39,3 +39,7 @@ def mapName(oldName):
         if oldName in NameTable.keys():
             newName = NameTable[oldName]
     return newName.replace('-','_')
+
+def indent(s,indent,prepend=''):
+    lines=['    '*indent + prepend + l for l in s.split('\n')]
+    return '\n'.join(lines)
