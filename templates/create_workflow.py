@@ -7,44 +7,41 @@ Programmatically creates a workflow type
 __version__ = "$Revision: 1.6 $"[11:-2]
 
 from Products.CMFCore.WorkflowTool import addWorkflowFactory
-
 from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
 from Products.ExternalMethod.ExternalMethod import ExternalMethod
 
 def setup<dtml-var "statemachine.getCleanName()">(self, wf):
-    "..."
-    productname='<dtml-var "package.getCleanName()">'
+    """
+    <dtml-var "statemachine.getCleanName()"> Workflow Definition
+    """
+
     wf.setProperties(title='<dtml-var "statemachine.getCleanName()">')
 
+    # worklists generations are not defined yet...
     for s in <dtml-var "repr(statemachine.getStateNames(no_duplicates = 1))">:
         wf.states.addState(s)
     for t in <dtml-var "repr(statemachine.getTransitionNames(no_duplicates = 1))">:
         wf.transitions.addTransition(t)
-
-
     for v in ['review_history', 'comments', 'time', 'actor', 'action']:
         wf.variables.addVariable(v)
-    for l in ['reviewer_queue']:
-        wf.worklists.addWorklist(l)
     for p in <dtml-var "repr(statemachine.getAllPermissionNames())">:
         wf.addManagedPermission(p)
-        
 
     ## Initial State
+
     wf.states.setInitialState('<dtml-var "statemachine.getInitialState().getCleanName()">')
 
     ## States initialization
     
-    <dtml-in "[s for s in statemachine.getStates(no_duplicates = 1) if s.getCleanName()]">
-    
+<dtml-in "[s for s in statemachine.getStates(no_duplicates = 1) if s.getCleanName()]">
     sdef = wf.states['<dtml-var "_['sequence-item'].getCleanName()">']
     sdef.setProperties(title="""<dtml-var "_['sequence-item'].getDocumentation(striphtml=generator.atgenerator.striphtml) or _['sequence-item'].getCleanName()">""",
                        transitions=<dtml-var "repr([t.getCleanName() for t in _['sequence-item'].getOutgoingTransitions()])">)
-    <dtml-in "_['sequence-item'].getPermissionsDefinitions()"> 
-sdef.setPermission('<dtml-var "_['sequence-item'].get('permission')">', 0, <dtml-var "_['sequence-item'].get('roles')">)
-    </dtml-in>
+<dtml-in "_['sequence-item'].getPermissionsDefinitions()"> 
+    sdef.setPermission('<dtml-var "_['sequence-item'].get('permission')">', 0, <dtml-var "_['sequence-item'].get('roles')">)
+</dtml-in>
 
-    </dtml-in>
+</dtml-in>
 
     ## Transitions initialization
     <dtml-in "[t for t in statemachine.getTransitions(no_duplicates = 1) if t.getCleanName()]">
@@ -123,15 +120,6 @@ sdef.setPermission('<dtml-var "_['sequence-item'].get('permission')">', 0, <dtml
                        for_status=1,
                        update_always=1,
                        props=None)
-
-    ## Worklists Initialization
-    ldef = wf.worklists['reviewer_queue']
-    ldef.setProperties(description="""Reviewer tasks""",
-                       actbox_name="""Pending (%(count)d)""",
-                       actbox_url="""%(portal_url)s/search?review_state=pending""",
-                       actbox_category="""global""",
-                       props={'guard_permissions': 'Review portal content', 'var_match_review_state': 'pending'})
-
 
 def create<dtml-var "statemachine.getCleanName()">(self, id):
     "..."

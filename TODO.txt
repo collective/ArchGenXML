@@ -17,3 +17,9 @@ http://plone.org/development/teams/developer/ArchGenXML
 * Tool support:
   automagically disable uneccessary tabs (like base_view, metadata 
   and maybe references) on classes with stereotype 'portal_tool'
+
+* On Workflow definitions generation
+
+  * Define how worklists would be represented using state diagrams
+
+  * Generate better suport for guards (roles, permissions) on transitions

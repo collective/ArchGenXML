@@ -1692,7 +1692,13 @@ class XMIStateMachine(XMIStateContainer):
         cl.setStateMachine(self)
         
     def getAllPermissionNames(self):
-        return []
+        ret = []
+        for s in self.getStates():
+            pd = s.getPermissionsDefinitions()
+            for p in pd:
+                if p['permission'] not in ret:
+                    ret.append(p['permission'])
+        return ret
     
     def getInitialState(self):
         return self.getStates()[0]
