@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.34.2.1 2004/07/27 18:44:28 zworkb Exp $
+# RCS-ID:      $Id$
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -748,10 +748,12 @@ class ArchetypesGenerator:
         print >> outfile
 
         if mode == 'class':
-            permission=getExpression(m.getTaggedValue('permission',None))
-            if permission:
+            rawPerm=m.getTaggedValue('permission',None)
+            permission=getExpression(rawPerm)
+            if rawPerm :
                 print >> outfile,indent("security.declareProtected(%s,'%s')" % (permission,m.getName()),1)
-            
+
+         
         cls=self.parsed_class_sources.get(klass.getName(),None)
         
         if cls:
