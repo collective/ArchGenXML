@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.82 2004/06/18 14:54:52 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.83 2004/06/18 15:02:01 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -1119,6 +1119,7 @@ class XMIClass (XMIElement):
                 title.setTaggedValue('widget:i18n_domain',"plone")
                 title.setTaggedValue('widget:description_msgid',"help_title")
                 title.setTaggedValue('searchable','python:1')
+                title.setTaggedValue('accessor','Title')
                 title.setParent(self)
                 self.addAttributeDef(title,0)
     
