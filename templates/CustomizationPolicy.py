@@ -6,7 +6,7 @@ class <dtml-var "package.getProductName()">CustomizationPolicy(DefaultCustomizat
 
     def customize(self, portal):
         ''' this method gets called during the customization '''
-        #DefaultCustomizationPolicy.customize(self, portal)
+        DefaultCustomizationPolicy.customize( portal)
 
 def register(context):
     addPolicy('<dtml-var "package.getProductName()">', <dtml-var "package.getProductName()">CustomizationPolicy())
