@@ -2058,7 +2058,7 @@ class XMIState(XMIElement):
 
         for k, v in tv.items():
             # list of tagged values that are NOT permissions
-            non_permissions = ['initial_state']
+            non_permissions = ['initial_state', 'documentation']
             if k in non_permissions or not v:
                 continue
 
@@ -2091,15 +2091,19 @@ class XMIState(XMIElement):
 
         # If not permissions were defined, uses the default values
 
-        for p in pm.values():
-            has_permission = 0
-            for r in ret:
-                if r.get('permission', None) == p:
-                    has_permission = 1
-                    break
-            if not has_permission:
-                ret.append({'permission' : p,
-                            'roles' : ['Owner', 'Manager']})
+        # Removed (~optilude) - this is a terrible mis-feature. It must be
+        # possible to avoid setting these properties so that they can be
+        # acquired from parent.
+
+        # for p in pm.values():
+        #    has_permission = 0
+        #    for r in ret:
+        #        if r.get('permission', None) == p:
+        #            has_permission = 1
+        #            break
+        #    if not has_permission:
+        #        ret.append({'permission' : p,
+        #                    'roles' : ['Owner', 'Manager']})
 
         return ret
 

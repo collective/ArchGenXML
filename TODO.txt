@@ -12,6 +12,15 @@ http://plone.org/development/teams/developer/ArchGenXML
                     value2)
   If this is the end of a method, the line with "value2)" is lost.
     
+* Creation permissions:
+
+    - tagged value creation_permission (string or python:) on class
+    - use Bricolite method for registering custom permissions
+    
+* Workflow
+
+    - tagged value workflow on class sets workflow by name, allow empty for none
+    
 * Initialise uml_profile with all tagged values + steretypes + documentation
 
     - See stereotype_reference.stx, tgv_reference.stx

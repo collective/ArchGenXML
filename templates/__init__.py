@@ -42,11 +42,11 @@ def initialize(context):
 <dtml-var "protected_init_section_top">
     # imports packages and types for registration
 <dtml-in "package_imports">
-    <dtml-if sequence-item>
-    
+<dtml-if sequence-item>
     import <dtml-var sequence-item>
-    </dtml-if>
+</dtml-if>
 </dtml-in>
+
 <dtml-in "class_imports">
     import <dtml-var sequence-item>
 </dtml-in>
@@ -62,7 +62,7 @@ def initialize(context):
 
 </dtml-if>
     # initialize portal content
-<dtml-if creation_permissions>
+<dtml-if "creation_permissions">
     all_content_types, all_constructors, all_ftis = process_types(
         listTypes(PROJECTNAME),
         PROJECTNAME)

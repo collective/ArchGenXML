@@ -24,6 +24,9 @@ filter_content_types -- If set to true (1), explicitly turn on the filter_conten
 
 allowed_content_types -- A comma-separated list of allowed sub-types for a (folderish) content type. Note that allowed content types are automatically set when using aggregation and composition between classes to specify containment.
 
+inherit_allowed_types -- By default, a child type will inherit the allowable
+content types from its parents. Set this property to false (0) to turn this off.
+
 class_header -- An arbitrary string which is injected into the header section of the class, before any methods are defined.
 
 default_actions -- If set to true (1), generate explicitly the default 'view' and 'edit' actions. Usually, these are inherited from the Archetypes base classes, but if you have a funny base class, this may be necessary.

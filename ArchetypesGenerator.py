@@ -1151,8 +1151,11 @@ class ArchetypesGenerator(BaseGenerator):
                                  'name': name})
 
         # check and collect Aggregation
-        aggregatedClasses = element.getRefs() + element.getSubtypeNames(recursive=1,filter=['class'])
-        aggregatedInterfaces = element.getRefs() + element.getSubtypeNames(recursive=1,filter=['interface'])
+        
+        # Unset recursive flag (~optilude) - we don't want to get subclasses'
+        # aggregation in allowable types of parent!
+        aggregatedClasses = element.getRefs() + element.getSubtypeNames(recursive=0,filter=['class'])
+        aggregatedInterfaces = element.getRefs() + element.getSubtypeNames(recursive=0,filter=['interface'])
 
         if element.getTaggedValue('allowed_content_types'):
             aggregatedClasses=aggregatedClasses+element.getTaggedValue('allowed_content_types').split(',')
@@ -1299,13 +1302,14 @@ class ArchetypesGenerator(BaseGenerator):
 
         #allowed_content_classes
         parentAggregates=''
-        if element.getGenParents():
+        
+        if isTGVTrue(element.getTaggedValue('inherit_allowed_types', True)) and element.getGenParents():
             parentAggregates = '+ ' + ' + '.join(tuple(["getattr(%s,'allowed_content_types',[])"%p.getCleanName() for p in element.getGenParents()]))
         print >> outfile, CLASS_ALLOWED_CONTENT_TYPES % (repr(aggregatedClasses),parentAggregates)
 
         #allowed_content_interfaces
         parentAggregatedInterfaces=''
-        if element.getGenParents():
+        if isTGVTrue(element.getTaggedValue('inherit_allowed_types', True)) and element.getGenParents():
             parentAggregatedInterfaces = '+ ' + ' + '.join(tuple(['getattr('+p.getCleanName()+",'allowed_content_interfaces',[])" for p in element.getGenParents()]))
 
         if aggregatedInterfaces or baseaggregatedInterfaces:
