@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.72 2004/01/18 11:41:31 yenzenz Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.73 2004/01/18 12:18:58 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -49,7 +49,7 @@ class ArchetypesGenerator:
 
     force=1
     unknownTypesAsString=0
-    generateActions=0
+    generateActions=1
     generateDefaultActions=0
     prefix=''
     packages=[] #packages to scan for classes
@@ -163,7 +163,7 @@ class ArchetypesGenerator:
             
         ftiTempl='''
 
-    # uncommant lines below when you need
+    # uncomment lines below when you need
     factory_type_information={
         'allowed_content_types':%(subtypes)s %(parentsubtypes)s,
         %(has_content_icon)s'content_icon':'%(content_icon)s',
@@ -980,7 +980,7 @@ from Products.I18NArchetypes.public import *
 def main():
     version()
     args = sys.argv[1:]
-    opts, args = getopt.getopt(args, 'f:a:t:o:s:p:P:n',['ape','actions','default-actions','no-actons','ape','ape-support','noclass','unknown-types-as-string','method-preservation','no-method-preservation','i18n-support','i18n'])
+    opts, args = getopt.getopt(args, 'f:a:t:o:s:p:P:n',['ape','actions','default-actions','no-actions','ape','ape-support','noclass','unknown-types-as-string','method-preservation','no-method-preservation','i18n-support','i18n'])
     prefix = ''
     outfileName = None
     yesno={'yes':1,'y': 1, 'no':0, 'n':0}
@@ -1045,12 +1045,12 @@ ArchGenXML %(version)s
 
 USAGE_TEXT = """
 Usage: python ArchGenXML.py [ options ] <in_xmi_file>
-Options:
+Options (defaults marked with '*'):
     -o <outfilename>                                    Output file path for data representation classes.
                                                         Last part of used for internal directory namings.
     --unknown-types-as-string                           unknown attribut types will be treated as text
-    --actions                                           generates actions
-    --method-preservation / no-method-preservation      methods in the target sources will be preserved
+    --actions* / --no-actions                           generates actions
+    --method-preservation* / no-method-preservation     methods in the target sources will be preserved
     -P <packagename>                                    package to parse
     --ape-support                                       generate apeconf.xml and generators for ape (needs Archetypes 1.1+)
     --i18n-support                                      support for i18NArchetypes:
