@@ -82,6 +82,8 @@ class ArchetypesGenerator(BaseGenerator):
     default_class_type='content_class'
 
     uml_profile=UMLProfile(BaseGenerator.uml_profile)
+
+
     uml_profile.addStereoType('portal_tool',['XMIClass'],
         description='turns a class into a portal tool')
     uml_profile.addStereoType('stub',['XMIClass'],
@@ -90,6 +92,8 @@ class ArchetypesGenerator(BaseGenerator):
         description='turns a class into a portal tool',dispatching=1,
         generator='generateArchetypesClass')
 
+    uml_profile.addStereoType('tests',['XMIPackage'],
+        description='this package will be treated as test package')
     uml_profile.addStereoType('plone_testcase',['XMIClass'],dispatching=1,
         generator='generateBaseTestcaseClass',template='tests/PloneTestcase.py')
     uml_profile.addStereoType('testcase',['XMIClass'],dispatching=1,
@@ -1606,6 +1610,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         # Prepare DTML varibles
         d={'generator'                     : self,
+           'package'                       : package, 
            'utils'                         : utils,
            'package_imports'               : packageImports,
            'class_imports'                 : classImports,

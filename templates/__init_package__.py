@@ -9,8 +9,10 @@ import <dtml-var sequence-item>
 </dtml-in>
 
 #classes
+<dtml-if "not package.hasStereoType(['tests'])">
 <dtml-in "class_imports">
 import <dtml-var sequence-item>
 </dtml-in>
+</dtml-if>
 
 <dtml-var "protected_module_footer">
