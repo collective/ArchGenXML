@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.1 2003/05/31 02:44:51 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.2 2003/06/01 09:15:21 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -95,7 +95,7 @@ class ArchetypesGenerator:
         ftiTempl='''    
         
     factory_type_information={
-        'allowed_content_types':(%(subtypes)s),
+        'allowed_content_types':%(subtypes)s,
         #'content_icon':'%(type_name)s.gif',
         'immediate_view':'base_view' 
         }
