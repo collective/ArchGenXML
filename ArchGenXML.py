@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.61 2003/12/05 16:20:25 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.62 2003/12/05 16:38:05 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -50,6 +50,7 @@ class ArchetypesGenerator:
     force=1
     unknownTypesAsString=0
     generateActions=0
+    generateDefaultActions=0
     prefix=''
     packages=[] #packages to scan for classes
     noclass=0   # if set no module is reverse engineered,
@@ -145,6 +146,9 @@ class ArchetypesGenerator:
 
         actTempl='''
     actions=(
+        '''
+        if self.generateDefaultActions:
+            actTempl += '''
            {'action': 'string:${object_url}/portal_form/base_edit',
           'category': 'object',
           'id': 'edit',
@@ -158,21 +162,22 @@ class ArchetypesGenerator:
           'permissions': ('View',)},
 
         '''
-        if subtypes:
-            actTempl=actTempl+'''
+            if subtypes:
+                actTempl=actTempl+'''
            {'action': 'folder_listing',
           'category': 'object',
           'id': 'folder_listing',
           'name': 'folder_listing',
           'permissions': ('View',)},
 
-    '''
+        '''
+    
         method_actions=self.generateMethodActions(element)
         actTempl +=method_actions
-
         actTempl+='''
-              )
+          )
         '''
+            
         ftiTempl='''
 
     # uncommant lines below when you need
@@ -923,7 +928,7 @@ from Products.Archetypes.public import *
 def main():
     version()
     args = sys.argv[1:]
-    opts, args = getopt.getopt(args, 'f:a:t:o:s:p:P:n',['ape','actions','no-actons','ape','ape-support','noclass','unknown-types-as-string','method-preservation','no-method-preservation'])
+    opts, args = getopt.getopt(args, 'f:a:t:o:s:p:P:n',['ape','actions','default-actions','no-actons','ape','ape-support','noclass','unknown-types-as-string','method-preservation','no-method-preservation'])
     prefix = ''
     outfileName = None
     yesno={'yes':1,'y': 1, 'no':0, 'n':0}
@@ -948,6 +953,8 @@ def main():
             options['generateActions'] = yesno[option[1]]
         elif option[0] == '--actions':
             options['generateActions'] = 1
+        elif option[0] == '--default-actions':
+            options['generateDefaultActions'] = 1
         elif option[0] == '--no-method-preservation':
             options['method_preservation'] = 0
         elif option[0] == '--method-preservation':
