@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.86 2004/06/27 22:03:43 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.87 2004/07/26 01:06:35 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -100,6 +100,22 @@ class XMI1_0:
     ABSTRACTION="Foundation.Core.Abstraction"
     DEP_CLIENT="Foundation.Core.Dependency.client"
     DEP_SUPPLIER="Foundation.Core.Dependency.supplier"
+    
+    #State Machine
+
+    STATEMACHINE='Behavioral_Elements.State_Machines.StateMachine'
+    STATEMACHINE_CONTEXT="Behavioral_Elements.State_Machines.StateMachine.context"
+    STATEMACHINE_TOP="Behavioral_Elements.State_Machines.StateMachine.top"
+    COMPOSITESTATE="Behavioral_Elements.State_Machines.CompositeState"
+    COMPOSITESTATE_SUBVERTEX="Behavioral_Elements.State_Machines.CompositeState.subvertex"
+    SIMPLESTATE="Behavioral_Elements.State_Machines.State"
+    STATEVERTEX_OUTGOING="Behavioral_Elements.State_Machines.StateVertex.outgoing"
+    STATEVERTEX_INCOMING="Behavioral_Elements.State_Machines.StateVertex.incoming"
+    TRANSITION="Behavioral_Elements.State_Machines.Transition"
+    STATEMACHINE_TRANSITIONS="Behavioral_Elements.State_Machines.StateMachine.transitions"
+    TRANSITON_TARGET="Behavioral_Elements.State_Machines.Transition.target"
+    TRANSITION_SOURCE="Behavioral_Elements.State_Machines.Transition.source"
+    
 
     aggregates=['composite','aggregate']
 
@@ -338,8 +354,13 @@ class XMI1_0:
     def getOwnedElement(self,el):
         return getElementByTagName(el,self.OWNED_ELEMENT)
 
-    def getModel(self,doc):
+    def getContent(self,doc):
         content=getElementByTagName(doc,XMI.XMI_CONTENT,recursive=1)
+
+        return content
+
+    def getModel(self,doc):
+        content=self.getContent(doc)
         model=getElementByTagName(content,XMI.MODEL,recursive=0)
 
         return model
@@ -411,6 +432,22 @@ class XMI1_1 (XMI1_0):
     DEP_SUPPLIER="UML:Dependency.supplier"
 
     ASSOCIATION_CLASS='UML:AssociationClass'
+
+    #State Machine
+
+    STATEMACHINE="UML:StateMachine"
+    STATEMACHINE_CONTEXT="UML:StateMachine.context"
+    STATEMACHINE_TOP="UML:StateMachine.top"
+    COMPOSITESTATE="UML:CompositeState"
+    COMPOSITESTATE_SUBVERTEX="UML:CompositeState.subvertex"
+    SIMPLESTATE="UML:SimpleState"
+    STATEVERTEX_OUTGOING="UML:StateVertex.outgoing"
+    STATEVERTEX_INCOMING="UML:StateVertex.incoming"
+    TRANSITION="UML:Transition"
+    STATEMACHINE_TRANSITIONS="UML:StateMachine.transitions"
+    TRANSITON_TARGET="UML:Transition.target"
+    TRANSITION_SOURCE="UML:Transition.source"
+
 
     def getName(self,domElement):
         return domElement.getAttribute('name').strip()
@@ -852,16 +889,49 @@ class XMIElement:
         return [self.getName()]
 
 
-class XMIPackage(XMIElement):
+class StateMachineContainer:
+    def __init__(self):
+        self.statemachines=[]
+        
+    def findStateMachines(self):
+        ownedElement=XMI.getOwnedElement(self.domElement)
+        statemachines=getElementsByTagName(ownedElement,XMI.STATEMACHINE) 
+        print 'statemachines1:',statemachines
+        return statemachines
+        
+    def buildStateMachines(self, recursive=1):
+        #print 'buildClasses:',self.getFilePath(includeRoot=1)
+        statemachines=self.findStateMachines()
+
+        for m in statemachines:
+            sm=XMIStateMachine(m)
+            if sm.getName():
+                print 'StateMachine:',sm.getName(),sm.id
+                self.addStateMachine(sm)
+
+        if recursive:
+            for p in self.getPackages():
+                p.buildStateMachines()
+
+    def addStateMachine(self,sm):
+        self.statemachines.append(sm)
+        sm.setParent(self)
+        
+    def getStateMachines(self):
+        return self.statemachines
+
+
+class XMIPackage(XMIElement, StateMachineContainer):
     project=None
     isroot=0
 
     def __init__(self,el):
         XMIElement.__init__(self,el)
+        StateMachineContainer.__init__(self)
         self.classes=[]
         self.interfaces=[]
         self.packages=[]
-
+        
     def initFromDOM(self,domElement=None):
         self.parentPackage=None
         XMIElement.initFromDOM(self,domElement)
@@ -1022,21 +1092,35 @@ class XMIPackage(XMIElement):
         path=self.getPath(parent=ref)
         return path
 
+
 class XMIModel(XMIPackage):
     isroot=1
     parent=None
 
     def __init__(self,doc):
         self.document=doc
+        self.content=XMI.getContent(doc)
         self.model=XMI.getModel(doc)
         XMIPackage.__init__(self,self.model)
 
+    def findStateMachines(self):
+        statemachines=getElementsByTagName(self.content,XMI.STATEMACHINE)
+        statemachines.extend(getElementsByTagName(self.model,XMI.STATEMACHINE))
+        
+        print 'statemachines:',statemachines
 
-class XMIClass (XMIElement):
+        ownedElement=XMI.getOwnedElement(self.domElement)
+        statemachines.extend(getElementsByTagName(ownedElement,XMI.STATEMACHINE) )
+        return statemachines
+
+
+class XMIClass (XMIElement, StateMachineContainer):
     package=None
     isinterface=0
-
+    statemachine=None
+    
     def __init__(self,*args,**kw):
+        StateMachineContainer.__init__(self)
         XMIElement.__init__(self,*args,**kw)
         self.assocsTo=[]
         self.assocsFrom=[]
@@ -1052,6 +1136,7 @@ class XMIClass (XMIElement):
     def initFromDOM(self,domElement):
         XMIElement.initFromDOM(self,domElement)
         XMI.calcClassAbstract(self)
+        self.buildStateMachines(recursive=0)
 
     def isInternal(self):
         ''' internal class '''
@@ -1266,6 +1351,12 @@ class XMIClass (XMIElement):
         if self.package.getProduct() != ref.getProduct():
             res='Products.'+res
         return res
+    
+    def setStateMachine(self,sm):
+        self.statemachine=sm
+        
+    def getStateMachine(self):
+        return self.statemachine
 
 
 class XMIInterface(XMIClass):
@@ -1417,6 +1508,56 @@ class XMIAssociationClass (XMIClass, XMIAssociation):
 class XMIAbstraction(XMIElement):
     pass
 
+#-----------------------------------
+# here comes the Workflow support
+#-----------------------------------
+
+class XMIStateContainer(XMIElement):
+    
+    def __init__(self,*args,**kwargs):
+        XMIElement.__init__(self,*args,**kwargs)
+        self.states=[]
+        
+        
+    def addState(self, state):
+        self.states.append(state)
+        state.setParent(self)
+        
+class XMIStateMachine(XMIStateContainer):
+    
+    def init(self):
+        self.transitions=[]
+        
+    def __init__(self,*args,**kwargs):
+        XMIStateContainer.__init__(self,*args,**kwargs)
+        self.init()
+        print 'created statemachine:',self.getId()
+        
+    def addTransition(self, transition):
+        self.transitions.append(transition)
+        transition.setParent(self)
+            
+
+class XMIStateTransition(XMIElement):
+    def __init__(self,*args,**kwargs):
+        XMIElement.__init__(self,*args,**kwargs)
+
+
+class XMIState(XMIElement):
+    def __init__(self,*args,**kwargs):
+        XMIElement.__init__(self,*args,**kwargs)
+
+
+class XMICompositeState(XMIState):
+    def __init__(self,*args,**kwargs):
+        XMIState.__init__(self,*args,**kwargs)
+        XMIStateMachine.init(self)
+
+    
+
+#----------------------------------------------------------
+
+
 def buildDataTypes(doc):
     global datatypes
 
@@ -1481,6 +1622,7 @@ def buildHierarchy(doc,packagenames):
 
     res.buildPackages()
     res.buildClassesAndInterfaces()
+    res.buildStateMachines()
 
     #print 'res:',res.getName()
 
