@@ -215,6 +215,9 @@ parser.add_option("-o",
         section="GENERAL",
         )
 
+#----------------------------------------------------------------------------
+# Config File options
+
 group = OptionGroup(parser, "Configuration File Options")
 
 group.add_option("-c", 
@@ -232,37 +235,42 @@ group.add_option( "--sample-config",
 
 parser.add_option_group(group)
 
-parser.add_option("-P", 
-        "--parse-packages",
-        type="commalist",
-        action="append", 
-        metavar="PACKAGE", 
-        help="Name of packages to parse in source file (can specify several times)",
-        section="GENERAL",
-        )
 
-parser.add_option("--method-preservation", 
-        help="Methods in the target source will be preserved (default)", 
-        default=1,
-        dest="method_preservation",
-        action="store_true",
-        section="CLASSES",
-        )
+#----------------------------------------------------------------------------
+# Parsing Options
 
-parser.add_option("--no-method-preservation", 
-        help="Methods in the target source will not be preserved", 
-        dest="method_preservation",
-        action="store_false",
-        section="CLASSES",
-        )
+group = OptionGroup(parser, "Parsing Options")
 
-parser.add_option("-t",
+group.add_option("-t",
         "--unknown-types-as-string", 
         dest="unknownTypesAsString",
         help="Unknown attribute types will be treated as strings", 
         action="store_true",
         section="CLASSES",
         )
+
+group.add_option("-P", 
+        "--parse-packages",
+        type="commalist",
+        action="append", 
+        metavar="PACKAGE", 
+        dest="parse_packages",
+        help="Name of packages to parse in source file (can specify several times)",
+        section="GENERAL",
+        )
+
+# XXX:
+# Not sure that this works in the current system.
+# utils.py/makeFile looks for force="ask", but not sure this is set
+
+group.add_option("-f", 
+        "--force",
+        help="Overwrite files without asking?",
+        default=1,
+        section="GENERAL",
+        )
+
+parser.add_option_group(group)
 
 #----------------------------------------------------------------------------
 # Generation Options
@@ -327,6 +335,20 @@ group.add_option("--strip-html",
         )
 
 
+group.add_option("--method-preservation", 
+        help="Methods in the target source will be preserved (default)", 
+        default=1,
+        dest="method_preservation",
+        action="store_true",
+        section="CLASSES",
+        )
+
+group.add_option("--no-method-preservation", 
+        help="Methods in the target source will not be preserved", 
+        dest="method_preservation",
+        action="store_false",
+        section="CLASSES",
+        )
 parser.add_option_group(group)
 
 
@@ -499,12 +521,6 @@ group.add_option("--generate-packages",
         type="commalist",
         )
 
-group.add_option("-f", 
-        "--force",
-        help="FIXME",
-        section="GENERAL",
-        )
-
 group.add_option("-n",
         "--noclass",
         action="store_true",
@@ -521,6 +537,9 @@ group.add_option("--default-field-generation",
         action="store_true",
         section="CLASSES",
         )
+
+# uses ATBackRef product (Phil)
+#   referee can show references
 
 group.add_option("--backreferences-support",
         dest="backreferences_support",
