@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.100 2004/02/26 14:55:28 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.101 2004/02/27 10:09:43 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -39,7 +39,7 @@ YamlGen = 0
 from utils import makeFile
 from utils import makeDir
 from utils import mapName
-from utils import indent, getExpression,isTGVTrue
+from utils import indent, getExpression,isTGVTrue,isTGVFalse
 
 #
 # Representation of element definition.
@@ -100,7 +100,7 @@ class ArchetypesGenerator:
         outfile=StringIO()
         print >> outfile
         for m in element.getMethodDefs():
-            if m.getStereoType() in ['action','view','form']:
+            if m.hasStereoType( ['action','view','form']):
                 action_name=m.getTaggedValue(m.getStereoType(), m.getName()).strip()
                 print 'generating ' + m.getStereoType()+':',action_name
                 dict={}
@@ -119,14 +119,14 @@ class ArchetypesGenerator:
 
                 print >>outfile, self.ACT_TEMPL % dict
 
-            if m.getStereoType() == 'view':
+            if m.hasStereoType('view'):
                 f=makeFile(os.path.join(self.outfileName,'skins',self.projectName,action_name+'.pt'),0)
                 if f:
                     templdir=os.path.join(sys.path[0],'templates')
                     viewTemplate=open(os.path.join(templdir,'action_view.pt')).read()
                     f.write(viewTemplate)
 
-            elif m.getStereoType() == 'form':
+            elif m.hasStereoType('form'):
                 f=makeFile(os.path.join(self.outfileName,'skins',self.projectName,action_name+'.cpt'),0)
                 if f:
                     templdir=os.path.join(sys.path[0],'templates')
@@ -222,7 +222,7 @@ def modify_fti(fti):
 
         global_allow=not element.isDependent()
         #print 'dependent:',element.isDependent(),element.getName()
-        if element.getStereoType() in self.portal_tools or element.isAbstract():
+        if element.hasStereoType(self.portal_tools) or element.isAbstract():
             global_allow=0
 
         has_content_icon=''
@@ -234,7 +234,7 @@ def modify_fti(fti):
         res=ftiTempl % {'subtypes':repr(tuple(subtypes)),
             'has_content_icon':has_content_icon,'content_icon':content_icon,
             'parentsubtypes':parentsubtypes,'global_allow':global_allow,'immediate_view':immediate_view,
-            'filter_content_types':not isTGVTrue(element.getTaggedValue('folderish'))}
+            'filter_content_types': not isTGVFalse(element.getTaggedValue('filter_content_types'))}
 
         return res
 
@@ -565,7 +565,7 @@ def modify_fti(fti):
         
         #if __init__ has to be generated for tools i want _not_ __init__ to be preserved
         #if it is added to method_names it wont be recognized as a manual method (hacky but works)
-        if element.getStereoType() in self.portal_tools and '__init__' not in method_names:
+        if element.hasStereoType(self.portal_tools) and '__init__' not in method_names:
             method_names.append('__init__')
             
         if self.method_preservation:
@@ -583,11 +583,11 @@ def modify_fti(fti):
     def generateMethod(self,outfile,m,klass):
         #ignore actions and views here because they are
         #generated separately
-        if m.getStereoType() in ['action','view','form']:
+        if m.hasStereoType(['action','view','form']):
             return
         
         #print 'generatemethod:',m.getStereoType(),m.getName()
-        if m.getStereoType()=='portlet_view':
+        if m.hasStereoType('portlet_view'):
             view_name=m.getTaggedValue('view').strip() or m.getName()
             print 'generating portlet:',view_name
             autoinstall=m.getTaggedValue('autoinstall')
@@ -660,6 +660,8 @@ from Products.CMFCore.utils import UniqueObject
     '''
     def generateClasses(self, outfile, element, delayed):
         wrt = outfile.write
+        print '=====================',element.getStereoType()
+        print '+++++++++++++++++++++',element.getStereoTypes()
         wrt('\n')
         parentnames = [p.getCleanName() for p in element.getGenParents()]
         for p in parentnames:
@@ -711,7 +713,7 @@ from Products.CMFCore.utils import UniqueObject
                 baseclass='I18NBaseContent'
             
         parentnames.insert(0,baseclass)
-        if element.getStereoType() in self.portal_tools:
+        if element.hasStereoType(self.portal_tools):
             print >>outfile,self.TEMPL_TOOL_HEADER
             parentnames.insert(0,'UniqueObject')
 
@@ -740,7 +742,7 @@ from Products.CMFCore.utils import UniqueObject
         print >> outfile,'''    archetype_name = '%s'   #this name appears in the 'add' box ''' %  archetype_name
         self.generateArcheSchema(outfile,element)
 
-        if element.getStereoType() in self.portal_tools:
+        if element.hasStereoType(self.portal_tools):
             tool_instance_name=element.getTaggedValue('tool_instance_name') or 'portal_'+element.getName().lower()
             print >> outfile,self.TEMPL_CONSTR_TOOL % (baseclass,tool_instance_name)
             print >> outfile
@@ -765,7 +767,7 @@ from Products.CMFCore.utils import UniqueObject
 # generated by: ArchGenXML Version %(version)s http://sf.net/projects/archetypes/
 #
 # Created:      %(date)s
-# RCS-ID:       $Id: ArchGenXML.py,v 1.100 2004/02/26 14:55:28 zworkb Exp $
+# RCS-ID:       $Id: ArchGenXML.py,v 1.101 2004/02/27 10:09:43 zworkb Exp $
 # Copyright:    (c) %(year)s by %(copyright)s
 # Licence:      %(licence)s
 #------------------------------------------------------------------------------
@@ -849,7 +851,7 @@ from Products.CMFCore.utils import UniqueObject
 
     def getGeneratedTools(self):
         ''' returns a list of  generated tools '''
-        return [c[0] for c in self.generatedClasses if c[0].getStereoType() in self.portal_tools]
+        return [c[0] for c in self.generatedClasses if c[0].hasStereoType(self.portal_tools)]
 
     TEMPL_DETAILLED_CREATION_PERMISSIONS='''
     # and now give it some extra permissions so that i
@@ -881,7 +883,7 @@ from Products.CMFCore.utils import UniqueObject
         tool_classes=self.getGeneratedTools()
 
         if tool_classes:
-            toolinit=self.TEMPL_TOOLINIT % ','.join([m+'.'+c.getName() for c,m in self.generatedClasses if c.getStereoType() in self.portal_tools])
+            toolinit=self.TEMPL_TOOLINIT % ','.join([m+'.'+c.getName() for c,m in self.generatedClasses if c.hasStereoType(self.portal_tools)])
         else: toolinit=''
 
         add_content_permission = self.creation_permission or 'Add %s content' % self.projectName
@@ -908,7 +910,7 @@ from Products.CMFCore.utils import UniqueObject
             hide_folder_tabs+="'"+c.getName()+"', "
 
         #handling of tools
-        autoinstall_tools=[c[0].getName() for c in self.generatedClasses if c[0].getStereoType() in self.portal_tools and isTGVTrue(c[0].getTaggedValue('autoinstall')) ]
+        autoinstall_tools=[c[0].getName() for c in self.generatedClasses if c[0].hasStereoType(self.portal_tools) and isTGVTrue(c[0].getTaggedValue('autoinstall')) ]
 
         if self.getGeneratedTools():
             copy(os.path.join(templdir,'tool.gif'), os.path.join(target,'tool.gif') )
@@ -917,7 +919,7 @@ from Products.CMFCore.utils import UniqueObject
         register_configlets='#auto build\n'
         unregister_configlets='#auto build\n'
         for c in [cn[0] for cn in self.generatedClasses
-                            if cn[0].getStereoType() in self.portal_tools and
+                            if cn[0].hasStereoType(self.portal_tools) and
                                isTGVTrue(cn[0].getTaggedValue('autoinstall','0') ) and
                                cn[0].getTaggedValue('configlet', None)
                  ]:
@@ -977,7 +979,7 @@ from Products.CMFCore.utils import UniqueObject
         of=makeFile(os.path.join(target,'apeconf.xml'))
         print >> of,self.TEMPL_APECONFIG_BEGIN
         for el in self.root.getChildren():
-            if el.isInternal() or el.getStereoType() in self.stub_stereotypes:
+            if el.isInternal() or el.hasStereoType(self.stub_stereotypes):
                 continue
 
             print >>of
@@ -1039,7 +1041,7 @@ is the right place."""
 
             for element in root.getChildren():
                 #skip stub and internal classes
-                if element.isInternal() or element.getStereoType() in self.stub_stereotypes:
+                if element.isInternal() or element.hasStereoType(self.stub_stereotypes):
                     continue
 
                 module=element.getName()

@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.37 2004/01/25 18:54:42 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.38 2004/02/27 10:09:43 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -374,10 +374,10 @@ class XMI1_2 (XMI1_1):
         #while in xmi 1.2 its opposite
 
         sts=o.domElement.getElementsByTagName(self.STEREOTYPE)
-        if len(sts) == 1:
-            id=sts[0].getAttribute('xmi.idref')
+        for st in sts:
+            id=st.getAttribute('xmi.idref')
             st=stereotypes[id]
-            o.setStereoType(self.getName(st).strip())
+            o.addStereoType(self.getName(st).strip())
             print 'stereotype found:',id,self.getName(st),o.getStereoType()
 
     def calcClassAbstract(self,o):
@@ -472,7 +472,7 @@ class XMIElement:
         self.id=''
         self.taggedValues={}
         self.subTypes=[]
-        self.stereoType=None
+        self.stereoTypes=[]
 
         if domElement:
             allObjects[domElement.getAttribute('xmi.id')]=self
@@ -617,11 +617,29 @@ class XMIElement:
         return XMI.calculateStereoType(self)
 
     def setStereoType(self,st):
-        self.stereoType=st
+        self.stereoTypes=[st]
 
     def getStereoType(self):
-        return self.stereoType
+        if self.stereoTypes:
+            return self.stereoTypes[0]
+        else:
+            return None
 
+    def addStereoType(self,st):
+        self.stereoTypes.append(st)
+
+    def getStereoTypes(self):
+        return self.stereoTypes
+
+    def hasStereoType(self,sts):
+        if type(sts) in (type(''),type(u'')):
+            sts=[sts]
+            
+        for st in sts:
+            if st in self.getStereoTypes():
+                return 1
+            
+        return 0
 class XMIClass (XMIElement):
 
     def __init__(self,*args,**kw):

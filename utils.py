@@ -75,3 +75,9 @@ def isTGVTrue(tgv):
         tgv=tgv.lower()
         
     return tgv in (1,'1','true')
+
+def isTGVFalse(tgv):
+    if type(tgv) in (type(''),type(u'')):
+        tgv=tgv.lower()
+        
+    return tgv in (0,'0','false')
