@@ -38,14 +38,14 @@ def initialize(context):
     # and now give it some extra permissions so that i
     # can control them on a per class limit
     for i in range(0,len(content_types)):
-        perm='Add '+ ftis[i]['id']+'s'
-        methname='add'+ftis[i]['id']
+        perm='Add '+ ftis[i]['id'].capitalize()+'s'
+        methname='add'+ftis[i]['id'].capitalize()
         meta_type = ftis[i]['meta_type']
 
         context.registerClass(
             meta_type=meta_type,
             constructors = (
-                            getattr(locals()[meta_type],'add'+meta_type),
+                            getattr(locals()[meta_type],'add'+meta_type.capitalize()),
                                ) 
             , permission = perm
             )

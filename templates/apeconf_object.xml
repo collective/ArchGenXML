@@ -1,0 +1,10 @@
+
+<mapper name="Products.%(project_name)s.%(class_name)s.%(class_name)s"  parent="root" extends="base">
+ <use-for class="Products.%(project_name)s.%(class_name)s.%(class_name)s" />
+
+ <serializer name="remainder" order="z"
+   factory="Products.Archetypes.ApeSupport.RemainingState" />
+
+ <serializer name="%(class_name)s_fields" factory="Products.%(project_name)s.%(class_name)s.ApeSerializer" />
+ <gateway name="%(class_name)s_fields" factory="Products.%(project_name)s.%(class_name)s.ApeGateway" />
+</mapper>

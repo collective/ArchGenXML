@@ -35,18 +35,18 @@ objectdomain.uml.core.Stereotype-owns $13
 )
 (uid "2rxcn5_-gc5_dgd0uvn8_-p8x")
 (diagramType "class"))
-($4 4 < 2rxcn5_-gc5_dgd0uvn8_-p8w "outline" 3
+($4 4 < 2rxcn5_-gc5_dgd0uvn8_-p8w "Outline" 3
 (uid "2rxcn5_-gc5_dgd0uvn8_-p8w")
-(bbx 170 60 100 50))
-($4 5 < 2rxcn5_-gc5_dgd0uvn8_-p8v "node" 3
+(bbx 260 50 120 90))
+($4 5 < 2rxcn5_-gc5_dgd0uvn8_-p8v "Node" 3
 (uid "2rxcn5_-gc5_dgd0uvn8_-p8v")
-(bbx 260 230 100 80))
+(bbx 270 210 100 80))
 ($5 6 < 2rxcn5_-gc5_dgd0uvn8_-p8u "" 3
 (uid "2rxcn5_-gc5_dgd0uvn8_-p8u")
-(points 252 150 291 230)
+(points 320 140 320 210)
 (lineStyle "oblique"))
-($7 8 < 2rxcn5_-gc5_dgd0uvn8_-p97 "outline" 7
-(name "outline"
+($7 8 < 2rxcn5_-gc5_dgd0uvn8_-p97 "Outline" 7
+(name "Outline"
 )
 (uid "2rxcn5_-gc5_dgd0uvn8_-p97"))
 ($8 9 < 2rxcn5_-gc5_dgd0uvn8_-p94 "test" 8
@@ -61,7 +61,7 @@ objectdomain.uml.core.Stereotype-owns $13
 (name "description"
 )
 (uid "2rxcn5_-gc5_dgd0uvn8_-p92"))
-($10 12 < 2rxcn5_-gc5_dgd0uvn8_-p95 "#<anon> (outline, node)" 8
+($10 12 < 2rxcn5_-gc5_dgd0uvn8_-p95 "#<anon> (Outline, Node)" 8
 (name "")
 (uid "2rxcn5_-gc5_dgd0uvn8_-p95"))
 ($11 13 < 2rxcn5_-gc5_dgd0uvn8_-p8t "#0" 12
@@ -69,8 +69,8 @@ objectdomain.uml.core.Stereotype-owns $13
 (uid "2rxcn5_-gc5_dgd0uvn8_-p8t"))
 ($11 14 < 2rxcn5_-gc5_dgd0uvn8_-p8s "#1" 12
 (uid "2rxcn5_-gc5_dgd0uvn8_-p8s"))
-($7 15 < 2rxcn5_-gc5_dgd0uvn8_-p96 "node" 7
-(name "node"
+($7 15 < 2rxcn5_-gc5_dgd0uvn8_-p96 "Node" 7
+(name "Node"
 )
 (uid "2rxcn5_-gc5_dgd0uvn8_-p96"))
 ($9 16 < 2rxcn5_-gc5_dgd0uvn8_-p91 "label" 15

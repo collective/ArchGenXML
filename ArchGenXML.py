@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.27 2003/10/08 22:18:06 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.28 2003/10/09 04:14:56 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -52,7 +52,7 @@ class ArchetypesGenerator:
     packages=[] #packages to scan for classes
     noclass=0   # if set no module is reverse engineered, 
                 #just an empty project + skin is created
-
+    ape_support=0 #generate ape config and serializers/gateways for APE
     reservedAtts=['id',]
 
     def __init__(self,xschemaFileName,outfileName,**kwargs):
@@ -164,7 +164,7 @@ class ArchetypesGenerator:
         'string':'''StringField('%(name)s',
                     %(other)s
                     ),''' ,
-        'text':  '''TextField('%(name)s',
+        'text':  '''StringField('%(name)s',
                     widget=TextAreaWidget(),
                     %(other)s
                     ),''' ,
@@ -412,6 +412,18 @@ class ArchetypesGenerator:
                 
             print >> outfile
         
+    TEMPL_APE_HEADER='''
+from Products.Archetypes.ApeSupport import constructGateway,constructSerializer
+
+
+def ApeGateway():
+    return constructGateway(%(class_name)s)
+
+def ApeSerializer():
+    return constructSerializer(%(class_name)s)
+
+'''
+        
     def generateClasses(self, outfile, element, delayed):
         wrt = outfile.write
         wrt('\n')
@@ -450,7 +462,10 @@ class ArchetypesGenerator:
                 baseclass=folder_base_class
             else:
                 baseclass='BaseFolder'
-        
+                
+        if self.ape_support:
+            print >>outfile,self.TEMPL_APE_HEADER % {'class_name':name}
+            
         s1 = 'class %s%s(%s,%s):\n' % (self.prefix, name, baseclass, parents)
 
         wrt(s1)
@@ -507,7 +522,34 @@ class ArchetypesGenerator:
         
         of.write(installTemplate % {'project_dir':os.path.split(target)[1]})
         of.close()
+        
+    TEMPL_APECONFIG_BEGIN='''<?xml version="1.0"?>
 
+<!-- Basic Zope 2 configuration for Ape. -->
+
+<configuration>'''
+    def generateApeConf(self, target,projectName):
+        #generates apeconf.xml
+        
+        #remove trailing slash
+        if target[-1] in ('/','\\'):
+            target=target[:-1]
+            
+        templdir=os.path.join(sys.path[0],'templates')
+        apeconfig_object=open(os.path.join(templdir,'apeconf_object.xml')).read()
+        apeconfig_folder=open(os.path.join(templdir,'apeconf_folder.xml')).read()
+
+        of=makeFile(os.path.join(target,'apeconf.xml'))
+        print >> of,self.TEMPL_APECONFIG_BEGIN
+        for el in self.root.getChildren():
+            print >>of
+            if el.getRefs() + el.getSubtypeNames(recursive=1):
+                print >>of,apeconfig_folder % {'project_name':projectName,'class_name':el.getCleanName()}
+            else:
+                print >>of,apeconfig_object % {'project_name':projectName,'class_name':el.getCleanName()}
+                
+        print >>of,'</configuration>'
+        of.close()
 
     def generate(self, root, projectName=None ):
         dirMode=0
@@ -572,6 +614,8 @@ class ArchetypesGenerator:
                     outfile.close()
                 #generateMain(outfile, prefix, root)
                 self.generateStdFiles(self.outfileName,projectName,generatedModules)
+                if self.ape_support:
+                    self.generateApeConf(self.outfileName,projectName)
 
     def parseAndGenerate(self):
 
@@ -580,7 +624,7 @@ class ArchetypesGenerator:
         if not self.noclass:
             if suff.lower() in ('.xmi','.xml'):
                 print 'opening xmi'
-                root=XMIParser.parse(self.xschemaFileName,packages=self.packages)
+                self.root=root=XMIParser.parse(self.xschemaFileName,packages=self.packages)
             elif suff.lower() in ('.zargo',):
                 print 'opening zargo'
                 zf=ZipFile(self.xschemaFileName)
@@ -613,7 +657,7 @@ from Products.Archetypes.public import *
 
 def main():
     args = sys.argv[1:]
-    opts, args = getopt.getopt(args, 'f:a:t:o:s:p:P:n')
+    opts, args = getopt.getopt(args, 'f:a:t:o:s:p:P:n',['ape','actions','ape-support'])
     prefix = ''
     outfileName = None
     yesno={'yes':1,'y': 1, 'no':0, 'n':0}
@@ -634,8 +678,16 @@ def main():
             options['unknownTypesAsString'] = yesno[option[1]]
         elif option[0] == '-a':
             options['generateActions'] = yesno[option[1]]
+        elif option[0] == '--actions':
+            options['generateActions'] = 1
+        elif option[0] == '--noactions':
+            options['generateActions'] = 0
         if option[0] == '-n':
             options['noclass'] = 1
+        if option[0] == '--noclass':
+            options['noclass'] = 1
+        if option[0] in ('--ape','--ape-support'):
+            options['ape_support'] = 1
 
     if len(args) < 1 and not options.get('noclass',0):
         usage()
@@ -653,7 +705,6 @@ def main():
     gen=ArchetypesGenerator(xschemaFileName,outfileName, **options)
     gen.parseAndGenerate()
 
-
 USAGE_TEXT = """
 Usage: python ArchGenXML.py [ options ] <in_xsd_file>
 Options:
@@ -663,6 +714,7 @@ Options:
     -f <yes|no>              Force creation of output files.  Do not ask.
     -a <yes|no>              generates actions
     -P <packagename>         package to parse
+    --ape-support            generate apeconf.xml and generators for ape (needs Archetypes 1.1+)
 """
 
 def usage():
