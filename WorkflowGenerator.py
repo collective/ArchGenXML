@@ -54,7 +54,7 @@ class WorkflowGenerator(BaseGenerator):
             of.close()
 
             # generate workflow transition script
-            print utils.indent('Generating workflow script:',self.atgenerator.infoind)
+            print utils.indent('Generating workflow script(s).',self.atgenerator.infoind)
             templ=readTemplate('create_workflow_script.py')
 
             scriptpath=os.path.join(extDir,cleanName(sm.getName())+'_scripts.py')

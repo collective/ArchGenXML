@@ -15,6 +15,7 @@ import getopt
 from utils import mapName,toBoolean
 from utils import wrap as doWrap
 from xml.dom import minidom
+from sets import Set
 from odict import odict
 
 has_stripogram=1
@@ -1808,8 +1809,25 @@ class XMIStateMachine(XMIStateContainer):
         for t in self.getTransitions():
             if t.getAction():
                 res.append(t.getAction())
-
         return res
+
+    def getTransitionActionByName(self,name):
+        for t in self.getTransitions():
+            if t.getAction():
+                if t.getAction().getBeforeActionName() == name or \
+                   t.getAction().getAfterActionName() == name:
+                    return t.getAction()
+        return None
+
+    def getAllTransitionActionNames(self, before=True, after=True):
+        actionnames=Set()
+        actions=self.getAllTransitionActions()
+        for action in actions:
+            if before and action.getBeforeActionName():
+                actionnames.add(action.getBeforeActionName())
+            if after and action.getAfterActionName():
+                actionnames.add(action.getAfterActionName())
+        return list(actionnames)
 
     def getAllRoles(self, ignore=[]):
         roles = []

@@ -1,23 +1,16 @@
 ## Workflow scripts
-## <dtml-var "parsedModule.functions.keys()">    
-<dtml-in "statemachine.getAllTransitionActions()">
-<dtml-let action="_['sequence-item']">
+## <dtml-var "parsedModule.functions.keys()">
+<dtml-in "statemachine.getAllTransitionActionNames()">
+<dtml-let actionname="_['sequence-item']">
+<dtml-let action="statemachine.getTransitionActionByName(actionname)">
 
-<dtml-if "action.getBeforeActionName() and action.getBeforeActionName() not in parsedModule.functions.keys()">
-def <dtml-var "action.getBeforeActionName()">(self,state_change,**kw):
+<dtml-if "actionname not in parsedModule.functions.keys()">
+def <dtml-var "actionname">(self,state_change,**kw):
 <dtml-var "utils.indent(action.getExpressionBody() or 'pass' ,1)">
 <dtml-else>
-<dtml-if "action.getBeforeActionName()"><dtml-var "parsedModule.functions[action.getBeforeActionName()].getSrc()"></dtml-if>
-</dtml-if>
-
-
-<dtml-if "action.getAfterActionName() and action.getAfterActionName() not in parsedModule.functions.keys()">
-def <dtml-var "action.getAfterActionName()">(self,state_change,**kw):
-<dtml-var "utils.indent(action.getExpressionBody() or 'pass' ,1)">
-<dtml-else>
-<dtml-if "action.getAfterActionName()"><dtml-var "parsedModule.functions[action.getAfterActionName()].getSrc()"></dtml-if>
+<dtml-var "parsedModule.functions[actionname].getSrc()">
 </dtml-if>
 
 </dtml-let>
+</dtml-let>
 </dtml-in>
-
