@@ -3,7 +3,6 @@ print 'Product %(project_name)s installed'
 
 try:
     import CustomizationPolicy
-    print 'Customizationpolicy for %(project_name)s installed'
 except ImportError:
     CustomizationPolicy=None
 
@@ -47,3 +46,4 @@ def initialize(context):
 
     if CustomizationPolicy and hasattr(CustomizationPolicy,'register'):
         CustomizationPolicy.register(context)
+        print 'Customizationpolicy for %(project_name)s installed'
