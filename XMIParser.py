@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.55 2004/04/04 03:06:45 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.56 2004/04/04 03:39:01 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -863,7 +863,7 @@ class XMIPackage(XMIElement):
             if includeRoot:
                 res.append(o)
                 
-            if absolute and o.isRoot():
+            if o.isProduct():
                 break
             if not o.getParent():
                 break
