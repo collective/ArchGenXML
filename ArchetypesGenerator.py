@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.32 2004/06/27 22:03:43 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.33 2004/06/29 00:43:22 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -1382,7 +1382,10 @@ class ArchetypesGenerator:
                 of=self.makeFile(filepath)                
                 of.write(PotTemplate)
                 of.close()
-            self.msgcatstack.append(msgcatalog.MessageCatalog( filename=filepath ))
+            self.msgcatstack.append(msgcatalog.MessageCatalog( 
+                    filename=os.path.join(self.targetRoot, filepath) ))
+
+
                 
         
         package=root
