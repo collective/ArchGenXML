@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.73 2004/05/07 16:09:22 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.74 2004/05/08 17:55:49 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -70,6 +70,7 @@ class XMI1_0:
     TYPE='Foundation.Core.StructuralFeature.type'
     ASSOCEND_PARTICIPANT=CLASSIFIER='Foundation.Core.Classifier'
     ASSOCIATION='Foundation.Core.Association'
+    ASSOCIATION_CLASS='Foundation.Core.AssociationClass'
     AGGREGATION='Foundation.Core.AssociationEnd.aggregation'
     ASSOCEND='Foundation.Core.AssociationEnd'
     ASSOCENDTYPE='Foundation.Core.AssociationEnd.type'
@@ -148,7 +149,8 @@ class XMI1_0:
 
     def buildRelations(self, doc, objects):
         #XXX: needs refactoring
-        rels=doc.getElementsByTagName(XMI.ASSOCIATION)
+        rels=doc.getElementsByTagName(XMI.ASSOCIATION) + \
+            doc.getElementsByTagName(XMI.ASSOCIATION_CLASS)
         for rel in rels:
             master=None
             detail=None
@@ -193,7 +195,13 @@ class XMI1_0:
 
             else: #its an assoc, lets model it as association
                 try:
-                    assoc=XMIAssociation(rel)
+                    #check if an association class already exists
+                    relid=self.getId(rel)
+                    if allObjects.has_key(relid):
+                        assoc=allObjects[relid]
+                        assoc.calcEnds()
+                    else:
+                        assoc=XMIAssociation(rel)
                 except KeyError:
                     print 'Warning: Child Object not found for aggregation:%s, parent=%s' % (XMI.getId(rel),XMI.getName(master))
                     continue
@@ -396,6 +404,8 @@ class XMI1_1 (XMI1_0):
     ABSTRACTION="UML:Abstraction"
     DEP_CLIENT="UML:Dependency.client"
     DEP_SUPPLIER="UML:Dependency.supplier"
+
+    ASSOCIATION_CLASS='UML:AssociationClass'
 
     def getName(self,domElement):
         return domElement.getAttribute('name').strip()
@@ -859,9 +869,13 @@ class XMIPackage(XMIElement):
     def buildClasses(self):
         #print 'buildClasses:',self.getFilePath(includeRoot=1)
         ownedElement=XMI.getOwnedElement(self.domElement)
-        classes=getElementsByTagName(ownedElement,XMI.CLASS)
+        classes=getElementsByTagName(ownedElement,XMI.CLASS) + \
+           getElementsByTagName(ownedElement,XMI.ASSOCIATION_CLASS)
         for c in classes:
-            xc=XMIClass(c)
+            if c.nodeName==XMI.ASSOCIATION_CLASS:
+                xc=XMIAssociationClass(c)
+            else:
+                xc=XMIClass(c)
             if xc.getName():
                 print 'Class:',xc.getName(),xc.id
                 self.addClass(xc)
@@ -991,6 +1005,7 @@ class XMIClass (XMIElement):
         self.realizationParents=[]
         self.internalOnly=0
         self.type=self.name
+        
         #self.isabstract=0
 
     def initFromDOM(self,domElement):
@@ -1284,6 +1299,9 @@ class XMIAssociation (XMIElement):
 
     def initFromDOM(self,domElement=None):
         XMIElement.initFromDOM(self,domElement)
+        self.calcEnds()
+        
+    def calcEnds(self):
         #print 'Association:',domElement,self.id
         ends=self.domElement.getElementsByTagName(XMI.ASSOCEND)
         assert len(ends)==2
@@ -1293,6 +1311,11 @@ class XMIAssociation (XMIElement):
         self.fromEnd=XMIAssocEnd(ends[0])
         self.toEnd=XMIAssocEnd(ends[1])
 
+class XMIAssociationClass (XMIClass, XMIAssociation):
+    def initFromDOM(self,domElement=None):
+        XMIClass.initFromDOM(self,domElement)
+        self.calcEnds()
+    
 class XMIAbstraction(XMIElement):
     pass
 
