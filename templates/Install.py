@@ -7,6 +7,8 @@ from Products.Archetypes.Extensions.utils import installTypes
 from Products.Archetypes import listTypes
 from Products.%(project_dir)s import PROJECTNAME,product_globals
 
+from zExceptions import NotFound
+
 from StringIO import StringIO
 import sys
 
@@ -216,8 +218,7 @@ def install(self):
     #in 'InstallWorkflows.py' method 'installWorkflows'
     try:
         installWorkflows = ExternalMethod('temp','temp',PROJECTNAME+'.InstallWorkflows', 'installWorkflows').__of__(self)
-    except:
-        raise
+    except NotFound:
         installWorkflows=None
 
     if installWorkflows:
