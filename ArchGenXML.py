@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.44 2003/10/29 23:34:56 yenzenz Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.45 2003/10/30 00:30:35 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -557,7 +557,10 @@ from Products.CMFCore.utils import UniqueObject
         , '%(configlet_description)s'
         , None
         )
-
+    # set title of tool:
+    tool=getToolByName(self, '%(tool_instance)s')
+    tool.title='%(configlet_title)s'
+        
     # dont allow tool listed as content in navtree
     try:
         idx=self.portal_properties.navtree_properties.metaTypesNotToList.index('%(tool_name)s')
@@ -639,6 +642,7 @@ from Products.CMFCore.utils import UniqueObject
                 
             register_configlets+=self.TEMPL_CONFIGLET_INSTALL % {
                 'tool_name':c.getName(),
+                'tool_instance':'portal_'+c.getName().lower(),
                 'configlet_title':configlet_title,
                 'configlet_url':'portal_'+c.getName().lower()+configlet_view,
                 'configlet_condition':configlet_condition,
