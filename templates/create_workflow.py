@@ -12,14 +12,16 @@
 """
 Programmatically creates a workflow type
 """
-__version__ = "$Revision: 1.3 $"[11:-2]
+__version__ = "$Revision: 1.4 $"[11:-2]
 
 from Products.CMFCore.WorkflowTool import addWorkflowFactory
 
 from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
 
+
 def setup<dtml-var "statemachine.getCleanName()">(wf):
     "..."
+    productname='<dtml-var "package.getCleanName()">'
     wf.setProperties(title='<dtml-var "statemachine.getCleanName()">')
 
     for s in <dtml-var "repr(statemachine.getStateNames())">:
@@ -55,12 +57,21 @@ def setup<dtml-var "statemachine.getCleanName()">(wf):
     <dtml-in "[t for t in statemachine.getTransitions() if t.getCleanName()]">
     <dtml-let tran="_['sequence-item']">
 
+    <dtml-if "tran.getAction()">
+
+    ##creation of workflow scripts
+    wf_scriptname='<dtml-var "tran.getAction().getCleanName()">'
+    if not wf_scriptname in wf.scripts.objectIds():
+        wf.scripts.manage_addProduct['ExternalMethod'].manage_addExternalMethod(wf_scriptname, wf_scriptname, productname+'.<dtml-var "statemachine.getCleanName()">', ws)
+    </dtml-if>
+
+
     tdef = wf.transitions['<dtml-var "tran.getCleanName()">']
     tdef.setProperties(title="""<dtml-var "tran.getTaggedValue('label') or tran.getCleanName()">""",
                        new_state_id="""<dtml-var "tran.getTargetStateName()">""",
                        trigger_type=1,
                        script_name="""""",
-                       after_script_name="""""",
+                       after_script_name="""<dtml-var "tran.getActionName() or ''">""",
                        actbox_name="""<dtml-var "tran.getTaggedValue('label') or tran.getCleanName()">""",
                        actbox_url="""""",
                        actbox_category="""workflow""",
@@ -139,4 +150,21 @@ addWorkflowFactory(create<dtml-var "statemachine.getCleanName()">,
                    id='<dtml-var "statemachine.getCleanName()">',
                    title='<dtml-var "statemachine.getTaggedValue('label') or statemachine.getCleanName()">')
 
-    
+<dtml-if "statemachine.getAllTransitionActions()">
+
+## Workflow scripts
+## <dtml-var "parsedModule.functions.keys()">    
+<dtml-in "statemachine.getAllTransitionActions()">
+<dtml-let action="_['sequence-item']">
+
+<dtml-if "action.getCleanName() not in parsedModule.functions.keys()">
+def <dtml-var "action.getCleanName()">(self,state_change,**kw):
+<dtml-var "utils.indent(action.getExpressionBody() or 'pass' ,1)">
+
+<dtml-else>
+<dtml-var "parsedModule.functions[action.getCleanName()].getSrc()">
+</dtml-if>
+</dtml-let>
+</dtml-in>
+
+</dtml-if>

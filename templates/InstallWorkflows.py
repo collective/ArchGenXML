@@ -3,7 +3,7 @@ from Products.ExternalMethod.ExternalMethod import ExternalMethod
 
 def installWorkflows(self,out):
     ''' '''
-    productname='<dtml-var "package.getName()">'
+    productname='<dtml-var "package.getCleanName()">'
     wft=getToolByName(self,'portal_workflow')
 
     <dtml-in "package.getStateMachines()">

@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.93 2004/08/15 13:36:18 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.94 2004/08/15 17:04:51 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -101,7 +101,8 @@ class XMI1_0:
     ABSTRACTION="Foundation.Core.Abstraction"
     DEP_CLIENT="Foundation.Core.Dependency.client"
     DEP_SUPPLIER="Foundation.Core.Dependency.supplier"
-    
+
+    BOOLEAN_EXPRESSION="Foundation.Data_Types.BooleanExpression"
     #State Machine
 
     STATEMACHINE='Behavioral_Elements.State_Machines.StateMachine'
@@ -117,6 +118,8 @@ class XMI1_0:
     TRANSITON_TARGET="Behavioral_Elements.State_Machines.Transition.target"
     TRANSITION_SOURCE="Behavioral_Elements.State_Machines.Transition.source"
     TRANSITION_EFFECT="Behavioral_Elements.State_Machines.Transition.effect"    
+    TRANSITION_GUARD="Behavioral_Elements.State_Machines.Transition.guard"    
+
     ACTION_SCRIPT="Behavioral_Elements.Common_Behavior.Action.script"
     ACTION_EXPRESSION="Foundation.Data_Types.ActionExpression"
     ACTION_EXPRESSION_BODY="Foundation.Data_Types.Expression.body"
@@ -298,7 +301,7 @@ class XMI1_0:
     def getExpressionBody(self,element,tagname=None):
         if not tagname:
             tagname=XMI.EXPRESSION
-        exp = getElementByTagName(element,tagname+'.body',recursive=1,default=None)
+        exp = getElementByTagName(element,XMI.EXPRESSION_BODY,recursive=1,default=None)
         if exp and exp.firstChild:
             return exp.firstChild.nodeValue
         else:
@@ -447,6 +450,7 @@ class XMI1_1 (XMI1_0):
     DEP_SUPPLIER="UML:Dependency.supplier"
 
     ASSOCIATION_CLASS='UML:AssociationClass'
+    BOOLEAN_EXPRESSION="UML:BooleanExpression"
 
     #State Machine
 
@@ -463,6 +467,9 @@ class XMI1_1 (XMI1_0):
     TRANSITON_TARGET="UML:Transition.target"
     TRANSITION_SOURCE="UML:Transition.source"
     TRANSITION_EFFECT="UML:Transition.effect"
+    TRANSITION_GUARD="UML:Transition.guard"
+
+
     ACTION_SCRIPT="UML:Action.script"
     ACTION_EXPRESSION="UML:ActionExpression"
     ACTION_EXPRESSION_BODY="UML:ActionExpression.body"
@@ -1646,21 +1653,39 @@ class XMIStateMachine(XMIStateContainer):
     def getInitialState(self):
         return self.getStates()[0]
         
-        
+    def getAllTransitionActions(self):
+        res=[]
+        for t in self.getTransitions():
+            if t.getAction():
+                res.append(t.getAction())
+                
+        return res
+                    
 class XMIStateTransition(XMIElement):
     targetState=None
     action=None
     
-    def __init__(self,*args,**kwargs):
-        XMIElement.__init__(self,*args,**kwargs)
-
     def initFromDOM(self,domElement=None):
         XMIElement.initFromDOM(self,domElement)
+        self.buildEffect()
+        self.buildGuard()
         
     def buildEffect(self):
-        el=getElementByTagName(self.domElement,XMI.TRANSITION_EFFECT)
+        el=getElementByTagName(self.domElement,XMI.TRANSITION_EFFECT,None)
+        if not el:
+            return
+        
         actel=getSubElement(el)
         self.action=XMIAction(actel)
+        
+    def buildGuard(self):
+        el=getElementByTagName(self.domElement,XMI.TRANSITION_GUARD,default=None)
+        if not el:return
+        
+        guardel=getSubElement(el)
+        self.guard=XMIGuard(guardel)
+        
+        
         
     def setTargetState(self,state):
         self.targetState=state
@@ -1677,20 +1702,36 @@ class XMIStateTransition(XMIElement):
     def getAction(self):
         return self.action
     
+    def getActionName(self):
+        if self.action:
+            return self.action.getName()
+        
+    def getActionExpression(self):
+        if self.action:
+            return self.action.getExpression()
+    
     
 class XMIAction(XMIElement):
     expression=None
     def initFromDOM(self,domElement=None):
         XMIElement.initFromDOM(self,domElement)
+        #import pdb;pdb.set_trace()
+        self.expression=XMI.getExpressionBody(self.domElement,tagname=XMI.ACTION_EXPRESSION)
+        print '!!!ACTIONEX:',self.getExpressionBody()
+        
+    def getExpressionBody(self):
+        return self.expression
 
-class XMITransitionGuard(XMIElement):
+class XMIGuard(XMIElement):
     expression=None
     def initFromDOM(self,domElement=None):
         XMIElement.initFromDOM(self,domElement)
+        self.expression=XMI.getExpressionBody(self.domElement,tagname=XMI.BOOLEAN_EXPRESSION)
+        print '!!!GUARDEX:',self.getExpressionBody()
+        
+    def getExpressionBody(self):
+        return self.expression
 
-class XMITransitionEffect(XMIElement):
-    def initFromDOM(self,domElement=None):
-        XMIElement.initFromDOM(self,domElement)
 
 
 class XMIState(XMIElement):
@@ -1724,7 +1765,6 @@ class XMIState(XMIElement):
     def addIncomingTransition(self,tran):
         self.incomingTransitions.append(tran)
         tran.setTargetState(self)
-        print 'TRAAAAAAAN:',tran.getName(),tran.getTargetState()
 
     def addOutgoingTransition(self,tran):
         self.outgoingTransitions.append(tran)
@@ -1768,9 +1808,10 @@ class XMIDiagram(XMIElement):
         
         el=getSubElement(model_el)
         idref=XMI.getIdRef(el)
-        self.modelElement=allObjects[idref]
+        self.modelElement=allObjects.get(idref,None)
         
-        #workaround for the Poseidon problem
+        
+        #workaround for the Poseidon problem    
         if issubclass(self.modelElement.__class__,XMIStateMachine):
             self.modelElement.setName(self.getName())
             

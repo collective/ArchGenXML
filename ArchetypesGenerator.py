@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.38 2004/07/29 12:33:39 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.39 2004/08/15 17:04:50 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -20,7 +20,7 @@ from shutil import copy
 import XSDParser, XMIParser, PyParser
 from documenttemplate.documenttemplate import HTML
 from codesnippets import *
-from utils import makeFile, makeDir,mapName, wrap, indent, getExpression, \
+from utils import makeFile, readFile, makeDir,mapName, wrap, indent, getExpression, \
     isTGVTrue, isTGVFalse, readTemplate
 
 from WorkflowGenerator import WorkflowGenerator
@@ -102,6 +102,10 @@ class ArchetypesGenerator:
     def makeFile(self,fn,force=1):
         ffn=os.path.join(self.targetRoot,fn)
         return makeFile(ffn,force=force)
+
+    def readFile(self,fn):
+        ffn=os.path.join(self.targetRoot,fn)
+        return readFile(ffn)
     
     def makeDir(self,fn,force=1):
         ffn=os.path.join(self.targetRoot,fn)

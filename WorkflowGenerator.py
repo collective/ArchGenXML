@@ -3,6 +3,9 @@ import os
 from documenttemplate.documenttemplate import HTML
 
 from utils import readTemplate, cleanName
+import utils
+
+from PyParser import PyModule
 
 class WorkflowGenerator:
     atgenerator=None
@@ -22,19 +25,26 @@ class WorkflowGenerator:
         print 'Generating Workflows'
         print '===================='
         
-        d={'package':self.package,'generator':self,'builtins':__builtins__}
+        d={'package':self.package,'generator':self,'builtins':__builtins__,'utils':utils}
         d.update(__builtins__)
         
         for sm in statemachines:
+            extDir=os.path.join(self.package.getFilePath(),'Extensions')
+            scriptpath=os.path.join(extDir,cleanName(sm.getName())+'.py')
+
+            filesrc=self.atgenerator.readFile(scriptpath) or ''
+            parsedModule=PyModule(filesrc,mode='string')
+
             d['statemachine']=sm
+            d['parsedModule']=parsedModule
+            
             print 'generating Workflow:', sm.getName()
             templ=readTemplate('create_workflow.py')
             dtml=HTML(templ,d)
             res=dtml()
             
-            extDir=os.path.join(self.package.getFilePath(),'Extensions')
             self.atgenerator.makeDir(extDir)
-            of=self.atgenerator.makeFile(os.path.join(extDir,cleanName(sm.getName())+'.py'))
+            of=self.atgenerator.makeFile(scriptpath)
             of.write(res)
             of.close()
 

@@ -117,10 +117,16 @@ class PyModule:
     protectedSections={}
     
     
-    def __init__(self,file):
+    def __init__(self,file,mode='file'):
         self.classes={}
         #print 'init PyModule:',file
-        self.initFromFile(file)
+        if mode=='file':
+            self.initFromFile(file)
+        elif mode=='string':
+            self.initFromString(file)
+        else:
+            raise ValueError,"mode must be file or string, but is given '%s'" %mode
+        
         
     def initFromFile(self,file):
         if type(file) in (type(''),type(u'')):
@@ -129,6 +135,13 @@ class PyModule:
             #assume its a file object
             self.filebuf=file.read()
             
+        self.init()
+        
+    def initFromString(self,buf):
+        self.filebuf=buf
+        self.init()
+        
+    def init(self):
         self.splittedSource=self.filebuf.split('\n')
         self.ast=parser.suite(self.filebuf)
         self.code=self.ast.compile()
@@ -164,7 +177,7 @@ class PyModule:
 
         #get the functions
         functions=[c for c in codes if self.isItAFunction(c)]
-        print 'functions:',functions
+        #print 'functions:',functions
         for f in functions:
             func=PyFunction(f,self)
             self.functions[f.co_name]=func

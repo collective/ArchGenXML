@@ -21,6 +21,15 @@ def makeFile(outFileName,force=1):
         outFile = open(outFileName, 'w')
     return outFile
 
+def readFile(fn):
+    try:
+        file = open(fn, 'r')
+        res=file.read()
+        file.close()
+        return res
+    except IOError:
+        return None
+
 def makeDir(outFileName,force=1):
     outFile = None
     if (not force) and os.path.exists(outFileName):
