@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.46 2003/10/30 09:21:21 yenzenz Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.47 2003/10/31 10:07:47 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -18,6 +18,8 @@
 
 import sys, os.path, time
 import getopt
+
+from shutil import copy
 
 from zipfile import ZipFile
 
@@ -544,7 +546,7 @@ from Products.CMFCore.utils import UniqueObject
     utils.ToolInit( PROJECTNAME+' Tools',
                 tools = tools,
                 product_name = PROJECTNAME,
-                icon=None #'tool.gif' 
+                icon='tool.gif'
                 ).initialize( context )'''
 
     TEMPL_CONFIGLET_INSTALL='''
@@ -612,6 +614,9 @@ from Products.CMFCore.utils import UniqueObject
 
         #handling of tools
         autoinstall_tools=[c[0].getName() for c in self.generatedClasses if c[0].getStereoType() in self.portal_tools and c[0].getTaggedValue('autoinstall') == '1' ]
+        
+        if autoinstall_tools:
+            copy(os.path.join(templdir,'tool.gif'), os.path.join(target,'tool.gif') )
         
         #handling of tools with configlets
         register_configlets='#auto build\n'
