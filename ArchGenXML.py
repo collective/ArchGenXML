@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.51 2003/11/07 00:32:27 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.52 2003/11/07 02:32:31 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -598,7 +598,9 @@ from Products.CMFCore.utils import UniqueObject
     except:
         raise'''
 
-
+    def getGeneratedTools(self):
+        ''' returns a list of  generated tools '''
+        return [c[0] for c in self.generatedClasses if c[0].getStereoType() in self.portal_tools]
 
     def generateStdFiles(self, target,projectName,generatedModules):
         #generates __init__.py, Extensions/Install.py and the skins directory
@@ -613,7 +615,11 @@ from Products.CMFCore.utils import UniqueObject
 
         imports='\n'.join(['    import '+m for m in generatedModules])
 
-        toolinit=self.TEMPL_TOOLINIT % ','.join([m+'.'+c.getName() for c,m in self.generatedClasses if c.getStereoType() in self.portal_tools])
+        tool_classes=self.getGeneratedTools()
+
+        if tool_classes:
+            toolinit=self.TEMPL_TOOLINIT % ','.join([m+'.'+c.getName() for c,m in self.generatedClasses if c.getStereoType() in self.portal_tools])
+        else: toolinit=''
 
         initTemplate=initTemplate % {'project_name':self.projectName,'add_content_permission':'Add %s content' % self.projectName,'imports':imports, 'toolinit':toolinit }
         of=makeFile(os.path.join(target,'__init__.py'))
@@ -628,7 +634,7 @@ from Products.CMFCore.utils import UniqueObject
         #handling of tools
         autoinstall_tools=[c[0].getName() for c in self.generatedClasses if c[0].getStereoType() in self.portal_tools and c[0].getTaggedValue('autoinstall') == '1' ]
 
-        if autoinstall_tools:
+        if self.getGeneratedTools():
             copy(os.path.join(templdir,'tool.gif'), os.path.join(target,'tool.gif') )
 
         #handling of tools with configlets
