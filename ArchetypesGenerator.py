@@ -19,6 +19,8 @@ from types import StringTypes
 
 # AGX-specific imports
 import XSDParser, XMIParser, PyParser
+from UMLProfile import UMLProfile
+
 from documenttemplate.documenttemplate import HTML
 
 from codesnippets import *
@@ -76,7 +78,27 @@ class DummyModel:
         return 1
 
 class ArchetypesGenerator(BaseGenerator):
-
+    generator_generator='archetypes'
+    default_class_type='content_class'
+    
+    uml_profile=UMLProfile(BaseGenerator.uml_profile)
+    uml_profile.addStereoType('portal_tool',['XMIClass'],
+        description='turns a class into a portal tool')
+    uml_profile.addStereoType('stub',['XMIClass'],
+        description='This class wont get generated')
+    uml_profile.addStereoType('content_class',['XMIClass'],
+        description='turns a class into a portal tool',dispatching=1,
+        generator='generateArchetypesClass')
+        
+    uml_profile.addStereoType('plone_testcase',['XMIClass'],dispatching=1,
+        generator='generateBaseTestcaseClass',template='tests/PloneTestcase.py')
+    uml_profile.addStereoType('testcase',['XMIClass'],dispatching=1,
+        generator='generateTestcaseClass',template='tests/GenericTestcase.py')
+    uml_profile.addStereoType('setup_testcase',['XMIClass'],dispatching=1,
+        generator='generateTestcaseClass',template='tests/SetupTestcase.py')
+    uml_profile.addStereoType('interface_testcase',['XMIClass'],dispatching=1,
+        generator='generateTestcaseClass',template='tests/InterfaceTestcase.py')
+    
     infoind = 0
     force=1
     unknownTypesAsString=0
@@ -151,6 +173,7 @@ class ArchetypesGenerator(BaseGenerator):
         self.xschemaFileName=xschemaFileName
         self.__dict__.update(kwargs)
 
+    
     def makeFile(self,fn,force=1):
         ffn=os.path.join(self.targetRoot,fn)
         return makeFile(ffn,force=force)
@@ -974,14 +997,39 @@ class ArchetypesGenerator(BaseGenerator):
         print >> outfile
 
 
+    def generateBaseTestcaseClass(self,element,template):
+        
+        #write runalltests.py and framework.py
+        runalltests=readTemplate('tests/runalltests.py')
+        framework=readTemplate('tests/framework.py')
+
+        of=self.makeFile(os.path.join(element.getPackage().getFilePath(),'runalltests.py'))
+        of.write(runalltests)
+        of.close()
+
+        of=self.makeFile(os.path.join(element.getPackage().getFilePath(),'framework.py'))
+        of.write(framework)
+        of.close()
+        
+        
+            
+        return self.generateTestcaseClass(element,template)
+
+    def generateTestcaseClass(self,element,template):
+        
+        if element.getGenParents():
+            parent=element.getGenParents()[0]
+        else:
+            parent=None
+            
+        return BaseGenerator.generatePythonClass(self,element,template,parent=parent)
 
 
-
-    def generateClass(self, element):
+    def generateArchetypesClass(self, element,**kw):
         print indent('generating class: '+element.getName(),self.infoind)
         
-        if element.hasStereoType(self.python_stereotype):
-            return BaseGenerator.generateClass(self,element)
+##        if element.hasStereoType(self.python_stereotype):
+##            return BaseGenerator.generateClass(self,element)
         
         
         outfile=StringIO()
