@@ -651,8 +651,8 @@ class ArchetypesGenerator:
         map.update(self.getFieldAttributes(rel.fromEnd))
         map.update( {'widget':self.getWidget('BackReference', rel.fromEnd, name, classelement)} )
 
-##        if getattr(rel,'isAssociationClass',0):
-##            map.update({'referenceClass':"ContentReferenceCreator('%s')" % rel.getName()})
+        if getattr(rel,'isAssociationClass',0):
+            map.update({'referenceClass':"ContentReferenceCreator('%s')" % rel.getName()})
 
         doc=rel.getDocumentation(striphtml=self.striphtml)                
         res=self.getFieldFormatted(name,field,map,doc)
