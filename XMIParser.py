@@ -963,6 +963,7 @@ class XMIElement:
         return self.getTaggedValue('module') or self.getTaggedValue('module_name') or self.getCleanName()
 
     def annotate(self,key,value):
+        #print "annotate",key,value
         self.annotations[key]=value
 
     def getAnnotation(self,name):

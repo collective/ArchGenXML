@@ -1181,7 +1181,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         # Remark: CMFMember support include VariableSchema support
         if element.hasStereoType(self.variable_schema) and \
-             not element.hasStereoType(self.cmfmember_stereotype):
+             not element.hasStereoType(self.stereotype_cmfmember):
             parentnames.insert(0,'VariableSchemaSupport')
 
         # a tool needs to be a unique object
@@ -1477,7 +1477,6 @@ class ArchetypesGenerator(BaseGenerator):
 
     def getGeneratedTools(self,package):
         """ returns a list of  generated tools """
-
         return [c for c in self.getGeneratedClasses(package) if
                     c.hasStereoType(self.portal_tools)]
 
@@ -1730,12 +1729,10 @@ class ArchetypesGenerator(BaseGenerator):
         for p in package.getPackages():
             if not p.isProduct():
                 classes.extend(self.getGeneratedClasses(p))
-
         res=[]
         for c in classes:
             if c not in res:
                 res.append(c)
-
         return res
 
     def generatePackage(self,package,recursive=1):
@@ -1794,7 +1791,8 @@ class ArchetypesGenerator(BaseGenerator):
                     self.generateHeader(outfile, element)
                     self.generateClass(outfile, element, 0)
                     generated_classes = package.getAnnotation('generatedClasses') or []
-                    package.annotate('generatedClasses', generated_classes.append(element))
+                    generated_classes.append(element)
+                    package.annotate('generatedClasses', generated_classes)
                 else:
                     self.generateInterface(outfile,element,0)
 
