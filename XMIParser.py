@@ -128,7 +128,8 @@ class XMI1_0:
     DIAGRAM_OWNER="UML:Diagram.owner"
     DIAGRAM_SEMANTICMODEL_BRIDGE="UML:Uml1SemanticModelBridge"
     DIAGRAM_SEMANTICMODEL_BRIDGE_ELEMENT="UML:Uml1SemanticModelBridge.element"
-    
+    ACTOR="Behavioral_Elements.Use_Cases.Actor"
+
     aggregates=['composite','aggregate']
 
     def getName(self,domElement):
@@ -481,6 +482,7 @@ class XMI1_1 (XMI1_0):
     DIAGRAM_OWNER="UML:Diagram.owner"
     DIAGRAM_SEMANTICMODEL_BRIDGE="UML:Uml1SemanticModelBridge"
     DIAGRAM_SEMANTICMODEL_BRIDGE_ELEMENT="UML:Uml1SemanticModelBridge.element"
+    ACTOR="UML:Actor"
 
     def getName(self,domElement):
         return domElement.getAttribute('name').strip()
@@ -573,7 +575,10 @@ class XMI1_2 (XMI1_1):
             if len(classifiers):
                 #print 'classifier found for 1.2'
                 typeid=str(classifiers[0].getAttribute('xmi.idref'))
-                typeElement=datatypes[typeid]
+                try:
+                    typeElement=datatypes[typeid]
+                except KeyError:
+                    raise ValueError,'datatype %s not defined' % typeid
                 #self.type=getAttributeValue(typeElement,XMI.NAME)
                 att.type=XMI.getName(typeElement)
                 if att.type not in datatypenames: #collect all datatype names (to prevent pure datatype classes from being generated)
@@ -1972,6 +1977,11 @@ def buildDataTypes(doc):
         datatypes[str(dt.getAttribute('xmi.id'))]=dt
 
     interfaces=[c for c in doc.getElementsByTagName(XMI.INTERFACE) ]
+
+    for dt in interfaces:
+        datatypes[str(dt.getAttribute('xmi.id'))]=dt
+
+    interfaces=[c for c in doc.getElementsByTagName(XMI.ACTOR) ]
 
     for dt in interfaces:
         datatypes[str(dt.getAttribute('xmi.id'))]=dt
