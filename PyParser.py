@@ -50,8 +50,8 @@ class PyCodeElement:
     def getSrc(self):
         return self.src
 
-class PyMethod(PyCodeElement):
-    
+class PyFunction(PyCodeElement):
+    typename='function'
     def __init__(self,code,module):
         PyCodeElement.__init__(self,code,module)
         
@@ -64,17 +64,21 @@ class PyMethod(PyCodeElement):
         self.src=extractCode(self.module.splittedSource,start-1,self.code.co_lnotab)
 
     def printit(self):
-        print 'method:',self.code.co_name
+        print '%s:' % self.typename,self.code.co_name
         print '-------------------------------------------------------'
         print self.src
         print '-------------------------------------------------------'
 
     def getProtectedSection(self,section):
         return self.module.getProtectedSection(section)
-    
+
+class PyMethod(PyFunction):
+    typename='method'
+        
 class PyClass(PyCodeElement):
     methods={}
     module=None
+    typename='Class'
     
     def __init__(self,code,module):
         PyCodeElement.__init__(self,code,module)
@@ -93,7 +97,7 @@ class PyClass(PyCodeElement):
             
     def printit(self):
         print '======================================='
-        print self.name
+        print self.typename,':',self.name
         print '======================================='
         
         for m in self.methods.values():
@@ -109,6 +113,7 @@ class PyModule:
     code=None
     src=None
     classes={}
+    functions={}
     protectedSections={}
     
     
@@ -140,6 +145,12 @@ class PyModule:
         #print 'Class:####',c.co_name,res,c.co_consts
         return res
 
+    def isItAFunction(self,c):
+        ''' woooh - heuristic method to check if a code fragment is a method '''
+        
+        fl=c.co_firstlineno
+        if self.splittedSource[fl-1].startswith('def'):
+            return 1
         
     def initFromCode(self):
         
@@ -150,6 +161,13 @@ class PyModule:
         for c in classes:
             klass=PyClass(c,self)
             self.classes[c.co_name]=klass
+
+        #get the functions
+        functions=[c for c in codes if self.isItAFunction(c)]
+        print 'functions:',functions
+        for f in functions:
+            func=PyFunction(f,self)
+            self.functions[f.co_name]=func
             
         self.findProtectedSections()
     
@@ -175,9 +193,28 @@ class PyModule:
         return self.protectedSections.get(section)
 
     def printit(self):
-        print 'PyModule:',
+        print 'PyModule:'
+
+        print '========'
+        print 'CLASSES'
+        print '========'
         for c in self.classes.values():
             c.printit()
+
+        print '========'
+        print 'FUNCTIONS'
+        print '========'
+        for f in self.functions.values():
+            f.printit()
+
+        print '========'
+        print 'PROTECTED SECTIONS'
+        print '========'
+        for k,v in self.protectedSections.items():
+            print 'section:',k
+            print '-----------'
+            print v
+            print '-----------'
             
 if __name__=='__main__':
    mod=PyModule(sys.argv[1])
