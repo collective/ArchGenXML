@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.31 2003/10/17 08:27:18 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.32 2003/10/17 08:46:49 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -252,7 +252,7 @@ class ArchetypesGenerator:
 
     def getFieldAttributes(self,element):
         ''' converts the tagged values of a field into extended attributes for the archetypes field '''
-        noparams=['documentation','element.uuid']
+        noparams=['documentation','element.uuid','transient','volatile']
         convtostring=['expression']
         lines=[]
         tgv=element.getTaggedValues()
