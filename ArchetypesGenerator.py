@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.15 2004/05/16 23:31:14 yenzenz Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.16 2004/05/17 07:51:50 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -18,6 +18,7 @@ from shutil import copy
 
 # AGX-specific imports
 import XSDParser, XMIParser, PyParser
+from codesnippets import *
 from utils import makeFile, makeDir,mapName, wrap, indent, getExpression, \
     isTGVTrue, isTGVFalse
 
@@ -86,14 +87,6 @@ class ArchetypesGenerator:
         self.xschemaFileName=xschemaFileName
         self.__dict__.update(kwargs)
 
-    ACT_TEMPL='''
-           {'action':      %(action)s,
-            'category':    %(action_category)s,
-            'id':          '%(action_id)s',
-            'name':        '%(action_label)s',
-            'permissions': (%(permission)s,),
-            'condition'  : '%(condition)s'},
-          '''
     def makeFile(self,fn,force=1):
         ffn=os.path.join(self.targetRoot,fn)
         return makeFile(ffn,force=force)
@@ -168,14 +161,6 @@ class ArchetypesGenerator:
         res=outfile.getvalue()
         return res
 
-    MODIFY_FTI = """\
-def modify_fti(fti):
-    # hide unnecessary tabs (usability enhancement)
-    for a in fti['actions']:
-        if a['id'] in [%(hideactions)s]:
-            a['visible'] = 0
-    return fti
-""" 
 
     def generateModifyFti(self,element):
         hide_actions=element.getTaggedValue('hide_actions', '').strip()
@@ -191,9 +176,7 @@ def modify_fti(fti):
     def generateFti(self,element,subtypes):
         ''' '''
 
-        actTempl='''
-    actions= %s (
-        '''
+        actTempl=ACTIONS_START
         base_actions=element.getTaggedValue('base_actions', '').strip()
         if base_actions:
             base_actions += ' + '
@@ -202,49 +185,15 @@ def modify_fti(fti):
             actTempl = actTempl % ''
         
         if self.generateDefaultActions or element.getTaggedValue('default_actions'):
-            actTempl += '''
-           {'action': 'string:${object_url}/portal_form/base_edit',
-          'category': 'object',
-          'id': 'edit',
-          'name': 'Edit',
-          'permissions': ('Manage portal content',)},
-
-           {'action': 'string:${object_url}/base_view',
-          'category': 'object',
-          'id': 'view',
-          'name': 'View',
-          'permissions': ('View',)},
-
-        '''
+            actTempl += DEFAULT_ACTIONS
             if subtypes:
-                actTempl=actTempl+'''
-           {'action': 'folder_listing',
-          'category': 'object',
-          'id': 'folder_listing',
-          'name': 'Folder Listing',
-          'permissions': ('View',)},
-
-        '''
+                actTempl=actTempl+DEFAULT_ACTIONS_FOLDERISH
     
         method_actions=self.generateMethodActions(element)
         actTempl +=method_actions
-        actTempl+='''
-          )
-        '''
+        actTempl+=ACTIONS_END
             
-        ftiTempl='''
-
-    # uncomment lines below when you need
-    factory_type_information={
-        'allowed_content_types':%(subtypes)s %(parentsubtypes)s,
-        'allow_discussion': %(discussion)s,
-        %(has_content_icon)s'content_icon':'%(content_icon)s',
-        'immediate_view':'%(immediate_view)s',
-        'global_allow':%(global_allow)d,
-        'filter_content_types':%(filter_content_types)d,
-        }
-
-        '''
+        ftiTempl=FTI_TEMPL
         if self.generateActions:
             ftiTempl += actTempl
 
@@ -398,7 +347,7 @@ def modify_fti(fti):
         return ctype
 
     def getFieldAttributes(self,element):
-        ''' converts the tagged values of a field into extended attributes for the archetypes field '''
+        """ converts the tagged values of a field into extended attributes for the archetypes field """
         noparams=['documentation','element.uuid','transient','volatile','widget']
         convtostring=['expression']
         map={}
@@ -611,13 +560,13 @@ def modify_fti(fti):
             parent_schemata_expr=''
 
         if self.i18n_support and element.isI18N():
-            schemastmt='    schema=I18NBaseSchema %s + Schema((' % parent_schemata_expr
+            schemastmt=SCHEMA_START_I18N % parent_schemata_expr
         else:
-            schemastmt='    schema=BaseSchema %s + Schema((' % parent_schemata_expr
+            schemastmt=SCHEMA_START_DEFAULT % parent_schemata_expr
 
-        #tagged vaues for base-schema overrule
+        #tagged values for base-schema overrule
         if base_schema:
-            schemastmt='    schema=%s %s + Schema((' % (base_schema, parent_schemata_expr)
+            schemastmt= SCHEMA_START_TGV % (base_schema, parent_schemata_expr)
             
         print >>outfile, schemastmt
         refs=[]
@@ -629,6 +578,7 @@ def modify_fti(fti):
             mappedName = mapName(name)
 
             print >> outfile, indent(self.getFieldStringFromAttribute(attrDef, element),2)
+            
         for child in element.getChildren():
             name = child.getCleanName()
             if name in self.reservedAtts:
@@ -745,7 +695,7 @@ def modify_fti(fti):
         print >> outfile
 
         if mode == 'class':
-            permission=getExpression(m.getTaggedValue('permission'))
+            permission=getExpression(m.getTaggedValue('permission',None))
             if permission:
                 print >> outfile,indent("security.declareProtected(%s,'%s')" % (permission,m.getName()),1)
             
@@ -778,22 +728,8 @@ def modify_fti(fti):
 
         print >> outfile
 
-    TEMPL_APE_HEADER='''
-from Products.Archetypes.ApeSupport import constructGateway,constructSerializer
 
 
-def ApeGateway():
-    return constructGateway(%(class_name)s)
-
-def ApeSerializer():
-    return constructSerializer(%(class_name)s)
-
-'''
-
-    TEMPL_TOOL_HEADER='''
-from Products.CMFCore.utils import UniqueObject
-
-    '''
     def generateDependentImports(self,outfile,element):
         package=element.getPackage()
         
@@ -912,13 +848,13 @@ from Products.CMFCore.utils import UniqueObject
             parentnames.insert(0,baseclass)
             
         if element.hasStereoType(self.portal_tools):
-            print >>outfile,self.TEMPL_TOOL_HEADER
+            print >>outfile,TEMPL_TOOL_HEADER
             parentnames.insert(0,'UniqueObject')
 
 
         parents=','.join(parentnames)
         if self.ape_support:
-            print >>outfile,self.TEMPL_APE_HEADER % {'class_name':name}
+            print >>outfile,TEMPL_APE_HEADER % {'class_name':name}
 
         s1 = 'class %s%s(%s):\n' % (self.prefix, name, parents)
 
@@ -936,8 +872,8 @@ from Products.CMFCore.utils import UniqueObject
         archetype_name=element.getTaggedValue('archetype_name') or element.getTaggedValue('label')
         if not archetype_name: archetype_name=name
 
-        print >> outfile,'''    portal_type = meta_type = '%s' ''' % name
-        print >> outfile,'''    archetype_name = '%s'   #this name appears in the 'add' box ''' %  archetype_name
+        print >> outfile, CLASS_PORTAL_TYPE % name
+        print >> outfile, CLASS_ARCHETYPE_NAME %  archetype_name
         
         
         #handle realization parents
@@ -946,7 +882,7 @@ from Products.CMFCore.utils import UniqueObject
             reparentnames=[p.getName() for p in reparents]
             
             print >> outfile
-            print >> outfile, '''    __implements__ = %(baseclass_interfaces)s + (%(realizations)s,)''' % \
+            print >> outfile, CLASS_IMPLEMENTS % \
                 {'baseclass_interfaces' : ' + '.join(["getattr(%s,'__implements__',())" % i for i in parents.split(',')]),
                  'realizations' : ','.join(reparentnames)}
         
@@ -970,7 +906,10 @@ from Products.CMFCore.utils import UniqueObject
         
         print >> outfile, self.generateModifyFti(element)   
 
-        wrt('registerType(%s)\n' % name)
+        wrt( REGISTER_ARCHTYPE % name)
+        
+        # insert ATVocabularyManager integration here
+        
         wrt('# end of class %s\n\n'   % name)
 
         self.generateProtectedSection(outfile,element,'module-footer')
@@ -984,7 +923,7 @@ from Products.CMFCore.utils import UniqueObject
 
         self.generateDependentImports(outfile,element)
         
-        print >> outfile,'from Interface import Base'
+        print >> outfile, IMPORT_INTERFACE
         
         additionalImports=element.getTaggedValue('imports')
         if additionalImports:
@@ -1020,32 +959,6 @@ from Products.CMFCore.utils import UniqueObject
         wrt('# end of class %s\n'   % name)
 
 
-    MODULE_INFO_HEADER = """\
-# File: %(filename)s 
-\"""\\
-%(purpose)s 
-
-RCS-ID $Id: ArchetypesGenerator.py,v 1.15 2004/05/16 23:31:14 yenzenz Exp $
-\"""
-# %(copyright)s
-#
-# Generated: %(date)s 
-# Generator: ArchGenXML Version %(version)s http://sf.net/projects/archetypes/
-#
-# %(licence)s
-#
-__author__  = '%(author)s <%(email)s>'
-__docformat__ = 'plaintext'
-
-"""
-
-    GPLTEXT = """\
-GNU General Public Licence (GPL)
-
-This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA"""
-
     def generateModuleInfoHeader(self, outfile, modulename, element): 
         if not self.module_info_header:
             return
@@ -1056,12 +969,12 @@ You should have received a copy of the GNU General Public License along with thi
         
         author= element.getTaggedValue('author',  self.author) or 'unknown'
 
-        copyright = "Copyright (c) %s by %s" % \
+        copyright = COPYRIGHT % \
             (str(time.localtime()[0]),
              element.getTaggedValue('copyright', self.copyright) or author)
         
         licence = ('\n# ').join( \
-            wrap((element.getTaggedValue('licence', self.licence) or self.GPLTEXT),77).split('\n') )
+            wrap((element.getTaggedValue('licence', self.licence) or GPLTEXT),77).split('\n') )
 
         fileheaderinfo = {'filename': modulename+'.py',
                           'purpose':  purposeline,
@@ -1072,83 +985,20 @@ You should have received a copy of the GNU General Public License along with thi
                           'copyright':'\n# '.join(wrap(copyright,77).split('\n')),
                           'licence':  licence,
         }        
-        outfile.write(self.MODULE_INFO_HEADER % fileheaderinfo)
+        outfile.write(MODULE_INFO_HEADER % fileheaderinfo)
 
     def generateHeader(self, outfile, i18n=0):
         if i18n:
-            s1 = self.TEMPLATE_HEADER_I18N 
+            s1 = TEMPLATE_HEADER_I18N 
         else:
-            s1 = self.TEMPLATE_HEADER 
+            s1 = TEMPLATE_HEADER 
             
         outfile.write(s1)
 
-
-    TEMPL_TOOLINIT='''
-    tools=[%s]
-    utils.ToolInit( PROJECTNAME+' Tools',
-                tools = tools,
-                product_name = PROJECTNAME,
-                icon='tool.gif'
-                ).initialize( context )'''
-
-    TEMPL_CONFIGLET_INSTALL='''
-    portal_control_panel.registerConfiglet( '%(tool_name)s' #id of your Product
-        , '%(configlet_title)s' # Title of your Product
-        , 'string:${portal_url}/%(configlet_url)s/'
-        , '%(configlet_condition)s' # a condition
-        , 'Manage portal' # access permission
-        , '%(configlet_section)s' # section to which the configlet should be added: (Plone,Products,Members)
-        , 1 # visibility
-        , '%(tool_name)sID'
-        , '%(configlet_icon)s' # icon in control_panel
-        , '%(configlet_description)s'
-        , None
-        )
-    # set title of tool:
-    tool=getToolByName(self, '%(tool_instance)s')
-    tool.title='%(configlet_title)s'
-
-    # dont allow tool listed as content in navtree
-    try:
-        idx=self.portal_properties.navtree_properties.metaTypesNotToList.index('%(tool_name)s')
-        self.portal_properties.navtree_properties._p_changed=1        
-    except ValueError:
-        self.portal_properties.navtree_properties.metaTypesNotToList.append('%(tool_name)s')
-    except:
-        raise'''
-
-    TEMPL_CONFIGLET_UNINSTALL='''
-    portal_control_panel.unregisterConfiglet('%(tool_name)s')
-
-    # remove prodcut from navtree properties
-    try:
-        self.portal_properties.navtree_properties.metaTypesNotToList.remove('%(tool_name)s')
-        self.portal_properties.navtree_properties._p_changed=1        
-    except ValueError:
-        pass
-    except:
-        raise'''
-
     def getGeneratedTools(self,package):
-        ''' returns a list of  generated tools '''
+        """ returns a list of  generated tools """
         return [c for c in self.getGeneratedClasses(package) if c.hasStereoType(self.portal_tools)]
 
-    TEMPL_DETAILLED_CREATION_PERMISSIONS='''
-    # and now give it some extra permissions so that i
-    # can control them on a per class limit
-    for i in range(0,len(content_types)):
-        perm='Add '+ capitalize(ftis[i]['id'])+'s'
-        methname='add'+capitalize(ftis[i]['id'])
-        meta_type = ftis[i]['meta_type']
-
-        context.registerClass(
-            meta_type=meta_type,
-            constructors = (
-                            getattr(locals()[meta_type],'add'+capitalize(meta_type)),
-                               )
-            , permission = perm
-            )
-'''
     def generateStdFiles(self,target,package):
         if package.isRoot():
             self.generateStdFilesForProduct(target,package)
@@ -1243,7 +1093,7 @@ You should have received a copy of the GNU General Public License along with thi
                                                  'ArchGenXML generated Configlet "'+configlet_title+'" in Tool "'+c.getName()+'".')
 
             tool_instance_name = c.getTaggedValue('tool_instance_name', 'portal_'+ c.getName().lower() )
-            register_configlets+=self.TEMPL_CONFIGLET_INSTALL % {
+            register_configlets+=TEMPL_CONFIGLET_INSTALL % {
                 'tool_name':c.getName(),
                 'tool_instance': tool_instance_name,
                 'configlet_title':configlet_title,
@@ -1254,7 +1104,7 @@ You should have received a copy of the GNU General Public License along with thi
                 'configlet_description':configlet_descr,
                 } + '\n'
 
-            unregister_configlets+=self.TEMPL_CONFIGLET_UNINSTALL % {
+            unregister_configlets+=TEMPL_CONFIGLET_UNINSTALL % {
                 'tool_name':c.getName()
                 } + '\n'
 
@@ -1268,11 +1118,7 @@ You should have received a copy of the GNU General Public License along with thi
                                    })
         of.close()
         
-    TEMPL_APECONFIG_BEGIN='''<?xml version="1.0"?>
 
-<!-- Basic Zope 2 configuration for Ape. -->
-
-<configuration>'''
     def generateApeConf(self, target,package):
         #generates apeconf.xml
 
@@ -1285,7 +1131,7 @@ You should have received a copy of the GNU General Public License along with thi
         apeconfig_folder=open(os.path.join(templdir,'apeconf_folder.xml')).read()
 
         of=self.makeFile(os.path.join(target,'apeconf.xml'))
-        print >> of,self.TEMPL_APECONFIG_BEGIN
+        print >> of, TEMPL_APECONFIG_BEGIN
         for el in self.root.getClasses():
             if el.isInternal() or el.hasStereoType(self.stub_stereotypes):
                 continue
@@ -1296,7 +1142,7 @@ You should have received a copy of the GNU General Public License along with thi
             else:
                 print >>of,apeconfig_object % {'project_name':package.getProductName(),'class_name':el.getCleanName()}
 
-        print >>of,'</configuration>'
+        print >>of, TEMPL_APECONFIG_END
         of.close()
 
     def getGeneratedClasses(self,package):
@@ -1393,26 +1239,7 @@ You should have received a copy of the GNU General Public License along with thi
         dirMode=0
         outfile=None
 
-        dirMode=1
-        
-        READMEHIGHEST = """\
-Directory 'skins/%s_public':
-
-This skin layer has highest priority, put templates and scripts here that are 
-supposed to overload existing ones. 
-
-I.e. if you want to change want a site-wide change of Archetypes skins 
-base_edit, base_view, etc or also Plone skins like main_template or 
-document_view, put it in here."""
-        
-        READMELOWEST = """\
-Directory 'skins/%s':
-
-This skin layer has low priority, put unique templates and scripts here.
-
-I.e. if you to want to create own unique views or forms for your product, this 
-is the right place."""
-
+        dirMode=1        
 
         #create the directories
         self.makeDir(root.getFilePath())
@@ -1515,16 +1342,3 @@ is the right place."""
             print "Warning: Can't strip html from doc-strings. Module 'stripogram' not found."
             
         self.generateProduct(root)
-    
-    TEMPLATE_HEADER = """\
-from AccessControl import ClassSecurityInfo
-from Products.Archetypes.public import *
-
-    """
-
-    TEMPLATE_HEADER_I18N = """\
-from AccessControl import ClassSecurityInfo
-from Products.Archetypes.public import *
-from Products.I18NArchetypes.public import *
-
-    """
