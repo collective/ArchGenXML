@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.22 2004/05/23 23:28:29 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.23 2004/05/24 09:11:32 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -624,11 +624,6 @@ class ArchetypesGenerator:
             schemastmt= SCHEMA_START_TGV % (base_schema, parent_schemata_expr)
             
         print >>outfile, schemastmt
-        
-        # tools don't need editable id and title
-        if element.hasStereoType(self.portal_tools):
-            print  >>outfile, SCHEMA_TOOL
-        
         refs=[]
 
         for attrDef in element.getAttributeDefs():
@@ -851,6 +846,10 @@ class ArchetypesGenerator:
             wrt('# additional imports')
             wrt(additionalImports)
             wrt('\n')
+            
+        #optional support for SQLStorage
+        if isTGVTrue(self.getOption('sql_storage_support',element,0)):
+            wrt('from Products.Archetypes.SQLStorage import *\n')
 
         self.generateProtectedSection(outfile,element,'module-header')
             
@@ -1162,15 +1161,15 @@ class ArchetypesGenerator:
                                isTGVTrue(cn.getTaggedValue('autoinstall','0') ) and
                                cn.getTaggedValue('configlet', None)
                  ]:
-            configlet_title=    c.getTaggedValue('configlet:title',c.getName())
-            configlet_section=  c.getTaggedValue('configlet:section', 'Products')
+            configlet_title=    c.getTaggedValue('configlet_title',c.getName())
+            configlet_section=  c.getTaggedValue('configlet_section', 'Products')
             if not configlet_section in ['Plone','Products','Members']:
                 configlet_section='Products'
 
-            configlet_condition=c.getTaggedValue('configlet:condition','')
-            configlet_icon=     c.getTaggedValue('configlet:icon','site_icon.gif')
-            configlet_view=     '/'+c.getTaggedValue('configlet:view')
-            configlet_descr=    c.getTaggedValue('configlet:description',
+            configlet_condition=c.getTaggedValue('configlet_condition','')
+            configlet_icon=     c.getTaggedValue('configlet_icon','site_icon.gif')
+            configlet_view=     '/'+c.getTaggedValue('configlet_view')
+            configlet_descr=    c.getTaggedValue('configlet_description',
                                                  'ArchGenXML generated Configlet "'+configlet_title+'" in Tool "'+c.getName()+'".')
 
             tool_instance_name = c.getTaggedValue('tool_instance_name', 'portal_'+ c.getName().lower() )

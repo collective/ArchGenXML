@@ -145,7 +145,8 @@ ALLOWED_OPTIONS_MAP = {
     'strip-html':                       (1, 0,   'DOCUMENTATION', 'striphtml', 'switchon'),
     'cfg=':                             (1, 'c', None,            None,'string'),
     'project-configuration=':           (1, 0,   None,            None,'string'),                
-    'storage=':                         (1, 0, 'GENERAL',       'storage', 'string'),
+    'storage=':                         (1, 0,   'GENERAL',       'storage', 'string'),
+    'sql-storage-support':              (1, 0,   'CLASSES',       'sql_storage_support', 'switchon'),
 }
 
 def set_setting(okey, value, settings):
