@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.18 2003/07/23 17:43:04 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.19 2003/07/24 18:17:19 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -51,6 +51,8 @@ class ArchetypesGenerator:
     generateActions=0
     prefix=''
     packages=[] #packages to scan for classes
+    noclass=0   # if set no module is reverse engineered, 
+                #just an empty project + skin is created
 
     reservedAtts=['id','title']
 
@@ -455,27 +457,31 @@ class ArchetypesGenerator:
 
         suff=os.path.splitext(self.xschemaFileName)[1].lower()
 
-        if suff.lower() in ('.xmi','.xml'):
-            print 'opening xmi'
-            root=XMIParser.parse(self.xschemaFileName,packages=self.packages)
-        elif suff.lower() in ('.zargo',):
-            print 'opening zargo'
-            zf=ZipFile(self.xschemaFileName)
-            xmis=[n for n in zf.namelist() if os.path.splitext(n)[1].lower()=='.xmi']
-            assert(len(xmis)==1)
-            buf=zf.read(xmis[0])
-            root=XMIParser.parse(xschema=buf,packages=self.packages)
-        elif suff.lower() == '.xsd':
-            root=XSDParser.parse(self.xschemaFileName)
-
-        #if no output filename given, ry to guess it from the model
-        if not self.outfileName:
-            self.outfileName=root.getName()
-
-        if not self.outfileName:
-            raise TypeError,'output filename not specified'
-
-        print 'outfile:',self.outfileName
+        if not self.noclass:
+            if suff.lower() in ('.xmi','.xml'):
+                print 'opening xmi'
+                root=XMIParser.parse(self.xschemaFileName,packages=self.packages)
+            elif suff.lower() in ('.zargo',):
+                print 'opening zargo'
+                zf=ZipFile(self.xschemaFileName)
+                xmis=[n for n in zf.namelist() if os.path.splitext(n)[1].lower()=='.xmi']
+                assert(len(xmis)==1)
+                buf=zf.read(xmis[0])
+                root=XMIParser.parse(xschema=buf,packages=self.packages)
+            elif suff.lower() == '.xsd':
+                root=XSDParser.parse(self.xschemaFileName)
+    
+            #if no output filename given, ry to guess it from the model
+            if not self.outfileName:
+                self.outfileName=root.getName()
+    
+            if not self.outfileName:
+                raise TypeError,'output filename not specified'
+    
+            print 'outfile:',self.outfileName
+        else:
+            root=XMIParser.XMIElement() #create empty element
+            
         self.generate(root)
 
     TEMPLATE_HEADER = """\
@@ -486,13 +492,10 @@ from Products.Archetypes.public import *
 
 def main():
     args = sys.argv[1:]
-    opts, args = getopt.getopt(args, 'f:a:t:o:s:p:P:')
+    opts, args = getopt.getopt(args, 'f:a:t:o:s:p:P:n')
     prefix = ''
     outfileName = None
     yesno={'yes':1,'y': 1, 'no':0, 'n':0}
-
-    if len(args) < 1:
-        usage()
 
     options={}
 
@@ -510,9 +513,18 @@ def main():
             options['unknownTypesAsString'] = yesno[option[1]]
         elif option[0] == '-a':
             options['generateActions'] = yesno[option[1]]
+        if option[0] == '-n':
+            options['noclass'] = 1
+
+    if len(args) < 1 and not options.get('noclass',0):
+        usage()
+
+    if len(args):
+        xschemaFileName = args[0]
+    else:
+        xschemaFileName = ''
 
 
-    xschemaFileName = args[0]
     if not outfileName:
         if len(args) >= 2:
             outfileName=args[1]
