@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.48 2003/11/03 18:51:25 dreamcatcher Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.49 2003/11/05 10:37:41 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -58,9 +58,19 @@ class ArchetypesGenerator:
     reservedAtts=['id',]
     portal_tools=['portal_tool']
     stub_stereotypes=['odStub','stub']
-
-    def __init__(self,xschemaFileName,outfileName,**kwargs):
+    def __init__(self,xschemaFileName,outfileName,projectName=None, **kwargs):
         self.outfileName=outfileName
+
+        if not projectName:
+            path=os.path.split(self.outfileName)
+            if path[1]:
+                self.projectName=path[1]
+            else:
+                #in case of trailing slash
+                self.projectName=os.path.split(path[0])[1]
+                
+        print 'projectName:',self.projectName
+
         self.xschemaFileName=xschemaFileName
         self.__dict__.update(kwargs)
 
@@ -91,9 +101,7 @@ class ArchetypesGenerator:
                 dict['action_id']=m.getName()
                 dict['action_label']=m.getTaggedValue('action_label',m.getName())
                 dict['permission']=m.getTaggedValue('permission','View')
-
-                f=makeFile(os.path.join(self.outfileName,'skins',self.outfileName,m.getTaggedValue('view')+'.pt'),0)
-
+                f=makeFile(os.path.join(self.outfileName,'skins',self.projectName,m.getTaggedValue('view')+'.pt'),0)
                 if f:
                     templdir=os.path.join(sys.path[0],'templates')
                     viewTemplate=open(os.path.join(templdir,'action_view.pt')).read()
@@ -702,15 +710,6 @@ from Products.CMFCore.utils import UniqueObject
         dirMode=0
         outfile=None
 
-        if not projectName:
-            path=os.path.split(self.outfileName)
-            if path[1]:
-                projectName=path[1]
-            else:
-                #in case of trailing slash
-                projectName=os.path.split(path[0])[1]
-            print 'projectName:',projectName
-
         if not os.path.splitext(self.outfileName)[1]:
             dirMode=1
 
@@ -718,11 +717,11 @@ from Products.CMFCore.utils import UniqueObject
             if dirMode:
                 makeDir(self.outfileName)
                 makeDir(os.path.join(self.outfileName,'skins'))
-                makeDir(os.path.join(self.outfileName,'skins',self.outfileName))
-                makeDir(os.path.join(self.outfileName,'skins',self.outfileName+'_public'))
-    ##            makeDir(os.path.join(outfileName,'skins',outfileName,outfileName+'_forms'))
-    ##            makeDir(os.path.join(outfileName,'skins',outfileName,outfileName+'_views'))
-    ##            makeDir(os.path.join(outfileName,'skins',outfileName,outfileName+'_scripts'))
+                makeDir(os.path.join(self.outfileName,'skins',self.projectName))
+                makeDir(os.path.join(self.outfileName,'skins',self.projectName+'_public'))
+    ##            makeDir(os.path.join(self.outfileName,'skins',self.projectName,self.projectName+'_forms'))
+    ##            makeDir(os.path.join(self.outfileName,'skins',self.projectName,self.projectName+'_views'))
+    ##            makeDir(os.path.join(self.outfileName,'skins',self.projectName,self.projectName+'_scripts'))
             else:
                 outfile = makeFile(self.outfileName)
 
@@ -771,7 +770,7 @@ from Products.CMFCore.utils import UniqueObject
                     self.generateApeConf(self.outfileName,projectName)
 
     def parseAndGenerate(self):
-
+        
         suff=os.path.splitext(self.xschemaFileName)[1].lower()
 
         if not self.noclass:
@@ -809,6 +808,7 @@ from Products.Archetypes.public import *
     """
 
 def main():
+    version()
     args = sys.argv[1:]
     opts, args = getopt.getopt(args, 'f:a:t:o:s:p:P:n',['ape','actions','ape-support','noclass'])
     prefix = ''
@@ -854,14 +854,20 @@ def main():
     if not outfileName:
         if len(args) >= 2:
             outfileName=args[1]
-
+            
     gen=ArchetypesGenerator(xschemaFileName,outfileName, **options)
     gen.parseAndGenerate()
+
+ARCHGENXML_VERSION_LINE = """\
+ArchGenXML %(version)s 
+(c) 2003 BlueDynamics, under GNU Public License 2.0 or later
+"""
 
 USAGE_TEXT = """
 Usage: python ArchGenXML.py [ options ] <in_xsd_file>
 Options:
-    -o <outfilename>         Output file name for data representation classes
+    -o <outfilename>         Output file path for data representation classes.
+                             Last part of used for internal directory namings.
     -p <prefix>              Prefix string to be pre-pended to the class names
     -t <yes|no>              unknown attribut types will be treated as text
     -f <yes|no>              Force creation of output files.  Do not ask.
@@ -873,6 +879,10 @@ Options:
 def usage():
     print USAGE_TEXT
     sys.exit(-1)
+    
+def version():
+    ver=open(os.path.join(sys.path[0],'version.txt')).read().strip()
+    print ARCHGENXML_VERSION_LINE % {'version': ver}
 
 if __name__ == '__main__':
     main()
