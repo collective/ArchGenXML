@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.27 2003/11/08 17:54:05 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.28 2003/11/19 19:45:03 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -206,7 +206,7 @@ class XMI1_0:
         #in xmi its weird, because all objects to which a
         #stereotype applies are stored in the stereotype
         #while in xmi 1.2 its opposite
-        for k in stereotypes:
+        for k in stereotypes.keys():
             st=stereotypes[k]
             els=st.getElementsByTagName(self.MODELELEMENT)
             for el in els:
