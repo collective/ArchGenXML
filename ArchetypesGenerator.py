@@ -705,7 +705,15 @@ class ArchetypesGenerator:
         map.update( {'widget':self.getWidget('Reference', rel.toEnd, name, classelement)} )
 
         if getattr(rel,'isAssociationClass',0):
-            map.update({'referenceClass':"ContentReferenceCreator('%s')" % rel.getName()})
+            #associationclasses with stereotype "stub" and tagged value "import_from" will not use ContentReferenceCreator
+ 
+            if rel.hasStereoType(self.stub_stereotypes) :
+                map.update({'referenceClass':"%s" % rel.getName()})
+                # do not forget the import!!!
+                
+            else:
+                map.update({'referenceClass':"ContentReferenceCreator('%s')" % rel.getName()})
+
 
         doc=rel.getDocumentation(striphtml=self.striphtml)                
         res=self.getFieldFormatted(name,field,map,doc)
@@ -937,6 +945,9 @@ class ArchetypesGenerator:
     def generateDependentImports(self,outfile,element):
         package=element.getPackage()
         
+	#imports for stub-association classes
+        importLines=[]
+	
         parents = element.getGenParents()
         for p in parents:
             if p.hasStereoType(self.stub_stereotypes) and \
@@ -962,6 +973,12 @@ class ArchetypesGenerator:
         hasAssocClass=0
         for p in assocs:
             if getattr(p,'isAssociationClass',0):
+                # get import_from and add it to importLines
+                #import pdb; pdb.set_trace()
+                module = p.getTaggedValue('import_from', None)
+                if module:
+                    importLine = 'from %s import %s' % (module, p.getName())
+                    importLines.append(importLine)
                 hasAssocClass=1
                 break
 
@@ -973,6 +990,9 @@ class ArchetypesGenerator:
                     break
             
         if hasAssocClass:
+	    for line in importLines:
+                print >> outfile, line
+		
             print >> outfile,'from Products.Archetypes.ReferenceEngine import ContentReferenceCreator'
 
         if element.hasStereoType(self.variable_schema):
