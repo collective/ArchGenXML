@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.62 2003/12/05 16:38:05 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.63 2003/12/09 11:03:24 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -56,7 +56,7 @@ class ArchetypesGenerator:
     noclass=0   # if set no module is reverse engineered,
                 #just an empty project + skin is created
     ape_support=0 #generate ape config and serializers/gateways for APE
-    method_preservation=0 #should the method bodies be preserved? defaults now to 0 will change to 1
+    method_preservation=1 #should the method bodies be preserved? defaults now to 0 will change to 1
     
     reservedAtts=['id',]
     portal_tools=['portal_tool']
@@ -585,7 +585,7 @@ from Products.CMFCore.utils import UniqueObject
             parentnames=list(parentnames)+additionalParents.split(',')
 
         baseclass='BaseContent'
-        if refs or baserefs:
+        if refs or baserefs or element.getTaggedValue('folderish') == 1:
             folder_base_class=element.getTaggedValue('folder_base_class')
             if folder_base_class:
                 baseclass=folder_base_class
