@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.144 2004/04/22 23:57:56 yenzenz Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.145 2004/04/24 14:27:13 xiru Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -427,25 +427,15 @@ def modify_fti(fti):
         convtostring=['expression']
         map={}
         tgv=element.getTaggedValues()
-        #print element.getName(),tgv
         for k in tgv.keys():
             if k not in noparams and not k.startswith('widget:'):
                 v=tgv[k]
-                
                 if k not in self.nonstring_tgvs:
                     v=getExpression(v)
-                    
-                #if k in convtostring:
-                #    v=repr(v)
-                
-                n=0
                 formatted=''
                 for line in v.split('\n'):
-                    if formatted:
-                        formatted+=(len(k)+1)*' '
-                    formatted+=line+'\n'
+                    formatted+=line
                 map.update( {k:formatted.strip()} )
-
         return map
             
     def getWidget(self, type, element, fieldname, elementclass):
@@ -1026,7 +1016,7 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchGenXML.py,v 1.144 2004/04/22 23:57:56 yenzenz Exp $
+RCS-ID $Id: ArchGenXML.py,v 1.145 2004/04/24 14:27:13 xiru Exp $
 \"""
 # Copyright: (c) %(year)s by %(copyright)s
 #
