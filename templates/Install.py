@@ -46,7 +46,12 @@ def install(self):
     installTypes(self, out,
                  classes,
                  PROJECTNAME)
-    install_subskin(self,out,GLOBALS)
+    pubskins = [skin for skin in os.listdir(fullProductSkinsPath)
+                if skin.endswith('_public')]
+    positionmapping = {}
+    for pubskin in pubskins:
+        positionmapping.update{pubskin:''}
+    install_subskin(self, out, GLOBALS, positionmapping=positionmapping)
 
 <dtml-let hide_folder_tabs="[cn.getName() for cn in generator.getGeneratedClasses(package) if cn.getTaggedValue('hide_folder_tabs', False)]">
 <dtml-if "hide_folder_tabs">
@@ -166,7 +171,7 @@ def install(self):
         print >>out,'no workflow install'
 
     <dtml-if "[klass for klass in package.getClasses(recursive=1) if klass.getTaggedValue('use_workflow')]">
-    
+
     #bind classes to workflows
     wft=getToolByName(self,'portal_workflow')
     <dtml-in "package.getClasses(recursive=1)">

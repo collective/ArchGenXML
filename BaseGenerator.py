@@ -28,6 +28,35 @@ from codesnippets import *
 
 class BaseGenerator:
     """ abstract base class for the different concrete generators """
+##    self.context = {}
+##    self.registry= {}
+##
+##    def registerContext(self, context, documentation):
+##        """ context might be field, class, package ... """
+##        self.context[context]=documentation
+##
+##    def register(self, name, type, contexts, documentation=None):
+##        """ register a stereotype in on specific context """
+##        for context in contexts:
+##            if not self.context.has_key(context):
+##                raise AttributeError, "You're using a not registered context! %s" % context
+##            if not self.registry.has_key(name):
+##                self.registry[name]={}
+##            if not documentation:
+##                print "WARNING: Your code uses registered, " \
+##                    "but undocumented type %s with name %s " \
+##                    "in context %s" % (type, name, context)
+##            self.registry[name][context] = (type, documentation)
+##
+##    def isRegistered(self, name, context, type=None):
+##        """ lookup registry and check if registerd """
+##        if not self.registry.has_key(name):
+##            return False
+##        if not self.registry[name].has_key(context):
+##            return False
+##        if type and self.registry[name][context][0]!=type:
+##            return False
+##        return True
 
     def getOption(self,option,element,default=_marker,aggregate=False):
         ''' query a certain option for an element including 'acquisition' :
@@ -103,7 +132,7 @@ class BaseGenerator:
     def generateProtectedSection(self,outfile,element,section,indent=0):
         parsed = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.getName(),None)
         print >> outfile, self.getProtectedSection(parsed,section,indent)
-        
+
     def generateDependentImports(self,element):
         outfile=StringIO()
         package=element.getPackage()
@@ -202,7 +231,7 @@ class BaseGenerator:
 
             print >> outfile, CLASS_IMPLEMENTS_BASE % \
                     {'baseclass_interfaces' : parentInterfacesConcatenation,}
-                    
+
         return outfile.getvalue()
 
     def getMethodsToGenerate(self,element):
@@ -237,21 +266,21 @@ class BaseGenerator:
             if cl:
                 manual_methods=[mt for mt in cl.methods.values() if mt.name not in method_names]
 
-                    
-        
-        return generatedMethods, manual_methods                    
+
+
+        return generatedMethods, manual_methods
 
     def generateClass(self,element):
-        
+
         templ=readTemplate('python_class.py')
         d={ 'klass':element,
             'generator':self,
             'parsed_class':element.parsed_class,
             'builtins'   : __builtins__,
             'utils'       :utils,
-            
+
             }
         d.update(__builtins__)
-        
+
         res=HTML(templ,d)()
         return res

@@ -14,36 +14,37 @@ nr = 0
 
 empty = False
 
+def addline(no,group,value,line):
+    if value:
+        value="<<%s>>" % value
+    items.append("%s: %s %s %s" % (no, group,value,line))
+
 for line in generator.readlines():
     nr+=1
-    line = line.strip()
-
-    #import pdb
-    #if line.find('def') >0 and line.find('default') == -1:
-    #    pdb.set_trace()
+    line = line.strip().replace('"',"'")
 
     if re.search (r'''def\s?.*\:''', line):
         if empty and items:
             items.pop()
         #method = re.sub(r'''^.*def\s?[^']+:.*$''',
         #                '\\0', line)
-        items.append("%d: DEF  %s" % (nr, line))
+        addline(nr,'DEF','',line)
         empty=True
 
     if re.search (r'''getTaggedValue\s?\(''', line):
-        line = re.sub(r'''^.*getTaggedValue\s?\(['"]([^']+)['"].*$''',
+        tgv = re.sub(r'''^.*getTaggedValue\s?\(['"]([^']+)['"].*$''',
                         '\\1', line)
-        items.append ('%d: TGV  %s' % (nr,line))
+        addline(nr,'TGV',tgv,line)
         empty=False
 
     if line.find('getTaggedValues') >= 0:
-        items.append ('%d: TGVS %s' % (nr, line))
+        addline(nr,'TGVS','',line)
         empty=False
 
     if re.search (r'''hasStereoType\s?\(''', line):
-        line = re.sub(r'''^.*hasStereoType\s?\(['"]([^']+)['"].*$''',
+        stt = re.sub(r'''^.*hasStereoType\s?\(['"]([^']+)['"].*$''',
                         '\\1', line)
-        items.append ('%d: STT  %s' % (nr,line))
+        addline(nr,'STT',stt,line)
         empty=False
 
 
