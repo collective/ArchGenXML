@@ -46,12 +46,6 @@ def install(self):
     installTypes(self, out,
                  classes,
                  PROJECTNAME)
-    #pubskins = [skin for skin in os.listdir(fullProductSkinsPath)
-    #            if skin.endswith('_public')]
-    #positionmapping = {}
-    #for pubskin in pubskins:
-    #    positionmapping.update({pubskin:''})
-    #install_subskin(self, out, GLOBALS, positionmapping=positionmapping)
     install_subskin(self, out, GLOBALS)
 
 <dtml-let hide_folder_tabs="[cn.getName() for cn in generator.getGeneratedClasses(package) if cn.getTaggedValue('hide_folder_tabs', False)]">
