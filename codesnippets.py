@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: codesnippets.py,v 1.6 2004/06/27 22:03:43 zworkb Exp $
+# RCS-ID:      $Id$
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -131,7 +131,7 @@ MODULE_INFO_HEADER = """\
 \"""\\
 %(purpose)s
 
-RCS-ID $Id: codesnippets.py,v 1.6 2004/06/27 22:03:43 zworkb Exp $
+RCS-ID $Id$
 \"""
 # %(copyright)s
 #
@@ -159,7 +159,7 @@ REGISTER_VOCABULARY_CONTAINER = """registerVocabulary(%s)"""
 
 TEMPL_CONSTR_TOOL="""
     # tool-constructors have no id argument, the id is fixed
-    def __init__(self):
+    def __init__(self, id=''):
         %s.__init__(self,'%s')
         """
 
