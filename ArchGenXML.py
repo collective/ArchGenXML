@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.149 2004/04/25 12:06:21 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.150 2004/04/27 00:06:15 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -40,7 +40,7 @@ from utils import indent, getExpression,isTGVTrue,isTGVFalse
 
 has_i18ndude = 1    
 try:
-    from i18ndude import catalog as msgcatalog
+    from i18ndudes import catalog as msgcatalog
 except ImportError:
     has_i18ndude = 0
 
@@ -1018,7 +1018,7 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchGenXML.py,v 1.149 2004/04/25 12:06:21 zworkb Exp $
+RCS-ID $Id: ArchGenXML.py,v 1.150 2004/04/27 00:06:15 yenzenz Exp $
 \"""
 # %(copyright)s
 #
