@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.12 2003/07/18 12:55:23 dreamcatcher Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.13 2003/07/19 08:03:58 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -209,17 +209,18 @@ class ArchetypesGenerator:
 
         templ=self.typeMap['reference']
         obj=rel.toEnd.obj
-        name=rel.fromEnd.getName()
+        name=rel.toEnd.getName()
         relname=rel.getName()
+        allowed_types=(obj.getName(), ) + tuple(obj.getGenChildrenNames())
         
-        if int(rel.fromEnd.mult[1]) == -1:
+        if int(rel.toEnd.mult[1]) == -1:
             multiValued=1
             
         if name == 'None':
             name=obj.getName()+'_ref'
             
         return templ % {'name':name,'type':obj.getType(),
-                'allowed_types':repr((obj.getName(),)),
+                'allowed_types':repr(allowed_types),
                 'multiValued' : multiValued,
                 'relationship':relname}
 
@@ -277,7 +278,7 @@ class ArchetypesGenerator:
             params=m.getParamNames()
             if params:
                 paramstr=','+','.join(params)
-                print paramstr
+                #print paramstr
             print >> outfile
             print >> outfile,'    def %s(self%s):' % (m.getName(),paramstr)
             code=m.taggedValues.get('code','')

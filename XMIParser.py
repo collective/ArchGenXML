@@ -407,6 +407,10 @@ class XMIClass (XMIElement):
                 res.extend(r.getGenChildren(1))
 
         return res
+
+    def getGenChildrenNames(self, recursive=0):
+        ''' returns the names of the generalization children '''
+        return [o.getName() for o in self.getGenChildren(recursive=recursive) ]
     
     def getGenParents(self):
         ''' generalization parents '''
