@@ -1785,7 +1785,20 @@ class XMIStateTransition(XMIElement):
     def getActionExpression(self):
         if self.action:
             return self.action.getExpression()
-    
+
+    def getGuardRoles(self):
+        gr = self.guard.getExpressionBody()
+        if not gr.startswith('guard_roles:'):
+            return 'Anonymous;Owner;Manager'
+        else:
+            return gr[12:]
+
+    def getGuardPermissions(self):
+        gr = self.guard.getExpressionBody()
+        if not gr.startswith('guard_permissions:'):
+            return 'View'
+        else:
+            return gr[18:]
     
 class XMIAction(XMIElement):
     expression=None

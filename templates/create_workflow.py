@@ -18,12 +18,16 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
     wf.setProperties(title='<dtml-var "statemachine.getCleanName()">')
 
     # worklists generations are not defined yet...
+
     for s in <dtml-var "repr(statemachine.getStateNames(no_duplicates = 1))">:
         wf.states.addState(s)
+
     for t in <dtml-var "repr(statemachine.getTransitionNames(no_duplicates = 1))">:
         wf.transitions.addTransition(t)
+
     for v in ['review_history', 'comments', 'time', 'actor', 'action']:
         wf.variables.addVariable(v)
+
     for p in <dtml-var "repr(statemachine.getAllPermissionNames())">:
         wf.addManagedPermission(p)
 
@@ -42,11 +46,9 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
 </dtml-in>
 
 </dtml-in>
-
     ## Transitions initialization
     <dtml-in "[t for t in statemachine.getTransitions(no_duplicates = 1) if t.getCleanName()]">
     <dtml-let tran="_['sequence-item']">
-
     <dtml-if "tran.getAction()">
 
     ##creation of workflow scripts
@@ -54,7 +56,6 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
     if not wf_scriptname in wf.scripts.objectIds():
         wf.scripts._setObject(wf_scriptname,ExternalMethod(wf_scriptname, wf_scriptname, productname+'.<dtml-var "statemachine.getCleanName()">','<dtml-var "tran.getAction().getCleanName()">'))
     </dtml-if>
-
 
     tdef = wf.transitions['<dtml-var "tran.getCleanName()">']
     tdef.setProperties(title="""<dtml-var "tran.getTaggedValue('label') or tran.getCleanName()">""",
@@ -65,12 +66,10 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
                        actbox_name="""<dtml-var "tran.getTaggedValue('label') or tran.getCleanName()">""",
                        actbox_url="""""",
                        actbox_category="""workflow""",
-                       props={'guard_permissions': 'View', 'guard_roles': 'Anonymous; Owner; Manager'},
+                       props={'guard_permissions': '<dtml-var "tran.getGuardPermissions()">', 'guard_roles': '<dtml-var "tran.getGuardRoles()">'},
                        )
-                       
     </dtml-let>
     </dtml-in>
-
 
     ## State Variable
     wf.variables.setStateVar('review_state')
