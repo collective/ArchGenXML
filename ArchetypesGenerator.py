@@ -884,10 +884,22 @@ class ArchetypesGenerator(BaseGenerator):
         print >> outfile
 
         if mode == 'class':
-            rawPerm=m.getTaggedValue('permission',None)
-            permission=getExpression(rawPerm)
-            if rawPerm :
-                print >> outfile,indent("security.declareProtected(%s,'%s')" % (permission,m.getName()),1)
+        
+            # [optilude] Added check for permission:mode - public, private or protected (default)
+            permissionMode = m.getTaggedValue ('permission:mode', 'protected')
+        
+            if permissionMode == 'public':
+                print >> outfile,indent("security.declarePublic('%s')" % (m.getName(),),1)
+            elif permissionMode == 'private':
+                print >> outfile,indent("security.declarePrivate('%s')" % (m.getName(),),1)
+            elif permissionMode == 'protected':        
+                rawPerm=m.getTaggedValue('permission',None)
+                permission=getExpression(rawPerm)
+                if rawPerm:
+                    print >> outfile,indent("security.declareProtected(%s,'%s')" % (permission,m.getName()),1)
+            elif permissionMode != 'none':
+                print "** Warning: value for permission:mode should be 'public', 'private', 'protected' or 'none', got", permissionMode
+
 
         cls=self.parsed_class_sources.get(klass.getName(),None)
 
