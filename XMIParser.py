@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.31 2003/11/27 17:49:26 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.32 2003/12/29 03:09:19 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -99,7 +99,12 @@ class XMI1_0:
         assocend=getElementByTagName(el,self.ASSOCENDTYPE,None)
         if not assocend:
             return None
-        return getElementByTagName(assocend,self.CLASSIFIER,None).getAttribute('xmi.idref')
+
+        classifier=getElementByTagName(assocend,self.CLASSIFIER,None)
+	if not classifier:
+            classifier=getElementByTagName(assocend,self.CLASS,None)
+		
+	return classifier.getAttribute('xmi.idref')
 
     def isAssocEndAggregation(self,el):
         aggs=el.getElementsByTagName(XMI.AGGREGATION)
