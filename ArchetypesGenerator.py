@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.2 2004/04/27 12:27:04 yenzenz Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.3 2004/05/01 21:27:26 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -246,6 +246,7 @@ def modify_fti(fti):
     # uncomment lines below when you need
     factory_type_information={
         'allowed_content_types':%(subtypes)s %(parentsubtypes)s,
+        'allow_discussion': %(discussion)s,
         %(has_content_icon)s'content_icon':'%(content_icon)s',
         'immediate_view':'%(immediate_view)s',
         'global_allow':%(global_allow)d,
@@ -276,6 +277,7 @@ def modify_fti(fti):
 
         res=ftiTempl % {'subtypes':repr(tuple(subtypes)),
             'has_content_icon':has_content_icon,'content_icon':content_icon,
+            'discussion':element.getTaggedValue('allow_discussion','0'),
             'parentsubtypes':parentsubtypes,'global_allow':global_allow,'immediate_view':immediate_view,
             'filter_content_types': not isTGVFalse(element.getTaggedValue('filter_content_types'))}
 
@@ -999,7 +1001,7 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchetypesGenerator.py,v 1.2 2004/04/27 12:27:04 yenzenz Exp $
+RCS-ID $Id: ArchetypesGenerator.py,v 1.3 2004/05/01 21:27:26 yenzenz Exp $
 \"""
 # %(copyright)s
 #
