@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.139 2004/04/21 12:08:18 yenzenz Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.140 2004/04/21 15:12:40 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -455,7 +455,7 @@ def modify_fti(fti):
         
         modulename= elementclass.getPackage().getProductName()
         check_map = {
-            'label':            "'%s'" % fieldname.capitalize(),
+            'label':            "'%s'" % fieldname,
             'label_msgid':      "'%s_label_%s'" % (modulename,fieldname),
             'description_msgid':"'%s_help_%s'" % (modulename,fieldname),
             'description':      "'Enter a value for %s.'" % fieldname,
@@ -540,8 +540,8 @@ def modify_fti(fti):
             ctype=self.coerceType(typename)
 
         res=self.getFieldFormatted(element.getCleanName(),
-            self.typeMap[ctype]['field'], 
-            self.typeMap[ctype]['map'] )
+            self.typeMap[ctype]['field'].copy(), 
+            self.typeMap[ctype]['map'].copy() )
 
         return res
 
@@ -560,7 +560,7 @@ def modify_fti(fti):
         else:
             atype=attr.getType().lower().capitalize()
             
-        map=self.typeMap[ctype]['map']
+        map=self.typeMap[ctype]['map'].copy()
         if attr.hasDefault():
             map.update( {'default':attr.getDefault()} )       
         map.update(self.getFieldAttributes(attr))
@@ -583,7 +583,7 @@ def modify_fti(fti):
     def getFieldStringFromAssociation(self, rel, classelement):
         ''' gets the schema field code '''
         multiValued=0
-        map=self.typeMap['reference']['map']
+        map=self.typeMap['reference']['map'].copy()
         obj=rel.toEnd.obj
         name=rel.toEnd.getName()
         relname=rel.getName()
@@ -1010,7 +1010,7 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchGenXML.py,v 1.139 2004/04/21 12:08:18 yenzenz Exp $
+RCS-ID $Id: ArchGenXML.py,v 1.140 2004/04/21 15:12:40 yenzenz Exp $
 \"""
 # Copyright: (c) %(year)s by %(copyright)s
 #
@@ -1431,7 +1431,7 @@ is the right place."""
                     'charset':sys.getdefaultencoding(),
                     'package': root.getProductName(),
                 }
-                of=self.makeFile(filepath)
+                of=self.makeFile(filepath)                
                 of.write(PotTemplate)
                 of.close()
             self.msgcatstack.append(msgcatalog.MessageCatalog( filename=filepath ))
