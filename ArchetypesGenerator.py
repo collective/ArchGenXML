@@ -54,6 +54,7 @@ DelayedElements = []
 AlreadyGenerated = []
 Force = 0
 
+
 class DummyModel:
     def __init__(self,name=''):
         self.name=name
@@ -76,6 +77,7 @@ class DummyModel:
 
 class ArchetypesGenerator(BaseGenerator):
 
+    infoind = 0
     force=1
     unknownTypesAsString=0
     generateActions=1
@@ -309,7 +311,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         # Filter content types?
         filter_content_types = not (isTGVFalse(
-                element.getTaggedValue('filter_content_types')) 
+                element.getTaggedValue('filter_content_types'))
             or element.hasStereoType('folder'))
 
         # Set a type description.
@@ -495,9 +497,9 @@ class ArchetypesGenerator(BaseGenerator):
             if k not in noparams and not k.startswith('widget:'):
                 v=tgv[k]
                 if v is None:
-                    print 'Warning: empty tagged value for "%s" in field "%s"' %(k,element.getName())
+                    print '!: Warning: Empty tagged value for "%s" in field "%s"' %(k,element.getName())
                     continue
-                    
+
                 if k not in self.nonstring_tgvs:
                     v=getExpression(v)
                 # [optilude] Permit python: if people forget they don't have to (I often do!)
@@ -746,6 +748,7 @@ class ArchetypesGenerator(BaseGenerator):
             }
         )
         map.update(self.getFieldAttributes(rel.toEnd))
+
         map.update( {'widget':self.getWidget('Reference', rel.toEnd, name, classelement)} )
 
         if getattr(rel,'isAssociationClass',0):
@@ -930,7 +933,7 @@ class ArchetypesGenerator(BaseGenerator):
                 if rawPerm:
                     print >> outfile,indent("security.declareProtected(%s,'%s')" % (permission,m.getName()),1)
             elif permissionMode != 'none':
-                print "** Warning: value for permission:mode should be 'public', 'private', 'protected' or 'none', got", permissionMode
+                print "! Warning: value for permission:mode should be 'public', 'private', 'protected' or 'none', got", permissionMode
 
 
         cls=self.parsed_class_sources.get(klass.getPackage().getFilePath()+'/'+klass.getName(),None)
@@ -1068,7 +1071,7 @@ class ArchetypesGenerator(BaseGenerator):
         print >> outfile, self.getProtectedSection(parsed,section,indent)
 
     def generateClass(self, outfile, element, delayed):
-        print 'Generating class:',element.getName()
+        print indent('generating class: '+element.getName(),self.infoind)
 
         name = element.getCleanName()
 
@@ -1198,10 +1201,10 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateProtectedSection(outfile,element,'after-schema')
 
         if not element.isComplex():
-            print "stop complex"
+            print "I: stop complex: ", element.getName()
             return
         if element.getType() in AlreadyGenerated:
-            print "stop alredy gen"
+            print "I: stop already generated:", element.getName()
             return
         AlreadyGenerated.append(element.getType())
 
@@ -1723,7 +1726,7 @@ class ArchetypesGenerator(BaseGenerator):
         of.close()
 
     def getGeneratedClasses(self,package):
-        classes=package.generatedClasses
+        classes=package.getAnnotation('generatedClasses') or []
         for p in package.getPackages():
             if not p.isProduct():
                 classes.extend(self.getGeneratedClasses(p))
@@ -1739,21 +1742,22 @@ class ArchetypesGenerator(BaseGenerator):
 
         if package.hasStereoType(self.stub_stereotypes):
             return
-
         package.generatedModules=[]
-        package.generatedClasses=[]
         if package.getName() == 'java' or package.getName().startswith('java'):
-            #to suppress these unneccesary implicit created java packages (ArcgoUML and Poseidon)
-            print 'ignore package:',package.getName()
+            #to suppress these unneccesary implicit created java packages (ArgoUML and Poseidon)
+            print indent('ignore package:',package.getName(),self.infoind)
             return
 
         self.makeDir(package.getFilePath())
 
         for element in package.getClasses()+package.getInterfaces():
             #skip stub and internal classes
-            if element.isInternal() or element.hasStereoType(self.stub_stereotypes) or \
-               element.getName() in self.hide_classes or element.getName().startswith('java::'): # Enterprise Architect fix!
-                print 'ignore class:',element.getName()
+            if element.isInternal() or element.getName() in self.hide_classes \
+               or element.getName().startswith('java::'): # Enterprise Architect fix!
+                print indent('Ignore superfluent class: '+element.getName(),self.infoind)
+                continue
+            if element.hasStereoType(self.stub_stereotypes):
+                print indent('Ignore stub class: '+element.getName(),self.infoind)
                 continue
 
             module=element.getModuleName()
@@ -1789,10 +1793,10 @@ class ArchetypesGenerator(BaseGenerator):
                 if not element.isInterface():
                     self.generateHeader(outfile, element)
                     self.generateClass(outfile, element, 0)
-                    package.generatedClasses.append(element)
+                    generated_classes = package.getAnnotation('generatedClasses') or []
+                    package.annotate('generatedClasses', generated_classes.append(element))
                 else:
                     self.generateInterface(outfile,element,0)
-
 
                 classfile=self.makeFile(outfilepath)
                 buf=outfile.getvalue()
@@ -1806,12 +1810,15 @@ class ArchetypesGenerator(BaseGenerator):
         #generate subpackages
         package.generatedPackages=[]
         for p in package.getPackages():
-            #print 'generating package:',p.getName()
-            #print '================================'
             if p.isProduct():
+                self.infoind+=+1
                 self.generateProduct(p)
+                self.infoind-=1
             else:
+                print indent('generating package: '+ p.getName(),self.infoind)
+                self.infoind+=1
                 self.generatePackage(p,recursive=1)
+                self.infoind-=1
                 package.generatedPackages.append(p)
 
         self.generateStdFiles(package)
@@ -1821,16 +1828,16 @@ class ArchetypesGenerator(BaseGenerator):
         outfile=None
 
         if self.generate_packages and root.getCleanName() not in self.generate_packages:
-            print 'skipping package:', root.getCleanName()
+            print indent('Info: Skipping package:' + root.getCleanName(),self.infoind)
             return
 
         dirMode=1
         if root.hasStereoType(self.stub_stereotypes):
-            print 'skipping stub product:',root.getName()
+            print indent('Skipping stub Product:' + root.getName(), self.infoind)
             return
 
-        print '\nGenerating product:',root.getName()
-        print "-" * 50
+        print indent(">>> Starting new Product: " +root.getName(),self.infoind)
+        self.infoind+=1
 
         #create the directories
         self.makeDir(root.getFilePath())
@@ -1894,6 +1901,7 @@ class ArchetypesGenerator(BaseGenerator):
         #start Workflow creation
         wfg=WorkflowGenerator(package,self)
         wfg.generateWorkflows()
+        self.infoind-=1
 
     def parseAndGenerate(self):
 
@@ -1937,5 +1945,4 @@ class ArchetypesGenerator(BaseGenerator):
             print "Warning: Can't build message catalog. Module 'i18ndude' not found."
         if not XMIParser.has_stripogram:
             print "Warning: Can't strip html from doc-strings. Module 'stripogram' not found."
-
         self.generateProduct(root)

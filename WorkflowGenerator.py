@@ -21,8 +21,6 @@ class WorkflowGenerator(BaseGenerator):
         if not statemachines:
             return
 
-        print 'Generating workflows for package '+ self.package.getName()
-
         d={'package'    : self.package,
            'generator'  : self,
            'atgenerator': self.atgenerator,
@@ -43,7 +41,7 @@ class WorkflowGenerator(BaseGenerator):
             d['statemachine']=sm
             d['parsedModule']=parsedModule
 
-            print 'Generating workflow:', sm.getName()
+            print utils.indent('Generating workflow: ' + sm.getName(),self.atgenerator.infoind)
             templ=readTemplate('create_workflow.py')
             dtml=HTML(templ,d)
             res=dtml()

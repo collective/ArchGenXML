@@ -702,6 +702,7 @@ class PseudoElement:
 class XMIElement:
     package=None
     parent=None
+
     def __init__(self, domElement=None,name='',*args,**kwargs):
         self.domElement=domElement
         self.name = name
@@ -717,6 +718,9 @@ class XMIElement:
         self.taggedValues=odict()
         self.subTypes=[]
         self.stereoTypes=[]
+        self.annotations={} # space to store values by external access. use
+                             # annotate() to store values in this dict, and
+                             # getAnnotation() to fetch it.
 
         if domElement:
             allObjects[domElement.getAttribute('xmi.id')]=self
@@ -779,7 +783,7 @@ class XMIElement:
                     #print 'maxOccurs:',self.maxOccurs
 
             domElement.xmiElement=self
-            self.annotate()
+            self.createCleanName()
 
 
     def addChild(self, element):
@@ -848,7 +852,7 @@ class XMIElement:
         return doc
 
     def getUnmappedCleanName(self): return self.unmappedCleanName
-    def setName(self, name): self.name = name;self.annotate()
+    def setName(self, name): self.name = name;self.createCleanName()
     def getAttrs(self): return self.attrs
     def getMaxOccurs(self): return self.maxOccurs
     def getType(self): return self.type
@@ -890,7 +894,8 @@ class XMIElement:
         if m.getName():
             self.methodDefs.append(m)
 
-    def annotate(self):
+
+    def createCleanName(self):
         # If there is a namespace, replace it with an underscore.
         if self.getName():
             self.unmappedCleanName = str(self.getName()).translate(clean_trans)
@@ -898,9 +903,6 @@ class XMIElement:
             self.unmappedCleanName = ''
 
         self.cleanName = mapName(self.unmappedCleanName)
-
-##        for child in self.getChildren():
-##            child.annotate()
 
     def isIntrinsicType(self):
         return str(self.getType()).startswith('xs:')
@@ -959,6 +961,12 @@ class XMIElement:
     def getModuleName(self):
         ''' gets the name of the module the class is in '''
         return self.getTaggedValue('module') or self.getTaggedValue('module_name') or self.getCleanName()
+
+    def annotate(self,key,value):
+        self.annotations[key]=value
+
+    def getAnnotation(self,name):
+        return self.annotations.get(name, None)
 
 class StateMachineContainer:
     def __init__(self):
