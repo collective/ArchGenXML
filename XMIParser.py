@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.68 2004/04/27 21:55:09 yenzenz Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.69 2004/04/30 18:54:08 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -610,7 +610,7 @@ class XMIElement:
                 else:
                     self.taggedValues[tagname]=tagvalue
                 print '\n-----\n', self.taggedValues[tagname]
-            except AttributeError:
+            except:
                 pass
 
         #print 'taggedValues:',self.__class__,self.getName(),self.getTaggedValues()
