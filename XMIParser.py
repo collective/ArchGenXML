@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.23 2003/10/26 22:41:52 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.24 2003/10/26 23:09:23 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -618,7 +618,7 @@ class XMIClass (XMIElement):
     def getSubtypeNames(self,recursive=0):
         ''' returns the non-intrinsic subtypes '''
 
-        res = [o.getName() for o in self.subTypes]
+        res = [o.getName() for o in self.subTypes if not o.isAbstract()]
         
         if recursive:
             for sc in self.subTypes:

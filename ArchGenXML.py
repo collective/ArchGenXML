@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.37 2003/10/26 22:41:52 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.38 2003/10/26 23:09:23 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -322,7 +322,11 @@ class ArchetypesGenerator:
         obj=rel.toEnd.obj
         name=rel.toEnd.getName()
         relname=rel.getName()
-        allowed_types=(obj.getName(), ) + tuple(obj.getGenChildrenNames())
+    
+        if obj.isAbstract():
+            allowed_types= tuple(obj.getGenChildrenNames())
+        else:
+            allowed_types=(obj.getName(), ) + tuple(obj.getGenChildrenNames())
         
         if int(rel.toEnd.mult[1]) == -1:
             multiValued=1
