@@ -130,3 +130,6 @@ def install(self):
     print >> out,sr.install(self)
     return out.getvalue()
 
+def uninstall(self):
+    #put your uninstall code there, its automatically called by QuickInstaller
+    pass

@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.4 2003/06/11 02:34:10 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.5 2003/06/16 01:55:08 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -143,6 +143,7 @@ class ArchetypesGenerator:
                     ),''',
         'reference':'''ReferenceField('%(name)s',allowed_types=%(allowed_types)s,
                     searchable=1,
+                    multiValued=%(multiValued)d
                     ),''',
 
     }
@@ -204,14 +205,19 @@ class ArchetypesGenerator:
     def getFieldStringFromAssociation(self, rel):
         ''' gets the schema field code '''
         #print 'getFieldStringFromAttribute:',attr.getName(),attr.type
+        multiValued=0
 
         templ=self.typeMap['reference']
         obj=rel.toEnd.obj
         name=rel.fromEnd.getName()
+        
+        if int(rel.fromEnd.mult[1]) == -1:
+            multiValued=1
+            
         if name == 'None':
             name=obj.getName()+'_ref'
             
-        return templ % {'name':name,'type':obj.getType(),'allowed_types':repr((obj.getName(),))}
+        return templ % {'name':name,'type':obj.getType(),'allowed_types':repr((obj.getName(),)),'multiValued' : multiValued,}
 
     # Generate get/set/add member functions.
     def generateArcheSchema(self, outfile, element):
