@@ -116,7 +116,7 @@ class ArchetypesGenerator:
     def getSkinPath(self,element):
         return os.path.join(element.getRootPackage().getFilePath(),'skins',element.getRootPackage().getModuleName())
 
-    def getOption(self,option,element,default=_marker):
+    def getOption(self,option,element,default=_marker,aggregate=False):
         ''' query a certain option for an element including 'aquisition' :
             search the lement, then the packages upwards, then global options'''
             
@@ -124,10 +124,17 @@ class ArchetypesGenerator:
             o=element
             
             #climb up the hierarchy
+            aggregator=''
             while o:
                 if o.hasTaggedValue(option):
-                    return o.getTaggedValue(option)
+                    if aggregate:
+                        # create a multiline string
+                        aggregator+=o.getTaggedValue(option)+'\n'
+                    else:
+                        return o.getTaggedValue(option)
                 o=o.getParent()
+            if aggregator:
+                return aggregator
             
         #look in the options
         if hasattr(self,option):
@@ -433,8 +440,17 @@ class ArchetypesGenerator:
         tgv=element.getTaggedValues()
         widgetcode = type.capitalize()+'Widget('
         widgetmap={}
-        custom = 0 #is there a custom setting for widget?
+        custom = 0 # is there a custom setting for widget?
         widgetoptions=[t for t in tgv.items() if t[0].startswith('widget:')]
+
+        # check if a global default overrides it. settig defaults is provided 
+        # through getOption. 
+        # to set an default just put:
+        # default:widget:type = widgetname
+        # as a tagged value on the package or model
+        default_widget = self.getOption('default:widget:%s' % type, element, None)
+        if default_widget:
+            widgetcode = default_widget+'('
         
         modulename= elementclass.getPackage().getProductName()
         check_map = {
@@ -455,12 +471,12 @@ class ArchetypesGenerator:
                 formatted+=line+'\n'
             widgetcode =  formatted
             
-        elif self.widgetMap.has_key(type):
-            # Standard widget for this type found in widgetMap
+        elif self.widgetMap.has_key(type) and not default_widget:
+            # default widget for this type found in widgetMap
             custom=1
             widgetcode = self.widgetMap[type]
                     
-        if ')' not in widgetcode:
+        if ')' not in widgetcode: # XXX bad check *sigh*
             
             for tup in widgetoptions:
                 key=tup[0][7:]
@@ -920,7 +936,7 @@ class ArchetypesGenerator:
         parentnames = [p.getCleanName() for p in element.getGenParents()]
         self.generateDependentImports(outfile,element)
                 
-        additionalImports=element.getTaggedValue('imports')
+        additionalImports=self.getOption('imports',element,None,True)
         if additionalImports:
             wrt('# additional imports\n')
             wrt(additionalImports)
