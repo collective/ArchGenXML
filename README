@@ -108,6 +108,13 @@ There is more information on PyXML at:
     http://pyxml.sourceforge.net/
     http://www.python.org/sigs/xml-sig/
 
+================
+More Documention
+================
+
+see http://plone.org/documentation/archetypes/ArchetypesDeveloperGuide#archgenxml-generating-archetypes-using-uml
+or at http://sf.net/projects/plone-docs 
+in cvs at Developers/Archetypes/ArchGenXML.rst
 
 ===========
 features
