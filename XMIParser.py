@@ -1133,7 +1133,7 @@ class XMIPackage(XMIElement, StateMachineContainer):
         if self.isProduct():
             #products are always handled as top-level
             if includeRoot:
-                return [self]
+                return [o]
             else:
                 return []
 
@@ -1143,8 +1143,10 @@ class XMIPackage(XMIElement, StateMachineContainer):
 
             if o.isProduct():
                 break
+
             if not o.getParent():
                 break
+
             if o==parent:
                 break
 
@@ -1198,12 +1200,13 @@ class XMIPackage(XMIElement, StateMachineContainer):
 
         return 0
 
-    def getQualifiedName(self, ref,includeRoot=1):
-        ''' returns the qualified name of tha package, depending of the
+    def getQualifiedName(self, ref, includeRoot=True):
+        ''' returns the qualified name of that package, depending of the
             reference package 'ref' it generates an absolute path or
             a relative path if the pack(self) is a subpack of 'ref' '''
 
         path=self.getPath(includeRoot=includeRoot,parent=ref)
+
         return path
 
 
@@ -1444,7 +1447,7 @@ class XMIClass (XMIElement, StateMachineContainer):
         ''' generalization parents '''
         return self.realizationParents
 
-    def getQualifiedModulePath(self,ref,pluginRoot='Products',forcePluginRoot=0):
+    def getQualifiedModulePath(self,ref,pluginRoot='Products',forcePluginRoot=0,includeRoot=1):
         ''' returns the qualified name of the class, depending of the
             reference package 'ref' it generates an absolute path or
             a relative path if the pack(self) is a subpack of 'ref'
@@ -1452,32 +1455,34 @@ class XMIClass (XMIElement, StateMachineContainer):
             '''
 
         package=self.getPackage()
-
-        if self.package == ref:
-            path=package.getPath(includeRoot=0,parent=ref)
+        if package == ref:
+            path=package.getPath(includeRoot=includeRoot,parent=ref)
         else:
-            path=package.getPath(includeRoot=1,parent=ref)
             if self.package.getProduct() != ref.getProduct() or forcePluginRoot:
+                path=package.getPath(includeRoot=1,parent=ref)
                 path.insert(0,PseudoElement(name=pluginRoot))
+            else:
+                path=package.getPath(includeRoot=includeRoot,parent=ref)
 
         if not self.getPackage().hasStereoType('module'):
             path.append(self)
 
         return path
 
-    def getQualifiedModuleName(self,ref,pluginRoot='Products',forcePluginRoot=0):
-        path=self.getQualifiedModulePath(ref,pluginRoot=pluginRoot,forcePluginRoot=forcePluginRoot)
-
+    def getQualifiedModuleName(self,ref,pluginRoot='Products',forcePluginRoot=0,includeRoot=1):
+        path=self.getQualifiedModulePath(ref,pluginRoot=pluginRoot,
+                                         forcePluginRoot=forcePluginRoot,
+                                         includeRoot=includeRoot)
         res= '.'.join([p.getModuleName() for p in path if p])
-
         return res
 
 
-    def getQualifiedName(self,ref,pluginRoot='Products',forcePluginRoot=0):
-        name=self.getQualifiedModuleName(ref,pluginRoot=pluginRoot,forcePluginRoot=forcePluginRoot)
-
+    def getQualifiedName(self, ref, pluginRoot='Products', forcePluginRoot=0,
+                         includeRoot=1):
+        name=self.getQualifiedModuleName(ref, pluginRoot=pluginRoot,
+                                         forcePluginRoot=forcePluginRoot,
+                                         includeRoot=includeRoot)
         res=name+'.'+self.getCleanName()
-
         return res
 
     def setStateMachine(self,sm):

@@ -1558,15 +1558,10 @@ class ArchetypesGenerator(BaseGenerator):
 
         # Find out if we need to initialise any tools
         generatedTools = self.getGeneratedTools(package)
-
         hasTools = 0
         toolNames = []
-
         if generatedTools:
-            toolNames = [c.getQualifiedName(package) for c in
-                            self.getGeneratedClasses(package) if
-                            c.hasStereoType(self.portal_tools)]
-
+            toolNames = [c.getQualifiedName(package, includeRoot=0) for c in generatedTools]
             hasTools = 1
 
         # Get the preserved code section

@@ -47,7 +47,7 @@ def initialize(context):
 
 <dtml-if "has_tools">
     # initialize portal tools
-    tools = [<dtml-var "','.join (tool_names)">]
+    tools = [<dtml-var "', '.join (tool_names)">]
     utils.ToolInit( PROJECTNAME +' Tools',
                 tools = tools,
                 product_name = PROJECTNAME,
