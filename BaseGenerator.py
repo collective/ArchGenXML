@@ -28,25 +28,25 @@ from UMLProfile import UMLProfile
 
 class BaseGenerator:
     """ abstract base class for the different concrete generators """
-    
+
     uml_profile=UMLProfile()
     uml_profile.addStereoType('python_class',['XMIClass'],dispatching=1,
         generator='generatePythonClass',template='python_class.py')
-    
+
     default_class_type='python_class'
 
     def isTGVTrue(self,v):
         return isTGVTrue(v)
-    
+
     def isTGVFalse(self,v):
         return isTGVFalse(v)
-    
+
     def getUMLProfile(self):
         return self.uml_profile
-    
+
     def getDefaultClassType(self):
         return self.getUMLProfile().getStereoType(self.default_class_type)
-    
+
     def getOption(self,option,element,default=_marker,aggregate=False):
         ''' query a certain option for an element including 'acquisition' :
             search the element, then the packages upwards, then global options'''
@@ -123,7 +123,7 @@ class BaseGenerator:
     def generateProtectedSection(self,outfile,element,section,indent=0):
         parsed = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.getName(),None)
         print >> outfile, self.getProtectedSection(parsed,section,indent)
-        
+
     def generateDependentImports(self,element):
         outfile=StringIO()
         package=element.getPackage()
@@ -141,7 +141,9 @@ class BaseGenerator:
             else:
                 print >> outfile,'from %s import %s' % (
                     p.getQualifiedModuleName(
-                        package,forcePluginRoot=self.force_plugin_root
+                        package,
+                        forcePluginRoot=self.force_plugin_root,
+                        includeRoot=0,
                     ),
                     p.getName())
 
@@ -222,7 +224,7 @@ class BaseGenerator:
 
             print >> outfile, CLASS_IMPLEMENTS_BASE % \
                     {'baseclass_interfaces' : parentInterfacesConcatenation,}
-                    
+
         return outfile.getvalue()
 
     def getMethodsToGenerate(self,element):
@@ -257,9 +259,9 @@ class BaseGenerator:
             if cl:
                 manual_methods=[mt for mt in cl.methods.values() if mt.name not in method_names]
 
-                    
-        
-        return generatedMethods, manual_methods                    
+
+
+        return generatedMethods, manual_methods
 
     def generateClass(self,element):
         dispatchers=self.getUMLProfile().findStereoTypes(entities=['XMIClass'],dispatching=1)
@@ -267,22 +269,22 @@ class BaseGenerator:
         for tgv in dispatchers:
             if element.hasStereoType(tgv.getName()):
                 dispatcher=tgv
-                
+
         if not dispatcher:
             dispatcher=self.getDefaultClassType()
-            
+
         generator=dispatcher.generator
         return getattr(self,generator)(element,template=getattr(dispatcher,'template',None))
-            
+
     def generatePythonClass(self,element,template,**kw):
-        
+
         templ=readTemplate(template)
         d={ 'klass':element,
             'generator':self,
             'parsed_class':element.parsed_class,
             'builtins'   : __builtins__,
             'utils'       :utils,
-            
+
             }
         d.update(__builtins__)
         d.update(kw)
