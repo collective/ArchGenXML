@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.26 2003/10/03 17:01:12 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.27 2003/10/08 22:18:06 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -140,7 +140,7 @@ class ArchetypesGenerator:
     factory_type_information={
         'allowed_content_types':%(subtypes)s %(parentsubtypes)s,
         #'content_icon':'%(type_name)s.gif',
-        'immediate_view':'base_view',
+        'immediate_view':'%(immediate_view)s',
         'global_allow':%(global_allow)d,
         'filter_content_types':1,
         }
@@ -153,7 +153,11 @@ class ArchetypesGenerator:
         parentsubtypes=''
         if element.getGenParents():
             parentsubtypes = '+ ' + ' + '.join(tuple([p.getCleanName()+".factory_type_information['allowed_content_types']" for p in element.getGenParents()]))
-        res=ftiTempl % {'subtypes':repr(tuple(subtypes)),'type_name':element.getCleanName(),'parentsubtypes':parentsubtypes,'global_allow':not element.isDependent()}
+        immediate_view=element.getTaggedValue('immediate_view') or 'base_view'
+        
+        res=ftiTempl % {'subtypes':repr(tuple(subtypes)),'type_name':element.getCleanName(),
+            'parentsubtypes':parentsubtypes,'global_allow':not element.isDependent(),'immediate_view':immediate_view}
+        
         return res
 
     typeMap={
@@ -367,7 +371,12 @@ class ArchetypesGenerator:
                 print >> outfile, '    '*2 ,self.getFieldStringFromAssociation(rel)
                 
 
-        print >> outfile,'    ))'
+        print >> outfile,'    ),'
+        marshaller=element.getTaggedValue('marshaller')
+        if marshaller:
+            print >> outfile, '    marshall='+marshaller
+            
+        print >> outfile,'    )'
 
     def generateMethods(self,outfile,element):
         print >> outfile

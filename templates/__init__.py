@@ -4,6 +4,13 @@ from Products.Archetypes.public import *
 from Products.Archetypes import listTypes
 import os, os.path
 
+try:
+    import CustomizationPolicy
+    print 'Customizationpolicy for %(project_name)s installed'
+except ImportError:
+    CustomizationPolicy=None
+    print 'no Customizationpolicy %(project_name)s installed'
+        
 ADD_CONTENT_PERMISSION = '%(add_content_permission)s'
 PROJECTNAME = "%(project_name)s"
 
@@ -42,4 +49,5 @@ def initialize(context):
                                ) 
             , permission = perm
             )
- 
+    if CustomizationPolicy:
+        CustomizationPolicy.register(context)
