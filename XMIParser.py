@@ -1479,7 +1479,7 @@ class XMIClass (XMIElement, StateMachineContainer):
         res=name+'.'+self.getCleanName()
 
         return res
-
+    
     def setStateMachine(self,sm):
         self.statemachine=sm
 
@@ -1771,7 +1771,7 @@ class XMIStateMachine(XMIStateContainer):
         for s in states:
             if s.isInitial():
                 return s
-
+            
         for s in states:
             for k, v in s.getTaggedValues().items():
                 if k == 'initial_state':
@@ -1910,18 +1910,18 @@ class XMIAction(XMIElement):
 
     def getExpressionBody(self):
         return self.expression
-
+    
     def getSplittedName(self,padding=1):
         ''' when the name contains a semicolon the name specifies two
             actions: the one before the transition and the one after the transition
         '''
-
+        
         res=self.getName().split(';')
         if len(res)==1 and padding:
             return ['',res[0]]
         else:
             return res
-
+        
     def getBeforeActionName(self):
         return self.getSplittedName()[0]
 
@@ -1941,7 +1941,7 @@ class XMIGuard(XMIElement):
 
 class XMIState(XMIElement):
     isinitial=0
-
+    
     def __init__(self,*args,**kwargs):
         self.incomingTransitions=[]
         self.outgoingTransitions=[]
