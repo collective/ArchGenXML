@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.22 2003/10/26 21:03:18 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.23 2003/10/26 22:41:52 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -81,6 +81,8 @@ class XMI1_0:
     STEREOTYPE="Foundation.Extension_Mechanisms.Stereotype"
     STEREOTYPE_MODELELEMENT="Foundation.Extension_Mechanisms.Stereotype.extendedElement"
     MODELELEMENT="Foundation.Core.ModelElement"
+    ISABSTRACT="Foundation.Core.GeneralizableElement.isAbstract"
+    
     aggregates=['composite','aggregate']
 
     def getName(self,domElement):
@@ -189,7 +191,13 @@ class XMI1_0:
                     name=self.getName(st)
                     print 'Stereotype found:',name
                     o.setStereoType(name)
-                
+    
+    def calcClassAbstract(self,o):
+        abs=getElementByTagName(o.domElement,XMI.ISABSTRACT,None)
+        if abs:
+            o.isabstract=abs.getAttribute('xmi.value')=='true'
+        else:
+            o.isabstract=0
     
 class XMI1_1 (XMI1_0):
     # XMI version specific stuff goes there
@@ -240,6 +248,8 @@ class XMI1_1 (XMI1_0):
 
     MODELELEMENT="UML:ModelElement"
     STEREOTYPE="UML:Stereotype"
+    ISABSTRACT="UML:GeneralizableElement.isAbstract"
+    
     def getName(self,domElement):
         return domElement.getAttribute('name')
 
@@ -298,7 +308,10 @@ class XMI1_2 (XMI1_1):
             o.setStereoType(self.getName(st).strip())
             print 'stereotype found:',id,self.getName(st),o.getStereoType()
         
-
+    def calcClassAbstract(self,o):
+        o.isabstract=o.domElement.hasAttribute('isAbstract') and o.domElement.getAttribute('isAbstract')=='true'
+        #print 'xmi12_calcabstract:',o.getName(),o.isAbstract()
+        
 XMI=XMI1_0()
 
 _marker=[]
@@ -532,7 +545,12 @@ class XMIClass (XMIElement):
         self.genParents=[]
         
         self.type=self.name
+        #self.isabstract=0
 
+    def initFromDOM(self,domElement):
+        XMIElement.initFromDOM(self,domElement)
+        XMI.calcClassAbstract(self)
+        
     def addGenChild(self,c):
         self.genChildren.append(c)
         
@@ -593,8 +611,9 @@ class XMIClass (XMIElement):
         #print 'isDependent:',self.getName(),res
     
         return res
+    
     def isAbstract(self):
-        return 0
+        return self.isabstract
 
     def getSubtypeNames(self,recursive=0):
         ''' returns the non-intrinsic subtypes '''
@@ -826,6 +845,7 @@ def parse(xschemaFileName=None,xschema=None,packages=[]):
         pass
 
     root=buildHierarchy(doc,packages)
+
     return root
 
 

@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.36 2003/10/26 21:43:53 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.37 2003/10/26 22:41:52 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -158,9 +158,9 @@ class ArchetypesGenerator:
         immediate_view=element.getTaggedValue('immediate_view') or 'base_view'
         
         global_allow=not element.isDependent()
-        if element.getStereoType() in self.portal_tools:
+        if element.getStereoType() in self.portal_tools or element.isAbstract():
             global_allow=0
-        
+            
         res=ftiTempl % {'subtypes':repr(tuple(subtypes)),'type_name':element.getCleanName(),
             'parentsubtypes':parentsubtypes,'global_allow':global_allow,'immediate_view':immediate_view}
         
