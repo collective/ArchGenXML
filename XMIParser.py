@@ -1194,12 +1194,12 @@ class XMIPackage(XMIElement, StateMachineContainer):
 
         return 0
 
-    def getQualifiedName(self, ref):
+    def getQualifiedName(self, ref,includeRoot=1):
         ''' returns the qualified name of tha package, depending of the
             reference package 'ref' it generates an absolute path or
             a relative path if the pack(self) is a subpack of 'ref' '''
 
-        path=self.getPath(parent=ref)
+        path=self.getPath(includeRoot=includeRoot,parent=ref)
         return path
 
 
@@ -1469,11 +1469,14 @@ class XMIClass (XMIElement, StateMachineContainer):
         return res
 
 
-    def getQualifiedName(self,ref):
-        path=self.getQualifiedModulePath(ref)
+    def getQualifiedName(self,ref,includeRoot=0):
+        path= self.getQualifiedModulePath(ref)
+        #res = res+'.%s' % self.getName()
         path.append(self)
+        if not includeRoot:
+            path=path[1:]
         res='.'.join([p.getName() for p in path if p])
-        if self.package.getProduct() != ref.getProduct():
+        if not includeRoot and self.package.getProduct() != ref.getProduct():
             res='Products.'+res
         return res
 

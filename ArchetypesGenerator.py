@@ -593,8 +593,8 @@ class ArchetypesGenerator(BaseGenerator):
                 if not (k in widgetmap.keys()): # XXX check if disabled
                     widgetmap.update( {k: check_map[k]} )
             if 'label_msgid' in widgetmap.keys() and has_enhanced_strip_support:
-                self.addMsgid(widgetmap['label_msgid'].strip("'"),
-                    (widgetmap.has_key('label') and widgetmap['label'].strip("'")) or fieldname,
+                self.addMsgid(widgetmap['label_msgid'].strip("'").strip('"'),
+                    (widgetmap.has_key('label') and widgetmap['label'].strip("'").strip('"')) or fieldname,
                     elementclass,
                     fieldname
                 )
@@ -1575,8 +1575,8 @@ class ArchetypesGenerator(BaseGenerator):
         """ Generate __init__.py at product root from the DTML template"""
 
         # Get the names of packages and classes to import
-        packageImports = [m.getModuleName () for m in package.generatedPackages]
-        classImports   = [m.getModuleName () for m in package.generatedModules]
+        packageImports = [m.getModuleName() for m in package.getAnnotation('generatedPackages') or []]
+        classImports   = [m.getModuleName() for m in package.generatedModules]
 
         # Find out if we need to initialise any tools
         generatedTools = self.getGeneratedTools(package)
@@ -1622,7 +1622,7 @@ class ArchetypesGenerator(BaseGenerator):
         """ Generate __init__.py for packages from the DTML template"""
 
         # Get the names of packages and classes to import
-        packageImports = [m.getModuleName () for m in package.generatedPackages]
+        packageImports = [m.getModuleName () for m in package.getAnnotation('generatedPackages') or []]
         classImports   = [m.getModuleName () for m in package.generatedModules]
 
         # Get the preserved code sections
@@ -1806,7 +1806,7 @@ class ArchetypesGenerator(BaseGenerator):
                 raise
 
         #generate subpackages
-        package.generatedPackages=[]
+        generatedPkg = package.getAnnotation('generatedPackages') or []
         for p in package.getPackages():
             if p.isProduct():
                 self.infoind+=+1
@@ -1817,7 +1817,8 @@ class ArchetypesGenerator(BaseGenerator):
                 self.infoind+=1
                 self.generatePackage(p,recursive=1)
                 self.infoind-=1
-                package.generatedPackages.append(p)
+                generatedPkg.append(p)
+                package.annotate('generatedPackages',generatedPkg)
 
         self.generateStdFiles(package)
 
