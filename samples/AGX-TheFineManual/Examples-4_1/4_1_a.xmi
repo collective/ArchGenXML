@@ -1,0 +1,370 @@
+<?xml version = '1.0' encoding = 'UTF-8' ?>
+<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Wed May 19 16:51:24 CEST 2004'>
+  <XMI.header>
+    <XMI.documentation>
+      <XMI.exporter>Netbeans XMI Writer</XMI.exporter>
+      <XMI.exporterVersion>1.0</XMI.exporterVersion>
+    </XMI.documentation>
+  </XMI.header>
+  <XMI.content>
+    <UML:Diagram xmi.id = 'di$1818f80:fc9389dd90:-7fc8' isVisible = 'true' name = 'Class Diagram_1'
+      zoom = '1.0'>
+      <UML:GraphElement.position>
+        <XMI.field>0.0</XMI.field>
+        <XMI.field>0.0</XMI.field>
+      </UML:GraphElement.position>
+      <UML:GraphNode.size>
+        <XMI.field>176.2793</XMI.field>
+        <XMI.field>130.0</XMI.field>
+      </UML:GraphNode.size>
+      <UML:Diagram.viewport>
+        <XMI.field>0.0</XMI.field>
+        <XMI.field>0.0</XMI.field>
+      </UML:Diagram.viewport>
+      <UML:GraphElement.semanticModel>
+        <UML:SimpleSemanticModelElement xmi.id = 'di$1818f80:fc9389dd90:-7fc7' presentation = ''
+          typeInfo = 'ClassDiagram'/>
+      </UML:GraphElement.semanticModel>
+      <UML:GraphElement.contained>
+        <UML:GraphNode xmi.id = 'di$1818f80:fc9389dd90:-7fc6' isVisible = 'true'>
+          <UML:GraphElement.position>
+            <XMI.field>110.0</XMI.field>
+            <XMI.field>120.0</XMI.field>
+          </UML:GraphElement.position>
+          <UML:GraphNode.size>
+            <XMI.field>116.2793</XMI.field>
+            <XMI.field>70.0</XMI.field>
+          </UML:GraphNode.size>
+          <UML:GraphElement.semanticModel>
+            <UML:Uml1SemanticModelBridge xmi.id = 'di$1818f80:fc9389dd90:-7fc5' presentation = ''>
+              <UML:Uml1SemanticModelBridge.element>
+                <UML:Class xmi.idref = 'sm$1818f80:fc9389dd90:-7fc4'/>
+              </UML:Uml1SemanticModelBridge.element>
+            </UML:Uml1SemanticModelBridge>
+          </UML:GraphElement.semanticModel>
+          <UML:GraphElement.contained>
+            <UML:GraphNode xmi.id = 'di$1818f80:fc9389dd90:-7fc3' isVisible = 'true'>
+              <UML:GraphElement.position>
+                <XMI.field>1.0</XMI.field>
+                <XMI.field>1.0</XMI.field>
+              </UML:GraphElement.position>
+              <UML:GraphNode.size>
+                <XMI.field>114.2793</XMI.field>
+                <XMI.field>18.0</XMI.field>
+              </UML:GraphNode.size>
+              <UML:GraphElement.semanticModel>
+                <UML:SimpleSemanticModelElement xmi.id = 'di$1818f80:fc9389dd90:-7fc2' presentation = ''
+                  typeInfo = 'NameCompartment'/>
+              </UML:GraphElement.semanticModel>
+              <UML:GraphElement.contained>
+                <UML:GraphNode xmi.id = 'di$1818f80:fc9389dd90:-7fc1' isVisible = 'true'>
+                  <UML:GraphElement.position>
+                    <XMI.field>2.0</XMI.field>
+                    <XMI.field>2.0</XMI.field>
+                  </UML:GraphElement.position>
+                  <UML:GraphNode.size>
+                    <XMI.field>110.2793</XMI.field>
+                    <XMI.field>14.0</XMI.field>
+                  </UML:GraphNode.size>
+                  <UML:GraphElement.semanticModel>
+                    <UML:SimpleSemanticModelElement xmi.id = 'di$1818f80:fc9389dd90:-7fc0' presentation = ''
+                      typeInfo = 'Name'/>
+                  </UML:GraphElement.semanticModel>
+                </UML:GraphNode>
+              </UML:GraphElement.contained>
+            </UML:GraphNode>
+            <UML:GraphNode xmi.id = 'di$1818f80:fc9389dd90:-7fbf' isVisible = 'true'>
+              <UML:GraphElement.position>
+                <XMI.field>1.0</XMI.field>
+                <XMI.field>19.0</XMI.field>
+              </UML:GraphElement.position>
+              <UML:GraphNode.size>
+                <XMI.field>114.2793</XMI.field>
+                <XMI.field>1.0</XMI.field>
+              </UML:GraphNode.size>
+              <UML:GraphElement.semanticModel>
+                <UML:SimpleSemanticModelElement xmi.id = 'di$1818f80:fc9389dd90:-7fbe' presentation = ''
+                  typeInfo = 'CompartmentSeparator'/>
+              </UML:GraphElement.semanticModel>
+            </UML:GraphNode>
+            <UML:GraphNode xmi.id = 'di$1818f80:fc9389dd90:-7fbd' isVisible = 'true'>
+              <UML:GraphElement.position>
+                <XMI.field>1.0</XMI.field>
+                <XMI.field>20.0</XMI.field>
+              </UML:GraphElement.position>
+              <UML:GraphNode.size>
+                <XMI.field>114.2793</XMI.field>
+                <XMI.field>24.0</XMI.field>
+              </UML:GraphNode.size>
+              <UML:GraphElement.semanticModel>
+                <UML:SimpleSemanticModelElement xmi.id = 'di$1818f80:fc9389dd90:-7fbc' presentation = ''
+                  typeInfo = 'AttributeCompartment'/>
+              </UML:GraphElement.semanticModel>
+              <UML:GraphElement.contained>
+                <UML:GraphNode xmi.id = 'di$1818f80:fc9389dd90:-7fbb' isVisible = 'true'>
+                  <UML:GraphElement.position>
+                    <XMI.field>2.0</XMI.field>
+                    <XMI.field>2.0</XMI.field>
+                  </UML:GraphElement.position>
+                  <UML:GraphNode.size>
+                    <XMI.field>110.2793</XMI.field>
+                    <XMI.field>20.0</XMI.field>
+                  </UML:GraphNode.size>
+                  <UML:GraphElement.semanticModel>
+                    <UML:SimpleSemanticModelElement xmi.id = 'di$1818f80:fc9389dd90:-7fba' presentation = ''
+                      typeInfo = 'DelimitedSection'/>
+                  </UML:GraphElement.semanticModel>
+                  <UML:GraphElement.contained>
+                    <UML:GraphNode xmi.id = 'di$1818f80:fc9389dd90:-7fb9' isVisible = 'true'>
+                      <UML:GraphElement.position>
+                        <XMI.field>2.0</XMI.field>
+                        <XMI.field>2.0</XMI.field>
+                      </UML:GraphElement.position>
+                      <UML:GraphNode.size>
+                        <XMI.field>106.2793</XMI.field>
+                        <XMI.field>14.0</XMI.field>
+                      </UML:GraphNode.size>
+                      <UML:GraphElement.semanticModel>
+                        <UML:Uml1SemanticModelBridge xmi.id = 'di$1818f80:fc9389dd90:-7fb8' presentation = ''>
+                          <UML:Uml1SemanticModelBridge.element>
+                            <UML:Attribute xmi.idref = 'sm$1818f80:fc9389dd90:-7fb7'/>
+                          </UML:Uml1SemanticModelBridge.element>
+                        </UML:Uml1SemanticModelBridge>
+                      </UML:GraphElement.semanticModel>
+                      <UML:GraphElement.contained>
+                        <UML:GraphNode xmi.id = 'di$1818f80:fc9389dd90:-7fb6' isVisible = 'true'>
+                          <UML:GraphElement.position>
+                            <XMI.field>0.0</XMI.field>
+                            <XMI.field>0.0</XMI.field>
+                          </UML:GraphElement.position>
+                          <UML:GraphNode.size>
+                            <XMI.field>6.3647</XMI.field>
+                            <XMI.field>14.0</XMI.field>
+                          </UML:GraphNode.size>
+                          <UML:GraphElement.semanticModel>
+                            <UML:SimpleSemanticModelElement xmi.id = 'di$1818f80:fc9389dd90:-7fb5' presentation = ''
+                              typeInfo = 'Visibility'/>
+                          </UML:GraphElement.semanticModel>
+                        </UML:GraphNode>
+                        <UML:GraphNode xmi.id = 'di$1818f80:fc9389dd90:-7fb4' isVisible = 'true'>
+                          <UML:GraphElement.position>
+                            <XMI.field>6.3647</XMI.field>
+                            <XMI.field>0.0</XMI.field>
+                          </UML:GraphElement.position>
+                          <UML:GraphNode.size>
+                            <XMI.field>64.4746</XMI.field>
+                            <XMI.field>14.0</XMI.field>
+                          </UML:GraphNode.size>
+                          <UML:GraphElement.semanticModel>
+                            <UML:SimpleSemanticModelElement xmi.id = 'di$1818f80:fc9389dd90:-7fb3' presentation = ''
+                              typeInfo = 'Name'/>
+                          </UML:GraphElement.semanticModel>
+                        </UML:GraphNode>
+                        <UML:GraphNode xmi.id = 'di$1818f80:fc9389dd90:-7fb2' isVisible = 'true'>
+                          <UML:GraphElement.position>
+                            <XMI.field>70.8394</XMI.field>
+                            <XMI.field>0.0</XMI.field>
+                          </UML:GraphElement.position>
+                          <UML:GraphNode.size>
+                            <XMI.field>3.4805</XMI.field>
+                            <XMI.field>14.0</XMI.field>
+                          </UML:GraphNode.size>
+                          <UML:GraphElement.semanticModel>
+                            <UML:SimpleSemanticModelElement xmi.id = 'di$1818f80:fc9389dd90:-7fb1' presentation = ''
+                              typeInfo = 'TypeSeparator'/>
+                          </UML:GraphElement.semanticModel>
+                        </UML:GraphNode>
+                        <UML:GraphNode xmi.id = 'di$1818f80:fc9389dd90:-7fb0' isVisible = 'true'>
+                          <UML:GraphElement.position>
+                            <XMI.field>74.3198</XMI.field>
+                            <XMI.field>0.0</XMI.field>
+                          </UML:GraphElement.position>
+                          <UML:GraphNode.size>
+                            <XMI.field>21.103</XMI.field>
+                            <XMI.field>14.0</XMI.field>
+                          </UML:GraphNode.size>
+                          <UML:GraphElement.semanticModel>
+                            <UML:SimpleSemanticModelElement xmi.id = 'di$1818f80:fc9389dd90:-7faf' presentation = ''
+                              typeInfo = 'StructuralFeatureType'/>
+                          </UML:GraphElement.semanticModel>
+                          <UML:GraphElement.contained>
+                            <UML:GraphNode xmi.id = 'di$1818f80:fc9389dd90:-7fae' isVisible = 'true'>
+                              <UML:GraphElement.position>
+                                <XMI.field>0.0</XMI.field>
+                                <XMI.field>0.0</XMI.field>
+                              </UML:GraphElement.position>
+                              <UML:GraphNode.size>
+                                <XMI.field>21.103</XMI.field>
+                                <XMI.field>14.0</XMI.field>
+                              </UML:GraphNode.size>
+                              <UML:GraphElement.semanticModel>
+                                <UML:Uml1SemanticModelBridge xmi.id = 'di$1818f80:fc9389dd90:-7fad' presentation = ''>
+                                  <UML:Uml1SemanticModelBridge.element>
+                                    <UML:Class xmi.idref = 'sm$1818f80:fc9389dd90:-7fac'/>
+                                  </UML:Uml1SemanticModelBridge.element>
+                                </UML:Uml1SemanticModelBridge>
+                              </UML:GraphElement.semanticModel>
+                              <UML:GraphElement.contained>
+                                <UML:GraphNode xmi.id = 'di$1818f80:fc9389dd90:-7fab' isVisible = 'true'>
+                                  <UML:GraphElement.position>
+                                    <XMI.field>0.0</XMI.field>
+                                    <XMI.field>0.0</XMI.field>
+                                  </UML:GraphElement.position>
+                                  <UML:GraphNode.size>
+                                    <XMI.field>21.103</XMI.field>
+                                    <XMI.field>14.0</XMI.field>
+                                  </UML:GraphNode.size>
+                                  <UML:GraphElement.semanticModel>
+                                    <UML:SimpleSemanticModelElement xmi.id = 'di$1818f80:fc9389dd90:-7faa' presentation = ''
+                                      typeInfo = 'Name'/>
+                                  </UML:GraphElement.semanticModel>
+                                </UML:GraphNode>
+                              </UML:GraphElement.contained>
+                            </UML:GraphNode>
+                          </UML:GraphElement.contained>
+                        </UML:GraphNode>
+                        <UML:GraphNode xmi.id = 'di$1818f80:fc9389dd90:-7fa9' isVisible = 'true'>
+                          <UML:GraphElement.position>
+                            <XMI.field>95.4229</XMI.field>
+                            <XMI.field>0.0</XMI.field>
+                          </UML:GraphElement.position>
+                          <UML:GraphNode.size>
+                            <XMI.field>3.5771</XMI.field>
+                            <XMI.field>14.0</XMI.field>
+                          </UML:GraphNode.size>
+                          <UML:GraphElement.semanticModel>
+                            <UML:SimpleSemanticModelElement xmi.id = 'di$1818f80:fc9389dd90:-7fa8' presentation = ''
+                              typeInfo = 'MultiplicityStart'/>
+                          </UML:GraphElement.semanticModel>
+                        </UML:GraphNode>
+                        <UML:GraphNode xmi.id = 'di$1818f80:fc9389dd90:-7fa7' isVisible = 'true'>
+                          <UML:GraphElement.position>
+                            <XMI.field>99.0</XMI.field>
+                            <XMI.field>0.0</XMI.field>
+                          </UML:GraphElement.position>
+                          <UML:GraphNode.size>
+                            <XMI.field>3.4805</XMI.field>
+                            <XMI.field>14.0</XMI.field>
+                          </UML:GraphNode.size>
+                          <UML:GraphElement.semanticModel>
+                            <UML:SimpleSemanticModelElement xmi.id = 'di$1818f80:fc9389dd90:-7fa6' presentation = ''
+                              typeInfo = 'Multiplicity'/>
+                          </UML:GraphElement.semanticModel>
+                        </UML:GraphNode>
+                        <UML:GraphNode xmi.id = 'di$1818f80:fc9389dd90:-7fa5' isVisible = 'true'>
+                          <UML:GraphElement.position>
+                            <XMI.field>102.4805</XMI.field>
+                            <XMI.field>0.0</XMI.field>
+                          </UML:GraphElement.position>
+                          <UML:GraphNode.size>
+                            <XMI.field>3.5771</XMI.field>
+                            <XMI.field>14.0</XMI.field>
+                          </UML:GraphNode.size>
+                          <UML:GraphElement.semanticModel>
+                            <UML:SimpleSemanticModelElement xmi.id = 'di$1818f80:fc9389dd90:-7fa4' presentation = ''
+                              typeInfo = 'MultiplicityEnd'/>
+                          </UML:GraphElement.semanticModel>
+                        </UML:GraphNode>
+                      </UML:GraphElement.contained>
+                    </UML:GraphNode>
+                  </UML:GraphElement.contained>
+                </UML:GraphNode>
+              </UML:GraphElement.contained>
+            </UML:GraphNode>
+            <UML:GraphNode xmi.id = 'di$1818f80:fc9389dd90:-7fa3' isVisible = 'true'>
+              <UML:GraphElement.position>
+                <XMI.field>1.0</XMI.field>
+                <XMI.field>44.0</XMI.field>
+              </UML:GraphElement.position>
+              <UML:GraphNode.size>
+                <XMI.field>114.2793</XMI.field>
+                <XMI.field>1.0</XMI.field>
+              </UML:GraphNode.size>
+              <UML:GraphElement.semanticModel>
+                <UML:SimpleSemanticModelElement xmi.id = 'di$1818f80:fc9389dd90:-7fa2' presentation = ''
+                  typeInfo = 'CompartmentSeparator'/>
+              </UML:GraphElement.semanticModel>
+            </UML:GraphNode>
+            <UML:GraphNode xmi.id = 'di$1818f80:fc9389dd90:-7fa1' isVisible = 'true'>
+              <UML:GraphElement.position>
+                <XMI.field>1.0</XMI.field>
+                <XMI.field>45.0</XMI.field>
+              </UML:GraphElement.position>
+              <UML:GraphNode.size>
+                <XMI.field>114.2793</XMI.field>
+                <XMI.field>24.0</XMI.field>
+              </UML:GraphNode.size>
+              <UML:GraphElement.semanticModel>
+                <UML:SimpleSemanticModelElement xmi.id = 'di$1818f80:fc9389dd90:-7fa0' presentation = ''
+                  typeInfo = 'OperationCompartment'/>
+              </UML:GraphElement.semanticModel>
+              <UML:GraphElement.contained>
+                <UML:GraphNode xmi.id = 'di$1818f80:fc9389dd90:-7f9f' isVisible = 'true'>
+                  <UML:GraphElement.position>
+                    <XMI.field>2.0</XMI.field>
+                    <XMI.field>2.0</XMI.field>
+                  </UML:GraphElement.position>
+                  <UML:GraphNode.size>
+                    <XMI.field>110.2793</XMI.field>
+                    <XMI.field>20.0</XMI.field>
+                  </UML:GraphNode.size>
+                  <UML:GraphElement.semanticModel>
+                    <UML:SimpleSemanticModelElement xmi.id = 'di$1818f80:fc9389dd90:-7f9e' presentation = ''
+                      typeInfo = 'DelimitedSection'/>
+                  </UML:GraphElement.semanticModel>
+                </UML:GraphNode>
+              </UML:GraphElement.contained>
+            </UML:GraphNode>
+          </UML:GraphElement.contained>
+        </UML:GraphNode>
+      </UML:GraphElement.contained>
+      <UML:Diagram.owner>
+        <UML:Uml1SemanticModelBridge xmi.id = 'di$1818f80:fc9389dd90:-7f9d' presentation = ''>
+          <UML:Uml1SemanticModelBridge.element>
+            <UML:Model xmi.idref = 'sm$1818f80:fc9389dd90:-7f9c'/>
+          </UML:Uml1SemanticModelBridge.element>
+        </UML:Uml1SemanticModelBridge>
+      </UML:Diagram.owner>
+    </UML:Diagram>
+    <UML:Model xmi.id = 'sm$1818f80:fc9389dd90:-7f9c' name = 'model 2' isSpecification = 'false'
+      isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+      <UML:Namespace.ownedElement>
+        <UML:Class xmi.id = 'sm$1818f80:fc9389dd90:-7fc4' name = 'MyFirstAGXContent'
+          visibility = 'public' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
+          isAbstract = 'false' isActive = 'false'>
+          <UML:Namespace.ownedElement>
+            <UML:Class xmi.id = 'sm$1818f80:fc9389dd90:-7fac' name = 'text' visibility = 'public'
+              isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'
+              isActive = 'false'/>
+          </UML:Namespace.ownedElement>
+          <UML:Classifier.feature>
+            <UML:Attribute xmi.id = 'sm$1818f80:fc9389dd90:-7fb7' name = 'MyTextField'
+              visibility = 'private' isSpecification = 'false' ownerScope = 'instance'
+              changeability = 'changeable'>
+              <UML:StructuralFeature.multiplicity>
+                <UML:Multiplicity xmi.id = 'sm$1818f80:fc9389dd90:-7f9b'/>
+              </UML:StructuralFeature.multiplicity>
+              <UML:StructuralFeature.type>
+                <UML:Class xmi.idref = 'sm$1818f80:fc9389dd90:-7fac'/>
+              </UML:StructuralFeature.type>
+            </UML:Attribute>
+          </UML:Classifier.feature>
+        </UML:Class>
+        <UML:Package xmi.id = 'sm$1818f80:fc9389dd90:-7f9a' name = 'java' isSpecification = 'false'
+          isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Namespace.ownedElement>
+            <UML:Package xmi.id = 'sm$1818f80:fc9389dd90:-7f99' name = 'lang' isSpecification = 'false'
+              isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+              <UML:Namespace.ownedElement>
+                <UML:DataType xmi.id = 'sm$1818f80:fc9389dd90:-7f98' name = 'int' isSpecification = 'false'
+                  isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+                <UML:DataType xmi.id = 'sm$1818f80:fc9389dd90:-7f97' name = 'void' isSpecification = 'false'
+                  isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+              </UML:Namespace.ownedElement>
+            </UML:Package>
+          </UML:Namespace.ownedElement>
+        </UML:Package>
+      </UML:Namespace.ownedElement>
+    </UML:Model>
+  </XMI.content>
+</XMI>
