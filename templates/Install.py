@@ -81,7 +81,7 @@ class PloneSkinRegistrar:
                 rpt += '! Warning: skipping "%%s" skin, "%%s" is already set up\n' %% (skin, type)
         return rpt
 
-    def unInstall(self, aq_obj):
+    def uninstall(self, aq_obj):
         """Uninstalls and unregisters the skin resources
         @param aq_obj: object from which cmf site object is acquired
         @type aq_obj: any Zope object in the CMF
@@ -121,12 +121,41 @@ class PloneSkinRegistrar:
 
 def install(self):
     out = StringIO()
+    classes=listTypes(PROJECTNAME)
     installTypes(self, out,
-                 listTypes(PROJECTNAME),
+                 classes,
                  PROJECTNAME)
 
     print >> out, "Successfully installed %%s." %% PROJECTNAME
     sr = PloneSkinRegistrar('skins', product_globals)
     print >> out,sr.install(self)
+    
+    #register folderish classes in use_folder_contents
+    props=getToolByName(self,'portal_properties').site_properties
+    use_folder_tabs=list(props.use_folder_tabs)
+    print >> out, 'adding classes to use_folder_tabs:'
+    for cl in classes:
+        print >> out,  'type:',cl['klass'].portal_type
+        if cl['klass'].isPrincipiaFolderish:
+            use_folder_tabs.append(cl['klass'].portal_type)
+            
+    props.use_folder_tabs=tuple(use_folder_tabs)
+    
     return out.getvalue()
 
+def uninstall(self):
+    out = StringIO()
+    classes=listTypes(PROJECTNAME)
+   
+    #unregister folderish classes in use_folder_contents
+    props=getToolByName(self,'portal_properties').site_properties
+    use_folder_tabs=list(props.use_folder_tabs)
+    print >> out, 'removing classes from use_folder_tabs:'
+    for cl in classes:
+        print >> out,  'type:',cl['klass'].portal_type
+        if cl['klass'].isPrincipiaFolderish:
+            use_folder_tabs.remove(cl['klass'].portal_type)
+            
+    props.use_folder_tabs=tuple(use_folder_tabs)
+ 
+    return out.getvalue()
