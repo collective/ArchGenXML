@@ -449,6 +449,10 @@ class ArchetypesGenerator(BaseGenerator):
         for k in tgv.keys():
             if k not in noparams and not k.startswith('widget:'):
                 v=tgv[k]
+		
+		if v is None:
+		   continue
+		   
                 if k not in self.nonstring_tgvs:
                     v=getExpression(v)
                 formatted=''
