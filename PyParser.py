@@ -23,11 +23,13 @@ def extractCode(arr,start,lnotab):
     length = 0
 
     for i in range(0,len(lnotab),2):
-        length += ord(lnotab[i+1])
+        cl=ord(lnotab[i+1])
+        if cl != 255:
+            length += cl
 
-    # and now take into account the trainling backslashes
-    while arr[start+length].strip()[-1]=='\\':
-        length += 1
+    # and now take into account the trailing backslashes
+    while arr[start+length].strip() and arr[start+length].strip()[-1]=='\\':
+            length += 1
         
     snip = arr[start:start+length+1]
     return '\n'.join(snip)
