@@ -37,12 +37,6 @@ def extractCode(arr,start,lnotab):
     snip = arr[start:start+length+1]
     return '\n'.join(snip)
 
-def isItAClass(c):
-    ''' woooh - heuristic method to check if a code fragment is a class '''
-    res=len([o for o in c.co_consts if type(o) == types.CodeType])
-    #print 'Class:####',c.co_name,res,c.co_consts
-    return res
-
         
 class PyCodeElement:
     module=None
@@ -114,6 +108,7 @@ class PyModule:
     classes={}
     protectedSections={}
     
+    
     def __init__(self,file):
         self.classes={}
         #print 'init PyModule:',file
@@ -130,13 +125,25 @@ class PyModule:
         self.ast=parser.suite(self.filebuf)
         self.code=self.ast.compile()
         self.initFromCode()
+
+    def isItAClass(self,c):
+        ''' woooh - heuristic method to check if a code fragment is a class '''
+        
+        fl=c.co_firstlineno
+        if self.splittedSource[fl-1].strip().startswith('class'):
+            return 1
+        
+        res=len([o for o in c.co_consts if type(o) == types.CodeType])
+        #print 'Class:####',c.co_name,res,c.co_consts
+        return res
+
         
     def initFromCode(self):
         
         #collect code elements in the class
         codes=[c for c in self.code.co_consts if type(c) == types.CodeType]
         #print 'codes:',codes
-        classes=[c for c in codes if isItAClass(c)]
+        classes=[c for c in codes if self.isItAClass(c)]
         for c in classes:
             klass=PyClass(c,self)
             self.classes[c.co_name]=klass

@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.148 2004/04/24 20:38:36 yenzenz Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.149 2004/04/25 12:06:21 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -119,7 +119,8 @@ class ArchetypesGenerator:
             'category':    %(action_category)s,
             'id':          '%(action_id)s',
             'name':        '%(action_label)s',
-            'permissions': (%(permission)s,)},
+            'permissions': (%(permission)s,),
+            'condition'  : '%(condition)s'},
           '''
     def makeFile(self,fn,force=1):
         ffn=os.path.join(self.targetRoot,fn)
@@ -159,7 +160,6 @@ class ArchetypesGenerator:
                 action_name=m.getTaggedValue(m.getStereoType(), m.getName()).strip()
                 print 'generating ' + m.getStereoType()+':',action_name
                 dict={}
-
                 
                 if not action_name.startswith('string:') and not action_name.startswith('python:'):
                     action_target='string:$object_url/'+action_name
@@ -171,13 +171,15 @@ class ArchetypesGenerator:
                 dict['action_id']=m.getTaggedValue('id',m.getName())
                 dict['action_label']=m.getTaggedValue('action_label') or m.getTaggedValue('label',m.getName()) # action_label is deprecated and for backward compability only!
                 dict['permission']=getExpression(m.getTaggedValue('permission','View'))
+                dict['action_id']=m.getTaggedValue('id',m.getName())
 
+                condition=m.getTaggedValue('condition') or '1'
+                dict['condition']='python:'+condition
+                    
                 if not isTGVFalse(m.getTaggedValue('create_action')):
                     print >>outfile, self.ACT_TEMPL % dict
 
             if m.hasStereoType('view'):
-                print 'rootf:',element.getRootPackage().getName()
-                print 'rootfres:',self.getSkinPath(element)+action_name+'.pt'
                 f=self.makeFile(os.path.join(self.getSkinPath(element),action_name+'.pt'),0)
                 if f:
                     templdir=os.path.join(sys.path[0],'templates')
@@ -1016,7 +1018,7 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchGenXML.py,v 1.148 2004/04/24 20:38:36 yenzenz Exp $
+RCS-ID $Id: ArchGenXML.py,v 1.149 2004/04/25 12:06:21 zworkb Exp $
 \"""
 # %(copyright)s
 #
@@ -1166,7 +1168,7 @@ You should have received a copy of the GNU General Public License along with thi
         generatedModules=package.generatedModules
         #generates __init__.py, Extensions/Install.py and the skins directory
         #the result is a QuickInstaller installable product
-        print 'standard-files for ',package.getName()
+        #print 'standard-files for ',package.getName()
         #remove trailing slash
         if target[-1] in ('/','\\'):
             target=target[:-1]
@@ -1318,16 +1320,12 @@ You should have received a copy of the GNU General Public License along with thi
             module=element.getName()
             package.generatedModules.append(module)
             outfilepath=os.path.join(package.getFilePath(),module+'.py')
+            #print 'writing class:',outfilepath
             
-            try:
-                outfilebuf=open(outfilepath).read()
-            except IOError:
-                outfilebuf=None
-                
             if self.method_preservation:
                 try:
                     #print 'existing sources found for:',element.getName(),outfilepath
-                    mod=PyParser.PyModule(os.path.join(self.targetRoot,outfilepath)) 
+                    mod=PyParser.PyModule(os.path.join(self.targetRoot,outfilepath))
                     #mod.printit()
                     self.parsed_sources.append(mod)
                     for c in mod.classes.values():
@@ -1372,8 +1370,9 @@ You should have received a copy of the GNU General Public License along with thi
             #print 'generating package:',p.getName()
             #print '================================'
             if p.isProduct():
+                print
                 print 'generating product:',p.getName()
-                print '==============================='
+                print '-------------------------'
                 self.generateProduct(p)
             else:
                 self.generatePackage(p,recursive=1)
@@ -1469,7 +1468,7 @@ is the right place."""
 
         suff=os.path.splitext(self.xschemaFileName)[1].lower()
         print 'Parsing...'
-        print '-------------'
+        print '==============='
         if not self.noclass:
             if suff.lower() in ('.xmi','.xml'):
                 print 'opening xmi'
@@ -1494,7 +1493,7 @@ is the right place."""
             self.root=root=XMIParser.XMIElement() #create empty element
 
         print 'Generating...'
-        print '-------------'
+        print '=============='
         if self.method_preservation:
             print 'method bodies will be preserved'
         else:

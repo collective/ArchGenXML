@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.66 2004/04/21 09:35:46 yenzenz Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.67 2004/04/25 12:06:21 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -126,7 +126,7 @@ class XMI1_0:
             classifier=getElementByTagName(assocend,self.CLASS,None)
 
         if not classifier:
-            print 'No assocEnd participant found  for: ',XMI.getId(el)
+            print 'Warning: No assocEnd participant found  for: ',XMI.getId(el)
             return None
                 
         return classifier.getAttribute('xmi.idref')
@@ -1354,7 +1354,7 @@ def buildHierarchy(doc,packagenames):
     res.buildPackages()
     res.buildClassesAndInterfaces()
 
-    print 'res:',res.getName()
+    #print 'res:',res.getName()
     
     #pure datatype classes should not be generated!
     #print 'datatypenames:',datatypenames
