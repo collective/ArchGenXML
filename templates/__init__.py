@@ -30,9 +30,10 @@ import os, os.path
 from Products.<dtml-var "product_name">.config import *
 
 DirectoryView.registerDirectory('skins', product_globals)
-DirectoryView.registerDirectory('skins/<dtml-var "product_name">', 
+DirectoryView.registerDirectory('skins/<dtml-var "product_name">',
                                     product_globals)
 
+<dtml-var "protected_init_section_top">
 
 def initialize(context):
     ##Import Types here to register them
@@ -85,5 +86,5 @@ def initialize(context):
     if CustomizationPolicy and hasattr(CustomizationPolicy, 'register'):
         CustomizationPolicy.register(context)
         print 'Customization policy for <dtml-var "product_name"> installed'
-        
-<dtml-var "protected_init_section">
+
+<dtml-var "protected_init_section_bottom">

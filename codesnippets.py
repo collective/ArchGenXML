@@ -187,7 +187,7 @@ except ImportError:
     pass
 
     """
-    
+
 TEMPLATE_CONFIG_IMPORT = """\
 from Products.%(module)s.config import *
 """
