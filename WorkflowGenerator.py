@@ -12,6 +12,8 @@ class WorkflowGenerator:
         self.package=package
         self.atgenerator=atgenerator
         
+
+        
     def generateWorkflows(self):
         statemachines=self.package.getStateMachines()
         if not statemachines:
@@ -20,10 +22,12 @@ class WorkflowGenerator:
         print 'Generating Workflows'
         print '===================='
         
+        d={'package':self.package,'generator':self,'builtins':__builtins__}
+        d.update(__builtins__)
         
         for sm in statemachines:
+            d['statemachine']=sm
             print 'generating Workflow:', sm.getName()
-            d={'package':self.package,'statemachine':sm,'generator':self}
             templ=readTemplate('create_workflow.py')
             dtml=HTML(templ,d)
             res=dtml()
@@ -33,9 +37,8 @@ class WorkflowGenerator:
             of=self.atgenerator.makeFile(os.path.join(extDir,cleanName(sm.getName())+'.py'))
             of.write(res)
             of.close()
-            
 
-        d={'package':self.package,'generator':self}
+        del d['statemachine']
         templ=readTemplate('InstallWorkflows.py')
         dtml=HTML(templ,d)
         res=dtml()
