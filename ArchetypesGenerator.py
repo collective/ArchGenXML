@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.11 2004/05/16 03:31:37 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.12 2004/05/16 12:05:35 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -942,6 +942,7 @@ from Products.CMFCore.utils import UniqueObject
         if element.hasStereoType(self.portal_tools):
             tool_instance_name=element.getTaggedValue('tool_instance_name') or 'portal_'+element.getName().lower()
             print >> outfile,self.TEMPL_CONSTR_TOOL % (baseclass,tool_instance_name)
+            self.generateProtectedSection(outfile,element,'constructor-footer',2)
             print >> outfile
 
         self.generateMethods(outfile,element)
@@ -1008,7 +1009,7 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchetypesGenerator.py,v 1.11 2004/05/16 03:31:37 zworkb Exp $
+RCS-ID $Id: ArchetypesGenerator.py,v 1.12 2004/05/16 12:05:35 yenzenz Exp $
 \"""
 # %(copyright)s
 #
@@ -1199,7 +1200,9 @@ You should have received a copy of the GNU General Public License along with thi
             hide_folder_tabs+="'"+c.getName()+"', "
 
         #handling of tools
-        autoinstall_tools=[c.getName() for c in self.getGeneratedClasses(package) if c.hasStereoType(self.portal_tools) and isTGVTrue(c.getTaggedValue('autoinstall')) ]
+        autoinstall_tools=[c.getName() \
+            for c in self.getGeneratedClasses(package) \
+            if c.hasStereoType(self.portal_tools) and isTGVTrue(c.getTaggedValue('autoinstall')) ]
 
         if self.getGeneratedTools(package):
             copy(os.path.join(templdir,'tool.gif'), os.path.join(self.targetRoot,package.getFilePath(),'tool.gif') )

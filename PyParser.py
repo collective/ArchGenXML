@@ -68,6 +68,9 @@ class PyMethod(PyCodeElement):
         print '-------------------------------------------------------'
         print self.src
         print '-------------------------------------------------------'
+
+    def getProtectedSection(self,section):
+        return self.module.getProtectedSection(section)
     
 class PyClass(PyCodeElement):
     methods={}
