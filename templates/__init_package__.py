@@ -1,8 +1,16 @@
-%(protected_module_header)s
+# Initialise this package. You may add your own code in the protected sections
+# below.
+
+<dtml-var "protected_module_header"> 
+
 #subpackages
-%(imports_packages)s
+<dtml-in "package_imports">
+import <dtml-var sequence-item>
+</dtml-in>
 
 #classes
-%(imports_classes)s
+<dtml-in "class_imports">
+import <dtml-var sequence-item>
+</dtml-in>
 
-%(protected_module_footer)s
+<dtml-var "protected_module_footer">

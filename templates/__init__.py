@@ -1,19 +1,18 @@
 #
-# Initialise the product's module. There three ways to inject custom code
+# Initialise the product's module. There are three ways to inject custom code
 # here:
 #
 #   - To set global configuration variables, create a file AppConfig.py. This
 #       will be imported in config.py, which in turns is imported in each
 #       generated class and in this file.
-#   - To perform custom initialisation after types have been registered, create
-#       a file called AppInit.py, with a method initialize(context)
+#   - To perform custom initialisation after types have been registered, use
+#       the protected code section at the bottom of initialize().
 #   - To register a customisation policy, create a file CustomizationPolicy.py
 #       with a method register(context) to register the policy
 #
 
 
-print 'Product %(project_name)s installed'
-
+print 'Product <dtml-var "product_name"> installed'
 
 try:
     import CustomizationPolicy
@@ -28,21 +27,36 @@ from Products.Archetypes.utils import capitalize
 
 import os, os.path
 
-from Products.%(project_name)s.config import *
+from Products.<dtml-var "product_name">.config import *
 
 DirectoryView.registerDirectory('skins', product_globals)
-DirectoryView.registerDirectory('skins/%(project_name)s', product_globals)
+DirectoryView.registerDirectory('skins/<dtml-var "product_name">', 
+                                    product_globals)
 
 
 def initialize(context):
     ##Import Types here to register them
-%(imports)s
+
+<dtml-in "package_imports">
+    import <dtml-var sequence-item>
+</dtml-in>
+
+<dtml-in "class_imports">
+    import <dtml-var sequence-item>
+</dtml-in>
 
     content_types, constructors, ftis = process_types(
         listTypes(PROJECTNAME),
         PROJECTNAME)
 
-    %(toolinit)s
+<dtml-if "has_tools">
+    tools = [<dtml-var "','.join (tool_names)">]
+    utils.ToolInit( PROJECTNAME +' Tools',
+                tools = tools,
+                product_name = PROJECTNAME,
+                icon='tool.gif'
+                ).initialize( context )
+</dtml-if>
 
     utils.ContentInit(
         PROJECTNAME + ' Content',
@@ -52,15 +66,24 @@ def initialize(context):
         fti                = ftis,
         ).initialize(context)
 
-    %(extra_perms)s
+<dtml-if "detailed_creation_permissions">
+    # Generate separate permissions for adding each content type
+    for i in range(0,len(content_types)):
+        perm='Add ' + capitalize(ftis[i]['id'])+'s'
+        methname='add' + capitalize(ftis[i]['id'])
+        meta_type = ftis[i]['meta_type']
 
-    if CustomizationPolicy and hasattr(CustomizationPolicy,'register'):
+        context.registerClass(
+            meta_type = meta_type,
+            constructors = (
+                getattr(locals()[meta_type],'add' + capitalize(meta_type)),
+                               )
+            , permission = perm
+            )
+</dtml-if>
+
+    if CustomizationPolicy and hasattr(CustomizationPolicy, 'register'):
         CustomizationPolicy.register(context)
-        print 'Customization policy for %(project_name)s installed'
+        print 'Customization policy for <dtml-var "product_name"> installed'
         
-    try:
-        import AppInit
-        if hasattr (AppInit, 'initialize'):
-            AppInit.initialize (context)
-    except ImportError:
-        pass
+<dtml-var "protected_init_section">

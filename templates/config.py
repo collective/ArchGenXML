@@ -1,7 +1,10 @@
 #
 # Product configuration. This contents of this module will be imported into
-# __init__.py and every type definition. You may write a file AppConfig.py
-# which will use be imported here if it is found, for your custom configuration.
+# __init__.py and every content type module.
+#
+# If you wish to perform custom configuration, you may put a file AppConfig.py
+# in your product's root directory. This will be included in this file if
+# found.
 #
 
 ADD_CONTENT_PERMISSION = <dtml-var "add_content_permission">

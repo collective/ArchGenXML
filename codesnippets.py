@@ -163,32 +163,6 @@ TEMPL_CONSTR_TOOL="""
         %s.__init__(self,'%s')
         """
 
-TEMPL_TOOLINIT="""
-    tools=[%s]
-    utils.ToolInit( PROJECTNAME+' Tools',
-                tools = tools,
-                product_name = PROJECTNAME,
-                icon='tool.gif'
-                ).initialize( context )"""
-
-TEMPL_DETAILLED_CREATION_PERMISSIONS="""
-    # and now give it some extra permissions so that i
-    # can control them on a per class limit
-    for i in range(0,len(content_types)):
-        perm='Add '+ capitalize(ftis[i]['id'])+'s'
-        methname='add'+capitalize(ftis[i]['id'])
-        meta_type = ftis[i]['meta_type']
-
-        context.registerClass(
-            meta_type=meta_type,
-            constructors = (
-                            getattr(locals()[meta_type],'add'+capitalize(meta_type)),
-                               )
-            , permission = perm
-            )
-"""
-
-
 TEMPLATE_HEADER = """\
 from AccessControl import ClassSecurityInfo
 from Products.Archetypes.public import *

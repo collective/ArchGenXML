@@ -997,18 +997,48 @@ class ArchetypesGenerator(BaseGenerator):
 
         print >> outfile, ''
 
-    def getProtectedSection(self,parsed,section,ind=0):
-        outstring = indent(PyParser.PROTECTED_BEGIN,ind)+' '+section+' #fill in your manual code here\n'
+    
+    def parsePythonModule(self, packagePath, fileName):
+        """Parse a python module and return the module object. This can then
+        be passed to getProtectedSection() to generate protected sections
+        """
+        
+        targetPath = os.path.join(self.targetRoot, packagePath, fileName)
+        parsed = None
+                  
+        if self.method_preservation:
+            try:
+                parsed = PyParser.PyModule(targetPath)
+            except IOError:
+                pass
+            except :
+                print
+                print '***'
+                print '***Error while reparsing the file', targetPath
+                print '***'
+                print
+                raise
+                
+        return parsed
+
+
+    def getProtectedSection(self, parsed, section, ind=0):
+        """Given a parsed python module and a section name, return a string
+        with the protected code-section to be included in the generated module.
+        """
+    
+        outstring = indent(PyParser.PROTECTED_BEGIN, ind) + ' ' + \
+                            section +' #fill in your manual code here\n'
         if parsed:
             sectioncode=parsed.getProtectedSection(section)
             if sectioncode:
                 outstring += sectioncode + '\n'
 
-        outstring+=indent(PyParser.PROTECTED_END,ind)+' '+section+'\n'
+        outstring += indent(PyParser.PROTECTED_END,ind) + ' ' + section + '\n'
         return outstring
 
     def generateProtectedSection(self,outfile,element,section,indent=0):
-        parsed=self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.getName(),None)
+        parsed = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.getName(),None)
         print >> outfile, self.getProtectedSection(parsed,section,indent)
 
     def generateClass(self, outfile, element, delayed):
@@ -1398,7 +1428,8 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateHeader(self, outfile, element):
 
-        i18ncontent = self.getOption('i18ncontent',element, self.i18n_content_support)
+        i18ncontent = self.getOption('i18ncontent',element, 
+                                        self.i18n_content_support)
 
         if i18ncontent in self.i18n_at and element.isI18N():
             s1 = TEMPLATE_HEADER_I18N_I18N_AT
@@ -1411,49 +1442,25 @@ class ArchetypesGenerator(BaseGenerator):
 
     def getGeneratedTools(self,package):
         """ returns a list of  generated tools """
-        return [c for c in self.getGeneratedClasses(package) if c.hasStereoType(self.portal_tools)]
+        
+        return [c for c in self.getGeneratedClasses(package) if 
+                    c.hasStereoType(self.portal_tools)]
 
-    def generateStdFiles(self,target,package):
+    def generateStdFiles(self, package):
         if package.isRoot():
-            self.generateStdFilesForProduct(target,package)
+            self.generateStdFilesForProduct(package)
         else:
-            self.generateStdFilesForPackage(target,package)
+            self.generateStdFilesForPackage(package)
 
-    def generateStdFilesForPackage(self,target,package):
-        if target[-1] in ('/','\\'):
-            target=target[:-1]
-
-        templdir=os.path.join(sys.path[0],'templates')
-        initTemplate=open(os.path.join(templdir,'__init_package__.py')).read()
-        imports_packages='\n'.join(['import '+m.getModuleName() for m in package.generatedPackages])
-        imports_classes='\n'.join(['import '+m.getModuleName() for m in package.generatedModules])
-
-        parsed = None
-        if self.method_preservation:
-            try:
-                parsed=PyParser.PyModule(os.path.join(target,'__init__.py'))
-            except IOError:
-                pass
-            except :
-                print '\n***\n***Error while reparsing the file '+os.path.join(target,'__init__.py')
-                print '***\n'
-                raise
-        else:
-            parsed = None
-
-        init_params = {
-            'imports_packages':         imports_packages,
-            'imports_classes':          imports_classes,
-            'protected_module_header':  self.getProtectedSection(parsed,'init-module-header'),
-            'protected_module_footer':  self.getProtectedSection(parsed,'init-module-footer')
-        }
-        initTemplate=initTemplate % init_params
-        of=self.makeFile(os.path.join(target,'__init__.py'))
-        of.write(initTemplate)
-        of.close()
-
-    def updateVersionForProduct(self,package):
-        ''' '''
+    def generateStdFilesForPackage(self, package):
+        """Generate the standard files for a non-root package"""
+        
+        # Generate an __init__.py
+        self.generatePackageInitPy(package)
+        
+    def updateVersionForProduct(self, package):
+        """Increment the build number in verion.txt"""
+        
         build=1
         versionbase='0.1'
         fp=os.path.join(package.getFilePath(),'version.txt')
@@ -1476,7 +1483,7 @@ class ArchetypesGenerator(BaseGenerator):
         of.close()
 
     def generateInstallPy(self, package):
-        """ generates: Extensions/Install.py """
+        """Generate Extensions/Install.py from the DTML template"""
 
         # create Extension directory
         installTemplate=open(os.path.join(sys.path[0],'templates','Install.py')).read()
@@ -1506,7 +1513,6 @@ class ArchetypesGenerator(BaseGenerator):
 
         return
 
-    # [optilude] New method to generate config.py from DTML template
     def generateConfigPy(self, package):
         """ generates: config.py """
 
@@ -1530,57 +1536,115 @@ class ArchetypesGenerator(BaseGenerator):
         of.close()
 
         return
+        
+    def generateProductInitPy(self, package):
+        """ Generate __init__.py at product root from the DTML template"""
+        
+        # Get the names of packages and classes to import
+        packageImports = [m.getModuleName () for m in package.generatedPackages]
+        classImports   = [m.getModuleName () for m in package.generatedModules]
+        
+        # Find out if we need to initialise any tools
+        generatedTools = self.getGeneratedTools(package)
+        
+        hasTools = 0
+        toolNames = []
+        
+        if generatedTools:
+            toolNames = [c.getQualifiedName(package) for c in 
+                            self.getGeneratedClasses(package) if 
+                            c.hasStereoType(self.portal_tools)]
+            hasTools = 1
+                            
+        # Get the preserved code section
+        parsed = self.parsePythonModule(package.getFilePath (), '__init__.py')        
+        protectedInitCode = self.getProtectedSection(parsed, 'custom-init', 1)
+         
+        # prepare DTML varibles
+        d={'generator'                     : self,
+           'utils'                         : utils,
+           'product_name'                  : package.getProductName (),
+           'package_imports'               : packageImports,
+           'class_imports'                 : classImports,
+           'has_tools'                     : hasTools,
+           'tool_names'                    : toolNames,
+           'detailed_creation_permissions' : self.detailled_creation_permissions,
+           'protected_init_section'        : protectedInitCode,
+        }
+        
+        templ=readTemplate('__init__.py')
+        dtml=HTML(templ,d)
+        res=dtml()
 
-    def generateStdFilesForProduct(self, target,package):
-        # generates __init__.py,  and the skins directory
-        # calls generateInstallPy
-        # the result is a QuickInstaller installable product
+        of=self.makeFile(os.path.join(package.getFilePath(),'__init__.py'))
+        of.write(res)
+        of.close()
 
-        generatedModules=package.generatedModules
+        return
+
+    def generatePackageInitPy(self, package):
+        """ Generate __init__.py for packages from the DTML template"""
+        
+        # Get the names of packages and classes to import
+        packageImports = [m.getModuleName () for m in package.generatedPackages]
+        classImports   = [m.getModuleName () for m in package.generatedModules]
+                             
+        # Get the preserved code sections
+        parsed = self.parsePythonModule(package.getFilePath (), '__init__.py')
+        headerCode = self.getProtectedSection(parsed, 'init-module-header')
+        footerCode = self.getProtectedSection(parsed, 'init-module-footer')
+                                            
+        # Prepare DTML varibles
+        d={'generator'                     : self,
+           'utils'                         : utils,
+           'package_imports'               : packageImports,
+           'class_imports'                 : classImports,
+           'protected_module_header'       : headerCode,
+           'protected_module_footer'       : footerCode,
+           }
+        
+        templ=readTemplate('__init_package__.py')
+        dtml=HTML(templ,d)
+        res=dtml()
+
+        of=self.makeFile(os.path.join(package.getFilePath(),'__init__.py'))
+        of.write(res)
+        of.close()
+
+        return
+
+        
+    def generateStdFilesForProduct(self, package):
+        """Generate __init__.py,  various support files and and the skins
+        directory. The result is a QuickInstaller installable product
+        """
+        
+        target = package.getFilePath ()
+
         # remove trailing slash
         if target[-1] in ('/','\\'):
             target=target[:-1]
 
         templdir=os.path.join(sys.path[0],'templates')
-
-        initTemplate=open(os.path.join(templdir,'__init__.py')).read()
-        imports_packages='\n'.join(['    import '+m.getModuleName() for m in package.generatedPackages])
-        imports_classes ='\n'.join(['    import '+m.getModuleName() for m in generatedModules])
-
-        imports=imports_packages+'\n\n'+imports_classes
-        tool_classes=self.getGeneratedTools(package)
-
-        productname = package.getProductName()
-
-        if tool_classes:
-            toolinit=TEMPL_TOOLINIT % ','.join([c.getQualifiedName(package) for c in self.getGeneratedClasses(package) if c.hasStereoType(self.portal_tools)])
-            # copy tool.gif
+    
+        # Create a tool.gif if necessary
+        if self.getGeneratedTools(package):
             toolgif=open(os.path.join(templdir,'tool.gif')).read()
             of=self.makeFile(os.path.join(package.getFilePath(),'tool.gif'))
-            of.write(initTemplate)
+            of.write(toolgif)
             of.close()
-
-        else:
-            toolinit=''
-
-        init_params={'project_name':productname,'imports':imports, 'toolinit':toolinit }
-
-        if self.detailled_creation_permissions:
-            init_params['extra_perms']=TEMPL_DETAILLED_CREATION_PERMISSIONS
-        else:
-            init_params['extra_perms']=""
-
+    
+        # Generate a refresh.txt for the product
         of=self.makeFile(os.path.join(package.getFilePath(),'refresh.txt'))
         of.close()
 
+        # Increment version.txt build number
         self.updateVersionForProduct(package)
 
+        # Generate product root __init__.py
+        self.generateProductInitPy(package)
 
-        initTemplate=initTemplate % init_params
-        of=self.makeFile(os.path.join(package.getFilePath(),'__init__.py'))
-        of.write(initTemplate)
-        of.close()
-
+        # Create a customisation policy if required
         if self.customization_policy:
             of=self.makeFile(os.path.join(package.getFilePath(),'CustomizationPolicy.py'),0)
             if of:
@@ -1590,9 +1654,10 @@ class ArchetypesGenerator(BaseGenerator):
                 of.write(cp)
                 of.close()
 
-        # [optilude] Generate config.py from template
+        # Generate config.py from template
         self.generateConfigPy(package)
 
+        # Generate Extensions/Install.py
         self.generateInstallPy(package)
 
 
@@ -1715,9 +1780,9 @@ class ArchetypesGenerator(BaseGenerator):
                 self.generatePackage(p,recursive=1)
                 package.generatedPackages.append(p)
 
-        self.generateStdFiles(package.getFilePath(),package)
+        self.generateStdFiles(package)
 
-    def generateProduct(self, root, ):
+    def generateProduct(self, root):
         dirMode=0
         outfile=None
 

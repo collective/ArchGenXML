@@ -11,19 +11,19 @@ http://plone.org/development/teams/developer/ArchGenXML
 
 * Move remainder of templates in templates/ to DTML 
 
-    - __init__.py
-    - __init_package__.py
     - action_view.pt
     - apeconf_folder.xml
     - apeconf_object.xml
     - generated.pot
     - portlet_template.pt
 
-* Make AppInit.py and AppConfig.py paradigms use protected code sections?
-
 * Move class, interface generation to DTML. There are too many conditionals and
     strings being generated in the current code. :-) Having DTML conditionals
     and loops would make it much clearer and easier to manipulate. 
+    
+* Tool support:
+  automagically disable uneccessary tabs (like base_view, metadata 
+  and maybe references) on classes with stereotype 'portal_tool'
     
 * ATVocabularyManager integration, part registration of class:
   fetch container_class - needs to be refined:
@@ -31,10 +31,6 @@ http://plone.org/development/teams/developer/ArchGenXML
   name as container
   else check for TGV vocabulary_container
   fallback: use SimpleVocabulary
-
-* Tool support:
-  automagically disable uneccessary tabs (like base_view, metadata 
-  and maybe references) on classes with stereotype 'portal_tool'
 
 * On Workflow definitions generation
 
