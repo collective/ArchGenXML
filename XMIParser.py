@@ -1747,6 +1747,7 @@ class XMIStateMachine(XMIStateContainer):
 class XMIStateTransition(XMIElement):
     targetState=None
     action=None
+    guard=None
     
     def initFromDOM(self,domElement=None):
         XMIElement.initFromDOM(self,domElement)
@@ -1792,6 +1793,9 @@ class XMIStateTransition(XMIElement):
             return self.action.getExpression()
 
     def getGuardRoles(self):
+        if not self.guard:
+            return 'Anonymous;Owner;Manager'
+            
         gr = self.guard.getExpressionBody()
         if not gr.startswith('guard_roles:'):
             return 'Anonymous;Owner;Manager'
@@ -1799,7 +1803,11 @@ class XMIStateTransition(XMIElement):
             return gr[12:]
 
     def getGuardPermissions(self):
+        if not self.guard:
+            return 'View'
+        
         gr = self.guard.getExpressionBody()
+        
         if not gr.startswith('guard_permissions:'):
             return 'View'
         else:
