@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.26 2004/06/06 12:42:13 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.27 2004/06/15 12:05:36 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -843,7 +843,7 @@ class ArchetypesGenerator:
                 
         additionalImports=element.getTaggedValue('imports')
         if additionalImports:
-            wrt('# additional imports')
+            wrt('# additional imports\n')
             wrt(additionalImports)
             wrt('\n')
             
