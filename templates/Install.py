@@ -199,6 +199,23 @@ def uninstall(self):
 
     props.use_folder_tabs=tuple(use_folder_tabs)
 
+    #try to call a custom uninstall method 
+    #in 'AppInstall.py' method 'uninstall'
+    try:
+        uninstall = ExternalMethod('temp','temp',PROJECTNAME+'.AppInstall', 'uninstall')
+    except:
+        uninstall=None
+        
+    if uninstall:
+        print >>out,'Custom Uninstall:'
+        res=uninstall(self)
+        if res:
+            print >>out,res
+        else:
+            print >>out,'no output'
+    else:
+        print >>out,'no custom uninstall'
+
     return out.getvalue()
 
 
