@@ -1257,16 +1257,16 @@ class ArchetypesGenerator:
         purposeline=('\n').join( \
             (element.getDocumentation(striphtml=self.striphtml,wrap=79) or 'unknown').split('\n') )
 
-        author= element.getOption('author', element, self.author) or 'unknown'
+        author= self.getOption('author', element, self.author) or 'unknown'
 
         copyright = COPYRIGHT % \
             (str(time.localtime()[0]),
-             element.getOption('copyright', element, self.copyright) or author)
+             self.getOption('copyright', element, self.copyright) or author)
 
         licence = ('\n# ').join( \
             wrap(self.getOption('license', element, GPLTEXT),77).split('\n') )
 
-        email=element.Option('email', element, self.email) or ['unknown']
+        email=self.getOption('email', element, self.email) or ['unknown']
         email=email.split(',')
         email+="<"+">, <".join([i.strip() for i in email])+">"
 
