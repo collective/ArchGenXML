@@ -4,8 +4,6 @@
 
 <body>
 
-<!-- The events box -->
-
 <div metal:define-macro="portlet">
      
 
