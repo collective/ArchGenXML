@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.34 2003/10/26 16:59:05 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.35 2003/10/26 21:03:18 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -54,6 +54,7 @@ class ArchetypesGenerator:
                 #just an empty project + skin is created
     ape_support=0 #generate ape config and serializers/gateways for APE
     reservedAtts=['id',]
+    portal_tools=['portal_tool']
 
     def __init__(self,xschemaFileName,outfileName,**kwargs):
         self.outfileName=outfileName
@@ -156,7 +157,7 @@ class ArchetypesGenerator:
         immediate_view=element.getTaggedValue('immediate_view') or 'base_view'
         
         global_allow=not element.isDependent()
-        if element.getStereoType()=='portal_tool':
+        if element.getStereoType() in self.portal_tools:
             global_allow=0
         
         res=ftiTempl % {'subtypes':repr(tuple(subtypes)),'type_name':element.getCleanName(),
@@ -480,7 +481,7 @@ from Products.CMFCore.utils import UniqueObject
 
         
         parentnames.insert(0,baseclass)
-        if element.getStereoType()=='portal_tool':
+        if element.getStereoType() in self.portal_tools:
             print >>outfile,self.TEMPL_TOOL_HEADER
             parentnames.insert(0,'UniqueObject')
 
@@ -506,7 +507,7 @@ from Products.CMFCore.utils import UniqueObject
         print >> outfile,'''    archetype_name = '%s'   #this name appears in the 'add' box ''' % name
         self.generateArcheSchema(outfile,element)
 
-        if element.getStereoType()=='portal_tool':
+        if element.getStereoType() in self.portal_tools:
             print >> outfile,self.TEMPL_CONSTR_TOOL % (baseclass,'portal_'+element.getName().lower())
             print >> outfile
         
@@ -547,7 +548,7 @@ from Products.CMFCore.utils import UniqueObject
 
         imports='\n'.join(['    import '+m for m in generatedModules])
         
-        toolinit=self.TEMPL_TOOLINIT % ','.join([m+'.'+c.getName() for c,m in self.generatedClasses if c.getStereoType()=='portal_tool'])
+        toolinit=self.TEMPL_TOOLINIT % ','.join([m+'.'+c.getName() for c,m in self.generatedClasses if c.getStereoType() in self.portal_tools])
         
         initTemplate=initTemplate % {'project_name':projectName,'add_content_permission':'Add %s content' % projectName,'imports':imports, 'toolinit':toolinit }
         of=makeFile(os.path.join(target,'__init__.py'))
@@ -558,9 +559,8 @@ from Products.CMFCore.utils import UniqueObject
         extDir=os.path.join(target,'Extensions')
         makeDir(extDir)
         of=makeFile(os.path.join(extDir,'Install.py'))
-
-        autoinstall_tools=[c[0].getName() for c in self.generatedClasses if c[0].getStereoType()=='portal_tool' and c[0].getTaggedValue('autoinstall') == '1' ]
-        
+            
+        autoinstall_tools=[c[0].getName() for c in self.generatedClasses if c[0].getStereoType() in self.portal_tools and c[0].getTaggedValue('autoinstall') == '1' ]
         of.write(installTemplate % {'project_dir':os.path.split(target)[1],'autoinstall_tools':repr(autoinstall_tools)})
         of.close()
         

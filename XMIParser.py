@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.21 2003/10/26 16:59:05 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.22 2003/10/26 21:03:18 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -285,6 +285,19 @@ class XMI1_2 (XMI1_1):
         for t in tagdefs:
             if t.hasAttribute('name'):
                 self.tagDefinitions[t.getAttribute('xmi.id')]=t#.getAttribute('name')
+
+    def calculateStereoType(self,o):
+        #in xmi its weird, because all objects to which a 
+        #stereotype applies are stored in the stereotype
+        #while in xmi 1.2 its opposite
+        
+        sts=o.domElement.getElementsByTagName(self.STEREOTYPE)
+        if len(sts) == 1:
+            id=sts[0].getAttribute('xmi.idref')
+            st=stereotypes[id]
+            o.setStereoType(self.getName(st).strip())
+            print 'stereotype found:',id,self.getName(st),o.getStereoType()
+        
 
 XMI=XMI1_0()
 
