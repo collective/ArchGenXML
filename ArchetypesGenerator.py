@@ -308,11 +308,9 @@ class ArchetypesGenerator(BaseGenerator):
         allow_discussion = element.getTaggedValue('allow_discussion','0')
 
         # Filter content types?
-        filter_content_types = 0
-
-        if isTGVTrue(element.getTaggedValue('filter_content_types')) or \
-                element.hasStereoType('folder'):
-            filter_content_types = 1
+        filter_content_types = not (isTGVFalse(
+                element.getTaggedValue('filter_content_types')) 
+            or element.hasStereoType('folder'))
 
         # Set a type description.
 
