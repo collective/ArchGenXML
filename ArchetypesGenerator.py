@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.33 2004/06/29 00:43:22 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.34 2004/07/20 22:44:14 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -65,6 +65,7 @@ class ArchetypesGenerator:
     
     reservedAtts=['id',]    
     portal_tools=['portal_tool']
+    variable_schema='variable_schema'
     stub_stereotypes=['odStub','stub']
     vocabulary_item_stereotype = ['vocabulary_item']
     vocabulary_container_stereotype = ['vocabulary']
@@ -816,6 +817,9 @@ class ArchetypesGenerator:
         if hasAssocClass:
             print >> outfile,'from Products.Archetypes.ReferenceEngine import ContentReferenceCreator'
 
+        if element.hasStereoType(self.variable_schema):
+            print >> outfile,'from Products.Archetypes.VariableSchemaSupport import VariableSchemaSupport'
+            
         # ATVocabularyManager imports
         if element.hasStereoType(self.vocabulary_item_stereotype):
             print >> outfile, 'from Products.ATVocabularyManager.VocabularyTool import registerVocabularyItem'
@@ -920,6 +924,9 @@ class ArchetypesGenerator:
         # if you dont want it set the TGV to zero '0'
         if not isTGVFalse(element.getTaggedValue('base_class')):
             parentnames.insert(0,baseclass)
+
+        if element.hasStereoType(self.variable_schema):
+            parentnames.insert(0,'VariableSchemaSupport')
             
         if element.hasStereoType(self.portal_tools):
             print >>outfile,TEMPL_TOOL_HEADER
@@ -1148,6 +1155,9 @@ class ArchetypesGenerator:
             init_params['extra_perms']=TEMPL_DETAILLED_CREATION_PERMISSIONS
         else:
             init_params['extra_perms']=""
+
+        of=self.makeFile(os.path.join(package.getFilePath(),'refresh.txt'))
+        of.close()
 
         initTemplate=initTemplate % init_params
         of=self.makeFile(os.path.join(package.getFilePath(),'__init__.py'))
