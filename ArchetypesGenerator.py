@@ -1450,14 +1450,27 @@ class ArchetypesGenerator(BaseGenerator):
 
         authors, emails, authorline = self.getAuthors(element)
 
+        rcs_id = self.getOption('rcs_id', element, False)
+        if rcs_id:
+            rcs_id_tag = '\nRCS-ID $Id$'
+        else:
+            rcs_id_tag = ''
+
+        generated_date = self.getOption('generated_date', element, False)
+        if generated_date:
+            date = '\n# Generated: ' + time.ctime()
+        else:
+            date = ''
+        
         moduleinfo = {  'purpose':      purposeline,
                         'authors':      ', '.join(authors),
                         'emails' :      ', '.join(emails),
                         'authorline':   authorline,
                         'version':      self.version,
-                        'date':         time.ctime(),
+                        'date':         date,
                         'copyright':    '\n# '.join(wrap(copyright,77).split('\n')),
                         'licence':      licence,
+                        'rcs_id_tag':   rcs_id_tag
         }
 
         return moduleinfo

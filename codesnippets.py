@@ -132,12 +132,10 @@ MODULE_INFO_HEADER = """\
 # File: %(filename)s
 \"""\\
 %(purpose)s
-
-RCS-ID $Id$
+%(rcs_id_tag)s
 \"""
 # %(copyright)s
-#
-# Generated: %(date)s
+#%(date)s
 # Generator: ArchGenXML Version %(version)s http://sf.net/projects/archetypes/
 #
 # %(licence)s
