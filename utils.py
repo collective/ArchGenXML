@@ -59,13 +59,11 @@ def getExpression(s):
     '''
 
     if s is None:
-        return ''
+        s=''
     
     s=s.strip()
-    if s=='':
-        return s
     
-    if s[0]=='"' and s[-1]=='"' or s[0]=="'" and s[-1]=="'":
+    if s and (s[0]=='"' and s[-1]=='"' or s[0]=="'" and s[-1]=="'"):
         return s
     else:
         if s.startswith('python:'):
