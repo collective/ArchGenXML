@@ -129,7 +129,7 @@ def install(self):
     print >> out, "Successfully installed %%s." %% PROJECTNAME
     sr = PloneSkinRegistrar('skins', product_globals)
     print >> out,sr.install(self)
-    
+
     #register folderish classes in use_folder_contents
     props=getToolByName(self,'portal_properties').site_properties
     use_folder_tabs=list(props.use_folder_tabs)
@@ -138,24 +138,27 @@ def install(self):
         print >> out,  'type:',cl['klass'].portal_type
         if cl['klass'].isPrincipiaFolderish:
             use_folder_tabs.append(cl['klass'].portal_type)
-            
+
     props.use_folder_tabs=tuple(use_folder_tabs)
-    
+
     return out.getvalue()
 
 def uninstall(self):
     out = StringIO()
     classes=listTypes(PROJECTNAME)
-   
+
     #unregister folderish classes in use_folder_contents
     props=getToolByName(self,'portal_properties').site_properties
     use_folder_tabs=list(props.use_folder_tabs)
     print >> out, 'removing classes from use_folder_tabs:'
     for cl in classes:
-        print >> out,  'type:',cl['klass'].portal_type
+        print >> out,  'type:', cl['klass'].portal_type
         if cl['klass'].isPrincipiaFolderish:
-            use_folder_tabs.remove(cl['klass'].portal_type)
-            
+            if cl['klass'].portal_type in use_folder_tabs:
+                use_folder_tabs.remove(cl['klass'].portal_type)
+
     props.use_folder_tabs=tuple(use_folder_tabs)
- 
+
     return out.getvalue()
+
+

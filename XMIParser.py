@@ -12,6 +12,7 @@ from xml.dom import minidom
 
 def getAttributeValue(domElement,tagName=None,recursive=0):
     el=domElement
+    el.normalize()
     if tagName:
         el=getElementByTagName(domElement,tagName,recursive=recursive)
     return el.firstChild.nodeValue
@@ -64,6 +65,11 @@ class XMI1_0:
     GEN_CHILD="Foundation.Core.Generalization.child"
     GEN_PARENT="Foundation.Core.Generalization.parent"
     GEN_ELEMENT="Foundation.Core.GeneralizableElement"
+    
+    TAGGED_VALUE_MODEL="Foundation.Core.ModelElement.taggedValue"
+    TAGGED_VALUE="Foundation.Extension_Mechanisms.TaggedValue"
+    TAGGED_VALUE_TAG="Foundation.Extension_Mechanisms.TaggedValue.tag"
+    TAGGED_VALUE_VALUE="Foundation.Extension_Mechanisms.TaggedValue.value"
     
     aggregates=['composite','aggregate']
 
@@ -210,8 +216,19 @@ def getElementByTagName(domElement,tagName,default=_marker, recursive=0):
             raise
         else:
             return default
-    def getMethodDefs(self):
-        return self.methodDefs
+
+def getElementsByTagName(domElement,tagName, recursive=0):
+    ''' returns elements by tag name , the only difference 
+        to the original getElementsByTagName is, that the optional recursive
+        parameter
+        '''
+        
+    if recursive:
+        els=domElement.getElementsByTagName(tagName)
+    else:
+        els=[el for el in domElement.childNodes if str(getattr(el,'tagName',None)) == tagName]
+        
+    return els
 
 def hasClassFeatures(domClass):
 
@@ -232,7 +249,7 @@ class XMIElement:
         self.attributeDefs = []
         self.methodDefs=[]
         self.id=''
-
+        self.taggedValues={}
         self.subTypes=[]
 
         if domElement:
@@ -241,6 +258,24 @@ class XMIElement:
         self.initFromDOM(domElement)
         self.buildChildren(domElement)
 
+    def parseTaggedValues(self):
+        ''' '''
+        tgvsm=getElementByTagName(self.domElement,XMI.TAGGED_VALUE_MODEL,default=None,recursive=0)
+        
+        if tgvsm is None:
+            return
+        
+        tgvs=getElementsByTagName(tgvsm, XMI.TAGGED_VALUE, recursive=0)
+        
+        try:
+            for tgv in tgvs:
+                tagname=getAttributeValue(tgv,XMI.TAGGED_VALUE_TAG,recursive=0)
+                tagvalue=getAttributeValue(tgv,XMI.TAGGED_VALUE_VALUE,recursive=0)
+                self.taggedValues[tagname]=tagvalue
+        except:
+            pass
+        
+        
     def initFromDOM(self,domElement):
         if not domElement:
             domElement=self.domElement
@@ -249,7 +284,8 @@ class XMIElement:
             self.id=domElement.getAttribute('xmi.id')
             self.name=XMI.getName(domElement)
             #print 'name:',self.name,self.id
-
+            self.parseTaggedValues()
+            
             mult=getElementByTagName(domElement,XMI.MULTIPLICITY,None)
             if mult:
                 maxNodes=mult.getElementsByTagName(XMI.MULT_MAX)
@@ -276,6 +312,13 @@ class XMIElement:
             return self.id
         
     def getCleanName(self): return self.cleanName
+    
+    def getTaggedValue(self,name,default=''):
+        return self.taggedValues.get(name,default)
+    
+    def getDocumentation(self):
+        return self.getTaggedValue('documentation')
+    
     def getUnmappedCleanName(self): return self.unmappedCleanName
     def setName(self, name): self.name = name
     def getAttrs(self): return self.attrs
