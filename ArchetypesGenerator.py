@@ -496,8 +496,8 @@ class ArchetypesGenerator:
         custom = 0 # is there a custom setting for widget?
         widgetoptions=[t for t in tgv.items() if t[0].startswith('widget:')]
 
-        # check if a global default overrides it. settig defaults is provided
-        # through getOption.
+        # check if a global default overrides a widget. setting defaults is
+        # provided through getOption.
         # to set an default just put:
         # default:widget:type = widgetname
         # as a tagged value on the package or model
@@ -759,34 +759,25 @@ class ArchetypesGenerator:
 
     # Generate get/set/add member functions.
     def generateArcheSchema(self, outfile, element, base_schema):
-        parent_schemata=["getattr(%s,'schema',Schema(()))" % p.getCleanName() for p in element.getGenParents()]
+        parent_schema=["getattr(%s,'schema',Schema(()))" % p.getCleanName() for p in element.getGenParents()]
 
         overrule_base_schema = element.getTaggedValue('base_schema', None)
-        baseschema =  overrule_base_schema or base_schema
+        base_schema =  overrule_base_schema or base_schema
+
+        schema = [base_schema] + parent_schema
 
         #if it's a derived class check if parent has stereotype 'archetype'
         parent_is_archetype = False
         for p in element.getGenParents():
             parent_is_archetype=parent_is_archetype or p.hasStereoType(self.archetype_stereotype)
 
-        if parent_schemata:
-            parent_schemata_expr=' + '.join(parent_schemata)
-        else:
-            parent_schemata_expr=''
-
         if self.i18n_content_support in self.i18n_at and element.isI18N():
-            schemastmt=SCHEMA_START_I18N % parent_schemata_expr
-        else:
-            schemastmt=SCHEMA_START_DEFAULT % parent_schemata_expr
+            schema[0] = "I18NBaseSchema"
 
-        #tagged values for base-schema overrule
-        if overrule_base_schema:
-            print "GENERATE OVERULE"
-            schemastmt= SCHEMA_START_TGV % (base_schema, parent_schemata_expr)
-            print schemastmt
-        elif parent_is_archetype:
-            print "GENERATE ARCHTYPE PARENT"
-            schemastmt= SCHEMA_START_AT % (parent_schemata_expr)
+        if parent_is_archetype:
+            schema=len(schema)>1 and schema[1:] or []
+
+        schemastmt = SCHEMA_START_DEFAULT % " + ".join(schema)
 
         print schemastmt
 
