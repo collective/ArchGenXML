@@ -13,10 +13,15 @@ class WorkflowGenerator:
         self.atgenerator=atgenerator
         
     def generateWorkflows(self):
+        statemachines=self.package.getStateMachines()
+        if not statemachines:
+            return
+        
         print 'Generating Workflows'
         print '===================='
         
-        for sm in self.package.getStateMachines():
+        
+        for sm in statemachines:
             print 'generating Workflow:', sm.getName()
             d={'package':self.package,'statemachine':sm,'generator':self}
             templ=readTemplate('create_workflow.py')

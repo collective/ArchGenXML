@@ -13,9 +13,9 @@
 ##############################################################################
 """
 
-$Id: dt_return.py,v 1.1 2004/07/27 02:42:53 zworkb Exp $
+$Id: dt_return.py,v 1.2 2004/07/27 18:08:51 zworkb Exp $
 """
-from zope.documenttemplate.dt_util import parse_params, name_param
+from dt_util import parse_params, name_param
 
 class ReturnTag:
     name = 'return'

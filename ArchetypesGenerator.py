@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.35 2004/07/27 02:42:53 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.36 2004/07/27 18:08:51 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -961,7 +961,7 @@ class ArchetypesGenerator:
         #allowed_content_classes
         parentAggregates=''
         if element.getGenParents():
-            parentAggregates = '+ ' + ' + '.join(tuple([p.getCleanName()+".allowed_content_types" for p in element.getGenParents()]))
+            parentAggregates = '+ ' + ' + '.join(tuple(["getattr(%s,'allowed_content_types',[])"%p.getCleanName() for p in element.getGenParents()]))
         print >> outfile, CLASS_ALLOWED_CONTENT_TYPES % (repr(aggregatedClasses),parentAggregates)
         
         #allowed_content_interfaces

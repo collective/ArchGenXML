@@ -32,12 +32,12 @@
    should be treated as mapping object, rather than as an object with
    named attributes.
 
-$Id: dt_with.py,v 1.1 2004/07/27 02:42:53 zworkb Exp $
+$Id: dt_with.py,v 1.2 2004/07/27 18:08:51 zworkb Exp $
 """
 
-from zope.documenttemplate.dt_util import \
+from dt_util import \
      parse_params, name_param, InstanceDict, render_blocks
-from zope.documenttemplate.dt_util import TemplateDict
+from dt_util import TemplateDict
 
 from types import StringTypes, TupleType
 

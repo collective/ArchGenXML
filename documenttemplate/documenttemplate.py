@@ -79,11 +79,11 @@ Document Templates may be created 2 ways by default:
         string using HTML server-side-include rather than
         python-format-string syntax.
 
-$Id: documenttemplate.py,v 1.1 2004/07/27 02:42:53 zworkb Exp $
+$Id: documenttemplate.py,v 1.2 2004/07/27 18:08:51 zworkb Exp $
 '''
 
 ParseError='Document Template Parse Error'
 
-from zope.documenttemplate.dt_string import String
-from zope.documenttemplate.dt_html import HTML
-from zope.documenttemplate.dt_util import html_quote
+from dt_string import String
+from dt_html import HTML
+from dt_util import html_quote

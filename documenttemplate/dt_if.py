@@ -75,9 +75,9 @@
          is used inside the tag, including in enclosed tags, the
          variable is not reevaluated.
 
-$Id: dt_if.py,v 1.1 2004/07/27 02:42:53 zworkb Exp $
+$Id: dt_if.py,v 1.2 2004/07/27 18:08:51 zworkb Exp $
 """
-from zope.documenttemplate.dt_util import ParseError, parse_params, name_param
+from dt_util import ParseError, parse_params, name_param
 
 class If:
     blockContinuations = 'else', 'elif'

@@ -13,14 +13,14 @@
 ##############################################################################
 """
 
-$Id: dt_string.py,v 1.1 2004/07/27 02:42:53 zworkb Exp $
+$Id: dt_string.py,v 1.2 2004/07/27 18:08:51 zworkb Exp $
 """
 import re, thread
 
-from zope.documenttemplate.dt_util import \
+from dt_util import \
      ParseError, InstanceDict, TemplateDict, render_blocks
-from zope.documenttemplate.dt_var import Var, Call, Comment
-from zope.documenttemplate.dt_return import ReturnTag, DTReturn
+from dt_var import Var, Call, Comment
+from dt_return import ReturnTag, DTReturn
 
 from types import TupleType
 
@@ -99,7 +99,7 @@ class String:
             try:
                 exec 'from %s import %s' % (module, name) in d
             except ImportError:
-                exec 'from zope.documenttemplate.%s import %s' % (module,
+                exec 'from documenttemplate.%s import %s' % (module,
                                                                   name) in d
             command = d[name]
             self.commands[cname] = command

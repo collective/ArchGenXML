@@ -312,16 +312,16 @@
         - The 'next' attribute was used and their are no
           next batches, or
 
-$Id: dt_in.py,v 1.1 2004/07/27 02:42:53 zworkb Exp $
+$Id: dt_in.py,v 1.2 2004/07/27 18:08:51 zworkb Exp $
 """
 
-from zope.documenttemplate.dt_util import \
+from dt_util import \
      ParseError, parse_params, name_param
-from zope.documenttemplate.dt_util import \
+from dt_util import \
      render_blocks, InstanceDict, ValidationError, Eval
 
 import re
-from zope.documenttemplate.dt_insv import sequence_variables, opt
+from dt_insv import sequence_variables, opt
 from types import StringType, ListType, TupleType, IntType, FloatType, NoneType
 
 
