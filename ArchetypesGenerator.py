@@ -1087,7 +1087,7 @@ class ArchetypesGenerator:
              element.getTaggedValue('copyright', self.copyright) or author)
         
         licence = ('\n# ').join( \
-            wrap((element.getTaggedValue('licence', self.licence) or GPLTEXT),77).split('\n') )
+            wrap(self.getOption('license', element, GPLTEXT),77).split('\n') )
 
         fileheaderinfo = {'filename': modulename+'.py',
                           'purpose':  purposeline,

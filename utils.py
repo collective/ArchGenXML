@@ -161,7 +161,7 @@ ALLOWED_OPTIONS_MAP = {
     'author=':                          (1, 0,   'DOCUMENTATION', 'author', 'string'),
     'e-mail=':                          (1, 0,   'DOCUMENTATION', 'email', 'string'),
     'copyright=':                       (1, 0,   'DOCUMENTATION', 'copyright', 'string'),
-    'licence=':                         (1, 0,   'DOCUMENTATION', 'licence', 'string'),
+    'license=':                         (1, 0,   'DOCUMENTATION', 'license', 'string'),
     'strip-html':                       (1, 0,   'DOCUMENTATION', 'striphtml', 'switchon'),
     'cfg=':                             (1, 'c', None,            None,'string'),
     'project-configuration=':           (1, 0,   None,            None,'string'),                
