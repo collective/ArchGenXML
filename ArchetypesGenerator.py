@@ -287,7 +287,7 @@ class ArchetypesGenerator:
         immediate_view=element.getTaggedValue('immediate_view') or 'base_view'
 
         # global_allow
-        ga = element.getTaggedValue('global_allow')
+        ga = self.getOption('global_allow', element, default=None)
         if ga:
             global_allow = int(ga)
         else:
@@ -307,9 +307,11 @@ class ArchetypesGenerator:
             content_icon = element.getCleanName()+'.gif'
 
         res=ftiTempl % {'subtypes':repr(tuple(subtypes)),
-            'has_content_icon':has_content_icon,'content_icon':content_icon,
+            'has_content_icon':has_content_icon,
+            'content_icon':content_icon,
             'discussion':element.getTaggedValue('allow_discussion','0'),
-            'global_allow':global_allow,'immediate_view':immediate_view,
+            'global_allow':global_allow,
+            'immediate_view':immediate_view,
             'filter_content_types': not (isTGVFalse(element.getTaggedValue('filter_content_types')) or element.hasStereoType('folder'))}
 
         return res

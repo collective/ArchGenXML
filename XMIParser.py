@@ -1689,18 +1689,23 @@ class XMIStateMachine(XMIStateContainer):
         transition.setParent(self)
 
     def getTransitions(self, no_duplicates = None):
-        ret = []
+        if not no_duplicates:
+            return self.transitions
+
+        tran = {}
         for t in self.transitions:
-            if no_duplicates:
-                flag_exists = 0
-                for r in ret:
-                    if t.getCleanName() == r.getCleanName():
-                        flag_exists = 1
-                        break
-                if flag_exists:
-                    continue
-            ret.append(t)
-        return ret
+            if not t.getCleanName():
+                continue
+            if not t.getCleanName() in tran.keys():
+                tran.update({t.getCleanName():t})
+                #print "add transition", t.getCleanName(), t.getProps()
+                continue
+            for tname in tran:
+                if t.getCleanName() == tname and t.hasStereoType('primary'):
+                    #print "overrules transition", tname, t.getProps()
+                    tran.update({tname:t})
+
+        return [tran[tname] for tname in tran]
 
     def getTransitionNames(self, no_duplicates = None):
         return [t.getCleanName() for t in self.getTransitions(no_duplicates = no_duplicates) if t.getCleanName()]
@@ -1917,7 +1922,7 @@ class XMIState(XMIElement):
 
         ret = []
         for k, v in tv.items():
-            if k in non_permissions:
+            if k in non_permissions or not v:
                 continue
             permission = pm.get(k, k)
             roles =  [str(r.strip()) for r in v.split(',') if r.strip()]
