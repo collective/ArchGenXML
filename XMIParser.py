@@ -40,7 +40,7 @@ class XMI1_0:
     BASE = 'Behavioral_Elements.Collaborations.ClassifierRole.base'
     # which we will assume to be a CLASS, collapsing otherwise
     CLASS = 'Foundation.Core.Class'
-
+    PACKAGE='Model_Management.Package'
     # To match up a CR with the right start state,  we look out for the context
     CONTEXT = 'Behavioral_Elements.State_Machines.StateMachine.context'
     MODEL='Model_Management.Model'
@@ -133,8 +133,8 @@ class XMI1_0:
             except IndexError:
                 pass
 
-        
-class XMI1_2 (XMI1_0):
+
+class XMI1_1 (XMI1_0):
     # XMI version specific stuff goes there
 
     NAME = 'UML:ModelElement.name'
@@ -142,7 +142,8 @@ class XMI1_2 (XMI1_0):
     #Collaboration stuff: a
     COLLAB = 'Behavioral_Elements.Collaborations.Collaboration'
     CLASS = 'UML:Class'
-
+    PACKAGE = 'UML:Package'
+    
     # To match up a CR with the right start state,  we look out for the context
     MULTIPLICITY='UML:StructuralFeature.multiplicity'
     ATTRIBUTE='UML:Attribute'
@@ -159,6 +160,9 @@ class XMI1_2 (XMI1_0):
     METHODPARAMETER="UML:Parameter"
     MULTRANGE='UML:MultiplicityRange'
 
+    MULT_MIN='UML:MultiplicityRange.lower'
+    MULT_MAX='UML:MultiplicityRange.upper'
+
     GENERALIZATION="UML:Generalization"
     GEN_CHILD="UML:Generalization.child"
     GEN_PARENT="UML:Generalization.parent"
@@ -166,6 +170,10 @@ class XMI1_2 (XMI1_0):
 
     def getName(self,domElement):
         return domElement.getAttribute('name')
+
+        
+class XMI1_2 (XMI1_1):
+    # XMI version specific stuff goes there
 
     def getAssocEndParticipantId(self,el):
         return getElementByTagName(getElementByTagName(el,self.ASSOCEND_PARTICIPANT),self.CLASS).getAttribute('xmi.idref')
@@ -446,7 +454,7 @@ class XMIAssocEnd (XMIElement):
         pid=XMI.getAssocEndParticipantId(el)
         self.obj=allObjects[pid]
         self.mult=XMI.getMultiplicity(el)
-        #print 'mult;',self.mult,self.getName()
+        #print 'mult;',self.mult,self.getName(),self.id
         
 class XMIAssociation (XMIElement):
     fromEnd=None
@@ -477,10 +485,24 @@ def buildDataTypes(doc):
         datatypes[str(dt.getAttribute('xmi.id'))]=dt
 
 
-def buildHierarchy(doc):
+def buildHierarchy(doc,packagenames):
     """ builds Hierarchy out of the doc """
     global datatypes
     datatypes={}
+
+    buildDataTypes(doc)
+
+    print 'packagenames:', packagenames
+    if packagenames: #XXX: TODO support for more than one package
+        packages=doc.getElementsByTagName(XMI.PACKAGE)
+        for p in packages:
+            n=XMI.getName(p)
+            print 'package name:',n
+            if n in packagenames:
+                doc=p
+                print 'package found'
+                break
+        
     buildDataTypes(doc)
 
     res=XMIElement()
@@ -488,16 +510,16 @@ def buildHierarchy(doc):
     #try to get the name out of the model
     xmis=doc.getElementsByTagName(XMI.MODEL)
     if len(xmis)==1:
-        print 'model name:',XMI.getName(xmis[0])
+        #print 'model name:',XMI.getName(xmis[0])
         res.setName(XMI.getName(xmis[0]))
 
     classes=doc.getElementsByTagName(XMI.CLASS)
-    #print 'classes:',classes
     for c in classes:
-        if hasClassFeatures(c):
+        if 1 or hasClassFeatures(c):
             xc=XMIClass(c)
-            print 'Class:',xc.getName()
+            print 'Class:',xc.getName(),xc.id
             res.addChild(xc)
+
 
     res.annotate()
     XMI.buildRelations(doc,allObjects)
@@ -505,7 +527,7 @@ def buildHierarchy(doc):
     return res
 
 
-def parse(xschemaFileName=None,xschema=None):
+def parse(xschemaFileName=None,xschema=None,packages=[]):
     """ """
     global XMI
 
@@ -519,14 +541,17 @@ def parse(xschemaFileName=None,xschema=None):
         xmiver=str(xmi.getAttribute('xmi.version'))
         print 'XMI version:', xmiver
         if xmiver >= "1.2":
-            print 'using xmi 1.2 parser'
+            print 'using xmi 1.2+ parser'
             XMI=XMI1_2()
+        elif xmiver >= "1.1":
+            print 'using xmi 1.1+ parser'
+            XMI=XMI1_1()
 
     except:
         print 'no version info found, taking XMI1_0'
         pass
 
-    root=buildHierarchy(doc)
+    root=buildHierarchy(doc,packages)
     return root
 
 

@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.8 2003/06/22 10:21:54 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.8.2.1 2003/07/10 18:48:54 dreamcatcher Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -54,6 +54,7 @@ class ArchetypesGenerator:
     unknownTypesAsString=1
     generateActions=0
     prefix=''
+    packages=[] #packages to scan for classes
 
     reservedAtts=['id','title']
 
@@ -411,14 +412,14 @@ class ArchetypesGenerator:
 
         if suff.lower() in ('.xmi','.xml'):
             print 'opening xmi'
-            root=XMIParser.parse(self.xschemaFileName)
+            root=XMIParser.parse(self.xschemaFileName,packages=self.packages)
         elif suff.lower() in ('.zargo',):
             print 'opening zargo'
             zf=ZipFile(self.xschemaFileName)
             xmis=[n for n in zf.namelist() if os.path.splitext(n)[1].lower()=='.xmi']
             assert(len(xmis)==1)
             buf=zf.read(xmis[0])
-            root=XMIParser.parse(xschema=buf)
+            root=XMIParser.parse(xschema=buf,packages=self.packages)
         elif suff.lower() == '.xsd':
             root=XSDParser.parse(self.xschemaFileName)
 
@@ -440,7 +441,7 @@ from Products.Archetypes.public import *
 
 def main():
     args = sys.argv[1:]
-    opts, args = getopt.getopt(args, 'f:a:t:o:s:p:')
+    opts, args = getopt.getopt(args, 'f:a:t:o:s:p:P:')
     prefix = ''
     outfileName = None
     yesno={'yes':1,'y': 1, 'no':0, 'n':0}
@@ -455,6 +456,9 @@ def main():
             options['prefix'] = option[1]
         elif option[0] == '-o':
             outfileName = option[1]
+        elif option[0] == '-P':
+            options['packages'] = option[1].split(',')
+            print 'packs:',options['packages']
         elif option[0] == '-f':
             options['force'] = yesno[option[1]]
         elif option[0] == '-t':
@@ -473,13 +477,14 @@ def main():
 
 
 USAGE_TEXT = """
-Usage: python ArggenXML.py [ options ] <in_xsd_file>
+Usage: python ArchGenXML.py [ options ] <in_xsd_file>
 Options:
     -o <outfilename>         Output file name for data representation classes
     -p <prefix>              Prefix string to be pre-pended to the class names
     -t <yes|no>              unknown attribut types will be treated as text
     -f <yes|no>              Force creation of output files.  Do not ask.
     -a <yes|no>              generates actions
+    -P <packagename>         package to parse
 """
 
 def usage():
