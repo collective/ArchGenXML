@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.94 2004/08/15 17:04:51 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.95 2004/08/17 16:42:21 xiru Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -1583,11 +1583,22 @@ class XMIStateContainer(XMIElement):
         self.states.append(state)
         state.setParent(self)
         
-    def getStates(self):
-        return self.states
+    def getStates(self, no_duplicates = None):
+        ret = []
+        for s in self.states:
+            if no_duplicates:
+                flag_exists = 0
+                for r in ret:
+                    if s.getName() == r.getName():
+                        flag_exists = 1
+                        break
+                if flag_exists:
+                    continue
+            ret.append(s) 
+        return ret
     
-    def getStateNames(self):
-        return [s.getName() for s in self.getStates() if s.getName()]
+    def getStateNames(self, no_duplicates = None):
+        return [s.getName() for s in self.getStates(no_duplicates = no_duplicates) if s.getName()]
         
 class XMIStateMachine(XMIStateContainer):
     
@@ -1619,11 +1630,22 @@ class XMIStateMachine(XMIStateContainer):
         self.transitions.append(transition)
         transition.setParent(self)
 
-    def getTransitions(self):
-        return self.transitions
+    def getTransitions(self, no_duplicates = None):
+        ret = []
+        for t in self.transitions:
+            if no_duplicates:
+                flag_exists = 0
+                for r in ret:
+                    if t.getCleanName() == r.getCleanName():
+                        flag_exists = 1
+                        break
+                if flag_exists:
+                    continue
+            ret.append(t) 
+        return ret
     
-    def getTransitionNames(self):
-        return [t.getCleanName() for t in self.getTransitions() if t.getName()]
+    def getTransitionNames(self, no_duplicates = None):
+        return [t.getCleanName() for t in self.getTransitions(no_duplicates = no_duplicates) if t.getCleanName()]
     
     def buildStates(self):
         sels=getElementsByTagName(self.domElement,XMI.SIMPLESTATE,recursive=1)

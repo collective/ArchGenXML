@@ -12,7 +12,7 @@
 """
 Programmatically creates a workflow type
 """
-__version__ = "$Revision: 1.5 $"[11:-2]
+__version__ = "$Revision: 1.6 $"[11:-2]
 
 from Products.CMFCore.WorkflowTool import addWorkflowFactory
 
@@ -24,9 +24,9 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
     productname='<dtml-var "package.getCleanName()">'
     wf.setProperties(title='<dtml-var "statemachine.getCleanName()">')
 
-    for s in <dtml-var "repr(statemachine.getStateNames())">:
+    for s in <dtml-var "repr(statemachine.getStateNames(no_duplicates = 1))">:
         wf.states.addState(s)
-    for t in <dtml-var "repr(statemachine.getTransitionNames())">:
+    for t in <dtml-var "repr(statemachine.getTransitionNames(no_duplicates = 1))">:
         wf.transitions.addTransition(t)
 
 
@@ -43,7 +43,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
 
     ## States initialization
     
-    <dtml-in "[s for s in statemachine.getStates() if s.getCleanName()]">
+    <dtml-in "[s for s in statemachine.getStates(no_duplicates = 1) if s.getCleanName()]">
     
     sdef = wf.states['<dtml-var "_['sequence-item'].getCleanName()">']
     sdef.setProperties(title="""<dtml-var "_['sequence-item'].getDocumentation(striphtml=generator.atgenerator.striphtml) or _['sequence-item'].getCleanName()">""",
@@ -54,7 +54,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
     </dtml-in>
 
     ## Transitions initialization
-    <dtml-in "[t for t in statemachine.getTransitions() if t.getCleanName()]">
+    <dtml-in "[t for t in statemachine.getTransitions(no_duplicates = 1) if t.getCleanName()]">
     <dtml-let tran="_['sequence-item']">
 
     <dtml-if "tran.getAction()">
