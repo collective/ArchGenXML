@@ -485,7 +485,10 @@ class XMI1_1 (XMI1_0):
     ACTOR="UML:Actor"
 
     def getName(self,domElement):
-        return domElement.getAttribute('name').strip()
+        if domElement:
+            return domElement.getAttribute('name').strip()
+        else:
+            return ''
 
     def getExpressionBody(self,element,tagname=None):
         if not tagname:

@@ -610,12 +610,11 @@ class ArchetypesGenerator:
 
     def getFieldStringFromAttribute(self, attr, classelement):
         ''' gets the schema field code '''
-        print 'typename:%s:'%attr.getName(),attr.type,
+        #print 'typename:%s:'%attr.getName(),attr.type,
         if not hasattr(attr,'type') or attr.type=='NoneType':
             ctype='string'
         else:
             ctype=self.coerceType(str(attr.type))
-        print " with ctype", ctype
 
 
         map=self.typeMap[ctype]['map'].copy()
