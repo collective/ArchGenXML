@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.40 2004/08/20 20:20:38 zworkb Exp $
+# RCS-ID:      $Id$
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -1126,8 +1126,8 @@ class ArchetypesGenerator:
 
         templdir=os.path.join(sys.path[0],'templates')
         initTemplate=open(os.path.join(templdir,'__init_package__.py')).read()
-        imports_packages='\n'.join(['import '+m for m in package.generatedPackages])
-        imports_classes='\n'.join(['import '+m for m in package.generatedModules])
+        imports_packages='\n'.join(['import '+m.getModuleName() for m in package.generatedPackages])
+        imports_classes='\n'.join(['import '+m.getModuleName() for m in package.generatedModules])
 
         init_params = {'imports_packages':imports_packages,'imports_classes':imports_classes}
         initTemplate=initTemplate % init_params
@@ -1147,8 +1147,8 @@ class ArchetypesGenerator:
 
         templdir=os.path.join(sys.path[0],'templates')
         initTemplate=open(os.path.join(templdir,'__init__.py')).read()
-        imports_packages='\n'.join(['    import '+m for m in package.generatedPackages])
-        imports_classes='\n'.join(['    import '+m for m in generatedModules])
+        imports_packages='\n'.join(['    import '+m.getModuleName() for m in package.generatedPackages])
+        imports_classes='\n'.join(['    import '+m.getModuleName() for m in generatedModules])
 
         imports=imports_packages+'\n\n'+imports_classes
         tool_classes=self.getGeneratedTools(package)
@@ -1310,7 +1310,7 @@ class ArchetypesGenerator:
                 continue
 
             module=element.getModuleName()
-            package.generatedModules.append(module)
+            package.generatedModules.append(element)
             outfilepath=os.path.join(package.getFilePath(),module+'.py')
             #print 'writing class:',outfilepath
             
@@ -1365,7 +1365,7 @@ class ArchetypesGenerator:
                 self.generateProduct(p)
             else:
                 self.generatePackage(p,recursive=1)
-                package.generatedPackages.append(p.getName())
+                package.generatedPackages.append(p)
 
         self.generateStdFiles(package.getFilePath(),package)
 
