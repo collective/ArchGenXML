@@ -102,7 +102,7 @@ class ArchetypesGenerator(BaseGenerator):
     variable_schema='variable_schema'
     stub_stereotypes=['odStub','stub']
     archetype_stereotype = ['archetype']
-    hide_classes=['EARootClass','int','float','boolean','long','bool','void'
+    hide_classes=['EARootClass','int','float','boolean','long','bool','void','string',
         'integer','java::lang::int','java::lang::string','java::lang::long','java::lang::float','java::lang::void'] # Enterprise Architect and other automagically created crap Dummy Class
     vocabulary_item_stereotype = ['vocabulary_item']
     vocabulary_container_stereotype = ['vocabulary']
@@ -1745,7 +1745,7 @@ class ArchetypesGenerator(BaseGenerator):
         if package.hasStereoType(self.stub_stereotypes):
             return
         package.generatedModules=[]
-        if package.getName() == 'java' or package.getName().startswith('java'):
+        if package.getName().lower() == 'java' or package.getName().lower().startswith('java'):
             #to suppress these unneccesary implicit created java packages (ArgoUML and Poseidon)
             print indent('ignore package:',package.getName(),self.infoind)
             return
@@ -1755,8 +1755,8 @@ class ArchetypesGenerator(BaseGenerator):
         for element in package.getClasses()+package.getInterfaces():
             #skip stub and internal classes
             if element.isInternal() or element.getName() in self.hide_classes \
-               or element.getName().startswith('java::'): # Enterprise Architect fix!
-                print indent('Ignore superfluent class: '+element.getName(),self.infoind)
+               or element.getName().lower().startswith('java::'): # Enterprise Architect fix!
+                print indent('Ignore unnecessary class: '+element.getName(),self.infoind)
                 continue
             if element.hasStereoType(self.stub_stereotypes):
                 print indent('Ignore stub class: '+element.getName(),self.infoind)
