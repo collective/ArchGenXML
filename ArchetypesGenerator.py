@@ -1036,8 +1036,7 @@ class ArchetypesGenerator(BaseGenerator):
                 # No declaration
                 print >> outfile,indent("# Use class/module security defaults",1)
             else:
-                print "! Warning: method visibility should be 'public', 'private', 'protected' or 'package', got", permissionMode
-
+                print indent("! Warning: method visibility should be 'public', 'private', 'protected' or 'package', got %s." % permissionMode, self.infoind)
 
         cls=self.parsed_class_sources.get(klass.getPackage().getFilePath()+'/'+klass.getName(),None)
 
