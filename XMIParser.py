@@ -1473,17 +1473,13 @@ class XMIClass (XMIElement, StateMachineContainer):
         return res
 
 
-    def getQualifiedName(self,ref,includeRoot=0):
-        path= self.getQualifiedModulePath(ref)
-        #res = res+'.%s' % self.getName()
-        path.append(self)
-        if not includeRoot:
-            path=path[1:]
-        res='.'.join([p.getName() for p in path if p])
-        if not includeRoot and self.package.getProduct() != ref.getProduct():
-            res='Products.'+res
-        return res
+    def getQualifiedName(self,ref,pluginRoot='Products',forcePluginRoot=0):
+        name=self.getQualifiedModuleName(ref,pluginRoot=pluginRoot,forcePluginRoot=forcePluginRoot)
 
+        res=name+'.'+self.getCleanName()
+
+        return res
+    
     def setStateMachine(self,sm):
         self.statemachine=sm
 

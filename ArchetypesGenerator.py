@@ -1593,6 +1593,7 @@ class ArchetypesGenerator(BaseGenerator):
             toolNames = [c.getQualifiedName(package) for c in
                             self.getGeneratedClasses(package) if
                             c.hasStereoType(self.portal_tools)]
+                            
             hasTools = 1
 
         # Get the preserved code section
