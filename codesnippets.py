@@ -211,6 +211,10 @@ except ImportError:
     pass
 
     """
+    
+TEMPLATE_CONFIG_IMPORT = """\
+from Products.%(module)s.config import *
+"""
 
 
 TEMPL_APECONFIG_BEGIN = """<?xml version="1.0"?>

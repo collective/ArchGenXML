@@ -1,12 +1,30 @@
 TODO's for ArchGenXML
 ---------------------
 
-this are todos for current HEAD code, not a feature wish list. 
-A list of iwished/plannedi features planned is at:
+To-do list for current HEAD code, not a feature wish list. 
+A list of wished-for/planned features planned is at:
 http://plone.org/development/teams/developer/ArchGenXML
 
-* finish writing documentation: current is a tutorial at plone.org!
+* Finish writing documentation: current is a tutorial at plone.org
 
+	- optilude and natoka want to help :)
+
+* Move remainder of templates in templates/ to DTML 
+
+    - __init__.py
+    - __init_package__.py
+    - action_view.pt
+    - apeconf_folder.xml
+    - apeconf_object.xml
+    - generated.pot
+    - portlet_template.pt
+
+* Make AppInit.py and AppConfig.py paradigms use protected code sections?
+
+* Move class, interface generation to DTML. There are too many conditionals and
+    strings being generated in the current code. :-) Having DTML conditionals
+    and loops would make it much clearer and easier to manipulate. 
+    
 * ATVocabularyManager integration, part registration of class:
   fetch container_class - needs to be refined:
   check if parent has vocabulary_container_stereotype and use its 

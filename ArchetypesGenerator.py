@@ -1032,6 +1032,10 @@ class ArchetypesGenerator(BaseGenerator):
             wrt("# additional imports from tagged value 'import'\n")
             wrt(additionalImports)
             wrt('\n')
+        
+        # [optilude] Import config.py
+        wrt(TEMPLATE_CONFIG_IMPORT % {'module' : element.getRootPackage().getProductModuleName()})
+        wrt('\n')
 
         # CMFMember needs a special factory method
         if element.hasStereoType(self.cmfmember_stereotype):
@@ -1498,6 +1502,31 @@ class ArchetypesGenerator(BaseGenerator):
 
         return
 
+    # [optilude] New method to generate config.py from DTML template
+    def generateConfigPy(self, package):
+        """ generates: config.py """
+
+        add_content_permission = self.creation_permission or 'Add %s content' % package.getProductName ()
+
+        # prepare (d)TML varibles
+        d={'package'                : package,
+           'generator'              : self,
+           'builtins'               : __builtins__,
+           'utils'                  : utils,
+           'add_content_permission' : getExpression(add_content_permission),
+        }
+        d.update(__builtins__)
+
+        templ=readTemplate('config.py')
+        dtml=HTML(templ,d)
+        res=dtml()
+
+        of=self.makeFile(os.path.join(package.getFilePath(),'config.py'))
+        of.write(res)
+        of.close()
+
+        return
+
     def generateStdFilesForProduct(self, target,package):
         # generates __init__.py,  and the skins directory
         # calls generateInstallPy
@@ -1509,6 +1538,7 @@ class ArchetypesGenerator(BaseGenerator):
             target=target[:-1]
 
         templdir=os.path.join(sys.path[0],'templates')
+        
         initTemplate=open(os.path.join(templdir,'__init__.py')).read()
         imports_packages='\n'.join(['    import '+m.getModuleName() for m in package.generatedPackages])
         imports_classes ='\n'.join(['    import '+m.getModuleName() for m in generatedModules])
@@ -1526,10 +1556,10 @@ class ArchetypesGenerator(BaseGenerator):
             of.write(initTemplate)
             of.close()
 
-        else: toolinit=''
-
-        add_content_permission = self.creation_permission or 'Add %s content' % productname
-        init_params={'project_name':productname,'add_content_permission': getExpression(add_content_permission),'imports':imports, 'toolinit':toolinit }
+        else: 
+            toolinit=''
+        
+        init_params={'project_name':productname,'imports':imports, 'toolinit':toolinit }
 
         if self.detailled_creation_permissions:
             init_params['extra_perms']=TEMPL_DETAILLED_CREATION_PERMISSIONS
@@ -1555,6 +1585,10 @@ class ArchetypesGenerator(BaseGenerator):
                 cp=HTML(cpTemplate,d)()
                 of.write(cp)
                 of.close()
+                
+        # [optilude] Generate config.py from template
+        self.generateConfigPy(package)
+                
         self.generateInstallPy(package)
 
 

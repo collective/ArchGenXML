@@ -1,3 +1,17 @@
+#
+# Initialise the product's module. There three ways to inject custom code
+# here:
+#
+#   - To set global configuration variables, create a file AppConfig.py. This
+#       will be imported in config.py, which in turns is imported in each
+#       generated class and in this file.
+#   - To perform custom initialisation after types have been registered, create
+#       a file called AppInit.py, with a method initialize(context)
+#   - To register a customisation policy, create a file CustomizationPolicy.py
+#       with a method register(context) to register the policy
+#
+
+
 print 'Product %(project_name)s installed'
 
 
@@ -14,11 +28,7 @@ from Products.Archetypes.utils import capitalize
 
 import os, os.path
 
-
-ADD_CONTENT_PERMISSION = %(add_content_permission)s
-PROJECTNAME = "%(project_name)s"
-
-product_globals=globals()
+from Products.%(project_name)s.config import *
 
 DirectoryView.registerDirectory('skins', product_globals)
 DirectoryView.registerDirectory('skins/%(project_name)s', product_globals)
@@ -46,4 +56,11 @@ def initialize(context):
 
     if CustomizationPolicy and hasattr(CustomizationPolicy,'register'):
         CustomizationPolicy.register(context)
-        print 'Customizationpolicy for %(project_name)s installed'
+        print 'Customization policy for %(project_name)s installed'
+        
+    try:
+        import AppInit
+        if hasattr (AppInit, 'initialize'):
+            AppInit.initialize (context)
+    except ImportError:
+        pass
