@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.70 2004/01/17 19:32:39 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.71 2004/01/17 19:46:10 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -484,11 +484,6 @@ class ArchetypesGenerator:
 
     def generateMethods(self,outfile,element):
 
-        if element.getStereoType() in self.portal_tools:
-            tool_instance_name=element.getTaggedValue('tool_instance_name') or 'portal_'+element.getName().lower()
-            print >> outfile,self.TEMPL_CONSTR_TOOL % (baseclass,tool_instance_name)
-            print >> outfile
-
         print >> outfile
 
         print >> outfile,'    #Methods'
@@ -674,6 +669,10 @@ from Products.CMFCore.utils import UniqueObject
         print >> outfile,'''    archetype_name = '%s'   #this name appears in the 'add' box ''' %  archetype_name
         self.generateArcheSchema(outfile,element)
 
+        if element.getStereoType() in self.portal_tools:
+            tool_instance_name=element.getTaggedValue('tool_instance_name') or 'portal_'+element.getName().lower()
+            print >> outfile,self.TEMPL_CONSTR_TOOL % (baseclass,tool_instance_name)
+            print >> outfile
 
         self.generateMethods(outfile,element)
 
