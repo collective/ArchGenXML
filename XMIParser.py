@@ -1448,7 +1448,7 @@ class XMIClass (XMIElement, StateMachineContainer):
 
         package=self.getPackage()
 
-        if package.isSubPackageOf(ref):
+        if self.package == ref:
             path=package.getPath(includeRoot=0,parent=ref)
         else:
             path=package.getPath(includeRoot=1,parent=ref)
