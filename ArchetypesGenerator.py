@@ -69,13 +69,23 @@ class DummyModel:
     def hasStereoType(self,s):
         return 0
 
-    def getClasses(self):
+    def getClasses(self,*a,**kw):
         return []
     getInterfaces=getClasses
     getPackages=getClasses
     getStateMachines=getClasses
     def isRoot(self):
         return 1
+    
+    def getAnnotation(self,*a,**kw):
+        return None
+    
+    def getDocumentation(self,**kw):
+        return None
+    def hasTaggedValue(*a,**kw):
+        return None
+    def getParent(*a,**kw):
+        return None
 
 class ArchetypesGenerator(BaseGenerator):
     generator_generator='archetypes'
