@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.62 2004/04/13 11:34:25 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.63 2004/04/13 13:45:18 xiru Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -243,8 +243,6 @@ class XMI1_0:
                     print 'Warning: Parent Object not found for realization relation:%s, parent %s' % (XMI.getId(ab),XMI.getName(par0))
                     continue
                 
-	        print "Xiru was here!"
-
                 #child=objects[getElementByTagName(child0,self.REALIZATION_ELEMENT).getAttribute('xmi.idref')]
                 try:
                     child0=getElementByTagName (ab,self.DEP_CLIENT,recursive=1)
