@@ -477,7 +477,7 @@ class ArchetypesGenerator(BaseGenerator):
                 else:
                     if v.startswith ('python:'):
                         v = v[7:]
-                    
+
                 formatted=''
                 for line in v.split('\n'):
                     formatted+=line
@@ -543,7 +543,7 @@ class ArchetypesGenerator(BaseGenerator):
                 else:
                     if val.startswith ('python:'):
                         val = val[7:]
-                        
+
                 widgetmap.update({key:val})
 
             if '(' not in widgetcode:
@@ -858,7 +858,7 @@ class ArchetypesGenerator(BaseGenerator):
             method_names.append('__init__')
 
         if self.method_preservation:
-            cl=self.parsed_class_sources.get(element.getName(),None)
+            cl=self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name,None)
             if cl:
                 manual_methods=[mt for mt in cl.methods.values() if mt.name not in method_names]
                 if manual_methods:
@@ -884,15 +884,15 @@ class ArchetypesGenerator(BaseGenerator):
         print >> outfile
 
         if mode == 'class':
-        
+
             # [optilude] Added check for permission:mode - public, private or protected (default)
             permissionMode = m.getTaggedValue ('permission:mode', 'protected')
-        
+
             if permissionMode == 'public':
                 print >> outfile,indent("security.declarePublic('%s')" % (m.getName(),),1)
             elif permissionMode == 'private':
                 print >> outfile,indent("security.declarePrivate('%s')" % (m.getName(),),1)
-            elif permissionMode == 'protected':        
+            elif permissionMode == 'protected':
                 rawPerm=m.getTaggedValue('permission',None)
                 permission=getExpression(rawPerm)
                 if rawPerm:
@@ -901,7 +901,7 @@ class ArchetypesGenerator(BaseGenerator):
                 print "** Warning: value for permission:mode should be 'public', 'private', 'protected' or 'none', got", permissionMode
 
 
-        cls=self.parsed_class_sources.get(klass.getName(),None)
+        cls=self.parsed_class_sources.get(klass.getPackage().getFilePath()+'/'+klass.getName(),None)
 
         if cls:
             method_code=cls.methods.get(m.getName())
@@ -991,16 +991,19 @@ class ArchetypesGenerator(BaseGenerator):
 
         print >> outfile, ''
 
-    def generateProtectedSection(self,outfile,element,section,ind=0):
-        print >> outfile,indent(PyParser.PROTECTED_BEGIN,ind),section,'#fill in your manual code here'
-        cl=self.parsed_class_sources.get(element.getName(),None)
-        if cl:
-            sectioncode=cl.getProtectedSection(section)
+    def getProtectedSection(self,parsed,section,ind=0):
+        outstring = indent(PyParser.PROTECTED_BEGIN,ind)+' '+section+' #fill in your manual code here\n'
+        if parsed:
+            sectioncode=parsed.getProtectedSection(section)
             if sectioncode:
-                print >>outfile,sectioncode
+                outstring += sectioncode + '\n'
 
-        print >> outfile,indent(PyParser.PROTECTED_END,ind),section
-        print >> outfile
+        outstring+=indent(PyParser.PROTECTED_END,ind)+' '+section+'\n'
+        return outstring
+
+    def generateProtectedSection(self,outfile,element,section,indent=0):
+        parsed=self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.getName(),None)
+        print >> outfile, self.getProtectedSection(parsed,section,indent)
 
     def generateClass(self, outfile, element, delayed):
         print 'Generating class:',element.getName()
@@ -1095,9 +1098,9 @@ class ArchetypesGenerator(BaseGenerator):
 
         # normally a one of the Archetypes base classes are set.
         # if you dont want it set the TGV to zero '0'
-        
-        
-        # [optilude] Also - ignore the standard class if this is an abstract/mixin        
+
+
+        # [optilude] Also - ignore the standard class if this is an abstract/mixin
         if not isTGVFalse(element.getTaggedValue('base_class')) and not element.isAbstract ():
             parentnames.insert(0,baseclass)
 
@@ -1149,7 +1152,7 @@ class ArchetypesGenerator(BaseGenerator):
         print >>outfile,indent('security = ClassSecurityInfo()',1)
 
         # "__implements__" line -> handle realization parents
-        reparents=element.getRealizationParents()        
+        reparents=element.getRealizationParents()
         reparentnames=[p.getName() for p in reparents]
         if reparents:
 
@@ -1157,28 +1160,28 @@ class ArchetypesGenerator(BaseGenerator):
             # base __implements__ is a single interface, not a tuple. Arbitrary
             # nesting of tuples in interface declaration is permitted.
             # Also, handle now-possible case where parentnames is empty
-            
+
             if parentnames:
                 parentInterfacesConcatenation = \
                     ' + '.join(["(getattr(%s,'__implements__',()),)" % i for i in parentnames])
             else:
                 parentInterfacesConcatenation = '()'
-                
+
             realizationsConcatenation = ','.join(reparentnames)
-            
+
             print >> outfile, CLASS_IMPLEMENTS % \
                     {'baseclass_interfaces' : parentInterfacesConcatenation,
                      'realizations' : realizationsConcatenation, }
         else:
-        
+
             # [optilude] Same as above
-            
+
             if parentnames:
                 parentInterfacesConcatenation = \
                     ' + '.join(["(getattr(%s,'__implements__',()),)" % i for i in parentnames])
             else:
                 parentInterfacesConcatenation = '()'
-        
+
             print >> outfile, CLASS_IMPLEMENTS_BASE % \
                     {'baseclass_interfaces' : parentInterfacesConcatenation,}
 
@@ -1188,7 +1191,7 @@ class ArchetypesGenerator(BaseGenerator):
             print >>outfile,indent(header, 1)
 
         archetype_name=element.getTaggedValue('archetype_name') or element.getTaggedValue('label')
-        if not archetype_name: 
+        if not archetype_name:
             archetype_name=name
 
         # [optilude] Only output portal type and AT name if it's not an abstract
@@ -1415,7 +1418,25 @@ class ArchetypesGenerator(BaseGenerator):
         imports_packages='\n'.join(['import '+m.getModuleName() for m in package.generatedPackages])
         imports_classes='\n'.join(['import '+m.getModuleName() for m in package.generatedModules])
 
-        init_params = {'imports_packages':imports_packages,'imports_classes':imports_classes}
+        parsed = None
+        if self.method_preservation:
+            try:
+                parsed=PyParser.PyModule(os.path.join(target,'__init__.py'))
+            except IOError:
+                pass
+            except :
+                print '\n***\n***Error while reparsing the file '+os.path.join(target,'__init__.py')
+                print '***\n'
+                raise
+        else:
+            parsed = None
+
+        init_params = {
+            'imports_packages':         imports_packages,
+            'imports_classes':          imports_classes,
+            'protected_module_header':  self.getProtectedSection(parsed,'init-module-header'),
+            'protected_module_footer':  self.getProtectedSection(parsed,'init-module-footer')
+        }
         initTemplate=initTemplate % init_params
         of=self.makeFile(os.path.join(target,'__init__.py'))
         of.write(initTemplate)
@@ -1608,8 +1629,8 @@ class ArchetypesGenerator(BaseGenerator):
                     #mod.printit()
                     self.parsed_sources.append(mod)
                     for c in mod.classes.values():
-                        #print 'found class:',c.name
-                        self.parsed_class_sources[c.name]=c
+                        #print 'parse module:',c.name
+                        self.parsed_class_sources[package.getFilePath()+'/'+c.name]=c
 
                 except IOError:
                     #print 'no source found'

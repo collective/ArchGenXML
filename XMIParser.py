@@ -292,7 +292,7 @@ class XMI1_0:
                     child=objects[child_xmid]
                 except (KeyError,IndexError):
                     print 'Warning: Child element for realization relation not found, parent name + relation xmi_id given:',par.getName(),XMI.getId(ab)
-                    
+
                 par.addRealizationChild(child)
                 child.addRealizationParent(par)
             except IndexError:
