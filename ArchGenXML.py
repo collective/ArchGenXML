@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.63 2003/12/09 11:03:24 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.64 2003/12/11 22:13:35 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -802,11 +802,14 @@ from Products.CMFCore.utils import UniqueObject
         of=makeFile(os.path.join(target,'apeconf.xml'))
         print >> of,self.TEMPL_APECONFIG_BEGIN
         for el in self.root.getChildren():
+            if el.isInternal() or el.getStereoType() in self.stub_stereotypes:
+                continue
+
             print >>of
             if el.getRefs() + el.getSubtypeNames(recursive=1):
-                print >>of,apeconfig_folder % {'project_name':projectName,'class_name':el.getCleanName()}
+                print >>of,apeconfig_folder % {'project_name':self.projectName,'class_name':el.getCleanName()}
             else:
-                print >>of,apeconfig_object % {'project_name':projectName,'class_name':el.getCleanName()}
+                print >>of,apeconfig_object % {'project_name':self.projectName,'class_name':el.getCleanName()}
 
         print >>of,'</configuration>'
         of.close()
