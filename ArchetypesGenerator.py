@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.37 2004/07/29 08:12:26 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.38 2004/07/29 12:33:39 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -18,9 +18,10 @@ from shutil import copy
 
 # AGX-specific imports
 import XSDParser, XMIParser, PyParser
+from documenttemplate.documenttemplate import HTML
 from codesnippets import *
 from utils import makeFile, makeDir,mapName, wrap, indent, getExpression, \
-    isTGVTrue, isTGVFalse
+    isTGVTrue, isTGVFalse, readTemplate
 
 from WorkflowGenerator import WorkflowGenerator
 
@@ -75,6 +76,7 @@ class ArchetypesGenerator:
     right_slots=[]
     force_plugin_root=1 #should be 'Products.' be prepended to all absolute paths?
     creation_permission=None ## unused!
+    customization_policy=0
     
     parsed_class_sources={} #dict containing the parsed sources by class names (for preserving method codes)
     parsed_sources=[] #list of containing the parsed sources (for preserving method codes)
@@ -1167,6 +1169,16 @@ class ArchetypesGenerator:
         of.write(initTemplate)
         of.close()
 
+        if self.customization_policy:
+            of=self.makeFile(os.path.join(package.getFilePath(),'CustomizationPolicy.py'),0)
+            if of:
+                cpTemplate=readTemplate('CustomizationPolicy.py')
+                d={'package':package,'generator':self}
+                cp=HTML(cpTemplate,d)()
+                of.write(cp)
+                of.close()
+
+            
         installTemplate=open(os.path.join(templdir,'Install.py')).read()
         extDir=os.path.join(package.getFilePath(),'Extensions')
         self.makeDir(extDir)
