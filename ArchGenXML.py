@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.35 2003/10/26 21:03:18 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.36 2003/10/26 21:43:53 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -55,7 +55,8 @@ class ArchetypesGenerator:
     ape_support=0 #generate ape config and serializers/gateways for APE
     reservedAtts=['id',]
     portal_tools=['portal_tool']
-
+    stub_stereotypes=['odStub','stub']
+    
     def __init__(self,xschemaFileName,outfileName,**kwargs):
         self.outfileName=outfileName
         self.xschemaFileName=xschemaFileName
@@ -637,6 +638,10 @@ from Products.CMFCore.utils import UniqueObject
                 self.generatedClasses=[]
                 
                 for element in root.getChildren():
+                    #skip tool classes
+                    if element.getStereoType() in self.stub_stereotypes:
+                        continue
+                    
                     module=element.getName()
                     generatedModules.append(module)
                     outfile=makeFile(os.path.join(self.outfileName,module+'.py'))
