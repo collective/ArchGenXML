@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.60 2003/11/28 02:13:11 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.61 2003/12/05 16:20:25 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -26,7 +26,7 @@ from zipfile import ZipFile
 from StringIO import StringIO
 import XSDParser
 import XMIParser
-
+import PyParser #for extracting the method codes out of the destination src
 #
 # Global variables etc.
 #
@@ -55,11 +55,16 @@ class ArchetypesGenerator:
     noclass=0   # if set no module is reverse engineered,
                 #just an empty project + skin is created
     ape_support=0 #generate ape config and serializers/gateways for APE
+    method_preservation=0 #should the method bodies be preserved? defaults now to 0 will change to 1
+    
     reservedAtts=['id',]
     portal_tools=['portal_tool']
     stub_stereotypes=['odStub','stub']
     left_slots=[]
     right_slots=[]
+
+    parsed_class_sources={} #dict containing the parsed sources by class names (for preserving method codes)
+    parsed_sources=[] #list of containing the parsed sources (for preserving method codes)
     
     def __init__(self,xschemaFileName,outfileName,projectName=None, **kwargs):
         self.outfileName=outfileName
@@ -424,8 +429,8 @@ class ArchetypesGenerator:
 
                 if name in self.reservedAtts:
                     continue
-
-                print >> outfile, '    '*2 ,self.getFieldStringFromAssociation(rel)
+                print >> outfile
+                print >> outfile, '    '*2+self.getFieldStringFromAssociation(rel)
 
 
         print >> outfile,'    ),'
@@ -446,11 +451,25 @@ class ArchetypesGenerator:
 
         print >> outfile,'    #Methods'
         for m in element.getMethodDefs():
-            self.generateMethod(outfile,m)
+            self.generateMethod(outfile,m,element)
+            
+        method_names=[m.getName() for m in element.getMethodDefs()]
+            
+        if self.method_preservation:
+            cl=self.parsed_class_sources.get(element.getName(),None)
+            if cl:
+                manual_methods=[mt for mt in cl.methods.values() if mt.name not in method_names]
+                if manual_methods:
+                    print >> outfile, '    #manually created methods\n'
+                    
+                for mt in manual_methods:
+                    print >> outfile, mt.src
+                    print >> outfile
+        
 
-    def generateMethod(self,outfile,m):
-            #ignore actions and views here because they are
-            #generated separately
+    def generateMethod(self,outfile,m,klass):
+        #ignore actions and views here because they are
+        #generated separately
         if m.getStereoType() in ['action','view']:
             return
         
@@ -474,6 +493,7 @@ class ArchetypesGenerator:
                 f.write(viewTemplate % {'method_name':m.getName()})
             return
             
+        
         paramstr=''
         params=m.getParamExpressions()
         if params:
@@ -483,16 +503,29 @@ class ArchetypesGenerator:
         permission=m.getTaggedValue('permission')
         if permission:
             print >> outfile,indent("security.declareProtected(%s,'%s')" % (permission,m.getName()),1)
-        print >> outfile,'    def %s(self%s):' % (m.getName(),paramstr)
-        code=m.taggedValues.get('code','')
-        doc=m.taggedValues.get('documentation','')
-        if doc:
-            print >> outfile, indent("'''\n%s\n'''" % doc ,2)
-
-        if code:
-            print >> outfile, indent('\n'+code,2)
+            
+        cls=self.parsed_class_sources.get(klass.getName(),None)
+        
+        if cls:
+            method_code=cls.methods.get(m.getName())
         else:
-            print >> outfile, indent('\n'+'pass',2)
+            #print 'method not found:',m.getName()
+            method_code=None
+            
+        if self.method_preservation and method_code:
+            print 'preserve method:',method_code.name
+            print >>outfile, method_code.src
+        else:
+            print >> outfile,'    def %s(self%s):' % (m.getName(),paramstr)
+            code=m.taggedValues.get('code','')
+            doc=m.taggedValues.get('documentation','')
+            if doc:
+                print >> outfile, indent("'''\n%s\n'''" % doc ,2)
+    
+            if code:
+                print >> outfile, indent('\n'+code,2)
+            else:
+                print >> outfile, indent('\n'+'pass',2)
 
         print >> outfile
 
@@ -777,78 +810,75 @@ from Products.CMFCore.utils import UniqueObject
         dirMode=0
         outfile=None
 
-        if not os.path.splitext(self.outfileName)[1]:
-            dirMode=1
+        dirMode=1
 
         if self.outfileName:
-            if dirMode:
-                makeDir(self.outfileName)
-                makeDir(os.path.join(self.outfileName,'skins'))
-                makeDir(os.path.join(self.outfileName,'skins',self.projectName))
-                makeDir(os.path.join(self.outfileName,'skins',self.projectName+'_public'))
+            #create the directories
+            makeDir(self.outfileName)
+            makeDir(os.path.join(self.outfileName,'skins'))
+            makeDir(os.path.join(self.outfileName,'skins',self.projectName))
+            makeDir(os.path.join(self.outfileName,'skins',self.projectName+'_public'))
 
-                of=makeFile(os.path.join(self.outfileName,'skins',self.projectName+'_public','readme.txt'))
-                print >> of,'this skin layer has highest priority, put templates and scripts here that are supposed to overload existing ones'
-                of.close()
+            of=makeFile(os.path.join(self.outfileName,'skins',self.projectName+'_public','readme.txt'))
+            print >> of,'this skin layer has highest priority, put templates and scripts here that are supposed to overload existing ones'
+            of.close()
 
-                of=makeFile(os.path.join(self.outfileName,'skins',self.projectName,'readme.txt'))
-                print >> of,'this skin layer has low priority, put unique templates and scripts here'
-                of.close()
-                
-    ##            makeDir(os.path.join(self.outfileName,'skins',self.projectName,self.projectName+'_forms'))
-    ##            makeDir(os.path.join(self.outfileName,'skins',self.projectName,self.projectName+'_views'))
-    ##            makeDir(os.path.join(self.outfileName,'skins',self.projectName,self.projectName+'_scripts'))
-            else:
-                outfile = makeFile(self.outfileName)
+            of=makeFile(os.path.join(self.outfileName,'skins',self.projectName,'readme.txt'))
+            print >> of,'this skin layer has low priority, put unique templates and scripts here'
+            of.close()
 
-            if outfile:
+            # and now start off with the class files
+            generatedModules=self.generatedModules=[]
+            self.generatedClasses=[]
+
+            for element in root.getChildren():
+                #skip stub and internal classes
+                if element.isInternal() or element.getStereoType() in self.stub_stereotypes:
+                    continue
+
+                module=element.getName()
+                generatedModules.append(module)
+                outfilepath=os.path.join(self.outfileName,module+'.py')
+                if self.method_preservation:
+                    try:
+                        #print 'existing sources found for:',element.getName(),outfilepath
+                        mod=PyParser.PyModule(outfilepath) 
+                        #mod.printit()
+                        self.parsed_sources.append(mod)
+                        for c in mod.classes.values():
+                            #print 'found class:',c.name
+                            self.parsed_class_sources[c.name]=c
+                    except IOError:
+                        #print 'no source found'
+                        pass
+                    
+                outfile=makeFile(outfilepath)
                 self.generateHeader(outfile)
-                for element in root.getChildren():
-                    self.generateClasses(outfile, element, 0)
-                while 1:
-                    if len(DelayedElements) <= 0:
-                        break
-                    element = DelayedElements.pop()
-                    self.generateClasses(outfile, element, 1)
-                #generateMain(outfile, prefix, root)
+                self.generateClasses(outfile, element, 0)
+                self.generatedClasses.append([element,module])
                 outfile.close()
 
-            if dirMode:
-                generatedModules=self.generatedModules=[]
-                self.generatedClasses=[]
+            while 1:
+                if len(DelayedElements) <= 0:
+                    break
+                element = DelayedElements.pop()
+                module=element.getName()
+                generatedModules.append(module)
+                outfile=makeFile(os.path.join(self.outfileName,module+'.py'))
+                generateHeader(outfile)
+                generateClasses(outfile, element, 1)
+                outfile.close()
 
-                for element in root.getChildren():
-                    #skip stub and internal classes
-                    if element.isInternal() or element.getStereoType() in self.stub_stereotypes:
-                        continue
-
-                    module=element.getName()
-                    generatedModules.append(module)
-                    outfile=makeFile(os.path.join(self.outfileName,module+'.py'))
-                    self.generateHeader(outfile)
-                    self.generateClasses(outfile, element, 0)
-                    self.generatedClasses.append([element,module])
-                    outfile.close()
-
-                while 1:
-                    if len(DelayedElements) <= 0:
-                        break
-                    element = DelayedElements.pop()
-                    module=element.getName()
-                    generatedModules.append(module)
-                    outfile=makeFile(os.path.join(self.outfileName,module+'.py'))
-                    generateHeader(outfile)
-                    generateClasses(outfile, element, 1)
-                    outfile.close()
                 #generateMain(outfile, prefix, root)
-                self.generateStdFiles(self.outfileName,projectName,generatedModules)
-                if self.ape_support:
-                    self.generateApeConf(self.outfileName,projectName)
+            self.generateStdFiles(self.outfileName,projectName,generatedModules)
+            if self.ape_support:
+                self.generateApeConf(self.outfileName,projectName)
 
     def parseAndGenerate(self):
         
         suff=os.path.splitext(self.xschemaFileName)[1].lower()
-
+        print 'Parsing...'
+        print '-------------'
         if not self.noclass:
             if suff.lower() in ('.xmi','.xml'):
                 print 'opening xmi'
@@ -874,6 +904,13 @@ from Products.CMFCore.utils import UniqueObject
         else:
             self.root=root=XMIParser.XMIElement() #create empty element
 
+        print 'Generating...'
+        print '-------------'
+        if self.method_preservation:
+            print 'method bodies will be preserved'
+        else:
+            print 'method bodies will be overwritten'
+            
         self.generate(root)
 
     TEMPLATE_HEADER = """\
@@ -886,7 +923,7 @@ from Products.Archetypes.public import *
 def main():
     version()
     args = sys.argv[1:]
-    opts, args = getopt.getopt(args, 'f:a:t:o:s:p:P:n',['ape','actions','ape','ape-support','noclass','unknown-types-as-string'])
+    opts, args = getopt.getopt(args, 'f:a:t:o:s:p:P:n',['ape','actions','no-actons','ape','ape-support','noclass','unknown-types-as-string','method-preservation','no-method-preservation'])
     prefix = ''
     outfileName = None
     yesno={'yes':1,'y': 1, 'no':0, 'n':0}
@@ -911,7 +948,11 @@ def main():
             options['generateActions'] = yesno[option[1]]
         elif option[0] == '--actions':
             options['generateActions'] = 1
-        elif option[0] == '--noactions':
+        elif option[0] == '--no-method-preservation':
+            options['method_preservation'] = 0
+        elif option[0] == '--method-preservation':
+            options['method_preservation'] = 1
+        elif option[0] == '--no-actions':
             options['generateActions'] = 0
         if option[0] == '-n':
             options['noclass'] = 1
@@ -942,16 +983,16 @@ ArchGenXML %(version)s
 """
 
 USAGE_TEXT = """
-Usage: python ArchGenXML.py [ options ] <in_xsd_file>
+Usage: python ArchGenXML.py [ options ] <in_xmi_file>
 Options:
-    -o <outfilename>         Output file path for data representation classes.
-                             Last part of used for internal directory namings.
-    -p <prefix>              Prefix string to be pre-pended to the class names
-    -t <yes|no>              unknown attribut types will be treated as text
-    -f <yes|no>              Force creation of output files.  Do not ask.
-    -a <yes|no>              generates actions
-    -P <packagename>         package to parse
-    --ape-support            generate apeconf.xml and generators for ape (needs Archetypes 1.1+)
+    -o <outfilename>                                    Output file path for data representation classes.
+                                                        Last part of used for internal directory namings.
+    --unknown-types-as-string                           unknown attribut types will be treated as text
+    --actions                                           generates actions
+    --method-preservation / no-method-preservation      methods in the target sources will be preserved
+    -P <packagename>                                    package to parse
+    --ape-support                                       generate apeconf.xml and generators for ape (needs Archetypes 1.1+)
+    
 """
 
 def usage():
