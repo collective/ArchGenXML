@@ -102,8 +102,6 @@ class ArchetypesGenerator(BaseGenerator):
     variable_schema='variable_schema'
     stub_stereotypes=['odStub','stub']
     archetype_stereotype = ['archetype']
-    hide_classes=['EARootClass','int','float','boolean','long','bool','void','string',
-        'integer','java::lang::int','java::lang::string','java::lang::long','java::lang::float','java::lang::void'] # Enterprise Architect and other automagically created crap Dummy Class
     vocabulary_item_stereotype = ['vocabulary_item']
     vocabulary_container_stereotype = ['vocabulary']
     cmfmember_stereotype = ['CMFMember', 'member']
@@ -458,6 +456,11 @@ class ArchetypesGenerator(BaseGenerator):
         '':'string',     #
         None:'string',
     }
+
+    hide_classes=['EARootClass','int','float','boolean','long','bool','void','string',
+        'integer','java::lang::int','java::lang::string','java::lang::long',
+        'java::lang::float','java::lang::void']+\
+        list(typeMap.keys())+list(coerceMap.keys()) # Enterprise Architect and other automagically created crap Dummy Class
 
     def coerceType(self, intypename):
         #print 'coerceType: ',intypename,' -> ',
