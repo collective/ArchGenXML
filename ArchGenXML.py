@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.54 2003/11/14 19:14:41 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.55 2003/11/16 19:36:42 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -499,7 +499,13 @@ from Products.CMFCore.utils import UniqueObject
             wrt('\n')
 
         refs = element.getRefs() + element.getSubtypeNames(recursive=1)
-
+        
+        #also check if the parent classes can have subobjects
+        baserefs=[]
+        for b in element.getGenParents():
+            baserefs.extend(b.getRefs())
+            baserefs.extend(b.getSubtypeNames(recursive=1))
+            
         if not element.isComplex():
             return
         if element.getType() in AlreadyGenerated:
@@ -515,7 +521,7 @@ from Products.CMFCore.utils import UniqueObject
             parentnames=list(parentnames)+additionalParents.split(',')
 
         baseclass='BaseContent'
-        if refs :
+        if refs or baserefs:
             folder_base_class=element.getTaggedValue('folder_base_class')
             if folder_base_class:
                 baseclass=folder_base_class
