@@ -1,13 +1,13 @@
 #-----------------------------------------------------------------------------
 # Name:        codesnippets.py
 # Purpose:     collects all string based code snippets
-# Remark:      this and the stuff in templates directory should go somewhere 
+# Remark:      this and the stuff in templates directory should go somewhere
 #              in future into a templating language like DTML
 #
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: codesnippets.py,v 1.4 2004/05/23 14:21:08 yenzenz Exp $
+# RCS-ID:      $Id: codesnippets.py,v 1.5 2004/06/27 18:42:59 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -29,16 +29,16 @@ def modify_fti(fti):
         if a['id'] in [%(hideactions)s]:
             a['visible'] = 0
     return fti
-""" 
+"""
 
 ACTIONS_START = """
     actions= %s (
         """
-        
+
 ACTIONS_END = """
           )
         """
-        
+
 DEFAULT_ACTIONS = """
            {'action': 'string:${object_url}/portal_form/base_edit',
           'category': 'object',
@@ -53,7 +53,7 @@ DEFAULT_ACTIONS = """
           'permissions': ('View',)},
 
         """
-        
+
 DEFAULT_ACTIONS_FOLDERISH ="""
            {'action': 'folder_listing',
           'category': 'object',
@@ -62,12 +62,13 @@ DEFAULT_ACTIONS_FOLDERISH ="""
           'permissions': ('View',)},
 
         """
-        
+
 FTI_TEMPL="""
 
     # uncomment lines below when you need
+    allowed_content_types=%(subtypes)s %(parentsubtypes)s
     factory_type_information={
-        'allowed_content_types':%(subtypes)s %(parentsubtypes)s,
+        'allowed_content_types':allowed_content_types,
         'allow_discussion': %(discussion)s,
         %(has_content_icon)s'content_icon':'%(content_icon)s',
         'immediate_view':'%(immediate_view)s',
@@ -76,7 +77,7 @@ FTI_TEMPL="""
         }
 
         """
-        
+
 SCHEMA_START_DEFAULT = """    schema=BaseSchema %s + Schema(("""
 SCHEMA_START_I18N    = """    schema=I18NBaseSchema %s + Schema(("""
 SCHEMA_START_TGV     = """    schema=%s %s + Schema(("""
@@ -89,7 +90,7 @@ SCHEMA_TOOL = """\
             accessor="getId",
             mutator="setId",
             default='',
-        ),     
+        ),
         StringField('title',
             required=1,
             searchable=0,
@@ -115,7 +116,7 @@ TEMPL_TOOL_HEADER="""
 from Products.CMFCore.utils import UniqueObject
 
     """
-    
+
 CLASS_PORTAL_TYPE    = """    portal_type = meta_type = '%s' """
 CLASS_ARCHETYPE_NAME = """    archetype_name = '%s'   #this name appears in the 'add' box """
 CLASS_IMPLEMENTS     = """    __implements__ = %(baseclass_interfaces)s + (%(realizations)s,)"""
@@ -125,15 +126,15 @@ REGISTER_ARCHTYPE    = """registerType(%s)\n"""
 IMPORT_INTERFACE     = """from Interface import Base"""
 
 MODULE_INFO_HEADER = """\
-# File: %(filename)s 
+# File: %(filename)s
 \"""\\
-%(purpose)s 
+%(purpose)s
 
-RCS-ID $Id: codesnippets.py,v 1.4 2004/05/23 14:21:08 yenzenz Exp $
+RCS-ID $Id: codesnippets.py,v 1.5 2004/06/27 18:42:59 zworkb Exp $
 \"""
 # %(copyright)s
 #
-# Generated: %(date)s 
+# Generated: %(date)s
 # Generator: ArchGenXML Version %(version)s http://sf.net/projects/archetypes/
 #
 # %(licence)s
@@ -189,7 +190,7 @@ TEMPL_CONFIGLET_INSTALL="""
     # dont allow tool listed as content in navtree
     try:
         idx=self.portal_properties.navtree_properties.metaTypesNotToList.index('%(tool_name)s')
-        self.portal_properties.navtree_properties._p_changed=1        
+        self.portal_properties.navtree_properties._p_changed=1
     except ValueError:
         self.portal_properties.navtree_properties.metaTypesNotToList.append('%(tool_name)s')
     except:
@@ -201,7 +202,7 @@ TEMPL_CONFIGLET_UNINSTALL="""
     # remove prodcut from navtree properties
     try:
         self.portal_properties.navtree_properties.metaTypesNotToList.remove('%(tool_name)s')
-        self.portal_properties.navtree_properties._p_changed=1        
+        self.portal_properties.navtree_properties._p_changed=1
     except ValueError:
         pass
     except:
@@ -224,7 +225,7 @@ TEMPL_DETAILLED_CREATION_PERMISSIONS="""
             )
 """
 
-    
+
 TEMPLATE_HEADER = """\
 from AccessControl import ClassSecurityInfo
 from Products.Archetypes.public import *
@@ -260,28 +261,17 @@ TEMPL_APECONFIG_END   = """</configuration>"""
 READMEHIGHEST = """\
 Directory 'skins/%s_public':
 
-This skin layer has highest priority, put templates and scripts here that are 
-supposed to overload existing ones. 
+This skin layer has highest priority, put templates and scripts here that are
+supposed to overload existing ones.
 
-I.e. if you want to change want a site-wide change of Archetypes skins 
-base_edit, base_view, etc or also Plone skins like main_template or 
+I.e. if you want to change want a site-wide change of Archetypes skins
+base_edit, base_view, etc or also Plone skins like main_template or
 document_view, put it in here."""
-        
+
 READMELOWEST = """\
 Directory 'skins/%s':
 
 This skin layer has low priority, put unique templates and scripts here.
 
-I.e. if you to want to create own unique views or forms for your product, this 
+I.e. if you to want to create own unique views or forms for your product, this
 is the right place."""
-
-
-
-
-
-
-
-
-
-
-
