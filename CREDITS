@@ -11,7 +11,8 @@ Authors:
     Fabiano Weimar dos Santos (xiru) brings in some
        good ideas from his project (UML2AT).
        + testing and bug fixing
-       + bugfixing
+       + more bugfixing
+       + several code generation improviments for workflow defitions
 
 
 Sponsors:

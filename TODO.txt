@@ -21,3 +21,14 @@ http://plone.org/development/teams/developer/ArchGenXML
 * On Workflow definitions generation
 
   * Define how worklists would be represented using state diagrams
+
+  * Define custom initial state using a tagged value mark (to enable the correct generation of initial state on workflow definitions, when the initial state is not the first state created on the model.)
+
+  * Test the transitions scripts generation
+
+  * Add support for conditions on transitions
+
+* Write documentation about workflow generation features (I think that only xiru knows all these features)
+
+* Update README
+
