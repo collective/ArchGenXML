@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.88 2004/07/26 02:56:39 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.89 2004/07/26 04:09:58 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -639,7 +639,9 @@ class PseudoElement:
     
     
 class XMIElement:
-    def __init__(self, domElement=None,name=''):
+    package=None
+    parent=None
+    def __init__(self, domElement=None,name='',*args,**kwargs):
         self.domElement=domElement
         self.name = name
         self.cleanName = ''
@@ -654,8 +656,6 @@ class XMIElement:
         self.taggedValues={}
         self.subTypes=[]
         self.stereoTypes=[]
-        self.package=None
-        self.parent=None
 
         if domElement:
             allObjects[domElement.getAttribute('xmi.id')]=self
@@ -921,9 +921,18 @@ class StateMachineContainer:
             for p in self.getPackages():
                 p.buildStateMachines()
 
-    def addStateMachine(self,sm):
-        self.statemachines.append(sm)
-        sm.setParent(self)
+    def addStateMachine(self,sm,reparent=1):
+        if not sm in self.statemachines:
+            self.statemachines.append(sm)
+            if reparent:
+                sm.setParent(self)
+                
+        if hasattr(self,'isProduct') and not self.isProduct():
+            self.getProduct().addStateMachine(sm,reparent=0)
+            
+        if not hasattr(self,'isProduct'):
+            print 'addStateMachine:',self,self.package
+            self.getPackage().getProduct().addStateMachine(sm,reparent=0)
         
     def getStateMachines(self):
         return self.statemachines
@@ -992,9 +1001,9 @@ class XMIPackage(XMIElement, StateMachineContainer):
            getElementsByTagName(ownedElement,XMI.ASSOCIATION_CLASS)
         for c in classes:
             if c.nodeName==XMI.ASSOCIATION_CLASS:
-                xc=XMIAssociationClass(c)
+                xc=XMIAssociationClass(c,package=self)
             else:
-                xc=XMIClass(c)
+                xc=XMIClass(c,package=self)
             if xc.getName():
                 print 'Class:',xc.getName(),xc.id
                 self.addClass(xc)
@@ -1007,7 +1016,7 @@ class XMIPackage(XMIElement, StateMachineContainer):
         ownedElement=XMI.getOwnedElement(self.domElement)
         classes=getElementsByTagName(ownedElement,XMI.INTERFACE)
         for c in classes:
-            xc=XMIInterface(c)
+            xc=XMIInterface(c,package=self)
             if xc.getName():
                 #print 'Interface:',xc.getName(),xc.id
                 self.addInterface(xc)
@@ -1128,6 +1137,8 @@ class XMIClass (XMIElement, StateMachineContainer):
     statemachine=None
     
     def __init__(self,*args,**kw):
+        self.setPackage(kw.get('package',None))
+        print 'package:',self,self.package
         StateMachineContainer.__init__(self)
         XMIElement.__init__(self,*args,**kw)
         self.assocsTo=[]
@@ -1140,6 +1151,9 @@ class XMIClass (XMIElement, StateMachineContainer):
         self.type=self.name
         
         #self.isabstract=0
+        
+    def setPackage(self,p):
+        self.package=p
 
     def initFromDOM(self,domElement):
         XMIElement.initFromDOM(self,domElement)
