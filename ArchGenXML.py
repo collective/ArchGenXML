@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.53 2003/11/08 17:54:05 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.54 2003/11/14 19:14:41 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -88,6 +88,7 @@ class ArchetypesGenerator:
         for m in element.getMethodDefs():
             if m.getTaggedValue('action') or m.getStereoType() == 'action':
                 action_name=m.getTaggedValue('action').strip() or m.getName()
+                print 'generating action:',action_name
                 dict={}
                 dict['action']=action_name
                 dict['action_id']=m.getName()
@@ -98,6 +99,7 @@ class ArchetypesGenerator:
 
             elif m.getTaggedValue('view') or m.getStereoType() == 'view':
                 view_name=m.getTaggedValue('view').strip() or m.getName()
+                print 'generating view:',view_name
                 dict={}
                 dict['action']=view_name
                 dict['action_id']=m.getName()
@@ -109,6 +111,21 @@ class ArchetypesGenerator:
                     viewTemplate=open(os.path.join(templdir,'action_view.pt')).read()
                     f.write(viewTemplate)
 
+                print >>outfile,self.ACT_TEMPL % dict
+
+            elif m.getTaggedValue('form') or m.getStereoType() == 'form':
+                view_name=m.getTaggedValue('view').strip() or m.getTaggedValue('form').strip() or m.getName()
+                print 'generating form:',view_name
+                dict={}
+                dict['action']=view_name
+                dict['action_id']=m.getName()
+                dict['action_label']=m.getTaggedValue('action_label',m.getName())
+                dict['permission']=m.getTaggedValue('permission','View')
+                f=makeFile(os.path.join(self.outfileName,'skins',self.projectName,view_name+'.cpt'),0)
+                if f:
+                    templdir=os.path.join(sys.path[0],'templates')
+                    viewTemplate=open(os.path.join(templdir,'action_view.pt')).read()
+                    f.write(viewTemplate)
 
 
                 print >>outfile,self.ACT_TEMPL % dict
@@ -537,7 +554,8 @@ from Products.CMFCore.utils import UniqueObject
         self.generateArcheSchema(outfile,element)
 
         if element.getStereoType() in self.portal_tools:
-            print >> outfile,self.TEMPL_CONSTR_TOOL % (baseclass,'portal_'+element.getName().lower())
+            tool_instance_name=element.getTaggedValue('tool_instance_name') or 'portal_'+element.getName().lower()
+            print >> outfile,self.TEMPL_CONSTR_TOOL % (baseclass,tool_instance_name)
             print >> outfile
 
         self.generateMethods(outfile,element)
@@ -668,11 +686,12 @@ from Products.CMFCore.utils import UniqueObject
             if not configlet_descr:
                 configlet_descr='ArchGenXML generated Configlet "'+configlet_title+'" in Tool "'+c.getName()+'".'
 
+            tool_instance_name = c.getTaggedValue('tool_instance_name') or ('portal_'+ c.getName().lower())
             register_configlets+=self.TEMPL_CONFIGLET_INSTALL % {
                 'tool_name':c.getName(),
-                'tool_instance':'portal_'+c.getName().lower(),
+                'tool_instance': tool_instance_name,
                 'configlet_title':configlet_title,
-                'configlet_url':'portal_'+c.getName().lower()+configlet_view,
+                'configlet_url':tool_instance_name+configlet_view,
                 'configlet_condition':configlet_condition,
                 'configlet_section':configlet_section,
                 'configlet_icon':configlet_icon,
