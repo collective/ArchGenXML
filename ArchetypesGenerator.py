@@ -957,7 +957,8 @@ class ArchetypesGenerator:
         #imports for stub-association classes
         importLines=[]
 
-        parents = element.getGenParents()
+        parents  = element.getGenParents()
+        parents += element.getRealizationParents()
         for p in parents:
             if p.hasStereoType(self.stub_stereotypes) and \
                 p.getTaggedValue('import_from',None):
@@ -965,14 +966,6 @@ class ArchetypesGenerator:
                     (p.getTaggedValue('import_from'), p.getName())
             else:
                 print >> outfile,'from %s import %s' % (
-                    p.getQualifiedModuleName(
-                        package,forcePluginRoot=self.force_plugin_root
-                    ),
-                    p.getName())
-
-        reparents = element.getRealizationParents()
-        for p in reparents:
-            print >> outfile,'from %s import %s' % (
                     p.getQualifiedModuleName(
                         package,forcePluginRoot=self.force_plugin_root
                     ),
@@ -1334,9 +1327,9 @@ class ArchetypesGenerator:
                     build=int(parsed[ind+1]) + 1
                 except:
                     build=1
-               
-                versionbase=' '.join(parsed[:ind])     
-        
+
+                versionbase=' '.join(parsed[:ind])
+
         version='%s build %d\n' % (versionbase,build)
         of=self.makeFile(fp)
         print >>of,version,
@@ -1375,9 +1368,9 @@ class ArchetypesGenerator:
 
         of=self.makeFile(os.path.join(package.getFilePath(),'refresh.txt'))
         of.close()
-        
+
         self.updateVersionForProduct(package)
-        
+
 
         initTemplate=initTemplate % init_params
         of=self.makeFile(os.path.join(package.getFilePath(),'__init__.py'))
