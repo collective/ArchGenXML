@@ -50,3 +50,22 @@ def indent(s,indent,prepend='',skipFirstRow=0):
         lines=['    '*indent + prepend + l for l in rows]
         
     return '\n'.join(lines)
+
+def getExpression(s):
+    '''
+    interprets an expression (for permission settings and other taggedValues)
+    if an exp is a string it will be kept, if not it will be enclosed by quotes
+    if an exp starts with python: it will be not quoted
+    '''
+
+    s=s.strip()
+    if s=='':
+        return s
+    
+    if s[0]=='"' and s[-1]=='"' or s[0]=="'" and s[-1]=="'":
+        return s
+    else:
+        if s.startswith('python:'):
+            return s[7:]
+        else:
+            return "'''%s'''" % s
