@@ -1326,7 +1326,7 @@ class ArchetypesGenerator:
         fp=os.path.join(package.getFilePath(),'version.txt')
         vertext=self.readFile(fp)
         if vertext:
-            vertext=vertext.strip()
+            versionbase=vertext=vertext.strip()
             parsed=vertext.split(' ')
             if parsed.count('build'):
                 ind=parsed.index('build')
