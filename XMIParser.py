@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.14 2003/08/01 01:29:42 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.15 2003/08/01 01:54:49 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -163,6 +163,7 @@ class XMI1_0:
             return None
 
     def getTaggedValue(self,el):
+        #print 'getTaggedValue:',el
         tagname=getAttributeValue(el,XMI.TAGGED_VALUE_TAG,recursive=0)
         tagvalue=getAttributeValue(el,XMI.TAGGED_VALUE_VALUE,recursive=0)
         return tagname,tagvalue
@@ -215,6 +216,8 @@ class XMI1_1 (XMI1_0):
 
     TAGGED_VALUE_MODEL="UML:ModelElement.taggedValue"
     TAGGED_VALUE="UML:TaggedValue"
+    TAGGED_VALUE_TAG="UML:TaggedValue.tag"
+    TAGGED_VALUE_VALUE="UML:TaggedValue.value"
 
     def getName(self,domElement):
         return domElement.getAttribute('name')
@@ -226,6 +229,22 @@ class XMI1_1 (XMI1_0):
         else:
             return None
     
+            
+    
+class XMI1_2 (XMI1_1):
+    # XMI version specific stuff goes there
+
+    def getAssocEndParticipantId(self,el):
+        return getElementByTagName(getElementByTagName(el,self.ASSOCEND_PARTICIPANT),self.CLASS).getAttribute('xmi.idref')
+    
+    def isAssocEndAggregation(self,el):
+        return str(el.getAttribute('aggregation')) in self.aggregates        
+    
+    def getMultiplicity(self,el):
+        mult_min=int(getElementByTagName(el,self.MULTRANGE,recursive=1).getAttribute('lower'))
+        mult_max=int(getElementByTagName(el,self.MULTRANGE,recursive=1).getAttribute('upper'))
+        return (mult_min,mult_max)
+
     def getTaggedValue(self,el):
         tdef=getElementByTagName(el,self.TAG_DEFINITION,default=None,recursive=1)
         # fetch the name from the global tagDefinitions (weird)
@@ -242,21 +261,6 @@ class XMI1_1 (XMI1_0):
         for t in tagdefs:
             if t.hasAttribute('name'):
                 self.tagDefinitions[t.getAttribute('xmi.id')]=t#.getAttribute('name')
-            
-    
-class XMI1_2 (XMI1_1):
-    # XMI version specific stuff goes there
-
-    def getAssocEndParticipantId(self,el):
-        return getElementByTagName(getElementByTagName(el,self.ASSOCEND_PARTICIPANT),self.CLASS).getAttribute('xmi.idref')
-    
-    def isAssocEndAggregation(self,el):
-        return str(el.getAttribute('aggregation')) in self.aggregates        
-    
-    def getMultiplicity(self,el):
-        mult_min=int(getElementByTagName(el,self.MULTRANGE,recursive=1).getAttribute('lower'))
-        mult_max=int(getElementByTagName(el,self.MULTRANGE,recursive=1).getAttribute('upper'))
-        return (mult_min,mult_max)
 
 XMI=XMI1_0()
 
