@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.77 2004/05/13 21:39:46 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.78 2004/05/17 15:09:39 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -691,6 +691,17 @@ class XMIElement:
     def hasTaggedValue(self,name):
         return self.taggedValues.has_key(name)
 
+    def hasAttributeWithTaggedValue(self, tag, value=None):
+        ''' returns true, if any attribute has a TGV with tag
+            and (if given) if its equals value.
+        '''
+        attrs = self.getAttributeDefs()
+        for attr in attrs:
+            if attr.hasTaggedValue(tag):
+                if not value or attr.getTaggedValue(tag,None) == value:
+                    return 1
+        return 0
+
     def getTaggedValues(self):
         return self.taggedValues
 
@@ -1192,6 +1203,7 @@ class XMIClass (XMIElement):
         if self.package.getProduct() != ref.getProduct():
             res='Products.'+res
         return res
+
 
 class XMIInterface(XMIClass):
     isinterface=1

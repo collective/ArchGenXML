@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: codesnippets.py,v 1.1 2004/05/17 07:51:50 yenzenz Exp $
+# RCS-ID:      $Id: codesnippets.py,v 1.2 2004/05/17 15:09:40 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -111,7 +111,7 @@ MODULE_INFO_HEADER = """\
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: codesnippets.py,v 1.1 2004/05/17 07:51:50 yenzenz Exp $
+RCS-ID $Id: codesnippets.py,v 1.2 2004/05/17 15:09:40 yenzenz Exp $
 \"""
 # %(copyright)s
 #
@@ -133,6 +133,15 @@ GNU General Public Licence (GPL)
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA"""
+
+REGISTER_VOCABULARY_ITEM      = """registerVocabularyItem(%s, '%s')"""
+REGISTER_VOCABULARY_CONTAINER = """registerVocabulary(%s)"""
+
+TEMPL_CONSTR_TOOL="""
+    # tool-constructors have no id argument, the id is fixed
+    def __init__(self):
+        %s.__init__(self,'%s')
+        """
 
 TEMPL_TOOLINIT="""
     tools=[%s]
@@ -201,8 +210,7 @@ TEMPL_DETAILLED_CREATION_PERMISSIONS="""
 TEMPLATE_HEADER = """\
 from AccessControl import ClassSecurityInfo
 from Products.Archetypes.public import *
-
-    """
+"""
 
 TEMPLATE_HEADER_I18N = """\
 from AccessControl import ClassSecurityInfo

@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.16 2004/05/17 07:51:50 yenzenz Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.17 2004/05/17 15:09:39 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -58,9 +58,11 @@ class ArchetypesGenerator:
     build_msgcatalog=1
     striphtml=0
     
-    reservedAtts=['id',]
+    reservedAtts=['id',]    
     portal_tools=['portal_tool']
     stub_stereotypes=['odStub','stub']
+    vocabulary_item_stereotype = ['vocabulary_item']
+    vocabulary_container_stereotype = ['vocabulary']
     left_slots=[]
     right_slots=[]
     force_plugin_root=1 #should be 'Products.' be prepended to all absolute paths?
@@ -456,7 +458,9 @@ class ArchetypesGenerator:
         res+=indent("%s('%s',\n" % (fieldtype % {'type':fieldType.capitalize()},name), indent_level)
         map_keys=map.keys()
         map_keys.sort()
-        res+=indent(',\n'.join(['%s=%s' % (key,map[key]) for key in map_keys]),indent_level+1) + ',\n'        
+        res+=indent(',\n'.join(['%s=%s' % (key,map[key]) \
+                                for key in map_keys if key.find(':')<0 ]) ,
+                    indent_level+1) + ',\n'        
         res+=indent('),\n',indent_level)
         
         return res
@@ -469,10 +473,12 @@ class ArchetypesGenerator:
             ctype='lines'
         else:
             ctype=self.coerceType(typename)
+            
+        map = typeMap[ctype]['map'].copy()
 
         res=self.getFieldFormatted(element.getCleanName(),
             self.typeMap[ctype]['field'].copy(), 
-            self.typeMap[ctype]['map'].copy() )
+            map )
 
         return res
 
@@ -503,6 +509,20 @@ class ArchetypesGenerator:
                 classelement ),
                 
         } )
+        
+        # ATVocabularyManager: Add NamedVocabulary to field.        
+        vocaboptions = {}
+        for t in attr.getTaggedValues().items():            
+            if t[0].startswith('vocabulary:'):
+                vocaboptions[t[0][11:]]=t[1]
+        if vocaboptions:
+            map.update( {
+                'vocabulary':"NamedVocabulary('''%s''')" % \
+                    attr.getTaggedValue('vocabulary:name','%s_%s' % \
+                        (classelement.getCleanName(),attr.getName()))
+            } )
+        
+        # end ATVM
             
         doc=attr.getDocumentation(striphtml=self.striphtml)                
         res=self.getFieldFormatted(attr.getName(),
@@ -609,12 +629,6 @@ class ArchetypesGenerator:
             print >> outfile, '    marshall='+marshaller
 
         print >> outfile,'    )'
-
-    TEMPL_CONSTR_TOOL="""
-    #toolconstructors have no id argument, the id is fixed
-    def __init__(self):
-        %s.__init__(self,'%s')
-        """
 
     def generateMethods(self,outfile,element,mode='class'):
 
@@ -764,6 +778,16 @@ class ArchetypesGenerator:
         if hasAssocClass:
             print >> outfile,'from Products.Archetypes.ReferenceEngine import ContentReferenceCreator'
 
+        # ATVocabularyManager imports
+        if element.hasStereoType(self.vocabulary_item_stereotype):
+            print >> outfile, 'from Products.ATVocabularyManager.VocabularyTool import registerVocabularyItem'
+        if element.hasStereoType(self.vocabulary_container_stereotype):
+            print >> outfile, 'from Products.ATVocabularyManager.VocabularyTool import registerVocabulary'
+        if element.hasAttributeWithTaggedValue('vocabulary:type','ATVocabularyManager'):
+            print >> outfile, 'from Products.ATVocabularyManager.NamedVocabulary import NamedVocabulary'
+        
+        print >> outfile, ''
+
     def generateProtectedSection(self,outfile,element,section,ind=0):
         print >> outfile,indent(PyParser.PROTECTED_BEGIN,ind),section,'#fill in your manual code here'
         cl=self.parsed_class_sources.get(element.getName(),None)
@@ -781,14 +805,15 @@ class ArchetypesGenerator:
 
         parentnames = [p.getCleanName() for p in element.getGenParents()]
         self.generateDependentImports(outfile,element)
-        
+                
         additionalImports=element.getTaggedValue('imports')
-        self.generateProtectedSection(outfile,element,'module-header')
-        
         if additionalImports:
+            wrt('# additional imports')
             wrt(additionalImports)
             wrt('\n')
 
+        self.generateProtectedSection(outfile,element,'module-header')
+            
         refs = element.getRefs() + element.getSubtypeNames(recursive=1)
 
         if element.getTaggedValue('allowed_content_types'):
@@ -908,7 +933,17 @@ class ArchetypesGenerator:
 
         wrt( REGISTER_ARCHTYPE % name)
         
-        # insert ATVocabularyManager integration here
+        # ATVocabularyManager: registration of class
+        if element.hasStereoType(self.vocabulary_item_stereotype):
+            # FIXME XXX TODO: fetch container_class - needs to be refined:
+            # check if parent has vocabulary_container_stereotype and use its 
+            # name as container
+            # else check for TGV vocabulary_container
+            # fallback: use SimpleVocabulary
+            container = element.getTaggedValue('vocabulary:portal_type','SimpleVocabulary')
+            wrt( REGISTER_VOCABULARY_ITEM % (name, container) )
+        if element.hasStereoType(self.vocabulary_container_stereotype):
+            wrt( REGISTER_VOCABULARY_CONTAINER % name )
         
         wrt('# end of class %s\n\n'   % name)
 
@@ -1039,14 +1074,14 @@ class ArchetypesGenerator:
         tool_classes=self.getGeneratedTools(package)
 
         if tool_classes:
-            toolinit=self.TEMPL_TOOLINIT % ','.join([c.getQualifiedName(package) for c in self.getGeneratedClasses(package) if c.hasStereoType(self.portal_tools)])
+            toolinit=self.TOOLINIT % ','.join([c.getQualifiedName(package) for c in self.getGeneratedClasses(package) if c.hasStereoType(self.portal_tools)])
         else: toolinit=''
 
         add_content_permission = self.creation_permission or 'Add %s content' % package.getProductName()
         init_params={'project_name':package.getProductName(),'add_content_permission': getExpression(add_content_permission),'imports':imports, 'toolinit':toolinit }
 
         if self.detailled_creation_permissions:
-            init_params['extra_perms']=self.TEMPL_DETAILLED_CREATION_PERMISSIONS
+            init_params['extra_perms']=TEMPL_DETAILLED_CREATION_PERMISSIONS
         else:
             init_params['extra_perms']=""
 
