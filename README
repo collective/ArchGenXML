@@ -112,6 +112,9 @@ Attributes
 Methods
 
 Associations (Aggregation and Composite)
+generation of associations using ArcheType's 
+ReferenceEngine
+Generalization
 
 ===========
 Planned/ToDo
@@ -119,12 +122,11 @@ Planned/ToDo
 
 code cleaning, documentation
 
-generation of associations using ArcheType's 
-ReferenceEngine
 
 Support for Umbrello the KDE UML tool,
 currently generation of classes/attributes/methods is supported, but not yet
 the handling of associations
+
 
 creating interface classes
 ============

@@ -154,7 +154,8 @@ def uninstall(self):
     for cl in classes:
         print >> out,  'type:',cl['klass'].portal_type
         if cl['klass'].isPrincipiaFolderish:
-            use_folder_tabs.remove(cl['klass'].portal_type)
+            if cl['klass'].portal_type in use_folder_tabs:
+                use_folder_tabs.remove(cl['klass'].portal_type)
             
     props.use_folder_tabs=tuple(use_folder_tabs)
  
