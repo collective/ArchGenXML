@@ -23,7 +23,7 @@ try:
     from Products.Archetypes.lib.register import listTypes
 except ImportError:
     from Products.Archetypes.public import listTypes
-    
+
 <dtml-if "[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.cmfmember_stereotype)]">
 from Products.CMFMember.Extensions.toolbox import SetupMember
 </dtml-if>
@@ -57,8 +57,8 @@ def install(self):
     for cl in classes:
         if cl['klass'].isPrincipiaFolderish and \
             not cl['klass'].portal_type in <dtml-var "repr(hide_folder_tabs)">:
-                print >> out, 'portal type:',cl['klass'].portal_type
-                use_folder_tabs.append(cl['klass'].portal_type)
+            print >> out, 'portal type:',cl['klass'].portal_type
+            use_folder_tabs.append(cl['klass'].portal_type)
 
     props.use_folder_tabs=tuple(use_folder_tabs)
 </dtml-if>
@@ -144,7 +144,7 @@ def install(self):
 
     # registers as CMFMember and update catalogs, workflow, ...
 <dtml-in "cmfmembers">
-    print >> out, SetupMember(self, member_type='<dtml-var "_['sequence-item'].getTaggedValue('tool_instance_name', 'portal_'+ _['sequence-item'].getName().lower() )">').finish()
+    print >> out, SetupMember(self, member_type='<dtml-var "_['sequence-item'].getCleanName()">').finish()
 </dtml-in>
 </dtml-if>
 </dtml-let>
@@ -195,8 +195,8 @@ def uninstall(self):
     for cl in classes:
         if cl['klass'].isPrincipiaFolderish and \
             not cl['klass'].portal_type in <dtml-var "repr(hide_folder_tabs)">:
-                print >> out, 'portal type:',cl['klass'].portal_type
-                use_folder_tabs.remove(cl['klass'].portal_type)
+            print >> out, 'portal type:',cl['klass'].portal_type
+            use_folder_tabs.remove(cl['klass'].portal_type)
 
     props.use_folder_tabs=tuple(use_folder_tabs)
 </dtml-if>
