@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.72 2004/05/06 11:52:38 yenzenz Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.73 2004/05/07 16:09:22 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -33,7 +33,7 @@ default_wrap_width = 64
 class XMI1_0:
     XMI_CONTENT="XMI.content"
     OWNED_ELEMENT="Foundation.Core.Namespace.ownedElement"
-    
+
     # XMI version specific stuff goes there
     STATEMACHINE = 'Behavioral_Elements.State_Machines.StateMachine'
     STATE = 'Behavioral_Elements.State_Machines.State'
@@ -99,22 +99,22 @@ class XMI1_0:
     ABSTRACTION="Foundation.Core.Abstraction"
     DEP_CLIENT="Foundation.Core.Dependency.client"
     DEP_SUPPLIER="Foundation.Core.Dependency.supplier"
-    
+
     aggregates=['composite','aggregate']
 
-    
+
     def getName(self,domElement):
         try:
             return str(getAttributeValue(domElement,self.NAME)).strip()
         except:
             return None
-    
+
     def getId(self,domElement):
         return domElement.getAttribute('xmi.id').strip()
 
     def getAssocEndParticipantId(self,el):
         assocend=getElementByTagName(el,self.ASSOCEND_PARTICIPANT,None)
-        
+
         if not assocend:
             assocend=getElementByTagName(el,self.ASSOCENDTYPE,None)
 
@@ -128,7 +128,7 @@ class XMI1_0:
         if not classifier:
             print 'Warning: No assocEnd participant found  for: ',XMI.getId(el)
             return None
-                
+
         return classifier.getAttribute('xmi.idref')
 
     def isAssocEndAggregation(self,el):
@@ -180,7 +180,7 @@ class XMI1_0:
                 if not d:
                     print 'Warning: Child Object not found for aggregation relation: parent=%s' % (m.getName())
                     continue
-                    
+
                 try:
                     m.addSubType(d)
                 except KeyError:
@@ -219,7 +219,7 @@ class XMI1_0:
                 except KeyError:
                     print 'Warning: Parent Object not found for generalization relation:%s, parent %s' % (XMI.getId(gen),XMI.getName(par0))
                     continue
-                
+
                 #child=objects[getElementByTagName(child0,self.GEN_ELEMENT).getAttribute('xmi.idref')]
                 child=objects[getSubElement(child0).getAttribute('xmi.idref')]
 
@@ -247,7 +247,7 @@ class XMI1_0:
                 except KeyError:
                     print 'Warning: Parent Object not found for realization relation:%s, parent %s' % (XMI.getId(ab),XMI.getName(par0))
                     continue
-                
+
                 #child=objects[getElementByTagName(child0,self.REALIZATION_ELEMENT).getAttribute('xmi.idref')]
                 try:
                     child0=getElementByTagName (ab,self.DEP_CLIENT,recursive=1)
@@ -298,7 +298,7 @@ class XMI1_0:
             o.isabstract=abs.getAttribute('xmi.value')=='true'
         else:
             o.isabstract=0
-            
+
     def calcDatatype(self,att):
         global datatypes
         typeinfos=att.domElement.getElementsByTagName(XMI.TYPE)
@@ -312,7 +312,7 @@ class XMI1_0:
                 if att.type not in datatypenames: #collect all datatype names (to prevent pure datatype classes from being generated)
                     datatypenames.append(att.type)
                 #print 'attribute:'+self.getName(),typeid,self.type
-                
+
     def getPackageElements(self,el):
         ''' gets all package nodes below the current node (only one level)'''
         res=[]
@@ -323,20 +323,20 @@ class XMI1_0:
 
         ownedElements=getElementByTagName(el,self.OWNED_ELEMENT)
         res=getElementsByTagName(ownedElements,self.PACKAGE)
-        
+
         return res
-        
+
     def getOwnedElement(self,el):
         return getElementByTagName(el,self.OWNED_ELEMENT)
-    
+
     def getModel(self,doc):
         content=getElementByTagName(doc,XMI.XMI_CONTENT,recursive=1)
         model=getElementByTagName(content,XMI.MODEL,recursive=0)
 
         return model
-        
-        
-        
+
+
+
 class XMI1_1 (XMI1_0):
     # XMI version specific stuff goes there
 
@@ -388,7 +388,7 @@ class XMI1_1 (XMI1_0):
 
     MODELELEMENT="UML:ModelElement"
     STEREOTYPE_MODELELEMENT="UML:ModelElement.stereotype"
-    
+
     STEREOTYPE="UML:Stereotype"
     ISABSTRACT="UML:GeneralizableElement.isAbstract"
     INTERFACE="UML:Interface"
@@ -396,7 +396,7 @@ class XMI1_1 (XMI1_0):
     ABSTRACTION="UML:Abstraction"
     DEP_CLIENT="UML:Dependency.client"
     DEP_SUPPLIER="UML:Dependency.supplier"
-        
+
     def getName(self,domElement):
         return domElement.getAttribute('name').strip()
 
@@ -425,24 +425,24 @@ class XMI1_2 (XMI1_1):
     def getMultiplicity(self,el):
         min=getElementByTagName(el,self.MULTRANGE,default=None,recursive=1)
         max=getElementByTagName(el,self.MULTRANGE,default=None,recursive=1)
-        
+
         if min:
             mult_min=int(min.getAttribute('lower'))
         else:
             mult_min=0
-            
+
         if max:
             mult_max=int(max.getAttribute('upper'))
         else:
             mult_max=-1
-            
+
         return (mult_min,mult_max)
 
     def getTaggedValue(self,el):
         tdef=getElementByTagName(el,self.TAG_DEFINITION,default=None,recursive=1)
         # fetch the name from the global tagDefinitions (weird)
         tagname=self.tagDefinitions[tdef.getAttribute('xmi.idref')].getAttribute('name')
-        tagvalue=getAttributeValue(el,self.TAGGED_VALUE_VALUE)
+        tagvalue=getAttributeValue(el,self.TAGGED_VALUE_VALUE,default=None)
         return tagname,tagvalue
 
     def collectTagDefinitions(self,el):
@@ -453,7 +453,7 @@ class XMI1_2 (XMI1_1):
         for t in tagdefs:
             if t.hasAttribute('name'):
                 self.tagDefinitions[t.getAttribute('xmi.id')]=t
-        
+
     def calculateStereoType(self,o):
         #in xmi its weird, because all objects to which a
         #stereotype applies are stored in the stereotype
@@ -470,7 +470,7 @@ class XMI1_2 (XMI1_1):
                     #print 'stereotype found:',id,self.getName(st),o.getStereoType()
                 else:
                     print 'warning: empty stereotype id for class :',o.getName(),o.getId()
-                    
+
 
     def calcClassAbstract(self,o):
         o.isabstract=o.domElement.hasAttribute('isAbstract') and o.domElement.getAttribute('isAbstract')=='true'
@@ -514,7 +514,7 @@ def getSubElement(domElement,default=_marker,ignoremult=0):
             raise
         else:
             return default
-    
+
 
 def getElementByTagName(domElement,tagName,default=_marker, recursive=0):
     ''' returns a single element by name and throws an error if more than 1 exist'''
@@ -540,12 +540,16 @@ def getAttributeValue(domElement,tagName=None,default=_marker,recursive=0):
     if tagName:
         try:
             el=getElementByTagName(domElement,tagName,recursive=recursive)
+        
         except IndexError:
             if default==_marker:
                 raise
             else:
                 return default
-
+        
+    if not el.firstChild and default != _marker:
+        return default
+        
     return el.firstChild.nodeValue
 
 def getElementsByTagName(domElement,tagName, recursive=0):
@@ -603,13 +607,13 @@ class XMIElement:
         tgvs=getElementsByTagName(tgvsm, XMI.TAGGED_VALUE, recursive=0)
         for tgv in tgvs:
             try:
-                tagname,tagvalue=XMI.getTaggedValue(tgv)                
+                tagname,tagvalue=XMI.getTaggedValue(tgv)
                 if self.taggedValues.has_key(tagname):
                     # poseidon multiline fix
                     self.taggedValues[tagname]+='\n'+tagvalue
                 else:
                     self.taggedValues[tagname]=tagvalue
-            except:
+            except TypeError:
                 pass
 
         #print 'taggedValues:',self.__class__,self.getName(),self.getTaggedValues()
@@ -648,7 +652,7 @@ class XMIElement:
             res=name
         else:
             res=self.id
-            
+
         if type(res) in (type(''),type(u'')):
             res=res.strip()
         return res
@@ -669,13 +673,13 @@ class XMIElement:
 
     def getDocumentation(self,striphtml=0,wrap=-1):
         """ return formatted documentation string:
-            
+
             try to use stripogram to remove (e.g. poseidon) HTML-tags, wrap and
-            indent text. If no stripogram is present it uses wrap and indent 
+            indent text. If no stripogram is present it uses wrap and indent
             from own utils module.
-            
+
             striphtml(boolean) - use stripogram html2text to remove html tags
-            wrap(integer)      - default: 60, set to 0: do not wrap, 
+            wrap(integer)      - default: 60, set to 0: do not wrap,
                                  all other >0: wrap with this value
         """
         #TODO: create an option on command line to control the page width
@@ -684,10 +688,10 @@ class XMIElement:
             return ''
         if wrap == -1:
             wrap=default_wrap_width
-        if has_stripogram and striphtml:            
+        if has_stripogram and striphtml:
             doc = html2text(doc, (), 0, 1000000).strip()
         if wrap:
-            doc = doWrap(doc,wrap)    
+            doc = doWrap(doc,wrap)
         return doc
 
     def getUnmappedCleanName(self): return self.unmappedCleanName
@@ -750,12 +754,12 @@ class XMIElement:
 
     def getMethodDefs(self,recursive=0):
         res=[m for m in self.methodDefs]
-        
+
         if recursive:
             parents=self.getGenParents(recursive=1)
             for p in parents:
                 res.extend(p.getMethodDefs())
-                
+
         return res
 
     def calculateStereoType(self):
@@ -779,16 +783,16 @@ class XMIElement:
     def hasStereoType(self,sts):
         if type(sts) in (type(''),type(u'')):
             sts=[sts]
-            
+
         for st in sts:
             if st in self.getStereoTypes():
                 return 1
-            
+
         return 0
-    
+
     def getFullQualifiedName():
         return self.getName()
-    
+
     def getPackage(self):
         ''' returns the package to which this object belongs '''
         return self.package
@@ -806,21 +810,21 @@ class XMIPackage(XMIElement):
         self.classes=[]
         self.interfaces=[]
         self.packages=[]
-        
+
     def initFromDOM(self,domElement=None):
         self.parentPackage=None
         XMIElement.initFromDOM(self,domElement)
-        
+
     def setParent(self,parent):
         self.parent=parent
-        
+
     def getParent(self):
         return self.parent
-    
+
     def getClasses(self,recursive=0):
         res=[c for c in self.classes]
-        return self.classes    
-    
+        return self.classes
+
     def addClass(self,cl):
         self.classes.append(cl)
         cl.package=self
@@ -828,20 +832,20 @@ class XMIPackage(XMIElement):
     def addInterface(self,cl):
         self.interfaces.append(cl)
         cl.package=self
-        
+
     def getInterfaces(self):
         return self.interfaces
 
     def getChildren(self):
         return self.children+self.getClasses() + self.getPackages() + self.getInterfaces()
-    
+
     def addPackage(self,p):
         self.packages.append(p)
         p.parent=self
-        
+
     def getPackages(self):
         return self.packages
-    
+
 
     def buildPackages(self):
         packEls=XMI.getPackageElements(self.domElement)
@@ -861,7 +865,7 @@ class XMIPackage(XMIElement):
             if xc.getName():
                 print 'Class:',xc.getName(),xc.id
                 self.addClass(xc)
-                
+
         for p in self.getPackages():
             p.buildClasses()
 
@@ -874,34 +878,34 @@ class XMIPackage(XMIElement):
             if xc.getName():
                 #print 'Interface:',xc.getName(),xc.id
                 self.addInterface(xc)
-                
+
         for p in self.getPackages():
             p.buildInterfaces()
-            
+
     def buildClassesAndInterfaces(self):
         self.buildClasses()
-        self.buildInterfaces()            
-        
+        self.buildInterfaces()
+
     def isRoot(self):
         return self.isroot or self.hasStereoType(['product','zopeproduct','Product','ZopeProduct'])
 
     isProduct=isRoot
-    
+
     def getPath(self,includeRoot=1,absolute=0,parent=None):
         res=[]
         o=self
-        
+
         if self.isProduct():
             #products are always handled as top-level
             if includeRoot:
                 return [self]
             else:
                 return []
-        
+
         while 1:
             if includeRoot:
                 res.append(o)
-                
+
             if o.isProduct():
                 break
             if not o.getParent():
@@ -911,37 +915,37 @@ class XMIPackage(XMIElement):
 
             if not includeRoot:
                 res.append(o)
-                
+
             o=o.getParent()
-            
+
         res.reverse()
         return res
-    
+
     def getFilePath(self,includeRoot=1,absolute=0):
         names=[p.getName() for p in self.getPath(includeRoot=includeRoot,absolute=absolute)]
         if not names:
             return ''
-        
+
         res=os.path.join(*names)
         return res
-    
+
     def getRootPackage(self):
         o=self
         while not o.isRoot():
             o=o.getParent()
-            
+
         return o
-    
+
     def getProduct(self):
         o=self
         while not o.isProduct():
             o=o.getParent()
-            
+
         return o
 
     def getProductName(self):
         return self.getProduct().getName()
-    
+
     def isSubPackageOf(self,parent):
         o=self
         #print 'isSubPackage:',self.getName(),parent.getName()
@@ -950,33 +954,33 @@ class XMIPackage(XMIElement):
             if o==parent:
                 #print 'ys'
                 return 1
-            
+
             o=o.getParent()
-        
+
         return 0
-    
+
     def getQualifiedName(self,ref):
-        ''' returns the qualified name of tha package, depending of the 
-            reference package 'ref' it generates an absolute path or 
+        ''' returns the qualified name of tha package, depending of the
+            reference package 'ref' it generates an absolute path or
             a relative path if the pack(self) is a subpack of 'ref' '''
-            
+
         path=self.getPath(parent=ref)
         return path
 
 class XMIModel(XMIPackage):
     isroot=1
     parent=None
-    
+
     def __init__(self,doc):
         self.document=doc
         self.model=XMI.getModel(doc)
         XMIPackage.__init__(self,self.model)
-        
+
 
 class XMIClass (XMIElement):
     package=None
     isinterface=0
-    
+
     def __init__(self,*args,**kw):
         XMIElement.__init__(self,*args,**kw)
         self.assocsTo=[]
@@ -996,7 +1000,7 @@ class XMIClass (XMIElement):
     def isInternal(self):
         ''' internal class '''
         return self.internalOnly
-    
+
     def addGenChild(self,c):
         self.genChildren.append(c)
 
@@ -1025,7 +1029,7 @@ class XMIClass (XMIElement):
         if recursive:
             for r in res:
                 res.extend(r.getGenParents(1))
-        
+
         return res
 
     def buildChildren(self,domElement):
@@ -1054,7 +1058,7 @@ class XMIClass (XMIElement):
         ''' every object to which only composite assocs point shouldnt be created independently '''
         aggs=self.getToAssociations(aggtypes=['aggregate'])
         comps=self.getToAssociations(aggtypes=['composite'])
-    
+
         if comps and not aggs:
             res=1
         else:
@@ -1064,8 +1068,8 @@ class XMIClass (XMIElement):
         for p in self.getGenParents():
             if p.isDependent():
                 res=1
-                
-        return res 
+
+        return res
 
     def isAbstract(self):
         return self.isabstract
@@ -1079,24 +1083,24 @@ class XMIClass (XMIElement):
             for sc in self.subTypes:
                 res.extend([o.getName() for o in sc.getGenChildren(recursive=1)])
         return res
-    
+
     def isI18N(self):
         ''' if at least one method is I18N the class has to be treated as i18N '''
         for a in self.getAttributeDefs():
             if a.isI18N():
                 return 1
-        
+
         return 0
-    
+
     def getPackage(self):
         return self.package
-    
+
     def getRootPackage(self):
         return self.getPackage().getRootPackage()
-    
+
     def isInterface(self):
         #print 'interface:',self.getName(),self.getStereoType()
-        return self.isinterface  or self.getStereoType()=='interface' 
+        return self.isinterface  or self.getStereoType()=='interface'
         # the second branch is for older XMI engines where interface is just a stereotype of a class
 
 
@@ -1127,32 +1131,32 @@ class XMIClass (XMIElement):
         return self.realizationParents
 
     def getQualifiedModulePath(self,ref):
-        ''' returns the qualified name of the class, depending of the 
-            reference package 'ref' it generates an absolute path or 
-            a relative path if the pack(self) is a subpack of 'ref' 
+        ''' returns the qualified name of the class, depending of the
+            reference package 'ref' it generates an absolute path or
+            a relative path if the pack(self) is a subpack of 'ref'
             if it belongs to a different root package it even needs a 'Products.'
             '''
-            
+
         package=self.getPackage()
-        
+
         if package.isSubPackageOf(ref):
             path=package.getPath(includeRoot=0,parent=ref)
         else:
             path=package.getPath(includeRoot=1,parent=ref)
-            
+
         path.append(self)
 
         return path
-    
+
     def getQualifiedModuleName(self,ref):
         path=self.getQualifiedModulePath(ref)
         res= '.'.join([p.getName() for p in path if p])
         if self.package.getProduct() != ref.getProduct():
             res='Products.'+res
-        
+
         return res
 
-    
+
     def getQualifiedName(self,ref):
         path=self.getQualifiedModulePath(ref)
         path.append(self)
@@ -1160,7 +1164,7 @@ class XMIClass (XMIElement):
         if self.package.getProduct() != ref.getProduct():
             res='Products.'+res
         return res
-        
+
 class XMIInterface(XMIClass):
     isinterface=1
     pass
@@ -1253,7 +1257,7 @@ class XMIAttribute (XMIElement):
         if domElement:
             self.calcType()
             self.findDefault()
-            
+
     def isI18N(self):
         ''' with a stereotype 'i18N' or the taggedValue i18n=='1' an attribute is treated as i18n'''
         return self.getStereoType()=='i18n' or self.getTaggedValue('i18n') =='1'
@@ -1291,10 +1295,10 @@ class XMIAssociation (XMIElement):
 
 class XMIAbstraction(XMIElement):
     pass
-        
+
 def buildDataTypes(doc):
     global datatypes
-    
+
     dts=doc.getElementsByTagName(XMI.DATATYPE)
 
     for dt in dts:
@@ -1328,8 +1332,8 @@ def buildHierarchy(doc,packagenames):
     global stereotypes
     global datatypenames
     global packages
-    
-    
+
+
     datatypes={}
     stereotypes={}
     datatypenames=['int','void','string',]
@@ -1358,14 +1362,14 @@ def buildHierarchy(doc,packagenames):
     res.buildClassesAndInterfaces()
 
     #print 'res:',res.getName()
-    
+
     #pure datatype classes should not be generated!
     #print 'datatypenames:',datatypenames
     for c in res.getClasses(recursive=1):
         if c.getName() in datatypenames:
             c.internalOnly=1
             print 'internal class (not generated):',c.getName()
-            
+
     res.annotate()
     XMI.buildRelations(doc,allObjects)
     XMI.buildGeneralizations(doc,allObjects)
