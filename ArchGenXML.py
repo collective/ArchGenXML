@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.74 2004/01/18 13:18:15 yenzenz Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.75 2004/01/18 13:28:49 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -130,7 +130,7 @@ class ArchetypesGenerator:
         actTempl='''
     actions=(
         '''
-        if self.generateDefaultActions or element.getTaggedValue('defaultactions'):
+        if self.generateDefaultActions or element.getTaggedValue('default_actions'):
             actTempl += '''
            {'action': 'string:${object_url}/portal_form/base_edit',
           'category': 'object',
