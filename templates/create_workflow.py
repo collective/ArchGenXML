@@ -71,17 +71,19 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
     <dtml-if "tran.getAction()">
 
     ##creation of workflow scripts
-    wf_scriptname='<dtml-var "tran.getAction().getCleanName()">'
-    if not wf_scriptname in wf.scripts.objectIds():
-        wf.scripts._setObject(wf_scriptname,ExternalMethod(wf_scriptname, wf_scriptname, productname + '.<dtml-var "statemachine.getCleanName()">_scripts','<dtml-var "tran.getAction().getCleanName()">'))
+    for wf_scriptname in <dtml-var "repr(tran.getAction().getSplittedName(padding=0))">:
+        if not wf_scriptname in wf.scripts.objectIds():
+            wf.scripts._setObject(wf_scriptname,ExternalMethod(wf_scriptname, wf_scriptname, 
+                productname + '.<dtml-var "statemachine.getCleanName()">_scripts',
+                wf_scriptname))
     </dtml-if>
 
     tdef = wf.transitions['<dtml-var "tran.getCleanName()">']
     tdef.setProperties(title="""<dtml-var "tran.getTaggedValue('label') or tran.getName()">""",
                        new_state_id="""<dtml-var "tran.getTargetStateName()">""",
                        trigger_type=1,
-                       script_name="""""",
-                       after_script_name="""<dtml-var "tran.getActionName() or ''">""",
+                       script_name="""<dtml-var "tran.getBeforeActionName() or ''">""",
+                       after_script_name="""<dtml-var "tran.getAfterActionName() or ''">""",
                        actbox_name="""<dtml-var "tran.getTaggedValue('label') or tran.getName()">""",<dtml-call name="atgenerator.addMsgid(tran.getTaggedValue('label') or tran.getName())">
                        actbox_url="""""",
                        actbox_category="""workflow""",

@@ -1837,6 +1837,14 @@ class XMIStateTransition(XMIElement):
         if self.action:
             return self.action.getName()
 
+    def getBeforeActionName(self):
+        if self.action:
+            return self.action.getBeforeActionName()
+
+    def getAfterActionName(self):
+        if self.action:
+            return self.action.getAfterActionName()
+
     def getActionExpression(self):
         if self.action:
             return self.action.getExpression()
@@ -1890,6 +1898,23 @@ class XMIAction(XMIElement):
 
     def getExpressionBody(self):
         return self.expression
+    
+    def getSplittedName(self,padding=1):
+        ''' when the name contains a semicolon the name specifies two
+            actions: the one before the transition and the one after the transition
+        '''
+        
+        res=self.getName().split(';')
+        if len(res)==1 and padding:
+            return ['',res[0]]
+        else:
+            return res
+        
+    def getBeforeActionName(self):
+        return self.getSplittedName()[0]
+
+    def getAfterActionName(self):
+        return self.getSplittedName()[1]
 
 class XMIGuard(XMIElement):
     expression=None
