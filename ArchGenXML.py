@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.39 2003/10/27 00:15:19 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.40 2003/10/27 01:45:33 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -530,7 +530,7 @@ from Products.CMFCore.utils import UniqueObject
 
 
     TEMPL_TOOLINIT='''    
-    tools=(%s,)
+    tools=%s
     utils.ToolInit( PROJECTNAME+' Tools',
                 tools = tools,
                 product_name = PROJECTNAME,
@@ -551,7 +551,7 @@ from Products.CMFCore.utils import UniqueObject
 
         imports='\n'.join(['    import '+m for m in generatedModules])
         
-        toolinit=self.TEMPL_TOOLINIT % ','.join([m+'.'+c.getName() for c,m in self.generatedClasses if c.getStereoType() in self.portal_tools])
+        toolinit=self.TEMPL_TOOLINIT % repr([m+'.'+c.getName() for c,m in self.generatedClasses if c.getStereoType() in self.portal_tools])
         
         initTemplate=initTemplate % {'project_name':projectName,'add_content_permission':'Add %s content' % projectName,'imports':imports, 'toolinit':toolinit }
         of=makeFile(os.path.join(target,'__init__.py'))
