@@ -534,6 +534,16 @@ class ArchetypesGenerator(BaseGenerator):
                 if v:
                     tgv.update({key:v})
 
+
+        # set permissions, if theres one arround in the model
+        perm=self.getOption('read_permission',element,default=None)
+        if perm:
+            tgv.update({'read_permission':perm})
+        perm=self.getOption('write_permission',element,default=None)
+        if perm:
+            tgv.update({'write_permission':perm})
+
+        # set attributes from tgv
         for k in tgv.keys():
             if k not in noparams and not k.startswith('widget:'):
                 v=tgv[k]
@@ -712,6 +722,7 @@ class ArchetypesGenerator(BaseGenerator):
                 classelement ),
 
         } )
+
 
         # ATVocabularyManager: Add NamedVocabulary to field.
         vocaboptions = {}
@@ -1610,7 +1621,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         # Prepare DTML varibles
         d={'generator'                     : self,
-           'package'                       : package, 
+           'package'                       : package,
            'utils'                         : utils,
            'package_imports'               : packageImports,
            'class_imports'                 : classImports,
