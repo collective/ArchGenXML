@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.152 2004/04/27 12:25:07 yenzenz Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.153 2004/04/27 20:29:01 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -21,11 +21,11 @@ import sys
 try:
     # for standalone use
     from ArchetypesGenerator import ArchetypesGenerator
-    from utils import read_project_settings, version
+    from utils import read_project_settings, version, usage
 except ImportError:
     # if installed in site-packages:
     from ArchGenXML.ArchetypesGenerator import ArchetypesGenerator
-    from ArchGenXML.utils import read_project_settings
+    from ArchGenXML.utils import read_project_settings, version, usage
         
 def main():
     args = sys.argv[1:]
