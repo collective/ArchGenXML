@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.134 2004/04/19 20:42:34 yenzenz Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.135 2004/04/20 16:30:26 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -41,9 +41,9 @@ from utils import mapName
 from utils import indent, getExpression,isTGVTrue,isTGVFalse
 
 try:
-    from i18ndude.catalog import MessageCatalog
-    from i18ndude.catalog import POWriter
+    from i18ndude import catalog as msgcatalog
     has_i18ndude = 1
+    
 except ImportError:
     has_i18ndude = 0
 
@@ -65,7 +65,7 @@ class ArchetypesGenerator:
     ape_support=0 #generate ape config and serializers/gateways for APE
     method_preservation=1 #should the method bodies be preserved? defaults now to 0 will change to 1
     i18n_support=0
-    no_i18ndude_support=0
+    build_msgcatalog=1
     striphtml=0
     
     reservedAtts=['id',]
@@ -80,6 +80,8 @@ class ArchetypesGenerator:
     parsed_sources=[] #list of containing the parsed sources (for preserving method codes)
     
     nonstring_tgvs=['widget','vocabulary','required','precision'] #taggedValues that are not strings, e.g. widget or vocabulary
+    
+    msgcatpipe = []
     
     def __init__(self,xschemaFileName,outfileName,projectName=None, **kwargs):
         self.outfileName=outfileName
@@ -121,7 +123,30 @@ class ArchetypesGenerator:
 
     def getSkinPath(self,element):
         return os.path.join(element.getRootPackage().getFilePath(),'skins',element.getRootPackage().getName())
-        
+    
+    def addMsgid(self,msgid,msgstr,element,fieldname):        
+        """add a msgid to the catalog if it not exists. if it exists and not 
+           listed in occurrences, then add its occurence."""
+        if has_i18ndude and self.build_msgcatalog and len(self.msgcatpipe):                  
+            msgcat=self.msgcatpipe[len(self.msgcatpipe)-1]
+            package=element.getPackage()
+            name='Product: %s; class: %s; schema-field: %s' % ( \
+                element.getQualifiedModuleName(element.getRootPackage()),
+                element.getName(),
+                fieldname
+                )
+            if not msgcat.has_key(msgid):
+                # add new msgid
+                msgcat[msgid] = (msgstr, [(name, [msgstr])], [])
+            else:
+                if name and [msgstr]:
+                    # check if occurrence is listed
+                    for oname,oexcerpt in msgcat[msgid][1]:
+                        if oname == name:
+                            return
+                    # isnt listed, so add it
+                    msgcat[msgid][1].append((name, [msgstr])) 
+                    
     def generateMethodActions(self,element):
         outfile=StringIO()
         print >> outfile
@@ -423,15 +448,22 @@ def modify_fti(fti):
 
         return map
             
-    def getWidget(self, type, element, modulename, fieldname):
-        ''' returns either default widget, widget according to
-        attribute or no widget '''
+    def getWidget(self, type, element, fieldname, elementclass):
+        """ returns either default widget, widget according to
+        attributes or no widget.
+        
+        atributes/tgv's can be: 
+            * widget and a whole widget code block or
+            * widget:PARAMETER which will be rendered as a PARAMETER=value
+        
+        """
         tgv=element.getTaggedValues()
         widgetcode = type.capitalize()+'Widget('
         widgetmap={}
         custom = 0 #is there a custom setting for widget?
         widgetoptions=[t for t in tgv.items() if t[0].startswith('widget:')]
         
+        modulename= elementclass.getPackage().getProductName()
         check_map = {
             'label':            "'%s'" % fieldname,
             'label_msgid':      "'%s_label_%s'" % (modulename,fieldname),
@@ -466,9 +498,23 @@ def modify_fti(fti):
                       
             if '(' not in widgetcode:
                 widgetcode += '('
-            for k in check_map:
+            for k in check_map:                    
                 if not (k in widgetmap.keys()): # XXX check if disabled
                     widgetmap.update( {k: check_map[k]} )
+            if 'label_msgid' in widgetmap.keys():
+                self.addMsgid(widgetmap['label_msgid'].strip("'"),
+                    (widgetmap.has_key('label') and widgetmap['label'].strip("'")) or fieldname,
+                    elementclass,
+                    fieldname
+                )
+            if 'description_msgid' in widgetmap.keys():
+                print widgetmap['description']
+                self.addMsgid(widgetmap['description_msgid'].strip("'"),
+                    (widgetmap.has_key('description') and widgetmap['description'].strip("'")) or fieldname ,
+                    elementclass,
+                    fieldname
+                )
+
 
             map_keys=widgetmap.keys()
             map_keys.sort()
@@ -495,7 +541,7 @@ def modify_fti(fti):
         
         return res
     
-    def getFieldString(self, element, modulename):
+    def getFieldString(self, element, classelement):
         ''' gets the schema field code '''
         typename=str(element.type)
 
@@ -510,7 +556,7 @@ def modify_fti(fti):
 
         return res
 
-    def getFieldStringFromAttribute(self, attr, modulename):
+    def getFieldStringFromAttribute(self, attr, classelement):
         ''' gets the schema field code '''
         #print 'typename:%s:'%attr.getName(),attr.type,
         if not hasattr(attr,'type') or attr.type=='NoneType':
@@ -533,8 +579,8 @@ def modify_fti(fti):
             'widget': self.getWidget( \
                 ctype, 
                 attr, 
-                modulename, 
-                attr.getName() )
+                attr.getName(),
+                classelement )
         } )
             
         doc=attr.getDocumentation(striphtml=self.striphtml)                
@@ -545,7 +591,7 @@ def modify_fti(fti):
         
         return res
 
-    def getFieldStringFromAssociation(self, rel, modulename):
+    def getFieldStringFromAssociation(self, rel, classelement):
         ''' gets the schema field code '''
         multiValued=0
         map=self.typeMap['reference']['map']
@@ -572,13 +618,13 @@ def modify_fti(fti):
             }
         )
         map.update(self.getFieldAttributes(rel.toEnd))
-        map.update( {'widget':self.getWidget('Reference', rel.toEnd, modulename, name)} )
+        map.update( {'widget':self.getWidget('Reference', rel.toEnd, name, classelement)} )
         doc=rel.getDocumentation(striphtml=self.striphtml)                
         res=self.getFieldFormatted(name,field,map,doc)
         return res
 
     # Generate get/set/add member functions.
-    def generateArcheSchema(self, outfile, element, base_schema, modulename):
+    def generateArcheSchema(self, outfile, element, base_schema):
         parent_schemata=[p.getCleanName()+'.schema' for p in element.getGenParents()]
 
         base_schema = element.getTaggedValue('base_schema', base_schema)
@@ -605,7 +651,7 @@ def modify_fti(fti):
             #    continue
             mappedName = mapName(name)
 
-            print >> outfile, indent(self.getFieldStringFromAttribute(attrDef, modulename),2)
+            print >> outfile, indent(self.getFieldStringFromAttribute(attrDef, element),2)
         for child in element.getChildren():
             name = child.getCleanName()
             if name in self.reservedAtts:
@@ -615,7 +661,7 @@ def modify_fti(fti):
                 refs.append(str(child.getRef()))
 
             if child.isIntrinsicType():
-                print >> outfile, indent(self.getFieldString(child, modulename),2)
+                print >> outfile, indent(self.getFieldString(child, element),2)
 
         #print 'rels:',element.getName(),element.getFromAssociations()
         # and now the associations
@@ -627,7 +673,7 @@ def modify_fti(fti):
                 if name in self.reservedAtts:
                     continue
                 print >> outfile
-                print >> outfile, indent(self.getFieldStringFromAssociation(rel, modulename),2)
+                print >> outfile, indent(self.getFieldStringFromAssociation(rel, element),2)
 
 
         print >> outfile,'    ),'
@@ -793,7 +839,7 @@ from Products.CMFCore.utils import UniqueObject
         print >> outfile,indent(PyParser.PROTECTED_END,ind),section
         print >> outfile
 
-    def generateClass(self, outfile, element, delayed, modulename):
+    def generateClass(self, outfile, element, delayed):
         wrt = outfile.write
         wrt('\n')
 
@@ -904,7 +950,7 @@ from Products.CMFCore.utils import UniqueObject
         print >>outfile
         
         self.generateProtectedSection(outfile,element,'class-header',1)    
-        self.generateArcheSchema(outfile,element,baseschema,modulename)
+        self.generateArcheSchema(outfile,element,baseschema)
 
         if element.hasStereoType(self.portal_tools):
             tool_instance_name=element.getTaggedValue('tool_instance_name') or 'portal_'+element.getName().lower()
@@ -979,7 +1025,7 @@ from Products.CMFCore.utils import UniqueObject
 # generated by: ArchGenXML Version %(version)s http://sf.net/projects/archetypes/
 #
 # Created:      %(date)s
-# RCS-ID:       $Id: ArchGenXML.py,v 1.134 2004/04/19 20:42:34 yenzenz Exp $
+# RCS-ID:       $Id: ArchGenXML.py,v 1.135 2004/04/20 16:30:26 yenzenz Exp $
 # Copyright:    (c) %(year)s by %(copyright)s
 # Licence:      %(licence)s
 #------------------------------------------------------------------------------
@@ -1292,7 +1338,7 @@ from Products.CMFCore.utils import UniqueObject
                 self.generateModuleInfoHeader(outfile, module, element)
                 if not element.isInterface():
                     self.generateHeader(outfile, i18n=self.i18n_support and element.isI18N()) 
-                    self.generateClass(outfile, element, 0, package.getProductName())
+                    self.generateClass(outfile, element, 0)
                     package.generatedClasses.append(element)
                 else:
                     self.generateInterface(outfile,element,0)
@@ -1346,10 +1392,6 @@ This skin layer has low priority, put unique templates and scripts here.
 I.e. if you to want to create own unique views or forms for your product, this 
 is the right place."""
 
-        # prepare messagecatalog
-        if has_i18ndude:
-            # follow l8r
-            pass        
 
         #create the directories
         self.makeDir(root.getFilePath())
@@ -1369,6 +1411,28 @@ is the right place."""
                                 root.getProductName(),'readme.txt'))
         print >> of, READMELOWEST % root.getProductName()
         of.close()
+
+        # prepare messagecatalog
+        if has_i18ndude and self.build_msgcatalog:
+            print "msgcatalog generation"
+            self.makeDir(os.path.join(root.getFilePath(),'i18n'))
+            filepath=os.path.join(root.getFilePath(),'i18n','generated.pot')
+            if not os.path.exists(filepath):
+                templdir=os.path.join(sys.path[0],'templates')
+                PotTemplate=open(os.path.join(sys.path[0],'templates','generated.pot')).read()
+                PotTemplate = PotTemplate % {
+                    'author':self.author or 'unknown author',
+                    'email':self.email or 'unknown@email.address',
+                    'year': str(time.localtime()[0]),
+                    'datetime': time.ctime(),
+                    'charset':sys.getdefaultencoding(),
+                    'package': root.getProductName(),
+                }
+                of=self.makeFile(filepath)
+                of.write(PotTemplate)
+                of.close()
+            self.msgcatpipe.append(msgcatalog.MessageCatalog( filename=filepath ))
+                
         
         package=root
 
@@ -1376,6 +1440,16 @@ is the right place."""
 
         if self.ape_support:
             self.generateApeConf(root.getFilePath(),root)
+
+        # write messagecatalog
+        if has_i18ndude and self.build_msgcatalog:
+            print 'write msgcatalog'
+            filepath=os.path.join(root.getFilePath(),'i18n','generated.pot')
+            of=self.makeFile(filepath) or open(filepath,'w')
+            pow=msgcatalog.POWriter(of,self.msgcatpipe.pop() )
+            pow.write()
+            of.close()
+            
 
     def parseAndGenerate(self):
         
@@ -1414,6 +1488,8 @@ is the right place."""
             print 'method bodies will be preserved'
         else:
             print 'method bodies will be overwritten'
+        if self.build_msgcatalog and not has_i18ndude:
+            print "Warning: Can't build message catalog. i18ndude not found"
             
         self.generateProduct(root)
     
@@ -1448,7 +1524,7 @@ def main():
                                'i18n-support','i18n','no-module-info-header',
                                'author=','e-mail=','copyright=','licence=','creation-permission=',
                                'detailled-creation-permissions','no-detailled-creation-permissions',
-                               'strip-html','no-widget-enhancement'])
+                               'strip-html','no-widget-enhancement','no-message-catalog'])
     prefix = ''
     outfileName = None
     yesno={'yes':1,'y': 1, 'no':0, 'n':0}
@@ -1482,6 +1558,8 @@ def main():
             options['generateActions'] = 0
         elif option[0] == '--no-widget-enhancement':
             options['widget_enhancement'] = 1
+        elif option[0] == '--no-message-catalog':
+            options['build_msgcatalog'] = 0
 
         if option[0] == '-n':
             options['noclass'] = 1
@@ -1573,7 +1651,7 @@ OPTIONS:
         do not create widgets with default label, label_msgid, description, 
         description_msgid and i18ndomain. 
         
-    --no-i18ndude-support
+    --no-message-catalog
         do not automagically create msgid catalogs 
 
     --creation-permission=<perm> 
