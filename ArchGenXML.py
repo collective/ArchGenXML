@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.67 2004/01/13 03:25:12 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.68 2004/01/17 15:47:54 dreamcatcher Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -222,11 +222,9 @@ class ArchetypesGenerator:
                     %(other)s
                     ),''' ,
         'text':  '''TextField('%(name)s',
-                    widget=TextAreaWidget(),
                     %(other)s
                     ),''' ,
         'richtext':  '''TextField('%(name)s',
-                    widget=RichWidget(),
                     default_output_type='text/html',
                     allowable_content_types=('text/plain',
                         'text/structured',
@@ -257,7 +255,6 @@ class ArchetypesGenerator:
                     ),''',
         'file':'''FileField('%(name)s',
                     storage=AttributeStorage(),
-                    widget=FileWidget(),
                     %(other)s
                     ),''',
         'lines':'''LinesField('%(name)s',
@@ -274,6 +271,12 @@ class ArchetypesGenerator:
         'photo':'''PhotoField('%(name)s',
                     %(other)s
                     ),''',
+    }
+
+    widgetMap={
+        'text': 'TextAreaWidget()' ,
+        'richtext': 'RichWidget()' ,
+        'file': 'FileWidget()',
     }
 
     coerceMap={
@@ -315,7 +318,7 @@ class ArchetypesGenerator:
 
     def getFieldAttributes(self,element):
         ''' converts the tagged values of a field into extended attributes for the archetypes field '''
-        noparams=['documentation','element.uuid','transient','volatile']
+        noparams=['documentation','element.uuid','transient','volatile','widget']
         convtostring=['expression']
         lines=[]
         tgv=element.getTaggedValues()
@@ -334,6 +337,24 @@ class ArchetypesGenerator:
 
         return res
 
+    def getWidget(self, type, element):
+        ''' returns either default widget, widget according to
+        attribute or no widget '''
+        tgv=element.getTaggedValues()
+        if tgv.has_key('widget'):
+            # Custom widget defined in attributes
+            res = '''widget=%s,
+                    ''' % tgv['widget']
+            return res
+        if self.widgetMap.has_key(type):
+            # Standard widget for this type found in widgetMap
+            res = '''widget=%s,
+                    ''' % self.widgetMap[type]
+            return res
+        else:
+            return ''
+
+        
     def getFieldString(self, element):
         ''' gets the schema field code '''
         typename=str(element.type)
@@ -360,7 +381,8 @@ class ArchetypesGenerator:
         if attr.hasDefault():
             defexp='default='+attr.getDefault()+','
 
-        other_attributes=self.getFieldAttributes(attr)
+        other_attributes = (self.getWidget(ctype, attr) +
+                            self.getFieldAttributes(attr))
 
         if self.i18n_support and attr.isI18N():
             templ='I18N'+templ
