@@ -1,15 +1,26 @@
 ArchGenXML - generate Plone/Archetypes apps
 out of XMI and XSD files
 
+Authors:
+    Philipp Auersperg phil@bluedynamics.com
+
+    Fabiano Weimar dos Santos (xiru) brings in some
+      good ideas from his project (UML2AT).
+
+Sponsors:
+    PilotSystems, Paris, France (David Sapiro)
+    OpenSource.ag, Innsbruck, Austria (Georg Pleger)
+
+
 ==========
 What is it
 ==========
 
 ArchGenXML is a commandline utility that
-generates Plone applications based 
+generates Plone applications based
 on the Archetypes framework from XMI(UML) and XSD(XMLSchema) files.
 
-It is tested with the XMI output from the following 
+It is tested with the XMI output from the following
 tools:
 
 ObjectDomain (commercial, free demo for <= 30 classes)
@@ -26,8 +37,13 @@ Poseidon  (commercial, based on ArgoUML)
     stores the model native as xmi + diagram information
     in .zargo files (zip files) (xmi version 1.2)
 
+Sybase Powerdesigner (commercial, demo download)
+    www.sybase.com
+    supports model export as XMI (XMI version 1.1)
+
 KDE's Umbrello (not complete yet)
     umbrello saves the models native in XMI (not fully standard compliant)
+
 
 ===============
 How to build it
@@ -37,7 +53,7 @@ First, install PyXML.  You can find it at:
 
     http://pyxml.sourceforge.net/
 
-Then, unpack the PyXML archive and enter the directory,   
+Then, unpack the PyXML archive and enter the directory,
  the regular Distutils commands should work:
 
     python setup.py build
@@ -47,10 +63,10 @@ Then, unpack the PyXML archive and enter the directory,
 
 Next, de-compress the ArchGenXML distribution file.  Use something
 like the following:
- 
+
     tar xzvf ArchGenXML*.tgz
 
-  
+
 
 
 =============
@@ -67,7 +83,7 @@ there you type :
     $ cd ArchGenXML/samples
     $ ./mkdemo
 
-it automatically generates applications out of the 
+it automatically generates applications out of the
 different xmi files. they are then ready to go for
 using inside Plone
 
@@ -100,6 +116,9 @@ Attributes
 Methods
 
 Associations (Aggregation and Composite)
+generation of associations using ArcheType's
+ReferenceEngine
+Generalization
 
 ===========
 Planned/ToDo
@@ -107,12 +126,11 @@ Planned/ToDo
 
 code cleaning, documentation
 
-generation of associations using ArcheType's 
-ReferenceEngine
 
 Support for Umbrello the KDE UML tool,
 currently generation of classes/attributes/methods is supported, but not yet
 the handling of associations
+
 
 creating interface classes
 ============
