@@ -1,11 +1,14 @@
 #-----------------------------------------------------------------------------
 # Name:        XSDParser.py
-# Purpose:
+# Purpose:     use XML Schema Definitions as base for code generation
 #
 # Author:      Philipp Auersperg
+# Remark:      (jensens) The developement of this part has stopped almost.
+#              conversion from XSD to XMI can be done with Eclipse and
+#              a plugin named (ill add the name later (brain-dead today)
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XSDParser.py,v 1.14 2004/01/13 01:17:07 zworkb Exp $
+# RCS-ID:      $Id: XSDParser.py,v 1.15 2004/05/23 14:21:08 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------

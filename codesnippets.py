@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: codesnippets.py,v 1.3 2004/05/18 01:34:02 zworkb Exp $
+# RCS-ID:      $Id: codesnippets.py,v 1.4 2004/05/23 14:21:08 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -81,6 +81,24 @@ SCHEMA_START_DEFAULT = """    schema=BaseSchema %s + Schema(("""
 SCHEMA_START_I18N    = """    schema=I18NBaseSchema %s + Schema(("""
 SCHEMA_START_TGV     = """    schema=%s %s + Schema(("""
 
+SCHEMA_TOOL = """\
+        # a tool does not need be editable in id and title
+        StringField('id',
+            required=0,
+            mode="r",
+            accessor="getId",
+            mutator="setId",
+            default='',
+        ),     
+        StringField('title',
+            required=1,
+            searchable=0,
+            default='',
+            mode='r',
+            accessor='Title',
+        ),
+"""
+
 TEMPL_APE_HEADER = """
 from Products.Archetypes.ApeSupport import constructGateway,constructSerializer
 
@@ -111,7 +129,7 @@ MODULE_INFO_HEADER = """\
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: codesnippets.py,v 1.3 2004/05/18 01:34:02 zworkb Exp $
+RCS-ID $Id: codesnippets.py,v 1.4 2004/05/23 14:21:08 yenzenz Exp $
 \"""
 # %(copyright)s
 #
