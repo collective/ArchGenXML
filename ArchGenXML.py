@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.30 2003/10/16 00:05:20 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.31 2003/10/17 08:27:18 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -252,7 +252,7 @@ class ArchetypesGenerator:
 
     def getFieldAttributes(self,element):
         ''' converts the tagged values of a field into extended attributes for the archetypes field '''
-        noparams=['documentation',]
+        noparams=['documentation','element.uuid']
         convtostring=['expression']
         lines=[]
         tgv=element.getTaggedValues()
@@ -632,9 +632,9 @@ def ApeSerializer():
                 xmis=[n for n in zf.namelist() if os.path.splitext(n)[1].lower()=='.xmi']
                 assert(len(xmis)==1)
                 buf=zf.read(xmis[0])
-                root=XMIParser.parse(xschema=buf,packages=self.packages)
+                self.root=root=XMIParser.parse(xschema=buf,packages=self.packages)
             elif suff.lower() == '.xsd':
-                root=XSDParser.parse(self.xschemaFileName)
+                self.root=root=XSDParser.parse(self.xschemaFileName)
     
             #if no output filename given, ry to guess it from the model
             if not self.outfileName:
@@ -645,7 +645,7 @@ def ApeSerializer():
     
             print 'outfile:',self.outfileName
         else:
-            root=XMIParser.XMIElement() #create empty element
+            self.root=root=XMIParser.XMIElement() #create empty element
             
         self.generate(root)
 

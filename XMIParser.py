@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.18 2003/10/03 17:01:12 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.19 2003/10/17 08:27:18 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -19,12 +19,6 @@ from xml.dom import minidom
 
 #tag constants
 
-def getAttributeValue(domElement,tagName=None,recursive=0):
-    el=domElement
-    el.normalize()
-    if tagName:
-        el=getElementByTagName(domElement,tagName,recursive=recursive)
-    return el.firstChild.nodeValue
 
 class XMI1_0:
     # XMI version specific stuff goes there
@@ -107,8 +101,8 @@ class XMI1_0:
         return aggs[0].getAttribute('xmi.value')
     
     def getMultiplicity(self,el):
-        mult_min=int(getAttributeValue(el,self.MULT_MIN,recursive=1))
-        mult_max=int(getAttributeValue(el,self.MULT_MAX,recursive=1))
+        mult_min=int(getAttributeValue(el,self.MULT_MIN,default=0,recursive=1))
+        mult_max=int(getAttributeValue(el,self.MULT_MAX,default=-1,recursive=1))
         return (mult_min,mult_max)
         
     def buildRelations(self, doc, objects):
@@ -298,6 +292,20 @@ def getElementByTagName(domElement,tagName,default=_marker, recursive=0):
             raise
         else:
             return default
+
+def getAttributeValue(domElement,tagName=None,default=_marker,recursive=0):
+    el=domElement
+    el.normalize()
+    if tagName:
+        try:
+            el=getElementByTagName(domElement,tagName,recursive=recursive)
+        except IndexError:
+            if default==_marker:
+                raise
+            else:
+                return default
+            
+    return el.firstChild.nodeValue
 
 def getElementsByTagName(domElement,tagName, recursive=0):
     ''' returns elements by tag name , the only difference 

@@ -17,7 +17,7 @@
       <Foundation.Core.GeneralizableElement.isAbstract xmi.value="false"/>
       <Foundation.Core.Namespace.ownedElement>
         <Foundation.Core.Class xmi.id="xmi.2">
-          <Foundation.Core.ModelElement.name>outline</Foundation.Core.ModelElement.name>
+          <Foundation.Core.ModelElement.name>Outline</Foundation.Core.ModelElement.name>
           <Foundation.Core.ModelElement.visibility xmi.value="public"/>
           <Foundation.Core.ModelElement.isSpecification xmi.value="false"/>
           <Foundation.Core.GeneralizableElement.isRoot xmi.value="false"/>
@@ -191,7 +191,7 @@
           </Foundation.Core.Association.connection>
         </Foundation.Core.Association>
         <Foundation.Core.Class xmi.id="xmi.21">
-          <Foundation.Core.ModelElement.name>node</Foundation.Core.ModelElement.name>
+          <Foundation.Core.ModelElement.name>Node</Foundation.Core.ModelElement.name>
           <Foundation.Core.ModelElement.visibility xmi.value="public"/>
           <Foundation.Core.ModelElement.isSpecification xmi.value="false"/>
           <Foundation.Core.GeneralizableElement.isRoot xmi.value="false"/>
@@ -264,19 +264,72 @@
             </Foundation.Core.Attribute>
           </Foundation.Core.Classifier.feature>
         </Foundation.Core.Class>
-        <Foundation.Extension_Mechanisms.Stereotype xmi.id="xmi.30">
-          <Foundation.Core.ModelElement.name>interface</Foundation.Core.ModelElement.name>
+        <Foundation.Core.Association xmi.id="xmi.30">
+          <Foundation.Core.ModelElement.name></Foundation.Core.ModelElement.name>
           <Foundation.Core.ModelElement.visibility xmi.value="public"/>
           <Foundation.Core.ModelElement.isSpecification xmi.value="false"/>
           <Foundation.Core.GeneralizableElement.isRoot xmi.value="false"/>
           <Foundation.Core.GeneralizableElement.isLeaf xmi.value="false"/>
           <Foundation.Core.GeneralizableElement.isAbstract xmi.value="false"/>
-          <Foundation.Extension_Mechanisms.Stereotype.baseClass>Class</Foundation.Extension_Mechanisms.Stereotype.baseClass>
           <Foundation.Core.ModelElement.namespace>
             <Foundation.Core.Namespace xmi.idref="xmi.1"/>
           </Foundation.Core.ModelElement.namespace>
-        </Foundation.Extension_Mechanisms.Stereotype>
-        <Model_Management.Model xmi.id="xmi.31">
+          <Foundation.Core.Association.connection>
+            <Foundation.Core.AssociationEnd xmi.id="xmi.31">
+              <Foundation.Core.ModelElement.name></Foundation.Core.ModelElement.name>
+              <Foundation.Core.ModelElement.visibility xmi.value="public"/>
+              <Foundation.Core.ModelElement.isSpecification xmi.value="false"/>
+              <Foundation.Core.AssociationEnd.isNavigable xmi.value="true"/>
+              <Foundation.Core.AssociationEnd.ordering xmi.value="unordered"/>
+              <Foundation.Core.AssociationEnd.aggregation xmi.value="composite"/>
+              <Foundation.Core.AssociationEnd.targetScope xmi.value="instance"/>
+              <Foundation.Core.AssociationEnd.multiplicity>
+                <Foundation.Data_Types.Multiplicity xmi.id="xmi.32">
+                  <Foundation.Data_Types.Multiplicity.range>
+                    <Foundation.Data_Types.MultiplicityRange xmi.id="xmi.33">
+                      <Foundation.Data_Types.MultiplicityRange.lower>0</Foundation.Data_Types.MultiplicityRange.lower>
+                      <Foundation.Data_Types.MultiplicityRange.upper>-1</Foundation.Data_Types.MultiplicityRange.upper>
+                    </Foundation.Data_Types.MultiplicityRange>
+                  </Foundation.Data_Types.Multiplicity.range>
+                </Foundation.Data_Types.Multiplicity>
+              </Foundation.Core.AssociationEnd.multiplicity>
+              <Foundation.Core.AssociationEnd.changeability xmi.value="changeable"/>
+              <Foundation.Core.AssociationEnd.association>
+                <Foundation.Core.Association xmi.idref="xmi.30"/>
+              </Foundation.Core.AssociationEnd.association>
+              <Foundation.Core.AssociationEnd.type>
+                <Foundation.Core.Classifier xmi.idref="xmi.21"/>
+              </Foundation.Core.AssociationEnd.type>
+            </Foundation.Core.AssociationEnd>
+            <Foundation.Core.AssociationEnd xmi.id="xmi.34">
+              <Foundation.Core.ModelElement.name></Foundation.Core.ModelElement.name>
+              <Foundation.Core.ModelElement.visibility xmi.value="public"/>
+              <Foundation.Core.ModelElement.isSpecification xmi.value="false"/>
+              <Foundation.Core.AssociationEnd.isNavigable xmi.value="true"/>
+              <Foundation.Core.AssociationEnd.ordering xmi.value="unordered"/>
+              <Foundation.Core.AssociationEnd.aggregation xmi.value="none"/>
+              <Foundation.Core.AssociationEnd.targetScope xmi.value="instance"/>
+              <Foundation.Core.AssociationEnd.multiplicity>
+                <Foundation.Data_Types.Multiplicity xmi.id="xmi.35">
+                  <Foundation.Data_Types.Multiplicity.range>
+                    <Foundation.Data_Types.MultiplicityRange xmi.id="xmi.36">
+                      <Foundation.Data_Types.MultiplicityRange.lower>0</Foundation.Data_Types.MultiplicityRange.lower>
+                      <Foundation.Data_Types.MultiplicityRange.upper>-1</Foundation.Data_Types.MultiplicityRange.upper>
+                    </Foundation.Data_Types.MultiplicityRange>
+                  </Foundation.Data_Types.Multiplicity.range>
+                </Foundation.Data_Types.Multiplicity>
+              </Foundation.Core.AssociationEnd.multiplicity>
+              <Foundation.Core.AssociationEnd.changeability xmi.value="changeable"/>
+              <Foundation.Core.AssociationEnd.association>
+                <Foundation.Core.Association xmi.idref="xmi.30"/>
+              </Foundation.Core.AssociationEnd.association>
+              <Foundation.Core.AssociationEnd.type>
+                <Foundation.Core.Classifier xmi.idref="xmi.21"/>
+              </Foundation.Core.AssociationEnd.type>
+            </Foundation.Core.AssociationEnd>
+          </Foundation.Core.Association.connection>
+        </Foundation.Core.Association>
+        <Model_Management.Model xmi.id="xmi.37">
           <Foundation.Core.ModelElement.name>Use Case View</Foundation.Core.ModelElement.name>
           <Foundation.Core.ModelElement.visibility xmi.value="public"/>
           <Foundation.Core.ModelElement.isSpecification xmi.value="false"/>
