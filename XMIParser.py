@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.38 2004/02/27 10:09:43 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.39 2004/02/27 12:45:27 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -88,12 +88,12 @@ class XMI1_0:
     
     def getName(self,domElement):
         try:
-            return str(getAttributeValue(domElement,self.NAME))
+            return str(getAttributeValue(domElement,self.NAME)).strip()
         except:
             return None
     
     def getId(self,domElement):
-        return domElement.getAttribute('xmi.id')
+        return domElement.getAttribute('xmi.id').strip()
 
     def getAssocEndParticipantId(self,el):
         assocend=getElementByTagName(el,self.ASSOCEND_PARTICIPANT,None)
@@ -311,7 +311,7 @@ class XMI1_1 (XMI1_0):
     ISABSTRACT="UML:GeneralizableElement.isAbstract"
 
     def getName(self,domElement):
-        return domElement.getAttribute('name')
+        return domElement.getAttribute('name').strip()
 
     def getExpressionBody(self,element):
         exp = getElementByTagName(element,XMI.EXPRESSION,recursive=1,default=None)
@@ -531,9 +531,13 @@ class XMIElement:
     def getName(self):
         name=str(self.name)
         if self.name:
-            return name
+            res=name
         else:
-            return self.id
+            res=self.id
+            
+        if type(res) in (type(''),type(u'')):
+            res=res.strip()
+        return res
 
     def getCleanName(self): return self.cleanName
 
