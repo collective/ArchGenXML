@@ -5,8 +5,8 @@ ArchGenXML Manual - generating Archetypes using UML
 
 :Author ArchGenXML: Phil Auersperg <phil@bluedynamics.org>
 :Author Documentation: Jens W. Klein <jens.klein@jensquadrat.de>
-:Date: $Date: 2004/03/04 07:27:35 $
-:Version: $Revision: 1.5 $
+:Date: $Date: 2004/04/21 09:36:04 $
+:Doku-Version: 1.0.1
 :Web site: http://sourceforge.net/projects/archetypes
 :Original URL: http://plone.org/documentation/archetypes/archgenxml-manual/
 
@@ -29,13 +29,14 @@ UML class diagramm - a brief introduction
 =========================================
 
 UML - the Unified Modelling Language is a graphical language designed to describe software.
-
 To attain that goal this language has got several different diagram-types defined.
 An overview about them gives the OOSE_ (german and a english pdf).
 Our interest is mainly on class diagrams.
 An article about class diagrams is at `Developer.com`_
-andanother comprehensive site about it you'll find at `The Official Agile Modeling (AM) Site`_.
+and another comprehensive site about it you'll find at `The Official Agile Modeling (AM) Site`_.
+The major resource for UML is `uml.org`_ the offical UML (tm) Resource Page of OMG.
 
+.. _`uml.org`: http://www.uml.org/
 .. _OOSE:           http://www.oose.de/notationuml14/
 .. _`Developer.com`:  http://www.developer.com/design/article.php/2206791
 .. _`The Official Agile Modeling (AM) Site`: http://www.agilemodeling.com/artifacts/classDiagram.htm
@@ -319,8 +320,7 @@ base_actions
 base_class
     Defines the base-class for folderish or contentish classes.
     If no aggregation to another class is defined it defaults to 'BaseContent' otherwise to 'Basefolder'.
-    If i18n-support is enabled this setting would be ignored and
-    in case of no aggregation to another class it defaults to 'i18nBaseContent' otherwise to 'i18nBaseFolder'.
+    If i18n-support is enabled it defaults to 'i18nBaseContent' resp. to 'i18nBaseFolder'.
 
 base_schema
     Defines an alternate base-schema for the class instead of 'BaseSchema' or 'I18NBaseSchema'.

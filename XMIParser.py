@@ -1,26 +1,31 @@
 #-----------------------------------------------------------------------------
 # Name:        XMIParser.py
-# Purpose:
+# Purpose:     Parse XMI (UML-model) and provide a logical model of it
 #
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.65 2004/04/13 14:38:30 xiru Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.66 2004/04/21 09:35:46 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
 
 import sys, os.path, time, string
 import getopt
-
 from utils import mapName
-
+from utils import wrap as doWrap
 from xml.dom import minidom
+
+has_stripogram=1
 try:
     from stripogram import html2text
 except ImportError:
+    has_stripogram=0
     def html2text(s,*args,**kwargs):
         return s
+
+#set default wrap width
+default_wrap_width = 64
 
 #tag constants
 
@@ -659,14 +664,28 @@ class XMIElement:
     def getTaggedValues(self):
         return self.taggedValues
 
-    def getDocumentation(self,striphtml=0):
-        ret = ''
-        if striphtml:
-            #TODO: create an option on command line to control the page width
-            ret = html2text(self.getTaggedValue('documentation'), (), 0, 60) 
-        else:
-            ret = self.getTaggedValue('documentation')
-        return ret.strip()
+    def getDocumentation(self,striphtml=0,wrap=-1):
+        """ return formatted documentation string:
+            
+            try to use stripogram to remove (e.g. poseidon) HTML-tags, wrap and
+            indent text. If no stripogram is present it uses wrap and indent 
+            from own utils module.
+            
+            striphtml(boolean) - use stripogram html2text to remove html tags
+            wrap(integer)      - default: 60, set to 0: do not wrap, 
+                                 all other >0: wrap with this value
+        """
+        #TODO: create an option on command line to control the page width
+        doc=self.getTaggedValue('documentation')
+        if not doc:
+            return ''
+        if wrap == -1:
+            wrap=default_wrap_width
+        if has_stripogram and striphtml:            
+            doc = html2text(doc, (), 0, 1000000).strip()
+        if wrap:
+            doc = doWrap(doc,wrap)    
+        return doc
 
     def getUnmappedCleanName(self): return self.unmappedCleanName
     def setName(self, name): self.name = name

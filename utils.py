@@ -81,3 +81,23 @@ def isTGVFalse(tgv):
         tgv=tgv.lower()
         
     return tgv in (0,'0','false')
+
+# begin code copy
+# copied from http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/148061 :
+def wrap(text, width):
+    """
+    A word-wrap function that preserves existing line breaks
+    and most spaces in the text. Expects that existing line
+    breaks are posix newlines (\n).
+    
+       
+    """
+    return reduce(lambda line, word, width=width: '%s%s%s' %
+                  (line,
+                   ' \n'[(len(line[line.rfind('\n')+1:])
+                         + len(word.split('\n',1)[0]
+                              ) >= width)],
+                   word),
+                  text.split(' ')
+                 )
+# end code copy
