@@ -5,14 +5,14 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XSDParser.py,v 1.7 2003/08/23 14:20:06 zworkb Exp $
+# RCS-ID:      $Id: XSDParser.py,v 1.8 2003/09/11 18:57:11 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
 
 import sys, os.path, time, string
 import getopt
-from xml.sax import saxexts, saxlib, saxutils
+from xml import sax
 from xml.sax import handler
 
 from utils import mapName
@@ -56,9 +56,6 @@ class XschemaElement:
 
     def getTaggedValue(self,name,default=''):
         return self.taggedValues.get(name,default)
-    
-    def getTaggedValues(self):
-        return self.taggedValues
     
     def getDocumentation(self):
         return self.getTaggedValue('documentation')
@@ -159,6 +156,7 @@ class XschemaAttribute(XschemaElement):
         self.complex = 0
         self.type = 'NoneType'
         self.attributeDefs = []
+        self.taggedValues={}
 
         for k,v in attrs.items():
             setattr(self,str(k),v)
@@ -172,6 +170,18 @@ class XschemaAttribute(XschemaElement):
 
     #def has_key(self,k):
     #    return self.__dict__.has_key(k)
+
+    def hasDefault(self):
+         return 0
+
+    def getDefault(self):
+         return None
+
+    def getTaggedValue(self,name,default=''):
+        return self.taggedValues.get(name,default)
+
+    def getTaggedValues(self):
+        return self.taggedValues
 #
 # SAX handler
 #
@@ -259,7 +269,7 @@ class XschemaHandler(handler.ContentHandler):
 def parse(xschemaFileName):
     """ """
 
-    parser = saxexts.make_parser("xml.sax.drivers2.drv_pyexpat")
+    parser = sax.make_parser(["xml.sax.drivers2.drv_pyexpat",])
     dh = XschemaHandler()
     parser.setContentHandler(dh)
     parser.parse(xschemaFileName)

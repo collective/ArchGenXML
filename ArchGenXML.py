@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.24 2003/08/23 14:20:06 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.25 2003/09/11 18:57:11 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -18,8 +18,6 @@
 
 import sys, os.path, time
 import getopt
-from xml.sax import saxexts, saxlib, saxutils
-from xml.sax import handler
 
 from zipfile import ZipFile
 
@@ -269,7 +267,7 @@ class ArchetypesGenerator:
 
         templ=self.typeMap[ctype]
         
-        return templ % {'name':element.getCleanName(),'type':element.type,}
+        return templ % {'name':element.getCleanName(),'type':element.type,'other':''}
 
     def getFieldStringFromAttribute(self, attr):
         ''' gets the schema field code '''

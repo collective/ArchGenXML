@@ -1,8 +1,6 @@
 
 import sys, os.path, time
 import getopt
-from xml.sax import saxexts, saxlib, saxutils
-from xml.sax import handler
 
 NameTable = {
     'class': 'klass',

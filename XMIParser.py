@@ -5,15 +5,13 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.16 2003/08/23 14:20:06 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.17 2003/09/11 18:57:11 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
 
 import sys, os.path, time, string
 import getopt
-from xml.sax import saxexts, saxlib, saxutils
-from xml.sax import handler
 
 from utils import mapName
 
