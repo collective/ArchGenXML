@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XSDParser.py,v 1.8 2003/09/11 18:57:11 zworkb Exp $
+# RCS-ID:      $Id: XSDParser.py,v 1.9 2003/10/03 17:01:12 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -144,6 +144,9 @@ class XschemaElement:
         return []
     
     def isAbstract(self):
+        return 0
+    
+    def isDependent(self):
         return 0
 
 class XschemaAttribute(XschemaElement):

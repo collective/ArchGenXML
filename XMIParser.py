@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.17 2003/09/11 18:57:11 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.18 2003/10/03 17:01:12 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -99,6 +99,12 @@ class XMI1_0:
     def isAssocEndAggregation(self,el):
         aggs=el.getElementsByTagName(XMI.AGGREGATION)        
         return aggs and aggs[0].getAttribute('xmi.value') in self.aggregates        
+
+    def getAssocEndAggregation(self,el):
+        aggs=el.getElementsByTagName(XMI.AGGREGATION)        
+        if not aggs:
+            return None
+        return aggs[0].getAttribute('xmi.value')
     
     def getMultiplicity(self,el):
         mult_min=int(getAttributeValue(el,self.MULT_MIN,recursive=1))
@@ -132,11 +138,16 @@ class XMI1_0:
                 m=objects[masterid]
                 d=objects[detailid]
                 m.addSubType(d)
+
+                assoc=XMIAssociation(rel)
+                assoc.fromEnd.obj.addAssocFrom(assoc)
+                assoc.toEnd.obj.addAssocTo(assoc)
+                
             else: #its an assoc, lets model it as association
                 
                 assoc=XMIAssociation(rel)
-                assoc.fromEnd.obj.addAssocTo(assoc)
-                assoc.toEnd.obj.addAssocFrom(assoc)
+                assoc.fromEnd.obj.addAssocFrom(assoc)
+                assoc.toEnd.obj.addAssocTo(assoc)
 
     def buildGeneralizations(self,doc,objects):
         gens=doc.getElementsByTagName(XMI.GENERALIZATION)
@@ -237,6 +248,9 @@ class XMI1_2 (XMI1_1):
     
     def isAssocEndAggregation(self,el):
         return str(el.getAttribute('aggregation')) in self.aggregates        
+
+    def getAssocEndAggregation(self,el):
+        return str(el.getAttribute('aggregation'))
     
     def getMultiplicity(self,el):
         mult_min=int(getElementByTagName(el,self.MULTRANGE,recursive=1).getAttribute('lower'))
@@ -501,12 +515,26 @@ class XMIClass (XMIElement):
     def addAssocTo(self,a):
         self.assocsTo.append(a)
 
-    def getToAssociations(self):
-        return self.assocsTo
+    def getToAssociations(self,aggtypes=['none']):
+        return [a for a in self.assocsTo if a.fromEnd.aggregation in aggtypes]
     
-    def getFromAssociations(self):
-        return self.assocsFrom
+    def getFromAssociations(self,aggtypes=['none']):
+        return [a for a in self.assocsFrom if a.fromEnd.aggregation in aggtypes]
+        #return self.assocsFrom
+        
+    def isDependent(self):
+        ''' every object to which only composite assocs point shouldnt be created independently '''
+        aggs=self.getToAssociations(aggtypes=['aggregate'])
+        comps=self.getToAssociations(aggtypes=['composite'])
+
+        if comps and not aggs:
+            res=1
+        else:
+            res=0
+            
+        #print 'isDependent:',self.getName(),res
     
+        return res
     def isAbstract(self):
         return 0
 
@@ -623,12 +651,16 @@ class XMIAssocEnd (XMIElement):
         pid=XMI.getAssocEndParticipantId(el)
         self.obj=allObjects[pid]
         self.mult=XMI.getMultiplicity(el)
+        self.aggregation=XMI.getAssocEndAggregation(el)
+        #print 'aggreg:',self.aggregation
+            
+
         #print 'mult;',self.mult,self.getName(),self.id
         
 class XMIAssociation (XMIElement):
     fromEnd=None
     toEnd=None
-
+    
     def initFromDOM(self,domElement=None):
         XMIElement.initFromDOM(self,domElement)
         #print 'Association:',domElement,self.id

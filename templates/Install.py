@@ -42,7 +42,7 @@ class PloneSkinRegistrar:
         self._prodglobals = prodglobals
         return
 
-    def install(self, aq_obj):
+    def install(self, aq_obj,position=None,mode='after',layerName=None):
         """Installs and registers the skin resources
         @param aq_obj: object from which cmf site object is acquired
         @type aq_obj: any Zope object in the CMF
@@ -55,26 +55,38 @@ class PloneSkinRegistrar:
 
         # Create the layer in portal_skins
 
-        if self._skinsdir not in skinstool.objectIds():
-            addDirectoryViews(skinstool, self._skinsdir, self._prodglobals)
-            rpt += 'Added "%%s" directory view to portal_skins\n' %% self._skinsdir
-        else:
+        try:
+            if self._skinsdir not in skinstool.objectIds():
+                addDirectoryViews(skinstool, self._skinsdir, self._prodglobals)
+                rpt += 'Added "%%s" directory view to portal_skins\n' %% self._skinsdir
+            else:
+                rpt += 'Warning: directory view "%%s" already added to portal_skins\n' %% self._skinsdir
+        except:
+            # ugh, but i am in stress
             rpt += 'Warning: directory view "%%s" already added to portal_skins\n' %% self._skinsdir
+            
 
         # Insert the layer in all skins
         # XXX FIXME: Actually assumes only one layer directory with the name of the Product
         # (should be replaced by a smarter solution that finds individual Product's layers)
 
-        layerName = self._prodglobals['__name__'].split('.')[-1]
+        if not layerName:
+            layerName = self._prodglobals['__name__'].split('.')[-1]
+            
         skins = skinstool.getSkinSelections()
+
         for skin in skins:
             layers = skinstool.getSkinPath(skin)
             layers = [layer.strip() for layer in layers.split(',')]
             if layerName not in layers:
                 try:
-                    layers.insert(layers.index('content'), layerName)
+                    pos=layers.index(position)
+                    if mode=='after': pos=pos+1
                 except ValueError:
-                    layers.append(layerName)
+                    pos=len(layers) 
+                    
+                layers.insert(pos, layerName)
+
                 layers = ','.join(layers)
                 skinstool.addSkinSelection(skin, layers)
                 rpt += 'Added "%%s" to "%%s" skin\n' %% (layerName, skin)
@@ -97,7 +109,9 @@ class PloneSkinRegistrar:
         # XXX FIXME: Actually assumes only one layer directory with the name of the Product
         # (should be replaced by a smarter solution that finds individual Product's layers)
 
-        layerName = self._prodglobals['__name__'].split('.')[-1]
+        if not layerName:
+            layerName = self._prodglobals['__name__'].split('.')[-1]
+            
         if layerName in skinstool.objectIds():
             skinstool.manage_delObjects([layerName])
             rpt += 'Removed "%%s" directory view from portal_skins\n' %% layerName
@@ -130,6 +144,8 @@ def install(self):
     print >> out, "Successfully installed %%s." %% PROJECTNAME
     sr = PloneSkinRegistrar('skins', product_globals)
     print >> out,sr.install(self)
+    #sr = PloneSkinRegistrar('skins', product_globals)
+    print >> out,sr.install(self,position='custom',mode='after',layerName=PROJECTNAME+'_public')
 
     #register folderish classes in use_folder_contents
     props=getToolByName(self,'portal_properties').site_properties

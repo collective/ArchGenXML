@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.25 2003/09/11 18:57:11 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.26 2003/10/03 17:01:12 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -141,7 +141,7 @@ class ArchetypesGenerator:
         'allowed_content_types':%(subtypes)s %(parentsubtypes)s,
         #'content_icon':'%(type_name)s.gif',
         'immediate_view':'base_view',
-        #'global_allow':0,
+        'global_allow':%(global_allow)d,
         'filter_content_types':1,
         }
 
@@ -153,17 +153,27 @@ class ArchetypesGenerator:
         parentsubtypes=''
         if element.getGenParents():
             parentsubtypes = '+ ' + ' + '.join(tuple([p.getCleanName()+".factory_type_information['allowed_content_types']" for p in element.getGenParents()]))
-        res=ftiTempl % {'subtypes':repr(tuple(subtypes)),'type_name':element.getCleanName(),'parentsubtypes':parentsubtypes}
+        res=ftiTempl % {'subtypes':repr(tuple(subtypes)),'type_name':element.getCleanName(),'parentsubtypes':parentsubtypes,'global_allow':not element.isDependent()}
         return res
 
     typeMap={
         'string':'''StringField('%(name)s',
                     %(other)s
                     ),''' ,
-        'text':  '''StringField('%(name)s',
+        'text':  '''TextField('%(name)s',
                     widget=TextAreaWidget(),
                     %(other)s
                     ),''' ,
+        'richtext':  '''TextField('%(name)s',
+                    widget=RichWidget(),
+                    default_output_type='text/html',
+                    allowable_content_types=('text/plain',
+                        'text/structured',
+                        'application/msword',
+                        'text/html',),
+                    %(other)s
+                    ),''' ,
+                    
         'integer':'''IntegerField('%(name)s',
                     %(other)s
                     ),''',
@@ -344,8 +354,10 @@ class ArchetypesGenerator:
             if child.isIntrinsicType():
                 print >> outfile, '    '*2 ,self.getFieldString(child)
 
+        #print 'rels:',element.getName(),element.getFromAssociations()
         # and now the associations
-        for rel in element.getToAssociations():
+        for rel in element.getFromAssociations():
+            #print 'rel:',rel
             if 1 or rel.toEnd.mult==1: #XXX: for mult==-1 a multiselection widget must come
                 name = rel.fromEnd.getName()
                     
@@ -509,6 +521,7 @@ class ArchetypesGenerator:
                 makeDir(self.outfileName)
                 makeDir(os.path.join(self.outfileName,'skins'))
                 makeDir(os.path.join(self.outfileName,'skins',self.outfileName))
+                makeDir(os.path.join(self.outfileName,'skins',self.outfileName+'_public'))
     ##            makeDir(os.path.join(outfileName,'skins',outfileName,outfileName+'_forms'))
     ##            makeDir(os.path.join(outfileName,'skins',outfileName,outfileName+'_views'))
     ##            makeDir(os.path.join(outfileName,'skins',outfileName,outfileName+'_scripts'))
