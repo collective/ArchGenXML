@@ -1,6 +1,18 @@
 ArchGenXML - generate Plone/Archetypes apps
 out of XMI and XSD files
 
+Authors: 
+    Philipp Auersperg phil@bluedynamics.com
+
+    Fabiano Weimar dos Santos (xiru) brings in some 
+      good ideas from his project (UML2AT).
+
+Sponsors: 
+    PilotSystems, Paris, France (David Sapiro)
+    OpenSource.ag, Innsbruck, Austria (Georg Pleger)
+
+
+
 ==========
 What is it
 ==========
@@ -26,8 +38,13 @@ Poseidon  (commercial, based on ArgoUML)
     stores the model native as xmi + diagram information
     in .zargo files (zip files) (xmi version 1.2)
 
+Sybase Powerdesigner (commercial, demo download)
+    www.sybase.com
+    supports model export as XMI (XMI version 1.1)
+
 KDE's Umbrello (not complete yet)
     umbrello saves the models native in XMI (not fully standard compliant)
+
 
 ===============
 How to build it
@@ -100,6 +117,9 @@ Attributes
 Methods
 
 Associations (Aggregation and Composite)
+generation of associations using ArcheType's 
+ReferenceEngine
+Generalization
 
 ===========
 Planned/ToDo
@@ -107,12 +127,11 @@ Planned/ToDo
 
 code cleaning, documentation
 
-generation of associations using ArcheType's 
-ReferenceEngine
 
 Support for Umbrello the KDE UML tool,
 currently generation of classes/attributes/methods is supported, but not yet
 the handling of associations
+
 
 creating interface classes
 ============
