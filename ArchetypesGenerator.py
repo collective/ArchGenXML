@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.9 2004/05/10 15:25:25 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.10 2004/05/10 15:57:20 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -594,7 +594,7 @@ def modify_fti(fti):
         map.update( {'widget':self.getWidget('Reference', rel.toEnd, name, classelement)} )
 
         if getattr(rel,'isAssociationClass',0):
-            map.update({'associationClass':rel.getName()})
+            map.update({'referenceClass':rel.getName()})
 
         doc=rel.getDocumentation(striphtml=self.striphtml)                
         res=self.getFieldFormatted(name,field,map,doc)
@@ -1003,7 +1003,7 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchetypesGenerator.py,v 1.9 2004/05/10 15:25:25 zworkb Exp $
+RCS-ID $Id: ArchetypesGenerator.py,v 1.10 2004/05/10 15:57:20 zworkb Exp $
 \"""
 # %(copyright)s
 #
