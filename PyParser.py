@@ -7,6 +7,9 @@ import pprint
 import sys
 import types
 
+PROTECTED_BEGIN='##code-section'
+PROTECTED_END='##/code-section'
+
 
 def codeLength(l):
     ''' calculates the length of a method using the code.co_lnotab '''
@@ -74,11 +77,13 @@ class PyMethod(PyCodeElement):
     
 class PyClass(PyCodeElement):
     methods={}
+    module=None
     
     def __init__(self,code,module):
         PyCodeElement.__init__(self,code,module)
         self.methods={}
         self.name=code.co_name
+        self.module=module
         #print 'Class:',self.name
         
         self.buildMethods()
@@ -96,7 +101,10 @@ class PyClass(PyCodeElement):
         
         for m in self.methods.values():
             m.printit()
-
+            
+    def getProtectedSection(self,section):
+        return self.module.getProtectedSection(section)
+    
 class PyModule:
     filebuf=None
     splittedSource=None
@@ -104,6 +112,7 @@ class PyModule:
     code=None
     src=None
     classes={}
+    protectedSections={}
     
     def __init__(self,file):
         self.classes={}
@@ -129,7 +138,31 @@ class PyModule:
         #print 'codes:',codes
         classes=[c for c in codes if isItAClass(c)]
         for c in classes:
-            self.classes[c.co_name]=PyClass(c,self)
+            klass=PyClass(c,self)
+            self.classes[c.co_name]=klass
+            
+        self.findProtectedSections()
+    
+    def findProtectedSections(self):
+        for i in xrange(0,len(self.splittedSource)):
+            line=self.splittedSource[i]
+            sline=line.strip()
+            if sline.startswith(PROTECTED_BEGIN):
+                j=start=i
+                sectionname=sline.split()[1]
+                try:
+                    while not self.splittedSource[j].strip().startswith(PROTECTED_END):
+                        j=j+1
+                except IndexError:
+                    return
+                
+                end=j
+                self.protectedSections[sectionname]='\n'.join(self.splittedSource[start+1:end])
+                
+                
+                
+    def getProtectedSection(self,section):
+        return self.protectedSections.get(section)
 
     def printit(self):
         print 'PyModule:',
