@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.56 2004/04/04 03:39:01 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.57 2004/04/04 16:21:54 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -716,8 +716,15 @@ class XMIElement:
     def buildChildren(self,domElement):
         pass
 
-    def getMethodDefs(self):
-        return self.methodDefs
+    def getMethodDefs(self,recursive=0):
+        res=self.methodDefs
+        
+        if recursive:
+            parents=self.getGenParents(recursive=1)
+            for p in parents:
+                res.extend(p.getMethodDefs())
+                
+        return res
 
     def calculateStereoType(self):
         return XMI.calculateStereoType(self)
