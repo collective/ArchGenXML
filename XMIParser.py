@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.40 2004/02/27 14:13:16 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.41 2004/02/27 18:44:48 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -16,6 +16,11 @@ import getopt
 from utils import mapName
 
 from xml.dom import minidom
+try:
+    from stripogram import html2text
+except ImportError:
+    def html2text(s,*args,**kwargs):
+        return s
 
 #tag constants
 
@@ -555,8 +560,11 @@ class XMIElement:
     def getTaggedValues(self):
         return self.taggedValues
 
-    def getDocumentation(self):
-        return self.getTaggedValue('documentation')
+    def getDocumentation(self,striphtml=0):
+        if striphtml:
+            return html2text(self.getTaggedValue('documentation'))
+        else:
+            return self.getTaggedValue('documentation')
 
     def getUnmappedCleanName(self): return self.unmappedCleanName
     def setName(self, name): self.name = name
