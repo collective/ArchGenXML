@@ -271,7 +271,7 @@ class ArchetypesGenerator(BaseGenerator):
                 if autoinstall=='right':
                     self.right_slots.append(portlet)
 
-                f=self.makeFile(os.path.join(self.getSkinPath(klass),view_name+'.pt'),0)
+                f=self.makeFile(os.path.join(self.getSkinPath(element),view_name+'.pt'),0)
                 if f:
                     templdir=os.path.join(sys.path[0],'templates')
                     viewTemplate=open(os.path.join(templdir,'portlet_template.pt')).read()
