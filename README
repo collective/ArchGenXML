@@ -99,9 +99,8 @@ There is more information on PyXML at:
 More Documention
 ================
 
-see http://plone.org/documentation/archetypes/ArchetypesDeveloperGuide#archgenxml-generating-archetypes-using-uml
-or at http://sf.net/projects/plone-docs 
-in cvs at Developers/Archetypes/ArchGenXML.rst
+See docs/archgenxml-manual.rst - you can convert it to HTML or
+LaTeX using DocUtils http://docutils.sf.net/
 
 ===========
 features
@@ -115,7 +114,7 @@ Attributes
 Methods
 
 Associations (Aggregation and Composite)
-generation of associations using ArcheType's 
+generation of associations using ArcheType's
 ReferenceEngine
 Generalization
 
