@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.41 2003/10/27 02:33:59 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.42 2003/10/29 13:09:49 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -141,7 +141,7 @@ class ArchetypesGenerator:
     # uncommant lines below when you need
     factory_type_information={
         'allowed_content_types':%(subtypes)s %(parentsubtypes)s,
-        #'content_icon':'%(type_name)s.gif',
+        %(has_content_icon)s'content_icon':'%(content_icon)s',
         'immediate_view':'%(immediate_view)s',
         'global_allow':%(global_allow)d,
         'filter_content_types':1,
@@ -160,8 +160,15 @@ class ArchetypesGenerator:
         global_allow=not element.isDependent()
         if element.getStereoType() in self.portal_tools or element.isAbstract():
             global_allow=0
+
+        has_content_icon=''
+        content_icon=element.getTaggedValue('content_icon')
+        if not content_icon:            
+            has_content_icon='#'
+            content_icon = element.getCleanName()+'.gif'
             
-        res=ftiTempl % {'subtypes':repr(tuple(subtypes)),'type_name':element.getCleanName(),
+        res=ftiTempl % {'subtypes':repr(tuple(subtypes)), 
+            'has_content_icon':has_content_icon,'content_icon':content_icon,
             'parentsubtypes':parentsubtypes,'global_allow':global_allow,'immediate_view':immediate_view}
         
         return res
