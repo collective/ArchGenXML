@@ -115,6 +115,7 @@ class XMI1_0:
     SIMPLESTATE="Behavioral_Elements.State_Machines.State"
     PSEUDOSTATE="Behavioral_Elements.State_Machines.Pseudostate"
     PSEUDOSTATE_KIND="Behavioral_Elements.State_Machines.Pseudostate.kind"
+    FINALSTATE="Behavioral_Elements.State_Machines.Finalstate"
     STATEVERTEX_OUTGOING="Behavioral_Elements.State_Machines.StateVertex.outgoing"
     STATEVERTEX_INCOMING="Behavioral_Elements.State_Machines.StateVertex.incoming"
     TRANSITION="Behavioral_Elements.State_Machines.Transition"
@@ -474,6 +475,7 @@ class XMI1_1 (XMI1_0):
     SIMPLESTATE="UML:SimpleState"
     PSEUDOSTATE="UML:Pseudostate"
     PSEUDOSTATE_KIND="kind"
+    FINALSTATE="UML:FinalState"
     STATEVERTEX_OUTGOING="UML:StateVertex.outgoing"
     STATEVERTEX_INCOMING="UML:StateVertex.incoming"
     TRANSITION="UML:Transition"
@@ -1771,6 +1773,11 @@ class XMIStateMachine(XMIStateContainer):
             if getAttributeValue(sel,XMI.PSEUDOSTATE_KIND,None)=='initial' or sel.getAttribute('kind')=='initial':
                 print 'initial state:',state.getCleanName()
                 state.isinitial=1
+            self.addState(state)
+
+        sels=getElementsByTagName(self.domElement,XMI.FINALSTATE,recursive=1)
+        for sel in sels:
+            state=XMIState(sel)
             self.addState(state)
 
     def buildTransitions(self):
