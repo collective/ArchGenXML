@@ -9,7 +9,7 @@ try:
     print 'Customizationpolicy for %(project_name)s installed'
 except ImportError:
     CustomizationPolicy=None
-    print 'no Customizationpolicy %(project_name)s installed'
+    print 'no Customizationpolicy for %(project_name)s installed'
         
 ADD_CONTENT_PERMISSION = '%(add_content_permission)s'
 PROJECTNAME = "%(project_name)s"

@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.28 2003/10/09 04:14:56 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.29 2003/10/11 12:07:35 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -657,7 +657,7 @@ from Products.Archetypes.public import *
 
 def main():
     args = sys.argv[1:]
-    opts, args = getopt.getopt(args, 'f:a:t:o:s:p:P:n',['ape','actions','ape-support'])
+    opts, args = getopt.getopt(args, 'f:a:t:o:s:p:P:n',['ape','actions','ape-support','noclass'])
     prefix = ''
     outfileName = None
     yesno={'yes':1,'y': 1, 'no':0, 'n':0}
