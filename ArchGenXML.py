@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.50 2003/11/05 23:36:21 yenzenz Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.51 2003/11/07 00:32:27 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -86,22 +86,24 @@ class ArchetypesGenerator:
         outfile=StringIO()
         print >> outfile
         for m in element.getMethodDefs():
-            if m.getTaggedValue('action') :
+            if m.getTaggedValue('action') or m.getStereoType() == 'action':
+                action_name=m.getTaggedValue('action').strip() or m.getName()
                 dict={}
-                dict['action']=m.getTaggedValue('action')
+                dict['action']=action_name
                 dict['action_id']=m.getName()
                 dict['action_label']=m.getTaggedValue('action_label',m.getName())
                 dict['permission']=m.getTaggedValue('permission','View')
 
                 print >>outfile,self.ACT_TEMPL % dict
 
-            elif m.getTaggedValue('view') :
+            elif m.getTaggedValue('view') or m.getStereoType() == 'view':
+                view_name=m.getTaggedValue('view').strip() or m.getName()
                 dict={}
-                dict['action']=m.getTaggedValue('view')
+                dict['action']=view_name
                 dict['action_id']=m.getName()
                 dict['action_label']=m.getTaggedValue('action_label',m.getName())
                 dict['permission']=m.getTaggedValue('permission','View')
-                f=makeFile(os.path.join(self.outfileName,'skins',self.projectName,m.getTaggedValue('view')+'.pt'),0)
+                f=makeFile(os.path.join(self.outfileName,'skins',self.projectName,view_name+'.pt'),0)
                 if f:
                     templdir=os.path.join(sys.path[0],'templates')
                     viewTemplate=open(os.path.join(templdir,'action_view.pt')).read()
@@ -235,6 +237,9 @@ class ArchetypesGenerator:
                     %(other)s
                     ),''',
         'computed':'''ComputedField('%(name)s',
+                    %(other)s
+                    ),''',
+        'photo':'''PhotoField('%(name)s',
                     %(other)s
                     ),''',
     }
@@ -422,7 +427,7 @@ class ArchetypesGenerator:
     def generateMethod(self,outfile,m):
             #ignore actions and views here because they are
             #generated separately
-        if m.getTaggedValue('action') or m.getTaggedValue('view'):
+        if m.getTaggedValue('action') or m.getTaggedValue('view') or m.getStereoType() in ['action','view']:
             return
 
         paramstr=''
@@ -719,6 +724,15 @@ from Products.CMFCore.utils import UniqueObject
                 makeDir(os.path.join(self.outfileName,'skins'))
                 makeDir(os.path.join(self.outfileName,'skins',self.projectName))
                 makeDir(os.path.join(self.outfileName,'skins',self.projectName+'_public'))
+
+                of=makeFile(os.path.join(self.outfileName,'skins',self.projectName+'_public','readme.txt'))
+                print >> of,'this skin layer has highest priority, put templates and scripts here that are supposed to overload existing ones'
+                of.close()
+
+                of=makeFile(os.path.join(self.outfileName,'skins',self.projectName,'readme.txt'))
+                print >> of,'this skin layer has low priority, put unique templates and scripts here'
+                of.close()
+                
     ##            makeDir(os.path.join(self.outfileName,'skins',self.projectName,self.projectName+'_forms'))
     ##            makeDir(os.path.join(self.outfileName,'skins',self.projectName,self.projectName+'_views'))
     ##            makeDir(os.path.join(self.outfileName,'skins',self.projectName,self.projectName+'_scripts'))
