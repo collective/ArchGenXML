@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.71 2004/01/17 19:46:10 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.72 2004/01/18 11:41:31 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -85,60 +85,42 @@ class ArchetypesGenerator:
         self.__dict__.update(kwargs)
 
     ACT_TEMPL='''
-           {'action': '%(action)s',
-          'category': 'object',
-          'id': '%(action_id)s',
-          'name': '%(action_label)s',
-          'permissions': ('%(permission)s',)},
+           {'action':      '%(action)s',
+            'category':    '%(action_category)s',
+            'id':          '%(action_id)s',
+            'name':        '%(action_label)s',
+            'permissions': ('%(permission)s',)},
           '''
 
     def generateMethodActions(self,element):
         outfile=StringIO()
         print >> outfile
         for m in element.getMethodDefs():
-            if m.getStereoType() == 'action':
-                action_name=m.getTaggedValue('action').strip() or m.getName()
-                print 'generating action:',action_name
+            if m.getStereoType() in ['action','view','form']:
+                action_name=m.getTaggedValue(m.getStereoType()).strip() or m.getName()
+                print 'generating ' + m.getStereoType()+':',action_name
                 dict={}
                 dict['action']=action_name
-                dict['action_id']=m.getName()
-                dict['action_label']=m.getTaggedValue('action_label',m.getName())
+                dict['action_category']=m.getTaggedValue('category','object')
+                dict['action_id']=m.getTaggedValue('id',m.getName())
+                dict['action_label']=m.getTaggedValue('action_label') or m.getTaggedValue('label',m.getName()) # action_label is deprecated and for backward compability only!
                 dict['permission']=m.getTaggedValue('permission','View')
 
-                print >>outfile,self.ACT_TEMPL % dict
+                print >>outfile, self.ACT_TEMPL % dict
 
-            elif m.getStereoType() == 'view':
-                view_name=m.getTaggedValue('view').strip() or m.getName()
-                print 'generating view:',view_name
-                dict={}
-                dict['action']=view_name
-                dict['action_id']=m.getName()
-                dict['action_label']=m.getTaggedValue('action_label',m.getName())
-                dict['permission']=m.getTaggedValue('permission','View')
-                f=makeFile(os.path.join(self.outfileName,'skins',self.projectName,view_name+'.pt'),0)
+            if m.getStereoType() == 'view':
+                f=makeFile(os.path.join(self.outfileName,'skins',self.projectName,action_name+'.pt'),0)
                 if f:
                     templdir=os.path.join(sys.path[0],'templates')
                     viewTemplate=open(os.path.join(templdir,'action_view.pt')).read()
                     f.write(viewTemplate)
-
-                print >>outfile,self.ACT_TEMPL % dict
 
             elif m.getStereoType() == 'form':
-                view_name=m.getTaggedValue('view').strip() or m.getTaggedValue('form').strip() or m.getName()
-                print 'generating form:',view_name
-                dict={}
-                dict['action']=view_name
-                dict['action_id']=m.getName()
-                dict['action_label']=m.getTaggedValue('action_label',m.getName())
-                dict['permission']=m.getTaggedValue('permission','View')
-                f=makeFile(os.path.join(self.outfileName,'skins',self.projectName,view_name+'.cpt'),0)
+                f=makeFile(os.path.join(self.outfileName,'skins',self.projectName,action_name+'.cpt'),0)
                 if f:
                     templdir=os.path.join(sys.path[0],'templates')
                     viewTemplate=open(os.path.join(templdir,'action_view.pt')).read()
                     f.write(viewTemplate)
-
-
-                print >>outfile,self.ACT_TEMPL % dict
 
         return outfile.getvalue()
 
@@ -148,7 +130,7 @@ class ArchetypesGenerator:
         actTempl='''
     actions=(
         '''
-        if self.generateDefaultActions:
+        if self.generateDefaultActions or element.getTaggedValue('defaultactions'):
             actTempl += '''
            {'action': 'string:${object_url}/portal_form/base_edit',
           'category': 'object',
