@@ -145,7 +145,7 @@ ALLOWED_OPTIONS_MAP = {
     'parse-packages=':                  (1,  0, 'GENERAL',        'parse_packages', 'commalist'),
     'force':                            (0, 'f', 'GENERAL',       'force', 'switchon'),
     'ape':                              (1, 0,   None,            'ape_support', 'switchon'),
-    'ape-support':                      (1, 0,   'STORAGE',       'ape_support', 'switchon'),
+    'ape-support':                      (1, 0,   'STORAGE',       'ape_support', 'yesno'), # used in conf-files, no switch here!
     'actions':                          (1, 'a', None     ,       'generateActions', 'switchon'),
     'no-actions':                       (1, 0,   None,            'generateActions', 'switchoff'),
     'generate-actions':                 (0, 0,   'CLASSES',       'generateActions', 'yesno'),
