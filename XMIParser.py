@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.78 2004/05/17 15:09:39 yenzenz Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.79 2004/05/23 23:28:29 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -610,6 +610,7 @@ class XMIElement:
         self.subTypes=[]
         self.stereoTypes=[]
         self.package=None
+        self.parent=None
 
         if domElement:
             allObjects[domElement.getAttribute('xmi.id')]=self
@@ -619,6 +620,12 @@ class XMIElement:
 
     def getId(self):
         return self.id
+    
+    def getParent(self):
+        return self.parent
+    
+    def setParent(self,parent):
+        self.parent=parent
 
     def parseTaggedValues(self):
         ''' '''
@@ -1073,9 +1080,13 @@ class XMIClass (XMIElement):
 
     def buildChildren(self,domElement):
         for el in domElement.getElementsByTagName(XMI.ATTRIBUTE):
-            self.addAttributeDefs(XMIAttribute(el))
+            att=XMIAttribute(el)
+            att.setParent(self)
+            self.addAttributeDefs(att)
         for el in domElement.getElementsByTagName(XMI.METHOD):
-            self.addMethodDefs(XMIMethod(el))
+            meth=XMIMethod(el)
+            meth.setParent(self)
+            self.addMethodDefs(meth)
 
     def isComplex(self):
         return 1
@@ -1134,6 +1145,8 @@ class XMIClass (XMIElement):
     def getPackage(self):
         return self.package
 
+    getParent=getPackage
+    
     def getRootPackage(self):
         return self.getPackage().getRootPackage()
 

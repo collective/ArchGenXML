@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.21 2004/05/23 14:21:08 yenzenz Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.22 2004/05/23 23:28:29 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -22,7 +22,9 @@ from codesnippets import *
 from utils import makeFile, makeDir,mapName, wrap, indent, getExpression, \
     isTGVTrue, isTGVFalse
 
-has_i18ndude = 1    
+has_i18ndude = 1  
+_marker=[]
+  
 try:
     from i18ndude import catalog as msgcatalog
 except ImportError:
@@ -74,7 +76,7 @@ class ArchetypesGenerator:
     parsed_class_sources={} #dict containing the parsed sources by class names (for preserving method codes)
     parsed_sources=[] #list of containing the parsed sources (for preserving method codes)
     
-    nonstring_tgvs=['widget','vocabulary','required','precision'] #taggedValues that are not strings, e.g. widget or vocabulary
+    nonstring_tgvs=['widget','vocabulary','required','precision','storage'] #taggedValues that are not strings, e.g. widget or vocabulary
     
     msgcatstack = []
     
@@ -102,6 +104,28 @@ class ArchetypesGenerator:
 
     def getSkinPath(self,element):
         return os.path.join(element.getRootPackage().getFilePath(),'skins',element.getRootPackage().getName())
+
+    def getOption(self,option,element,default=_marker):
+        ''' query a certain option for an element including 'aquisition' :
+            search the lement, then the packages upwards, then global options'''
+            
+        if element:
+            o=element
+            
+            #climb up the hierarchy
+            while o:
+                if o.hasTaggedValue(option):
+                    return o.getTaggedValue(option)
+                o=o.getParent()
+            
+        #look in the options
+        if hasattr(self,option):
+            return getattr(self,option)
+
+        if default != _marker:
+            return default
+        else:
+            raise ValueError,"option '%s' is mandatory for element '%s'" % (option,element and element.getName())
     
     def addMsgid(self,msgid,msgstr,element,fieldname):        
         """add a msgid to the catalog if it not exists. if it exists and not 
@@ -357,6 +381,13 @@ class ArchetypesGenerator:
         convtostring=['expression']
         map={}
         tgv=element.getTaggedValues()
+        
+        for k in ['storage']:
+            if k not in tgv.keys():
+                v=self.getOption(k,element,None)
+                if v:
+                    tgv.update({k:v})
+
         for k in tgv.keys():
             if k not in noparams and not k.startswith('widget:'):
                 v=tgv[k]
