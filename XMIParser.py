@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.43 2004/02/28 20:01:52 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.43.2.1 2004/04/01 07:51:05 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -240,7 +240,7 @@ class XMI1_0:
             for el in els:
                 if el.getAttribute('xmi.idref')==o.getId():
                     name=self.getName(st)
-                    print 'Stereotype found:',name
+                    #print 'Stereotype found:',name
                     o.setStereoType(name)
 
     def calcClassAbstract(self,o):
@@ -494,7 +494,6 @@ class XMIElement:
     def parseTaggedValues(self):
         ''' '''
         tgvsm=getElementByTagName(self.domElement,XMI.TAGGED_VALUE_MODEL,default=None,recursive=0)
-
         if tgvsm is None:
             return
 
@@ -506,7 +505,7 @@ class XMIElement:
         except:
             pass
 
-        #print self.taggedValues
+        #print 'taggedValues:',self.__class__,self.getName(),self.getTaggedValues()
 
     def initFromDOM(self,domElement):
         if not domElement:
