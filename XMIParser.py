@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.30 2003/11/25 13:44:13 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.31 2003/11/27 17:49:26 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -339,6 +339,7 @@ class XMI1_2 (XMI1_1):
             if t.hasAttribute('name'):
                 self.tagDefinitions[t.getAttribute('xmi.id')]=t#.getAttribute('name')
 
+        
     def calculateStereoType(self,o):
         #in xmi its weird, because all objects to which a
         #stereotype applies are stored in the stereotype
@@ -664,13 +665,18 @@ class XMIClass (XMIElement):
         ''' every object to which only composite assocs point shouldnt be created independently '''
         aggs=self.getToAssociations(aggtypes=['aggregate'])
         comps=self.getToAssociations(aggtypes=['composite'])
-
+    
         if comps and not aggs:
             res=1
         else:
             res=0
 
-        return res
+        # if one of the parents is dependent, count the class as dependent
+        for p in self.getGenParents():
+            if p.isDependent():
+                res=1
+                
+        return res 
 
     def isAbstract(self):
         return self.isabstract

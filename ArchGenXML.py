@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.58 2003/11/25 13:44:13 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.59 2003/11/27 17:49:26 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -187,6 +187,7 @@ class ArchetypesGenerator:
         immediate_view=element.getTaggedValue('immediate_view') or 'base_view'
 
         global_allow=not element.isDependent()
+        #print 'dependent:',element.isDependent(),element.getName()
         if element.getStereoType() in self.portal_tools or element.isAbstract():
             global_allow=0
 
