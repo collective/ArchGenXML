@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.69 2004/04/30 18:54:08 yenzenz Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.70 2004/05/01 20:07:47 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -750,7 +750,7 @@ class XMIElement:
         pass
 
     def getMethodDefs(self,recursive=0):
-        res=self.methodDefs
+        res=[m for m in self.methodDefs]
         
         if recursive:
             parents=self.getGenParents(recursive=1)
