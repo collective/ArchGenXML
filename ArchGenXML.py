@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.146 2004/04/24 15:36:04 xiru Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.147 2004/04/24 20:23:21 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -1016,7 +1016,7 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchGenXML.py,v 1.146 2004/04/24 15:36:04 xiru Exp $
+RCS-ID $Id: ArchGenXML.py,v 1.147 2004/04/24 20:23:21 yenzenz Exp $
 \"""
 # Copyright: (c) %(year)s by %(copyright)s
 #
@@ -1569,7 +1569,7 @@ def read_project_configfile(filename,settings):
     for key in ALLOWED_OPTIONS_MAP.keys():
         fkey = key[len(key)-1] == '=' and key[:len(key)-1] or key
         if cp.has_option(ALLOWED_OPTIONS_MAP[key][2], fkey):            
-            settings[ALLOWED_OPTIONS_MAP[key][3]]=cp.get(ALLOWED_OPTIONS_MAP[key][2], key)                
+            settings[ALLOWED_OPTIONS_MAP[key][3]]=cp.get(ALLOWED_OPTIONS_MAP[key][2], fkey)                
 
 ##    # print a ugly sample cfg
 ##    y=['['+ALLOWED_OPTIONS_MAP[key][2]+']\n'+(key[len(key)-1] == '=' and key[:len(key)-1] or key) for key in ALLOWED_OPTIONS_MAP.keys() if ALLOWED_OPTIONS_MAP[key][2]]
