@@ -446,7 +446,7 @@ class XMIAssocEnd (XMIElement):
         pid=XMI.getAssocEndParticipantId(el)
         self.obj=allObjects[pid]
         self.mult=XMI.getMultiplicity(el)
-        #print 'mult;',self.mult,self.getName()
+        #print 'mult;',self.mult,self.getName(),self.id
         
 class XMIAssociation (XMIElement):
     fromEnd=None
@@ -488,7 +488,7 @@ def buildHierarchy(doc):
     #try to get the name out of the model
     xmis=doc.getElementsByTagName(XMI.MODEL)
     if len(xmis)==1:
-        print 'model name:',XMI.getName(xmis[0])
+        #print 'model name:',XMI.getName(xmis[0])
         res.setName(XMI.getName(xmis[0]))
 
     classes=doc.getElementsByTagName(XMI.CLASS)
