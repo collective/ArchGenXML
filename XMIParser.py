@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.50 2004/04/03 15:22:47 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.51 2004/04/03 16:09:34 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -841,7 +841,7 @@ class XMIPackage(XMIElement):
     def isRoot(self):
         return self.isroot
 
-    def getPath(self,includeRoot=1,absolute=0):
+    def getPath(self,includeRoot=1,absolute=0,parent=None):
         res=[]
         o=self
         while 1:
@@ -851,6 +851,8 @@ class XMIPackage(XMIElement):
             if absolute and o.isRoot():
                 break
             if not o.getParent():
+                break
+            if o==parent:
                 break
 
             if not includeRoot:
@@ -875,7 +877,25 @@ class XMIPackage(XMIElement):
             o=o.getParent()
             
         return o
+
+    def isSubPackageOf(self,parent):
+        o=self
+        
+        while o:
+            if o==parent:
+                return 1
+            
+            o=o.getParent()
+        
+        return 0
     
+    def getQualifiedName(self,ref):
+        ''' returns the qualified name of tha package, depending of the 
+            reference package 'ref' it generates an absolute path or 
+            a relative path if the pack(self) is a subpack of 'ref' '''
+            
+        path=self.getPath(parent=ref)
+        return path
 
 class XMIModel(XMIPackage):
     isroot=1
@@ -1040,6 +1060,24 @@ class XMIClass (XMIElement):
         ''' generalization parents '''
         return self.realizationParents
 
+    def getQualifiedModuleName(self,ref):
+        ''' returns the qualified name of the class, depending of the 
+            reference package 'ref' it generates an absolute path or 
+            a relative path if the pack(self) is a subpack of 'ref' 
+            if it belongs to a different root package it even needs a 'Products.'
+            '''
+            
+        package=self.getPackage()
+        
+        if package.isSubPackageOf(ref):
+            path=package.getPath(includeRoot=0,parent=ref)
+        else:
+            path=package.getPath(includeRoot=1,parent=ref)
+            
+        path.append(self)
+        
+
+        return '.'.join([p.getName() for p in path if p])
 
 class XMIInterface(XMIClass):
     isinterface=1
