@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.97 2004/08/21 11:55:50 zworkb Exp $
+# RCS-ID:      $Id$
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -1777,7 +1777,6 @@ class XMIGuard(XMIElement):
         return self.expression
 
 
-
 class XMIState(XMIElement):
     def __init__(self,*args,**kwargs):
         self.incomingTransitions=[]
@@ -1818,6 +1817,52 @@ class XMIState(XMIElement):
 
     def getOutgoingTransitions(self):
         return self.outgoingTransitions
+
+    def getPermissionsDefinitions(self):
+
+        permissions_mapping = {'Access' : 'Access contents information',
+                               'View' : 'View',
+                               'Modify' : 'Modify portal content'}
+        pm = permissions_mapping
+
+        tv = self.getTaggedValues()
+
+        ret = []
+        for k, v in tv.items():
+            permission = pm.get(k, k)
+            roles =  [str(r.strip()) for r in v.split(',') if r.strip()]
+            ret.append({'permission' : permission,
+                        'roles' : roles})
+
+        # If View was defined but Access was not defined, the Access permission should
+        # be generated with the same rights defined for View
+
+        has_access = 0
+        has_view = 0
+        v = {}
+        for r in ret:
+            if r.get('permission', None) == pm['Access']:
+                has_access = 1
+            if r.get('permission', None) == pm['View']:
+                v = r
+                has_view = 1
+        if has_view and not has_access:
+            ret.append({'permission' : pm['Access'],
+                        'roles' : v['roles']})
+
+        # If not permissions were defined, uses the default values
+
+        for p in pm.values():
+            has_permission = 0
+            for r in ret:
+                if r.get('permission', None) == p:
+                    has_permission = 1
+                    break
+            if not has_permission:
+                ret.append({'permission' : p,
+                            'roles' : ['Owner', 'Manager']})
+
+        return ret
 
 
 
