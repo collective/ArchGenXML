@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.43 2003/10/29 23:07:59 yenzenz Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.44 2003/10/29 23:34:56 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -556,10 +556,26 @@ from Products.CMFCore.utils import UniqueObject
         , '%(configlet_icon)s' # icon in control_panel
         , '%(configlet_description)s'
         , None
-        )'''
+        )
+
+    # dont allow tool listed as content in navtree
+    try:
+        idx=self.portal_properties.navtree_properties.metaTypesNotToList.index('%(tool_name)s')
+    except ValueError: 
+        self.portal_properties.navtree_properties.metaTypesNotToList.append('%(tool_name)s')
+    except:
+        raise'''
 
     TEMPL_CONFIGLET_UNINSTALL='''
-    portal_control_panel.unregisterConfiglet('%(tool_name)s')'''
+    portal_control_panel.unregisterConfiglet('%(tool_name)s')
+
+    # remove prodcut from navtree properties
+    try:
+        self.portal_properties.navtree_properties.metaTypesNotToList.remove('%(tool_name)s')
+    except ValueError:        
+        pass
+    except:
+        raise'''
     
 
 
@@ -615,6 +631,8 @@ from Products.CMFCore.utils import UniqueObject
             if not configlet_icon:
                 configlet_icon='plone_icon'
 
+            configlet_view='/'+c.getTaggedValue('configlet_view')
+
             configlet_descr=c.getTaggedValue('configlet_description')
             if not configlet_descr:
                 configlet_descr='ArchGenXML generated Configlet "'+configlet_title+'" in Tool "'+c.getName()+'".'
@@ -622,7 +640,7 @@ from Products.CMFCore.utils import UniqueObject
             register_configlets+=self.TEMPL_CONFIGLET_INSTALL % {
                 'tool_name':c.getName(),
                 'configlet_title':configlet_title,
-                'configlet_url':'portal_'+c.getName().lower(),
+                'configlet_url':'portal_'+c.getName().lower()+configlet_view,
                 'configlet_condition':configlet_condition,
                 'configlet_section':configlet_section,
                 'configlet_icon':configlet_icon,
