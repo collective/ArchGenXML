@@ -1,5 +1,7 @@
 from Products.CMFPlone.CustomizationPolicy import DefaultCustomizationPolicy
 from Products.CMFPlone.Portal import addPolicy
+from config import PROJECTNAME
+from zLOG import LOG, INFO
 
 # next line can be replaced by the out-commented line if a config.py exists
 DEPENDENCIES = []
@@ -24,7 +26,7 @@ class <dtml-var "package.getProductName()">CustomizationPolicy(DefaultCustomizat
             pass
 
         # call all methods starting with 'customize'
-        LOG(DISPLAYNAME, INFO, "Customization Policy applied:")
+        LOG(PROJECTNAME, INFO, "Customization Policy applied:")
         for method in dir(self):
             if method.startswith('customize') and method!='customize':
                 print "Processing customization '%s' ..." % method
