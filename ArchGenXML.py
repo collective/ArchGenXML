@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.147 2004/04/24 20:23:21 yenzenz Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.148 2004/04/24 20:38:36 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -1016,9 +1016,9 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchGenXML.py,v 1.147 2004/04/24 20:23:21 yenzenz Exp $
+RCS-ID $Id: ArchGenXML.py,v 1.148 2004/04/24 20:38:36 yenzenz Exp $
 \"""
-# Copyright: (c) %(year)s by %(copyright)s
+# %(copyright)s
 #
 # Generated: %(date)s 
 # Generator: ArchGenXML Version %(version)s http://sf.net/projects/archetypes/
@@ -1046,6 +1046,10 @@ You should have received a copy of the GNU General Public License along with thi
             (element.getDocumentation(striphtml=self.striphtml,wrap=79) or 'unknown').split('\n') )
         
         author= element.getTaggedValue('author',  self.author) or 'unknown'
+
+        copyright = "Copyright (c) %s by %s" % \
+            (str(time.localtime()[0]),
+             element.getTaggedValue('copyright', self.copyright) or author)
         
         licence = ('\n# ').join( \
             wrap((element.getTaggedValue('licence', self.licence) or self.GPLTEXT),77).split('\n') )
@@ -1056,8 +1060,7 @@ You should have received a copy of the GNU General Public License along with thi
                           'email':    element.getTaggedValue('email', self.email) or 'unknown',
                           'version':  self.version,
                           'date':     time.ctime(),
-                          'year':     str(time.localtime()[0]),
-                          'copyright':element.getTaggedValue('copyright', self.copyright) or author,
+                          'copyright':'\n# '.join(wrap(copyright,77).split('\n')),
                           'licence':  licence,
         }        
         outfile.write(self.MODULE_INFO_HEADER % fileheaderinfo)
