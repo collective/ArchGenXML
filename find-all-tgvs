@@ -25,5 +25,6 @@ prevItem = ''
 
 for item in items:
     if item != prevItem:
-        print item
+        print item, "--", "Description"
+        print
     prevItem = item

@@ -1724,7 +1724,7 @@ class XMIStateMachine(XMIStateContainer):
         return [tran[tname] for tname in tran]
 
     def getTransitionNames(self, no_duplicates = None):
-        return [t.getCleanName() for t in self.getTransitions(no_duplicates = no_duplicates) if t.getCleanName()]
+        return [t.getName() for t in self.getTransitions(no_duplicates = no_duplicates) if t.getName()]
 
     def buildStates(self):
         sels=getElementsByTagName(self.domElement,XMI.SIMPLESTATE,recursive=1)
@@ -1838,7 +1838,7 @@ class XMIStateTransition(XMIElement):
 
     def getTargetStateName(self):
         if self.getTargetState():
-            return self.getTargetState().getCleanName()
+            return self.getTargetState().getName()
         else:
             return None
 

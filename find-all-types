@@ -17,9 +17,18 @@ for type in keys:
    
     widget = widgetMap.get (type, '')
     
-    print "%s --> %s (%s)" % (type, typeMap[type]['field'], widget)
-
-    for (prop, value) in typeMap[type]['map'].items ():
-        print '    ', prop, ':', value
+    print "%s (%s) -- " % (type, typeMap[type]['field'])
+    
+    if widget:
+        print
+        print "  o Uses widget:", widget
+        
+    if typeMap[type]['map']:
+        print
+        print "  o Sets attributes:"
+    
+        for (prop, value) in typeMap[type]['map'].items ():
+            print
+            print "    o ", prop, '=', value
 
     print

@@ -38,7 +38,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
     # generation of worklists is not defined yet...
     ### XXX :-(
 
-    for s in <dtml-var "repr(statemachine.getCleanStateNames(no_duplicates = 1))">:
+    for s in <dtml-var "repr(statemachine.getStateNames(no_duplicates = 1))">:
         wf.states.addState(s)
 
     for t in <dtml-var "repr(statemachine.getTransitionNames(no_duplicates = 1))">:
@@ -52,21 +52,21 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
 
     ## Initial State
 
-    wf.states.setInitialState('<dtml-var "statemachine.getInitialState().getCleanName()">')
+    wf.states.setInitialState('<dtml-var "statemachine.getInitialState().getName()">')
 
     ## States initialization
 
-<dtml-in "[s for s in statemachine.getStates(no_duplicates = 1) if s.getCleanName()]">
-    sdef = wf.states['<dtml-var "_['sequence-item'].getCleanName()">']
+<dtml-in "[s for s in statemachine.getStates(no_duplicates = 1) if s.getName()]">
+    sdef = wf.states['<dtml-var "_['sequence-item'].getName()">']
     sdef.setProperties(title="""<dtml-var "_['sequence-item'].getDocumentation(striphtml=generator.atgenerator.striphtml) or _['sequence-item'].getName()">""",
-                       transitions=<dtml-var "repr([t.getCleanName() for t in _['sequence-item'].getOutgoingTransitions()])">)
+                       transitions=<dtml-var "repr([t.getName() for t in _['sequence-item'].getOutgoingTransitions()])">)
 <dtml-in "_['sequence-item'].getPermissionsDefinitions()">
     sdef.setPermission('<dtml-var "_['sequence-item'].get('permission')">', 0, <dtml-var "_['sequence-item'].get('roles')">)
 </dtml-in>
 
 </dtml-in>
     ## Transitions initialization
-<dtml-in "[t for t in statemachine.getTransitions(no_duplicates = 1) if t.getCleanName()]">
+<dtml-in "[t for t in statemachine.getTransitions(no_duplicates = 1) if t.getName()]">
     <dtml-let tran="_['sequence-item']">
     <dtml-if "tran.getAction()">
 
@@ -78,7 +78,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
                 wf_scriptname))
     </dtml-if>
 
-    tdef = wf.transitions['<dtml-var "tran.getCleanName()">']
+    tdef = wf.transitions['<dtml-var "tran.getName()">']
     tdef.setProperties(title="""<dtml-var "tran.getTaggedValue('label') or tran.getName()">""",
                        new_state_id="""<dtml-var "tran.getTargetStateName()">""",
                        trigger_type=1,
