@@ -12,14 +12,14 @@
 """
 Programmatically creates a workflow type
 """
-__version__ = "$Revision: 1.4 $"[11:-2]
+__version__ = "$Revision: 1.5 $"[11:-2]
 
 from Products.CMFCore.WorkflowTool import addWorkflowFactory
 
 from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
+from Products.ExternalMethod.ExternalMethod import ExternalMethod
 
-
-def setup<dtml-var "statemachine.getCleanName()">(wf):
+def setup<dtml-var "statemachine.getCleanName()">(self, wf):
     "..."
     productname='<dtml-var "package.getCleanName()">'
     wf.setProperties(title='<dtml-var "statemachine.getCleanName()">')
@@ -62,7 +62,7 @@ def setup<dtml-var "statemachine.getCleanName()">(wf):
     ##creation of workflow scripts
     wf_scriptname='<dtml-var "tran.getAction().getCleanName()">'
     if not wf_scriptname in wf.scripts.objectIds():
-        wf.scripts.manage_addProduct['ExternalMethod'].manage_addExternalMethod(wf_scriptname, wf_scriptname, productname+'.<dtml-var "statemachine.getCleanName()">', ws)
+        wf.scripts._setObject(wf_scriptname,ExternalMethod(wf_scriptname, wf_scriptname, productname+'.<dtml-var "statemachine.getCleanName()">','<dtml-var "tran.getAction().getCleanName()">'))
     </dtml-if>
 
 
@@ -140,10 +140,10 @@ def setup<dtml-var "statemachine.getCleanName()">(wf):
                        props={'guard_permissions': 'Review portal content', 'var_match_review_state': 'pending'})
 
 
-def create<dtml-var "statemachine.getCleanName()">(id):
+def create<dtml-var "statemachine.getCleanName()">(self, id):
     "..."
     ob = DCWorkflowDefinition(id)
-    setup<dtml-var "statemachine.getCleanName()">(ob)
+    setup<dtml-var "statemachine.getCleanName()">(self, ob)
     return ob
 
 addWorkflowFactory(create<dtml-var "statemachine.getCleanName()">,
