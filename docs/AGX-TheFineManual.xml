@@ -439,7 +439,11 @@
       diagram. Choose the tool for class creation and add a class to the
       diagram. Give it a name <classname>MyFirstAGXContent</classname> and add
       an attribute <classname>MyTextField</classname> and choose type text.
-      See XMI in Example 4.1.a (file shipped with the release package).</para>
+      See XMI in Example 4.1.a. For all examples files are shipped with the
+      release package, in this case you'll find it in directory
+      <filename>ArchGenXML/samples/AGX-TheFineManual/example-4_1/4_1_a.xmi</filename>,
+      for other samples modify the path according to the name of the
+      example.</para>
 
       <figure>
         <title>Example 4.1.a</title>
@@ -455,13 +459,31 @@
     <section>
       <title>Generating the product</title>
 
-      <para></para>
+      <para>After saving the new created UML as XMI and call it
+      <filename>MyFirstExample.xmi</filename> (or an XMI-container format like
+      .zargo or .zuml), go to your command line and write: </para>
+
+      <para><command>ArchGenXML.py -o MyFirstAGXContent
+      MyFirstAGXExample.xmi</command></para>
+
+      <para>Now code generation is started. After the run a new folder
+      <filename>MyFirstAGXContent</filename> is created in your file
+      system.</para>
     </section>
 
     <section>
       <title>Installing and using the generated product</title>
 
-      <para></para>
+      <para>Move the whole folder <filename>MyFirstAGXContent</filename> to
+      your Plone/Zopes <filename>Products</filename> folder. Restart your
+      Zope, open your Plone in a browser and log in as manager. Choose
+      <guilabel>Plone Setup</guilabel> on your personal bar and choose
+      <guilabel>Add/Remove Products</guilabel>. Your Product
+      <literal>MyFirstAGXContent</literal> should now appear in the list of
+      <literal>Products available for install</literal>. Choose it and click
+      <guibutton>install</guibutton>. Go to your <guilabel>my
+      folder</guilabel>. In the list of addable items you'll find the new
+      product as an addable content type. Choose it and use it.</para>
     </section>
   </chapter>
 
@@ -595,6 +617,18 @@
         <title>Packages</title>
 
         <para></para>
+
+        <section>
+          <title>Stereotypes</title>
+
+          <para></para>
+        </section>
+
+        <section>
+          <title>Tagged Values</title>
+
+          <para></para>
+        </section>
       </section>
 
       <section>
@@ -619,6 +653,18 @@
         <title>Attributes (Fields)</title>
 
         <para></para>
+
+        <section>
+          <title>Stereotypes</title>
+
+          <para></para>
+        </section>
+
+        <section>
+          <title>TaggedValues</title>
+
+          <para></para>
+        </section>
       </section>
     </section>
   </chapter>
