@@ -147,6 +147,7 @@ ALLOWED_OPTIONS_MAP = {
     'project-configuration=':           (1, 0,   None,            None,'string'),                
     'storage=':                         (1, 0,   'GENERAL',       'storage', 'string'),
     'sql-storage-support':              (1, 0,   'CLASSES',       'sql_storage_support', 'switchon'),
+    'default-field-generation':         (1, 0,   'CLASSES',       'default_field_generation', 'switchon'),
 }
 
 def set_setting(okey, value, settings):

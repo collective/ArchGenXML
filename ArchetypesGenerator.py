@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.28 2004/06/18 11:23:17 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.29 2004/06/18 14:54:52 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -1396,14 +1396,14 @@ class ArchetypesGenerator:
         if not self.noclass:
             if suff.lower() in ('.xmi','.xml'):
                 print 'opening xmi'
-                self.root=root=XMIParser.parse(self.xschemaFileName,packages=self.packages)
+                self.root=root=XMIParser.parse(self.xschemaFileName,packages=self.packages,generator=self)
             elif suff.lower() in ('.zargo','.zuml'):
                 print 'opening zargo'
                 zf=ZipFile(self.xschemaFileName)
                 xmis=[n for n in zf.namelist() if os.path.splitext(n)[1].lower()=='.xmi']
                 assert(len(xmis)==1)
                 buf=zf.read(xmis[0])
-                self.root=root=XMIParser.parse(xschema=buf,packages=self.packages)
+                self.root=root=XMIParser.parse(xschema=buf,packages=self.packages, generator=self)
             elif suff.lower() == '.xsd':
                 self.root=root=XSDParser.parse(self.xschemaFileName)
             else:

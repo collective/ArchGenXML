@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.81 2004/06/18 12:48:23 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.82 2004/06/18 14:54:52 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -349,7 +349,11 @@ class XMI1_0:
 
         return model
 
-
+    def getGenerator(self):
+        return getattr(self,'generator',None)
+    
+    def getGenerationOption(self,opt):
+        return getattr(self.getGenerator(),opt,None)
 
 class XMI1_1 (XMI1_0):
     # XMI version specific stuff goes there
@@ -651,6 +655,9 @@ class XMIElement:
 
         #print 'taggedValues:',self.__class__,self.getName(),self.getTaggedValues()
 
+    def setTaggedValue(self,k,v):
+        self.taggedValues[k]=v
+        
     def initFromDOM(self,domElement):
         if not domElement:
             domElement=self.domElement
@@ -744,7 +751,12 @@ class XMIElement:
     def getMaxOccurs(self): return self.maxOccurs
     def getType(self): return self.type
     def isComplex(self): return self.complex
-    def addAttributeDefs(self, attrs): self.attributeDefs.append(attrs)
+    def addAttributeDef(self, attrs,pos=None): 
+        if pos is None:
+            self.attributeDefs.append(attrs)
+        else:
+            self.attributeDefs.insert(0,attrs)
+
     def getAttributeDefs(self): return self.attributeDefs
 
     def getRef(self):
@@ -1055,7 +1067,13 @@ class XMIClass (XMIElement):
 
     def addGenParent(self,c):
         self.genParents.append(c)
+        
+    def getAttributeNames(self):
+        return [a.getName() for a in self.getAttributeDefs()]
 
+    def hasAttribute(self,a):
+        return a in self.getAttributeNames()
+    
     def getGenChildren(self,recursive=0):
         ''' generalization children '''
 
@@ -1082,14 +1100,38 @@ class XMIClass (XMIElement):
         return res
 
     def buildChildren(self,domElement):
+        
         for el in domElement.getElementsByTagName(XMI.ATTRIBUTE):
             att=XMIAttribute(el)
             att.setParent(self)
-            self.addAttributeDefs(att)
+            self.addAttributeDef(att)
         for el in domElement.getElementsByTagName(XMI.METHOD):
             meth=XMIMethod(el)
             meth.setParent(self)
             self.addMethodDefs(meth)
+
+        if XMI.getGenerationOption('default_field_generation'):
+            if not self.hasAttribute('title'):
+                title=XMIAttribute()
+                title.id='title'
+                title.name='title'
+                title.setTaggedValue('widget:label_msgid',"label_title")
+                title.setTaggedValue('widget:i18n_domain',"plone")
+                title.setTaggedValue('widget:description_msgid',"help_title")
+                title.setTaggedValue('searchable','python:1')
+                title.setParent(self)
+                self.addAttributeDef(title,0)
+    
+            if not self.hasAttribute('id'):
+                id=XMIAttribute()
+                id.id='id'
+                id.name='id'
+                id.setParent(self)
+                id.setTaggedValue('widget:label_msgid',"label_short_name")
+                id.setTaggedValue('widget:i18n_domain',"plone")
+                id.setTaggedValue('widget:description_msgid',"help_short_name")
+                
+                self.addAttributeDef(id,0)
 
     def isComplex(self):
         return 1
@@ -1451,7 +1493,7 @@ def buildHierarchy(doc,packagenames):
     return res
 
 
-def parse(xschemaFileName=None,xschema=None,packages=[]):
+def parse(xschemaFileName=None,xschema=None,packages=[],generator=None):
     """ """
     global XMI
 
@@ -1474,6 +1516,8 @@ def parse(xschemaFileName=None,xschema=None,packages=[]):
     except:
         print 'no version info found, taking XMI1_0'
         pass
+    
+    XMI.generator=generator
 
     root=buildHierarchy(doc,packages)
 
