@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.57 2004/04/04 16:21:54 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.58 2004/04/05 00:46:19 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -244,7 +244,11 @@ class XMI1_0:
                     continue
                 
                 #child=objects[getElementByTagName(child0,self.REALIZATION_ELEMENT).getAttribute('xmi.idref')]
-                child=objects[getSubElement(child0).getAttribute('xmi.idref')]
+                child_xmid=getSubElement(child0).getAttribute('xmi.idref')
+                try:
+                    child=objects[child_xmid]
+                except KeyError:
+                    print 'Warning: Child element for realization relation not found, parent name + child xmi.id given:',par.getName(),child_xmid
 
                 par.addRealizationChild(child)
                 child.addRealizationParent(par)
