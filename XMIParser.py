@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.36 2004/01/17 18:09:04 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.36.2.1 2004/01/17 18:29:50 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -107,6 +107,10 @@ class XMI1_0:
         classifier=getElementByTagName(assocend,self.CLASSIFIER,None)
         if not classifier:
             classifier=getElementByTagName(assocend,self.CLASS,None)
+            
+        if not classifier:
+            #print 'no classifier for assocEnd:',el.getAttribute('xmi.id')
+            return None
 		
         return classifier.getAttribute('xmi.idref')
 
@@ -305,6 +309,21 @@ class XMI1_1 (XMI1_0):
     MODELELEMENT="UML:ModelElement"
     STEREOTYPE="UML:Stereotype"
     ISABSTRACT="UML:GeneralizableElement.isAbstract"
+    
+    #State Machine
+    
+    STATEMACHINE="UML:StateMachine"
+    STATEMACHINE_CONTEXT="UML:StateMachine.context"
+    STATEMACHINE_TOP="UML:StateMachine.top"
+    COMPOSITESTATE="UML:CompositeState"
+    COMPOSITESTATE_SUBVERTEX="UML:CompositeState.subvertex"
+    SIMPLESTATE="UML:SimpleState"
+    SUBVERTEX_OUTGOING="UML:StateVertex.outgoing"
+    SUBVERTEX_INCOMING="UML:StateVertex.incoming"
+    TRANSITION="UML:Transition"
+    STATEMACHINE_TRANSITIONS="UML:StateMachine.transitions"
+    TRANSITON_TARGET="UML:Transition.target"
+    TRANSITION_SOURCE="UML:Transition.source"
 
     def getName(self,domElement):
         return domElement.getAttribute('name')
@@ -606,6 +625,25 @@ class XMIElement:
 
     def getStereoType(self):
         return self.stereoType
+    
+class XMIProject(XMIElement):
+    
+    def __init__(self):
+        XMIElement.__init__(self)
+        self.stateMachines=[]
+        self.stateMachinesDict={}
+        
+    def getClasses(self):
+        return self.getChildren()
+    
+    def getStateMachines(XMIElement):
+        return self.stateMachines
+    
+    def addStateMachine(sm):
+        self.stateMachines.append(sm)
+        self.stateMachinesDict[sm.getId()]=sm
+        
+    
 
 class XMIClass (XMIElement):
 
@@ -618,6 +656,9 @@ class XMIClass (XMIElement):
         self.internalOnly=0
         self.type=self.name
         #self.isabstract=0
+        
+    def getAttributes(self):
+        return self.getChildren()
 
     def initFromDOM(self,domElement):
         XMIElement.initFromDOM(self,domElement)
@@ -887,7 +928,7 @@ def buildHierarchy(doc,packagenames):
 
     buildDataTypes(doc)
 
-    res=XMIElement()
+    res=XMIProject()
 
     #try to get the name out of the model
     xmis=doc.getElementsByTagName(XMI.MODEL)

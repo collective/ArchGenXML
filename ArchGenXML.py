@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.69 2004/01/17 18:09:04 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.69.2.1 2004/01/17 18:29:50 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -445,7 +445,7 @@ class ArchetypesGenerator:
             mappedName = mapName(name)
 
             print >> outfile, self.getFieldStringFromAttribute(attrDef)
-        for child in element.getChildren():
+        for child in element.getAttributes():
             name = child.getCleanName()
             if name in self.reservedAtts:
                 continue
@@ -845,7 +845,7 @@ from Products.CMFCore.utils import UniqueObject
 
         of=makeFile(os.path.join(target,'apeconf.xml'))
         print >> of,self.TEMPL_APECONFIG_BEGIN
-        for el in self.root.getChildren():
+        for el in self.root.getClasses():
             if el.isInternal() or el.getStereoType() in self.stub_stereotypes:
                 continue
 
@@ -883,7 +883,7 @@ from Products.CMFCore.utils import UniqueObject
             generatedModules=self.generatedModules=[]
             self.generatedClasses=[]
 
-            for element in root.getChildren():
+            for element in root.getClasses():
                 #skip stub and internal classes
                 if element.isInternal() or element.getStereoType() in self.stub_stereotypes:
                     continue

@@ -1,4 +1,11 @@
 from Globals import package_home
+try:
+    import CustomizationPolicy
+    print 'Customizationpolicy for %(project_name)s installed'
+except ImportError:
+    CustomizationPolicy=None
+    print 'no Customizationpolicy for %(project_name)s installed'
+
 from Products.CMFCore import utils, CMFCorePermissions, DirectoryView
 from Products.Archetypes.public import *
 from Products.Archetypes import listTypes
@@ -6,12 +13,6 @@ from Products.Archetypes.utils import capitalize
 
 import os, os.path
 
-try:
-    import CustomizationPolicy
-    print 'Customizationpolicy for %(project_name)s installed'
-except ImportError:
-    CustomizationPolicy=None
-    print 'no Customizationpolicy for %(project_name)s installed'
 
 ADD_CONTENT_PERMISSION = '%(add_content_permission)s'
 PROJECTNAME = "%(project_name)s"
@@ -54,5 +55,5 @@ def initialize(context):
                                )
             , permission = perm
             )
-    if CustomizationPolicy:
+    if CustomizationPolicy and hasattr(CustomizationPolicy,'register'):
         CustomizationPolicy.register(context)
