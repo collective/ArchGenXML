@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.58 2004/04/05 00:46:19 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.59 2004/04/10 02:52:59 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -238,13 +238,13 @@ class XMI1_0:
                 par0=getElementByTagName   (ab,self.DEP_SUPPLIER,recursive=1)
                 child0=getElementByTagName (ab,self.DEP_CLIENT,recursive=1)
                 try:
-                    par=objects[getSubElement(par0).getAttribute('xmi.idref')]
+                    par=objects[getSubElement(par0,ignoremult=1).getAttribute('xmi.idref')]
                 except KeyError:
                     print 'Warning: Parent Object not found for realization relation:%s, parent %s' % (XMI.getId(ab),XMI.getName(par0))
                     continue
                 
                 #child=objects[getElementByTagName(child0,self.REALIZATION_ELEMENT).getAttribute('xmi.idref')]
-                child_xmid=getSubElement(child0).getAttribute('xmi.idref')
+                child_xmid=getSubElement(child0,ignoremult=1).getAttribute('xmi.idref')
                 try:
                     child=objects[child_xmid]
                 except KeyError:
@@ -495,9 +495,9 @@ allObjects={}
 def getSubElements(domElement):
     return [e for e in domElement.childNodes if e.nodeType==e.ELEMENT_NODE]
 
-def getSubElement(domElement,default=_marker):
+def getSubElement(domElement,default=_marker,ignoremult=0):
     els=getSubElements(domElement)
-    if len(els) > 1:
+    if len(els) > 1 and not ignoremult:
         raise TypeError,'more than 1 element found'
 
     try:
