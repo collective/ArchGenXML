@@ -197,6 +197,7 @@ class XMIElement:
         self.type = 'NoneType'
         self.attributeDefs = []
         self.methodDefs=[]
+        self.id=''
 
         self.subTypes=[]
 
@@ -206,12 +207,15 @@ class XMIElement:
         self.initFromDOM(domElement)
         self.buildChildren(domElement)
 
-    def initFromDOM(self,domElement=None):
+    def initFromDOM(self,domElement):
         if not domElement:
             domElement=self.domElement
-            
+        
         if domElement:
+            self.id=domElement.getAttribute('xmi.id')
             self.name=XMI.getName(domElement)
+            #print 'name:',self.name,self.id
+
             mult=getElementByTagName(domElement,XMI.MULTIPLICITY,None)
             if mult:
                 maxNodes=mult.getElementsByTagName(XMI.MULT_MAX)
@@ -230,7 +234,13 @@ class XMIElement:
         self.subTypes.append(st)
 
     def getChildren(self): return self.children
-    def getName(self): return str(self.name)
+    def getName(self): 
+        name=str(self.name)
+        if self.name:
+            return name
+        else:
+            return self.id
+        
     def getCleanName(self): return self.cleanName
     def getUnmappedCleanName(self): return self.unmappedCleanName
     def setName(self, name): self.name = name
@@ -423,6 +433,7 @@ class XMIAssociation (XMIElement):
 
     def initFromDOM(self,domElement=None):
         XMIElement.initFromDOM(self,domElement)
+        #print 'Association:',domElement,self.id
         ends=self.domElement.getElementsByTagName(XMI.ASSOCEND)
         assert len(ends)==2
         #if len(ends) != 2:

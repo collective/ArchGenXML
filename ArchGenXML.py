@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.5 2003/06/16 01:55:08 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.6 2003/06/16 10:46:39 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -143,7 +143,8 @@ class ArchetypesGenerator:
                     ),''',
         'reference':'''ReferenceField('%(name)s',allowed_types=%(allowed_types)s,
                     searchable=1,
-                    multiValued=%(multiValued)d
+                    multiValued=%(multiValued)d,
+                    relationship='%(relationship)s',
                     ),''',
 
     }
@@ -210,6 +211,7 @@ class ArchetypesGenerator:
         templ=self.typeMap['reference']
         obj=rel.toEnd.obj
         name=rel.fromEnd.getName()
+        relname=rel.getName()
         
         if int(rel.fromEnd.mult[1]) == -1:
             multiValued=1
@@ -217,7 +219,10 @@ class ArchetypesGenerator:
         if name == 'None':
             name=obj.getName()+'_ref'
             
-        return templ % {'name':name,'type':obj.getType(),'allowed_types':repr((obj.getName(),)),'multiValued' : multiValued,}
+        return templ % {'name':name,'type':obj.getType(),
+                'allowed_types':repr((obj.getName(),)),
+                'multiValued' : multiValued,
+                'relationship':relname}
 
     # Generate get/set/add member functions.
     def generateArcheSchema(self, outfile, element):
