@@ -69,3 +69,9 @@ def getExpression(s):
             return s[7:]
         else:
             return "'''%s'''" % s
+        
+def isTGVTrue(tgv):
+    if type(tgv) in (type(''),type(u'')):
+        tgv=tgv.lower()
+        
+    return tgv in (1,'1','true')
