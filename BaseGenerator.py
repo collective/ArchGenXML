@@ -103,7 +103,7 @@ class BaseGenerator:
     def generateProtectedSection(self,outfile,element,section,indent=0):
         parsed = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.getName(),None)
         print >> outfile, self.getProtectedSection(parsed,section,indent)
-        
+
     def generateDependentImports(self,element):
         outfile=StringIO()
         package=element.getPackage()
@@ -202,7 +202,7 @@ class BaseGenerator:
 
             print >> outfile, CLASS_IMPLEMENTS_BASE % \
                     {'baseclass_interfaces' : parentInterfacesConcatenation,}
-                    
+
         return outfile.getvalue()
 
     def getMethodsToGenerate(self,element):
@@ -237,21 +237,21 @@ class BaseGenerator:
             if cl:
                 manual_methods=[mt for mt in cl.methods.values() if mt.name not in method_names]
 
-                    
-        
-        return generatedMethods, manual_methods                    
+
+
+        return generatedMethods, manual_methods
 
     def generateClass(self,element):
-        
+
         templ=readTemplate('python_class.py')
         d={ 'klass':element,
             'generator':self,
             'parsed_class':element.parsed_class,
             'builtins'   : __builtins__,
             'utils'       :utils,
-            
+
             }
         d.update(__builtins__)
-        
+
         res=HTML(templ,d)()
         return res

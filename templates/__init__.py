@@ -11,8 +11,9 @@
 #       with a method register(context) to register the policy
 #
 
+from zLOG import LOG, INFO
 
-print 'Product <dtml-var "product_name"> installed'
+print LOG('<dtml-var "product_name">',INFO, 'Installing Product')
 
 try:
     import CustomizationPolicy
@@ -58,19 +59,21 @@ def initialize(context):
                 icon='tool.gif'
                 ).initialize( context )
 </dtml-if>
-
     utils.ContentInit(
         PROJECTNAME + ' Content',
         content_types      = content_types,
-        permission         = ADD_CONTENT_PERMISSION,
+        permission         = DEFAULT_ADD_CONTENT_PERMISSION,
         extra_constructors = constructors,
         fti                = ftis,
         ).initialize(context)
 
-<dtml-if "detailed_creation_permissions">
-    # Generate separate permissions for adding each content type
+<dtml-if "creation_permissions">
     for i in range(0,len(content_types)):
-        perm='Add ' + capitalize(ftis[i]['id'])+'s'
+        if not content_types[i] in ADD_CONTENT_PERMISSIONS:
+            continue
+
+        # Generate separate permissions for adding this content type
+        perm = ADD_CONTENT_PERMISSIONS[content_types[i]]
         methname='add' + capitalize(ftis[i]['id'])
         meta_type = ftis[i]['meta_type']
 
@@ -78,9 +81,9 @@ def initialize(context):
             meta_type = meta_type,
             constructors = (
                 getattr(locals()[meta_type],'add' + capitalize(meta_type)),
-                               )
-            , permission = perm
-            )
+            ),
+            permission = perm
+        )
 </dtml-if>
 
     if CustomizationPolicy and hasattr(CustomizationPolicy, 'register'):
