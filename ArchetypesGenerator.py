@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.17 2004/05/17 15:09:39 yenzenz Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.18 2004/05/17 18:43:22 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -144,7 +144,7 @@ class ArchetypesGenerator:
                 dict['condition']='python:'+condition
                     
                 if not isTGVFalse(m.getTaggedValue('create_action')):
-                    print >>outfile, self.ACT_TEMPL % dict
+                    print >>outfile, ACT_TEMPL % dict
 
             if m.hasStereoType('view'):
                 f=self.makeFile(os.path.join(self.getSkinPath(element),action_name+'.pt'),0)
@@ -918,7 +918,7 @@ class ArchetypesGenerator:
 
         if element.hasStereoType(self.portal_tools):
             tool_instance_name=element.getTaggedValue('tool_instance_name') or 'portal_'+element.getName().lower()
-            print >> outfile,self.TEMPL_CONSTR_TOOL % (baseclass,tool_instance_name)
+            print >> outfile,TEMPL_CONSTR_TOOL % (baseclass,tool_instance_name)
             self.generateProtectedSection(outfile,element,'constructor-footer',2)
             print >> outfile
 
@@ -1074,7 +1074,7 @@ class ArchetypesGenerator:
         tool_classes=self.getGeneratedTools(package)
 
         if tool_classes:
-            toolinit=self.TOOLINIT % ','.join([c.getQualifiedName(package) for c in self.getGeneratedClasses(package) if c.hasStereoType(self.portal_tools)])
+            toolinit=TEMPL_TOOLINIT % ','.join([c.getQualifiedName(package) for c in self.getGeneratedClasses(package) if c.hasStereoType(self.portal_tools)])
         else: toolinit=''
 
         add_content_permission = self.creation_permission or 'Add %s content' % package.getProductName()
@@ -1101,6 +1101,10 @@ class ArchetypesGenerator:
             hide_folder_tabs+="'"+c.getName()+"', "
 
         #handling of tools
+        all_tools=[c.getName() \
+            for c in self.getGeneratedClasses(package) \
+            if c.hasStereoType(self.portal_tools)  ]
+
         autoinstall_tools=[c.getName() \
             for c in self.getGeneratedClasses(package) \
             if c.hasStereoType(self.portal_tools) and isTGVTrue(c.getTaggedValue('autoinstall')) ]
@@ -1145,6 +1149,7 @@ class ArchetypesGenerator:
 
         of.write(installTemplate % {'project_dir':package.getProductName(),
                                     'no_use_of_folder_tabs':'['+hide_folder_tabs+']',
+                                    'all_tools':repr(all_tools),
                                     'autoinstall_tools':repr(autoinstall_tools),
                                     'register_configlets':register_configlets,
                                     'unregister_configlets':unregister_configlets,

@@ -165,13 +165,6 @@ def install(self):
         try:
             portal.manage_addProduct[PROJECTNAME].manage_addTool(t)
             # tools are not content. dont list it in navtree
-            try:
-                self.portal_properties.navtree_properties.metaTypesNotToList=list(self.portal_properties.navtree_properties.metaTypesNotToList)
-                self.portal_properties.navtree_properties.metaTypesNotToList.index(t)
-            except ValueError:
-                list(self.portal_properties.navtree_properties.metaTypesNotToList).append(t)
-            except:
-                raise
         except:
             #heuristics for testing if an instance with the same name already exists
             #only this error will be swallowed.
@@ -179,6 +172,16 @@ def install(self):
             e=sys.exc_info()
             if e[0] != 'Bad Request':
                 raise
+
+    #hide tools in the navigation
+    for t in %(all_tools)s:
+        try:
+            if t not in self.portal_properties.navtree_properties.metaTypesNotToList:
+                self.portal_properties.navtree_properties.metaTypesNotToList= \
+                   list(self.portal_properties.navtree_properties.metaTypesNotToList) + \
+                      [t]
+        except TypeError, e:
+            print 'Attention: could not set the navtree properties:',e
 
     # register tool in control panel
     try:
