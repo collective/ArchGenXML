@@ -1231,7 +1231,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         copyright = COPYRIGHT % \
             (str(time.localtime()[0]),
-             self.getOption('copyright', element, self.copyright) or author)
+             self.getOption('copyright', element, self.copyright) or self.author)
 
         licence = ('\n# ').join( \
             wrap(self.getOption('license', element, GPLTEXT),77).split('\n') )
