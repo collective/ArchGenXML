@@ -285,11 +285,11 @@ class ArchetypesGenerator(BaseGenerator):
         hide_actions=element.getTaggedValue('hide_actions', '').strip()
         if not hide_actions:
             return ''
-            
+
         # Also permit comma separation, since Poseidon doesn't like multi-line
         # tagged values and specifying multiple tagged values is a pain
         hide_actions = hide_actions.replace(',', '\n')
-        
+
         hide_actions=', '.join(["'"+a.strip()+"'" for a in hide_actions.split('\n')])
         return MODIFY_FTI % {'hideactions':hide_actions, }
 
@@ -322,7 +322,7 @@ class ArchetypesGenerator(BaseGenerator):
         ftiTempl=FTI_TEMPL
         if self.generateActions and hasActions:
             ftiTempl += actTempl
-        
+
         immediate_view = element.getTaggedValue('immediate_view') or 'base_view'
         default_view = element.getTaggedValue('default_view') or immediate_view
 
@@ -351,7 +351,7 @@ class ArchetypesGenerator(BaseGenerator):
         # a tool icon
         if element.hasStereoType(self.portal_tools):
             ftiTempl += TOOL_FTI_TEMPL
-            
+
         has_toolicon=''
         toolicon = element.getTaggedValue('toolicon')
         if not toolicon:
@@ -373,7 +373,7 @@ class ArchetypesGenerator(BaseGenerator):
                     element.getName ()
 
         typeDescription = getExpression(element.getTaggedValue('typeDescription', typeName))
-        
+
         res=ftiTempl % {
             'subtypes'             : repr(tuple(subtypes)),
             'has_content_icon'     : has_content_icon,
@@ -695,12 +695,12 @@ class ArchetypesGenerator(BaseGenerator):
         # add comment
         if doc:
             res+=indent(doc,indent_level,'#')+'\n'+res
-        
+
         # If this is a generic field and the user entered MySpecialField,
         # then don't suffix it with 'field''
         if rawType.endswith('Field'):
             rawType = rawType[:-5]
-        
+
         res+=indent("%s('%s',\n" % (fieldtype % {'type':rawType},name), indent_level)
         res+=indent(',\n'.join(['%s=%s' % (key,map[key]) \
                                 for key in map if key.find(':')<0 ]) ,
@@ -1015,11 +1015,11 @@ class ArchetypesGenerator(BaseGenerator):
                 if rawPerm:
                     print >> outfile,indent("security.declareProtected(%s, '%s')" % (permission,m.getName()),1)
                 else:
-                    print >> outfile,indent("security.declarePublic('%s')" % (m.getName(),),1)    
-            # A private method is always declarePrivate()'d 
+                    print >> outfile,indent("security.declarePublic('%s')" % (m.getName(),),1)
+            # A private method is always declarePrivate()'d
             elif permissionMode == 'private':
                 print >> outfile,indent("security.declarePrivate('%s')" % (m.getName(),),1)
-            
+
             # A protected method is also declarePrivate()'d. The semantic
             # meaning of 'protected' is that is hidden from the outside world,
             # but accessible to subclasses. The model may wish to be explicit
@@ -1028,7 +1028,7 @@ class ArchetypesGenerator(BaseGenerator):
             # method as far as TTW code is concerned.
             elif permissionMode == 'protected':
                 print >> outfile,indent("security.declarePrivate('%s')" % (m.getName(),),1)
-            
+
             # A package-level method should be without security declarartion -
             # it is accessible to other methods in the same module, and will
             # use the class/module defaults as far as TTW code is concerned.
@@ -1157,6 +1157,11 @@ class ArchetypesGenerator(BaseGenerator):
         if element.getTaggedValue('allowed_content_types'):
             aggregatedClasses=aggregatedClasses+element.getTaggedValue('allowed_content_types').split(',')
 
+        # if it's a derived class check if parent has stereotype 'archetype'
+        parent_is_archetype = False
+        for p in element.getGenParents():
+            parent_is_archetype=parent_is_archetype or \
+                                p.hasStereoType(self.archetype_stereotype)
         #also check if the parent classes can have subobjects
         baseaggregatedClasses=[]
         for b in element.getGenParents():
@@ -1201,6 +1206,10 @@ class ArchetypesGenerator(BaseGenerator):
                 baseclass ='I18NBaseContent'
                 baseschema='I18NBaseSchema'
 
+        # if a parent is already an archetype we dont need a baseschema!
+        if parent_is_archetype:
+            baseclass = None
+
         # CMFMember support
         if element.hasStereoType(self.cmfmember_stereotype):
             baseclass = 'BaseMember.Member'
@@ -1220,7 +1229,8 @@ class ArchetypesGenerator(BaseGenerator):
 
 
         # [optilude] Also - ignore the standard class if this is an abstract/mixin
-        if not isTGVFalse(element.getTaggedValue('base_class')) and not element.isAbstract ():
+        if baseclass and not isTGVFalse(element.getTaggedValue('base_class')) \
+           and not element.isAbstract ():
             parentnames.insert(0,baseclass)
 
         # Remark: CMFMember support include VariableSchema support
@@ -1312,12 +1322,6 @@ class ArchetypesGenerator(BaseGenerator):
         # prepare schema as class atrribute
         parent_schema=["getattr(%s,'schema',Schema(()))" % p.getCleanName() \
                        for p in element.getGenParents()]
-
-        # if it's a derived class check if parent has stereotype 'archetype'
-        parent_is_archetype = False
-        for p in element.getGenParents():
-            parent_is_archetype=parent_is_archetype or \
-            p.hasStereoType(self.archetype_stereotype)
 
         if parent_is_archetype and \
            not element.hasStereoType(self.cmfmember_stereotype):
