@@ -1,0 +1,637 @@
+ObjectDomain_Model 15
+{z8kflt_-2qh_dkh958ph_-p8h 0
+}[objectdomain.uml.core.TypeExpression $22
+objectdomain.uml.core.UmlClassifier $23
+objectdomain.uml.mechanisms.UmlPackage-owns $7
+objectdomain.uml.core.Generalization-owns $16
+objectdomain.uml.core.Projection $20
+objectdomain.uml.core.UmlAttribute-features $9
+objectdomain.uml.core.UmlAssociationEnd-connections $14
+objectdomain.uml.core.UmlDataType-owns $15
+objectdomain.uml.view.ClassView-owns $4
+objectdomain.uml.core.UmlTaggedValue-taggedValues $10
+objectdomain.uml.core.UmlParameter-parameters $12
+objectdomain.uml.core.UmlAssociation-owns $13
+objectdomain.uml.view.Diagram-owns $3
+objectdomain.uml.core.UmlOperation-features $11
+objectdomain.domain.ModelEnvironment-owns $2
+objectdomain.uml.mechanisms.StylePackage-owns $19
+objectdomain.uml.mechanisms.StereotypePackage-owns $17
+objectdomain.uml.view.GeneralizationView-owns $6
+objectdomain.uml.core.UmlMultiplicity $21
+objectdomain.uml.core.UmlClass-owns $8
+objectdomain.domain.DomainLockObject $24
+objectdomain.uml.view.AssociationView-owns $5
+objectdomain.uml.mechanisms.UmlModel-models $1
+objectdomain.uml.core.Stereotype-owns $18
+]
+($1 1 > z8kflt_-2qh_dkh958ph_-p8h 0
+(name "Model"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p8h"))
+($2 2 < z8kflt_-2qh_dkh958ph_-p8g "ModelEnvironment" 1
+(uid "z8kflt_-2qh_dkh958ph_-p8g"))
+($7 15 < z8kflt_-2qh_dkh958ph_-p8r "Logical" 1
+(name "Logical"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p8r"))
+($3 3 < z8kflt_-2qh_dkh958ph_-p8f "Logical diagram" 15
+(name "Logical diagram"
+)
+(width 5000)
+(uid "z8kflt_-2qh_dkh958ph_-p8f")
+(height 5000)
+(diagramType "class"))
+($4 4 < z8kflt_-2qh_dkh958ph_-p8e "Project" 3
+(uid "z8kflt_-2qh_dkh958ph_-p8e")
+(bbx 150 30 200 90))
+($4 5 < z8kflt_-2qh_dkh958ph_-p8d "Task" 3
+(uid "z8kflt_-2qh_dkh958ph_-p8d")
+(bbx 10 190 120 90))
+($5 6 < z8kflt_-2qh_dkh958ph_-p8c "" 3
+(toMultiplicityPosition 100 155)
+(uid "z8kflt_-2qh_dkh958ph_-p8c")
+(points 199 120 121 190)
+(fromMultiplicityPosition 195 145)
+(lineStyle "oblique"))
+($4 7 < z8kflt_-2qh_dkh958ph_-p8b "Resource" 3
+(uid "z8kflt_-2qh_dkh958ph_-p8b")
+(bbx 180 320 140 80))
+($5 8 < z8kflt_-2qh_dkh958ph_-p8a "" 3
+(toMultiplicityPosition 250 295)
+(uid "z8kflt_-2qh_dkh958ph_-p8a")
+(points 250 120 250 320)
+(fromMultiplicityPosition 250 145)
+(lineStyle "oblique"))
+($4 9 < z8kflt_-2qh_dkh958ph_-p89 "Person" 3
+(uid "z8kflt_-2qh_dkh958ph_-p89")
+(bbx 380 190 120 90))
+($5 10 < z8kflt_-2qh_dkh958ph_-p88 "" 3
+(toMultiplicityPosition 400 170)
+(toRolePosition 370 160)
+(uid "z8kflt_-2qh_dkh958ph_-p88")
+(points 303 120 387 190)
+(fromMultiplicityPosition 325 120)
+(lineStyle "oblique"))
+($5 11 < z8kflt_-2qh_dkh958ph_-p87 "" 3
+(toMultiplicityPosition 150 305)
+(toRolePosition 145 285)
+(uid "z8kflt_-2qh_dkh958ph_-p87")
+(points 130 277 192 320)
+(fromMultiplicityPosition 150 250)
+(lineStyle "oblique"))
+($6 12 < z8kflt_-2qh_dkh958ph_-p86 "" 3
+(uid "z8kflt_-2qh_dkh958ph_-p86")
+(points 388 280 330 330 320 334)
+(lineStyle "oblique"))
+($4 13 < z8kflt_-2qh_dkh958ph_-p85 "Room" 3
+(uid "z8kflt_-2qh_dkh958ph_-p85")
+(bbx 380 320 120 80))
+($6 14 < z8kflt_-2qh_dkh958ph_-p84 "" 3
+(uid "z8kflt_-2qh_dkh958ph_-p84")
+(points 380 360 320 360)
+(lineStyle "oblique"))
+($8 16 < z8kflt_-2qh_dkh958ph_-p8k "Project" 15
+(name "Project"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p8k"))
+($9 17 < z8kflt_-2qh_dkh958ph_-p83 "description" 16
+(name "description"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p83")
+(multiplicity "0..*"))
+($10 18 < z8kflt_-2qh_dkh958ph_-p82 "widget" 17
+(name "widget"
+)
+(value "VisualWidget()"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p82"))
+($11 19 < z8kflt_-2qh_dkh958ph_-p81 "countTasks" 16
+(name "countTasks"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p81"))
+($12 20 < z8kflt_-2qh_dkh958ph_-p80 "fromstart" 19
+(name "fromstart"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p80"))
+($12 21 < z8kflt_-2qh_dkh958ph_-p7z "toend" 19
+(name "toend"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p7z"))
+($10 22 < z8kflt_-2qh_dkh958ph_-p7y "documentation" 19
+(name "documentation"
+)
+(value "this method returns the number of tasks"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p7y"))
+($10 23 < z8kflt_-2qh_dkh958ph_-p7x "code" 19
+(name "code"
+)
+(value "return self.ObjectValues('task') "
+)
+(uid "z8kflt_-2qh_dkh958ph_-p7x"))
+($11 24 < z8kflt_-2qh_dkh958ph_-p7w "view_project" 16
+(name "view_project"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p7w"))
+($10 25 < z8kflt_-2qh_dkh958ph_-p7v "view" 24
+(name "view"
+)
+(value "view_project"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p7v"))
+($10 26 < z8kflt_-2qh_dkh958ph_-p7u "label" 24
+(name "label"
+)
+(value "Project Overview"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p7u"))
+($10 27 < z8kflt_-2qh_dkh958ph_-p7t "permission" 24
+(name "permission"
+)
+(value "Modify portal content"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p7t"))
+($13 28 < z8kflt_-2qh_dkh958ph_-p8j "#<anon> (Project, Task)" 16
+(name "")
+(uid "z8kflt_-2qh_dkh958ph_-p8j"))
+($14 29 < z8kflt_-2qh_dkh958ph_-p7s "#0" 28
+(aggregation "composite")
+(uid "z8kflt_-2qh_dkh958ph_-p7s")
+(multiplicity "0..*"))
+($14 30 < z8kflt_-2qh_dkh958ph_-p7r "#1" 28
+(uid "z8kflt_-2qh_dkh958ph_-p7r")
+(multiplicity "0..*"))
+($13 31 < z8kflt_-2qh_dkh958ph_-p8m "#<anon> (Project, Resource)" 16
+(name "")
+(uid "z8kflt_-2qh_dkh958ph_-p8m"))
+($14 32 < z8kflt_-2qh_dkh958ph_-p8l "#0" 31
+(aggregation "aggregate")
+(uid "z8kflt_-2qh_dkh958ph_-p8l")
+(multiplicity "0..*"))
+($14 33 < z8kflt_-2qh_dkh958ph_-p7q "#1" 31
+(uid "z8kflt_-2qh_dkh958ph_-p7q")
+(multiplicity "0..*"))
+($13 34 < z8kflt_-2qh_dkh958ph_-p7p "#<anon> (Project, Person)" 16
+(name "")
+(uid "z8kflt_-2qh_dkh958ph_-p7p"))
+($14 35 < z8kflt_-2qh_dkh958ph_-p7o "#0" 34
+(uid "z8kflt_-2qh_dkh958ph_-p7o")
+(multiplicity "0..*"))
+($14 36 < z8kflt_-2qh_dkh958ph_-p7n "project_leader#1" 34
+(name "project_leader"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p7n")
+(multiplicity "1"))
+($8 37 < z8kflt_-2qh_dkh958ph_-p8n "Task" 15
+(name "Task"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p8n"))
+($9 38 < z8kflt_-2qh_dkh958ph_-p7m "start" 37
+(name "start"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p7m")
+(multiplicity "0..*"))
+($9 39 < z8kflt_-2qh_dkh958ph_-p7l "end" 37
+(name "end"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p7l")
+(multiplicity "0..*"))
+($9 40 < z8kflt_-2qh_dkh958ph_-p7k "description" 37
+(name "description"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p7k")
+(multiplicity "0..*"))
+($13 41 < z8kflt_-2qh_dkh958ph_-p8i "#<anon> (Task, Resource)" 37
+(name "")
+(uid "z8kflt_-2qh_dkh958ph_-p8i"))
+($14 42 < z8kflt_-2qh_dkh958ph_-p7j "#0" 41
+(uid "z8kflt_-2qh_dkh958ph_-p7j")
+(multiplicity "0..*"))
+($14 43 < z8kflt_-2qh_dkh958ph_-p7i "resource#1" 41
+(name "resource"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p7i")
+(multiplicity "0..*"))
+($15 44 < z8kflt_-2qh_dkh958ph_-p7h "datetime" 15
+(name "datetime"
+)
+(umlVisibility "protected")
+(uid "z8kflt_-2qh_dkh958ph_-p7h"))
+($15 45 < z8kflt_-2qh_dkh958ph_-p7g "text" 15
+(name "text"
+)
+(umlVisibility "protected")
+(uid "z8kflt_-2qh_dkh958ph_-p7g"))
+($8 46 < z8kflt_-2qh_dkh958ph_-p8q "Resource" 15
+(name "Resource"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p8q")
+(isAbstract true))
+($9 47 < z8kflt_-2qh_dkh958ph_-p7f "description" 46
+(name "description"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p7f")
+(multiplicity "0..*"))
+($10 48 < z8kflt_-2qh_dkh958ph_-p7e "widget" 47
+(name "widget"
+)
+(value "VisualWidget()"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p7e"))
+($8 49 < z8kflt_-2qh_dkh958ph_-p8o "Person" 15
+(name "Person"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p8o"))
+($9 50 < z8kflt_-2qh_dkh958ph_-p7d "name" 49
+(name "name"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p7d")
+(multiplicity "0..*"))
+($9 51 < z8kflt_-2qh_dkh958ph_-p7c "picture" 49
+(name "picture"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p7c")
+(multiplicity "0..*"))
+($16 52 < z8kflt_-2qh_dkh958ph_-p7b "#<anon> (Person, Resource)" 49
+(uid "z8kflt_-2qh_dkh958ph_-p7b"))
+($15 53 < z8kflt_-2qh_dkh958ph_-p7a "image" 15
+(name "image"
+)
+(umlVisibility "protected")
+(uid "z8kflt_-2qh_dkh958ph_-p7a"))
+($8 54 < z8kflt_-2qh_dkh958ph_-p8p "Room" 15
+(name "Room"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p8p"))
+($9 55 < z8kflt_-2qh_dkh958ph_-p79 "number" 54
+(name "number"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p79")
+(multiplicity "0..*"))
+($10 56 < z8kflt_-2qh_dkh958ph_-p78 "validator" 55
+(name "validator"
+)
+(value "numbervalidator()"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p78"))
+($9 57 < z8kflt_-2qh_dkh958ph_-p77 "description" 54
+(name "description"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p77")
+(multiplicity "0..*"))
+($16 58 < z8kflt_-2qh_dkh958ph_-p76 "#<anon> (Room, Resource)" 54
+(uid "z8kflt_-2qh_dkh958ph_-p76"))
+($17 59 < z8kflt_-2qh_dkh958ph_-p75 "stereotypes" 1
+(uid "z8kflt_-2qh_dkh958ph_-p75"))
+($18 60 < z8kflt_-2qh_dkh958ph_-p74 "_odPackage" 59
+(name "_odPackage"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p74")
+(baseClass "Package"))
+($18 61 < z8kflt_-2qh_dkh958ph_-p73 "odStub" 59
+(name "odStub"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p73"))
+($18 62 < z8kflt_-2qh_dkh958ph_-p72 "access" 59
+(name "access"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p72")
+(baseClass "Dependency"))
+($18 63 < z8kflt_-2qh_dkh958ph_-p71 "association" 59
+(name "association"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p71")
+(baseClass "AssociationEnd"))
+($18 64 < z8kflt_-2qh_dkh958ph_-p70 "create" 59
+(name "create"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p70")
+(baseClass "BehavioralFeature"))
+($18 65 < z8kflt_-2qh_dkh958ph_-p6z "destroy" 59
+(name "destroy"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6z")
+(baseClass "BehavioralFeature"))
+($18 66 < z8kflt_-2qh_dkh958ph_-p6y "document" 59
+(name "document"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6y")
+(baseClass "Component"))
+($18 67 < z8kflt_-2qh_dkh958ph_-p6x "executable" 59
+(name "executable"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6x")
+(baseClass "Component"))
+($18 68 < z8kflt_-2qh_dkh958ph_-p6w "extend" 59
+(name "extend"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6w")
+(baseClass "Dependency"))
+($18 69 < z8kflt_-2qh_dkh958ph_-p6v "facade" 59
+(name "facade"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6v")
+(baseClass "Package"))
+($18 70 < z8kflt_-2qh_dkh958ph_-p6u "file" 59
+(name "file"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6u")
+(baseClass "Component"))
+($18 71 < z8kflt_-2qh_dkh958ph_-p6t "framework" 59
+(name "framework"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6t")
+(baseClass "Package"))
+($18 72 < z8kflt_-2qh_dkh958ph_-p6s "friend" 59
+(name "friend"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6s")
+(baseClass "Dependency"))
+($18 73 < z8kflt_-2qh_dkh958ph_-p6r "global" 59
+(name "global"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6r")
+(baseClass "AssociationEnd"))
+($18 74 < z8kflt_-2qh_dkh958ph_-p6q "implementation" 59
+(name "implementation"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6q")
+(baseClass "Generalization"))
+($18 75 < z8kflt_-2qh_dkh958ph_-p6p "implementationClass" 59
+(name "implementationClass"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6p")
+(baseClass "Class"))
+($18 76 < z8kflt_-2qh_dkh958ph_-p6o "import" 59
+(name "import"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6o")
+(baseClass "Dependency"))
+($18 77 < z8kflt_-2qh_dkh958ph_-p6n "include" 59
+(name "include"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6n")
+(baseClass "Dependency"))
+($18 78 < z8kflt_-2qh_dkh958ph_-p6m "invariant" 59
+(name "invariant"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6m")
+(baseClass "Constraint"))
+($18 79 < z8kflt_-2qh_dkh958ph_-p6l "library" 59
+(name "library"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6l")
+(baseClass "Component"))
+($18 80 < z8kflt_-2qh_dkh958ph_-p6k "local" 59
+(name "local"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6k")
+(baseClass "AssociationEnd"))
+($18 81 < z8kflt_-2qh_dkh958ph_-p6j "metaclass" 59
+(name "metaclass"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6j")
+(baseClass "Classifier"))
+($18 82 < z8kflt_-2qh_dkh958ph_-p6i "metamodel" 59
+(name "metamodel"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6i")
+(baseClass "Package"))
+($18 83 < z8kflt_-2qh_dkh958ph_-p6h "parameter" 59
+(name "parameter"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6h")
+(baseClass "AssociationEnd"))
+($18 84 < z8kflt_-2qh_dkh958ph_-p6g "postcondition" 59
+(name "postcondition"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6g")
+(baseClass "Constraint"))
+($18 85 < z8kflt_-2qh_dkh958ph_-p6f "powertype" 59
+(name "powertype"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6f")
+(baseClass "Classifier"))
+($18 86 < z8kflt_-2qh_dkh958ph_-p6e "precondition" 59
+(name "precondition"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6e")
+(baseClass "Constraint"))
+($18 87 < z8kflt_-2qh_dkh958ph_-p6d "process" 59
+(name "process"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6d")
+(baseClass "Classifier"))
+($18 88 < z8kflt_-2qh_dkh958ph_-p6c "requirement" 59
+(name "requirement"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6c")
+(baseClass "Comment"))
+($18 89 < z8kflt_-2qh_dkh958ph_-p6b "responsibility" 59
+(name "responsibility"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6b")
+(baseClass "Comment"))
+($18 90 < z8kflt_-2qh_dkh958ph_-p6a "self" 59
+(name "self"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p6a")
+(baseClass "AssociationEnd"))
+($18 91 < z8kflt_-2qh_dkh958ph_-p69 "stub" 59
+(name "stub"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p69")
+(baseClass "Package"))
+($18 92 < z8kflt_-2qh_dkh958ph_-p68 "systemModel" 59
+(name "systemModel"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p68")
+(baseClass "Package"))
+($18 93 < z8kflt_-2qh_dkh958ph_-p67 "table" 59
+(name "table"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p67")
+(baseClass "Component"))
+($18 94 < z8kflt_-2qh_dkh958ph_-p66 "thread" 59
+(name "thread"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p66")
+(baseClass "Classifier"))
+($18 95 < z8kflt_-2qh_dkh958ph_-p65 "topLevel" 59
+(name "topLevel"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p65")
+(baseClass "Package"))
+($18 96 < z8kflt_-2qh_dkh958ph_-p64 "type" 59
+(name "type"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p64")
+(baseClass "Class"))
+($18 97 < z8kflt_-2qh_dkh958ph_-p63 "utility" 59
+(name "utility"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p63")
+(baseClass "Classifier"))
+($18 98 < z8kflt_-2qh_dkh958ph_-p62 "boundary" 59
+(smallImageFile stereotype/image/small/boundary.gif)
+(name "boundary"
+)
+(defaultIconWidth 65)
+(iconFile stereotype/icon/boundary.wmf)
+(uid "z8kflt_-2qh_dkh958ph_-p62")
+(baseClass "Class"))
+($18 99 < z8kflt_-2qh_dkh958ph_-p61 "entity" 59
+(smallImageFile stereotype/image/small/entity.gif)
+(name "entity"
+)
+(iconFile stereotype/icon/entity.wmf)
+(uid "z8kflt_-2qh_dkh958ph_-p61")
+(baseClass "Class"))
+($18 100 < z8kflt_-2qh_dkh958ph_-p60 "control" 59
+(smallImageFile stereotype/image/small/control.gif)
+(name "control"
+)
+(defaultIconWidth 60)
+(iconFile stereotype/icon/control.wmf)
+(uid "z8kflt_-2qh_dkh958ph_-p60")
+(defaultIconHeight 60)
+(baseClass "Class"))
+($18 101 < z8kflt_-2qh_dkh958ph_-p5z "interface" 59
+(name "interface"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p5z")
+(baseClass "Class"))
+($18 102 < z8kflt_-2qh_dkh958ph_-p5y "body" 59
+(name "body"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p5y")
+(baseClass "Component"))
+($19 103 < z8kflt_-2qh_dkh958ph_-p5x "styles" 1
+(uid "z8kflt_-2qh_dkh958ph_-p5x"))
+($7 104 < z8kflt_-2qh_dkh958ph_-p5w "Component" 1
+(name "Component"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p5w"))
+($7 105 < z8kflt_-2qh_dkh958ph_-p5v "Usecase" 1
+(name "Usecase"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p5v"))
+($7 106 < z8kflt_-2qh_dkh958ph_-p5u "Deployment" 1
+(name "Deployment"
+)
+(uid "z8kflt_-2qh_dkh958ph_-p5u"))
+($20 107)
+($22 108
+(body "text"
+))
+($22 109)
+($22 110
+(body "datetime"
+))
+($23 111 > z8kflt_-gnm_dki3gh6x_-p98 1 "?" $23
+(name "?"
+)
+(uid "z8kflt_-gnm_dki3gh6x_-p98"))
+($22 112
+(body "datetime"
+))
+($22 113
+(body "text"
+))
+($22 114
+(body "text"
+))
+($22 115
+(body "image"
+))
+($20 116)
+($20 117)
+($20 118)
+($20 119)
+($20 120)
+($20 121)
+($20 122)
+($20 123)
+($20 124)
+($22 125
+(body "text"
+))
+($20 126)
+($24 127
+(name "DomainLockObject"
+))
+(typeAssn 29 16)
+(assocEndAssn 16 29)
+(typeAssn 32 16)
+(assocEndAssn 16 32)
+(typeAssn 35 16)
+(assocEndAssn 16 35)
+(typeExpression 17 108)
+(typeExpression 20 109)
+(typeExpression 21 109)
+(assocEndAssn 37 30)
+(typeAssn 42 37)
+(assocEndAssn 37 42)
+(typeExpression 38 110)
+(typeRefAssn 39 111)
+(typeExpression 39 112)
+(typeRefAssn 40 111)
+(typeExpression 40 113)
+(typeAssn 33 46)
+(assocEndAssn 46 33)
+(assocEndAssn 46 43)
+(typeRefAssn 47 111)
+(typeExpression 47 114)
+(typeAssn 43 46)
+(typeAssn 30 37)
+(assocEndAssn 49 36)
+(subtypeAssn 52 49)
+(supertypeAssn 52 46)
+(generalizationAssn 49 52)
+(typeExpression 50 109)
+(typeRefAssn 51 111)
+(typeExpression 51 115)
+(typeAssn 36 49)
+(projectionAssn 4 16 107)
+(projectionAssn 5 37 116)
+(to 6 5)
+(from 6 4)
+(projectionAssn 6 28 117)
+(projectionAssn 7 46 118)
+(to 8 7)
+(from 8 4)
+(projectionAssn 8 31 119)
+(projectionAssn 9 49 120)
+(to 10 9)
+(from 10 4)
+(projectionAssn 10 34 121)
+(to 11 7)
+(from 11 5)
+(projectionAssn 11 41 122)
+(to 12 7)
+(from 12 9)
+(projectionAssn 12 52 123)
+(subtypeAssn 58 54)
+(supertypeAssn 58 46)
+(generalizationAssn 54 58)
+(typeExpression 55 109)
+(typeRefAssn 57 111)
+(typeExpression 57 125)
+(projectionAssn 13 54 124)
+(to 14 7)
+(from 14 13)
+(projectionAssn 14 58 126)
+(openDiagrams 2 3)
+(lockedBy 60 127)
+(stereotypeAssn 15 60)
+(lockedBy 15 127)
+(lockedBy 59 127)
+(lockedBy 103 127)
+(stereotypeAssn 104 60)
+(lockedBy 104 127)
+(stereotypeAssn 105 60)
+(lockedBy 105 127)
+(stereotypeAssn 106 60)
+(lockedBy 106 127)
+(lockedBy 1 127)
