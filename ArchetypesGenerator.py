@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.18 2004/05/17 18:43:22 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.19 2004/05/18 01:33:58 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -54,7 +54,10 @@ class ArchetypesGenerator:
                 #just an empty project + skin is created
     ape_support=0 #generate ape config and serializers/gateways for APE
     method_preservation=1 #should the method bodies be preserved? defaults now to 0 will change to 1
-    i18n_support=0
+    i18n_content_support=0
+    i18n_at=['i18n-archetypes','i18n', 'i18n-at']
+    
+    
     build_msgcatalog=1
     striphtml=0
     
@@ -449,13 +452,14 @@ class ArchetypesGenerator:
                 
         return widgetcode
 
-    def getFieldFormatted(self,name,fieldtype,map={},doc=None, fieldType='String', indent_level=0):
+    def getFieldFormatted(self,name,fieldtype,map={},doc=None, rawType='String', indent_level=0):
         ''' returns the formatted field definitions for the schema '''
         res = ''
         # add comment
+
         if doc:
             res+=indent(doc,indent_level,'#')+'\n'+res        
-        res+=indent("%s('%s',\n" % (fieldtype % {'type':fieldType.capitalize()},name), indent_level)
+        res+=indent("%s('%s',\n" % (fieldtype % {'type':rawType.capitalize()},name), indent_level)
         map_keys=map.keys()
         map_keys.sort()
         res+=indent(',\n'.join(['%s=%s' % (key,map[key]) \
@@ -490,12 +494,6 @@ class ArchetypesGenerator:
         else:
             ctype=self.coerceType(str(attr.type))
 
-        if ctype != 'generic':
-            atype=attr.getType()
-            if self.i18n_support and attr.isI18N():
-                atype='I18N'+atype
-        else:
-            atype=attr.getType().lower().capitalize()
             
         map=self.typeMap[ctype]['map'].copy()
         if attr.hasDefault():
@@ -523,14 +521,20 @@ class ArchetypesGenerator:
             } )
         
         # end ATVM
-            
+
+        atype=self.typeMap[ctype]['field']
+
+        if ctype != 'generic' and self.i18n_content_support in self.i18n_at and attr.isI18N():
+                atype='I18N'+atype
+
         doc=attr.getDocumentation(striphtml=self.striphtml)                
         res=self.getFieldFormatted(attr.getName(),
-            self.typeMap[ctype]['field'],
+            atype,
             map,
             doc,
-            fieldType=attr.getType() )
-        
+            rawType=attr.getType()
+            )
+
         return res
 
     def getFieldStringFromAssociation(self, rel, classelement):
@@ -579,7 +583,7 @@ class ArchetypesGenerator:
         else:
             parent_schemata_expr=''
 
-        if self.i18n_support and element.isI18N():
+        if self.i18n_content_support in self.i18n_at and element.isI18N():
             schemastmt=SCHEMA_START_I18N % parent_schemata_expr
         else:
             schemastmt=SCHEMA_START_DEFAULT % parent_schemata_expr
@@ -846,7 +850,7 @@ class ArchetypesGenerator:
             baseclass='BaseFolder'
             baseschema='BaseFolderSchema'
 
-            if self.i18n_support and element.isI18N():
+            if self.i18n_content_support in self.i18n_at and element.isI18N():
                 baseclass='I18NBaseFolder'
                 baseschema='I18NBaseFolderSchema'
 
@@ -858,7 +862,7 @@ class ArchetypesGenerator:
                         
         else:
             #contentish
-            if self.i18n_support and element.isI18N():
+            if self.i18n_content_support in self.i18n_at and element.isI18N():
                 baseclass='I18NBaseContent'
                 baseschema='I18NBaseSchema'
             
@@ -1023,8 +1027,10 @@ class ArchetypesGenerator:
         outfile.write(MODULE_INFO_HEADER % fileheaderinfo)
 
     def generateHeader(self, outfile, i18n=0):
-        if i18n:
-            s1 = TEMPLATE_HEADER_I18N 
+        if self.i18n_content_support in self.i18n_at:
+            s1 = TEMPLATE_HEADER_I18N_I18N_AT
+        elif self.i18n_content_support == 'linguaplone':    
+            s1 = TEMPLATE_HEADER_I18N_LINGUAPLONE
         else:
             s1 = TEMPLATE_HEADER 
             
@@ -1243,7 +1249,7 @@ class ArchetypesGenerator:
                 outfile=StringIO()
                 self.generateModuleInfoHeader(outfile, module, element)
                 if not element.isInterface():
-                    self.generateHeader(outfile, i18n=self.i18n_support and element.isI18N()) 
+                    self.generateHeader(outfile, i18n=self.i18n_content_support and element.isI18N()) 
                     self.generateClass(outfile, element, 0)
                     package.generatedClasses.append(element)
                 else:

@@ -132,7 +132,7 @@ ALLOWED_OPTIONS_MAP = {
     'no-method-preservation':           (1, 0,   None,            'method_preservation', 'switchoff'),
     'noclass':                          (1, 'n', 'CLASSES',       'noclass', 'switchon,'),
     'unknown-types-as-string':          (1, 't', 'CLASSES',       'unknownTypesAsString','switchon'),
-    'i18n-support':                     (1, 0,   'I18N',          'i18n_support','switchon'),
+    'i18n-content-support=':            (1, 0,   'I18N',          'i18n_content_support','string'),
     'i18n':                             (1, 0,   None,            'i18n_support','switchon'),
     'message-catalog':                  (0, 0,   'I18N',          'build_msgcatalog','yesno'),
     'no-message-catalog':               (1, 0,   None,            'build_msgcatalog','switchoff'),

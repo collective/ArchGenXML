@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: codesnippets.py,v 1.2 2004/05/17 15:09:40 yenzenz Exp $
+# RCS-ID:      $Id: codesnippets.py,v 1.3 2004/05/18 01:34:02 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -111,7 +111,7 @@ MODULE_INFO_HEADER = """\
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: codesnippets.py,v 1.2 2004/05/17 15:09:40 yenzenz Exp $
+RCS-ID $Id: codesnippets.py,v 1.3 2004/05/18 01:34:02 zworkb Exp $
 \"""
 # %(copyright)s
 #
@@ -212,10 +212,21 @@ from AccessControl import ClassSecurityInfo
 from Products.Archetypes.public import *
 """
 
-TEMPLATE_HEADER_I18N = """\
+TEMPLATE_HEADER_I18N_I18N_AT = """\
 from AccessControl import ClassSecurityInfo
 from Products.Archetypes.public import *
 from Products.I18NArchetypes.public import *
+
+    """
+
+TEMPLATE_HEADER_I18N_LINGUAPLONE = """\
+from AccessControl import ClassSecurityInfo
+from Products.Archetypes.public import *
+try:
+    from Products.LinguaPlone.public import *
+except ImportError:
+    # Not multilingual
+    pass
 
     """
 
