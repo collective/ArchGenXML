@@ -179,6 +179,8 @@ def install(self):
 
     %(register_configlets)s
 
+    portal.left_slots=list(portal.left_slots)+%(left_slots)s
+    portal.rght_slots=list(portal.right_slots)+%(right_slots)s
 
     #try to call a custom install method
     #in 'AppInstall.py' method 'install'

@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.59 2003/11/27 17:49:26 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.60 2003/11/28 02:13:11 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -58,6 +58,9 @@ class ArchetypesGenerator:
     reservedAtts=['id',]
     portal_tools=['portal_tool']
     stub_stereotypes=['odStub','stub']
+    left_slots=[]
+    right_slots=[]
+    
     def __init__(self,xschemaFileName,outfileName,projectName=None, **kwargs):
         self.outfileName=outfileName
 
@@ -86,7 +89,7 @@ class ArchetypesGenerator:
         outfile=StringIO()
         print >> outfile
         for m in element.getMethodDefs():
-            if m.getTaggedValue('action') or m.getStereoType() == 'action':
+            if m.getStereoType() == 'action':
                 action_name=m.getTaggedValue('action').strip() or m.getName()
                 print 'generating action:',action_name
                 dict={}
@@ -97,7 +100,7 @@ class ArchetypesGenerator:
 
                 print >>outfile,self.ACT_TEMPL % dict
 
-            elif m.getTaggedValue('view') or m.getStereoType() == 'view':
+            elif m.getStereoType() == 'view':
                 view_name=m.getTaggedValue('view').strip() or m.getName()
                 print 'generating view:',view_name
                 dict={}
@@ -113,7 +116,7 @@ class ArchetypesGenerator:
 
                 print >>outfile,self.ACT_TEMPL % dict
 
-            elif m.getTaggedValue('form') or m.getStereoType() == 'form':
+            elif m.getStereoType() == 'form':
                 view_name=m.getTaggedValue('view').strip() or m.getTaggedValue('form').strip() or m.getName()
                 print 'generating form:',view_name
                 dict={}
@@ -448,9 +451,29 @@ class ArchetypesGenerator:
     def generateMethod(self,outfile,m):
             #ignore actions and views here because they are
             #generated separately
-        if m.getTaggedValue('action') or m.getTaggedValue('view') or m.getStereoType() in ['action','view']:
+        if m.getStereoType() in ['action','view']:
             return
-
+        
+        #print 'generatemethod:',m.getStereoType(),m.getName()
+        if m.getStereoType()=='portlet_view':
+            view_name=m.getTaggedValue('view').strip() or m.getName()
+            print 'generating portlet:',view_name
+            autoinstall=m.getTaggedValue('autoinstall')
+            #print 'autoinstall:',autoinstall,m.getTaggedValues()
+            portlet='here/%s/macros/portlet' % view_name
+            #print 'portlet:',portlet
+            if autoinstall=='left':
+                self.left_slots.append(portlet)
+            if autoinstall=='right':
+                self.right_slots.append(portlet)
+                
+            f=makeFile(os.path.join(self.outfileName,'skins',self.projectName,view_name+'.pt'),0)
+            if f:
+                templdir=os.path.join(sys.path[0],'templates')
+                viewTemplate=open(os.path.join(templdir,'portlet_template.pt')).read()
+                f.write(viewTemplate % {'method_name':m.getName()})
+            return
+            
         paramstr=''
         params=m.getParamExpressions()
         if params:
@@ -635,7 +658,7 @@ from Products.CMFCore.utils import UniqueObject
     def generateStdFiles(self, target,projectName,generatedModules):
         #generates __init__.py, Extensions/Install.py and the skins directory
         #the result is a QuickInstaller installable product
-
+        print 'stdfiles'
         #remove trailing slash
         if target[-1] in ('/','\\'):
             target=target[:-1]
@@ -716,7 +739,9 @@ from Products.CMFCore.utils import UniqueObject
         of.write(installTemplate % {'project_dir':os.path.split(target)[1],
                                     'autoinstall_tools':repr(autoinstall_tools),
                                     'register_configlets':register_configlets,
-                                    'unregister_configlets':unregister_configlets
+                                    'unregister_configlets':unregister_configlets,
+                                    'left_slots':repr(self.left_slots),
+                                    'right_slots':repr(self.right_slots)
                                    })
         of.close()
 
