@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.12 2003/07/19 11:47:03 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.13 2003/07/20 18:47:38 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -71,6 +71,8 @@ class XMI1_0:
 
     METHOD="Foundation.Core.Operation"
     METHODPARAMETER="Foundation.Core.Parameter"
+    PARAM_DEFAULT="Foundation.Core.Parameter.defaultValue"
+    EXPRESSION_BODY="Foundation.Data_Types.Expression.body"
     
     GENERALIZATION="Foundation.Core.Generalization"
     GEN_CHILD="Foundation.Core.Generalization.child"
@@ -462,7 +464,31 @@ class XMIClass (XMIElement):
         return res
     
 class XMIMethodParameter(XMIElement):
-    pass
+    default=None
+
+    def getDefault(self):
+        return self.default
+    
+    def findDefault(self):
+        defparam=getElementByTagName(self.domElement,XMI.PARAM_DEFAULT,None)
+        #print defparam
+        if defparam:
+            exp = getElementByTagName(defparam,XMI.EXPRESSION_BODY,recursive=1)
+            if exp and getattr(exp,'firstChild',None):
+                self.default=exp.firstChild.nodeValue
+                #print 'default:',repr(self.default)
+                
+    def initFromDOM(self,domElement):
+        XMIElement.initFromDOM(self,domElement)
+        if domElement:
+            self.findDefault()
+
+    def getExpression(self):
+        ''' returns the param name and param=default expr if a default is defined '''
+        if self.getDefault():
+            return "%s=%s" % (self.getName(),self.getDefault())
+        else:
+            return self.getName()
 
 class XMIMethod (XMIElement):
     params=[]
@@ -483,6 +509,10 @@ class XMIMethod (XMIElement):
 
     def getParamNames(self):
         return [p.getName() for p in self.params]
+
+    def getParamExpressions(self):
+        ''' returns the param names or paramname=default for each param in a list '''
+        return [p.getExpression() for p in self.params]
 
     def addParameter(self,p):
         if p.getName() != 'return':

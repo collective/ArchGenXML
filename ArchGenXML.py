@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.15 2003/07/20 17:57:10 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.16 2003/07/20 18:47:38 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -275,7 +275,7 @@ class ArchetypesGenerator:
             
     def generateMethod(self,outfile,m):
             paramstr=''
-            params=m.getParamNames()
+            params=m.getParamExpressions()
             if params:
                 paramstr=','+','.join(params)
                 #print paramstr
@@ -289,7 +289,7 @@ class ArchetypesGenerator:
             if code:
                 print >> outfile, indent('\n'+code,2)
             else:
-                print >> outfile,'    '*2,'pass'
+                print >> outfile, indent('\n'+'pass',2)
                 
             print >> outfile
         
