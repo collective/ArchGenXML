@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.8 2004/05/10 14:57:06 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.9 2004/05/10 15:25:25 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -344,7 +344,7 @@ def modify_fti(fti):
             'map': {},
         },
         'generic': {
-            'field': '%(atype)sField',
+            'field': '%(type)sField',
             'map': {},
         },
     }
@@ -498,13 +498,13 @@ def modify_fti(fti):
                 
         return widgetcode
 
-    def getFieldFormatted(self,name,fieldtype,map={},doc=None,indent_level=0):
+    def getFieldFormatted(self,name,fieldtype,map={},doc=None, fieldType='String', indent_level=0):
         ''' returns the formatted field definitions for the schema '''
         res = ''
         # add comment
         if doc:
             res+=indent(doc,indent_level,'#')+'\n'+res        
-        res+=indent("%s('%s',\n" % (fieldtype % map,name), indent_level)
+        res+=indent("%s('%s',\n" % (fieldtype % {'type':fieldType.capitalize()},name), indent_level)
         map_keys=map.keys()
         map_keys.sort()
         res+=indent(',\n'.join(['%s=%s' % (key,map[key]) for key in map_keys]),indent_level+1) + ',\n'        
@@ -553,14 +553,14 @@ def modify_fti(fti):
                 attr.getName(),
                 classelement ),
                 
-            'atype':attr.type.capitalize()
         } )
             
         doc=attr.getDocumentation(striphtml=self.striphtml)                
         res=self.getFieldFormatted(attr.getName(),
             self.typeMap[ctype]['field'],
             map,
-            doc )
+            doc,
+            fieldType=attr.getType() )
         
         return res
 
@@ -1003,7 +1003,7 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchetypesGenerator.py,v 1.8 2004/05/10 14:57:06 zworkb Exp $
+RCS-ID $Id: ArchetypesGenerator.py,v 1.9 2004/05/10 15:25:25 zworkb Exp $
 \"""
 # %(copyright)s
 #
