@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.17 2003/07/23 11:12:23 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.18 2003/07/23 17:43:04 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -383,7 +383,7 @@ class ArchetypesGenerator:
         extDir=os.path.join(target,'Extensions')
         makeDir(extDir)
         of=makeFile(os.path.join(extDir,'Install.py'))
-        print 'target:',target
+        
         of.write(installTemplate % {'project_dir':os.path.split(target)[1]})
         of.close()
 
@@ -393,7 +393,13 @@ class ArchetypesGenerator:
         outfile=None
 
         if not projectName:
-            projectName=self.outfileName
+            path=os.path.split(self.outfileName)
+            if path[1]:
+                projectName=path[1]
+            else:
+                #in case of trailing slash
+                projectName=os.path.split(path[0])[1]
+            print 'projectName:',projectName
 
         if not os.path.splitext(self.outfileName)[1]:
             dirMode=1
