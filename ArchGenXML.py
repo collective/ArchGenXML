@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.6 2003/06/16 10:46:39 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.7 2003/06/18 13:50:24 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -226,7 +226,14 @@ class ArchetypesGenerator:
 
     # Generate get/set/add member functions.
     def generateArcheSchema(self, outfile, element):
-        print >> outfile,'    schema=BaseSchema + Schema(('
+        parent_schemata=[p.getCleanName()+'.schema' for p in element.getGenParents()]
+
+        if parent_schemata:
+            parent_schemata_expr=' + '+' + '.join(parent_schemata)
+        else:
+            parent_schemata_expr=''
+            
+        print >> outfile,'    schema=BaseSchema %s + Schema((' % parent_schemata_expr
         refs=[]
 
         for attrDef in element.getAttributeDefs():
@@ -276,8 +283,14 @@ class ArchetypesGenerator:
 
     def generateClasses(self, outfile, element, delayed):
         wrt = outfile.write
+        wrt('\n')
+        parentnames = [p.getCleanName() for p in element.getGenParents()]
+        for p in parentnames:
+            wrt('from %s import %s' % (p,p))
 
-        refs = element.getRefs() + element.getSubtypeNames()
+        wrt('\n')
+        
+        refs = element.getRefs() + element.getSubtypeNames(recursive=1)
 
         if not element.isComplex():
             return
@@ -289,12 +302,15 @@ class ArchetypesGenerator:
 
         wrt('\n')
 
+        parents=','.join(parentnames)
         if refs:
-            s1 = 'class %s%s(BaseFolder):\n' % (self.prefix, name)
+            s1 = 'class %s%s(BaseFolder,%s):\n' % (self.prefix, name, parents)
         else:
-            s1 = 'class %s%s(BaseContent):\n' % (self.prefix, name)
+            s1 = 'class %s%s(BaseContent,%s):\n' % (self.prefix, name, parents)
 
         wrt(s1)
+        print >> outfile,'''    portal_type = meta_type = '%s' ''' % name
+        print >> outfile,'''    archetype_name = '%s'   #this name appears in the 'add' box ''' % name
         self.generateArcheSchema(outfile,element)
         self.generateMethods(outfile,element)
 

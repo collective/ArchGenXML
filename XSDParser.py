@@ -28,6 +28,8 @@ class XschemaElement:
     def getMaxOccurs(self): return self.maxOccurs
     def getType(self): return self.type
     def isComplex(self): return self.complex
+    def getGenParents(self):return []
+    def getGenChildren(self):return []
     def addAttributeDefs(self, attrs):
         att=XschemaAttribute(attrs)
         self.attributeDefs.append(att)
@@ -40,7 +42,7 @@ class XschemaElement:
 
         return [str(c.getRef()) for c in self.getChildren() if c.getRef()]
 
-    def getSubtypeNames(self):
+    def getSubtypeNames(self,recursive=0):
         ''' returns the non-intrinsic subtypes '''
         return [str(c.getType()) for c in self.getChildren() if not c.isIntrinsicType() ]
 
@@ -122,6 +124,9 @@ class XschemaElement:
 
     def getMethodDefs(self):
         return []
+    
+    def isAbstract(self):
+        return 0
 
 class XschemaAttribute(XschemaElement):
     def __init__(self,  attrs):

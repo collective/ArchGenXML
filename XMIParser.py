@@ -59,7 +59,12 @@ class XMI1_0:
 
     METHOD="Foundation.Core.Operation"
     METHODPARAMETER="Foundation.Core.Parameter"
-
+    
+    GENERALIZATION="Foundation.Core.Generalization"
+    GEN_CHILD="Foundation.Core.Generalization.child"
+    GEN_PARENT="Foundation.Core.Generalization.parent"
+    GEN_ELEMENT="Foundation.Core.GeneralizableElement"
+    
     aggregates=['composite','aggregate']
 
     def getName(self,domElement):
@@ -113,6 +118,22 @@ class XMI1_0:
                 assoc.fromEnd.obj.addAssocTo(assoc)
                 assoc.toEnd.obj.addAssocFrom(assoc)
 
+    def buildGeneralizations(self,doc,objects):
+        gens=doc.getElementsByTagName(XMI.GENERALIZATION)
+        
+        for gen in gens:
+            try:
+                par0=getElementByTagName   (gen,self.GEN_PARENT)
+                child0=getElementByTagName (gen,self.GEN_CHILD)
+                par=objects[getElementByTagName(par0,self.GEN_ELEMENT).getAttribute('xmi.idref')]
+                child=objects[getElementByTagName(child0,self.GEN_ELEMENT).getAttribute('xmi.idref')]
+                
+                par.addGenChild(child)
+                child.addGenParent(par)
+            except IndexError:
+                pass
+
+        
 class XMI1_2 (XMI1_0):
     # XMI version specific stuff goes there
 
@@ -259,10 +280,6 @@ class XMIElement:
 
         return [str(c.getRef()) for c in self.getChildren() if c.getRef()]
 
-    def getSubtypeNames(self):
-        ''' returns the non-intrinsic subtypes '''
-        return [o.getName() for o in self.subTypes]
-
     def show(self, outfile, level):
         showLevel(outfile, level)
         outfile.write('Name: %s  Type: %s\n' % (self.name, self.type))
@@ -293,42 +310,6 @@ class XMIElement:
             self.unmappedCleanName = ''
 
         self.cleanName = mapName(self.unmappedCleanName)
-##        if 'maxOccurs' in self.attrs.keys():
-##            max = self.attrs['maxOccurs']
-##            if max == 'unbounded':
-##                max = 99999
-##            else:
-##                try:
-##                    max = int(self.attrs['maxOccurs'])
-##                except ValueError:
-##                    sys.stderr.write('*** %s/%s  maxOccurs must be integer or "unbounded".' % \
-##                        (element.getName(), child.getName())
-##                        )
-##                    sys.exit(-1)
-##        else:
-##            max = 1
-##        self.maxOccurs = max
-
-##        if 'type' in self.attrs.keys():
-##            type1 = self.attrs['type']
-##            if type1 == 'xs:string' or \
-##                type1 == 'xs:integer' or \
-##                type1 == 'xs:float':
-##                self.complex = 0
-##            else:
-##                self.complex = 1
-##            self.type = self.attrs['type']
-##        else:
-##            self.complex = 1
-##            self.type = 'NoneType'
-##        # If it does not have a type, then make the type the same as the name.
-##        if self.type == 'NoneType' and self.name:
-##            self.type = self.name
-##        # Do it recursively for all descendents.
-
-##        # refs
-##        if 'ref' in self.attrs.keys():
-##            self.ref=self.attrs['ref']
 
 
         for child in self.children:
@@ -349,9 +330,32 @@ class XMIClass (XMIElement):
         XMIElement.__init__(self,*args,**kw)
         self.assocsTo=[]
         self.assocsFrom=[]
+        self.genChildren=[]
+        self.genParents=[]
+        
         self.type=self.name
 
+    def addGenChild(self,c):
+        self.genChildren.append(c)
+        
+    def addGenParent(self,c):
+        self.genParents.append(c)
+        
+    def getGenChildren(self,recursive=0):
+        ''' generalization children '''
 
+        res=self.genChildren
+
+        if recursive:
+            for r in res:
+                res.extend(r.getGenChildren(1))
+
+        return res
+    
+    def getGenParents(self):
+        ''' generalization parents '''
+        return self.genParents
+    
     def buildChildren(self,domElement):
         for el in domElement.getElementsByTagName(XMI.ATTRIBUTE):
             self.addAttributeDefs(XMIAttribute(el))
@@ -373,6 +377,18 @@ class XMIClass (XMIElement):
     def getFromAssociations(self):
         return self.assocsFrom
     
+    def isAbstract(self):
+        return 0
+
+    def getSubtypeNames(self,recursive=0):
+        ''' returns the non-intrinsic subtypes '''
+
+        res = [o.getName() for o in self.subTypes]
+        
+        if recursive:
+            for sc in self.subTypes:
+                res.extend([o.getName() for o in sc.getGenChildren(recursive=1)])
+        return res
     
 class XMIMethodParameter(XMIElement):
     pass
@@ -480,6 +496,7 @@ def buildHierarchy(doc):
 
     res.annotate()
     XMI.buildRelations(doc,allObjects)
+    XMI.buildGeneralizations(doc,allObjects)
     return res
 
 
