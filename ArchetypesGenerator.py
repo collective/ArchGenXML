@@ -317,8 +317,9 @@ class ArchetypesGenerator(BaseGenerator):
         ftiTempl=FTI_TEMPL
         if self.generateActions and hasActions:
             ftiTempl += actTempl
-
-        immediate_view=element.getTaggedValue('immediate_view') or 'base_view'
+        
+        immediate_view = element.getTaggedValue('immediate_view') or 'base_view'
+        default_view = element.getTaggedValue('default_view') or immediate_view
 
         # global_allow
         ga = self.getOption('global_allow', element, default=None)
@@ -341,6 +342,17 @@ class ArchetypesGenerator(BaseGenerator):
             has_content_icon='#'
             content_icon = element.getCleanName()+'.gif'
 
+        # If we are generating a tool, include the template which sets
+        # a tool icon
+        if element.hasStereoType(self.portal_tools):
+            ftiTempl += TOOL_FTI_TEMPL
+            
+        has_toolicon=''
+        toolicon = element.getTaggedValue('toolicon')
+        if not toolicon:
+            has_toolicon='#'
+            toolicon = element.getCleanName()+'.gif'
+
         # Allow discussion?
         allow_discussion = element.getTaggedValue('allow_discussion','0')
 
@@ -355,16 +367,18 @@ class ArchetypesGenerator(BaseGenerator):
                     element.getTaggedValue('label') or \
                     element.getName ()
 
-        typeDescription = element.getTaggedValue('typeDescription', typeName)
-
-
+        typeDescription = getExpression(element.getTaggedValue('typeDescription', typeName))
+        
         res=ftiTempl % {
             'subtypes'             : repr(tuple(subtypes)),
             'has_content_icon'     : has_content_icon,
             'content_icon'         : content_icon,
+            'has_toolicon'         : has_toolicon,
+            'toolicon'             : toolicon,
             'allow_discussion'     : allow_discussion,
             'global_allow'         : global_allow,
             'immediate_view'       : immediate_view,
+            'default_view'         : default_view,
             'filter_content_types' : filter_content_types,
             'typeDescription'      : typeDescription,
             'type_name_lc'         : element.getName ().lower ()}
@@ -676,6 +690,12 @@ class ArchetypesGenerator(BaseGenerator):
         # add comment
         if doc:
             res+=indent(doc,indent_level,'#')+'\n'+res
+        
+        # If this is a generic field and the user entered MySpecialField,
+        # then don't suffix it with 'field''
+        if rawType.endswith('Field'):
+            rawType = rawType[:-5]
+        
         res+=indent("%s('%s',\n" % (fieldtype % {'type':rawType},name), indent_level)
         res+=indent(',\n'.join(['%s=%s' % (key,map[key]) \
                                 for key in map if key.find(':')<0 ]) ,
@@ -972,23 +992,46 @@ class ArchetypesGenerator(BaseGenerator):
 
         if mode == 'class':
 
-            # [optilude] Added check for permission:mode - public, private or protected (default)
+            # [optilude] Added check for permission:mode - public (default), private or protected
             # [jensens]  You can also use the visibility value from UML (implemented for 1.2 only!)
             # tgv overrides UML-mode!
-            permissionMode = m.getTaggedValue ('permission:mode', None) or m.getVisibility() or 'protected'
+            permissionMode = m.getVisibility() or 'public'
 
 
+            # A public method means it's part of the class' public interface,
+            # not to be confused with the fact that Zope has a method called
+            # declareProtected() to protect a method which is *part of the
+            # class' public interface* with a permission. If a method is public
+            # and has no permission set, declarePublic(). If it has a permission
+            # declareProtected() by that permission.
             if permissionMode == 'public':
-                print >> outfile,indent("security.declarePublic('%s')" % (m.getName(),),1)
-            elif permissionMode == 'private':
-                print >> outfile,indent("security.declarePrivate('%s')" % (m.getName(),),1)
-            elif permissionMode == 'protected':
                 rawPerm=m.getTaggedValue('permission',None)
                 permission=getExpression(rawPerm)
                 if rawPerm:
-                    print >> outfile,indent("security.declareProtected(%s,'%s')" % (permission,m.getName()),1)
-            elif permissionMode != 'none':
-                print "! Warning: value for permission:mode should be 'public', 'private', 'protected' or 'none', got", permissionMode
+                    print >> outfile,indent("security.declareProtected(%s, '%s')" % (permission,m.getName()),1)
+                else:
+                    print >> outfile,indent("security.declarePublic('%s')" % (m.getName(),),1)    
+            # A private method is always declarePrivate()'d 
+            elif permissionMode == 'private':
+                print >> outfile,indent("security.declarePrivate('%s')" % (m.getName(),),1)
+            
+            # A protected method is also declarePrivate()'d. The semantic
+            # meaning of 'protected' is that is hidden from the outside world,
+            # but accessible to subclasses. The model may wish to be explicit
+            # about this intention (even though python has no concept of
+            # such protection). In this case, it's still a privately declared
+            # method as far as TTW code is concerned.
+            elif permissionMode == 'protected':
+                print >> outfile,indent("security.declarePrivate('%s')" % (m.getName(),),1)
+            
+            # A package-level method should be without security declarartion -
+            # it is accessible to other methods in the same module, and will
+            # use the class/module defaults as far as TTW code is concerned.
+            elif permissionMode == 'package':
+                # No declaration
+                print >> outfile,indent("# Use class/module security defaults",1)
+            else:
+                print "! Warning: method visibility should be 'public', 'private', 'protected' or 'package', got", permissionMode
 
 
         cls=self.parsed_class_sources.get(klass.getPackage().getFilePath()+'/'+klass.getName(),None)
@@ -1236,8 +1279,9 @@ class ArchetypesGenerator(BaseGenerator):
         # [optilude] Only output portal type and AT name if it's not an abstract
         # mixin
         if not element.isAbstract ():
-            print >> outfile, CLASS_PORTAL_TYPE % name
             print >> outfile, CLASS_ARCHETYPE_NAME %  archetype_name
+            print >> outfile, CLASS_PORTAL_TYPE % name
+            print >> outfile
 
         #allowed_content_classes
         parentAggregates=''
@@ -1938,9 +1982,9 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             print 'method bodies will be overwritten'
         if not has_enhanced_strip_support:
-            print "Warning: Can't build message catalog. Needs 'python 2.3' or later."
+            print "Warning: Can't build i18n message catalog. Needs 'python 2.3' or later."
         if self.build_msgcatalog and not has_i18ndude:
-            print "Warning: Can't build message catalog. Module 'i18ndude' not found."
+            print "Warning: Can't build i18n message catalog. Module 'i18ndude' not found."
         if not XMIParser.has_stripogram:
             print "Warning: Can't strip html from doc-strings. Module 'stripogram' not found."
         self.generateProduct(root)

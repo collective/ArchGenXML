@@ -22,6 +22,7 @@ except ImportError:
 
 from Globals import package_home
 from Products.CMFCore import utils, CMFCorePermissions, DirectoryView
+from Products.CMFPlone.PloneUtilities import ToolInit
 from Products.Archetypes.public import *
 from Products.Archetypes import listTypes
 from Products.Archetypes.utils import capitalize
@@ -48,7 +49,7 @@ def initialize(context):
 <dtml-if "has_tools">
     # initialize portal tools
     tools = [<dtml-var "', '.join (tool_names)">]
-    utils.ToolInit( PROJECTNAME +' Tools',
+    ToolInit( PROJECTNAME +' Tools',
                 tools = tools,
                 product_name = PROJECTNAME,
                 icon='tool.gif'

@@ -45,7 +45,7 @@ DEFAULT_ACTIONS = """
         'category': 'object',
         'id': 'edit',
         'name': 'Edit',
-        'permissions': ('Manage portal content',),
+        'permissions': ('Modify portal content',),
        },
 
        {'action': 'string:${object_url}/base_view',
@@ -55,15 +55,16 @@ DEFAULT_ACTIONS = """
         'permissions': ('View',),
        },
 
-        """
+"""
 
 DEFAULT_ACTIONS_FOLDERISH ="""
-           {'action':       'folder_listing',
-            'category':     'object',
-            'id':           'folder_listing',
-            'name':         'Folder Listing',
-            'permissions':  ('View',)
-           },
+       {'action': 'string:${folder_url}/folder_listing',
+        'category': 'folder',
+        'condition': 'object/isPrincipiaFolderish',
+        'id': 'folderlisting',
+        'name': 'Folder Listing',
+        'permissions': ('View',)
+       },
 
 """
 
@@ -73,8 +74,13 @@ FTI_TEMPL='''\
     allow_discussion           = %(allow_discussion)s
     %(has_content_icon)scontent_icon               = '%(content_icon)s'
     immediate_view             = '%(immediate_view)s'
-    typeDescription            = """%(typeDescription)s"""
+    default_view               = '%(default_view)s'
+    typeDescription            = %(typeDescription)s
     typeDescMsgId              = 'description_edit_%(type_name_lc)s'
+'''
+
+TOOL_FTI_TEMPL='''\
+    %(has_toolicon)stoolicon                   = '%(toolicon)s'
 '''
 
 CLASS_SCHEMA = """\
@@ -118,7 +124,9 @@ from Products.CMFCore.utils import UniqueObject
     """
 
 CLASS_PORTAL_TYPE    = """    portal_type = meta_type    = '%s' """
-CLASS_ARCHETYPE_NAME = """    archetype_name             = '%s' #this name appears in the 'add' box """
+CLASS_ARCHETYPE_NAME = """\
+    # This name appears in the 'add' box
+    archetype_name             = '%s'"""
 CLASS_IMPLEMENTS     = """    __implements__ = %(baseclass_interfaces)s + (%(realizations)s,)"""
 CLASS_IMPLEMENTS_BASE= """    __implements__ = %(baseclass_interfaces)s"""
 CLASS_ALLOWED_CONTENT_TYPES = '''    allowed_content_types      = %s %s'''

@@ -5,13 +5,17 @@ To-do list for current HEAD code, not a feature wish list.
 A list of wished-for/planned features planned is at:
 http://plone.org/development/teams/developer/ArchGenXML
 
-* Finish writing documentation: current is a tutorial at plone.org
+* When generating docstrings, be more clever about linebreaks and whitespace. 
 
-	- optilude and natoka want to help :)
+	- Poseidon does not wrap, so we need to support funny linebreaks.
+
+* Finish writing documentation: current is a tutorial at plone.org
 	
 	- need to grep source code for stereotype and TGV checks and document
 	   each one. Also need to classify which ones are in 1.2 and which ones
 	   are only in trunk.
+	  
+	    -> see docs/ directory for the beginnings of this
 
 * New <<ordered>> stereotype on folderish items allows using OrderedBaseFolder:
   
@@ -59,17 +63,4 @@ http://plone.org/development/teams/developer/ArchGenXML
       xiru: it is already supported using a tagged valued called initial_state on the 
       state definition. However, support the UML initial state symbol would be ok too.
 
-  * Test the transitions scripts generation
-
-      xiru: It is already supported, but the code is a bit ugly yet.
-
-  * Add support for conditions on transitions
-
-      xiru: It is already supported too, but not documented :-P
-
-* Write documentation about workflow generation features (I think that only xiru knows all these features)
-  Jensens: I created a sample model: InExWorkflow in collective CVS
-
-* Update README
-
-  
+      optilude: it would, in fact, be better :) We should have this.
