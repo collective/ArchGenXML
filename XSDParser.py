@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XSDParser.py,v 1.13 2003/11/24 19:42:26 zworkb Exp $
+# RCS-ID:      $Id: XSDParser.py,v 1.14 2004/01/13 01:17:07 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -157,6 +157,9 @@ class XschemaElement:
 
     def getStereoType(self):
         return None
+    
+    def isI18N(self):
+        return 0
 
 class XschemaAttribute(XschemaElement):
     def __init__(self,  attrs):

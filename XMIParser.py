@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.34 2004/01/12 15:40:03 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.35 2004/01/13 01:17:07 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -703,6 +703,14 @@ class XMIClass (XMIElement):
             for sc in self.subTypes:
                 res.extend([o.getName() for o in sc.getGenChildren(recursive=1)])
         return res
+    
+    def isI18N(self):
+        ''' if at least one method is I18N the class has to be treated as i18N '''
+        for a in self.getAttributeDefs():
+            if a.isI18N():
+                return 1
+        
+        return 0
 
 class XMIMethodParameter(XMIElement):
     default=None
@@ -791,6 +799,11 @@ class XMIAttribute (XMIElement):
         if domElement:
             self.calcType()
             self.findDefault()
+            
+    def isI18N(self):
+        ''' with a stereotype 'i18N' or the taggedValue i18n=='1' an attribute is treated as i18n'''
+        return self.getStereoType()=='i18n' or self.getTaggedValue('i18n') =='1'
+
 
 class XMIAssocEnd (XMIElement):
     def initFromDOM(self,el):
