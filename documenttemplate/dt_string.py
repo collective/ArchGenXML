@@ -13,7 +13,7 @@
 ##############################################################################
 """
 
-$Id: dt_string.py,v 1.2 2004/07/27 18:08:51 zworkb Exp $
+$Id$
 """
 import re, thread
 
@@ -56,9 +56,13 @@ class String:
         return s
 
     def parse_error(self, mess, tag, text, start):
+        if hasattr(self, '__name__'):
+            MyErrQuote = self.errQuote(self.__name__)
+        else:
+            MyErrQuote = '(unknown)'
         raise ParseError, "%s, for tag %s, on line %s of %s<p>" % (
             mess, self.errQuote(tag), len(text[:start].split('\n')),
-            self.errQuote(self.__name__))
+            MyErrQuote)
 
     commands={
         'var': Var,
@@ -506,4 +510,3 @@ class String:
 
     def compile_python_expresssion(self, src):
         return compile(src, getattr(self, '__name__', '<string>'), 'eval')
-    
