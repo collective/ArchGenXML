@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.22 2003/08/11 02:35:15 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.23 2003/08/14 01:25:19 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -23,6 +23,7 @@ from xml.sax import handler
 
 from zipfile import ZipFile
 
+from StringIO import StringIO
 import XSDParser
 import XMIParser
 
@@ -61,18 +62,59 @@ class ArchetypesGenerator:
         self.xschemaFileName=xschemaFileName
         self.__dict__.update(kwargs)
 
+    ACT_TEMPL='''
+           {'action': '%(action)s',
+          'category': 'object',
+          'id': '%(action_id)s',
+          'name': '%(action_label)s',
+          'permissions': ('%(permission)s',)},
+          '''
+
+    def generateMethodActions(self,element):
+        outfile=StringIO()
+        print >> outfile
+        for m in element.getMethodDefs():
+            if m.getTaggedValue('action') :
+                dict={}
+                dict['action']=m.getTaggedValue('action')
+                dict['action_id']=m.getName()
+                dict['action_label']=m.getTaggedValue('action_label',m.getName())
+                dict['permission']=m.getTaggedValue('permission','View')
+                
+                print >>outfile,self.ACT_TEMPL % dict
+
+            elif m.getTaggedValue('view') :
+                dict={}
+                dict['action']=m.getTaggedValue('view')
+                dict['action_id']=m.getName()
+                dict['action_label']=m.getTaggedValue('action_label',m.getName())
+                dict['permission']=m.getTaggedValue('permission','View')
+                
+                f=makeFile(os.path.join(self.outfileName,'skins',self.outfileName,m.getTaggedValue('view')+'.pt'),0)
+                
+                if f:
+                    templdir=os.path.join(sys.path[0],'templates')
+                    viewTemplate=open(os.path.join(templdir,'action_view.pt')).read()
+                    f.write(viewTemplate)
+                
+                
+
+                print >>outfile,self.ACT_TEMPL % dict
+                
+        return outfile.getvalue()
+          
     def generateFti(self,element,subtypes):
         ''' '''
 
         actTempl='''
     actions=(
-           {'action': 'portal_form/base_edit',
+           {'action': 'string:${object_url}/portal_form/base_edit',
           'category': 'object',
           'id': 'edit',
           'name': 'edit',
           'permissions': ('Manage portal content',)},
 
-           {'action': 'base_view',
+           {'action': 'string:${object_url}/base_view',
           'category': 'object',
           'id': 'view',
           'name': 'view',
@@ -88,6 +130,9 @@ class ArchetypesGenerator:
           'permissions': ('View',)},
 
     '''
+        method_actions=self.generateMethodActions(element)   
+        actTempl +=method_actions
+
         actTempl+='''
               )
         '''
@@ -303,6 +348,11 @@ class ArchetypesGenerator:
             self.generateMethod(outfile,m)
             
     def generateMethod(self,outfile,m):
+            #ignore actions and views here because they are
+            #generated separately
+            if m.getTaggedValue('action') or m.getTaggedValue('view'):
+                return
+
             paramstr=''
             params=m.getParamExpressions()
             if params:

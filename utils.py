@@ -12,9 +12,13 @@ NameTable = {
 def makeFile(outFileName,force=1):
     outFile = None
     if (not force) and os.path.exists(outFileName):
+        return None
+    elif (force=='ask') and os.path.exists(outFileName):
         reply = raw_input('File %s exists.  Overwrite? (y/n): ' % outFileName)
         if reply == 'y':
             outFile = open(outFileName, 'w')
+        else:
+            return None
     else:
         outFile = open(outFileName, 'w')
     return outFile
