@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.143 2004/04/22 00:35:45 xiru Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.144 2004/04/22 23:57:56 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -49,7 +49,12 @@ try:
     "abca".strip('a')
 except:
     has_enhanced_strip_support=0
-
+    
+try:
+    from ConfigParser import SafeConfigParser as ConfigParser
+except:
+    from ConfigParser import ConfigParser
+        
 #
 # Representation of element definition.
 #
@@ -60,6 +65,7 @@ class ArchetypesGenerator:
     unknownTypesAsString=0
     generateActions=1
     generateDefaultActions=0
+    prefix=''
     prefix=''
     packages=[] #packages to scan for classes
     noclass=0   # if set no module is reverse engineered,
@@ -85,8 +91,8 @@ class ArchetypesGenerator:
     
     msgcatstack = []
     
-    def __init__(self,xschemaFileName,outfileName,projectName=None, **kwargs):
-        self.outfileName=outfileName
+    def __init__(self,xschemaFileName,projectName=None, **kwargs):
+        self.outfileName=kwargs['outfilename']
 
         if self.outfileName[-1] in ('/','\\'):
             self.outfileName=self.outfileName[:-1]
@@ -438,7 +444,7 @@ def modify_fti(fti):
                     if formatted:
                         formatted+=(len(k)+1)*' '
                     formatted+=line+'\n'
-                map.update( {k:formatted} )
+                map.update( {k:formatted.strip()} )
 
         return map
             
@@ -1020,7 +1026,7 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchGenXML.py,v 1.143 2004/04/22 00:35:45 xiru Exp $
+RCS-ID $Id: ArchGenXML.py,v 1.144 2004/04/22 23:57:56 yenzenz Exp $
 \"""
 # Copyright: (c) %(year)s by %(copyright)s
 #
@@ -1042,7 +1048,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA"""
 
     def generateModuleInfoHeader(self, outfile, modulename, element): 
-        if self.no_module_info_header:
+        if not self.module_info_header:
             return
         
         #deal with multiline docstring
@@ -1521,92 +1527,134 @@ from Products.Archetypes.public import *
 from Products.I18NArchetypes.public import *
 
     """
+    
+# key: (cmdlinekey?, shortcutkey?, cfg-file-key? -> 0 or section-name, internal settings-key, type)
+ALLOWED_OPTIONS_MAP = {
+    'outfile':                          (0, 'o', 'GENERAL',       'outfilename', 'string'),
+    'prefix':                           (0, 'p', 'GENERAL',       'prefix', 'string'),
+    'packages':                         (0, 'P', 'GENERAL',       'packages', 'string'),
+    'force':                            (0, 'f', 'GENERAL',       'force', 'switchon'),
+    'ape':                              (1, 0,   None,            'ape_support', 'switchon'),
+    'ape-support':                      (1, 0,   'STORAGE',       'ape_support', 'switchon'),
+    'actions':                          (1, 'a', None     ,       'generateActions', 'switchon'),
+    'no-actions':                       (1, 0,   None,            'generateActions', 'switchoff'),
+    'generate-actions':                 (0, 0,   'CLASSES',       'generateActions', 'yesno'),
+    'default-actions':                  (1, 0,   'CLASSES',       'generateDefaultActions', 'switchon'),
+    'creation-permission=':             (1, 0,   'CLASSES',       'creation_permissions', 'switchon'),
+    'detailled-creation-permissions':   (1, 0,   'CLASSES',       'detailled_creation_permissions', 'switchon'),
+    'no-detailled-creation-permissions':(1, 0,   None,            'detailled_creation_permissions', 'switchoff'),
+    'widget-enhancement':               (0, 0,   'CLASSES',       'widget_enhancement', 'switchon'),
+    'no-widget-enhancement':            (1, 0,   None,            'widget_enhancement', 'switchoff'),
+    'method-preservation':              (1, 0,   'CLASSES',       'method_preservation', 'switchon'),
+    'no-method-preservation':           (1, 0,   None,            'method_preservation', 'switchoff'),
+    'noclass':                          (1, 'n', 'CLASSES',       'noclass', 'switchon,'),
+    'unknown-types-as-string':          (1, 't', 'CLASSES',       'unknownTypesAsString','switchon'),
+    'i18n-support':                     (1, 0,   'I18N',          'i18n_support','switchon'),
+    'i18n':                             (1, 0,   None,            'i18n_support','switchon'),
+    'message-catalog':                  (0, 0,   'I18N',          'build_msgcatalog','yesno'),
+    'no-message-catalog':               (1, 0,   None,            'build_msgcatalog','switchoff'),
+    'module-info-header':               (0, 0,   'DOCUMENTATION', 'module_info_header','yesno'),
+    'no-module-info-header':            (1, 0,   None,            'module_info_header','switchoff'),
+    'author=':                          (1, 0,   'DOCUMENTATION', 'author', 'string'),
+    'e-mail=':                          (1, 0,   'DOCUMENTATION', 'email', 'string'),
+    'copyright=':                       (1, 0,   'DOCUMENTATION', 'copyright', 'string'),
+    'licence=':                         (1, 0,   'DOCUMENTATION', 'licence', 'string'),
+    'strip-html':                       (1, 0,   'DOCUMENTATION', 'striphtml', 'switchon'),
+    'cfg=':                             (1, 'c', None,            None,'string'),
+    'project-configuration=':           (1, 0,   None,            None,'string'),                
+}
 
-def main():
+def read_project_configfile(filename,settings):
+    cp = ConfigParser()
+    try:
+        fname = open(filename,"r")
+    except:            
+        print ARCHGENXML_VERSION_LINE
+        print "\nERROR: Can't open project configuration file '%s'!", filename
+        sys.exit(2)
+            
+    cp.readfp(fname)
+    fname.close()    
+    
+    for key in ALLOWED_OPTIONS_MAP.keys():
+        fkey = key[len(key)-1] == '=' and key[:len(key)-1] or key
+        if cp.has_option(ALLOWED_OPTIONS_MAP[key][2], fkey):            
+            settings[ALLOWED_OPTIONS_MAP[key][3]]=cp.get(ALLOWED_OPTIONS_MAP[key][2], key)                
 
-    options={}
-    options['version']=version()
-    options['author'] = None
-    options['email'] = None
-    options['copyright'] = None
-    options['licence'] = None
-    options['no_module_info_header'] = None
-    options['widget_enhancement'] = None
-    args = sys.argv[1:]
-    opts, args = getopt.getopt(args, 'f:a:t:o:s:p:P:n',
-                              ['ape','actions','default-actions','no-actions',
-                               'ape','ape-support','noclass','unknown-types-as-string',
-                               'method-preservation','no-method-preservation',
-                               'i18n-support','i18n','no-module-info-header',
-                               'author=','e-mail=','copyright=','licence=','creation-permission=',
-                               'detailled-creation-permissions','no-detailled-creation-permissions',
-                               'strip-html','no-widget-enhancement','no-message-catalog'])
-    prefix = ''
-    outfileName = None
-    yesno={'yes':1,'y': 1, 'no':0, 'n':0}
+##    # print a ugly sample cfg
+##    y=['['+ALLOWED_OPTIONS_MAP[key][2]+']\n'+(key[len(key)-1] == '=' and key[:len(key)-1] or key) for key in ALLOWED_OPTIONS_MAP.keys() if ALLOWED_OPTIONS_MAP[key][2]]
+##    y.sort()
+##    for x in y print x
 
-    for option in opts:
-        if option[0] == '-p':
-            options['prefix'] = option[1]
-        elif option[0] == '-o':
-            outfileName = option[1]
-        elif option[0] == '-P':
-            options['packages'] = option[1].split(',')
-            print 'packs:',options['packages']
-        elif option[0] == '-f':
-            options['force'] = yesno[option[1]]
-        elif option[0] == '-t':
-            options['unknownTypesAsString'] = yesno[option[1]]
+    return settings
 
-        if option[0] in ('--unknown-types-as-string',):
-            options['unknownTypesAsString'] = 1
-        elif option[0] == '-a':
-            options['generateActions'] = yesno[option[1]]
-        elif option[0] == '--actions':
-            options['generateActions'] = 1
-        elif option[0] == '--default-actions':
-            options['generateDefaultActions'] = 1
-        elif option[0] == '--no-method-preservation':
-            options['method_preservation'] = 0
-        elif option[0] == '--method-preservation':
-            options['method_preservation'] = 1
-        elif option[0] == '--no-actions':
-            options['generateActions'] = 0
-        elif option[0] == '--no-widget-enhancement':
-            options['widget_enhancement'] = 1
-        elif option[0] == '--no-message-catalog':
-            options['build_msgcatalog'] = 0
-
-        if option[0] == '-n':
-            options['noclass'] = 1
-        if option[0] == '--noclass':
-            options['noclass'] = 1
-        if option[0] in ('--ape','--ape-support'):
-            options['ape_support'] = 1
-        if option[0] in ('--i18n-support','--i18n'):
-            options['i18n_support'] = 1
-
-        if option[0] == '--no-module-info-header':
-            options['no_module_info_header'] = 1            
-        elif option[0] == '--author':
-            options['author'] = option[1]
-        elif option[0] == '--e-mail':
-            options['email'] = option[1]
-        elif option[0] == '--copyright':
-            options['copyright'] = option[1]
-        elif option[0] == '--licence':
-            options['licence'] = option[1]
-        elif option[0] == '--creation-permission':
-            options['creation_permission'] = option[1]
-        elif option[0] == '--detailled-creation-permissions':
-            options['detailled_creation_permissions'] = 1
-        elif option[0] == '--no-detailled-creation-permissions':
-            options['detailled_creation_permissions'] = 0
-        if option[0] in (['--strip-html']):
-            options['striphtml'] = 1
+def modify_settings(key, value, settings, shortkey=0):
+    """ option is an 2-tuple, settings a dict """
+    okey= len(key)>2 and key[:2]=='--' and key[2:]    
+    if okey:
+        if not ALLOWED_OPTIONS_MAP.has_key(okey) and ALLOWED_OPTIONS_MAP.has_key(okey+'='):
+            okey+='='
+        if ALLOWED_OPTIONS_MAP.has_key(okey) and (ALLOWED_OPTIONS_MAP[okey][0] or shortkey):
+            yesno={'yes':1,'y': 1, 'no':0, 'n':0, 1:1, 0:0 }
+            if ALLOWED_OPTIONS_MAP[okey][3]:
+                if ALLOWED_OPTIONS_MAP[okey][4] == 'switchon':
+                    settings[ALLOWED_OPTIONS_MAP[okey][3]]= 1
+                elif ALLOWED_OPTIONS_MAP[okey][4] == 'switchoff':
+                    settings[ALLOWED_OPTIONS_MAP[okey][3]]= 0
+                elif ALLOWED_OPTIONS_MAP[okey][4] == 'yesno' and yesno.has_key(value):
+                    settings[ALLOWED_OPTIONS_MAP[okey][3]]= yesno[option[1]]
+                elif ALLOWED_OPTIONS_MAP[okey][4] == 'string':
+                    settings[ALLOWED_OPTIONS_MAP[okey][3]]= value
+    return settings
+   
+def read_project_settings(args):
+    """ reads options from args and return options array"""   
+    # this should use sometimes the new advenced python2.3 parser
+    
+    # set defaults
+    settings={}
+    settings['version']=version()
+    settings['author'] = None
+    settings['email'] = None
+    settings['copyright'] = None
+    settings['licence'] = None
+    settings['module_info_header'] = 1
+    settings['widget_enhancement'] = None    
+    settings['outfilename'] = None
+    
+    shortoptions = ':'.join([ ALLOWED_OPTIONS_MAP[optkey][1] \
+        for optkey in ALLOWED_OPTIONS_MAP.keys() \
+        if ALLOWED_OPTIONS_MAP[optkey][1]]
+    )
+    longoptions = [optkey for optkey in ALLOWED_OPTIONS_MAP.keys() \
+        if ALLOWED_OPTIONS_MAP[optkey][0]]
         
+    opts, args = getopt.getopt(args, shortoptions,longoptions)
+    
+    prefix = ''
+    
+    # first run to get configfile
+    for option in opts:
+        if option[0] in ['--project-configuration','--cfg','-c'] and option[1]:
+            settings=read_project_configfile(option[1],settings)
 
-    if len(args) < 1 and not options.get('noclass',0):
+    # second run to overide with commandline parameters
+    for option in opts: 
+        settings= modify_settings(option[0], option[1], settings)
+        shortdict = { }
+        x=[shortdict.update({ALLOWED_OPTIONS_MAP[key][1]:key}) \
+            for key in ALLOWED_OPTIONS_MAP.keys() \
+            if ALLOWED_OPTIONS_MAP[key][1]]
+                
+        if len(option[0])>1 and option[0][0]=='-' and shortdict.has_key(option[0][1:]):
+            settings= modify_settings('--'+shortdict[option[0][1:]], option[1], settings, shortkey=1)
+     
+    return settings, args
+        
+def main():
+    args = sys.argv[1:]
+    settings,args=read_project_settings(args)
+    if len(args) < 1 and not settings.get('noclass',0):
         usage()
         
     if len(args):
@@ -1614,15 +1662,17 @@ def main():
     else:
         xschemaFileName = ''
 
-    if not outfileName: # if outfilename is not given by the -o oprion try
-                        # getting the second regular argument
+    # if outfilename is not given by the -o option try getting the second 
+    # regular argument
+    if not settings['outfilename']: 
         if len(args) > 1:
-            outfileName=args[1]
+            settings['outfilename']=args[1]
 
-    if not outfileName:
-        usage()
-
-    gen=ArchetypesGenerator(xschemaFileName,outfileName, **options)
+    if not settings['outfilename']:
+        usage(2)
+    
+    # start generation
+    gen=ArchetypesGenerator(xschemaFileName, **settings)
     gen.parseAndGenerate()
 
 ARCHGENXML_VERSION_LINE = """\
@@ -1631,7 +1681,7 @@ ArchGenXML %(version)s
 """
 
 USAGE_TEXT = """\
-Usage: python ArchGenXML.py -o <target> [ options ] <xmi-source-file>
+Usage: ArchGenXML.py -o <target>|-c <configfile> [ options ] <xmi-source-file>
 
 OPTIONS:
     -o <target>
@@ -1702,14 +1752,15 @@ OPTIONS:
 
 """
 
-def usage():
+def usage(returncode=-1):
     print USAGE_TEXT
-    sys.exit(-1)
+    sys.exit(returncode)
     
 def version():
     ver=open(os.path.join(sys.path[0],'version.txt')).read().strip()
     print ARCHGENXML_VERSION_LINE % {'version': ver}
     return ver
+
 
 if __name__ == '__main__':
     main()
