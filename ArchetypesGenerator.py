@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.27 2004/06/15 12:05:36 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.28 2004/06/18 11:23:17 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -382,11 +382,18 @@ class ArchetypesGenerator:
         map={}
         tgv=element.getTaggedValues()
         
-        for k in ['storage']:
-            if k not in tgv.keys():
-                v=self.getOption(k,element,None)
+        for kt in [('storage',),('callStorageOnSet',),('call_storage_on_set','callStorageOnSet')]:
+            if len(kt)>1:
+                skey=kt[0]
+                key=kt[1]
+            else:
+                skey=kt[0]
+                key=kt[0]
+                
+            if skey not in tgv.keys():
+                v=self.getOption(skey,element,None)
                 if v:
-                    tgv.update({k:v})
+                    tgv.update({key:v})
 
         for k in tgv.keys():
             if k not in noparams and not k.startswith('widget:'):
