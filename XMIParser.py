@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.35 2004/01/13 01:17:07 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.36 2004/01/17 18:09:04 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -319,6 +319,7 @@ class XMI1_1 (XMI1_0):
 
 
 class XMI1_2 (XMI1_1):
+    TAGGED_VALUE_VALUE="UML:TaggedValue.dataValue"
     # XMI version specific stuff goes there
 
     #def getAssocEndParticipantId(self,el):
@@ -339,8 +340,7 @@ class XMI1_2 (XMI1_1):
         tdef=getElementByTagName(el,self.TAG_DEFINITION,default=None,recursive=1)
         # fetch the name from the global tagDefinitions (weird)
         tagname=self.tagDefinitions[tdef.getAttribute('xmi.idref')].getAttribute('name')
-        tagvalue=el.getAttribute('dataValue')
-        #print 'TAGNAME:',tagname,tagvalue
+        tagvalue=getAttributeValue(el,self.TAGGED_VALUE_VALUE)
         return tagname,tagvalue
 
     def collectTagDefinitions(self,el):

@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.68 2004/01/17 15:47:54 dreamcatcher Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.69 2004/01/17 18:09:04 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -219,10 +219,10 @@ class ArchetypesGenerator:
 
     typeMap={
         'string':'''StringField('%(name)s',
-                    %(other)s
+%(other)s
                     ),''' ,
         'text':  '''TextField('%(name)s',
-                    %(other)s
+%(other)s
                     ),''' ,
         'richtext':  '''TextField('%(name)s',
                     default_output_type='text/html',
@@ -230,46 +230,46 @@ class ArchetypesGenerator:
                         'text/structured',
                         'application/msword',
                         'text/html',),
-                    %(other)s
+%(other)s
                     ),''' ,
 
         'integer':'''IntegerField('%(name)s',
-                    %(other)s
+%(other)s
                     ),''',
         'float':'''FloatField('%(name)s',
-                    %(other)s
+%(other)s
                     ),''',
         'boolean':'''BooleanField('%(name)s',
-                    %(other)s
+%(other)s
                     ),''',
         'lines':'''LinesField('%(name)s',
-                    %(other)s
+%(other)s
                     ),''',
         'date':'''DateTimeField('%(name)s',
-                    %(other)s
+%(other)s
                     ),''',
         'image':'''ImageField('%(name)s',
                     sizes={'small':(100,100),'medium':(200,200),'large':(600,600)},
                     storage=AttributeStorage(),
-                    %(other)s
+%(other)s
                     ),''',
         'file':'''FileField('%(name)s',
                     storage=AttributeStorage(),
-                    %(other)s
+%(other)s
                     ),''',
         'lines':'''LinesField('%(name)s',
-                    %(other)s
+%(other)s
                     ),''',
         'reference':'''ReferenceField('%(name)s',allowed_types=%(allowed_types)s,
                     multiValued=%(multiValued)d,
                     relationship='%(relationship)s',
-                    %(other)s
+%(other)s
                     ),''',
         'computed':'''ComputedField('%(name)s',
-                    %(other)s
+%(other)s
                     ),''',
         'photo':'''PhotoField('%(name)s',
-                    %(other)s
+%(other)s
                     ),''',
     }
 
@@ -379,7 +379,7 @@ class ArchetypesGenerator:
         templ=self.typeMap[ctype]
         defexp=''
         if attr.hasDefault():
-            defexp='default='+attr.getDefault()+','
+            defexp='            default='+attr.getDefault()+',\n'
 
         other_attributes = (self.getWidget(ctype, attr) +
                             self.getFieldAttributes(attr))
@@ -387,7 +387,7 @@ class ArchetypesGenerator:
         if self.i18n_support and attr.isI18N():
             templ='I18N'+templ
             
-        res = templ % {'name':attr.getName(),'type':attr.getType(),'other':defexp+indent(other_attributes,5)}
+        res = templ % {'name':attr.getName(),'type':attr.getType(),'other':defexp+indent(other_attributes,3)}
         doc=attr.getDocumentation()
         if doc:
             res=indent(doc,2,'#')+'\n'+' '*8+res
