@@ -1474,6 +1474,7 @@ class ArchetypesGenerator(BaseGenerator):
         authors, emails, authorline = self.getAuthors(element)
 
         rcs_id = self.getOption('rcs_id', element, False)
+
         if rcs_id:
             rcs_id_tag = '\nRCS-ID $Id$'
         else:
@@ -1520,6 +1521,16 @@ class ArchetypesGenerator(BaseGenerator):
         outfile.write(s1)
 
         return outfile.getvalue()
+
+    def getTools(self,package,autoinstallOnly=0):
+        """ returns a list of  generated tools """
+        res=[c for c in package.getClasses(recursive=1) if
+                    c.hasStereoType(self.portal_tools)]
+                  
+        if autoinstallOnly:
+            res=[c for c in res if isTGVTrue(c.getTaggedValue('autoinstall')) ]
+        
+        return res
 
     def getGeneratedTools(self,package):
         """ returns a list of  generated tools """
@@ -1786,9 +1797,9 @@ class ArchetypesGenerator(BaseGenerator):
         if package.hasStereoType(self.stub_stereotypes):
             return
         package.generatedModules=[]
-        if package.getName().lower() == 'java' or package.getName().lower().startswith('java'):
+        if package.getName().lower() == 'java' or package.getName().lower().startswith('java') or not package.getName():
             #to suppress these unneccesary implicit created java packages (ArgoUML and Poseidon)
-            print indent('ignore package:',package.getName(),self.infoind)
+            print indent('ignore package:'+package.getName(),self.infoind)
             return
 
         self.makeDir(package.getFilePath())
@@ -1965,10 +1976,10 @@ class ArchetypesGenerator(BaseGenerator):
             if suff.lower() in ('.xmi','.xml'):
                 print 'opening xmi'
                 self.root=root=XMIParser.parse(self.xschemaFileName,packages=self.parse_packages,generator=self)
-            elif suff.lower() in ('.zargo','.zuml'):
+            elif suff.lower() in ('.zargo','.zuml','.zip'):
                 print 'opening zargo'
                 zf=ZipFile(self.xschemaFileName)
-                xmis=[n for n in zf.namelist() if os.path.splitext(n)[1].lower()=='.xmi']
+                xmis=[n for n in zf.namelist() if os.path.splitext(n)[1].lower()in ['.xmi','.xml']]
                 assert(len(xmis)==1)
                 buf=zf.read(xmis[0])
                 self.root=root=XMIParser.parse(xschema=buf,packages=self.parse_packages, generator=self)

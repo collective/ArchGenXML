@@ -40,7 +40,10 @@ DirectoryView.registerDirectory('skins/<dtml-var "product_name">',
 def initialize(context):
     # imports packages and types for registration
 <dtml-in "package_imports">
+    <dtml-if sequence-item>
+    
     import <dtml-var sequence-item>
+    </dtml-if>
 </dtml-in>
 <dtml-in "class_imports">
     import <dtml-var sequence-item>

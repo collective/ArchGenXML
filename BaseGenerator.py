@@ -28,7 +28,7 @@ from UMLProfile import UMLProfile
 
 class BaseGenerator:
     """ abstract base class for the different concrete generators """
-
+    
     uml_profile=UMLProfile()
     uml_profile.addStereoType('python_class',['XMIClass'],dispatching=1,
         generator='generatePythonClass',template='python_class.py')

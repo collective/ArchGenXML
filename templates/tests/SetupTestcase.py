@@ -9,12 +9,12 @@ if __name__ == '__main__':
 from Products.PloneTestCase import PloneTestCase
 from <dtml-var "klass.getGenParents()[0].getQualifiedModuleName(klass.getPackage())"> import <dtml-var "klass.getGenParents()[0].getCleanName()">
 
-
 class TestSetup(<dtml-var "klass.getGenParents()[0].getCleanName()">):
 
     def testTools(self):
         ids = self.portal.objectIds()
         self.failUnless('archetype_tool' in ids)
+        #<dtml-var "[c.getName() for c in generator.getTools(klass.getPackage().getProduct(),autoinstallOnly=1)] ">
         # ...
 
     def testTypes(self):

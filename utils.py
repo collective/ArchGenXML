@@ -62,7 +62,10 @@ def indent(s,indent,prepend='',skipFirstRow=0):
     if skipFirstRow:
         lines=[rows[0]]+['    '*indent + prepend + l for l in rows[1:]]
     else:
-        lines=['    '*indent + prepend + l for l in rows]
+        try:
+            lines=['    '*indent + prepend + l for l in rows]
+        except:
+            import pdb;pdb.set_trace()
 
     return '\n'.join(lines)
 
@@ -249,7 +252,7 @@ def read_project_settings(args):
     settings['detailled_creation_permissions'] = None
     settings['widget_enhancement'] = None
     settings['outfilename'] = None
-    settings['rcs_id'] = 1
+    settings['rcs_id'] = 0
     settings['generated_date'] = 0
 
     shortoptions = ':'.join([ ALLOWED_OPTIONS_MAP[optkey][1] \

@@ -8,6 +8,10 @@ if __name__ == '__main__':
     execfile(os.path.join(sys.path[0], 'framework.py'))
 
 from <dtml-var "parent.getQualifiedModuleName(klass.getPackage())"> import <dtml-var "parent.getCleanName()">
+#import the tested classes
+<dtml-in "klass.getRealizationParents()">
+from <dtml-var "_['sequence-item'].getQualifiedModuleName(klass.getPackage(),forcePluginRoot=1)"> import <dtml-var "_['sequence-item'].getCleanName()">
+</dtml-in>
 
 class <dtml-var "klass.getCleanName()">(<dtml-var "parent.getCleanName()">):
 
@@ -27,7 +31,14 @@ class <dtml-var "klass.getCleanName()">(<dtml-var "parent.getCleanName()">):
     <dtml-else>
 
     def <dtml-var "mn">(self,<dtml-var "','.join(m.getParamNames())">):
-        pass
+        <dtml-let name="'temp_'+m.getParent().getCleanName()">
+        
+        ''' '''
+        #o=<dtml-var "m.getParent().getCleanName()">('<dtml-var name>')
+        #self.folder.<dtml-var name>=o
+        #print self.folder.<dtml-var name>
+        
+        </dtml-let>
     </dtml-if>
     </dtml-let>
     </dtml-in>
