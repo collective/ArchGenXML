@@ -7,16 +7,12 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.11 2003/07/17 08:00:33 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.12 2003/07/18 12:55:23 dreamcatcher Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
 
 # originally inspired Dave Kuhlman's generateDS Copyright (c) 2003 Dave Kuhlman
-
-
-
-
 
 #from __future__ import generators   # only needed for Python 2.2
 
