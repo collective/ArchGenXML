@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.36 2004/01/17 18:09:04 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.37 2004/01/25 18:54:42 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -107,6 +107,10 @@ class XMI1_0:
         classifier=getElementByTagName(assocend,self.CLASSIFIER,None)
         if not classifier:
             classifier=getElementByTagName(assocend,self.CLASS,None)
+
+        if not classifier:
+	    print 'No assocEnd participant found  for: ',XMI.getId(el)
+            return None
 		
         return classifier.getAttribute('xmi.idref')
 
@@ -332,8 +336,19 @@ class XMI1_2 (XMI1_1):
         return str(el.getAttribute('aggregation'))
 
     def getMultiplicity(self,el):
-        mult_min=int(getElementByTagName(el,self.MULTRANGE,recursive=1).getAttribute('lower'))
-        mult_max=int(getElementByTagName(el,self.MULTRANGE,recursive=1).getAttribute('upper'))
+        min=getElementByTagName(el,self.MULTRANGE,default=None,recursive=1)
+        max=getElementByTagName(el,self.MULTRANGE,default=None,recursive=1)
+        
+        if min:
+            mult_min=int(min.getAttribute('lower'))
+        else:
+            mult_min=0
+            
+        if max:
+            mult_max=int(max.getAttribute('upper'))
+        else:
+            mult_max=-1
+            
         return (mult_min,mult_max)
 
     def getTaggedValue(self,el):
