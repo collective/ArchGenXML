@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.28 2003/11/19 19:45:03 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.29 2003/11/24 19:42:26 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -85,6 +85,7 @@ class XMI1_0:
 
     aggregates=['composite','aggregate']
 
+    
     def getName(self,domElement):
         try:
             return str(getAttributeValue(domElement,self.NAME))
@@ -221,7 +222,21 @@ class XMI1_0:
             o.isabstract=abs.getAttribute('xmi.value')=='true'
         else:
             o.isabstract=0
-
+            
+    def calcDatatype(self,att):
+        global datatypes
+        typeinfos=att.domElement.getElementsByTagName(XMI.TYPE)
+        if len(typeinfos):
+            classifiers=typeinfos[0].getElementsByTagName(XMI.CLASSIFIER)
+            if len(classifiers):
+                typeid=str(classifiers[0].getAttribute('xmi.idref'))
+                typeElement=datatypes[typeid]
+                #self.type=getAttributeValue(typeElement,XMI.NAME)
+                att.type=XMI.getName(typeElement)
+                if att.type not in datatypenames: #collect all datatype names (to prevent pure datatype classes from being generated)
+                    datatypenames.append(att.type)
+                #print 'attribute:'+self.getName(),typeid,self.type
+        
 class XMI1_1 (XMI1_0):
     # XMI version specific stuff goes there
 
@@ -334,6 +349,21 @@ class XMI1_2 (XMI1_1):
     def calcClassAbstract(self,o):
         o.isabstract=o.domElement.hasAttribute('isAbstract') and o.domElement.getAttribute('isAbstract')=='true'
         #print 'xmi12_calcabstract:',o.getName(),o.isAbstract()
+
+    def calcDatatype(self,att):
+        global datatypes
+        typeinfos=att.domElement.getElementsByTagName(XMI.TYPE)
+        if len(typeinfos):
+            classifiers=typeinfos[0].getElementsByTagName(XMI.CLASS)
+            if len(classifiers):
+                print 'classifier found for 1.2'
+                typeid=str(classifiers[0].getAttribute('xmi.idref'))
+                typeElement=datatypes[typeid]
+                #self.type=getAttributeValue(typeElement,XMI.NAME)
+                att.type=XMI.getName(typeElement)
+                if att.type not in datatypenames: #collect all datatype names (to prevent pure datatype classes from being generated)
+                    datatypenames.append(att.type)
+                #print 'attribute:'+self.getName(),typeid,self.type
 
 XMI=XMI1_0()
 
@@ -566,7 +596,7 @@ class XMIClass (XMIElement):
         self.assocsFrom=[]
         self.genChildren=[]
         self.genParents=[]
-
+        self.internalOnly=0
         self.type=self.name
         #self.isabstract=0
 
@@ -574,6 +604,10 @@ class XMIClass (XMIElement):
         XMIElement.initFromDOM(self,domElement)
         XMI.calcClassAbstract(self)
 
+    def isInternal(self):
+        ''' internal class '''
+        return self.internalOnly
+    
     def addGenChild(self,c):
         self.genChildren.append(c)
 
@@ -717,16 +751,7 @@ class XMIAttribute (XMIElement):
         return self.has_default
 
     def calcType(self):
-        global datatypes
-        typeinfos=self.domElement.getElementsByTagName(XMI.TYPE)
-        if len(typeinfos):
-            classifiers=typeinfos[0].getElementsByTagName(XMI.CLASSIFIER)
-            if len(classifiers):
-                typeid=str(classifiers[0].getAttribute('xmi.idref'))
-                typeElement=datatypes[typeid]
-                #self.type=getAttributeValue(typeElement,XMI.NAME)
-                self.type=XMI.getName(typeElement)
-                #print 'attribute:'+self.getName(),typeid,self.type
+        return XMI.calcDatatype(self)
 
     def findDefault(self):
         initval=getElementByTagName(self.domElement,XMI.ATTRIBUTE_INIT_VALUE,None)
@@ -776,6 +801,7 @@ class XMIAssociation (XMIElement):
 
 def buildDataTypes(doc):
     global datatypes
+    
     dts=doc.getElementsByTagName(XMI.DATATYPE)
 
     for dt in dts:
@@ -802,8 +828,11 @@ def buildHierarchy(doc,packagenames):
     """ builds Hierarchy out of the doc """
     global datatypes
     global stereotypes
+    global datatypenames
+    
     datatypes={}
     stereotypes={}
+    datatypenames=[]
 
     buildDataTypes(doc)
     buildStereoTypes(doc)
@@ -837,7 +866,13 @@ def buildHierarchy(doc,packagenames):
                 print 'Class:',xc.getName(),xc.id
                 res.addChild(xc)
 
-
+    #pure datatype classes should not be generated!
+    #print 'datatypenames:',datatypenames
+    for c in res.getChildren():
+        if c.getName() in datatypenames:
+            c.internalOnly=1
+            print 'internal class (not generated):',c.getName()
+            
     res.annotate()
     XMI.buildRelations(doc,allObjects)
     XMI.buildGeneralizations(doc,allObjects)

@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.56 2003/11/24 12:54:12 yenzenz Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.57 2003/11/24 19:42:26 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -790,8 +790,8 @@ from Products.CMFCore.utils import UniqueObject
                 self.generatedClasses=[]
 
                 for element in root.getChildren():
-                    #skip tool classes
-                    if element.getStereoType() in self.stub_stereotypes:
+                    #skip stub and internal classes
+                    if element.isInternal() or element.getStereoType() in self.stub_stereotypes:
                         continue
 
                     module=element.getName()
@@ -825,7 +825,7 @@ from Products.CMFCore.utils import UniqueObject
             if suff.lower() in ('.xmi','.xml'):
                 print 'opening xmi'
                 self.root=root=XMIParser.parse(self.xschemaFileName,packages=self.packages)
-            elif suff.lower() in ('.zargo',):
+            elif suff.lower() in ('.zargo','.zuml'):
                 print 'opening zargo'
                 zf=ZipFile(self.xschemaFileName)
                 xmis=[n for n in zf.namelist() if os.path.splitext(n)[1].lower()=='.xmi']

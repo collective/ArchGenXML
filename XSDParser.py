@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XSDParser.py,v 1.12 2003/11/03 18:51:25 dreamcatcher Exp $
+# RCS-ID:      $Id: XSDParser.py,v 1.13 2003/11/24 19:42:26 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -28,9 +28,12 @@ class XschemaElement:
         self.type = 'NoneType'
         self.attributeDefs = []
         self.taggedValues={}
-
+        self.internalOnly=0
+        
     def addChild(self, element):
         self.children.append(element)
+    def isInternal(self):
+        return self.internalOnly
     def getChildren(self): return self.children
     def getName(self): return self.name
     def getCleanName(self): return self.cleanName
