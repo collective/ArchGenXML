@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.25 2004/06/02 20:34:47 yenzenz Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.26 2004/06/06 12:42:13 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -199,7 +199,7 @@ class ArchetypesGenerator:
         
         print 'hide actions: ', hide_actions
         
-        return self.MODIFY_FTI % {'hideactions':hide_actions, }
+        return MODIFY_FTI % {'hideactions':hide_actions, }
         
 
     def generateFti(self,element,subtypes):
