@@ -875,6 +875,13 @@ class ArchetypesGenerator:
             if getattr(p,'isAssociationClass',0):
                 hasAssocClass=1
                 break
+
+        if self.backreferences_support:
+            bassocs = element.getToAssociations()
+            for p in bassocs:
+                if getattr(p,'isAssociationClass',0):
+                    hasAssocClass=1
+                    break
             
         if hasAssocClass:
             print >> outfile,'from Products.Archetypes.ReferenceEngine import ContentReferenceCreator'
