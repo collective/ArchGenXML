@@ -84,7 +84,7 @@ def getExpression(s):
         if s.startswith('python:'):
             return s[7:]
         else:
-            return "'''%s'''" % s
+            return '"""%s"""' % s
 
 def isTGVTrue(tgv):
     if type(tgv) in (type(''),type(u'')):

@@ -473,6 +473,11 @@ class ArchetypesGenerator(BaseGenerator):
                 v=tgv[k]
                 if k not in self.nonstring_tgvs:
                     v=getExpression(v)
+                # [optilude] Permit python: if people forget they don't have to (I often do!)
+                else:
+                    if v.startswith ('python:'):
+                        v = v[7:]
+                    
                 formatted=''
                 for line in v.split('\n'):
                     formatted+=line
@@ -534,6 +539,11 @@ class ArchetypesGenerator(BaseGenerator):
                 val=tup[1]
                 if key not in self.nonstring_tgvs:
                     val=getExpression(val)
+                # [optilude] Permit python: if people forget they don't have to (I often do!)
+                else:
+                    if val.startswith ('python:'):
+                        val = val[7:]
+                        
                 widgetmap.update({key:val})
 
             if '(' not in widgetcode:
@@ -644,7 +654,7 @@ class ArchetypesGenerator(BaseGenerator):
                 vocaboptions['container_type'] = 'SimpleVocabulary'
 
             map.update( {
-                'vocabulary':"NamedVocabulary('''%s''')" % vocaboptions['name']
+                'vocabulary':'NamedVocabulary("""%s""")' % vocaboptions['name']
             } )
 
             # remember this vocab-name and if set its meta_type
