@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.10 2003/07/11 00:50:55 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.11 2003/07/17 08:00:33 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -42,7 +42,7 @@ YamlGen = 0
 from utils import makeFile
 from utils import makeDir
 from utils import mapName
-
+from utils import indent
 
 #
 # Representation of element definition.
@@ -274,6 +274,9 @@ class ArchetypesGenerator:
         print >> outfile
         print >> outfile,'    #Methods'
         for m in element.getMethodDefs():
+            self.generateMethod(outfile,m)
+            
+    def generateMethod(self,outfile,m):
             paramstr=''
             params=m.getParamNames()
             if params:
@@ -281,9 +284,18 @@ class ArchetypesGenerator:
                 print paramstr
             print >> outfile
             print >> outfile,'    def %s(self%s):' % (m.getName(),paramstr)
-            print >> outfile,'    '*2,'pass'
+            code=m.taggedValues.get('code','')
+            doc=m.taggedValues.get('documentation','')
+            if doc:
+                print >> outfile, indent("'''\n%s\n'''" % doc ,2)
+                
+            if code:
+                print >> outfile, indent('\n'+code,2)
+            else:
+                print >> outfile,'    '*2,'pass'
+                
             print >> outfile
-
+        
     def generateClasses(self, outfile, element, delayed):
         wrt = outfile.write
         wrt('\n')
@@ -312,6 +324,10 @@ class ArchetypesGenerator:
             s1 = 'class %s%s(BaseContent,%s):\n' % (self.prefix, name, parents)
 
         wrt(s1)
+        doc=element.getDocumentation()
+        if doc:
+            print >>outfile,indent("'''\n%s\n'''" % doc, 1)
+            
         print >> outfile,'''    portal_type = meta_type = '%s' ''' % name
         print >> outfile,'''    archetype_name = '%s'   #this name appears in the 'add' box ''' % name
         self.generateArcheSchema(outfile,element)

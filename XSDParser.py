@@ -16,6 +16,7 @@ class XschemaElement:
         self.complex = 0
         self.type = 'NoneType'
         self.attributeDefs = []
+        self.taggedValues={}
 
     def addChild(self, element):
         self.children.append(element)
@@ -42,6 +43,12 @@ class XschemaElement:
 
         return [str(c.getRef()) for c in self.getChildren() if c.getRef()]
 
+    def getTaggedValue(self,name,default=''):
+        return self.taggedValues.get(name,default)
+    
+    def getDocumentation(self):
+        return self.getTaggedValue('documentation')
+    
     def getSubtypeNames(self,recursive=0):
         ''' returns the non-intrinsic subtypes '''
         return [str(c.getType()) for c in self.getChildren() if not c.isIntrinsicType() ]
