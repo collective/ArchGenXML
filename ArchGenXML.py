@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.64 2003/12/11 22:13:35 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.65 2003/12/14 20:53:30 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -616,7 +616,7 @@ from Products.CMFCore.utils import UniqueObject
         if header:
             print >>outfile,indent(header, 1)
 
-        archetype_name=element.getTaggedValue('archetype_name')
+        archetype_name=element.getTaggedValue('archetype_name') or element.getTaggedValue('label')
         if not archetype_name: archetype_name=name
 
         print >> outfile,'''    portal_type = meta_type = '%s' ''' % name
