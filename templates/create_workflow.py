@@ -35,9 +35,6 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
 
     wf.setProperties(title='<dtml-var "statemachine.getCleanName()">')
 
-    # generation of worklists is not defined yet...
-    ### XXX :-(
-
     for s in <dtml-var "repr(statemachine.getStateNames(no_duplicates = 1))">:
         wf.states.addState(s)
 
@@ -139,6 +136,12 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
                        for_status=1,
                        update_always=1,
                        props=None)
+                       
+    # XXX Generation of worklists is not implemented yet...
+    # in the meantime, you can use the protecte code section below to
+    # do it manually    
+
+<dtml-var "protected_init_section_bottom">
 
 def create<dtml-var "statemachine.getCleanName()">(self, id):
     "..."

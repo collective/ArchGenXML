@@ -14,13 +14,15 @@ class WorkflowGenerator(BaseGenerator):
     def __init__(self,package,atgenerator):
         self.package=package
         self.atgenerator=atgenerator
+        self.targetRoot=atgenerator.targetRoot
+        self.method_preservation=atgenerator.method_preservation
 
 
     def generateWorkflows(self):
         statemachines=self.package.getStateMachines()
         if not statemachines:
             return
-
+            
         d={'package'    : self.package,
            'generator'  : self,
            'wfgenerator' : self,
@@ -41,6 +43,10 @@ class WorkflowGenerator(BaseGenerator):
 
             d['statemachine']=sm
             d['parsedModule']=parsedModule
+
+            parsed = self.parsePythonModule(self.package.getFilePath(), 'Extensions/' + cleanName(sm.getName()) + '.py')
+            d['protected_init_section_bottom'] = self.getProtectedSection(parsed, 'custom-init-bottom', 1)
+
 
             # generate workflow script
             print utils.indent('Generating workflow: ' + sm.getName(),self.atgenerator.infoind)

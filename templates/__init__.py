@@ -35,9 +35,11 @@ DirectoryView.registerDirectory('skins', product_globals)
 DirectoryView.registerDirectory('skins/<dtml-var "product_name">',
                                     product_globals)
 
-<dtml-var "protected_init_section_top">
+<dtml-var "protected_init_section_head">
 
 def initialize(context):
+    
+<dtml-var "protected_init_section_top">
     # imports packages and types for registration
 <dtml-in "package_imports">
     <dtml-if sequence-item>

@@ -1648,7 +1648,9 @@ class ArchetypesGenerator(BaseGenerator):
 
         # Get the preserved code section
         parsed = self.parsePythonModule(package.getFilePath (), '__init__.py')
-        protectedInitCodeT = self.getProtectedSection(parsed, 'custom-init-top', 0)
+        
+        protectedInitCodeH = self.getProtectedSection(parsed, 'custom-init-head', 0)
+        protectedInitCodeT = self.getProtectedSection(parsed, 'custom-init-top', 1)
         protectedInitCodeB = self.getProtectedSection(parsed, 'custom-init-bottom', 1)
 
         # prepare DTML varibles
@@ -1660,6 +1662,7 @@ class ArchetypesGenerator(BaseGenerator):
            'has_tools'                     : hasTools,
            'tool_names'                    : toolNames,
            'creation_permissions'          : self.creation_permissions,
+           'protected_init_section_head'   : protectedInitCodeH,
            'protected_init_section_top'    : protectedInitCodeT,
            'protected_init_section_bottom' : protectedInitCodeB,
         }

@@ -5,17 +5,24 @@ To-do list for current HEAD code, not a feature wish list.
 A list of wished-for/planned features planned is at:
 http://plone.org/development/teams/developer/ArchGenXML
 
+* BUG: Manually created methods lose security declarations upon re-generation!
+* BUG: Method that end with a comma-newline-value lose that value. For example:
+    
+            return (value1,
+                    value2)
+  If this is the end of a method, the line with "value2)" is lost.
+    
+* Initialise uml_profile with all tagged values + steretypes + documentation
+
+    - See stereotype_reference.stx, tgv_reference.stx
+
+    - Make getTaggedValue() and hasStereotype() fail if the tagged 
+        value/stereotype is not registered in a profile to force them all
+        to be documented
+
 * When generating docstrings, be more clever about linebreaks and whitespace. 
 
 	- Poseidon does not wrap, so we need to support funny linebreaks.
-
-* Finish writing documentation: current is a tutorial at plone.org
-	
-	- need to grep source code for stereotype and TGV checks and document
-	   each one. Also need to classify which ones are in 1.2 and which ones
-	   are only in trunk.
-	  
-	    -> see docs/ directory for the beginnings of this
 
 * New <<ordered>> stereotype on folderish items allows using OrderedBaseFolder:
   
@@ -41,7 +48,8 @@ http://plone.org/development/teams/developer/ArchGenXML
     
 * Tool support:
   automagically disable uneccessary tabs (like base_view, metadata 
-  and maybe references) on classes with stereotype 'portal_tool'
+  and maybe references) on classes with stereotype 'portal_tool'. Must be
+  possible to explicitly enable them again.
     
 * ATVocabularyManager integration, part registration of class:
   fetch container_class - needs to be refined:
@@ -50,17 +58,4 @@ http://plone.org/development/teams/developer/ArchGenXML
   else check for TGV vocabulary_container
   fallback: use SimpleVocabulary
 
-* On Workflow definitions generation
-
-  * Define how worklists would be represented using state diagrams
-
-  * Define custom initial state using a tagged value mark (to enable the correct 
-    generation of initial state on workflow definitions, when the initial state 
-    is not the first state created on the model.) 
-
-      jensens: i think this is solved, using the UML-initial-state-symbol (solid circle).
-      
-      xiru: it is already supported using a tagged valued called initial_state on the 
-      state definition. However, support the UML initial state symbol would be ok too.
-
-      optilude: it would, in fact, be better :) We should have this.
+* Define how worklists would be represented using state diagrams and implement
