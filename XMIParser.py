@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.44 2004/04/02 00:09:29 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.45 2004/04/02 10:48:54 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -692,6 +692,7 @@ class XMIElement:
 
 class XMIPackage(XMIElement):
     project=None
+    isroot=0
 
     def __init__(self,el):
         XMIElement.__init__(self,el)
@@ -714,6 +715,7 @@ class XMIPackage(XMIElement):
     
     def addClass(self,cl):
         self.classes.append(cl)
+        cl.package=self
 
     def getChildren(self):
         return self.children+self.getClasses() + self.getPackages()
@@ -734,6 +736,7 @@ class XMIPackage(XMIElement):
             package.buildPackages()
 
     def buildClasses(self):
+        print 'buildClasses:',self.getFilePath(includeRoot=1)
         ownedElement=XMI.getOwnedElement(self.domElement)
         classes=getElementsByTagName(ownedElement,XMI.CLASS)
         for c in classes:
@@ -744,17 +747,60 @@ class XMIPackage(XMIElement):
                 
         for p in self.getPackages():
             p.buildClasses()
+            
+    def isRoot(self):
+        return self.isroot
+
+    def getPath(self,includeRoot=1,absolute=0):
+        res=[]
+        o=self
+        while 1:
+            if includeRoot:
+                res.append(o)
+                
+            if absolute and o.isRoot():
+                break
+            if not o.getParent():
+                break
+
+            if not includeRoot:
+                res.append(o)
+                
+            o=o.getParent()
+            
+        res.reverse()
+        return res
+    
+    def getFilePath(self,includeRoot=1,absolute=0):
+        names=[p.getName() for p in self.getPath(includeRoot=includeRoot,absolute=absolute)]
+        if not names:
+            return ''
+        
+        res=os.path.join(*names)
+        return res
+    
+    def getRootPackage(self):
+        o=self
+        while not o.isRoot():
+            o=o.getParent()
+            
+        return o
+    
 
 class XMIModel(XMIPackage):
+    isroot=1
+    parent=None
     
     def __init__(self,doc):
         self.document=doc
         content=getElementByTagName(doc,XMI.XMI_CONTENT,recursive=1)
         self.model=getElementByTagName(content,XMI.MODEL,recursive=0)
         XMIPackage.__init__(self,self.model)
+        
 
 class XMIClass (XMIElement):
-
+    package=None
+    
     def __init__(self,*args,**kw):
         XMIElement.__init__(self,*args,**kw)
         self.assocsTo=[]
@@ -857,6 +903,12 @@ class XMIClass (XMIElement):
                 return 1
         
         return 0
+    
+    def getPackage(self):
+        return self.package
+    
+    def getRootPackage(self):
+        return self.getPackage().getRootPackage()
 
 class XMIMethodParameter(XMIElement):
     default=None
@@ -1041,25 +1093,10 @@ def buildHierarchy(doc,packagenames):
     buildDataTypes(doc)
 
     res=XMIModel(doc)
-    
     res.buildPackages()
-
-    #try to get the name out of the model
-    xmis=doc.getElementsByTagName(XMI.MODEL)
-    if len(xmis)==1:
-        #print 'model name:',XMI.getName(xmis[0])
-        res.setName(XMI.getName(xmis[0]))
-
-    
-##    classes=doc.getElementsByTagName(XMI.CLASS)
-##    for c in classes:
-##        if 1 or hasClassFeatures(c):
-##            xc=XMIClass(c)
-##            if xc.getName():
-##                print 'Class:',xc.getName(),xc.id
-##                res.addClass(xc)
-
     res.buildClasses()
+
+    print 'res:',res.getName()
     
     #pure datatype classes should not be generated!
     #print 'datatypenames:',datatypenames
