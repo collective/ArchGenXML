@@ -40,6 +40,6 @@ def mapName(oldName):
             newName = NameTable[oldName]
     return newName.replace('-','_')
 
-def indent(s,indent):
-    lines=['    '*indent + l for l in s.split('\n')]
+def indent(s,indent,prepend=''):
+    lines=['    '*indent + prepend + l for l in s.split('\n')]
     return '\n'.join(lines)

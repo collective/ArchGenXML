@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.20 2003/08/01 01:29:42 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.21 2003/08/01 09:59:34 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -222,7 +222,14 @@ class ArchetypesGenerator:
         if attr.hasDefault():
             defexp='default='+attr.getDefault()
             
-        return templ % {'name':attr.getName(),'type':attr.getType(),'other':defexp}
+        res = templ % {'name':attr.getName(),'type':attr.getType(),'other':defexp}
+        doc=attr.getDocumentation()
+        if doc:
+            res=indent(doc,2,'#')+'\n'+' '*8+res
+        else:
+            res=' '*8+res
+            
+        return res
 
     def getFieldStringFromAssociation(self, rel):
         ''' gets the schema field code '''
@@ -264,7 +271,7 @@ class ArchetypesGenerator:
                 continue
             mappedName = mapName(name)
 
-            print >> outfile, '    '*2 ,self.getFieldStringFromAttribute(attrDef)
+            print >> outfile, self.getFieldStringFromAttribute(attrDef)
         for child in element.getChildren():
             name = child.getCleanName()
             if name in self.reservedAtts:
