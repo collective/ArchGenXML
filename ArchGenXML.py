@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.66 2004/01/13 01:17:07 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.67 2004/01/13 03:25:12 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -597,9 +597,9 @@ from Products.CMFCore.utils import UniqueObject
         if self.i18n_support and element.isI18N():
             baseclass='I18NBaseContent'
             
-        print 'base0:',element.getName(),baseclass
+        #print 'base0:',element.getName(),baseclass
         if refs or baserefs or element.getTaggedValue('folderish') == 1:
-            print 'folderish'
+            #print 'folderish'
             if self.i18n_support and element.isI18N():
                 baseclass='I18NBaseFolder'
                 
