@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.46 2004/04/03 01:04:59 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.47 2004/04/03 01:30:20 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -409,7 +409,7 @@ class XMI1_2 (XMI1_1):
             if id:
                 st=stereotypes[id]
                 o.addStereoType(self.getName(st).strip())
-                print 'stereotype found:',id,self.getName(st),o.getStereoType()
+                #print 'stereotype found:',id,self.getName(st),o.getStereoType()
             else:
                 print 'warning: empty stereotype id for class :',o.getName(),o.getId()
 
@@ -693,6 +693,7 @@ class XMIElement:
     def getPath(self):
         return [self.getName()]
 
+
 class XMIPackage(XMIElement):
     project=None
     isroot=0
@@ -700,6 +701,7 @@ class XMIPackage(XMIElement):
     def __init__(self,el):
         XMIElement.__init__(self,el)
         self.classes=[]
+        self.interfaces=[]
         self.packages=[]
         
     def initFromDOM(self,domElement=None):
@@ -720,8 +722,15 @@ class XMIPackage(XMIElement):
         self.classes.append(cl)
         cl.package=self
 
+    def addInterface(self,cl):
+        self.interfaces.append(cl)
+        cl.package=self
+        
+    def getInterfaces(self):
+        return self.interfaces
+
     def getChildren(self):
-        return self.children+self.getClasses() + self.getPackages()
+        return self.children+self.getClasses() + self.getPackages() + self.getInterfaces()
     
     def addPackage(self,p):
         self.packages.append(p)
@@ -750,7 +759,23 @@ class XMIPackage(XMIElement):
                 
         for p in self.getPackages():
             p.buildClasses()
+
+    def buildInterfaces(self):
+        print 'buildInterfaces:',self.getFilePath(includeRoot=1)
+        ownedElement=XMI.getOwnedElement(self.domElement)
+        classes=getElementsByTagName(ownedElement,XMI.INTERFACE)
+        for c in classes:
+            xc=XMIInterface(c)
+            if xc.getName():
+                print 'Interface:',xc.getName(),xc.id
+                self.addInterface(xc)
+                
+        for p in self.getPackages():
+            p.buildInterfaces()
             
+    def buildClassesAndInterfaces(self):
+        self.buildClasses()
+        self.buildInterfaces()            
     def isRoot(self):
         return self.isroot
 
@@ -912,6 +937,11 @@ class XMIClass (XMIElement):
     
     def getRootPackage(self):
         return self.getPackage().getRootPackage()
+
+
+class XMIInterface(XMIClass):
+    pass
+
 
 class XMIMethodParameter(XMIElement):
     default=None
@@ -1097,7 +1127,7 @@ def buildHierarchy(doc,packagenames):
 
     res=XMIModel(doc)
     res.buildPackages()
-    res.buildClasses()
+    res.buildClassesAndInterfaces()
 
     print 'res:',res.getName()
     
