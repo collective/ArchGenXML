@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.19 2003/07/24 18:17:19 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.20 2003/08/01 01:29:42 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -116,41 +116,52 @@ class ArchetypesGenerator:
     typeMap={
         'string':'''StringField('%(name)s',
                     searchable=1,
+                    %(other)s
                     ),''' ,
         'text':  '''StringField('%(name)s',
                     searchable=1,
-                    widget=TextAreaWidget()
+                    widget=TextAreaWidget(),
+                    %(other)s
                     ),''' ,
         'integer':'''IntegerField('%(name)s',
                     searchable=1,
+                    %(other)s
                     ),''',
         'float':'''FloatField('%(name)s',
                     searchable=1,
+                    %(other)s
                     ),''',
         'boolean':'''BooleanField('%(name)s',
                     searchable=1,
+                    %(other)s
                     ),''',
         'lines':'''LinesField('%(name)s',
                     searchable=1,
+                    %(other)s
                     ),''',
         'date':'''DateTimeField('%(name)s',
                     searchable=1,
+                    %(other)s
                     ),''',
         'image':'''ImageField('%(name)s',
                     sizes={'small':(100,100),'medium':(200,200),'large':(600,600)},
-                    storage=AttributeStorage()
+                    storage=AttributeStorage(),
+                    %(other)s
                     ),''',
         'file':'''FileField('%(name)s',
                     storage=AttributeStorage(),
-                    widget=FileWidget()
+                    widget=FileWidget(),
+                    %(other)s
                     ),''',
         'lines':'''LinesField('%(name)s',
                     searchable=1,
+                    %(other)s
                     ),''',
         'reference':'''ReferenceField('%(name)s',allowed_types=%(allowed_types)s,
                     searchable=1,
                     multiValued=%(multiValued)d,
                     relationship='%(relationship)s',
+                    %(other)s
                     ),''',
 
     }
@@ -207,7 +218,11 @@ class ArchetypesGenerator:
             ctype=self.coerceType(str(attr.type))
 
         templ=self.typeMap[ctype]
-        return templ % {'name':attr.getName(),'type':attr.getType()}
+        defexp=''
+        if attr.hasDefault():
+            defexp='default='+attr.getDefault()
+            
+        return templ % {'name':attr.getName(),'type':attr.getType(),'other':defexp}
 
     def getFieldStringFromAssociation(self, rel):
         ''' gets the schema field code '''
@@ -229,7 +244,7 @@ class ArchetypesGenerator:
         return templ % {'name':name,'type':obj.getType(),
                 'allowed_types':repr(allowed_types),
                 'multiValued' : multiValued,
-                'relationship':relname}
+                'relationship':relname,'other':''}
 
     # Generate get/set/add member functions.
     def generateArcheSchema(self, outfile, element):

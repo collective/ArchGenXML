@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.13 2003/07/20 18:47:38 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.14 2003/08/01 01:29:42 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -72,6 +72,7 @@ class XMI1_0:
     METHOD="Foundation.Core.Operation"
     METHODPARAMETER="Foundation.Core.Parameter"
     PARAM_DEFAULT="Foundation.Core.Parameter.defaultValue"
+    EXPRESSION="Foundation.Data_Types.Expression"
     EXPRESSION_BODY="Foundation.Data_Types.Expression.body"
     
     GENERALIZATION="Foundation.Core.Generalization"
@@ -83,6 +84,8 @@ class XMI1_0:
     TAGGED_VALUE="Foundation.Extension_Mechanisms.TaggedValue"
     TAGGED_VALUE_TAG="Foundation.Extension_Mechanisms.TaggedValue.tag"
     TAGGED_VALUE_VALUE="Foundation.Extension_Mechanisms.TaggedValue.value"
+    
+    ATTRIBUTE_INIT_VALUE="Foundation.Core.Attribute.initialValue"
     
     aggregates=['composite','aggregate']
 
@@ -152,10 +155,27 @@ class XMI1_0:
             except IndexError:
                 pass
 
+    def getExpressionBody(self,element):
+        exp = getElementByTagName(element,XMI.EXPRESSION_BODY,recursive=1,default=None)
+        if exp and exp.firstChild:
+            return exp.firstChild.nodeValue
+        else:
+            return None
 
+    def getTaggedValue(self,el):
+        tagname=getAttributeValue(el,XMI.TAGGED_VALUE_TAG,recursive=0)
+        tagvalue=getAttributeValue(el,XMI.TAGGED_VALUE_VALUE,recursive=0)
+        return tagname,tagvalue
+        
+    def collectTagDefinitions(self,el):
+        ''' dummy function, only needed in xmi >=1.1'''
+        pass
+    
 class XMI1_1 (XMI1_0):
     # XMI version specific stuff goes there
 
+    tagDefinitions=None
+    
     NAME = 'UML:ModelElement.name'
     MODEL = 'UML:Model'
     #Collaboration stuff: a
@@ -187,10 +207,43 @@ class XMI1_1 (XMI1_0):
     GEN_PARENT="UML:Generalization.parent"
     GEN_ELEMENT="UML:Class"
 
+    ATTRIBUTE_INIT_VALUE="UML:Attribute.initialValue"
+    EXPRESSION="UML:Expression"
+    PARAM_DEFAULT="UML:Parameter.defaultValue"
+    
+    TAG_DEFINITION="UML:TagDefinition"
+
+    TAGGED_VALUE_MODEL="UML:ModelElement.taggedValue"
+    TAGGED_VALUE="UML:TaggedValue"
+
     def getName(self,domElement):
         return domElement.getAttribute('name')
 
-        
+    def getExpressionBody(self,element):
+        exp = getElementByTagName(element,XMI.EXPRESSION,recursive=1,default=None)
+        if exp:
+            return exp.getAttribute('body')
+        else:
+            return None
+    
+    def getTaggedValue(self,el):
+        tdef=getElementByTagName(el,self.TAG_DEFINITION,default=None,recursive=1)
+        # fetch the name from the global tagDefinitions (weird)
+        tagname=self.tagDefinitions[tdef.getAttribute('xmi.idref')].getAttribute('name')
+        tagvalue=el.getAttribute('dataValue')
+        #print 'TAGNAME:',tagname,tagvalue
+        return tagname,tagvalue
+    
+    def collectTagDefinitions(self,el):
+        tagdefs=el.getElementsByTagName(self.TAG_DEFINITION)
+        if self.tagDefinitions is None:
+            self.tagDefinitions={}
+            
+        for t in tagdefs:
+            if t.hasAttribute('name'):
+                self.tagDefinitions[t.getAttribute('xmi.id')]=t#.getAttribute('name')
+            
+    
 class XMI1_2 (XMI1_1):
     # XMI version specific stuff goes there
 
@@ -279,15 +332,14 @@ class XMIElement:
             return
         
         tgvs=getElementsByTagName(tgvsm, XMI.TAGGED_VALUE, recursive=0)
-        
         try:
             for tgv in tgvs:
-                tagname=getAttributeValue(tgv,XMI.TAGGED_VALUE_TAG,recursive=0)
-                tagvalue=getAttributeValue(tgv,XMI.TAGGED_VALUE_VALUE,recursive=0)
+                tagname,tagvalue=XMI.getTaggedValue(tgv)
                 self.taggedValues[tagname]=tagvalue
         except:
             pass
-        
+
+        #print self.taggedValues
         
     def initFromDOM(self,domElement):
         if not domElement:
@@ -465,17 +517,22 @@ class XMIClass (XMIElement):
     
 class XMIMethodParameter(XMIElement):
     default=None
-
+    has_default=0
+    
     def getDefault(self):
         return self.default
+
+    def hasDefault(self):
+        return self.has_default
     
     def findDefault(self):
         defparam=getElementByTagName(self.domElement,XMI.PARAM_DEFAULT,None)
         #print defparam
         if defparam:
-            exp = getElementByTagName(defparam,XMI.EXPRESSION_BODY,recursive=1)
-            if exp and getattr(exp,'firstChild',None):
-                self.default=exp.firstChild.nodeValue
+            default=XMI.getExpressionBody(defparam)
+            if default :
+                self.default=default
+                self.has_default=1
                 #print 'default:',repr(self.default)
                 
     def initFromDOM(self,domElement):
@@ -519,6 +576,15 @@ class XMIMethod (XMIElement):
             self.params.append(p)
 
 class XMIAttribute (XMIElement):
+    default=None
+    has_default=0
+    
+    def getDefault(self):
+        return self.default
+
+    def hasDefault(self):
+        return self.has_default
+    
     def calcType(self):
         global datatypes
         typeinfos=self.domElement.getElementsByTagName(XMI.TYPE)
@@ -530,11 +596,21 @@ class XMIAttribute (XMIElement):
                 #self.type=getAttributeValue(typeElement,XMI.NAME)
                 self.type=XMI.getName(typeElement)
                 #print 'attribute:'+self.getName(),typeid,self.type
+                
+    def findDefault(self):
+        initval=getElementByTagName(self.domElement,XMI.ATTRIBUTE_INIT_VALUE,None)
+        if initval:
+            default=XMI.getExpressionBody(initval)
+            if default :
+                self.default=default
+                self.has_default=1
+                #print 'default:',repr(self.default)
 
     def initFromDOM(self,domElement):
         XMIElement.initFromDOM(self,domElement)
         if domElement:
             self.calcType()
+            self.findDefault()
 
 class XMIAssocEnd (XMIElement):
     def initFromDOM(self,el):
@@ -572,6 +648,7 @@ def buildDataTypes(doc):
     for dt in classes:
         datatypes[str(dt.getAttribute('xmi.id'))]=dt
 
+    XMI.collectTagDefinitions(doc)
 
 def buildHierarchy(doc,packagenames):
     """ builds Hierarchy out of the doc """
@@ -605,8 +682,9 @@ def buildHierarchy(doc,packagenames):
     for c in classes:
         if 1 or hasClassFeatures(c):
             xc=XMIClass(c)
-            print 'Class:',xc.getName(),xc.id
-            res.addChild(xc)
+            if xc.getName():
+                print 'Class:',xc.getName(),xc.id
+                res.addChild(xc)
 
 
     res.annotate()
