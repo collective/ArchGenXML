@@ -249,11 +249,22 @@ group.add_option("-t",
         section="CLASSES",
         )
 
+group.add_option("--generate-packages",
+        help="Name of packages to generate (can specify as comma-separated list, or specify several times)",
+        section="GENERAL",
+        action="append",
+        dest="generate_packages",
+        type="commalist",
+        )
+
+# XXX: When would this be the right option to use, as opposed to
+# generate-packages, above? - WJB
+
 group.add_option("-P", 
         "--parse-packages",
         type="commalist",
         action="append", 
-        metavar="PACKAGE", 
+        metavar="GENERAL", 
         dest="parse_packages",
         help="Name of packages to parse in source file (can specify several times)",
         section="GENERAL",
@@ -349,8 +360,15 @@ group.add_option("--no-method-preservation",
         action="store_false",
         section="CLASSES",
         )
-parser.add_option_group(group)
 
+group.add_option("--backreferences-support",
+        dest="backreferences_support",
+        action="store_true",
+        help="For references, create a back reference field on the referred-to class. Requires ATBackRef product to work.",
+        section="CLASSES",
+        )
+
+parser.add_option_group(group)
 
 #----------------------------------------------------------------------------
 # i18n Options
@@ -515,12 +533,6 @@ group.add_option("--prefix",
         section="GENERAL",
         )
 
-group.add_option("--generate-packages",
-        help="FIXME",
-        section="GENERAL",
-        type="commalist",
-        )
-
 group.add_option("-n",
         "--noclass",
         action="store_true",
@@ -535,16 +547,6 @@ group.add_option("--default-field-generation",
         dest="default_field_generation",
         help="FIXME",
         action="store_true",
-        section="CLASSES",
-        )
-
-# uses ATBackRef product (Phil)
-#   referee can show references
-
-group.add_option("--backreferences-support",
-        dest="backreferences_support",
-        action="store_true",
-        help="FIXME",
         section="CLASSES",
         )
 
