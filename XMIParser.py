@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.33 2003/12/29 05:04:57 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.34 2004/01/12 15:40:03 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -97,6 +97,10 @@ class XMI1_0:
 
     def getAssocEndParticipantId(self,el):
         assocend=getElementByTagName(el,self.ASSOCEND_PARTICIPANT,None)
+        
+        if not assocend:
+            assocend=getElementByTagName(el,self.ASSOCENDTYPE,None)
+
         if not assocend:
             return None
 
@@ -145,8 +149,12 @@ class XMI1_0:
                 detailid=self.getAssocEndParticipantId(detail)
 
                 #print 'master,detail:',master,detail
-                m=objects[masterid]
+                m=objects.get(masterid,None)
                 d=objects.get(detailid,None)
+
+                if not m:
+                    print 'Warning: Master Object not found for aggregation relation: id=%s' % (XMI.getId(master))
+                    continue
 
                 if not d:
                     print 'Warning: Child Object not found for aggregation relation: parent=%s' % (XMI.getName(m))
