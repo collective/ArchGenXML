@@ -8,6 +8,7 @@ from Products.Archetypes import listTypes
 from Products.%(project_dir)s import PROJECTNAME,product_globals
 
 from StringIO import StringIO
+import sys
 
 class PloneSkinRegistrar:
     """
@@ -161,14 +162,22 @@ def install(self):
 
     #autoinstall tools
     for t in %(autoinstall_tools)s:
-        portal.manage_addProduct[PROJECTNAME].manage_addTool(t)
-        # tools are not content. dont list it in navtree
         try:
-            self.portal_properties.navtree_properties.metaTypesNotToList.index(t)
-        except ValueError:
-            self.portal_properties.navtree_properties.metaTypesNotToList.append(t)
+            portal.manage_addProduct[PROJECTNAME].manage_addTool(t)
+            # tools are not content. dont list it in navtree
+            try:
+                self.portal_properties.navtree_properties.metaTypesNotToList.index(t)
+            except ValueError:
+                self.portal_properties.navtree_properties.metaTypesNotToList.append(t)
+            except:
+                raise
         except:
-            raise
+            #heuristics for testing if an instance with the same name already exists
+            #only this error will be swallowed.
+            #Zope raises in an unelegant manner a 'Bad Request' error
+            e=sys.exc_info()
+            if e[0] != 'Bad Request':
+                raise
 
     # register tool in control panel
     try:
