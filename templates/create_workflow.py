@@ -70,8 +70,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
                        actbox_category="""workflow""",
                        props={'guard_permissions': '<dtml-var "tran.getGuardPermissions()">', 'guard_roles': '<dtml-var "tran.getGuardRoles()">'},
                        )
-    </dtml-let>
-    </dtml-in>
+</dtml-let></dtml-in>
 
     ## State Variable
     wf.variables.setStateVar('review_state')
