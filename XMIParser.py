@@ -1800,26 +1800,45 @@ class XMIStateTransition(XMIElement):
         if self.action:
             return self.action.getExpression()
 
+    def getProps(self):
+        d_ret = {}
+        d_expr = {'guard_permissions' : self.getGuardPermissions,
+                  'guard_roles' : self.getGuardRoles,
+                  'guard_expr' : self.getGuardExpr}
+        for k, v in d_expr.items():
+            g = v()
+            if g is not None:
+                d_ret.update({k:g})
+        return repr(d_ret)
+
     def getGuardRoles(self):
         if not self.guard:
-            return 'Anonymous;Owner;Manager'
-
-        gr = self.guard.getExpressionBody()
-        if not gr.startswith('guard_roles:'):
-            return 'Anonymous;Owner;Manager'
-        else:
-            return gr[12:]
+            return 'Owner;Manager'
+        geb = self.guard.getExpressionBody()
+        for ge in geb.split('|'):
+            ge = ge.strip()
+            if ge.startswith('guard_roles:'):
+                return str(ge[12:])
+        return 'Owner;Manager'
 
     def getGuardPermissions(self):
         if not self.guard:
             return 'View'
+        geb = self.guard.getExpressionBody()
+        for ge in geb.split('|'):
+            ge = ge.strip()
+            if ge.startswith('guard_permissions:'):
+                return str(ge[18:])
+        return 'View'
 
-        gr = self.guard.getExpressionBody()
-
-        if not gr.startswith('guard_permissions:'):
-            return 'View'
-        else:
-            return gr[18:]
+    def getGuardExpr(self):
+        if not self.guard:
+            return None
+        geb = self.guard.getExpressionBody()
+        for ge in geb.split('|'):
+            ge = ge.strip()
+            if ge.startswith('guard_expr:'):
+                return str(ge[11:])
 
 class XMIAction(XMIElement):
     expression=None

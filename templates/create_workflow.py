@@ -68,7 +68,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
                        actbox_name="""<dtml-var "tran.getTaggedValue('label') or tran.getCleanName()">""",
                        actbox_url="""""",
                        actbox_category="""workflow""",
-                       props={'guard_permissions': '<dtml-var "tran.getGuardPermissions()">', 'guard_roles': '<dtml-var "tran.getGuardRoles()">'},
+                       props=<dtml-var "tran.getProps()">,
                        )
 </dtml-let></dtml-in>
 
