@@ -112,6 +112,8 @@ class XMI1_0:
     COMPOSITESTATE="Behavioral_Elements.State_Machines.CompositeState"
     COMPOSITESTATE_SUBVERTEX="Behavioral_Elements.State_Machines.CompositeState.subvertex"
     SIMPLESTATE="Behavioral_Elements.State_Machines.State"
+    PSEUDOSTATE="Behavioral_Elements.State_Machines.Pseudostate"
+    PSEUDOSTATE_KIND="Behavioral_Elements.State_Machines.Pseudostate.kind"
     STATEVERTEX_OUTGOING="Behavioral_Elements.State_Machines.StateVertex.outgoing"
     STATEVERTEX_INCOMING="Behavioral_Elements.State_Machines.StateVertex.incoming"
     TRANSITION="Behavioral_Elements.State_Machines.Transition"
@@ -465,6 +467,8 @@ class XMI1_1 (XMI1_0):
     COMPOSITESTATE="UML:CompositeState"
     COMPOSITESTATE_SUBVERTEX="UML:CompositeState.subvertex"
     SIMPLESTATE="UML:SimpleState"
+    PSEUDOSTATE="UML:Pseudostate"
+    PSEUDOSTATE_KIND="kind"
     STATEVERTEX_OUTGOING="UML:StateVertex.outgoing"
     STATEVERTEX_INCOMING="UML:StateVertex.incoming"
     TRANSITION="UML:Transition"
@@ -1732,6 +1736,14 @@ class XMIStateMachine(XMIStateContainer):
             state=XMIState(sel)
             self.addState(state)
 
+        sels=getElementsByTagName(self.domElement,XMI.PSEUDOSTATE,recursive=1)
+        for sel in sels:
+            state=XMIState(sel)
+            if getAttributeValue(sel,XMI.PSEUDOSTATE_KIND,None)=='initial' or sel.getAttribute('kind')=='initial':
+                print 'initial state:',state.getCleanName()
+                state.isinitial=1
+            self.addState(state)
+
     def buildTransitions(self):
         tels=getElementsByTagName(self.domElement,XMI.TRANSITION,recursive=1)
         for tel in tels:
@@ -1760,6 +1772,10 @@ class XMIStateMachine(XMIStateContainer):
 
     def getInitialState(self):
         states = self.getStates()
+        for s in states:
+            if s.isInitial():
+                return s
+            
         for s in states:
             for k, v in s.getTaggedValues().items():
                 if k == 'initial_state':
@@ -1928,6 +1944,8 @@ class XMIGuard(XMIElement):
 
 
 class XMIState(XMIElement):
+    isinitial=0
+    
     def __init__(self,*args,**kwargs):
         self.incomingTransitions=[]
         self.outgoingTransitions=[]
@@ -2039,7 +2057,8 @@ class XMIState(XMIElement):
 
         return ret
 
-
+    def isInitial(self):
+        return self.isinitial
 
 class XMICompositeState(XMIState):
     def __init__(self,*args,**kwargs):
