@@ -2,12 +2,12 @@
 
 #-----------------------------------------------------------------------------
 # Name:        ArchGenXML.py
-# Purpose:     
+# Purpose:
 #
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.2 2003/06/01 09:15:21 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.3 2003/06/02 19:30:26 dreamcatcher Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -54,17 +54,17 @@ class ArchetypesGenerator:
     unknownTypesAsString=1
     generateActions=0
     prefix=''
-    
+
     reservedAtts=['id','title']
 
     def __init__(self,xschemaFileName,outfileName,**kwargs):
         self.outfileName=outfileName
         self.xschemaFileName=xschemaFileName
         self.__dict__.update(kwargs)
-    
+
     def generateFti(self,element,subtypes):
         ''' '''
-        
+
         actTempl='''
     actions=(
            {'action': 'portal_form/base_edit',
@@ -87,26 +87,26 @@ class ArchetypesGenerator:
           'id': 'folder_listing',
           'name': 'folder_listing',
           'permissions': ('View',)},
-            
-    '''    
+
+    '''
         actTempl+='''
               )
         '''
-        ftiTempl='''    
-        
+        ftiTempl='''
+
     factory_type_information={
         'allowed_content_types':%(subtypes)s,
         #'content_icon':'%(type_name)s.gif',
-        'immediate_view':'base_view' 
+        'immediate_view':'base_view'
         }
-                
-        ''' 
+
+        '''
         if self.generateActions:
             ftiTempl += actTempl
-        
+
         res=ftiTempl % {'subtypes':repr(tuple(subtypes)),'type_name':element.getCleanName()}
         return res
-        
+
     typeMap={
         'string':'''StringField('%(name)s',
                     searchable=1,
@@ -141,9 +141,9 @@ class ArchetypesGenerator:
         'lines':'''LinesField('%(name)s',
                     searchable=1,
                     ),''',
-            
+
     }
-    
+
     coerceMap={
         'xs:string':'string',
         'xs:int':'integer',
@@ -160,32 +160,32 @@ class ArchetypesGenerator:
         'liste':'lines',
         'image':'image'
     }
-    
+
     def coerceType(self, typename):
         #print 'coerceType:',typename,
         if typename in self.typeMap.keys():
             return typename
-        
+
         if self.unknownTypesAsString:
             ctype=self.coerceMap.get(typename.lower(),'string')
         else:
             ctype=self.coerceMap[typename.lower()]
-            
+
         #print ctype
         return ctype
-        
+
     def getFieldString(self, element):
         ''' gets the schema field code '''
         typename=str(element.type)
-        
+
         if element.getMaxOccurs()>1:
             ctype='lines'
         else:
             ctype=self.coerceType(typename)
-            
+
         templ=self.typeMap[ctype]
         return templ % {'name':element.getCleanName(),'type':element.type}
-    
+
     def getFieldStringFromAttribute(self, attr):
         ''' gets the schema field code '''
         #print 'getFieldStringFromAttribute:',attr.getName(),attr.type
@@ -193,21 +193,21 @@ class ArchetypesGenerator:
             ctype='string'
         else:
             ctype=self.coerceType(str(attr.type))
-    
+
         templ=self.typeMap[ctype]
         return templ % {'name':attr.getName(),'type':attr.getType()}
-    
+
     # Generate get/set/add member functions.
     def generateArcheSchema(self, outfile, element):
-        print >> outfile,'    schema=BaseSchema + Schema((' 
+        print >> outfile,'    schema=BaseSchema + Schema(('
         refs=[]
-    
+
         for attrDef in element.getAttributeDefs():
             name = attrDef.getName()
             if name in self.reservedAtts:
                 continue
             mappedName = mapName(name)
-            
+
             print >> outfile, '    '*2 ,self.getFieldStringFromAttribute(attrDef)
         for child in element.getChildren():
             name = child.getCleanName()
@@ -216,14 +216,14 @@ class ArchetypesGenerator:
             unmappedName = child.getUnmappedCleanName()
             if child.getRef():
                 refs.append(str(child.getRef()))
-               
+
             if child.isIntrinsicType():
                 print >> outfile, '    '*2 ,self.getFieldString(child)
-    
-    
-            
+
+
+
         print >> outfile,'    ))'
-        
+
     def generateMethods(self,outfile,element):
         print >> outfile
         print >> outfile,'    #Methods'
@@ -237,75 +237,75 @@ class ArchetypesGenerator:
             print >> outfile,'    def %s(self%s):' % (m.getName(),paramstr)
             print >> outfile,'    '*2,'pass'
             print >> outfile
-    
+
     def generateClasses(self, outfile, element, delayed):
         wrt = outfile.write
-        
+
         refs = element.getRefs() + element.getSubtypeNames()
-          
+
         if not element.isComplex():
             return
         if element.getType() in AlreadyGenerated:
             return
-        
+
         AlreadyGenerated.append(element.getType())
         name = element.getCleanName()
-        
+
         wrt('\n')
-        
+
         if refs:
             s1 = 'class %s%s(BaseFolder):\n' % (self.prefix, name)
         else:
             s1 = 'class %s%s(BaseContent):\n' % (self.prefix, name)
-    
+
         wrt(s1)
         self.generateArcheSchema(outfile,element)
         self.generateMethods(outfile,element)
-        
+
         #generateGettersAndSetters(outfile, element)
         print >> outfile,self.generateFti(element,refs)
-    
+
         wrt('registerType(%s)' % name)
         wrt('# end class %s\n' % name)
         wrt('\n\n')
-    
-    
+
+
     def generateHeader(self, outfile):
         s1 = self.TEMPLATE_HEADER % time.ctime()
         outfile.write(s1)
-    
-    
+
+
     def generateStdFiles(self, target,projectName,generatedModules):
         #generates __init__.py, Extensions/Install.py and the skins directory
         #the result is a QuickInstaller installable product
         templdir=os.path.join(sys.path[0],'templates')
         initTemplate=open(os.path.join(templdir,'__init__.py')).read()
-        
+
         imports='\n'.join(['    import '+m for m in generatedModules])
-        
+
         initTemplate=initTemplate % {'project_name':projectName,'add_content_permission':'Add %s content' % projectName,'imports':imports }
         of=makeFile(os.path.join(target,'__init__.py'))
         of.write(initTemplate)
         of.close()
-        
+
         installTemplate=open(os.path.join(templdir,'Install.py')).read()
-        extDir=os.path.join(target,'Extensions')    
+        extDir=os.path.join(target,'Extensions')
         makeDir(extDir)
         of=makeFile(os.path.join(extDir,'Install.py'))
         of.write(installTemplate % {'project_dir':os.path.split(target)[1]})
         of.close()
-        
-    
+
+
     def generate(self, root, projectName=None ):
         dirMode=0
         outfile=None
-        
-        if not projectName: 
+
+        if not projectName:
             projectName=self.outfileName
-        
+
         if not os.path.splitext(self.outfileName)[1]:
             dirMode=1
-            
+
         if self.outfileName:
             if dirMode:
                 makeDir(self.outfileName)
@@ -328,10 +328,10 @@ class ArchetypesGenerator:
                     self.generateClasses(outfile, element, 1)
                 #generateMain(outfile, prefix, root)
                 outfile.close()
-                
+
             if dirMode:
                 generatedModules=[]
-                
+
                 for element in root.getChildren():
                     module=element.getName()
                     generatedModules.append(module)
@@ -339,7 +339,7 @@ class ArchetypesGenerator:
                     self.generateHeader(outfile)
                     self.generateClasses(outfile, element, 0)
                     outfile.close()
-                    
+
                 while 1:
                     if len(DelayedElements) <= 0:
                         break
@@ -352,11 +352,11 @@ class ArchetypesGenerator:
                     outfile.close()
                 #generateMain(outfile, prefix, root)
                 self.generateStdFiles(self.outfileName,projectName,generatedModules)
-                
+
     def parseAndGenerate(self):
-        
+
         suff=os.path.splitext(self.xschemaFileName)[1].lower()
-        
+
         if suff.lower() in ('.xmi','.xml'):
             print 'opening xmi'
             root=XMIParser.parse(self.xschemaFileName)
@@ -369,21 +369,21 @@ class ArchetypesGenerator:
             root=XMIParser.parse(xschema=buf)
         elif suff.lower() == '.xsd':
             root=XSDParser.parse(self.xschemaFileName)
-            
+
         #if no output filename given, ry to guess it from the model
         if not self.outfileName:
             self.outfileName=root.getName()
-            
+
         if not self.outfileName:
             raise TypeError,'output filename not specified'
-        
+
         print 'outfile:',self.outfileName
         self.generate(root)
 
     TEMPLATE_HEADER = """\
 # generated by ArchGenXML %s
 from Products.Archetypes.public import *
-    
+
     """
 
 def main():
@@ -397,7 +397,7 @@ def main():
         usage()
 
     options={}
-    
+
     for option in opts:
         if option[0] == '-p':
             options['prefix'] = option[1]
@@ -415,7 +415,7 @@ def main():
     if not outfileName:
         if len(args) >= 2:
             outfileName=args[1]
-        
+
     gen=ArchetypesGenerator(xschemaFileName,outfileName, **options)
     gen.parseAndGenerate()
 
