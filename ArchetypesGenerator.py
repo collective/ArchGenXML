@@ -433,9 +433,9 @@ class ArchetypesGenerator(BaseGenerator):
         None:'string',
     }
 
-    def coerceType(self, typename):
-        #print 'coerceType:',typename,
-        typename=typename.lower()
+    def coerceType(self, intypename):
+        #print 'coerceType: ',intypename,' -> ',
+        typename=intypename.lower()
         if typename in self.typeMap.keys():
             return typename
 
@@ -446,7 +446,7 @@ class ArchetypesGenerator(BaseGenerator):
             if not ctype:
                 return 'generic' #raise ValueError,'Warning: unknown datatype : >%s< (use the option --unknown-types-as-string to force unknown types to be converted to string' % typename
 
-        #print ctype
+        #print ctype,'\n'
         return ctype
 
     def getFieldAttributes(self,element):
@@ -589,11 +589,15 @@ class ArchetypesGenerator(BaseGenerator):
     def getFieldFormatted(self,name,fieldtype,map={},doc=None, rawType='String', indent_level=0):
         ''' returns the formatted field definitions for the schema '''
         res = ''
-        # add comment
 
+        # capitalize only first letter of fields class name, keep camelcase
+        a=rawType[0].upper()
+        rawType=a+rawType[1:]
+
+        # add comment
         if doc:
             res+=indent(doc,indent_level,'#')+'\n'+res
-        res+=indent("%s('%s',\n" % (fieldtype % {'type':rawType.capitalize()},name), indent_level)
+        res+=indent("%s('%s',\n" % (fieldtype % {'type':rawType},name), indent_level)
         res+=indent(',\n'.join(['%s=%s' % (key,map[key]) \
                                 for key in map if key.find(':')<0 ]) ,
                     indent_level+1) + ',\n'
@@ -1032,7 +1036,7 @@ class ArchetypesGenerator(BaseGenerator):
             wrt("# additional imports from tagged value 'import'\n")
             wrt(additionalImports)
             wrt('\n')
-        
+
         # [optilude] Import config.py
         wrt(TEMPLATE_CONFIG_IMPORT % {'module' : element.getRootPackage().getProductModuleName()})
         wrt('\n')
@@ -1538,7 +1542,7 @@ class ArchetypesGenerator(BaseGenerator):
             target=target[:-1]
 
         templdir=os.path.join(sys.path[0],'templates')
-        
+
         initTemplate=open(os.path.join(templdir,'__init__.py')).read()
         imports_packages='\n'.join(['    import '+m.getModuleName() for m in package.generatedPackages])
         imports_classes ='\n'.join(['    import '+m.getModuleName() for m in generatedModules])
@@ -1556,9 +1560,9 @@ class ArchetypesGenerator(BaseGenerator):
             of.write(initTemplate)
             of.close()
 
-        else: 
+        else:
             toolinit=''
-        
+
         init_params={'project_name':productname,'imports':imports, 'toolinit':toolinit }
 
         if self.detailled_creation_permissions:
@@ -1585,10 +1589,10 @@ class ArchetypesGenerator(BaseGenerator):
                 cp=HTML(cpTemplate,d)()
                 of.write(cp)
                 of.close()
-                
+
         # [optilude] Generate config.py from template
         self.generateConfigPy(package)
-                
+
         self.generateInstallPy(package)
 
 
