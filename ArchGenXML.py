@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.145 2004/04/24 14:27:13 xiru Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.146 2004/04/24 15:36:04 xiru Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -1016,7 +1016,7 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchGenXML.py,v 1.145 2004/04/24 14:27:13 xiru Exp $
+RCS-ID $Id: ArchGenXML.py,v 1.146 2004/04/24 15:36:04 xiru Exp $
 \"""
 # Copyright: (c) %(year)s by %(copyright)s
 #
@@ -1496,7 +1496,7 @@ is the right place."""
             print 'method bodies will be preserved'
         else:
             print 'method bodies will be overwritten'
-        if has_enhanced_strip_support:
+        if not has_enhanced_strip_support:
             print "Warning: Can't build message catalog. Needs 'python 2.3' or later."
         if self.build_msgcatalog and not has_i18ndude:
             print "Warning: Can't build message catalog. Module 'i18ndude' not found."
