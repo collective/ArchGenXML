@@ -171,7 +171,12 @@ def install(self):
             raise
 
     # register tool in control panel
-    portal_control_panel=getToolByName(self,'portal_control_panel_actions')
+    try:
+        portal_control_panel=getToolByName(self,'portal_control_panel_actions')
+    except AttributeError:
+        #portal_control_panel has been renamed in RC1 (grumpf)
+        portal_control_panel=getToolByName(self,'portal_controlpanel',None)        
+
     %(register_configlets)s
 
 
@@ -220,7 +225,13 @@ def uninstall(self):
         except:
             raise
     # unregister tool in control panel
-    portal_control_panel=getToolByName(self,'portal_control_panel_actions')
+    try:
+        portal_control_panel=getToolByName(self,'portal_control_panel_actions')
+    except AttributeError:
+        #portal_control_panel has been renamed in RC1 (grumpf)
+        portal_control_panel=getToolByName(self,'portal_controlpanel',None)        
+    
+    
     %(unregister_configlets)s
 
 

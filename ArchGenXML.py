@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.57 2003/11/24 19:42:26 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.58 2003/11/25 13:44:13 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -291,7 +291,9 @@ class ArchetypesGenerator:
         if self.unknownTypesAsString:
             ctype=self.coerceMap.get(typename.lower(),'string')
         else:
-            ctype=self.coerceMap[typename.lower()]
+            ctype=self.coerceMap.get(typename.lower(),None)
+            if not ctype:
+                raise ValueError,'Warning: unknown datatype : %s (use the option --unknown-types-as-string to force unknown types to be converted to string' % typename
 
         #print ctype
         return ctype
@@ -858,7 +860,7 @@ from Products.Archetypes.public import *
 def main():
     version()
     args = sys.argv[1:]
-    opts, args = getopt.getopt(args, 'f:a:t:o:s:p:P:n',['ape','actions','ape-support','noclass'])
+    opts, args = getopt.getopt(args, 'f:a:t:o:s:p:P:n',['ape','actions','ape','ape-support','noclass','unknown-types-as-string'])
     prefix = ''
     outfileName = None
     yesno={'yes':1,'y': 1, 'no':0, 'n':0}
@@ -877,6 +879,8 @@ def main():
             options['force'] = yesno[option[1]]
         elif option[0] == '-t':
             options['unknownTypesAsString'] = yesno[option[1]]
+        if option[0] in ('--unknown-types-as-string',):
+            options['unknownTypesAsString'] = 1
         elif option[0] == '-a':
             options['generateActions'] = yesno[option[1]]
         elif option[0] == '--actions':

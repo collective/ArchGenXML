@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.29 2003/11/24 19:42:26 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.30 2003/11/25 13:44:13 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -141,7 +141,12 @@ class XMI1_0:
 
                 #print 'master,detail:',master,detail
                 m=objects[masterid]
-                d=objects[detailid]
+                d=objects.get(detailid,None)
+
+                if not d:
+                    print 'Warning: Child Object not found for aggregation relation: parent=%s' % (XMI.getName(m))
+                    continue
+                    
                 try:
                     m.addSubType(d)
                 except KeyError:
