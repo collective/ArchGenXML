@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<book>
+  <title>ArchGenXML - The Fine Manual</title>
+
+  <chapter>
+    <title>Introduction</title>
+
+    <sect1>
+      <title>What is ArchGenXML?</title>
+
+      <para>With ArchGenXML you can create working python code without writing
+      one single line of python. It is is a commandline utility that generates
+      fully operational Plone applications (Products) based on the Archetypes
+      framework from UML models using XMI (.xmi, .zargo, .zuml) files.</para>
+
+      <para>Design your Archetypes (code for content objects in plone) offline
+      using a UML design tool like Poseidon or ObjectDomain. Export the UML to
+      XMI or XSD and use ArchGenXML to generate Phyton code for use as a
+      Product. This new Product is available as a new item (document) type in
+      the Plone userinterface.</para>
+
+      <para>This time the tool is not round-trip enabled: Generated code
+      can&#39;t be back-converted into XMI. But you can re-generate over
+      existing code: The Method bodys and some other protected sections are
+      kept.</para>
+    </sect1>
+
+    <sect1>
+      <title>Why should I use ArchGenXML?</title>
+
+      <para>Major reasons: </para>
+
+      <itemizedlist>
+        <listitem>
+          <para>You are a lazy programmer,</para>
+        </listitem>
+
+        <listitem>
+          <para>You want to save time for coding,</para>
+        </listitem>
+
+        <listitem>
+          <para>You dont like copy and pasting code and bugs,</para>
+        </listitem>
+
+        <listitem>
+          <para>You have big projects with many different custom types,</para>
+        </listitem>
+
+        <listitem>
+          <para>You don&#39;t like to reinvent the wheel,</para>
+        </listitem>
+
+        <listitem>
+          <para>and much more other reasons.</para>
+        </listitem>
+      </itemizedlist>
+    </sect1>
+
+    <sect1>
+      <title>Contribution</title>
+
+      <para>The project initially started by Phil Auersperg. Thanks his
+      lazyness!</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Authors:</term>
+
+          <listitem>
+            <para>Phil Auersperg (Project Leader), BlueDynamics GmbH,
+            <email>phil@bluedynamics.com</email>,</para>
+
+            <para>Jens Klein (Developer and Doc-Writer), jens quadrat OEG,
+            <email>jens.klein@jensquadrat.de</email>,</para>
+
+            <para>Fabiano Weimar dos Santos (Ideas, Testing, Bugfixing),
+            Weimar Desenvolvimento e Consultoria em Informatica Ltda.,
+            xiru@xiru.org</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Sponsors</term>
+
+          <listitem>
+            <para></para>
+
+            <itemizedlist>
+              <listitem>
+                <para>Xiru.org, Brazil (Fabiano Weimar dos Santos) sponsors a
+                valuable amount of money into workflow support (State diagrams
+                -&#62; DCWorkflow, will go into release 1.2),</para>
+              </listitem>
+
+              <listitem>
+                <para>PilotSystems, Paris, France (David Sapiro),</para>
+              </listitem>
+
+              <listitem>
+                <para>OpenSource.ag, Innsbruck, Austria (Georg Pleger).</para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>If you want to contribute ArchGenXML by improving the code,
+      helping with documentation or sponsoring money just contact Phil
+      Auersperg.</para>
+    </sect1>
+  </chapter>
+
+  <chapter>
+    <title>Installation</title>
+
+    <para></para>
+
+    <sect1>
+      <title>ArchGenXML</title>
+
+      <para></para>
+    </sect1>
+
+    <sect1>
+      <title>UML Tools </title>
+
+      <para></para>
+    </sect1>
+  </chapter>
+
+  <chapter>
+    <title>Crash Course UML</title>
+
+    <para></para>
+  </chapter>
+
+  <chapter>
+    <title>Getting started</title>
+
+    <para></para>
+
+    <section>
+      <title>Creating a minimal content type in UML</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Generating the product</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Installaling and using the product</title>
+
+      <para></para>
+    </section>
+  </chapter>
+
+  <chapter>
+    <title>Basic Features</title>
+
+    <para></para>
+
+    <section>
+      <title>Classes</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Fields</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Widgets</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Contentish vs. Folderish</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>References</title>
+
+      <para></para>
+    </section>
+  </chapter>
+
+  <chapter>
+    <title>Advanced Usage</title>
+
+    <para></para>
+
+    <section>
+      <title>Tools and Configlets</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Vocabularies</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Interfaces</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Association Classes</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Internationalization</title>
+
+      <para></para>
+
+      <section>
+        <title>UI i18n with GNU-Gettext POT-File generation</title>
+
+        <para></para>
+      </section>
+
+      <section>
+        <title>Content i18n with I18NArchetypes</title>
+
+        <para></para>
+      </section>
+    </section>
+
+    <section>
+      <title>Storage</title>
+
+      <para></para>
+    </section>
+  </chapter>
+
+  <chapter>
+    <title>Reference</title>
+
+    <para></para>
+
+    <section>
+      <title>Command Line Options and Config File</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>UML Diagram</title>
+
+      <para></para>
+
+      <section>
+        <title>Packages</title>
+
+        <para></para>
+      </section>
+
+      <section>
+        <title>Classes</title>
+
+        <para></para>
+
+        <section>
+          <title>Stereotypes</title>
+
+          <para></para>
+        </section>
+
+        <section>
+          <title>Tagged Values</title>
+
+          <para></para>
+        </section>
+      </section>
+
+      <section>
+        <title>Attributes (Fields)</title>
+
+        <para></para>
+      </section>
+    </section>
+  </chapter>
+
+  <chapter>
+    <title>Further Information</title>
+
+    <para></para>
+  </chapter>
+
+  <appendix>
+    <title>License</title>
+
+    <para>This work is licensed under the Creative Commons
+    Attribution-NonCommercial-ShareAlike License. To view a copy of this
+    license, visit <ulink url="???">http://creativecommons.org/licenses/by-nc-sa/1.0/</ulink>
+    or send a letter to Creative Commons, 559 Nathan Abbott Way, Stanford,
+    California 94305, USA.</para>
+  </appendix>
+</book>
