@@ -80,6 +80,7 @@ FTI_TEMPL="""
 SCHEMA_START_DEFAULT = """    schema=BaseSchema %s + Schema(("""
 SCHEMA_START_I18N    = """    schema=I18NBaseSchema %s + Schema(("""
 SCHEMA_START_TGV     = """    schema=%s %s + Schema(("""
+SCHEMA_START_AT      = """    schema=%s + Schema(("""
 
 SCHEMA_TOOL = """\
         # a tool does not need be editable in id and title
