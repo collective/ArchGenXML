@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.29 2004/06/18 14:54:52 zworkb Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.30 2004/06/21 23:13:32 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -165,7 +165,6 @@ class ArchetypesGenerator:
                 dict['action_id']=m.getTaggedValue('id',m.getName())
                 dict['action_label']=m.getTaggedValue('action_label') or m.getTaggedValue('label',m.getName()) # action_label is deprecated and for backward compability only!
                 dict['permission']=getExpression(m.getTaggedValue('permission','View'))
-                dict['action_id']=m.getTaggedValue('id',m.getName())
 
                 condition=m.getTaggedValue('condition') or '1'
                 dict['condition']='python:'+condition
