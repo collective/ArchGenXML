@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.26 2003/11/03 18:51:25 dreamcatcher Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.27 2003/11/08 17:54:05 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -90,6 +90,9 @@ class XMI1_0:
             return str(getAttributeValue(domElement,self.NAME))
         except:
             return None
+    
+    def getId(self,domElement):
+        return domElement.getAttribute('xmi.id')
 
     def getAssocEndParticipantId(self,el):
         assocend=getElementByTagName(el,self.ASSOCENDTYPE,None)
@@ -138,15 +141,23 @@ class XMI1_0:
                 #print 'master,detail:',master,detail
                 m=objects[masterid]
                 d=objects[detailid]
-                m.addSubType(d)
+                try:
+                    m.addSubType(d)
+                except KeyError:
+                    print 'Warning: Child Object not found for aggregation relation:Child :%s(%s), parent=%s' % (d.getId(),d.getName(),XMI.getName(m))
+                    continue
 
                 assoc=XMIAssociation(rel)
                 assoc.fromEnd.obj.addAssocFrom(assoc)
                 assoc.toEnd.obj.addAssocTo(assoc)
 
             else: #its an assoc, lets model it as association
+                try:
+                    assoc=XMIAssociation(rel)
+                except KeyError:
+                    print 'Warning: Child Object not found for aggregation:%s, parent=%s' % (XMI.getId(rel),XMI.getName(master))
+                    continue
 
-                assoc=XMIAssociation(rel)
                 if getattr(assoc.fromEnd,'obj',None) and getattr(assoc.toEnd,'obj',None):
                     assoc.fromEnd.obj.addAssocFrom(assoc)
                     assoc.toEnd.obj.addAssocTo(assoc)
@@ -161,7 +172,12 @@ class XMI1_0:
             try:
                 par0=getElementByTagName   (gen,self.GEN_PARENT)
                 child0=getElementByTagName (gen,self.GEN_CHILD)
-                par=objects[getElementByTagName(par0,self.GEN_ELEMENT).getAttribute('xmi.idref')]
+                try:
+                    par=objects[getElementByTagName(par0,self.GEN_ELEMENT).getAttribute('xmi.idref')]
+                except KeyError:
+                    print 'Warning: Parent Object not found for generalization relation:%s, parent %s' % (XMI.getId(gen),XMI.getName(par0))
+                    continue
+                
                 child=objects[getElementByTagName(child0,self.GEN_ELEMENT).getAttribute('xmi.idref')]
 
                 par.addGenChild(child)
@@ -614,8 +630,6 @@ class XMIClass (XMIElement):
             res=1
         else:
             res=0
-
-        #print 'isDependent:',self.getName(),res
 
         return res
 
