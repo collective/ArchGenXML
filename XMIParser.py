@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.41 2004/02/27 18:44:48 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.42 2004/02/28 18:51:54 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -87,7 +87,7 @@ class XMI1_0:
     STEREOTYPE_MODELELEMENT="Foundation.Extension_Mechanisms.Stereotype.extendedElement"
     MODELELEMENT="Foundation.Core.ModelElement"
     ISABSTRACT="Foundation.Core.GeneralizableElement.isAbstract"
-
+    INTERFACE="Foundation.Core.Interface"
     aggregates=['composite','aggregate']
 
     
@@ -314,7 +314,8 @@ class XMI1_1 (XMI1_0):
     MODELELEMENT="UML:ModelElement"
     STEREOTYPE="UML:Stereotype"
     ISABSTRACT="UML:GeneralizableElement.isAbstract"
-
+    INTERFACE="UML:Interface"
+    
     def getName(self,domElement):
         return domElement.getAttribute('name').strip()
 
@@ -894,6 +895,11 @@ def buildDataTypes(doc):
     classes=[c for c in doc.getElementsByTagName(XMI.CLASS) ]
 
     for dt in classes:
+        datatypes[str(dt.getAttribute('xmi.id'))]=dt
+
+    interfaces=[c for c in doc.getElementsByTagName(XMI.INTERFACE) ]
+
+    for dt in interfaces:
         datatypes[str(dt.getAttribute('xmi.id'))]=dt
 
     XMI.collectTagDefinitions(doc)
