@@ -84,7 +84,11 @@ def getExpression(s):
         if s.startswith('python:'):
             return s[7:]
         else:
-            return '"""%s"""' % s
+            # Quote in """ if the string contains " or a newline, else use "
+            if '"' in s or '\n' in s:
+                return '"""%s"""' % s
+            else:
+                return '"%s"' % s
 
 def isTGVTrue(tgv):
     if type(tgv) in (type(''),type(u'')):

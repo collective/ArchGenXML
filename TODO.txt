@@ -8,6 +8,20 @@ http://plone.org/development/teams/developer/ArchGenXML
 * Finish writing documentation: current is a tutorial at plone.org
 
 	- optilude and natoka want to help :)
+	
+	- need to grep source code for stereotype and TGV checks and document
+	   each one. Also need to classify which ones are in 1.2 and which ones
+	   are only in trunk.
+
+* New <<ordered>> stereotype on folderish items allows using OrderedBaseFolder:
+  
+    - What impact does this have on I18NBaseFolder use (I can't find it in
+        Products/Archetypes...)
+        
+    - elvix seems to think we shouldn't generate this as all, since LinguaPlone
+        supercedes i18nlayer, and I18NBaseFolder was a workaround for a 
+        weakness in i18nlayer. I can't answer to that, since I've not used
+        either.
 
 * Move remainder of templates in templates/ to DTML 
 

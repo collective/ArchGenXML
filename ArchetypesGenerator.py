@@ -115,7 +115,9 @@ class ArchetypesGenerator(BaseGenerator):
     parsed_class_sources={} #dict containing the parsed sources by class names (for preserving method codes)
     parsed_sources=[] #list of containing the parsed sources (for preserving method codes)
 
-    nonstring_tgvs=['widget','vocabulary','required','precision','storage'] #taggedValues that are not strings, e.g. widget or vocabulary
+    #taggedValues that are not strings, e.g. widget or vocabulary
+    nonstring_tgvs=['widget','vocabulary','required','precision','storage',
+                    'enforceVocabulary', 'multiValued'] 
 
     msgcatstack = []
 
@@ -302,13 +304,35 @@ class ArchetypesGenerator(BaseGenerator):
             has_content_icon='#'
             content_icon = element.getCleanName()+'.gif'
 
-        res=ftiTempl % {'subtypes':repr(tuple(subtypes)),
-            'has_content_icon':has_content_icon,
-            'content_icon':content_icon,
-            'discussion':element.getTaggedValue('allow_discussion','0'),
-            'global_allow':global_allow,
-            'immediate_view':immediate_view,
-            'filter_content_types': not (isTGVFalse(element.getTaggedValue('filter_content_types')) or element.hasStereoType('folder'))}
+        # Allow discussion?
+        allow_discussion = element.getTaggedValue('allow_discussion','0')
+
+        # Filter content types?
+        filter_content_types = 0
+        
+        if isTGVTrue(element.getTaggedValue('filter_content_types')) or \
+                element.hasStereoType('folder'):
+            filter_content_types = 1
+                
+        # Set a type description.
+        
+        typeName = element.getTaggedValue('archetype_name') or \
+                    element.getTaggedValue('label') or \
+                    element.getName ()
+                            
+        typeDescription = element.getTaggedValue('typeDescription', typeName)
+    
+
+        res=ftiTempl % {
+            'subtypes'             : repr(tuple(subtypes)),
+            'has_content_icon'     : has_content_icon,
+            'content_icon'         : content_icon,
+            'allow_discussion'     : allow_discussion,
+            'global_allow'         : global_allow,
+            'immediate_view'       : immediate_view,
+            'filter_content_types' : filter_content_types,
+            'typeDescription'      : typeDescription,
+            'type_name_lc'         : element.getName ().lower ()}
 
         return res
 
@@ -1104,9 +1128,15 @@ class ArchetypesGenerator(BaseGenerator):
                       element.hasStereoType('folder')
         if isFolderish:
             # folderish
-            baseclass ='BaseFolder'
-            baseschema='BaseFolderSchema'
+            
+            if element.hasStereoType('ordered'):
+                baseclass ='OrderedBaseFolder'
+                baseschema='OrderedBaseFolderSchema'
+            else:
+                baseclass ='BaseFolder'
+                baseschema='BaseFolderSchema'
 
+            # XXX: How should <<ordered>> affect this?
             if self.i18n_content_support in self.i18n_at and element.isI18N():
                 baseclass='I18NBaseFolder'
                 baseschema='I18NBaseFolderSchema'
