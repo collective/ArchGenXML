@@ -95,7 +95,12 @@ class ArchetypesGenerator:
     # if metatype is None, it defaults to SimpleVocabulary 
     vocabularymap = {}
     
-    # End ATVM integration
+    # End ATVM integrationer
+    
+    # if a reference has the same name as another _and_ 
+    # its source object is the same, we want only one ReferenceWidget _unless_
+    # we have a tagged value 'single' on he reference
+    reference_groups = list()
     
     def __init__(self,xschemaFileName, **kwargs):
         self.outfileName=kwargs['outfilename']
@@ -775,11 +780,12 @@ class ArchetypesGenerator:
                 print >> outfile
                 print >> outfile, indent(self.getFieldStringFromAssociation(rel, element),2)
 
-        if self.backreferences_support:
+        if self.backreferences_support or self.getOption('backreferences_support',element,'0')=='1':
             for rel in element.getToAssociations():
                 name = rel.fromEnd.getName()
     
                 if rel.fromEnd.isNavigable:
+                    print "backreference"
                     if name in self.reservedAtts:
                         continue
                     print >> outfile
@@ -1036,9 +1042,9 @@ class ArchetypesGenerator:
                 baseschema='I18NBaseFolderSchema'
 
             #tagged vaues for base-schema overrule
-            folder_base_class=element.getTaggedValue('base_class') or element.getTaggedValue('folder_base_class') # folder_base_class is deprecated and for backward compability only
-            if folder_base_class:
-                baseclass=folder_base_class
+            userdefined_base_class=element.getTaggedValue('base_class') or element.getTaggedValue('folder_base_class') # folder_base_class is deprecated and for backward compability only
+            if userdefined_base_class:
+                baseclass=userdefined_base_class
                 
                         
         else:
