@@ -1,0 +1,20 @@
+Authors:
+    Philipp Auersperg phil@bluedynamics.com 
+
+    Jens Klein (jensquadrat.de) made a great documentation
+       and buzzes me to bring in new features
+       and added tool support and control panel integration
+
+    Fabiano Weimar dos Santos (xiru) brings in some
+      good ideas from his project (UML2AT).
+      + testing
+
+
+Sponsors:
+    Xiru.org, Brazil (Fabiano Weimar dos Santos)
+    sponsors a valuable amount of money into 
+    workflow support (State diags -> DCWorkflow, will come with release 1.1)
+
+    PilotSystems, Paris, France (David Sapiro)
+    OpenSource.ag, Innsbruck, Austria (Georg Pleger)
+

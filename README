@@ -1,21 +1,7 @@
 ArchGenXML - generate Plone/Archetypes apps
 out of XMI and XSD files
 
-Authors: 
-    Philipp Auersperg phil@bluedynamics.com
-
-    Jens Klein (jensquadrat.de) made a great documentation
-       and buzzes me to bring in new features
-       and added tool support and control panel integration
-
-    Fabiano Weimar dos Santos (xiru) brings in some 
-      good ideas from his project (UML2AT).
-
-
-Sponsors: 
-    PilotSystems, Paris, France (David Sapiro)
-    OpenSource.ag, Innsbruck, Austria (Georg Pleger)
-
+Authors and Credits see the file CREDITS
 
 
 ==========
