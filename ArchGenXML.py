@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.8.2.2 2003/07/17 18:59:42 dreamcatcher Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.8.2.3 2003/08/04 16:38:18 dreamcatcher Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -51,6 +51,8 @@ class ArchetypesGenerator:
     generateActions=0
     prefix=''
     packages=[] #packages to scan for classes
+    noclass=0   # if set no module is reverse engineered,
+                #just an empty project + skin is created
 
     reservedAtts=['id','title']
 
@@ -91,8 +93,9 @@ class ArchetypesGenerator:
         '''
         ftiTempl='''
 
+    # uncommant lines below when you need
     factory_type_information={
-        'allowed_content_types':%(subtypes)s,
+        'allowed_content_types':%(subtypes)s %(parentsubtypes)s,
         #'content_icon':'%(type_name)s.gif',
         'immediate_view':'base_view',
         #'global_allow':0,
@@ -103,47 +106,62 @@ class ArchetypesGenerator:
         if self.generateActions:
             ftiTempl += actTempl
 
-        res=ftiTempl % {'subtypes':repr(tuple(subtypes)),'type_name':element.getCleanName()}
+        #collect the allowed_subtypes from the parents
+        parentsubtypes=''
+        if element.getGenParents():
+            parentsubtypes = '+ ' + ' + '.join(tuple([p.getCleanName()+".factory_type_information['allowed_content_types']" for p in element.getGenParents()]))
+        res=ftiTempl % {'subtypes':repr(tuple(subtypes)),'type_name':element.getCleanName(),'parentsubtypes':parentsubtypes}
         return res
 
     typeMap={
         'string':'''StringField('%(name)s',
                     searchable=1,
+                    %(other)s
                     ),''' ,
         'text':  '''StringField('%(name)s',
                     searchable=1,
-                    widget=TextAreaWidget()
+                    widget=TextAreaWidget(),
+                    %(other)s
                     ),''' ,
         'integer':'''IntegerField('%(name)s',
                     searchable=1,
+                    %(other)s
                     ),''',
         'float':'''FloatField('%(name)s',
                     searchable=1,
+                    %(other)s
                     ),''',
         'boolean':'''BooleanField('%(name)s',
                     searchable=1,
+                    %(other)s
                     ),''',
         'lines':'''LinesField('%(name)s',
                     searchable=1,
+                    %(other)s
                     ),''',
         'date':'''DateTimeField('%(name)s',
                     searchable=1,
+                    %(other)s
                     ),''',
         'image':'''ImageField('%(name)s',
                     sizes={'small':(100,100),'medium':(200,200),'large':(600,600)},
-                    storage=AttributeStorage()
+                    storage=AttributeStorage(),
+                    %(other)s
                     ),''',
         'file':'''FileField('%(name)s',
                     storage=AttributeStorage(),
-                    widget=FileWidget()
+                    widget=FileWidget(),
+                    %(other)s
                     ),''',
         'lines':'''LinesField('%(name)s',
                     searchable=1,
+                    %(other)s
                     ),''',
         'reference':'''ReferenceField('%(name)s',allowed_types=%(allowed_types)s,
                     searchable=1,
                     multiValued=%(multiValued)d,
                     relationship='%(relationship)s',
+                    %(other)s
                     ),''',
 
     }
@@ -200,7 +218,18 @@ class ArchetypesGenerator:
             ctype=self.coerceType(str(attr.type))
 
         templ=self.typeMap[ctype]
-        return templ % {'name':attr.getName(),'type':attr.getType()}
+        defexp=''
+        if attr.hasDefault():
+            defexp='default='+attr.getDefault()
+
+        res = templ % {'name':attr.getName(),'type':attr.getType(),'other':defexp}
+        doc=attr.getDocumentation()
+        if doc:
+            res=indent(doc,2,'#')+'\n'+' '*8+res
+        else:
+            res=' '*8+res
+
+        return res
 
     def getFieldStringFromAssociation(self, rel):
         ''' gets the schema field code '''
@@ -209,19 +238,20 @@ class ArchetypesGenerator:
 
         templ=self.typeMap['reference']
         obj=rel.toEnd.obj
-        name=rel.fromEnd.getName()
+        name=rel.toEnd.getName()
         relname=rel.getName()
-        
-        if int(rel.fromEnd.mult[1]) == -1:
+        allowed_types=(obj.getName(), ) + tuple(obj.getGenChildrenNames())
+
+        if int(rel.toEnd.mult[1]) == -1:
             multiValued=1
-            
+
         if name == 'None':
             name=obj.getName()+'_ref'
-            
+
         return templ % {'name':name,'type':obj.getType(),
-                'allowed_types':repr((obj.getName(),)),
+                'allowed_types':repr(allowed_types),
                 'multiValued' : multiValued,
-                'relationship':relname}
+                'relationship':relname,'other':''}
 
     # Generate get/set/add member functions.
     def generateArcheSchema(self, outfile, element):
@@ -231,7 +261,7 @@ class ArchetypesGenerator:
             parent_schemata_expr=' + '+' + '.join(parent_schemata)
         else:
             parent_schemata_expr=''
-            
+
         print >> outfile,'    schema=BaseSchema %s + Schema((' % parent_schemata_expr
         refs=[]
 
@@ -241,7 +271,7 @@ class ArchetypesGenerator:
                 continue
             mappedName = mapName(name)
 
-            print >> outfile, '    '*2 ,self.getFieldStringFromAttribute(attrDef)
+            print >> outfile, self.getFieldStringFromAttribute(attrDef)
         for child in element.getChildren():
             name = child.getCleanName()
             if name in self.reservedAtts:
@@ -257,12 +287,12 @@ class ArchetypesGenerator:
         for rel in element.getToAssociations():
             if 1 or rel.toEnd.mult==1: #XXX: for mult==-1 a multiselection widget must come
                 name = rel.fromEnd.getName()
-                    
+
                 if name in self.reservedAtts:
                     continue
-    
+
                 print >> outfile, '    '*2 ,self.getFieldStringFromAssociation(rel)
-                
+
 
         print >> outfile,'    ))'
 
@@ -271,27 +301,27 @@ class ArchetypesGenerator:
         print >> outfile,'    #Methods'
         for m in element.getMethodDefs():
             self.generateMethod(outfile,m)
-            
+
     def generateMethod(self,outfile,m):
             paramstr=''
-            params=m.getParamNames()
+            params=m.getParamExpressions()
             if params:
                 paramstr=','+','.join(params)
-                print paramstr
+                #print paramstr
             print >> outfile
             print >> outfile,'    def %s(self%s):' % (m.getName(),paramstr)
             code=m.taggedValues.get('code','')
             doc=m.taggedValues.get('documentation','')
             if doc:
                 print >> outfile, indent("'''\n%s\n'''" % doc ,2)
-                
+
             if code:
                 print >> outfile, indent('\n'+code,2)
             else:
-                print >> outfile,'    '*2,'pass'
-                
+                print >> outfile, indent('\n'+'pass',2)
+
             print >> outfile
-        
+
     def generateClasses(self, outfile, element, delayed):
         wrt = outfile.write
         wrt('\n')
@@ -300,7 +330,12 @@ class ArchetypesGenerator:
             wrt('from %s import %s' % (p,p))
 
         wrt('\n')
-        
+
+        additionalImports=element.getTaggedValue('imports')
+        if additionalImports:
+            wrt(additionalImports)
+            wrt('\n')
+
         refs = element.getRefs() + element.getSubtypeNames(recursive=1)
 
         if not element.isComplex():
@@ -313,6 +348,10 @@ class ArchetypesGenerator:
 
         wrt('\n')
 
+        additionalParents=element.getTaggedValue('additional_parents')
+        if additionalParents:
+            parentnames=list(parentnames)+additionalParents.split(',')
+
         parents=','.join(parentnames)
         if refs:
             s1 = 'class %s%s(BaseFolder,%s):\n' % (self.prefix, name, parents)
@@ -323,7 +362,11 @@ class ArchetypesGenerator:
         doc=element.getDocumentation()
         if doc:
             print >>outfile,indent("'''\n%s\n'''" % doc, 1)
-            
+
+        header=element.getTaggedValue('class_header')
+        if header:
+            print >>outfile,indent(header, 1)
+
         print >> outfile,'''    portal_type = meta_type = '%s' ''' % name
         print >> outfile,'''    archetype_name = '%s'   #this name appears in the 'add' box ''' % name
         self.generateArcheSchema(outfile,element)
@@ -345,6 +388,11 @@ class ArchetypesGenerator:
     def generateStdFiles(self, target,projectName,generatedModules):
         #generates __init__.py, Extensions/Install.py and the skins directory
         #the result is a QuickInstaller installable product
+
+        #remove trailing slash
+        if target[-1] in ('/','\\'):
+            target=target[:-1]
+
         templdir=os.path.join(sys.path[0],'templates')
         initTemplate=open(os.path.join(templdir,'__init__.py')).read()
 
@@ -359,6 +407,7 @@ class ArchetypesGenerator:
         extDir=os.path.join(target,'Extensions')
         makeDir(extDir)
         of=makeFile(os.path.join(extDir,'Install.py'))
+
         of.write(installTemplate % {'project_dir':os.path.split(target)[1]})
         of.close()
 
@@ -368,7 +417,13 @@ class ArchetypesGenerator:
         outfile=None
 
         if not projectName:
-            projectName=self.outfileName
+            path=os.path.split(self.outfileName)
+            if path[1]:
+                projectName=path[1]
+            else:
+                #in case of trailing slash
+                projectName=os.path.split(path[0])[1]
+            print 'projectName:',projectName
 
         if not os.path.splitext(self.outfileName)[1]:
             dirMode=1
@@ -424,27 +479,31 @@ class ArchetypesGenerator:
 
         suff=os.path.splitext(self.xschemaFileName)[1].lower()
 
-        if suff.lower() in ('.xmi','.xml'):
-            print 'opening xmi'
-            root=XMIParser.parse(self.xschemaFileName,packages=self.packages)
-        elif suff.lower() in ('.zargo',):
-            print 'opening zargo'
-            zf=ZipFile(self.xschemaFileName)
-            xmis=[n for n in zf.namelist() if os.path.splitext(n)[1].lower()=='.xmi']
-            assert(len(xmis)==1)
-            buf=zf.read(xmis[0])
-            root=XMIParser.parse(xschema=buf,packages=self.packages)
-        elif suff.lower() == '.xsd':
-            root=XSDParser.parse(self.xschemaFileName)
+        if not self.noclass:
+            if suff.lower() in ('.xmi','.xml'):
+                print 'opening xmi'
+                root=XMIParser.parse(self.xschemaFileName,packages=self.packages)
+            elif suff.lower() in ('.zargo',):
+                print 'opening zargo'
+                zf=ZipFile(self.xschemaFileName)
+                xmis=[n for n in zf.namelist() if os.path.splitext(n)[1].lower()=='.xmi']
+                assert(len(xmis)==1)
+                buf=zf.read(xmis[0])
+                root=XMIParser.parse(xschema=buf,packages=self.packages)
+            elif suff.lower() == '.xsd':
+                root=XSDParser.parse(self.xschemaFileName)
 
-        #if no output filename given, ry to guess it from the model
-        if not self.outfileName:
-            self.outfileName=root.getName()
+            #if no output filename given, ry to guess it from the model
+            if not self.outfileName:
+                self.outfileName=root.getName()
 
-        if not self.outfileName:
-            raise TypeError,'output filename not specified'
+            if not self.outfileName:
+                raise TypeError,'output filename not specified'
 
-        print 'outfile:',self.outfileName
+            print 'outfile:',self.outfileName
+        else:
+            root=XMIParser.XMIElement() #create empty element
+
         self.generate(root)
 
     TEMPLATE_HEADER = """\
@@ -455,13 +514,10 @@ from Products.Archetypes.public import *
 
 def main():
     args = sys.argv[1:]
-    opts, args = getopt.getopt(args, 'f:a:t:o:s:p:P:')
+    opts, args = getopt.getopt(args, 'f:a:t:o:s:p:P:n')
     prefix = ''
     outfileName = None
     yesno={'yes':1,'y': 1, 'no':0, 'n':0}
-
-    if len(args) < 1:
-        usage()
 
     options={}
 
@@ -479,9 +535,18 @@ def main():
             options['unknownTypesAsString'] = yesno[option[1]]
         elif option[0] == '-a':
             options['generateActions'] = yesno[option[1]]
+        if option[0] == '-n':
+            options['noclass'] = 1
+
+    if len(args) < 1 and not options.get('noclass',0):
+        usage()
+
+    if len(args):
+        xschemaFileName = args[0]
+    else:
+        xschemaFileName = ''
 
 
-    xschemaFileName = args[0]
     if not outfileName:
         if len(args) >= 2:
             outfileName=args[1]

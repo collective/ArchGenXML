@@ -1,3 +1,14 @@
+#-----------------------------------------------------------------------------
+# Name:        XSDParser.py
+# Purpose:     
+#
+# Author:      Philipp Auersperg
+#
+# Created:     2003/19/07
+# RCS-ID:      $Id: XSDParser.py,v 1.4.2.2 2003/08/04 16:38:19 dreamcatcher Exp $
+# Copyright:   (c) 2003 BlueDynamics
+# Licence:     GPL
+#-----------------------------------------------------------------------------
 
 import sys, os.path, time, string
 import getopt
