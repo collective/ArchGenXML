@@ -155,7 +155,7 @@ def install(self):
     print >> out, 'adding classes to use_folder_tabs:'
     for cl in classes:
         print >> out,  'type:',cl['klass'].portal_type
-        if cl['klass'].isPrincipiaFolderish:
+        if cl['klass'].isPrincipiaFolderish and not cl['klass'].portal_type in %(no_use_of_folder_tabs)s:
             use_folder_tabs.append(cl['klass'].portal_type)
 
     props.use_folder_tabs=tuple(use_folder_tabs)
@@ -220,7 +220,7 @@ def uninstall(self):
     print >> out, 'removing classes from use_folder_tabs:'
     for cl in classes:
         print >> out,  'type:', cl['klass'].portal_type
-        if cl['klass'].isPrincipiaFolderish:
+        if cl['klass'].isPrincipiaFolderish and not cl['klass'].portal_type in %(no_use_of_folder_tabs)s:
             if cl['klass'].portal_type in use_folder_tabs:
                 use_folder_tabs.remove(cl['klass'].portal_type)
 
@@ -230,7 +230,7 @@ def uninstall(self):
     for t in %(autoinstall_tools)s:
         # undo: tools are not content. dont list it in navtree
         try:
-            self.portal_properties.navtree_properties.metaTypesNotToList.remove('PloneShop_Tool')
+            self.portal_properties.navtree_properties.metaTypesNotToList.remove(t)
         except ValueError:
             pass
         except:
