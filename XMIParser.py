@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.92 2004/08/12 16:06:39 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.93 2004/08/15 13:36:18 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -116,10 +116,17 @@ class XMI1_0:
     STATEMACHINE_TRANSITIONS="Behavioral_Elements.State_Machines.StateMachine.transitions"
     TRANSITON_TARGET="Behavioral_Elements.State_Machines.Transition.target"
     TRANSITION_SOURCE="Behavioral_Elements.State_Machines.Transition.source"
+    TRANSITION_EFFECT="Behavioral_Elements.State_Machines.Transition.effect"    
+    ACTION_SCRIPT="Behavioral_Elements.Common_Behavior.Action.script"
+    ACTION_EXPRESSION="Foundation.Data_Types.ActionExpression"
+    ACTION_EXPRESSION_BODY="Foundation.Data_Types.Expression.body"
+
+    DIAGRAM="UML:Diagram"
+    DIAGRAM_OWNER="UML:Diagram.owner"
+    DIAGRAM_SEMANTICMODEL_BRIDGE="UML:Uml1SemanticModelBridge"
+    DIAGRAM_SEMANTICMODEL_BRIDGE_ELEMENT="UML:Uml1SemanticModelBridge.element"
     
-
     aggregates=['composite','aggregate']
-
 
     def getName(self,domElement):
         try:
@@ -288,8 +295,10 @@ class XMI1_0:
                 print 'ab: index error for dependencies:%s'%self.getId(ab)
                 raise
 
-    def getExpressionBody(self,element):
-        exp = getElementByTagName(element,XMI.EXPRESSION_BODY,recursive=1,default=None)
+    def getExpressionBody(self,element,tagname=None):
+        if not tagname:
+            tagname=XMI.EXPRESSION
+        exp = getElementByTagName(element,tagname+'.body',recursive=1,default=None)
         if exp and exp.firstChild:
             return exp.firstChild.nodeValue
         else:
@@ -355,6 +364,7 @@ class XMI1_0:
 
         return res
 
+
     def getOwnedElement(self,el):
         return getElementByTagName(el,self.OWNED_ELEMENT, default=None)
 
@@ -375,6 +385,7 @@ class XMI1_0:
     def getGenerationOption(self,opt):
         return getattr(self.getGenerator(),opt,None)
 
+        
 class XMI1_1 (XMI1_0):
     # XMI version specific stuff goes there
 
@@ -451,13 +462,24 @@ class XMI1_1 (XMI1_0):
     STATEMACHINE_TRANSITIONS="UML:StateMachine.transitions"
     TRANSITON_TARGET="UML:Transition.target"
     TRANSITION_SOURCE="UML:Transition.source"
+    TRANSITION_EFFECT="UML:Transition.effect"
+    ACTION_SCRIPT="UML:Action.script"
+    ACTION_EXPRESSION="UML:ActionExpression"
+    ACTION_EXPRESSION_BODY="UML:ActionExpression.body"
 
+    DIAGRAM="UML:Diagram"
+    DIAGRAM_OWNER="UML:Diagram.owner"
+    DIAGRAM_SEMANTICMODEL_BRIDGE="UML:Uml1SemanticModelBridge"
+    DIAGRAM_SEMANTICMODEL_BRIDGE_ELEMENT="UML:Uml1SemanticModelBridge.element"
 
     def getName(self,domElement):
         return domElement.getAttribute('name').strip()
 
-    def getExpressionBody(self,element):
-        exp = getElementByTagName(element,XMI.EXPRESSION,recursive=1,default=None)
+    def getExpressionBody(self,element,tagname=None):
+        if not tagname:
+            tagname=XMI.EXPRESSION
+            
+        exp = getElementByTagName(element,tagname,recursive=1,default=None)
         if exp:
             return exp.getAttribute('body')
         else:
@@ -787,7 +809,7 @@ class XMIElement:
         return doc
 
     def getUnmappedCleanName(self): return self.unmappedCleanName
-    def setName(self, name): self.name = name
+    def setName(self, name): self.name = name;self.annotate()
     def getAttrs(self): return self.attrs
     def getMaxOccurs(self): return self.maxOccurs
     def getType(self): return self.type
@@ -1114,6 +1136,8 @@ class XMIPackage(XMIElement, StateMachineContainer):
 class XMIModel(XMIPackage):
     isroot=1
     parent=None
+    diagrams={}
+    diagramsByModel={}
 
     def __init__(self,doc):
         self.document=doc
@@ -1131,6 +1155,12 @@ class XMIModel(XMIPackage):
         statemachines.extend(getElementsByTagName(ownedElement,XMI.STATEMACHINE) )
         return statemachines
 
+    def buildDiagrams(self):
+        diagram_els=getElementsByTagName(self.content,XMI.DIAGRAM)
+        for el in diagram_els:
+            diagram=XMIDiagram(el)
+            self.diagrams[diagram.getId()]=diagram
+            self.diagramsByModel[diagram.getModelElementId()]=diagram
 
 class XMIClass (XMIElement, StateMachineContainer):
     package=None
@@ -1619,12 +1649,18 @@ class XMIStateMachine(XMIStateContainer):
         
 class XMIStateTransition(XMIElement):
     targetState=None
-
+    action=None
+    
     def __init__(self,*args,**kwargs):
         XMIElement.__init__(self,*args,**kwargs)
 
     def initFromDOM(self,domElement=None):
         XMIElement.initFromDOM(self,domElement)
+        
+    def buildEffect(self):
+        el=getElementByTagName(self.domElement,XMI.TRANSITION_EFFECT)
+        actel=getSubElement(el)
+        self.action=XMIAction(actel)
         
     def setTargetState(self,state):
         self.targetState=state
@@ -1637,7 +1673,25 @@ class XMIStateTransition(XMIElement):
             return self.getTargetState().getName()
         else:
             return None
+        
+    def getAction(self):
+        return self.action
     
+    
+class XMIAction(XMIElement):
+    expression=None
+    def initFromDOM(self,domElement=None):
+        XMIElement.initFromDOM(self,domElement)
+
+class XMITransitionGuard(XMIElement):
+    expression=None
+    def initFromDOM(self,domElement=None):
+        XMIElement.initFromDOM(self,domElement)
+
+class XMITransitionEffect(XMIElement):
+    def initFromDOM(self,domElement=None):
+        XMIElement.initFromDOM(self,domElement)
+
 
 class XMIState(XMIElement):
     def __init__(self,*args,**kwargs):
@@ -1688,8 +1742,45 @@ class XMICompositeState(XMIState):
         XMIState.__init__(self,*args,**kwargs)
         XMIStateMachine.init(self)
 
-    
 
+#necessary for Poseidon because in Poseidon i cannot assign a name to a statemachine,
+#so i have to pull the name of the statemachine from the diagram :(((((
+diagrams={}
+diagramsByModel={}
+
+class XMIDiagram(XMIElement):
+    modelElement=None
+    
+    def initFromDOM(self,domElement=None):
+        XMIElement.initFromDOM(self,domElement)
+        self.buildSemanticBridge()
+    
+    def buildSemanticBridge(self):
+        ownerel=getElementByTagName(self.domElement,XMI.DIAGRAM_OWNER,default=None)
+        if not ownerel:
+            print 'no ownerel'
+            return
+        
+        model_el=getElementByTagName(ownerel,XMI.DIAGRAM_SEMANTICMODEL_BRIDGE_ELEMENT,default=None,recursive=1)
+        if not model_el:
+            print 'no modelel'
+            return
+        
+        el=getSubElement(model_el)
+        idref=XMI.getIdRef(el)
+        self.modelElement=allObjects[idref]
+        
+        #workaround for the Poseidon problem
+        if issubclass(self.modelElement.__class__,XMIStateMachine):
+            self.modelElement.setName(self.getName())
+            
+
+    def getModelElementId(self):
+        if self.modelElement:
+            return self.modelElement.getId()
+        
+    def getModelElement(self):
+        return self.modelElement
 #----------------------------------------------------------
 
 
@@ -1758,7 +1849,8 @@ def buildHierarchy(doc,packagenames):
     res.buildPackages()
     res.buildClassesAndInterfaces()
     res.buildStateMachines()
-
+    res.buildDiagrams()
+    
     #print 'res:',res.getName()
 
     #pure datatype classes should not be generated!
