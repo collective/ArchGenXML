@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.51 2004/04/03 16:09:34 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.52 2004/04/03 18:17:34 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -1060,7 +1060,7 @@ class XMIClass (XMIElement):
         ''' generalization parents '''
         return self.realizationParents
 
-    def getQualifiedModuleName(self,ref):
+    def getQualifiedModulePath(self,ref):
         ''' returns the qualified name of the class, depending of the 
             reference package 'ref' it generates an absolute path or 
             a relative path if the pack(self) is a subpack of 'ref' 
@@ -1076,9 +1076,18 @@ class XMIClass (XMIElement):
             
         path.append(self)
         
-
+        return path
+    
+    def getQualifiedModuleName(self,ref):
+        path=self.getQualifiedModulePath(ref)
         return '.'.join([p.getName() for p in path if p])
 
+    
+    def getQualifiedName(self,ref):
+        path=self.getQualifiedModulePath(ref)
+        path.append(self)
+        return '.'.join([p.getName() for p in path if p])
+        
 class XMIInterface(XMIClass):
     isinterface=1
     pass
