@@ -1319,6 +1319,28 @@ class ArchetypesGenerator:
         of.write(initTemplate)
         of.close()
 
+    def updateVersionForProduct(self,package):
+        ''' '''
+        build=1
+        versionbase='0.1'
+        fp=os.path.join(package.getFilePath(),'version.txt')
+        vertext=self.readFile(fp)
+        if vertext:
+            vertext=vertext.strip()
+            parsed=vertext.split(' ')
+            if parsed.count('build'):
+                ind=parsed.index('build')
+                try:
+                    build=int(parsed[ind+1]) + 1
+                except:
+                    build=1
+               
+                versionbase=' '.join(parsed[:ind])     
+        
+        version='%s build %d\n' % (versionbase,build)
+        of=self.makeFile(fp)
+        print >>of,version,
+        of.close()
 
     def generateStdFilesForProduct(self, target,package):
         generatedModules=package.generatedModules
@@ -1353,6 +1375,9 @@ class ArchetypesGenerator:
 
         of=self.makeFile(os.path.join(package.getFilePath(),'refresh.txt'))
         of.close()
+        
+        self.updateVersionForProduct(package)
+        
 
         initTemplate=initTemplate % init_params
         of=self.makeFile(os.path.join(package.getFilePath(),'__init__.py'))
