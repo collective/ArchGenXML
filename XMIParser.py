@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.43 2004/02/28 20:01:52 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.44 2004/04/02 00:09:29 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -26,6 +26,9 @@ except ImportError:
 
 
 class XMI1_0:
+    XMI_CONTENT="XMI.content"
+    OWNED_ELEMENT="Foundation.Core.Namespace.ownedElement"
+    
     # XMI version specific stuff goes there
     STATEMACHINE = 'Behavioral_Elements.State_Machines.StateMachine'
     STATE = 'Behavioral_Elements.State_Machines.State'
@@ -88,6 +91,7 @@ class XMI1_0:
     MODELELEMENT="Foundation.Core.ModelElement"
     ISABSTRACT="Foundation.Core.GeneralizableElement.isAbstract"
     INTERFACE="Foundation.Core.Interface"
+    
     aggregates=['composite','aggregate']
 
     
@@ -240,7 +244,7 @@ class XMI1_0:
             for el in els:
                 if el.getAttribute('xmi.idref')==o.getId():
                     name=self.getName(st)
-                    print 'Stereotype found:',name
+                    #print 'Stereotype found:',name
                     o.setStereoType(name)
 
     def calcClassAbstract(self,o):
@@ -263,6 +267,24 @@ class XMI1_0:
                 if att.type not in datatypenames: #collect all datatype names (to prevent pure datatype classes from being generated)
                     datatypenames.append(att.type)
                 #print 'attribute:'+self.getName(),typeid,self.type
+                
+    def getPackageElements(self,el):
+        ''' gets all package nodes below the current node (only one level)'''
+        res=[]
+        #in case the el is a document we have to crawl down until we have ownedElements
+        ownedElements=getElementByTagName(el,self.OWNED_ELEMENT,default=None)
+        if not ownedElements:
+            el=getElementByTagName(el,self.MODEL,recursive=1)
+
+        ownedElements=getElementByTagName(el,self.OWNED_ELEMENT)
+        res=getElementsByTagName(ownedElements,self.PACKAGE)
+        
+        return res
+        
+    def getOwnedElement(self,el):
+        return getElementByTagName(el,self.OWNED_ELEMENT)
+        
+        
         
 class XMI1_1 (XMI1_0):
     # XMI version specific stuff goes there
@@ -270,6 +292,8 @@ class XMI1_1 (XMI1_0):
     tagDefinitions=None
 
     NAME = 'UML:ModelElement.name'
+    OWNED_ELEMENT="UML:Namespace.ownedElement"
+
     MODEL = 'UML:Model'
     #Collaboration stuff: a
     COLLAB = 'Behavioral_Elements.Collaborations.Collaboration'
@@ -481,6 +505,7 @@ class XMIElement:
         self.taggedValues={}
         self.subTypes=[]
         self.stereoTypes=[]
+        self.package=None
 
         if domElement:
             allObjects[domElement.getAttribute('xmi.id')]=self
@@ -494,7 +519,6 @@ class XMIElement:
     def parseTaggedValues(self):
         ''' '''
         tgvsm=getElementByTagName(self.domElement,XMI.TAGGED_VALUE_MODEL,default=None,recursive=0)
-
         if tgvsm is None:
             return
 
@@ -506,7 +530,7 @@ class XMIElement:
         except:
             pass
 
-        #print self.taggedValues
+        #print 'taggedValues:',self.__class__,self.getName(),self.getTaggedValues()
 
     def initFromDOM(self,domElement):
         if not domElement:
@@ -598,7 +622,7 @@ class XMIElement:
             showLevel(outfile, level + 1)
             outfile.write('key: %s  value: %s\n' % \
                 (key, self.attributeDefs[key]))
-        for child in self.children:
+        for child in self.getChildren():
             child.show(outfile, level + 1)
 
     def addMethodDefs(self,m):
@@ -616,7 +640,7 @@ class XMIElement:
         self.cleanName = mapName(self.unmappedCleanName)
 
 
-        for child in self.children:
+        for child in self.getChildren():
             child.annotate()
 
     def isIntrinsicType(self):
@@ -655,6 +679,80 @@ class XMIElement:
                 return 1
             
         return 0
+    
+    def getFullQualifiedName():
+        return self.getName()
+    
+    def getPackage(self):
+        ''' returns the package to which this object belongs '''
+        return self.package
+
+    def getPath(self):
+        return [self.getName()]
+
+class XMIPackage(XMIElement):
+    project=None
+
+    def __init__(self,el):
+        XMIElement.__init__(self,el)
+        self.classes=[]
+        self.packages=[]
+        
+    def initFromDOM(self,domElement=None):
+        self.parentPackage=None
+        XMIElement.initFromDOM(self,domElement)
+        
+    def setParent(self,parent):
+        self.parent=parent
+        
+    def getParent(self):
+        return self.parent
+    
+    def getClasses(self,recursive=0):
+        res=[c for c in self.classes]
+        return self.classes    
+    
+    def addClass(self,cl):
+        self.classes.append(cl)
+
+    def getChildren(self):
+        return self.children+self.getClasses() + self.getPackages()
+    
+    def addPackage(self,p):
+        self.packages.append(p)
+        p.parent=self
+        
+    def getPackages(self):
+        return self.packages
+    
+
+    def buildPackages(self):
+        packEls=XMI.getPackageElements(self.domElement)
+        for p in packEls:
+            package=XMIPackage(p)
+            self.addPackage(package)
+            package.buildPackages()
+
+    def buildClasses(self):
+        ownedElement=XMI.getOwnedElement(self.domElement)
+        classes=getElementsByTagName(ownedElement,XMI.CLASS)
+        for c in classes:
+            xc=XMIClass(c)
+            if xc.getName():
+                print 'Class:',xc.getName(),xc.id
+                self.addClass(xc)
+                
+        for p in self.getPackages():
+            p.buildClasses()
+
+class XMIModel(XMIPackage):
+    
+    def __init__(self,doc):
+        self.document=doc
+        content=getElementByTagName(doc,XMI.XMI_CONTENT,recursive=1)
+        self.model=getElementByTagName(content,XMI.MODEL,recursive=0)
+        XMIPackage.__init__(self,self.model)
+
 class XMIClass (XMIElement):
 
     def __init__(self,*args,**kw):
@@ -883,7 +981,7 @@ class XMIAssociation (XMIElement):
         self.fromEnd=XMIAssocEnd(ends[0])
         self.toEnd=XMIAssocEnd(ends[1])
 
-
+        
 def buildDataTypes(doc):
     global datatypes
     
@@ -919,6 +1017,7 @@ def buildHierarchy(doc,packagenames):
     global datatypes
     global stereotypes
     global datatypenames
+    global packages
     
     datatypes={}
     stereotypes={}
@@ -928,9 +1027,10 @@ def buildHierarchy(doc,packagenames):
     buildStereoTypes(doc)
 
     print 'packagenames:', packagenames
+    packageElements=doc.getElementsByTagName(XMI.PACKAGE)
     if packagenames: #XXX: TODO support for more than one package
-        packages=doc.getElementsByTagName(XMI.PACKAGE)
-        for p in packages:
+        packageElements=doc.getElementsByTagName(XMI.PACKAGE)
+        for p in packageElements:
             n=XMI.getName(p)
             print 'package name:',n
             if n in packagenames:
@@ -940,7 +1040,9 @@ def buildHierarchy(doc,packagenames):
 
     buildDataTypes(doc)
 
-    res=XMIElement()
+    res=XMIModel(doc)
+    
+    res.buildPackages()
 
     #try to get the name out of the model
     xmis=doc.getElementsByTagName(XMI.MODEL)
@@ -948,17 +1050,20 @@ def buildHierarchy(doc,packagenames):
         #print 'model name:',XMI.getName(xmis[0])
         res.setName(XMI.getName(xmis[0]))
 
-    classes=doc.getElementsByTagName(XMI.CLASS)
-    for c in classes:
-        if 1 or hasClassFeatures(c):
-            xc=XMIClass(c)
-            if xc.getName():
-                print 'Class:',xc.getName(),xc.id
-                res.addChild(xc)
+    
+##    classes=doc.getElementsByTagName(XMI.CLASS)
+##    for c in classes:
+##        if 1 or hasClassFeatures(c):
+##            xc=XMIClass(c)
+##            if xc.getName():
+##                print 'Class:',xc.getName(),xc.id
+##                res.addClass(xc)
 
+    res.buildClasses()
+    
     #pure datatype classes should not be generated!
     #print 'datatypenames:',datatypenames
-    for c in res.getChildren():
+    for c in res.getClasses(recursive=1):
         if c.getName() in datatypenames:
             c.internalOnly=1
             print 'internal class (not generated):',c.getName()
