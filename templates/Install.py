@@ -224,12 +224,19 @@ def install(self):
     if installWorkflows:
         print >>out,'Workflow Install:'
         res=installWorkflows(self,out)
-        if res:
-            print >>out,res
-        else:
-            print >>out,'no output'
+        print >>out,res or 'no output'
     else:
         print >>out,'no workflow install'
+        
+    # ATVM Integration
+
+    vocabs = [
+        %(setup_vocabularies)s
+    ]
+    for vocab in vocabs:
+        pass
+    
+    # end ATVM integration
 
     return out.getvalue()
 

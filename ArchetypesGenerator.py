@@ -87,6 +87,15 @@ class ArchetypesGenerator:
     
     msgcatstack = []
     
+    # ATVM integration
+
+    # a vocabularymap collects all used vocabularies
+    # format { productsname: (name, meta_type) }
+    # if metatype is None, it defaults to SimpleVocabulary 
+    vocabularymap = {}
+    
+    # End ATVM integration
+    
     def __init__(self,xschemaFileName, **kwargs):
         self.outfileName=kwargs['outfilename']
         
@@ -291,6 +300,14 @@ class ArchetypesGenerator:
                 'allowable_content_types': "('text/plain','text/structured','text/html','application/msword',)",
             },
         },
+        'selection': {
+            'field': 'StringField',
+            'map': {},
+        },
+        'multiselection': {
+            'field': 'StringField',
+            'map': {},
+        },
         'integer': {
             'field': 'IntegerField',
             'map': {},
@@ -355,7 +372,9 @@ class ArchetypesGenerator:
         'text': 'TextAreaWidget' ,
         'richtext': 'RichWidget' ,
         'file': 'FileWidget',
-        'date' : 'CalendarWidget'
+        'date' : 'CalendarWidget',
+        'selection' : 'SelectionWidget',
+        'multiselection' : 'MultiSelectionWidget',
     }
 
     coerceMap={
@@ -583,11 +602,29 @@ class ArchetypesGenerator:
             if t[0].startswith('vocabulary:'):
                 vocaboptions[t[0][11:]]=t[1]
         if vocaboptions:
+            if not 'name' in vocaboptions.keys():
+                vocaboptions['name'] = '%s_%s' % (classelement.getCleanName(), \
+                                                  attr.getName())
+            if not 'item_type' in vocaboptions.keys():
+                vocaboptions['item_type'] = 'SimpleVocabularyItem'
+
+            if not 'container_type' in vocaboptions.keys():
+                vocaboptions['container_type'] = 'SimpleVocabulary'
+                
             map.update( {
-                'vocabulary':"NamedVocabulary('''%s''')" % \
-                    attr.getTaggedValue('vocabulary:name','%s_%s' % \
-                        (classelement.getCleanName(),attr.getName()))
+                'vocabulary':"NamedVocabulary('''%s''')" % vocaboptions['name']
             } )
+            
+            # remeber this vocab-name and if set its meta_type
+            package = classelement.getPackage()
+            currentproduct = package.getProductName()
+            if not currentproduct in self.vocabularymap.keys():
+                self.vocabularymap[currentproduct] = {}
+
+            if not vocaboptions['name'] in self.vocabularymap[currentproduct]:
+                self.vocabularymap[currentproduct] = (vocaboptions['name'],
+                                                      vocaboptions['container_type'],
+                                                      vocaboptions['item_type'])
         
         # end ATVM
 
@@ -1236,13 +1273,15 @@ class ArchetypesGenerator:
 
         imports=imports_packages+'\n\n'+imports_classes
         tool_classes=self.getGeneratedTools(package)
+        
+        productname = package.getProductName()
 
         if tool_classes:
             toolinit=TEMPL_TOOLINIT % ','.join([c.getQualifiedName(package) for c in self.getGeneratedClasses(package) if c.hasStereoType(self.portal_tools)])
         else: toolinit=''
 
-        add_content_permission = self.creation_permission or 'Add %s content' % package.getProductName()
-        init_params={'project_name':package.getProductName(),'add_content_permission': getExpression(add_content_permission),'imports':imports, 'toolinit':toolinit }
+        add_content_permission = self.creation_permission or 'Add %s content' % productname
+        init_params={'project_name':productname,'add_content_permission': getExpression(add_content_permission),'imports':imports, 'toolinit':toolinit }
 
         if self.detailled_creation_permissions:
             init_params['extra_perms']=TEMPL_DETAILLED_CREATION_PERMISSIONS
@@ -1290,8 +1329,8 @@ class ArchetypesGenerator:
             copy(os.path.join(templdir,'tool.gif'), os.path.join(self.targetRoot,package.getFilePath(),'tool.gif') )
 
         #handling of tools with configlets
-        register_configlets='#auto build\n'
-        unregister_configlets='#auto build\n'
+        register_configlets='\n'
+        unregister_configlets='\n'
         for c in [cn for cn in self.getGeneratedClasses(package)
                             if cn.hasStereoType(self.portal_tools) and
                                isTGVTrue(cn.getTaggedValue('autoinstall','0') ) and
@@ -1323,6 +1362,14 @@ class ArchetypesGenerator:
             unregister_configlets+=TEMPL_CONFIGLET_UNINSTALL % {
                 'tool_name':c.getName()
                 } + '\n'
+        # ATVM integration
+        # if needed build empty vocabularies
+        setup_vocabs = '\n'
+        if productname in self.vocabularymap.keys():
+            #map=self.vocabularymap[productname]
+            #for (vname,vcontainer,vitem) in map:
+            pass
+        # end ATVM integration
 
         of.write(installTemplate % {'project_dir':package.getProductModuleName(),
                                     'no_use_of_folder_tabs':'['+hide_folder_tabs+']',
@@ -1330,6 +1377,7 @@ class ArchetypesGenerator:
                                     'autoinstall_tools':repr(autoinstall_tools),
                                     'register_configlets':register_configlets,
                                     'unregister_configlets':unregister_configlets,
+                                    'setup_vocabularies':setup_vocabs,
                                     'left_slots':repr(self.left_slots),
                                     'right_slots':repr(self.right_slots)
                                    })
