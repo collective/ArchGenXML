@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.61 2004/04/12 19:33:53 xiru Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.62 2004/04/13 11:34:25 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -459,13 +459,16 @@ class XMI1_2 (XMI1_1):
 
         sts=getElementsByTagName(o.domElement,self.STEREOTYPE_MODELELEMENT,recursive=0)
         for st in sts:
-            id=getSubElement(st).getAttribute('xmi.idref').strip()
-            if id:
-                st=stereotypes[id]
-                o.addStereoType(self.getName(st).strip())
-                #print 'stereotype found:',id,self.getName(st),o.getStereoType()
-            else:
-                print 'warning: empty stereotype id for class :',o.getName(),o.getId()
+            strefs=getSubElements(st)
+            for stref in strefs:
+                id=stref.getAttribute('xmi.idref').strip()
+                if id:
+                    st=stereotypes[id]
+                    o.addStereoType(self.getName(st).strip())
+                    #print 'stereotype found:',id,self.getName(st),o.getStereoType()
+                else:
+                    print 'warning: empty stereotype id for class :',o.getName(),o.getId()
+                    
 
     def calcClassAbstract(self,o):
         o.isabstract=o.domElement.hasAttribute('isAbstract') and o.domElement.getAttribute('isAbstract')=='true'
