@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.83 2004/06/18 15:02:01 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.84 2004/06/26 10:10:51 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -122,12 +122,7 @@ class XMI1_0:
         if not assocend:
             return None
 
-        classifier=getElementByTagName(assocend,self.CLASSIFIER,None)
-        if not classifier:
-            classifier=getElementByTagName(assocend,self.CLASS,None)
-
-        if not classifier:
-            classifier=getElementByTagName(assocend,self.ASSOCIATION_CLASS,None)
+        classifier=getSubElement(assocend)
 
         if not classifier:
             print 'Warning: No assocEnd participant found  for: ',XMI.getId(el)

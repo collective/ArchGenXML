@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.30 2004/06/21 23:13:32 yenzenz Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.31 2004/06/26 10:10:51 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -860,7 +860,7 @@ class ArchetypesGenerator:
         self.generateProtectedSection(outfile,element,'module-header')
             
         refs = element.getRefs() + element.getSubtypeNames(recursive=1)
-
+        
         if element.getTaggedValue('allowed_content_types'):
             refs=refs+element.getTaggedValue('allowed_content_types').split(',')
             
