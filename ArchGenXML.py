@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.142 2004/04/21 22:14:41 yenzenz Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.143 2004/04/22 00:35:45 xiru Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -492,6 +492,12 @@ def modify_fti(fti):
                       
             if '(' not in widgetcode:
                 widgetcode += '('
+
+            ## before update the widget mapping, try to make a 
+            ## better description based on the given label
+            if widgetmap.has_key('label'):
+                check_map['description'] = "\'Enter a value for %s.\'" % widgetmap['label'][3:-3].lower()
+                
             for k in check_map:                    
                 if not (k in widgetmap.keys()): # XXX check if disabled
                     widgetmap.update( {k: check_map[k]} )
@@ -760,7 +766,7 @@ def modify_fti(fti):
             #print paramstr
         print >> outfile
 
-	if mode == 'class':
+        if mode == 'class':
             permission=getExpression(m.getTaggedValue('permission'))
             if permission:
                 print >> outfile,indent("security.declareProtected(%s,'%s')" % (permission,m.getName()),1)
@@ -938,7 +944,7 @@ from Products.CMFCore.utils import UniqueObject
             print >> outfile
             print >> outfile, '''    __implements__ = %(baseclass_interfaces)s + (%(realizations)s,)''' % \
                 {'baseclass_interfaces' : ' + '.join(["getattr(%s,'__implements__',())" % i for i in parents.split(',')]),
-		 'realizations' : ','.join(reparentnames)}
+                 'realizations' : ','.join(reparentnames)}
         
         print >>outfile
         
@@ -1014,7 +1020,7 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchGenXML.py,v 1.142 2004/04/21 22:14:41 yenzenz Exp $
+RCS-ID $Id: ArchGenXML.py,v 1.143 2004/04/22 00:35:45 xiru Exp $
 \"""
 # Copyright: (c) %(year)s by %(copyright)s
 #
