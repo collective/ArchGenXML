@@ -54,7 +54,8 @@ class ArchetypesGenerator:
     generateDefaultActions=0
     prefix=''
     prefix=''
-    packages=[] #packages to scan for classes
+    parse_packages=[] #packages to scan for classes
+    generate_packages=[] #packages to be generated
     noclass=0   # if set no module is reverse engineered,
                 #just an empty project + skin is created
     ape_support=0 #generate ape config and serializers/gateways for APE
@@ -757,8 +758,9 @@ class ArchetypesGenerator:
         print >> outfile
 
         if mode == 'class':
-            permission=getExpression(m.getTaggedValue('permission',None))
-            if permission:
+            rawPerm=m.getTaggedValue('permission',None)
+            permission=getExpression(rawPerm)
+            if rawPerm :
                 print >> outfile,indent("security.declareProtected(%s,'%s')" % (permission,m.getName()),1)
             
         cls=self.parsed_class_sources.get(klass.getName(),None)
@@ -1372,6 +1374,10 @@ class ArchetypesGenerator:
     def generateProduct(self, root, ):
         dirMode=0
         outfile=None
+        
+        if self.generate_packages and root.getCleanName() not in self.generate_packages:
+            print 'skipping package:', root.getCleanName()
+            return
 
         dirMode=1        
         if root.hasStereoType(self.stub_stereotypes):
@@ -1456,14 +1462,14 @@ class ArchetypesGenerator:
         if not self.noclass:
             if suff.lower() in ('.xmi','.xml'):
                 print 'opening xmi'
-                self.root=root=XMIParser.parse(self.xschemaFileName,packages=self.packages,generator=self)
+                self.root=root=XMIParser.parse(self.xschemaFileName,packages=self.parse_packages,generator=self)
             elif suff.lower() in ('.zargo','.zuml'):
                 print 'opening zargo'
                 zf=ZipFile(self.xschemaFileName)
                 xmis=[n for n in zf.namelist() if os.path.splitext(n)[1].lower()=='.xmi']
                 assert(len(xmis)==1)
                 buf=zf.read(xmis[0])
-                self.root=root=XMIParser.parse(xschema=buf,packages=self.packages, generator=self)
+                self.root=root=XMIParser.parse(xschema=buf,packages=self.parse_packages, generator=self)
             elif suff.lower() == '.xsd':
                 self.root=root=XSDParser.parse(self.xschemaFileName)
             else:

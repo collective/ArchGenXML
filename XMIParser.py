@@ -752,7 +752,8 @@ class XMIElement:
                         self.maxOccurs=99999
 
                     #print 'maxOccurs:',self.maxOccurs
-                 
+
+            domElement.xmiElement=self
             self.annotate()
 
 
@@ -954,7 +955,15 @@ class StateMachineContainer:
             sm=XMIStateMachine(m)
             if sm.getName():
                 print 'StateMachine:',sm.getName(),sm.id
-                self.addStateMachine(sm)
+                #determine the correct product where it belongs
+                products=[c.getPackage().getProduct() for c in sm.getClasses()]
+                #associate the WF with the first product
+                if products:
+                    product=products[0]
+                else:
+                    products=self
+                    
+                product.addStateMachine(sm)
 
         if recursive:
             for p in self.getPackages():

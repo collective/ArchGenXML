@@ -136,7 +136,8 @@ except:
 ALLOWED_OPTIONS_MAP = {
     'outfile':                          (0, 'o', 'GENERAL',       'outfilename', 'string'),
     'prefix':                           (0, 'p', 'GENERAL',       'prefix', 'string'),
-    'packages':                         (0, 'P', 'GENERAL',       'packages', 'string'),
+    'generate-packages=':               (1,  0, 'GENERAL',        'generate_packages', 'commalist'),
+    'parse-packages=':                  (1,  0, 'GENERAL',        'parse_packages', 'commalist'),
     'force':                            (0, 'f', 'GENERAL',       'force', 'switchon'),
     'ape':                              (1, 0,   None,            'ape_support', 'switchon'),
     'ape-support':                      (1, 0,   'STORAGE',       'ape_support', 'switchon'),
@@ -183,6 +184,8 @@ def set_setting(okey, value, settings):
             settings[ALLOWED_OPTIONS_MAP[okey][3]]= yesno[value]
         elif ALLOWED_OPTIONS_MAP[okey][4] == 'string':
             settings[ALLOWED_OPTIONS_MAP[okey][3]]= value
+        elif ALLOWED_OPTIONS_MAP[okey][4] == 'commalist':
+            settings[ALLOWED_OPTIONS_MAP[okey][3]]= value.split(',')
         print "set %s [%s] to %s" % (ALLOWED_OPTIONS_MAP[okey][3],ALLOWED_OPTIONS_MAP[okey][4], value)
 
 

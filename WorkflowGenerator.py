@@ -22,7 +22,7 @@ class WorkflowGenerator:
         if not statemachines:
             return
         
-        print 'Generating Workflows'
+        print 'Generating Workflows for package '+ self.package.getName()
         print '===================='
         
         d={'package':self.package,'generator':self,'builtins':__builtins__,'utils':utils}
