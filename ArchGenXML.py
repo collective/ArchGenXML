@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.38 2003/10/26 23:09:23 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.39 2003/10/27 00:15:19 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -451,10 +451,8 @@ from Products.CMFCore.utils import UniqueObject
         wrt('\n')
         parentnames = [p.getCleanName() for p in element.getGenParents()]
         for p in parentnames:
-            wrt('from %s import %s' % (p,p))
+            print >> outfile,'from %s import %s' % (p,p)
 
-        wrt('\n')
-        
         additionalImports=element.getTaggedValue('imports')
         if additionalImports:
             wrt(additionalImports)
