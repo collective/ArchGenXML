@@ -1,0 +1,29 @@
+#!/usr/bin/python
+
+#
+# Find all stereotypes read in ArchetypesGenerator.py and print a sorted list
+#
+
+import re
+import sys
+
+generator = open('ArchetypesGenerator.py', 'r')
+
+items = []
+
+for line in generator.readlines():
+
+    line = line.strip()
+
+    if re.search (r'''hasStereoType\s?\(''', line):
+        line = re.sub(r'''^.*hasStereoType\s?\(['"]([^']+)['"].*$''', 
+                        '\\1', line)
+        items.append (line)
+
+items.sort()
+prevItem = ''
+
+for item in items:
+    if item != prevItem:
+        print item
+    prevItem = item
