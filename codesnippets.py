@@ -41,7 +41,7 @@ ACTIONS_END = """
 """
 
 DEFAULT_ACTIONS = """
-       {'action': 'string:${object_url}/portal_form/base_edit',
+       {'action': 'string:${object_url}/base_edit',
         'category': 'object',
         'id': 'edit',
         'name': 'Edit',
