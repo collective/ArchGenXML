@@ -2,7 +2,7 @@ from Products.CMFPlone.CustomizationPolicy import DefaultCustomizationPolicy
 from Products.CMFPlone.Portal import addPolicy
 
 class <dtml-var "package.getProductName()">CustomizationPolicy(DefaultCustomizationPolicy):
-    """ Make a custom Plone for PloneMall """
+    """ Make a custom Plone for <dtml-var "package.getProductName()"> """
 
     def customize(self, portal):
         ''' this method gets called during the customization '''
