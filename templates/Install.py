@@ -19,7 +19,11 @@ from Products.ExternalMethod.ExternalMethod import ExternalMethod
 
 from Products.Archetypes.Extensions.utils import installTypes
 from Products.Archetypes.Extensions.utils import install_subskin
-from Products.Archetypes.lib.register import listTypes
+try:
+    from Products.Archetypes.lib.register import listTypes
+except ImportError:
+    from Products.Archetypes.public import listTypes
+    
 <dtml-if "[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.cmfmember_stereotype)]">
 from Products.CMFMember.Extensions.toolbox import SetupMember
 </dtml-if>
@@ -51,7 +55,7 @@ def install(self):
     use_folder_tabs=list(props.use_folder_tabs)
     print >> out, 'adding %d classes to use_folder_tabs:' % len(classes)
     for cl in classes:
-        if cl['klass'].isPrincipiaFolderish and
+        if cl['klass'].isPrincipiaFolderish and \
             not cl['klass'].portal_type in <dtml-var "repr(hide_folder_tabs)">:
                 print >> out, 'portal type:',cl['klass'].portal_type
                 use_folder_tabs.append(cl['klass'].portal_type)
@@ -107,20 +111,20 @@ def install(self):
 <dtml-let c="_['sequence-item']">
 <dtml-let tool_instance_name="c.getTaggedValue('tool_instance_name', 'portal_'+ c.getName().lower() )"
     configlet_view="'/'+c.getTaggedValue('configlet:view')">
-portal_controlpanel.registerConfiglet(
-    '<dtml-var "c.getName()">', #id of your Tool
-    '<dtml-var "c.getTaggedValue('configlet:title',c.getName())">', # Title of your Troduct
-    'string:${portal_url}/<dtml-var "tool_instance_name"><dtml-var "configlet_view">/',
-    '<dtml-var "c.getTaggedValue('configlet:condition','python:True')">', # a condition
-    '<dtml-var "c.getTaggedValue('configlet:permission','Manage Portal')">', # access permission
-    '<dtml-var "c.getTaggedValue('configlet:section','Products')">', # section to which the configlet should be added: (Plone,Products,Members)
-    1, # visibility
-    '<dtml-var "c.getName()">ID',
-    '<dtml-var "c.getTaggedValue('configlet:icon','site_icon.gif')">', # icon in control_panel
-    '<dtml-var "c.getTaggedValue('configlet:description','Configuration for tool %s.' % c.getName())">',
-    None,
-)
-# set title of tool:
+    portal_controlpanel.registerConfiglet(
+        '<dtml-var "c.getName()">', #id of your Tool
+        '<dtml-var "c.getTaggedValue('configlet:title',c.getName())">', # Title of your Troduct
+        'string:${portal_url}/<dtml-var "tool_instance_name"><dtml-var "configlet_view">/',
+        '<dtml-var "c.getTaggedValue('configlet:condition','python:True')">', # a condition
+        '<dtml-var "c.getTaggedValue('configlet:permission','Manage Portal')">', # access permission
+        '<dtml-var "c.getTaggedValue('configlet:section','Products')">', # section to which the configlet should be added: (Plone,Products,Members)
+        1, # visibility
+        '<dtml-var "c.getName()">ID',
+        '<dtml-var "c.getTaggedValue('configlet:icon','site_icon.gif')">', # icon in control_panel
+        '<dtml-var "c.getTaggedValue('configlet:description','Configuration for tool %s.' % c.getName())">',
+        None,
+    )
+    # set title of tool:
     tool=getToolByName(self, '<dtml-var "tool_instance_name">')
     tool.title='<dtml-var "c.getTaggedValue('configlet:title',c.getName())">'
 </dtml-let>
@@ -189,7 +193,7 @@ def uninstall(self):
     use_folder_tabs=list(props.use_folder_tabs)
     print >> out, 'removing %d classes from use_folder_tabs:' % len(classes)
     for cl in classes:
-        if cl['klass'].isPrincipiaFolderish and
+        if cl['klass'].isPrincipiaFolderish and \
             not cl['klass'].portal_type in <dtml-var "repr(hide_folder_tabs)">:
                 print >> out, 'portal type:',cl['klass'].portal_type
                 use_folder_tabs.remove(cl['klass'].portal_type)
