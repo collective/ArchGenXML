@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.133 2004/04/18 18:23:11 xiru Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.134 2004/04/19 20:42:34 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -40,6 +40,14 @@ from utils import makeDir
 from utils import mapName
 from utils import indent, getExpression,isTGVTrue,isTGVFalse
 
+try:
+    from i18ndude.catalog import MessageCatalog
+    from i18ndude.catalog import POWriter
+    has_i18ndude = 1
+except ImportError:
+    has_i18ndude = 0
+
+
 #
 # Representation of element definition.
 #
@@ -57,6 +65,7 @@ class ArchetypesGenerator:
     ape_support=0 #generate ape config and serializers/gateways for APE
     method_preservation=1 #should the method bodies be preserved? defaults now to 0 will change to 1
     i18n_support=0
+    no_i18ndude_support=0
     striphtml=0
     
     reservedAtts=['id',]
@@ -260,66 +269,83 @@ def modify_fti(fti):
 
         return res
 
-    typeMap={
-        'string':'''StringField('%(name)s',
-%(other)s
-        ),''' ,
-        'text':  '''TextField('%(name)s',
-%(other)s
-        ),''' ,
-        'richtext':  '''TextField('%(name)s',
-                    default_output_type='text/html',
-                    allowable_content_types=('text/plain',
-                        'text/structured',
-                        'application/msword',
-                        'text/html',),
-%(other)s
-        ),''' ,
-
-        'integer':'''IntegerField('%(name)s',
-%(other)s
-        ),''',
-        'float':'''FloatField('%(name)s',
-%(other)s
-        ),''',
-        'fixedpoint':'''FixedPointField('%(name)s',
-%(other)s
-        ),''',
-         'boolean':'''BooleanField('%(name)s',
-%(other)s
-        ),''',
-        'lines':'''LinesField('%(name)s',
-%(other)s
-        ),''',
-        'date':'''DateTimeField('%(name)s',
-%(other)s
-        ),''',
-        'image':'''ImageField('%(name)s',
-            storage=AttributeStorage(),
-%(other)s
-        ),''',
-        'file':'''FileField('%(name)s',
-                    storage=AttributeStorage(),
-%(other)s
-        ),''',
-        'lines':'''LinesField('%(name)s',
-%(other)s
-        ),''',
-        'reference':'''%(field)s('%(name)s',
-            allowed_types=%(allowed_types)s,
-            multiValued=  %(multiValued)d,
-            relationship= '%(relationship)s',
-%(other)s
-        ),''',
-        'computed':'''ComputedField('%(name)s',
-%(other)s
-        ),''',
-        'photo':'''PhotoField('%(name)s',
-%(other)s
-        ),''',
-        'generic':'''%(type)sField('%(name)s',
-%(other)s
-        ),''',
+    # TypeMap for Fields, format is 
+    #   type: {field: 'Y',
+    #          lines: [key1=value1,key2=value2, ...]
+    #   ...
+    #   } 
+    typeMap= {
+        'string': {
+            'field': 'StringField',
+            'map': {},
+        },
+        'text':  {
+            'field': 'TextField',
+            'map': {},
+        },
+        'richtext':  {
+            'field': 'TextField',
+            'map': {
+                'default_output_type':'text/html',
+                'allowable_content_types': "('text/plain','text/structured','text/html','application/msword',)",
+            },
+        },
+        'integer': {
+            'field': 'IntegerField',
+            'map': {},
+        },
+        'float': {
+            'field': 'FloatField',
+            'map': {},
+        },
+        'fixedpoint': {
+            'field': 'FixedPointField',
+            'map': {},
+        },
+        'lines': {
+            'field': 'LinesField',
+            'map': {},
+        },
+        'date': {
+            'field': 'DateTimeField',
+            'map': {},
+        },
+        'image': {
+            'field': 'ImageField',
+            'map': {
+                'storage':'AttributeStorage()',
+            },
+        },
+        'file': {
+            'field': 'FileField',
+            'map': {
+                'storage':'AttributeStorage()',
+            },
+        },
+        'reference': {
+            'field': 'ReferenceField',
+            'map': {},
+        },
+        'computed': {
+            'field': 'ComputedField',
+            'map': {},
+        },
+        'computed': {
+            'field': 'ComputedField',
+            'map': {},
+        },
+        'photo': {
+            'field': 'PhotoField',
+            'map': {},
+        },
+        'photo': {
+            'field': 'PhotoField',
+            'map': {},
+        },
+        'generic': {
+            'field': '%(type)sField',
+            'map': {},
+        },
     }
 
     widgetMap={
@@ -374,7 +400,7 @@ def modify_fti(fti):
         ''' converts the tagged values of a field into extended attributes for the archetypes field '''
         noparams=['documentation','element.uuid','transient','volatile','widget']
         convtostring=['expression']
-        lines=[]
+        map={}
         tgv=element.getTaggedValues()
         #print element.getName(),tgv
         for k in tgv.keys():
@@ -393,22 +419,26 @@ def modify_fti(fti):
                     if formatted:
                         formatted+=(len(k)+1)*' '
                     formatted+=line+'\n'
-                lines.append('%s=%s'%(k,formatted.strip()))
+                map.update( {k:formatted.strip()} )
 
-        if lines:
-            res='\n'+',\n'.join(lines)
-        else:
-            res=''
-
-        return res
-
-    def getWidget(self, type, element):
+        return map
+            
+    def getWidget(self, type, element, modulename, fieldname):
         ''' returns either default widget, widget according to
         attribute or no widget '''
         tgv=element.getTaggedValues()
-        widgetcode='widget=%s'%type.capitalize()+'Widget('
+        widgetcode = type.capitalize()+'Widget('
+        widgetmap={}
         custom = 0 #is there a custom setting for widget?
         widgetoptions=[t for t in tgv.items() if t[0].startswith('widget:')]
+        
+        check_map = {
+            'label':            "'%s'" % fieldname,
+            'label_msgid':      "'%s_label_%s'" % (modulename,fieldname),
+            'description_msgid':"'%s_help_%s'" % (modulename,fieldname),
+            'description':      "'Enter a value for %s.'" % fieldname,
+            'i18n_domain':      "'%s'" % modulename,
+        }
         
         if tgv.has_key('widget'):
             # Custom widget defined in attributes
@@ -418,34 +448,54 @@ def modify_fti(fti):
                 if formatted:
                     line=indent(line.strip(),1)
                 formatted+=line+'\n'
-            widgetcode = '''widget=%s''' % formatted
+            widgetcode =  formatted
             
         elif self.widgetMap.has_key(type):
             # Standard widget for this type found in widgetMap
             custom=1
-            widgetcode = '''widget=%s''' % self.widgetMap[type]
+            widgetcode = self.widgetMap[type]
                     
         if ')' not in widgetcode:
-            widgetlines=[]
+            
             for tup in widgetoptions:
                 key=tup[0][7:]
                 val=tup[1]
                 if key not in self.nonstring_tgvs:
                     val=getExpression(val)
-                widgetlines.append('%s=%s'%(key,val))
-          
+                widgetmap.update({key:val})
+                      
             if '(' not in widgetcode:
                 widgetcode += '('
-            widgetcode += indent(',\n'.join(widgetlines),1,skipFirstRow=1)
-            widgetcode +=')'
-        
-        if custom or len(widgetoptions):
-            return widgetcode+','
-        else:
-            return ''
+            for k in check_map:
+                if not (k in widgetmap.keys()): # XXX check if disabled
+                    widgetmap.update( {k: check_map[k]} )
 
+            map_keys=widgetmap.keys()
+            map_keys.sort()
+            widgetcode += indent( \
+                ',\n'.join(['%s=%s' % (key,widgetmap[key]) for key in map_keys]),
+                1,
+                skipFirstRow=1) \
+                + ',\n'        
+            widgetcode +=')'
+                
+        return widgetcode
+
+    def getFieldFormatted(self,name,fieldtype,map={},doc=None,indent_level=0):
+        ''' returns the formatted field definitions for the schema '''
+        res = ''
+        # add comment
+        if doc:
+            res+=indent(doc,indent_level,'#')+'\n'+res        
+        res+=indent("%s('%s',\n" % (fieldtype,name), indent_level)
+        map_keys=map.keys()
+        map_keys.sort()
+        res+=indent(',\n'.join(['%s=%s' % (key,map[key]) for key in map_keys]),indent_level+1) + ',\n'        
+        res+=indent('),\n',indent_level)
         
-    def getFieldString(self, element):
+        return res
+    
+    def getFieldString(self, element, modulename):
         ''' gets the schema field code '''
         typename=str(element.type)
 
@@ -454,11 +504,13 @@ def modify_fti(fti):
         else:
             ctype=self.coerceType(typename)
 
-        templ=self.typeMap[ctype]
+        res=self.getFieldFormatted(element.getCleanName(),
+            self.typeMap[ctype]['field'], 
+            self.typeMap[ctype]['map'] )
 
-        return templ % {'name':element.getCleanName(),'type':element.type,'other':''}
+        return res
 
-    def getFieldStringFromAttribute(self, attr):
+    def getFieldStringFromAttribute(self, attr, modulename):
         ''' gets the schema field code '''
         #print 'typename:%s:'%attr.getName(),attr.type,
         if not hasattr(attr,'type') or attr.type=='NoneType':
@@ -468,47 +520,40 @@ def modify_fti(fti):
 
         if ctype != 'generic':
             atype=attr.getType()
+            if self.i18n_support and attr.isI18N():
+                atype='I18N'+atype
         else:
             atype=attr.getType().lower().capitalize()
             
-        #print ctype
-        templ=self.typeMap[ctype]
-        defexp=''
+        map=self.typeMap[ctype]['map']
         if attr.hasDefault():
-            defexp+=indent('default='+attr.getDefault()+',\n',3)
-        
-        if ctype=='image' and not attr.getTaggedValue('sizes',None):
-            defexp+=indent("sizes  = {'small':(100,100),'medium':(200,200),'large':(600,600)},\n",3)
-
-        other_attributes = (self.getWidget(ctype, attr) +
-                            self.getFieldAttributes(attr))
-
-        if self.i18n_support and attr.isI18N():
-            templ='I18N'+templ
+            map.update( {'default':attr.getDefault()} )       
+        map.update(self.getFieldAttributes(attr))
+        map.update( {
+            'widget': self.getWidget( \
+                ctype, 
+                attr, 
+                modulename, 
+                attr.getName() )
+        } )
             
-        res = templ % {'name': attr.getName(),
-                       'type': atype,
-                       'other':defexp+indent(other_attributes,3)
-              }
-        doc=attr.getDocumentation(striphtml=self.striphtml)
-        if doc:
-            res=indent(doc,2,'#')+'\n'+' '*8+res
-        else:
-            res=' '*8+res
-
+        doc=attr.getDocumentation(striphtml=self.striphtml)                
+        res=self.getFieldFormatted(attr.getName(),
+            self.typeMap[ctype]['field'],
+            map,
+            doc )
+        
         return res
 
-    def getFieldStringFromAssociation(self, rel):
+    def getFieldStringFromAssociation(self, rel, modulename):
         ''' gets the schema field code '''
         multiValued=0
-        field='ReferenceField'
-
-        templ=self.typeMap['reference']
+        map=self.typeMap['reference']['map']
         obj=rel.toEnd.obj
         name=rel.toEnd.getName()
         relname=rel.getName()
-        field=rel.getTaggedValue('reference_field') or field #the relation can override the field
-        field=rel.toEnd.getTaggedValue('reference_field') or field #the relation can override the field
+        field=rel.getTaggedValue('reference_field') or self.typeMap['reference']['field'] #the relation can override the field
+        field=rel.toEnd.getTaggedValue('reference_field') or self.typeMap['reference']['field'] #the relation can override the field
 
         if obj.isAbstract():
             allowed_types= tuple(obj.getGenChildrenNames())
@@ -520,20 +565,20 @@ def modify_fti(fti):
         if name == None:
             name=obj.getName()+'_ref'
 
-        other_attributes = (self.getWidget('Reference', rel.toEnd) +
-                            self.getFieldAttributes(rel.toEnd))
-
-        return templ % {'name': name,
-                        'field':field,
-                        'type':         obj.getType(),
-                        'allowed_types':repr(allowed_types),
-                        'multiValued':  multiValued,
-                        'relationship': relname,
-                        'other':        indent(other_attributes,3)
-               }
+        map.update({
+            'allowed_types': repr(allowed_types),
+            'multiValued':   multiValued,
+            'relationship':  "'%s'" % relname,
+            }
+        )
+        map.update(self.getFieldAttributes(rel.toEnd))
+        map.update( {'widget':self.getWidget('Reference', rel.toEnd, modulename, name)} )
+        doc=rel.getDocumentation(striphtml=self.striphtml)                
+        res=self.getFieldFormatted(name,field,map,doc)
+        return res
 
     # Generate get/set/add member functions.
-    def generateArcheSchema(self, outfile, element,base_schema):
+    def generateArcheSchema(self, outfile, element, base_schema, modulename):
         parent_schemata=[p.getCleanName()+'.schema' for p in element.getGenParents()]
 
         base_schema = element.getTaggedValue('base_schema', base_schema)
@@ -560,7 +605,7 @@ def modify_fti(fti):
             #    continue
             mappedName = mapName(name)
 
-            print >> outfile, self.getFieldStringFromAttribute(attrDef)
+            print >> outfile, indent(self.getFieldStringFromAttribute(attrDef, modulename),2)
         for child in element.getChildren():
             name = child.getCleanName()
             if name in self.reservedAtts:
@@ -570,7 +615,7 @@ def modify_fti(fti):
                 refs.append(str(child.getRef()))
 
             if child.isIntrinsicType():
-                print >> outfile, '    '*2 ,self.getFieldString(child)
+                print >> outfile, indent(self.getFieldString(child, modulename),2)
 
         #print 'rels:',element.getName(),element.getFromAssociations()
         # and now the associations
@@ -582,7 +627,7 @@ def modify_fti(fti):
                 if name in self.reservedAtts:
                     continue
                 print >> outfile
-                print >> outfile, '    '*2+self.getFieldStringFromAssociation(rel)
+                print >> outfile, indent(self.getFieldStringFromAssociation(rel, modulename),2)
 
 
         print >> outfile,'    ),'
@@ -748,7 +793,7 @@ from Products.CMFCore.utils import UniqueObject
         print >> outfile,indent(PyParser.PROTECTED_END,ind),section
         print >> outfile
 
-    def generateClass(self, outfile, element, delayed):
+    def generateClass(self, outfile, element, delayed, modulename):
         wrt = outfile.write
         wrt('\n')
 
@@ -859,7 +904,7 @@ from Products.CMFCore.utils import UniqueObject
         print >>outfile
         
         self.generateProtectedSection(outfile,element,'class-header',1)    
-        self.generateArcheSchema(outfile,element,baseschema)
+        self.generateArcheSchema(outfile,element,baseschema,modulename)
 
         if element.hasStereoType(self.portal_tools):
             tool_instance_name=element.getTaggedValue('tool_instance_name') or 'portal_'+element.getName().lower()
@@ -934,7 +979,7 @@ from Products.CMFCore.utils import UniqueObject
 # generated by: ArchGenXML Version %(version)s http://sf.net/projects/archetypes/
 #
 # Created:      %(date)s
-# RCS-ID:       $Id: ArchGenXML.py,v 1.133 2004/04/18 18:23:11 xiru Exp $
+# RCS-ID:       $Id: ArchGenXML.py,v 1.134 2004/04/19 20:42:34 yenzenz Exp $
 # Copyright:    (c) %(year)s by %(copyright)s
 # Licence:      %(licence)s
 #------------------------------------------------------------------------------
@@ -1062,7 +1107,7 @@ from Products.CMFCore.utils import UniqueObject
         generatedModules=package.generatedModules
         #generates __init__.py, Extensions/Install.py and the skins directory
         #the result is a QuickInstaller installable product
-        print 'stdfiles for ',package.getName()
+        print 'standard-files for ',package.getName()
         #remove trailing slash
         if target[-1] in ('/','\\'):
             target=target[:-1]
@@ -1152,7 +1197,7 @@ from Products.CMFCore.utils import UniqueObject
                                     'right_slots':repr(self.right_slots)
                                    })
         of.close()
-
+        
     TEMPL_APECONFIG_BEGIN='''<?xml version="1.0"?>
 
 <!-- Basic Zope 2 configuration for Ape. -->
@@ -1247,7 +1292,7 @@ from Products.CMFCore.utils import UniqueObject
                 self.generateModuleInfoHeader(outfile, module, element)
                 if not element.isInterface():
                     self.generateHeader(outfile, i18n=self.i18n_support and element.isI18N()) 
-                    self.generateClass(outfile, element, 0)
+                    self.generateClass(outfile, element, 0, package.getProductName())
                     package.generatedClasses.append(element)
                 else:
                     self.generateInterface(outfile,element,0)
@@ -1268,7 +1313,7 @@ from Products.CMFCore.utils import UniqueObject
             #print 'generating package:',p.getName()
             #print '================================'
             if p.isProduct():
-                print 'generting product:',p.getName()
+                print 'generating product:',p.getName()
                 print '==============================='
                 self.generateProduct(p)
             else:
@@ -1300,17 +1345,22 @@ This skin layer has low priority, put unique templates and scripts here.
 
 I.e. if you to want to create own unique views or forms for your product, this 
 is the right place."""
-        
+
+        # prepare messagecatalog
+        if has_i18ndude:
+            # follow l8r
+            pass        
 
         #create the directories
         self.makeDir(root.getFilePath())
         self.makeDir(os.path.join(root.getFilePath(),'skins'))
-        self.makeDir(os.path.join(root.getFilePath(),'skins',root.getProductName()))
         self.makeDir(os.path.join(root.getFilePath(),'skins',
-                            root.getProductName()+'_public'))
+            root.getProductName()))
+        self.makeDir(os.path.join(root.getFilePath(),'skins',
+            root.getProductName()+'_public'))
 
         of=self.makeFile(os.path.join(root.getFilePath(),'skins',
-                                root.getProductName()+'_public','readme.txt')
+            root.getProductName()+'_public','readme.txt')
         )
         print >> of, READMEHIGHEST % root.getProductName()
         of.close()
@@ -1389,6 +1439,7 @@ def main():
     options['copyright'] = None
     options['licence'] = None
     options['no_module_info_header'] = None
+    options['widget_enhancement'] = None
     args = sys.argv[1:]
     opts, args = getopt.getopt(args, 'f:a:t:o:s:p:P:n',
                               ['ape','actions','default-actions','no-actions',
@@ -1397,7 +1448,7 @@ def main():
                                'i18n-support','i18n','no-module-info-header',
                                'author=','e-mail=','copyright=','licence=','creation-permission=',
                                'detailled-creation-permissions','no-detailled-creation-permissions',
-                               'strip-html'])
+                               'strip-html','no-widget-enhancement'])
     prefix = ''
     outfileName = None
     yesno={'yes':1,'y': 1, 'no':0, 'n':0}
@@ -1429,6 +1480,8 @@ def main():
             options['method_preservation'] = 1
         elif option[0] == '--no-actions':
             options['generateActions'] = 0
+        elif option[0] == '--no-widget-enhancement':
+            options['widget_enhancement'] = 1
 
         if option[0] == '-n':
             options['noclass'] = 1
@@ -1511,10 +1564,17 @@ OPTIONS:
 
     --ape-support
         generate apeconf.xml and generators for ape (needs Archetypes 1.1+)
-
+        
     --i18n-support
         support for i18NArchetypes. Attributes with a stereotype 'i18n' or a 
         taggedValue 'i18n' set to '1' are multilingual.
+
+    --no-widget-enhancements
+        do not create widgets with default label, label_msgid, description, 
+        description_msgid and i18ndomain. 
+        
+    --no-i18ndude-support
+        do not automagically create msgid catalogs 
 
     --creation-permission=<perm> 
         specifies which permission to create content default:Add [project] 
