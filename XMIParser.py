@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.96 2004/08/20 20:20:38 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.97 2004/08/21 11:55:50 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -360,7 +360,10 @@ class XMI1_0:
         #in case the el is a document we have to crawl down until we have ownedElements
         ownedElements=getElementByTagName(el,self.OWNED_ELEMENT,default=None)
         if not ownedElements:
+            if el.tagName==self.PACKAGE:
+                return []
             el=getElementByTagName(el,self.MODEL,recursive=1)
+
 
         ownedElements=getElementByTagName(el,self.OWNED_ELEMENT)
         res=getElementsByTagName(ownedElements,self.PACKAGE)
@@ -1033,6 +1036,10 @@ class XMIPackage(XMIElement, StateMachineContainer):
     def buildClasses(self):
         #print 'buildClasses:',self.getFilePath(includeRoot=1)
         ownedElement=XMI.getOwnedElement(self.domElement)
+        if not ownedElement:
+            print 'warning: empty package:',self.getName()
+            return
+        
         classes=getElementsByTagName(ownedElement,XMI.CLASS) + \
            getElementsByTagName(ownedElement,XMI.ASSOCIATION_CLASS)
         for c in classes:
@@ -1050,6 +1057,9 @@ class XMIPackage(XMIElement, StateMachineContainer):
     def buildInterfaces(self):
         #print 'buildInterfaces:',self.getFilePath(includeRoot=1)
         ownedElement=XMI.getOwnedElement(self.domElement)
+        if not ownedElement:
+            print 'Warning: epty package:',self.getName()
+            return
         classes=getElementsByTagName(ownedElement,XMI.INTERFACE)
         for c in classes:
             xc=XMIInterface(c,package=self)
@@ -1402,8 +1412,9 @@ class XMIClass (XMIElement, StateMachineContainer):
             path=package.getPath(includeRoot=1,parent=ref)
             if self.package.getProduct() != ref.getProduct() or forcePluginRoot:
                 path.insert(0,PseudoElement(name=pluginRoot))
-            
-        path.append(self)
+        
+        if not self.getPackage().hasStereoType('module'):
+            path.append(self)
 
         return path
 
