@@ -192,7 +192,9 @@ class ArchetypesGenerator(BaseGenerator):
         for m in element.getMethodDefs():
             code=indent(m.getTaggedValue('code',''),1)
             if m.hasStereoType( ['action','view','form']):
-                action_name=m.getTaggedValue(m.getStereoType(), m.getName()).strip()
+                action_name=m.getTaggedValue('action','').strip()
+                if not action_name:
+                    action_name=m.getTaggedValue(m.getStereoType(), m.getName()).strip()
                 #print 'generating ' + m.getStereoType()+':',action_name
                 dict={}
 
@@ -1181,7 +1183,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         # Remark: CMFMember support include VariableSchema support
         if element.hasStereoType(self.variable_schema) and \
-             not element.hasStereoType(self.stereotype_cmfmember):
+             not element.hasStereoType(self.cmfmember_stereotype):
             parentnames.insert(0,'VariableSchemaSupport')
 
         # a tool needs to be a unique object

@@ -119,6 +119,8 @@ class PyModule:
     
     def __init__(self,file,mode='file'):
         self.classes={}
+        self.functions={}
+        self.protectedSections={}
         #print 'init PyModule:',file
         if mode=='file':
             self.initFromFile(file)

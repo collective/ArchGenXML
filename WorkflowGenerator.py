@@ -23,6 +23,7 @@ class WorkflowGenerator(BaseGenerator):
 
         d={'package'    : self.package,
            'generator'  : self,
+           'wfgenerator' : self,
            'atgenerator': self.atgenerator,
            'builtins'   : __builtins__,
            'utils'       :utils,
@@ -41,6 +42,7 @@ class WorkflowGenerator(BaseGenerator):
             d['statemachine']=sm
             d['parsedModule']=parsedModule
 
+            # generate workflow script
             print utils.indent('Generating workflow: ' + sm.getName(),self.atgenerator.infoind)
             templ=readTemplate('create_workflow.py')
             dtml=HTML(templ,d)
@@ -51,31 +53,21 @@ class WorkflowGenerator(BaseGenerator):
             of.write(res)
             of.close()
 
-            # generate workflow transition scripts
+            # generate workflow transition script
+            print utils.indent('Generating workflow script:',self.atgenerator.infoind)
+            templ=readTemplate('create_workflow_script.py')
 
-            s = {'package' : self.package,
-                 'generator' : self,
-                 'atgenerator': self.atgenerator,
-                 'builtins' : __builtins__,
-                 'utils' : utils}
-            s.update(__builtins__)
+            scriptpath=os.path.join(extDir,cleanName(sm.getName())+'_scripts.py')
+            filesrc=self.atgenerator.readFile(scriptpath) or ''
+            parsedModule=PyModule(filesrc,mode='string')
+            d['parsedModule']=parsedModule
+            dtml=HTML(templ,d)
+            res=dtml()
 
-            for t in sm.getTransitions(no_duplicates = 1):
-                if t.getCleanName() and t.getAction():
-                    wfscript = os.path.join(extDir, t.getAction().getCleanName() + '.py')
-
-                    s['script_name'] = t.getAction().getCleanName()
-
-                    print 'Generating workflow script:', t.getAction().getCleanName()
-                    templ=readTemplate('create_workflow_script.py')
-                    dtml=HTML(templ,s)
-                    res=dtml()
-
-                    self.atgenerator.makeDir(extDir)
-                    of=self.atgenerator.makeFile(wfscript, 0)
-                    if of:
-                        of.write(res)
-                        of.close()
+            self.atgenerator.makeDir(extDir)
+            of=self.atgenerator.makeFile(scriptpath)
+            of.write(res)
+            of.close()
 
         del d['statemachine']
         templ=readTemplate('InstallWorkflows.py')
@@ -87,3 +79,8 @@ class WorkflowGenerator(BaseGenerator):
         of=self.atgenerator.makeFile(os.path.join(extDir,'InstallWorkflows.py'))
         of.write(res)
         of.close()
+
+    def getActionScriptName(self,action):
+        trans=action.getParent()
+        wf=trans.getParent()
+        return '%s_%s_%s' %( wf.getCleanName(),trans.getCleanName(),action.getCleanName())

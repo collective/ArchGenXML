@@ -1809,6 +1809,7 @@ class XMIStateTransition(XMIElement):
 
         actel=getSubElement(el)
         self.action=XMIAction(actel)
+        self.action.setParent(self)
 
     def buildGuard(self):
         el=getElementByTagName(self.domElement,XMI.TRANSITION_GUARD,default=None)

@@ -73,7 +73,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
     ##creation of workflow scripts
     wf_scriptname='<dtml-var "tran.getAction().getCleanName()">'
     if not wf_scriptname in wf.scripts.objectIds():
-        wf.scripts._setObject(wf_scriptname,ExternalMethod(wf_scriptname, wf_scriptname, productname + '.<dtml-var "tran.getAction().getCleanName()">','<dtml-var "tran.getAction().getCleanName()">'))
+        wf.scripts._setObject(wf_scriptname,ExternalMethod(wf_scriptname, wf_scriptname, productname + '.<dtml-var "statemachine.getCleanName()">_scripts','<dtml-var "tran.getAction().getCleanName()">'))
     </dtml-if>
 
     tdef = wf.transitions['<dtml-var "tran.getCleanName()">']
@@ -147,3 +147,4 @@ def create<dtml-var "statemachine.getCleanName()">(self, id):
 addWorkflowFactory(create<dtml-var "statemachine.getCleanName()">,
                    id='<dtml-var "statemachine.getCleanName()">',
                    title='<dtml-var "statemachine.getTaggedValue('label') or statemachine.getCleanName()">')
+
