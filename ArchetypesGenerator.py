@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.5 2004/05/06 11:52:38 yenzenz Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.6 2004/05/09 17:04:50 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -62,6 +62,7 @@ class ArchetypesGenerator:
     stub_stereotypes=['odStub','stub']
     left_slots=[]
     right_slots=[]
+    force_plugin_root=1 #should be 'Products.' be prepended to all absolute paths?
     creation_permission=None ## unused!
     
     parsed_class_sources={} #dict containing the parsed sources by class names (for preserving method codes)
@@ -792,11 +793,11 @@ from Products.CMFCore.utils import UniqueObject
         
         parents = element.getGenParents()
         for p in parents:
-            print >> outfile,'from %s import %s' % (p.getQualifiedModuleName(package),p.getName())
+            print >> outfile,'from %s import %s' % (p.getQualifiedModuleName(package,forcePluginRoot=self.force_plugin_root),p.getName())
 
         reparents = element.getRealizationParents()
         for p in reparents:
-            print >> outfile,'from %s import %s' % (p.getQualifiedModuleName(package),p.getName())
+            print >> outfile,'from %s import %s' % (p.getQualifiedModuleName(package,forcePluginRoot=self.force_plugin_root),p.getName())
 
     def generateProtectedSection(self,outfile,element,section,ind=0):
         print >> outfile,indent(PyParser.PROTECTED_BEGIN,ind),section,'#fill in your manual code here'
@@ -991,7 +992,7 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchetypesGenerator.py,v 1.5 2004/05/06 11:52:38 yenzenz Exp $
+RCS-ID $Id: ArchetypesGenerator.py,v 1.6 2004/05/09 17:04:50 zworkb Exp $
 \"""
 # %(copyright)s
 #

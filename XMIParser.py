@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.74 2004/05/08 17:55:49 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.75 2004/05/09 17:04:50 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -581,6 +581,15 @@ def hasClassFeatures(domClass):
                 len(domClass.getElementsByTagName(XMI.ATTRIBUTE)) or    \
                 len(domClass.getElementsByTagName(XMI.METHOD))
 
+class PseudoElement:
+    #urgh, needed to pretend a class 
+    def __init__(self,**kw):
+        self.__dict__.update(kw)
+        
+    def getName(self):
+        return self.name
+    
+    
 class XMIElement:
     def __init__(self, domElement=None,name=''):
         self.domElement=domElement
@@ -1145,7 +1154,7 @@ class XMIClass (XMIElement):
         ''' generalization parents '''
         return self.realizationParents
 
-    def getQualifiedModulePath(self,ref):
+    def getQualifiedModulePath(self,ref,pluginRoot='Products',forcePluginRoot=0):
         ''' returns the qualified name of the class, depending of the
             reference package 'ref' it generates an absolute path or
             a relative path if the pack(self) is a subpack of 'ref'
@@ -1158,16 +1167,16 @@ class XMIClass (XMIElement):
             path=package.getPath(includeRoot=0,parent=ref)
         else:
             path=package.getPath(includeRoot=1,parent=ref)
-
+            if self.package.getProduct() != ref.getProduct() or forcePluginRoot:
+                path.insert(0,PseudoElement(name=pluginRoot))
+            
         path.append(self)
 
         return path
 
-    def getQualifiedModuleName(self,ref):
-        path=self.getQualifiedModulePath(ref)
+    def getQualifiedModuleName(self,ref,pluginRoot='Products',forcePluginRoot=0):
+        path=self.getQualifiedModulePath(ref,pluginRoot=pluginRoot,forcePluginRoot=forcePluginRoot)
         res= '.'.join([p.getName() for p in path if p])
-        if self.package.getProduct() != ref.getProduct():
-            res='Products.'+res
 
         return res
 
