@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.47 2004/04/03 01:30:20 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.48 2004/04/03 02:15:10 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -828,6 +828,7 @@ class XMIModel(XMIPackage):
 
 class XMIClass (XMIElement):
     package=None
+    isinterface=0
     
     def __init__(self,*args,**kw):
         XMIElement.__init__(self,*args,**kw)
@@ -940,6 +941,7 @@ class XMIClass (XMIElement):
 
 
 class XMIInterface(XMIClass):
+    isinterface=1
     pass
 
 
