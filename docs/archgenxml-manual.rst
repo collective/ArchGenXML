@@ -4,8 +4,8 @@ ArchGenXML - generating Archetypes using UML
 
 :Author: Jens W. Klein (aka Jensens)
 :Contact: jens.klein@jensquadrat.de
-:Date: $Date: 2004/03/03 12:59:32 $
-:Version: $Revision: 1.2 $
+:Date: $Date: 2004/03/03 15:09:07 $
+:Version: $Revision: 1.3 $
 :Web site: http://sourceforge.net/projects/archetypes
 :Original URL: cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/plone-docs co Developers/Archetypes
 
@@ -24,16 +24,15 @@ in the Plone userinterface.
 This time the tool is not round-trip enabled: Generated can't be back-converted into XMI.
 But you can re-generate over existing code: Method bodys are kept.
 
-ArchGenXML is started, programmed and maintained by 'Phil Auersperg'
+ArchGenXML is started, programmed and maintained by `Phil Auersperg`_
 
-The complete ArchGenXML manual is part of the latest 'ArchGenXML-Package'
+The complete ArchGenXML manual is part of the latest `ArchGenXML-Package`_
 or check it out from CVS::
 
     cvs -d :pserver:anonymous@cvs.sf.net:/cvsroot/archetypes co ArchGenXML
 
-.. _'Phil Auersperg': phil@bluedynamics.org
-
-.. _'ArchGenXML-Package': http://sourceforge.net/project/showfiles.php?group_id=75272&package_id=103241
+.. _`Phil Auersperg`: phil@bluedynamics.org
+.. _`ArchGenXML-Package`: http://sourceforge.net/project/showfiles.php?group_id=75272&package_id=103241
 
 
 
@@ -42,10 +41,15 @@ UML class diagramm - a brief introduction
 
 UML - the Unified Modelling Language is a graphical language designed to describe software.
 
-To attain that goal these language has got several different diagram-types defined, an (brief) example give the
-OOSE_ (german and a english pdf):
+To attain that goal this language has got several different diagram-types defined.
+An overview about them gives the OOSE_ (german and a english pdf).
+Our interest is mainly on class diagrams.
+An article about class diagrams is at `Developer.com`_
+andanother comprehensive site about it you'll find at `The Official Agile Modeling (AM) Site`_.
 
 .. _OOSE:           http://www.oose.de/notationuml14/
+.. _`Developer.com`:  http://www.developer.com/design/article.php/2206791
+.. _`The Official Agile Modeling (AM) Site`: http://www.agilemodeling.com/artifacts/classDiagram.htm
 
 For ArchGenXML are from interest: the class-diagramm and it's different associations.
 In future versions of ArchGenXML it may be possible to define the workflow with state diagrams.
