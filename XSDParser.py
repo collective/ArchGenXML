@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XSDParser.py,v 1.14 2004/01/13 01:17:07 zworkb Exp $
+# RCS-ID:      $Id: XSDParser.py,v 1.14.4.1 2004/04/29 20:51:03 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -63,7 +63,7 @@ class XschemaElement:
     def hasTaggedValue(self,name):
         return self.taggedValues.has_key(name)
 
-    def getDocumentation(self):
+    def getDocumentation(self,*args,**kw):
         return self.getTaggedValue('documentation')
 
     def getSubtypeNames(self,recursive=0):
@@ -158,8 +158,12 @@ class XschemaElement:
     def getStereoType(self):
         return None
     
+    def hasStereoType(self,st):
+        return None
+    
     def isI18N(self):
         return 0
+
 
 class XschemaAttribute(XschemaElement):
     def __init__(self,  attrs):
