@@ -1,11 +1,11 @@
-#-----------------------------------------------------------------------------
+-----------------------------------------------------------------------------
 # Name:        XMIParser.py
 # Purpose:
 #
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.63 2004/04/13 13:45:18 xiru Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.64 2004/04/13 14:35:38 xiru Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -121,9 +121,9 @@ class XMI1_0:
             classifier=getElementByTagName(assocend,self.CLASS,None)
 
         if not classifier:
-	    print 'No assocEnd participant found  for: ',XMI.getId(el)
+            print 'No assocEnd participant found  for: ',XMI.getId(el)
             return None
-		
+                
         return classifier.getAttribute('xmi.idref')
 
     def isAssocEndAggregation(self,el):
@@ -660,10 +660,13 @@ class XMIElement:
         return self.taggedValues
 
     def getDocumentation(self,striphtml=0):
+        ret = ''
         if striphtml:
-            return html2text(self.getTaggedValue('documentation'))
+            #TODO: create an option on command line to control the page width
+            ret = html2text(self.getTaggedValue('documentation'), (), 0, 60) 
         else:
-            return self.getTaggedValue('documentation')
+            ret = self.getTaggedValue('documentation')
+        return ret.strip()
 
     def getUnmappedCleanName(self): return self.unmappedCleanName
     def setName(self, name): self.name = name
