@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.59 2004/04/10 02:52:59 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.60 2004/04/10 03:07:09 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -235,20 +235,21 @@ class XMI1_0:
                 print 'skip dep:',abstraction.getStereoType()
                 continue
             try:
-                par0=getElementByTagName   (ab,self.DEP_SUPPLIER,recursive=1)
-                child0=getElementByTagName (ab,self.DEP_CLIENT,recursive=1)
                 try:
+                    par0=getElementByTagName   (ab,self.DEP_SUPPLIER,recursive=1)
                     par=objects[getSubElement(par0,ignoremult=1).getAttribute('xmi.idref')]
+                    continue
                 except KeyError:
                     print 'Warning: Parent Object not found for realization relation:%s, parent %s' % (XMI.getId(ab),XMI.getName(par0))
                     continue
                 
                 #child=objects[getElementByTagName(child0,self.REALIZATION_ELEMENT).getAttribute('xmi.idref')]
-                child_xmid=getSubElement(child0,ignoremult=1).getAttribute('xmi.idref')
                 try:
+                    child0=getElementByTagName (ab,self.DEP_CLIENT,recursive=1)
+                    child_xmid=getSubElement(child0,ignoremult=1).getAttribute('xmi.idref')
                     child=objects[child_xmid]
                 except KeyError:
-                    print 'Warning: Child element for realization relation not found, parent name + child xmi.id given:',par.getName(),child_xmid
+                    print 'Warning: Child element for realization relation not found, parent name + child xmi.id given:',par.getName()
 
                 par.addRealizationChild(child)
                 child.addRealizationParent(par)
