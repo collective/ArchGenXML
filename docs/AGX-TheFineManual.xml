@@ -429,12 +429,27 @@
   <chapter>
     <title>Getting started</title>
 
-    <para></para>
+    <para>This chapter describes the minimum to do to generate a Product with
+    ArchGenXML and get it running.</para>
 
     <section>
       <title>Creating a minimal content type in UML</title>
 
-      <para></para>
+      <para>Open the UML tools of your choice. Make a new UML and add a class
+      diagram. Choose the tool for class creation and add a class to the
+      diagram. Give it a name <classname>MyFirstAGXContent</classname> and add
+      an attribute <classname>MyTextField</classname> and choose type text.
+      See XMI in Example 4.1.a (file shipped with the release package).</para>
+
+      <figure>
+        <title>Example 4.1.a</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="example-4_1_a.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
     </section>
 
     <section>
@@ -444,7 +459,7 @@
     </section>
 
     <section>
-      <title>Installing and using the product</title>
+      <title>Installing and using the generated product</title>
 
       <para></para>
     </section>
@@ -453,7 +468,8 @@
   <chapter>
     <title>Basic Features</title>
 
-    <para></para>
+    <para>This chapter containes information about the features needed for
+    simple content type creation.</para>
 
     <section>
       <title>Classes</title>
@@ -501,7 +517,8 @@
   <chapter>
     <title>Advanced Usage</title>
 
-    <para></para>
+    <para>This chapter describes how to use more complex approaches including
+    i18n and parts used for design-pattern based developement.</para>
 
     <section>
       <title>Tools and Configlets</title>
@@ -540,6 +557,12 @@
 
       <section>
         <title>Content i18n with I18NArchetypes</title>
+
+        <para></para>
+      </section>
+
+      <section>
+        <title>Content i18n with LinguaPlone</title>
 
         <para></para>
       </section>
