@@ -1,13 +1,14 @@
---------------------------------------------
-ArchGenXML - generating Archetypes using UML
---------------------------------------------
+---------------------------------------------------
+ArchGenXML Manual - generating Archetypes using UML
+---------------------------------------------------
 
-:Author: Jens W. Klein (aka Jensens)
-:Contact: jens.klein@jensquadrat.de
-:Date: $Date: 2004/03/03 15:09:07 $
-:Version: $Revision: 1.3 $
+
+:Author ArchGenXML: Phil Auersperg <phil@bluedynamics.org>
+:Author Documentation: Jens W. Klein <jens.klein@jensquadrat.de>
+:Date: $Date: 2004/03/03 15:26:24 $
+:Version: $Revision: 1.4 $
 :Web site: http://sourceforge.net/projects/archetypes
-:Original URL: cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/plone-docs co Developers/Archetypes
+:Original URL: http://plone.org/documentation/archetypes/archgenxml-manual/
 
 
 Introduction
@@ -21,20 +22,8 @@ like Poseidon or ObjectDomain. Export the UML to XMI or XSD and use ArchGenXML t
 Phyton code for use as a Product. This new Product is available as a new item (document) type
 in the Plone userinterface.
 
-This time the tool is not round-trip enabled: Generated can't be back-converted into XMI.
-But you can re-generate over existing code: Method bodys are kept.
-
-ArchGenXML is started, programmed and maintained by `Phil Auersperg`_
-
-The complete ArchGenXML manual is part of the latest `ArchGenXML-Package`_
-or check it out from CVS::
-
-    cvs -d :pserver:anonymous@cvs.sf.net:/cvsroot/archetypes co ArchGenXML
-
-.. _`Phil Auersperg`: phil@bluedynamics.org
-.. _`ArchGenXML-Package`: http://sourceforge.net/project/showfiles.php?group_id=75272&package_id=103241
-
-
+This time the tool is not round-trip enabled: Generated code can't be back-converted into XMI.
+But you can re-generate over existing code: The Method bodys are kept.
 
 UML class diagramm - a brief introduction
 =========================================
@@ -76,7 +65,7 @@ ArgoUML_ (free)
     stores the model native as xmi + diagram information in .zargo files (zip files) (xmi version 1.0)
 
 Poseidon_  (commercial, based on ArgoUML)
-    stores the model native as xmi + diagram information in .zargo files (zip files) (xmi version 1.2)
+    stores the model native as xmi + diagram information in .zuml files (zip files) (xmi version 1.2)
 
 KDE_'s Umbrello_  (free, not complete yet)
     umbrello saves the models native in XMI (not fully standard compliant)
@@ -92,15 +81,19 @@ KDE_'s Umbrello_  (free, not complete yet)
 
 Installation
 ------------
-Requirements: You need an recent Archetypes with all it's dependencies (see Archetypes README), PyXML_ and an UML-Tool.
+Requirements: You need an recent Archetypes with all it's dependencies (see Archetypes README) and PyXML_ for older Python versions.
 
-It's tested with Plone 2.0 beta3 and Archetypes CVS HEAD too.
+It's tested with Plone 2.0.x and Archetypes 1.2.x and later
 
-Install a UML-Tool on your local workstation. For our examples we used the ObjectDomain Evaluation Version.
+Install an UML-Tool on your local workstation.
+For our examples we used the ObjectDomain Evaluation Version.
+At the moment we tend to commend Poseidon CE.
 
-Get latest ArchGenXML Release from CVS::
+Get latest `ArchGenXML Release` or grab the latest developer sketch from CVS::
 
     cvs -d :pserver:anonymous@cvs.sf.net:/cvsroot/archetypes co ArchGenXML
+
+.. _`ArchGenXML Release`: http://sourceforge.net/project/showfiles.php?group_id=75272&package_id=103241
 
 See also README file in ArchGenXML!
 

@@ -1,22 +1,21 @@
 <!-- ?xml version="1.0" encoding="utf-8" -->
-<meta name="author" content="Jens W. Klein (aka Jensens)" />
 <meta name="date" content="2004-03-03" />
 
-<div class="document" id="archgenxml-generating-archetypes-using-uml">
-<h1>ArchGenXML - generating Archetypes using UML</h1>
+<div class="document" id="archgenxml-manual-generating-archetypes-using-uml">
+<h1>ArchGenXML Manual - generating Archetypes using UML</h1>
 <table class="docinfo" frame="void" rules="none">
 <tbody valign="top">
-<tr><th >Author:</th>
-<td>Jens W. Klein (aka Jensens)</td></tr>
-<tr><th >Contact:</th>
-<td><a class="first last" href="mailto:jens.klein&#64;jensquadrat.de">jens.klein&#64;jensquadrat.de</a></td></tr>
+<tr><th>Author ArchGenXML:</th><td>Phil Auersperg &lt;<a href="mailto:phil&#64;bluedynamics.org">phil&#64;bluedynamics.org</a>&gt;</td>
+</tr>
+<tr><th>Author Documentation:</th><td>Jens W. Klein &lt;<a href="mailto:jens.klein&#64;jensquadrat.de">jens.klein&#64;jensquadrat.de</a>&gt;</td>
+</tr>
 <tr><th >Date:</th>
 <td>2004-03-03</td></tr>
 <tr><th >Version:</th>
 <td>1.1</td></tr>
 <tr><th>Web site:</th><td><a href="http://sourceforge.net/projects/archetypes">http://sourceforge.net/projects/archetypes</a></td>
 </tr>
-<tr><th>Original URL:</th><td>cvs -z3 -d:pserver:anonymous&#64;cvs.sourceforge.net:/cvsroot/plone-docs co Developers/Archetypes</td>
+<tr><th>Original URL:</th><td><a href="http://plone.org/documentation/archetypes/archgenxml-manual/">http://plone.org/documentation/archetypes/archgenxml-manual/</a></td>
 </tr>
 </tbody>
 </table>
@@ -28,22 +27,17 @@ based on the Archetypes framework from UML models using XMI (.xmi, .zargo, .zuml
 like Poseidon or ObjectDomain. Export the UML to XMI or XSD and use ArchGenXML to generate
 Phyton code for use as a Product. This new Product is available as a new item (document) type
 in the Plone userinterface.</p>
-<p>This time the tool is not round-trip enabled: Generated can't be back-converted into XMI.
-But you can re-generate over existing code: Method bodys are kept.</p>
-<p>ArchGenXML is started, programmed and maintained by <a href="mailto:phil&#64;bluedynamics.org">Phil Auersperg</a></p>
-<p>The complete ArchGenXML manual is part of the latest <a href="http://sourceforge.net/project/showfiles.php?group_id=75272&amp;package_id=103241">ArchGenXML-Package</a>
-or check it out from CVS:</p>
-<pre>
-cvs -d :pserver:anonymous&#64;cvs.sf.net:/cvsroot/archetypes co ArchGenXML
-</pre>
+<p>This time the tool is not round-trip enabled: Generated code can't be back-converted into XMI.
+But you can re-generate over existing code: The Method bodys are kept.</p>
 </div>
 <div class="section" id="uml-class-diagramm-a-brief-introduction">
 <h1><a name="uml-class-diagramm-a-brief-introduction">UML class diagramm - a brief introduction</a></h1>
 <p>UML - the Unified Modelling Language is a graphical language designed to describe software.</p>
-<p>To attain that goal these language has got several different diagram-types defined, an (brief) overview gives the
-<a href="http://www.oose.de/notationuml14/">OOSE</a> (german and a english pdf). Our interest is mainly on class diagrams.
-An article about class diagrams is at <a href="http://www.developer.com/design/article.php/2206791">Developer.com</a> and another comprehensive site about
-it you'll find at <a href="http://www.agilemodeling.com/artifacts/classDiagram.htm">The Official Agile Modeling (AM) Site</a>.</p>
+<p>To attain that goal this language has got several different diagram-types defined.
+An overview about them gives the <a href="http://www.oose.de/notationuml14/">OOSE</a> (german and a english pdf).
+Our interest is mainly on class diagrams.
+An article about class diagrams is at <a href="http://www.developer.com/design/article.php/2206791">Developer.com</a>
+andanother comprehensive site about it you'll find at <a href="http://www.agilemodeling.com/artifacts/classDiagram.htm">The Official Agile Modeling (AM) Site</a>.</p>
 <p>For ArchGenXML are from interest: the class-diagramm and it's different associations.
 In future versions of ArchGenXML it may be possible to define the workflow with state diagrams.</p>
 <p>With this language you're able to define object-oriented data-models.
@@ -63,17 +57,19 @@ If a building is related to other building you define this with associations.</p
 <dt><a href="http://argouml.tigris.org/">ArgoUML</a> (free)</dt>
 <dd>stores the model native as xmi + diagram information in .zargo files (zip files) (xmi version 1.0)</dd>
 <dt><a href="http://www.gentleware.com/">Poseidon</a>  (commercial, based on ArgoUML)</dt>
-<dd>stores the model native as xmi + diagram information in .zargo files (zip files) (xmi version 1.2)</dd>
+<dd>stores the model native as xmi + diagram information in .zuml files (zip files) (xmi version 1.2)</dd>
 <dt><a href="http://www.kde.org/">KDE</a>'s <a href="http://www.umbrello.org/">Umbrello</a>  (free, not complete yet)</dt>
 <dd>umbrello saves the models native in XMI (not fully standard compliant)</dd>
 </dl>
 </div>
 <div class="section" id="installation">
 <h2><a name="installation">Installation</a></h2>
-<p>Requirements: You need an recent Archetypes with all it's dependencies (see Archetypes README), <a href="http://pyxml.sourceforge.net/">PyXML</a> and an UML-Tool.</p>
-<p>It's tested with Plone 2.0 beta3 and Archetypes CVS HEAD too.</p>
-<p>Install a UML-Tool on your local workstation. For our examples we used the ObjectDomain Evaluation Version.</p>
-<p>Get latest ArchGenXML Release from CVS:</p>
+<p>Requirements: You need an recent Archetypes with all it's dependencies (see Archetypes README) and <a href="http://pyxml.sourceforge.net/">PyXML</a> for older Python versions.</p>
+<p>It's tested with Plone 2.0.x and Archetypes 1.2.x and later</p>
+<p>Install an UML-Tool on your local workstation.
+For our examples we used the ObjectDomain Evaluation Version.
+At the moment we tend to commend Poseidon CE.</p>
+<p>Get latest <cite>ArchGenXML Release</cite> or grab the latest developer sketch from CVS:</p>
 <pre>
 cvs -d :pserver:anonymous&#64;cvs.sf.net:/cvsroot/archetypes co ArchGenXML
 </pre>
