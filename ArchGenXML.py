@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.73 2004/01/18 12:18:58 zworkb Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.74 2004/01/18 13:18:15 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -603,23 +603,23 @@ from Products.CMFCore.utils import UniqueObject
         if additionalParents:
             parentnames=list(parentnames)+additionalParents.split(',')
 
-        baseclass='BaseContent'
-        if self.i18n_support and element.isI18N():
-            baseclass='I18NBaseContent'
-            
-        #print 'base0:',element.getName(),baseclass
-        if refs or baserefs or element.getTaggedValue('folderish') == 1:
-            #print 'folderish'
+        baseclass='BaseContent'            
+        if refs or baserefs or element.getTaggedValue('folderish') == 1:                
+            # folderish
+            baseclass='BaseFolder'
+            folder_base_class=element.getTaggedValue('base_class') or element.getTaggedValue('folder_base_class') # folder_base_class is deprecated and for backward compability only
+            if folder_base_class:
+                baseclass=folder_base_class            
+
             if self.i18n_support and element.isI18N():
                 baseclass='I18NBaseFolder'
-                
-            folder_base_class=element.getTaggedValue('folder_base_class')
-            if folder_base_class:
-                baseclass=folder_base_class
-            else:
-                baseclass='BaseFolder'
-
-            
+        else:
+            #contentish
+            content_base_class=element.getTaggedValue('base_class')
+            if content_base_class:
+                baseclass=content_base_class        
+            if self.i18n_support and element.isI18N():
+                baseclass='I18NBaseContent'
             
         parentnames.insert(0,baseclass)
         if element.getStereoType() in self.portal_tools:

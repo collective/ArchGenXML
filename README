@@ -95,7 +95,7 @@ using inside Plone
 
 you can generate code with the following command:
 
-pythonArchGenXML.py model.xmi model
+python ArchGenXML.py -o model model.xmi 
 
 this takes model.xmi and generates the ready-to-go app into the folder 'model'
 
