@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchGenXML.py,v 1.141 2004/04/21 15:16:14 yenzenz Exp $
+# RCS-ID:      $Id: ArchGenXML.py,v 1.142 2004/04/21 22:14:41 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -38,13 +38,17 @@ from utils import makeFile, makeDir
 from utils import mapName, wrap
 from utils import indent, getExpression,isTGVTrue,isTGVFalse
 
+has_i18ndude = 1    
 try:
     from i18ndude import catalog as msgcatalog
-    has_i18ndude = 1
-    
 except ImportError:
     has_i18ndude = 0
 
+has_enhanced_strip_support=1
+try:
+    "abca".strip('a')
+except:
+    has_enhanced_strip_support=0
 
 #
 # Representation of element definition.
@@ -434,7 +438,7 @@ def modify_fti(fti):
                     if formatted:
                         formatted+=(len(k)+1)*' '
                     formatted+=line+'\n'
-                map.update( {k:formatted.strip()} )
+                map.update( {k:formatted} )
 
         return map
             
@@ -491,13 +495,13 @@ def modify_fti(fti):
             for k in check_map:                    
                 if not (k in widgetmap.keys()): # XXX check if disabled
                     widgetmap.update( {k: check_map[k]} )
-            if 'label_msgid' in widgetmap.keys():
+            if 'label_msgid' in widgetmap.keys() and has_enhanced_strip_support:
                 self.addMsgid(widgetmap['label_msgid'].strip("'"),
                     (widgetmap.has_key('label') and widgetmap['label'].strip("'")) or fieldname,
                     elementclass,
                     fieldname
                 )
-            if 'description_msgid' in widgetmap.keys():
+            if 'description_msgid' in widgetmap.keys() and has_enhanced_strip_support:
                 self.addMsgid(widgetmap['description_msgid'].strip("'"),
                     (widgetmap.has_key('description') and widgetmap['description'].strip("'")) or fieldname,
                     elementclass,
@@ -1010,7 +1014,7 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchGenXML.py,v 1.141 2004/04/21 15:16:14 yenzenz Exp $
+RCS-ID $Id: ArchGenXML.py,v 1.142 2004/04/21 22:14:41 yenzenz Exp $
 \"""
 # Copyright: (c) %(year)s by %(copyright)s
 #
@@ -1490,6 +1494,8 @@ is the right place."""
             print 'method bodies will be preserved'
         else:
             print 'method bodies will be overwritten'
+        if has_enhanced_strip_support:
+            print "Warning: Can't build message catalog. Needs 'python 2.3' or later."
         if self.build_msgcatalog and not has_i18ndude:
             print "Warning: Can't build message catalog. Module 'i18ndude' not found."
         if not XMIParser.has_stripogram:

@@ -52,13 +52,35 @@ Then, unpack the PyXML archive and enter the directory,
     python setup.py install
 
 
-
 Next, de-compress the ArchGenXML distribution file.  Use something
 like the following:
  
     tar xzvf ArchGenXML*.tgz
 
-  
+    
+Optional Packages: 
+
+1) For POT-file (GNU gettext) generation you'll need "i18ndude". 
+This feature will work with python 2.3 or later only!
+Get it it out of CVS:
+
+    cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/plone-i18n login
+    cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/plone-i18n co i18ndude
+
+Then install it into your python: enter the directory and:
+   
+    python setup.py install
+
+
+2) Some UML-Tools (like Poseidon) are using HTML for documentation strings.
+If you want to enable stripping of HTML tags in DocStrings, you need to install
+"stripogram". Download latest version from:
+
+    http://sourceforge.net/project/showfiles.php?group_id=1083&package_id=34645
+
+and install it into your python: unpack it, enter the directory and:
+
+    python setup.py install
 
 
 =============
