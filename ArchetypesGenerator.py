@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.14 2004/05/16 22:48:08 yenzenz Exp $
+# RCS-ID:      $Id: ArchetypesGenerator.py,v 1.15 2004/05/16 23:31:14 yenzenz Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -799,8 +799,6 @@ from Products.CMFCore.utils import UniqueObject
         
         parents = element.getGenParents()
         for p in parents:
-            print p.hasStereoType(self.stub_stereotypes)
-            print p.getTaggedValue('import_from',None)
             if p.hasStereoType(self.stub_stereotypes) and \
                 p.getTaggedValue('import_from',None):
                 print >> outfile,'from %s import %s' % \
@@ -1027,7 +1025,7 @@ from Products.CMFCore.utils import UniqueObject
 \"""\\
 %(purpose)s 
 
-RCS-ID $Id: ArchetypesGenerator.py,v 1.14 2004/05/16 22:48:08 yenzenz Exp $
+RCS-ID $Id: ArchetypesGenerator.py,v 1.15 2004/05/16 23:31:14 yenzenz Exp $
 \"""
 # %(copyright)s
 #
