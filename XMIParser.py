@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.53 2004/04/04 02:09:26 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.54 2004/04/04 02:32:01 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -1107,14 +1107,19 @@ class XMIClass (XMIElement):
     
     def getQualifiedModuleName(self,ref):
         path=self.getQualifiedModulePath(ref)
-        return '.'.join([p.getName() for p in path if p])
+        res= '.'.join([p.getName() for p in path if p])
+        if self.package.getProduct() != ref.getProduct():
+            res='Products.'+res
+        
+        return res
 
     
     def getQualifiedName(self,ref):
         path=self.getQualifiedModulePath(ref)
         path.append(self)
         res='.'.join([p.getName() for p in path if p])
-        
+        if self.package.getProduct() != ref.getProduct():
+            res='Products.'+res
         return res
         
 class XMIInterface(XMIClass):
