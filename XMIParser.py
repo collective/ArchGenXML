@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.39 2004/02/27 12:45:27 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.40 2004/02/27 14:13:16 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -388,7 +388,8 @@ class XMI1_2 (XMI1_1):
         global datatypes
         typeinfos=att.domElement.getElementsByTagName(XMI.TYPE)
         if len(typeinfos):
-            classifiers=typeinfos[0].getElementsByTagName(XMI.CLASS)
+            classifiers=[cn for cn in typeinfos[0].childNodes if cn.nodeType==cn.ELEMENT_NODE] #getElementsByTagName(XMI.CLASS)
+            #assert len(classifiers)==1
             if len(classifiers):
                 print 'classifier found for 1.2'
                 typeid=str(classifiers[0].getAttribute('xmi.idref'))
@@ -398,6 +399,7 @@ class XMI1_2 (XMI1_1):
                 if att.type not in datatypenames: #collect all datatype names (to prevent pure datatype classes from being generated)
                     datatypenames.append(att.type)
                 #print 'attribute:'+self.getName(),typeid,self.type
+
 
 XMI=XMI1_0()
 
