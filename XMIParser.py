@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XMIParser.py,v 1.42 2004/02/28 18:51:54 zworkb Exp $
+# RCS-ID:      $Id: XMIParser.py,v 1.43 2004/02/28 20:01:52 zworkb Exp $
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -166,7 +166,7 @@ class XMI1_0:
                     continue
 
                 if not d:
-                    print 'Warning: Child Object not found for aggregation relation: parent=%s' % (XMI.getName(m))
+                    print 'Warning: Child Object not found for aggregation relation: parent=%s' % (m.getName())
                     continue
                     
                 try:
