@@ -3,10 +3,6 @@ from Products.CMFPlone.Portal import addPolicy
 from config import PROJECTNAME
 from zLOG import LOG, INFO
 
-# next line can be replaced by the out-commented line if a config.py exists
-DEPENDENCIES = []
-#from config import DEPENDENCIES
-
 
 class <dtml-var "package.getProductName()">CustomizationPolicy(DefaultCustomizationPolicy):
     """ Make a custom Plone for <dtml-var "package.getProductName()"> """
@@ -33,8 +29,13 @@ class <dtml-var "package.getProductName()">CustomizationPolicy(DefaultCustomizat
                 eval('self.%s(portal)' % method)
 
     def customize_1_InstallProducts(self, portal):
-        for p in DEPENDENCIES+[PROJECTNAME]:
-            portal.portal_quickinstaller.installProduct(p)
+        """ Install the product
+
+        Note that you can add dependencies to the DEPENDENCIES list in
+        config.py, these are auto-installed by Install.py so no need
+        to add them here.
+        """
+        portal.portal_quickinstaller.installProduct(PROJECTNAME)
         get_transaction().commit(1)
 
     # define your own customize_#_name methods after this line:

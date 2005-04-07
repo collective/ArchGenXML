@@ -38,9 +38,21 @@ import sys
 def install(self):
     """ External Method to install <dtml-var "package.getProductModuleName()"> """
     out = StringIO()
-    #install_dependencies(self, out)
-
     print >> out, "Installation log of %s:" % PROJECTNAME
+
+    # If the config contains a list of dependencies, try to install
+    # them.  Add a list called DEPENDENCIES to your custom
+    # AppConfig.py (imported by config.py) to use it.
+    try:
+        from Products.<dtml-var "package.getProductModuleName()">.config import DEPENDENCIES
+    except:
+        DEPENDENCIES = []
+    portal = getToolByName(self,'portal_url').getPortalObject()
+    quickinstaller = portal.portal_quickinstaller
+    for dependency in DEPENDENCIES:
+        print >> out, "Installing dependency %s:" % dependency
+        quickinstaller.installProduct(dependency)
+    get_transaction().commit(1)
 
     classes=listTypes(PROJECTNAME)
     installTypes(self, out,
@@ -246,7 +258,7 @@ def uninstall(self):
 </dtml-let>
 
     # try to call a workflow uninstall method
-    # in 'InstallWorkflows.py' method 'installWorkflows'
+    # in 'InstallWorkflows.py' method 'uninstallWorkflows'
     try:
         installWorkflows = ExternalMethod('temp','temp',PROJECTNAME+'.InstallWorkflows', 'uninstallWorkflows').__of__(self)
     except NotFound:
