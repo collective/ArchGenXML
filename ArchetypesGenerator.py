@@ -101,7 +101,6 @@ class ArchetypesGenerator(BaseGenerator):
     left_slots=[]
     right_slots=[]
     force_plugin_root=1 #should be 'Products.' be prepended to all absolute paths?
-    creation_permission=None ## unused!
     customization_policy=0
     backreferences_support=0
 
@@ -1374,8 +1373,9 @@ class ArchetypesGenerator(BaseGenerator):
             toolinit=TEMPL_TOOLINIT % ','.join([c.getQualifiedName(package) for c in self.getGeneratedClasses(package) if c.hasStereoType(self.portal_tools)])
         else: toolinit=''
 
-        add_content_permission = self.creation_permission or 'Add %s content' % productname
-        init_params={'project_name':productname,'add_content_permission': getExpression(add_content_permission),'imports':imports, 'toolinit':toolinit }
+        creation_permission = self.getOption('creation_permission', package, productname)
+        add_content_permission = 'Add %s content' % creation_permission
+        init_params={'project_name':productname,'add_content_permission': add_content_permission,'imports':imports, 'toolinit':toolinit }
 
         if self.detailled_creation_permissions:
             init_params['extra_perms']=TEMPL_DETAILLED_CREATION_PERMISSIONS
