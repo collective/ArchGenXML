@@ -15,7 +15,7 @@ from Products.Archetypes.utils import capitalize
 import os, os.path
 
 
-ADD_CONTENT_PERMISSION = %(add_content_permission)s
+ADD_CONTENT_PERMISSION = "%(add_content_permission)s"
 PROJECTNAME = "%(project_name)s"
 
 product_globals=globals()
