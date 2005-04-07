@@ -1958,6 +1958,18 @@ class XMIStateTransition(XMIElement):
             if ge.startswith('guard_expr:'):
                 return str(ge[11:])
 
+    def getTriggerType(self):
+        """ Return the Trigger Type, following what is defined by DCWorkflow
+            0 : Automatic
+            1 : User Action (default)
+            2 : Workflow Method
+        """
+        try:
+            return int(self.getTaggedValue('trigger_type'))
+        except ValueError:
+            return 1   
+
+
 class XMIAction(XMIElement):
     expression=None
     def initFromDOM(self,domElement=None):

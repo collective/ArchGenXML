@@ -78,7 +78,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
     tdef = wf.transitions['<dtml-var "tran.getName()">']
     tdef.setProperties(title="""<dtml-var "tran.getTaggedValue('label') or tran.getName()">""",
                        new_state_id="""<dtml-var "tran.getTargetStateName()">""",
-                       trigger_type=1,
+                       trigger_type=<dtml-var "tran.getTriggerType()">,
                        script_name="""<dtml-var "tran.getBeforeActionName() or ''">""",
                        after_script_name="""<dtml-var "tran.getAfterActionName() or ''">""",
                        actbox_name="""<dtml-var "tran.getTaggedValue('label') or tran.getName()">""",<dtml-call name="atgenerator.addMsgid(tran.getTaggedValue('label') or tran.getName())">
