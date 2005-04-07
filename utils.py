@@ -169,6 +169,10 @@ ALLOWED_OPTIONS_MAP = {
     'copyright=':                       (1, 0,   'DOCUMENTATION', 'copyright', 'string'),
     'license=':                         (1, 0,   'DOCUMENTATION', 'license', 'string'),
     'strip-html':                       (1, 0,   'DOCUMENTATION', 'striphtml', 'switchon'),
+    'rcs-id':                           (1, 0,   'DOCUMENTATION', 'rcs_id','switchon'),
+    'no-rcs-id':                        (1, 0,   'DOCUMENTATION', 'rcs_id','switchoff'),
+    'generated-date':                   (1, 0,   'DOCUMENTATION', 'generated_date','switchon'),
+    'no-generated-date':                (1, 0,   'DOCUMENTATION', 'generated_date','switchoff'),
     'cfg=':                             (1, 'c', None,            None,'string'),
     'project-configuration=':           (1, 0,   None,            None,'string'),
     'storage=':                         (1, 0,   'GENERAL',       'storage', 'string'),
@@ -243,6 +247,8 @@ def read_project_settings(args):
     settings['detailled_creation_permissions'] = None
     settings['widget_enhancement'] = None
     settings['outfilename'] = None
+    settings['rcs_id'] = 1
+    settings['generated_date'] = 0
 
     shortoptions = ':'.join([ ALLOWED_OPTIONS_MAP[optkey][1] \
         for optkey in ALLOWED_OPTIONS_MAP.keys() \
@@ -352,6 +358,12 @@ OPTIONS:
     --strip-html
         strips HTML tags from the document strings (e.g. for Poseidon which
         uses HTML inside the entity documentation )
+
+    --no-rcs-id
+        skips the addition of an version control ID tag
+
+    --generated-date
+        adds the date the file is generated to the file's header
 
 """
 

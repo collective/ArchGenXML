@@ -1257,14 +1257,27 @@ class ArchetypesGenerator(BaseGenerator):
 
         authorline = wrap(", ".join(authoremail),77)
 
+        rcs_id = self.getOption('rcs_id', element, False)
+        if rcs_id:
+            rcs_id_tag = 'RCD-ID $Id$'
+        else:
+            rcs_id_tag = ''
+
+        generated_date = self.getOption('generated_date', element, False)
+        if generated_date:
+            date = time.ctime()
+        else:
+            date = ''
+        
         moduleinfo = {  'purpose':      purposeline,
                         'authors':      ', '.join(authors),
                         'emails' :      ', '.join(emails),
                         'authorline':   authorline,
                         'version':      self.version,
-                        'date':         time.ctime(),
+                        'date':         date,
                         'copyright':    '\n# '.join(wrap(copyright,77).split('\n')),
                         'licence':      licence,
+                        'rcs_id_tag':   rcs_id_tag
         }
 
         return moduleinfo
@@ -1514,7 +1527,7 @@ class ArchetypesGenerator(BaseGenerator):
         package.generatedModules=[]
         package.generatedClasses=[]
         if package.getName() == 'java' or package.getName().startswith('java'):
-            #to suppress these unneccesary implicit created java packages (ArcgoUML and Poseidon)
+            #to suppress these unneccesary implicit created java packages (ArgoUML and Poseidon)
             print 'ignore package:',package.getName()
             return
 
