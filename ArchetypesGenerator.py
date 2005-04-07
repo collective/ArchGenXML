@@ -1166,7 +1166,8 @@ class ArchetypesGenerator(BaseGenerator):
 
         print >> outfile, self.generateModifyFti(element)
 
-        wrt( REGISTER_ARCHTYPE % name)
+        productName = element.getPackage().getProductName()
+        wrt( REGISTER_ARCHTYPE % (name, productName))
 
         # ATVocabularyManager: registration of class
         if element.hasStereoType(self.vocabulary_item_stereotype):

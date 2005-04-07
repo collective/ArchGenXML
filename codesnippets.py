@@ -121,7 +121,7 @@ CLASS_IMPLEMENTS_BASE= """    __implements__ = %(baseclass_interfaces)s"""
 CLASS_ALLOWED_CONTENT_TYPES = '''    allowed_content_types = %s %s'''
 CLASS_ALLOWED_CONTENT_INTERFACES = '''    allowed_content_interfaces = %s %s'''
 
-REGISTER_ARCHTYPE    = """registerType(%s)\n"""
+REGISTER_ARCHTYPE    = """registerType(%s, '%s')\n"""
 
 IMPORT_INTERFACE     = """from Interface import Base"""
 
