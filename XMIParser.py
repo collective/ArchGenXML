@@ -1803,7 +1803,7 @@ class XMIStateMachine(XMIStateContainer):
             for p in pd:
                 perm = p['permission'].strip()
                 if perm not in ret:
-                    ret.append(perm)
+                    ret.append(str(perm))
         return ret
 
     def getInitialState(self):
