@@ -14,11 +14,17 @@ from PyParser import PyModule
 class TestPyModule(unittest.TestCase):
     def setUp(self):
         self.emptyFile = 'tests/pythonfiles/empty.py'
-        self.emptyStringFile = '# Empty python file\n'
+        self.emptyStringFile = '# Empty python file\n# Some more'
     
-    def testInitByFile(self):
+    def testInitByFile1(self):
         # Don't barf on an empty file
         parser = PyModule(self.emptyFile)
+
+    def testInitByFile2(self):
+        # Also accept a file pointer instead of a filename
+        file = open(self.emptyFile)
+        parser = PyModule(file)
+        file.close()
 
     def testInitByString(self):
         # Don't barf on an empty string-file
@@ -27,6 +33,8 @@ class TestPyModule(unittest.TestCase):
     def testInitByStringBarf(self):
         # Barf on an empty string-file without correct mode
         self.assertRaises(IOError, PyModule, self.emptyStringFile)
+
+
 
 
 if __name__ == '__main__':

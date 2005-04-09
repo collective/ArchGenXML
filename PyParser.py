@@ -38,7 +38,7 @@ def extractCode(arr,start,lnotab):
 
         
 class PyModule:
-    """This is the module being called directly from the rest of ArchGenXML
+    """ This is the module being called directly from the rest of ArchGenXML
 
     Through the __init__() you can feed it a file and it chops it up
     in neat chunks of classes and methods. This way the other parts of
@@ -54,40 +54,40 @@ class PyModule:
     protectedSections = {}
 
     def __init__(self, file, mode='file'):
-        """Start dividing 'file' in chunks
+        """ Start dividing 'file' in chunks
 
-        'file' is the to chuck up. By default it is the name of a file
+        'file' is the to chunk up. By default it is the name of a file
         on the filesystem, but with 'mode' set to 'string', 'file' is
         passed as a string.
         """
+        # Dictionary inits
         self.classes = {}
         self.functions = {}
         self.protectedSections = {}
-        #print 'init PyModule:', file
-        if mode == 'file':
-            self.initFromFile(file)
-        elif mode == 'string':
-            self.initFromString(file)
-        else:
-            raise ValueError, "Mode must be file or string, but is given as '%s'" %mode
-
-    def initFromFile(self, file):
-        if type(file) in (type(''), type(u'')):
-            self.filebuf = open(file).read()
-        else:
-            #assume its a file object
-            self.filebuf = file.read()
-        self.init()
-        
-    def initFromString(self, buf):
-        self.filebuf = buf
-        self.init()
-        
-    def init(self):
+        # Read and mangle the file
+        self.readFile(file, mode)
         self.splittedSource = self.filebuf.split('\n')
-        self.ast = parser.suite(self.filebuf)
+        # Note: ast = abstract syntax tree (python internal thingy)
+        self.ast = parser.suite(self.filebuf) 
         self.code = self.ast.compile()
         self.initFromCode()
+
+    def readFile(self, file, mode):
+        """ Read the file into self.filebuf
+
+        File can be a filename, a file object or a big string.
+        """
+        if type(file) in (type(''), type(u'')):
+            # filename or big string
+            if mode == 'string':
+                # Big string!
+                self.filebuf = file
+            else:
+                # Filename!
+                self.filebuf = open(file).read()
+        else:
+            # File object!
+            self.filebuf = file.read()
 
     def isItAClass(self, c):
         ''' Woooh - heuristic method to check if a code fragment is a class
