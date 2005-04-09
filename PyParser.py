@@ -7,8 +7,8 @@ import pprint
 import sys
 import types
 
-PROTECTED_BEGIN='##code-section'
-PROTECTED_END='##/code-section'
+PROTECTED_BEGIN = '##code-section'
+PROTECTED_END = '##/code-section'
 
 def codeLength(l):
     ''' calculates the length of a method using the code.co_lnotab '''
@@ -37,82 +37,13 @@ def extractCode(arr,start,lnotab):
     return '\n'.join(snip)
 
         
-class PyCodeElement:
-    module = None
-    code = None
-    src = None
-
-    def __init__(self, code, module):
-        self.code = code
-        self.module = module
-        
-    def getSrc(self):
-        return self.src
-    
-    def getName(self):
-        return self.name
-
-
-class PyFunction(PyCodeElement):
-    typename='function'
-    def __init__(self, code, module):
-        PyCodeElement.__init__(self, code, module)
-        self.buildMethod()
-
-    def buildMethod(self):
-        self.name = self.code.co_name
-        start = self.code.co_firstlineno
-        length = codeLength(self.code.co_lnotab)
-        self.src = extractCode(self.module.splittedSource, start-1,self.code.co_lnotab)
-
-    def printit(self):
-        print '%s:' % self.typename, self.code.co_name
-        print '-------------------------------------------------------'
-        print self.src
-        print '-------------------------------------------------------'
-
-    def getProtectedSection(self, section):
-        return self.module.getProtectedSection(section)
-
-
-class PyMethod(PyFunction):
-    typename = 'method'
-        
-
-class PyClass(PyCodeElement):
-    methods = {}
-    module = None
-    typename = 'Class'
-    
-    def __init__(self, code, module):
-        PyCodeElement.__init__(self, code, module)
-        self.methods = {}
-        self.name = code.co_name
-        self.module = module
-        #print 'Class:', self.name
-        self.buildMethods()
-        
-    def buildMethods(self):
-        meths = [o for o in self.code.co_consts if type(o) == types.CodeType]
-        for m in meths:
-            name = m.co_name
-            self.methods[name] = PyMethod(m, self.module)
-
-    def printit(self):
-        print '======================================='
-        print self.typename, ':', self.name
-        print '======================================='
-        for m in self.methods.values():
-            m.printit()
-            
-    def getProtectedSection(self, section):
-        return self.module.getProtectedSection(section)
-    
-    def getMethodNames(self):
-        return self.methods.keys()
-    
-
 class PyModule:
+    """This is the module being called directly from the rest of ArchGenXML
+
+    Through the __init__() you can feed it a file and it chops it up
+    in neat chunks of classes and methods. This way the other parts of
+    ArchGenXML can add/remove/augment those chunks.
+    """
     filebuf = None
     splittedSource = None
     ast = None
@@ -123,6 +54,12 @@ class PyModule:
     protectedSections = {}
 
     def __init__(self, file, mode='file'):
+        """Start dividing 'file' in chunks
+
+        'file' is the to chuck up. By default it is the name of a file
+        on the filesystem, but with 'mode' set to 'string', 'file' is
+        passed as a string.
+        """
         self.classes = {}
         self.functions = {}
         self.protectedSections = {}
@@ -230,7 +167,82 @@ class PyModule:
             print v
             print '-----------'
 
+
+class PyCodeElement:
+    module = None
+    code = None
+    src = None
+
+    def __init__(self, code, module):
+        self.code = code
+        self.module = module
+        
+    def getSrc(self):
+        return self.src
+    
+    def getName(self):
+        return self.name
+
+
+class PyFunction(PyCodeElement):
+    typename='function'
+    def __init__(self, code, module):
+        PyCodeElement.__init__(self, code, module)
+        self.buildMethod()
+
+    def buildMethod(self):
+        self.name = self.code.co_name
+        start = self.code.co_firstlineno
+        length = codeLength(self.code.co_lnotab)
+        self.src = extractCode(self.module.splittedSource, start-1,self.code.co_lnotab)
+
+    def printit(self):
+        print '%s:' % self.typename, self.code.co_name
+        print '-------------------------------------------------------'
+        print self.src
+        print '-------------------------------------------------------'
+
+    def getProtectedSection(self, section):
+        return self.module.getProtectedSection(section)
+
+
+class PyMethod(PyFunction):
+    typename = 'method'
+        
+
+class PyClass(PyCodeElement):
+    methods = {}
+    module = None
+    typename = 'Class'
+    
+    def __init__(self, code, module):
+        PyCodeElement.__init__(self, code, module)
+        self.methods = {}
+        self.name = code.co_name
+        self.module = module
+        #print 'Class:', self.name
+        self.buildMethods()
+        
+    def buildMethods(self):
+        meths = [o for o in self.code.co_consts if type(o) == types.CodeType]
+        for m in meths:
+            name = m.co_name
+            self.methods[name] = PyMethod(m, self.module)
+
+    def printit(self):
+        print '======================================='
+        print self.typename, ':', self.name
+        print '======================================='
+        for m in self.methods.values():
+            m.printit()
             
+    def getProtectedSection(self, section):
+        return self.module.getProtectedSection(section)
+    
+    def getMethodNames(self):
+        return self.methods.keys()
+
+
 if __name__=='__main__':
     mod = PyModule(sys.argv[1])
     mod.printit()
