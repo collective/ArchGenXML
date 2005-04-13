@@ -155,7 +155,7 @@ ALLOWED_OPTIONS_MAP = {
     'no-actions':                       (1, 0,   None,            'generateActions', 'switchoff'),
     'generate-actions':                 (0, 0,   'CLASSES',       'generateActions', 'yesno'),
     'default-actions':                  (1, 0,   'CLASSES',       'generateDefaultActions', 'switchon'),
-    'creation-permission=':             (1, 0,   'CLASSES',       'creation_permissions', 'switchon'), # UNUSED!
+    'creation-permission=':             (1, 0,   'CLASSES',       'creation_permission', 'string'),
     'detailled-creation-permissions=':  (1, 0,   'CLASSES',       'detailled_creation_permissions', 'yesno'),
     'widget-enhancement':               (0, 0,   'CLASSES',       'widget_enhancement', 'switchon'),
     'no-widget-enhancement':            (1, 0,   None,            'widget_enhancement', 'switchoff'),
@@ -249,6 +249,7 @@ def read_project_settings(args):
     settings['copyright'] = None
     settings['licence'] = None
     settings['module_info_header'] = 1
+    settings['creation_permission'] = None
     settings['detailled_creation_permissions'] = None
     settings['widget_enhancement'] = None
     settings['outfilename'] = None
