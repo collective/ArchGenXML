@@ -196,7 +196,7 @@ def install(self):
     # in 'AppInstall.py' method 'install'
     try:
         install = ExternalMethod('temp','temp',PROJECTNAME+'.AppInstall', 'install')
-    except:
+    except NotFound:
         install=None
 
     if install:
