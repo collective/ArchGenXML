@@ -1623,7 +1623,8 @@ class ArchetypesGenerator(BaseGenerator):
 
         configpath=os.path.join(package.getFilePath(),'config.py')
         parsed_config=self.parsePythonModule(package.getFilePath(), 'config.py')
-        creation_permission = self.getOption('creation_permission', package, package.getProductName().capitalize())
+        creation_permission = self.getOption('creation_permission', package, None) or \
+                              package.getProductName().capitalize()
         default_creation_permission = 'Add %s Content' % creation_permission
 
         # prepare (d)TML varibles
