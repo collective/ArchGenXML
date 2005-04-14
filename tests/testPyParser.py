@@ -15,26 +15,25 @@ class TestPyModule(unittest.TestCase):
     def setUp(self):
         self.emptyFile = 'tests/pythonfiles/empty.py'
         self.emptyStringFile = '# Empty python file\n# Some more'
+        self.parser = PyModule(self.emptyFile)
     
-    def testInitByFile1(self):
+    def testReadFile1(self):
         # Don't barf on an empty file
-        parser = PyModule(self.emptyFile)
+        self.parser.readFile(self.emptyFile)
 
-    def testInitByFile2(self):
+    def testReadFile2(self):
         # Also accept a file pointer instead of a filename
         file = open(self.emptyFile)
-        parser = PyModule(file)
+        self.parser.readFile(file)
         file.close()
 
-    def testInitByString(self):
+    def testReadFile3(self):
         # Don't barf on an empty string-file
         parser = PyModule(self.emptyStringFile, mode='string')
 
-    def testInitByStringBarf(self):
+    def testReadFile4(self):
         # Barf on an empty string-file without correct mode
-        self.assertRaises(IOError, PyModule, self.emptyStringFile)
-
-
+        self.assertRaises(IOError, self.parser.readFile, self.emptyStringFile)
 
 
 if __name__ == '__main__':

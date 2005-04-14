@@ -65,15 +65,15 @@ class PyModule:
         self.functions = {}
         self.protectedSections = {}
         # Read and mangle the file
-        self.readFile(file, mode)
+        self.filebuf = self.readFile(file, mode)
         self.splittedSource = self.filebuf.split('\n')
         # Note: ast = abstract syntax tree (python internal thingy)
         self.ast = parser.suite(self.filebuf) 
         self.code = self.ast.compile()
         self.initFromCode()
 
-    def readFile(self, file, mode):
-        """ Read the file into self.filebuf
+    def readFile(self, file, mode='file'):
+        """ Read the file into a string
 
         File can be a filename, a file object or a big string.
         """
@@ -81,13 +81,14 @@ class PyModule:
             # filename or big string
             if mode == 'string':
                 # Big string!
-                self.filebuf = file
+                result = file
             else:
                 # Filename!
-                self.filebuf = open(file).read()
+                result = open(file).read()
         else:
             # File object!
-            self.filebuf = file.read()
+            result = file.read()
+        return result
 
     def isItAClass(self, c):
         ''' Woooh - heuristic method to check if a code fragment is a class
