@@ -15,7 +15,8 @@ class TestPyModule(unittest.TestCase):
     def setUp(self):
         self.emptyFile = 'tests/pythonfiles/empty.py'
         self.emptyStringFile = '# Empty python file\n# Some more'
-        self.parser = PyModule(self.emptyFile)
+        self.realFile = 'tests/pythonfiles/ParserTest.py'
+        self.parser = PyModule(self.realFile)
     
     def testReadFile1(self):
         # Don't barf on an empty file
@@ -34,6 +35,12 @@ class TestPyModule(unittest.TestCase):
     def testReadFile4(self):
         # Barf on an empty string-file without correct mode
         self.assertRaises(IOError, self.parser.readFile, self.emptyStringFile)
+
+    def testInitFromCode(self):
+        # tests/pythonfiles/ParserTest.py contains:
+        # 1 class + 1 method/function
+        self.assertEquals(len(self.parser.classes), 1)
+        self.assertEquals(len(self.parser.functions), 1)
 
 
 if __name__ == '__main__':
