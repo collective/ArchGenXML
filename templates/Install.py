@@ -52,7 +52,7 @@ def install(self):
     for dependency in DEPENDENCIES:
         print >> out, "Installing dependency %s:" % dependency
         quickinstaller.installProduct(dependency)
-    get_transaction().commit(1)
+        get_transaction().commit(1)
 
     classes=listTypes(PROJECTNAME)
     installTypes(self, out,
