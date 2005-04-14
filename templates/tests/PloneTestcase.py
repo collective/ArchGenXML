@@ -1,5 +1,6 @@
+<dtml-var "generator.getProtectedSection(parsed_class,'module-header')">
 #
-# Base TestCase for ProductName
+# Base TestCase for <dtml-var "klass.getPackage().getProductName()">
 #
 
 from Products.PloneTestCase import PloneTestCase
@@ -23,6 +24,9 @@ PloneTestCase.setupPloneSite(products=PRODUCTS)
 
 class <dtml-var "klass.getCleanName()">(PloneTestCase.PloneTestCase):
 
+<dtml-var "generator.getProtectedSection(parsed_class,'class-header_'+klass.getCleanName(),1)">
+
     def afterSetUp(self):
         pass
 
+<dtml-var "generator.getProtectedSection(parsed_class,'module-footer')">

@@ -1,7 +1,7 @@
+<dtml-var "generator.getProtectedSection(parsed_class,'module-header')">
 #
 # Setup tests
 #
-
 import os, sys
 if __name__ == '__main__':
     execfile(os.path.join(sys.path[0], 'framework.py'))
@@ -10,6 +10,8 @@ from Products.PloneTestCase import PloneTestCase
 from Products.<dtml-var "klass.getPackage().getProductName()">.<dtml-var "klass.getGenParents()[0].getQualifiedModuleName(klass.getPackage())"> import <dtml-var "klass.getGenParents()[0].getCleanName()">
 
 class TestSetup(<dtml-var "klass.getGenParents()[0].getCleanName()">):
+
+<dtml-var "generator.getProtectedSection(parsed_class,'class-header_'+klass.getCleanName(),1)">
 
     def testTools(self):
         ids = self.portal.objectIds()
@@ -47,3 +49,4 @@ def test_suite():
 if __name__ == '__main__':
     framework()
 
+<dtml-var "generator.getProtectedSection(parsed_class,'module-footer')">

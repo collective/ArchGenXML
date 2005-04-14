@@ -1,3 +1,4 @@
+<dtml-var "generator.getProtectedSection(parsed_class,'module-header')">
 <dtml-let allmethodnames="['test%s%s'%(m.getParent().getCleanName().capitalize(),m.getCleanName().capitalize()) for m in generator.getMethodsToGenerate(klass)[0]]">
 #
 # Skeleton test module
@@ -15,6 +16,8 @@ from <dtml-var "_['sequence-item'].getQualifiedModuleName(klass.getPackage(),for
 </dtml-in>
 
 class <dtml-var "klass.getCleanName()">(<dtml-var "parent.getCleanName()">):
+
+<dtml-var "generator.getProtectedSection(parsed_class,'class-header_'+klass.getCleanName(),1)">
 
     def afterSetUp(self):
         pass
@@ -66,3 +69,4 @@ if __name__ == '__main__':
     framework()
 
 </dtml-let>
+<dtml-var "generator.getProtectedSection(parsed_class,'module-footer')">
