@@ -34,14 +34,20 @@ class TestPyModule(unittest.TestCase):
 
     def testReadFile4(self):
         # Barf on an empty string-file without correct mode
-        self.assertRaises(IOError, self.parser.readFile, self.emptyStringFile)
+        self.assertRaises(IOError, self.parser.readFile,
+                          self.emptyStringFile) 
 
-    def testInitFromCode(self):
+    def testFindClassesAndMethods(self):
         # tests/pythonfiles/ParserTest.py contains:
         # 1 class + 1 method/function
         self.assertEquals(len(self.parser.classes), 1)
         self.assertEquals(len(self.parser.functions), 1)
 
+    def testFindProtectedSections(self):
+        # tests/pythonfiles/ParserTest.py contains 4 protected
+        # sections: module-header, after-schema, class-header,
+        # module-footer. 
+        self.assertEquals(len(self.parser.protectedSections), 4)
 
 if __name__ == '__main__':
     unittest.main()
