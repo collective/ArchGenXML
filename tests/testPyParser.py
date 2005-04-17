@@ -17,7 +17,7 @@ class TestPyModule(unittest.TestCase):
         self.emptyStringFile = '# Empty python file\n# Some more'
         self.realFile = 'tests/pythonfiles/ParserTest.py'
         self.parser = PyModule(self.realFile)
-    
+        
     def testReadFile1(self):
         # Don't barf on an empty file
         self.parser.readFile(self.emptyFile)
@@ -37,9 +37,9 @@ class TestPyModule(unittest.TestCase):
         self.assertRaises(IOError, self.parser.readFile,
                           self.emptyStringFile) 
 
-    def testFindClassesAndMethods(self):
+    def testFindClassesAndFunctions(self):
         # tests/pythonfiles/ParserTest.py contains:
-        # 1 class + 1 method/function
+        # 1 class + 1 function
         self.assertEquals(len(self.parser.classes), 1)
         self.assertEquals(len(self.parser.functions), 1)
 
@@ -48,6 +48,7 @@ class TestPyModule(unittest.TestCase):
         # sections: module-header, after-schema, class-header,
         # module-footer. 
         self.assertEquals(len(self.parser.protectedSections), 4)
+
 
 if __name__ == '__main__':
     unittest.main()

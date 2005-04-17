@@ -1,6 +1,6 @@
 """
-Very simple module for extracting classes and method codes out of a
-python file
+Very simple module for extracting classes and method/function codes
+out of a python file
 """
 import parser
 import pprint
@@ -11,7 +11,7 @@ PROTECTED_BEGIN = '##code-section'
 PROTECTED_END = '##/code-section'
 
 def codeLength(l):
-    ''' calculates the length of a method using the code.co_lnotab '''
+    """ calculates the length of a method using the code.co_lnotab """
     res=0
     for i in range(0,len(l),2):
         res += ord(l[i+1])
@@ -19,8 +19,8 @@ def codeLength(l):
     return res+1
 
 def extractCode(arr,start,lnotab):
-    ''' extracts method code from an array containing the code lines,
-        given a start (zero based) and a lnotab '''
+    """ extracts method code from an array containing the code lines,
+        given a start (zero based) and a lnotab """
     snip=[]
     length = 0
 
@@ -28,11 +28,9 @@ def extractCode(arr,start,lnotab):
         cl = ord(lnotab[i+1])
         if cl != 255:
             length += cl
-
     # and now take into account the trailing backslashes
     while arr[start+length].strip() and arr[start+length].strip()[-1] == '\\':
             length += 1
-        
     snip = arr[start:start+length+1]
     return '\n'.join(snip)
 
@@ -72,9 +70,9 @@ class PyModule:
         self.ast = parser.suite(self.filebuf)
         self.code = self.ast.compile()
         # The next two filter out the classes and the top-level
-        # methods in the sourcefile and the protected sections. Beware
-        # that the rest is left out!
-        self.findClassesAndMethods()
+        # functions in the sourcefile and the protected
+        # sections. Beware that the rest is left out!
+        self.findClassesAndFunctions()
         self.findProtectedSections()
 
     def readFile(self, file, mode='file'):
@@ -95,21 +93,26 @@ class PyModule:
             result = file.read()
         return result
 
-    def findClassesAndMethods(self):
+    def findClassesAndFunctions(self):
         """ Collect code elements in the source file
 
-        Code elements are seperate things like methods and classes,
+        Code elements are seperate things like functions and classes,
         the import-statements, local variables etcetera are not code
         elements filtered out by this method.
 
-        The results are placed in self.classes and self.functions.
+        The results are placed in self.classes and
+        self.functions. Functions are the top-level methods, methods
+        reside inside the classes.
         """
-        codes = [c for c in self.code.co_consts if type(c) == types.CodeType]
+        # First get all the code elements as seen by the python parser
+        codes = [c for c in self.code.co_consts if type(c) ==
+                 types.CodeType]
+        # Get the classes
         classes = [c for c in codes if self.isItAClass(c)]
         for c in classes:
             klass = PyClass(c, self)
             self.classes[c.co_name] = klass
-        #get the functions
+        # Get the functions
         functions = [c for c in codes if self.isItAFunction(c)]
         for f in functions:
             func = PyFunction(f, self)
@@ -138,8 +141,8 @@ class PyModule:
                 self.protectedSections[sectionname] = protectedSection
 
     def isItAClass(self, c):
-        ''' Woooh - heuristic method to check if a code fragment is a class
-        '''
+        """ Woooh - heuristic method to check if a code fragment is a class
+        """
         fl = c.co_firstlineno
         if self.splittedSource[fl-1].strip().startswith('class'):
             return 1
@@ -148,9 +151,9 @@ class PyModule:
         return res
 
     def isItAFunction(self, c):
-        ''' Woooh - heuristic method to check if a code fragment is a method
-        '''
-        # TODO: some renaming todo function->method?
+        """ Woooh - heuristic method to check if a code fragment is a
+        function
+        """
         fl = c.co_firstlineno
         if self.splittedSource[fl-1].startswith('def'):
             return 1
