@@ -1846,9 +1846,9 @@ class XMIStateMachine(XMIStateContainer):
     def getAllRoles(self, ignore=[]):
         roles = []
         for tran in self.getTransitions(no_duplicates = 1):
-            dummy = [roles.append(r) \
+            dummy = [roles.append(r.strip()) \
                      for r in tran.getGuardRoles().split(';') \
-                     if not (r in roles or r in ignore)]
+                     if not (r.strip() in roles or r.strip() in ignore)]
 
         for state in self.getStates():
             perms = state.getPermissionsDefinitions()
@@ -1856,9 +1856,9 @@ class XMIStateMachine(XMIStateContainer):
             dummy = [[sroles.append(j) for j in i] \
                      for i in [d['roles'] for d in perms] \
                     ]
-            dummy = [roles.append(r) \
+            dummy = [roles.append(r.strip()) \
                      for r in sroles \
-                     if not (r in roles or r in ignore)]
+                     if not (r.strip() in roles or r.strip() in ignore)]
         return roles
 
 class XMIStateTransition(XMIElement):
