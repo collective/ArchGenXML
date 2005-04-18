@@ -3,8 +3,7 @@
 
 # <dtml-var "infoheader['copyright']">
 #
-# Generated: <dtml-var "infoheader['date']">
-# Generator: ArchGenXML Version <dtml-var "infoheader['version']">
+<dtml-var "infoheader['date']"># Generator: ArchGenXML Version <dtml-var "infoheader['version']">
 #            http://sf.net/projects/archetypes/
 #
 # <dtml-var "infoheader['licence']">
@@ -19,21 +18,32 @@ from Products.CMFCore.WorkflowTool import addWorkflowFactory
 from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
 from Products.ExternalMethod.ExternalMethod import ExternalMethod
 
+<dtml-var "generator.getProtectedSection(parsedModule,'create-workflow-module-header')">
+
 productname = '<dtml-var "package.getCleanName()">'
 
 def setup<dtml-var "statemachine.getCleanName()">(self, wf):
     """
     <dtml-var "statemachine.getCleanName()"> Workflow Definition
     """
+<dtml-let additional_roles="statemachine.getAllRoles(ignore=['Owner','Manager','Member','Reviewer','Authenticated','Anonymous'])">
+<dtml-if "additional_roles">
     # add additional roles to portal
     portal=getToolByName(self,'portal_url').getPortalObject()
     data=list(portal.__ac_roles__)
-    for role in <dtml-var "statemachine.getAllRoles(ignore=['Owner','Manager','Member','Reviewer','Authenticated','Anonymous'])">:
+    for role in <dtml-var "additional_roles">:
         if not role in self.__ac_roles__:
             data.append(role)
     portal.__ac_roles__=tuple(data)
+</dtml-if>
+</dtml-let>
 
     wf.setProperties(title='<dtml-var "statemachine.getCleanName()">')
+
+<dtml-var "generator.getProtectedSection(parsedModule,'create-workflow-setup-method-header',1)">
+
+    # generation of worklists is not defined yet...
+    ### XXX :-(
 
     for s in <dtml-var "repr(statemachine.getStateNames(no_duplicates = 1))">:
         wf.states.addState(s)
@@ -70,7 +80,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
     ##creation of workflow scripts
     for wf_scriptname in <dtml-var "repr(tran.getAction().getSplittedName(padding=0))">:
         if not wf_scriptname in wf.scripts.objectIds():
-            wf.scripts._setObject(wf_scriptname,ExternalMethod(wf_scriptname, wf_scriptname, 
+            wf.scripts._setObject(wf_scriptname,ExternalMethod(wf_scriptname, wf_scriptname,
                 productname + '.<dtml-var "statemachine.getCleanName()">_scripts',
                 wf_scriptname))
     </dtml-if>
@@ -136,12 +146,12 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
                        for_status=1,
                        update_always=1,
                        props=None)
-                       
-    # XXX Generation of worklists is not implemented yet...
-    # in the meantime, you can use the protecte code section below to
-    # do it manually    
 
-<dtml-var "protected_init_section_bottom">
+    # XXX Generation of worklists is not implemented yet...
+    # in the meantime, you can use the protected code section below to
+    # do it manually
+
+<dtml-var "generator.getProtectedSection(parsedModule,'create-workflow-setup-method-footer',1)">
 
 def create<dtml-var "statemachine.getCleanName()">(self, id):
     "..."
@@ -153,3 +163,4 @@ addWorkflowFactory(create<dtml-var "statemachine.getCleanName()">,
                    id='<dtml-var "statemachine.getCleanName()">',
                    title='<dtml-var "statemachine.getTaggedValue('label') or statemachine.getCleanName()">')
 
+<dtml-var "generator.getProtectedSection(parsedModule,'create-workflow-module-footer')">
