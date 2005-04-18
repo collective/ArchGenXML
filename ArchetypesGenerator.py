@@ -1333,7 +1333,7 @@ class ArchetypesGenerator(BaseGenerator):
             fti=self.generateFti(element,aggregatedClasses)
             print >> outfile,fti
 
-        # prepare schema as class atrribute
+        # prepare schema as class attribute
         parent_schema=["getattr(%s,'schema',Schema(()))" % p.getCleanName() \
                        for p in element.getGenParents()]
 
@@ -1372,7 +1372,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         self.generateMethods(outfile,element)
 
-        # [optilude] Don't do FTI for abstract mixins
+        # [optilude] Don't do modify FTI for abstract mixins
         if not element.isAbstract ():
             print >> outfile, self.generateModifyFti(element)
 
@@ -1383,7 +1383,7 @@ class ArchetypesGenerator(BaseGenerator):
         # ATVocabularyManager: registration of class
         if element.hasStereoType(self.vocabulary_item_stereotype) and \
            not element.isAbstract ():
-            # FIXME XXX TODO: fetch container_class - needs to be refined:
+            # XXX TODO: fetch container_class - needs to be refined:
             # check if parent has vocabulary_container_stereotype and use its
             # name as container
             # else check for TGV vocabulary_container
@@ -1490,13 +1490,12 @@ class ArchetypesGenerator(BaseGenerator):
         rcs_id = self.getOption('rcs_id', element, False)
 
         if rcs_id:
-            rcs_id_tag = '\nRCS-ID $Id$'
+            rcs_id_tag = '\nRCS-ID $'+'I'+'d'+'$'
         else:
             rcs_id_tag = ''
 
-        generated_date = self.getOption('generated_date', element, False)
-        if generated_date:
-            date = '\n# Generated: ' + time.ctime()
+        if self.getOption('generated_date', element, False):
+            date = '# Generated: %s\n' % time.ctime()
         else:
             date = ''
 
