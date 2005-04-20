@@ -182,7 +182,7 @@ class BaseGenerator:
         if element.hasStereoType(self.vocabulary_container_stereotype):
             print >> outfile, 'from Products.ATVocabularyManager.VocabularyTool import registerVocabulary'
         if element.hasAttributeWithTaggedValue('vocabulary:type','ATVocabularyManager'):
-            print >> outfile, 'from Products.ATVocabularyManager.NamedVocabulary import NamedVocabulary'
+            print >> outfile, 'from Products.ATVocabularyManager.namedvocabulary import NamedVocabulary'
 
         print >> outfile, ''
 
