@@ -184,6 +184,7 @@ ALLOWED_OPTIONS_MAP = {
     'sql-storage-support':              (1, 0,   'CLASSES',       'sql_storage_support', 'switchon'),
     'default-field-generation':         (1, 0,   'CLASSES',       'default_field_generation', 'switchon'),
     'backreferences-support':           (1, 0,   'CLASSES',       'backreferences_support', 'switchon'),
+    'relation-implementation=':         (1, 0,   'CLASSES',       'relation_implementation', 'string'),
     'customization-policy':             (1, 0,   'GENERAL',       'customization_policy','switchon'),
     'noclass':                          (1, 0,   'GENERAL',       'noclass','switchon'),
 }

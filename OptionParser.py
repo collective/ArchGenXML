@@ -511,11 +511,26 @@ group.add_option("--ape-support",
         section="STORAGE",
         metavar="yes|no"
         )
+
 group.add_option("--sql-storage-support",
         dest="sql_storage_support",
         help="FIXME",
         action="store_true",
         section="CLASSES",
+        )
+
+parser.add_option_group(group)
+
+#----------------------------------------------------------------------------
+# FIXME: Storage Options
+
+group = OptionGroup(parser, "Relations")
+
+group.add_option("--relation-implementation",
+        dest="relation_implementation",
+        help="specifies how relations should be implemented (default is basic')",
+        section="CLASSES",
+        default='basic',
         )
 
 parser.add_option_group(group)

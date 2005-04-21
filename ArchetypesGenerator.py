@@ -17,6 +17,8 @@ from StringIO import StringIO
 from shutil import copy
 from types import StringTypes
 
+from xml.dom import minidom
+
 # AGX-specific imports
 import XSDParser, XMIParser, PyParser
 from UMLProfile import UMLProfile
@@ -112,6 +114,8 @@ class ArchetypesGenerator(BaseGenerator):
         generator='generateTestcaseClass',template='tests/SetupTestcase.py')
     uml_profile.addStereoType('interface_testcase',['XMIClass'],dispatching=1,
         generator='generateTestcaseClass',template='tests/InterfaceTestcase.py')
+    uml_profile.addStereoType('relation_implementation',['XMIClass','XMIAssociation','XMIPackage'],
+        description='specifies how relations should be implemented',default='basic')
 
     infoind = 0
     force=1
@@ -921,12 +925,19 @@ class ArchetypesGenerator(BaseGenerator):
             name = rel.fromEnd.getName()
             end=rel.fromEnd
 
-            if 1 or rel.fromEnd.isNavigable:
-                #print 'generating from assoc'
-                if name in self.reservedAtts:
-                    continue
-                print >> outfile
-                print >> outfile, indent(self.getFieldStringFromAssociation(rel, element),1)
+            relation_implementation=self.getOption('relation_implementation',rel,'basic')
+            #import pdb;pdb.set_trace()
+            print 'relation_impl:',relation_implementation,rel.getName()
+            
+            if relation_implementation=='basic':
+                if 1 or rel.fromEnd.isNavigable:
+                    #print 'generating from assoc'
+                    if name in self.reservedAtts:
+                        continue
+                    print >> outfile
+                    print >> outfile, indent(self.getFieldStringFromAssociation(rel, element),1)
+                
+            
 
         if self.backreferences_support or self.getOption('backreferences_support',element,'0')=='1':
             for rel in element.getToAssociations():
@@ -1896,7 +1907,52 @@ class ArchetypesGenerator(BaseGenerator):
                 package.annotate('generatedPackages',generatedPkg)
 
         self.generateStdFiles(package)
+        
+    def generateRelations(self,package):
+        doc=minidom.Document()
+        lib=doc.createElement('RelationsLibrary')
+        doc.appendChild(lib)
+        coll=doc.createElement('RulesetCollection')
+        coll.setAttribute('id',package.getCleanName())
+        lib.appendChild(coll)
+        package.num_generated_relations=0
+        
+        for assoc in package.getAssociations(recursive=1):
+            if self.getOption('relation_implementation',assoc,'basic') != 'relations':
+                continue
+            
+            package.num_generated_relations += 1
+            ruleset=doc.createElement('Ruleset')
+            ruleset.setAttribute('id',assoc.getCleanName())
+            coll.appendChild(ruleset)
+            source=assoc.fromEnd.obj
+            target=assoc.toEnd.obj
+            
+            typeconst=doc.createElement('TypeConstraint')
+            ruleset.appendChild(typeconst)
+            typeconst.setAttribute('id','type_constraint')
+            st=doc.createElement('allowedSourceType')
+            typeconst.appendChild(st)
+            st.appendChild(doc.createTextNode(source.getCleanName()))
 
+            if not target.isInterface():
+                tt=doc.createElement('allowedTargetType')
+                typeconst.appendChild(tt)
+                tt.appendChild(doc.createTextNode(target.getCleanName()))
+            else:
+                ifconst=doc.createElement('InterfaceConstraint')
+                ruleset.appendChild(ifconst)
+                ifconst.setAttribute('id','interface_constraint')
+                ti=doc.createElement('allowedTargetInterface')
+                ifconst.appendChild(ti)
+                ti.appendChild(doc.createTextNode(target.getCleanName()))
+            
+        if package.num_generated_relations:    
+            of=self.makeFile(os.path.join(package.getFilePath(),'relations.xml'))
+            print >>of,doc.toprettyxml()
+            of.close()
+        
+        
     def generateProduct(self, root):
         dirMode=0
         outfile=None
@@ -1963,11 +2019,13 @@ class ArchetypesGenerator(BaseGenerator):
 
         package=root
 
+        self.generateRelations(root)
         self.generatePackage(root)
 
         if self.ape_support:
             self.generateApeConf(root.getFilePath(),root)
 
+        
         # write messagecatalog
         if has_i18ndude and self.build_msgcatalog:
             filepath=os.path.join(root.getFilePath(),'i18n','generated.pot')

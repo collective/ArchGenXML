@@ -13,6 +13,10 @@ __author__    = '''<dtml-var "infoheader['authorline']">'''
 __docformat__ = 'plaintext'
 __version__   = '$ Revision 0.0 $'[11:-2]
 </dtml-let>
+
+import os.path
+from App.Common import package_home
+
 from Products.CMFCore.utils import manage_addTool
 from Products.CMFCore.utils import getToolByName
 from Products.ExternalMethod.ExternalMethod import ExternalMethod
@@ -191,6 +195,16 @@ def install(self):
     </dtml-in>
     </dtml-if>
 
+    <dtml-if "package.num_generated_relations">
+
+    # configuration for Relations
+    relations_tool=getToolByName(self,'relations_library')
+    xmlpath=os.path.join(package_home(GLOBALS),'relations.xml')
+    f=open(xmlpath)
+    xml=f.read()
+    f.close()
+    relations_tool.importXML(xml)
+    </dtml-if>
 
     # try to call a custom install method
     # in 'AppInstall.py' method 'install'
@@ -210,6 +224,7 @@ def install(self):
         print >>out,'no custom install'
 
     return out.getvalue()
+
 
 def uninstall(self):
     out = StringIO()
