@@ -17,6 +17,9 @@ class TestPyModule(unittest.TestCase):
         self.emptyStringFile = '# Empty python file\n# Some more'
         self.realFile = 'tests/pythonfiles/ParserTest.py'
         self.parser = PyModule(self.realFile)
+        self.function = self.parser.functions['someMethod']
+        self.oneLineFunction = self.parser.functions['oneLineMethod']
+        self.klass = self.parser.classes['ParserTest']
         
     def testReadFile1(self):
         # Don't barf on an empty file
@@ -41,7 +44,7 @@ class TestPyModule(unittest.TestCase):
         # tests/pythonfiles/ParserTest.py contains:
         # 1 class + 1 function
         self.assertEquals(len(self.parser.classes), 1)
-        self.assertEquals(len(self.parser.functions), 1)
+        self.assertEquals(len(self.parser.functions), 2)
 
     def testFindProtectedSections(self):
         # tests/pythonfiles/ParserTest.py contains 4 protected
@@ -49,6 +52,14 @@ class TestPyModule(unittest.TestCase):
         # module-footer. 
         self.assertEquals(len(self.parser.protectedSections), 4)
 
+    # Tests for PyFunction class inside PyParser
+    def testCodeLength(self):
+        self.assertEquals(self.function.codeLength(), 2)
+        self.assertEquals(self.oneLineFunction.codeLength(), 1)
+
+    def testExtractCode(self):
+        # TODO
+        pass
 
 if __name__ == '__main__':
     unittest.main()

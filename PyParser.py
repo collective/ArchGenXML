@@ -10,31 +10,6 @@ import types
 PROTECTED_BEGIN = '##code-section'
 PROTECTED_END = '##/code-section'
 
-def codeLength(l):
-    """ calculates the length of a method using the code.co_lnotab """
-    res=0
-    for i in range(0,len(l),2):
-        res += ord(l[i+1])
-
-    return res+1
-
-def extractCode(arr,start,lnotab):
-    """ extracts method code from an array containing the code lines,
-        given a start (zero based) and a lnotab """
-    snip=[]
-    length = 0
-
-    for i in range(0,len(lnotab),2):
-        cl = ord(lnotab[i+1])
-        if cl != 255:
-            length += cl
-    # and now take into account the trailing backslashes
-    while arr[start+length].strip() and arr[start+length].strip()[-1] == '\\':
-            length += 1
-    snip = arr[start:start+length+1]
-    return '\n'.join(snip)
-
-        
 class PyModule:
     """ This is the module being called directly from the rest of ArchGenXML
 
@@ -211,8 +186,7 @@ class PyFunction(PyCodeElement):
     def buildMethod(self):
         self.name = self.code.co_name
         start = self.code.co_firstlineno
-        length = codeLength(self.code.co_lnotab)
-        self.src = extractCode(self.module.splittedSource, start-1,self.code.co_lnotab)
+        self.src = self.extractCode(self.module.splittedSource, start-1)
 
     def printit(self):
         print '%s:' % self.typename, self.code.co_name
@@ -223,7 +197,30 @@ class PyFunction(PyCodeElement):
     def getProtectedSection(self, section):
         return self.module.getProtectedSection(section)
 
+    def codeLength(self):
+        """ Calculate the length of a method using the code.co_lnotab
+        """
+        res=0
+        for i in range(0, len(self.code.co_lnotab),2):
+            cl = ord(self.code.co_lnotab[i+1])
+            # I don't know what that next test does
+            if cl != 255:
+                res += cl
+        return res+1
 
+    def extractCode(self, arr, start):
+        """ Extracts method code from an array containing the code lines,
+        given a start (zero based) and a lnotab
+        """
+        snip=[]
+        length = self.codeLength()
+        # and now take into account the trailing backslashes
+        while arr[start+length].strip() and arr[start+length].strip()[-1] == '\\':
+                length += 1
+        snip = arr[start:start+length+1]
+        return '\n'.join(snip)
+
+        
 class PyMethod(PyFunction):
     typename = 'method'
         

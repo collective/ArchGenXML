@@ -55,6 +55,9 @@ someTest = 'Some value'
 
 def someMethod():
     pass
+
+def oneLineMethod(): pass
+
 ##/code-section after-schema
 
 class ParserTest(BaseContent):
