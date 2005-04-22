@@ -172,19 +172,19 @@ TEMPL_CONSTR_TOOL="""
 
 TEMPLATE_HEADER = """\
 from AccessControl import ClassSecurityInfo
-from Products.Archetypes.public import *
+from Products.Archetypes.atapi import *
 """
 
 TEMPLATE_HEADER_I18N_I18N_AT = """\
 from AccessControl import ClassSecurityInfo
-from Products.Archetypes.public import *
+from Products.Archetypes.atapi import *
 from Products.I18NArchetypes.public import *
 
     """
 
 TEMPLATE_HEADER_I18N_LINGUAPLONE = """\
 from AccessControl import ClassSecurityInfo
-from Products.Archetypes.public import *
+from Products.Archetypes.atapi import *
 try:
     from Products.LinguaPlone.public import *
 except ImportError:
