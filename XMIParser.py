@@ -1133,7 +1133,9 @@ class XMIPackage(XMIElement, StateMachineContainer):
         if not ownedElement:
             print 'warning: empty package:',self.getName()
             return
+
         classes=getElementsByTagName(ownedElement,XMI.INTERFACE)
+
         for c in classes:
             xc=XMIInterface(c,package=self)
             if xc.getName():
@@ -1144,8 +1146,8 @@ class XMIPackage(XMIElement, StateMachineContainer):
             p.buildInterfaces()
 
     def buildClassesAndInterfaces(self):
-        self.buildClasses()
         self.buildInterfaces()
+        self.buildClasses()
 
     def isRoot(self):
         return self.isroot or self.hasStereoType(['product','zopeproduct','Product','ZopeProduct'])

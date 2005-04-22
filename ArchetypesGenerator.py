@@ -1946,7 +1946,20 @@ class ArchetypesGenerator(BaseGenerator):
                 ti=doc.createElement('allowedTargetInterface')
                 ifconst.appendChild(ti)
                 ti.appendChild(doc.createTextNode(target.getCleanName()))
+                
             
+            if getattr(assoc,'isAssociationClass',0):
+                contref=doc.createElement('ContentReference')
+                ruleset.appendChild(contref)
+                contref.setAttribute('id','content_reference')
+                pt=doc.createElement('portalType')
+                contref.appendChild(pt)
+                pt.appendChild(doc.createTextNode(assoc.getCleanName()))
+
+                pt=doc.createElement('shareWithInverse')
+                contref.appendChild(pt)
+                pt.appendChild(doc.createTextNode('1'))
+                
         if package.num_generated_relations:    
             of=self.makeFile(os.path.join(package.getFilePath(),'relations.xml'))
             print >>of,doc.toprettyxml()
