@@ -772,11 +772,11 @@ class ArchetypesGenerator(BaseGenerator):
             if not 'name' in vocaboptions.keys():
                 vocaboptions['name'] = '%s_%s' % (classelement.getCleanName(), \
                                                   attr.getName())
-            if not 'item_type' in vocaboptions.keys():
-                vocaboptions['item_type'] = 'SimpleVocabularyItem'
+            if not 'term_type' in vocaboptions.keys():
+                vocaboptions['term_type'] = 'SimpleVocabularyItem'
 
-            if not 'container_type' in vocaboptions.keys():
-                vocaboptions['container_type'] = 'SimpleVocabulary'
+            if not 'vocabulary_type' in vocaboptions.keys():
+                vocaboptions['vocabulary_type'] = 'SimpleVocabulary'
 
             map.update( {
                 'vocabulary':'NamedVocabulary("""%s""")' % vocaboptions['name']
@@ -1210,6 +1210,9 @@ class ArchetypesGenerator(BaseGenerator):
             if element.hasStereoType('ordered'):
                 baseclass ='OrderedBaseFolder'
                 baseschema='OrderedBaseFolderSchema'
+            elif element.hasStereoType(['large','btree']):
+                baseclass ='BaseBTreeFolder'
+                baseschema='BaseFolderSchema'
             else:
                 baseclass ='BaseFolder'
                 baseschema='BaseFolderSchema'

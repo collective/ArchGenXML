@@ -178,9 +178,9 @@ class BaseGenerator:
 
         # ATVocabularyManager imports
         if element.hasStereoType(self.vocabulary_item_stereotype):
-            print >> outfile, 'from Products.ATVocabularyManager.VocabularyTool import registerVocabularyItem'
+            print >> outfile, 'from Products.ATVocabularyManager.tools import registerVocabularyTerm'
         if element.hasStereoType(self.vocabulary_container_stereotype):
-            print >> outfile, 'from Products.ATVocabularyManager.VocabularyTool import registerVocabulary'
+            print >> outfile, 'from Products.ATVocabularyManager.tools import registerVocabulary'
         if element.hasAttributeWithTaggedValue('vocabulary:type','ATVocabularyManager'):
             print >> outfile, 'from Products.ATVocabularyManager.namedvocabulary import NamedVocabulary'
 
