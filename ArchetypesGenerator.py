@@ -1927,6 +1927,7 @@ class ArchetypesGenerator(BaseGenerator):
             package.num_generated_relations += 1
             ruleset=doc.createElement('Ruleset')
             ruleset.setAttribute('id',assoc.getCleanName())
+            ruleset.setAttribute('uid',assoc.getId())
             coll.appendChild(ruleset)
             source=assoc.fromEnd.obj
             target=assoc.toEnd.obj
