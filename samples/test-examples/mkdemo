@@ -1,13 +1,13 @@
-python ../ArchGenXML.py outline.xsd outline_xsd
+python ../../ArchGenXML.py outline.xsd outline_xsd
 echo " successfully generated Archetypes product outline_xsd from the XMLSchema 'outline.xsd' " 
 
-python ../ArchGenXML.py outline_od.xmi outline_od
+python ../../ArchGenXML.py outline_od.xmi outline_od
 echo " successfully generated Archetypes product outline_od from the ObjectDomain XMI outline_od.xmi " 
 
-python ../ArchGenXML.py outline.zargo outline_argo
+python ../../ArchGenXML.py outline.zargo outline_argo
 echo " successfully generated Archetypes product outline_zargo from the ArgoUML file outline.zargo (XMI 1.0) " 
 
-python ../ArchGenXML.py outline_poseidon.zargo outline_poseidon
+python ../../ArchGenXML.py outline_poseidon.zargo outline_poseidon
 echo " successfully generated Archetypes product outline_poseidon from the ArgoUML (Poseidon) file outline_poseidon.zargo (XMI 1.2) " 
 
 echo 'copy the generated products into your Products dir and use it!'
