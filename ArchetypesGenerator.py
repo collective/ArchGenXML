@@ -1106,8 +1106,10 @@ class ArchetypesGenerator(BaseGenerator):
             parent=element.getGenParents()[0]
         else:
             parent=None
+        # protected sections
+        # self.generateProtectedSection(outfile,element,'module-header')
 
-        return BaseGenerator.generatePythonClass(self,element,template,parent=parent)
+        return BaseGenerator.generatePythonClass(self, element, template, parent=parent)
 
 
     def generateArchetypesClass(self, element,**kw):
