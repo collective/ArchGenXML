@@ -59,7 +59,11 @@ class TestPyModule(unittest.TestCase):
 
     def testExtractCode(self):
         # TODO
-        pass
+        desired = 'def oneLineMethod(): pass\n'
+        self.assertEquals(self.oneLineFunction.extractCode(), desired)
+        desired2 = 'def someMethod():\n    pass\n'
+        self.assertEquals(self.function.extractCode(), desired2)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -184,9 +184,12 @@ class PyFunction(PyCodeElement):
         self.buildMethod()
 
     def buildMethod(self):
+        """ Prepare the method for subsequent inclusion in the
+        generated class
+        """
         self.name = self.code.co_name
-        start = self.code.co_firstlineno
-        self.src = self.extractCode(self.module.splittedSource, start-1)
+        self.start = self.code.co_firstlineno - 1
+        self.src = self.extractCode()
 
     def printit(self):
         print '%s:' % self.typename, self.code.co_name
@@ -208,16 +211,18 @@ class PyFunction(PyCodeElement):
                 res += cl
         return res+1
 
-    def extractCode(self, arr, start):
-        """ Extracts method code from an array containing the code lines,
-        given a start (zero based) and a lnotab
+    def extractCode(self):
+        """ Return '\n'-string containing the method code
         """
-        snip=[]
+        snip = []
         length = self.codeLength()
+        start = self.start
+        codelist = self.module.splittedSource
         # and now take into account the trailing backslashes
-        while arr[start+length].strip() and arr[start+length].strip()[-1] == '\\':
-                length += 1
-        snip = arr[start:start+length+1]
+        while (codelist[start+length].strip() and 
+               codelist[start+length].strip()[-1] == '\\'):
+            length += 1
+        snip = codelist[start:start+length+1]
         return '\n'.join(snip)
 
         
