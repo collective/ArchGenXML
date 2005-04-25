@@ -148,7 +148,7 @@ class BaseGenerator:
                     p.getName())
 
         assocs = element.getFromAssociations()
-        hasAssocClass=0
+        element.hasAssocClass=0
         for p in assocs:
             if getattr(p,'isAssociationClass',0):
                 # get import_from and add it to importLines
@@ -157,34 +157,19 @@ class BaseGenerator:
                 if module:
                     importLine = 'from %s import %s' % (module, p.getName())
                     importLines.append(importLine)
-                hasAssocClass=1
+                element.hasAssocClass=1
                 break
-
+        
         if self.backreferences_support:
             bassocs = element.getToAssociations()
             for p in bassocs:
                 if getattr(p,'isAssociationClass',0):
-                    hasAssocClass=1
+                    element.hasAssocClass=1
                     break
 
-        if hasAssocClass:
+        if element.hasAssocClass:
             for line in importLines:
                 print >> outfile, line
-
-            print >> outfile,'from Products.Archetypes.ReferenceEngine import ContentReferenceCreator'
-
-        if element.hasStereoType(self.variable_schema):
-            print >> outfile,'from Products.Archetypes.VariableSchemaSupport import VariableSchemaSupport'
-
-        # ATVocabularyManager imports
-        if element.hasStereoType(self.vocabulary_item_stereotype):
-            print >> outfile, 'from Products.ATVocabularyManager.tools import registerVocabularyTerm'
-        if element.hasStereoType(self.vocabulary_container_stereotype):
-            print >> outfile, 'from Products.ATVocabularyManager.tools import registerVocabulary'
-        if element.hasAttributeWithTaggedValue('vocabulary:type','ATVocabularyManager'):
-            print >> outfile, 'from Products.ATVocabularyManager.namedvocabulary import NamedVocabulary'
-
-        print >> outfile, ''
 
         return outfile.getvalue()
 

@@ -295,6 +295,44 @@ class ArchetypesGenerator(BaseGenerator):
         return res
 
 
+    def generateAdditionalImports(self, element):
+        outfile=StringIO()
+
+        if element.hasAssocClass:
+            print >> outfile,'from Products.Archetypes.ReferenceEngine import ContentReferenceCreator'
+            
+        useRelations=0
+        
+        #check wether we have to import Relation's Relation Field
+        for rel in element.getFromAssociations():
+            if self.getOption('relation_implementation',rel,'basic'):
+                useRelations=1
+
+        for rel in element.getToAssociations():
+            if self.getOption('relation_implementation',rel,'basic') == 'relations' and \
+                (rel.getTaggedValue('inverse_relation_name') or rel.fromEnd.isNavigable) :
+                useRelations=1
+
+        if useRelations:
+            print >> outfile,'from Products.Relations.field import RelationField'
+                
+
+        if element.hasStereoType(self.variable_schema):
+            print >> outfile,'from Products.Archetypes.VariableSchemaSupport import VariableSchemaSupport'
+
+        # ATVocabularyManager imports
+        if element.hasStereoType(self.vocabulary_item_stereotype):
+            print >> outfile, 'from Products.ATVocabularyManager.tools import registerVocabularyTerm'
+        if element.hasStereoType(self.vocabulary_container_stereotype):
+            print >> outfile, 'from Products.ATVocabularyManager.tools import registerVocabulary'
+        if element.hasAttributeWithTaggedValue('vocabulary:type','ATVocabularyManager'):
+            print >> outfile, 'from Products.ATVocabularyManager.namedvocabulary import NamedVocabulary'
+
+        print >> outfile, ''
+        return outfile.getvalue()
+        
+
+
     def generateModifyFti(self,element):
         hide_actions=element.getTaggedValue('hide_actions', '').strip()
         if not hide_actions:
@@ -467,6 +505,10 @@ class ArchetypesGenerator(BaseGenerator):
         },
         'reference': {
             'field': 'ReferenceField',
+            'map': {},
+        },
+        'relation': {
+            'field': 'RelationField',
             'map': {},
         },
         'backreference': {
@@ -813,14 +855,10 @@ class ArchetypesGenerator(BaseGenerator):
     def getFieldStringFromAssociation(self, rel, classelement):
         ''' gets the schema field code '''
         multiValued=0
-        map=self.typeMap['reference']['map'].copy()
         obj=rel.toEnd.obj
         name=rel.toEnd.getName()
         relname=rel.getName()
         #field=rel.getTaggedValue('reference_field') or self.typeMap['reference']['field'] #the relation can override the field
-        field=rel.getTaggedValue('reference_field') or \
-              rel.toEnd.getTaggedValue('reference_field') or \
-              self.typeMap['reference']['field'] #the relation can override the field
 
         if obj.isAbstract():
             allowed_types= tuple(obj.getGenChildrenNames())
@@ -832,25 +870,43 @@ class ArchetypesGenerator(BaseGenerator):
         if name == None:
             name=obj.getName()+'_ref'
 
-        map.update({
-            'allowed_types': repr(allowed_types),
-            'multiValued':   multiValued,
-            'relationship':  "'%s'" % relname,
-            }
-        )
-        map.update(self.getFieldAttributes(rel.toEnd))
+        if self.getOption('relation_implementation',rel,'basic') == 'relations':
+            field=rel.getTaggedValue('reference_field') or \
+                  rel.toEnd.getTaggedValue('reference_field') or \
+                  self.typeMap['relation']['field'] #the relation can override the field
 
-        map.update( {'widget':self.getWidget('Reference', rel.toEnd, name, classelement)} )
-
-        if getattr(rel,'isAssociationClass',0):
-            #associationclasses with stereotype "stub" and tagged value "import_from" will not use ContentReferenceCreator
-
-            if rel.hasStereoType(self.stub_stereotypes) :
-                map.update({'referenceClass':"%s" % rel.getName()})
-                # do not forget the import!!!
-
-            else:
-                map.update({'referenceClass':"ContentReferenceCreator('%s')" % rel.getName()})
+            map=self.typeMap['relation']['map'].copy()
+            map.update({
+                'multiValued':   multiValued,
+                'relationship':  "'%s'" % relname,
+                }
+            )
+            map.update(self.getFieldAttributes(rel.toEnd))
+            map.update( {'widget':self.getWidget('Reference', rel.toEnd, name, classelement)} )
+        else:
+            field=rel.getTaggedValue('reference_field') or \
+                  rel.toEnd.getTaggedValue('reference_field') or \
+                  self.typeMap['reference']['field'] #the relation can override the field
+            map=self.typeMap['reference']['map'].copy()
+            map.update({
+                'allowed_types': repr(allowed_types),
+                'multiValued':   multiValued,
+                'relationship':  "'%s'" % relname,
+                }
+            )
+            map.update(self.getFieldAttributes(rel.toEnd))
+    
+            map.update( {'widget':self.getWidget('Reference', rel.toEnd, name, classelement)} )
+    
+            if getattr(rel,'isAssociationClass',0):
+                #associationclasses with stereotype "stub" and tagged value "import_from" will not use ContentReferenceCreator
+    
+                if rel.hasStereoType(self.stub_stereotypes) :
+                    map.update({'referenceClass':"%s" % rel.getName()})
+                    # do not forget the import!!!
+    
+                else:
+                    map.update({'referenceClass':"ContentReferenceCreator('%s')" % rel.getName()})
 
 
         doc=rel.getDocumentation(striphtml=self.striphtml)
@@ -860,11 +916,9 @@ class ArchetypesGenerator(BaseGenerator):
     def getFieldStringFromBackAssociation(self, rel, classelement):
         ''' gets the schema field code '''
         multiValued=0
-        map=self.typeMap['backreference']['map'].copy()
         obj=rel.fromEnd.obj
         name=rel.fromEnd.getName()
         relname=rel.getName()
-        field=rel.getTaggedValue('reference_field') or rel.toEnd.getTaggedValue('back_reference_field') or self.typeMap['backreference']['field'] #the relation can override the field
 
         if obj.isAbstract():
             allowed_types= tuple(obj.getGenChildrenNames())
@@ -876,17 +930,36 @@ class ArchetypesGenerator(BaseGenerator):
         if name == None:
             name=obj.getName()+'_ref'
 
-        map.update({
-            'allowed_types': repr(allowed_types),
-            'multiValued':   multiValued,
-            'relationship':  "'%s'" % relname,
-            }
-        )
-        map.update(self.getFieldAttributes(rel.fromEnd))
-        map.update( {'widget':self.getWidget('BackReference', rel.fromEnd, name, classelement)} )
+        if self.getOption('relation_implementation',rel,'basic') == 'relations'\
+              and (rel.fromEnd.isNavigable or rel.getTaggedValue('inverse_reference_name')):
+            field=rel.getTaggedValue('relation_field') or self.typeMap['relation']['field'] #the relation can override the field
+            map=self.typeMap['relation']['map'].copy()
+            backrelname=rel.getTaggedValue('inverse_relation_name') or relname+'_inverse'
 
-        if getattr(rel,'isAssociationClass',0):
-            map.update({'referenceClass':"ContentReferenceCreator('%s')" % rel.getName()})
+            map.update({
+                'multiValued':   multiValued,
+                'relationship':  "'%s'" % backrelname,
+                }
+            )
+            map.update(self.getFieldAttributes(rel.fromEnd))
+            map.update( {'widget':self.getWidget('Reference', rel.fromEnd, name, classelement)} )
+        else:
+            field=rel.getTaggedValue('reference_field') or rel.toEnd.getTaggedValue('back_reference_field') or self.typeMap['backreference']['field'] #the relation can override the field
+            map=self.typeMap['backreference']['map'].copy()
+            if rel.fromEnd.isNavigable and (self.backreferences_support or self.getOption('backreferences_support',element,'0')=='1'):
+                map.update({
+                    'allowed_types': repr(allowed_types),
+                    'multiValued':   multiValued,
+                    'relationship':  "'%s'" % relname,
+                    }
+                )
+                map.update(self.getFieldAttributes(rel.fromEnd))
+                map.update( {'widget':self.getWidget('BackReference', rel.fromEnd, name, classelement)} )
+        
+                if getattr(rel,'isAssociationClass',0):
+                    map.update({'referenceClass':"ContentReferenceCreator('%s')" % rel.getName()})
+            else:
+                return None
 
         doc=rel.getDocumentation(striphtml=self.striphtml)
         res=self.getFieldFormatted(name,field,map,doc)
@@ -925,30 +998,25 @@ class ArchetypesGenerator(BaseGenerator):
             name = rel.fromEnd.getName()
             end=rel.fromEnd
 
-            relation_implementation=self.getOption('relation_implementation',rel,'basic')
-            #import pdb;pdb.set_trace()
-            print 'relation_impl:',relation_implementation,rel.getName()
-            
-            if relation_implementation=='basic':
-                if 1 or rel.fromEnd.isNavigable:
-                    #print 'generating from assoc'
-                    if name in self.reservedAtts:
-                        continue
-                    print >> outfile
-                    print >> outfile, indent(self.getFieldStringFromAssociation(rel, element),1)
+            #print 'generating from assoc'
+            if name in self.reservedAtts:
+                continue
+            print >> outfile
+            print >> outfile, indent(self.getFieldStringFromAssociation(rel, element),1)
+
                 
-            
+        #Back References
+        for rel in element.getToAssociations():
+            name = rel.fromEnd.getName()
 
-        if self.backreferences_support or self.getOption('backreferences_support',element,'0')=='1':
-            for rel in element.getToAssociations():
-                name = rel.fromEnd.getName()
+            #print "backreference"
+            if name in self.reservedAtts:
+                continue
 
-                if rel.fromEnd.isNavigable:
-                    #print "backreference"
-                    if name in self.reservedAtts:
-                        continue
-                    print >> outfile
-                    print >> outfile, indent(self.getFieldStringFromBackAssociation(rel, element),1)
+            fc=self.getFieldStringFromBackAssociation(rel, element)
+            if fc:
+                print >> outfile
+                print >> outfile, indent(fc,1)
 
 
         print >> outfile,'),'
@@ -1129,6 +1197,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         parentnames = [p.getCleanName() for p in element.getGenParents()]
         print >>outfile,self.generateDependentImports(element)
+        print >>outfile,self.generateAdditionalImports(element)
 
         if self.detailled_creation_permissions:
             creation_permission = "'Add %s Content'" % element.getCleanName()
@@ -1425,6 +1494,7 @@ class ArchetypesGenerator(BaseGenerator):
         parentnames = [p.getCleanName() for p in element.getGenParents()]
 
         print >>outfile,self.generateDependentImports(element)
+        print >>outfile,self.generateAdditionalImports(element)
 
         print >> outfile, IMPORT_INTERFACE
 
@@ -2012,9 +2082,11 @@ class ArchetypesGenerator(BaseGenerator):
             source=assoc.fromEnd.obj
             target=assoc.toEnd.obj
             
-            targetcard=assoc.toEnd.mult
-            sourcecard=assoc.fromEnd.mult
-            print 'relation:',assoc.getName(),'target cardinality:',targetcard
+            targetcard=list(assoc.toEnd.mult)
+            sourcecard=list(assoc.fromEnd.mult)
+            sourcecard[0]=None #temporary pragmatic fix
+            targetcard[0]=None #temporary pragmatic fix
+            print 'relation:',assoc.getName(),'target cardinality:',targetcard,'sourcecard:',sourcecard
             sourcetype=None
             targettype=None
             sourceinterface=None
@@ -2030,7 +2102,11 @@ class ArchetypesGenerator(BaseGenerator):
             else:
                 targettype=target.getCleanName()    
                 
-            inverse_relation_name=assoc.getTaggedValue('inverse_relation_name',None)
+            
+            inverse_relation_name=assoc.getTaggedValue('inverse_relation_name',None) 
+            if not inverse_relation_name and assoc.fromEnd.isNavigable:
+                inverse_relation_name=assoc.getCleanName()+'_inverse'
+                
                 
             self.generateRelation(doc, coll,
                 assoc.getCleanName(), 
