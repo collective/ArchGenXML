@@ -227,12 +227,10 @@ class BaseGenerator:
 
         return outfile.getvalue()
 
-    def getMethodsToGenerate(self,element):
-
-
-        manual_methods=[]
-        generatedMethods=[]
-        allmethnames=[m.getName() for m in element.getMethodDefs(recursive=1)]
+    def getMethodsToGenerate(self, element):
+        manual_methods = []
+        generatedMethods = []
+        allmethnames = [m.getName() for m in element.getMethodDefs(recursive=1)]
 
         for m in element.getMethodDefs():
             allmethnames.append(m.getName())
@@ -258,8 +256,6 @@ class BaseGenerator:
             cl=self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name,None)
             if cl:
                 manual_methods=[mt for mt in cl.methods.values() if mt.name not in method_names]
-
-
 
         return generatedMethods, manual_methods
 

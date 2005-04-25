@@ -1086,7 +1086,6 @@ class ArchetypesGenerator(BaseGenerator):
 
 
     def generateBaseTestcaseClass(self,element,template):
-
         #write runalltests.py and framework.py
         runalltests=readTemplate('tests/runalltests.py')
         framework=readTemplate('tests/framework.py')
@@ -1102,7 +1101,7 @@ class ArchetypesGenerator(BaseGenerator):
         return self.generateTestcaseClass(element,template)
 
     def generateTestcaseClass(self,element,template):
-
+        print indent('Generating testcase: '+element.getName(),self.infoind)
         if element.getGenParents():
             parent=element.getGenParents()[0]
         else:
@@ -1112,7 +1111,7 @@ class ArchetypesGenerator(BaseGenerator):
 
 
     def generateArchetypesClass(self, element,**kw):
-        print indent('generating class: '+element.getName(),self.infoind)
+        print indent('Generating class: '+element.getName(),self.infoind)
 
 ##        if element.hasStereoType(self.python_stereotype):
 ##            return BaseGenerator.generateClass(self,element)
@@ -1843,20 +1842,20 @@ class ArchetypesGenerator(BaseGenerator):
 
             module=element.getModuleName()
             package.generatedModules.append(element)
-            outfilepath=os.path.join(package.getFilePath(),module+'.py')
+            outfilepath=os.path.join(package.getFilePath(), module+'.py')
             #print 'writing class:',outfilepath
 
             if self.method_preservation:
                 try:
                     #print 'existing sources found for:',element.getName(),outfilepath
-                    mod=PyParser.PyModule(os.path.join(self.targetRoot,outfilepath))
+                    mod=PyParser.PyModule(os.path.join(self.targetRoot, outfilepath))
                     #mod.printit()
                     self.parsed_sources.append(mod)
                     for c in mod.classes.values():
                         #print 'parse module:',c.name
                         self.parsed_class_sources[package.getFilePath()+'/'+c.name]=c
                 except IOError:
-                    #print 'no source found'
+                    # print 'no source found at %s' % os.path.join(self.targetRoot, outfilepath)
                     pass
                 except :
                     print
