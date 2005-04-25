@@ -958,10 +958,8 @@ class ArchetypesGenerator(BaseGenerator):
 
         print >> outfile,')\n'
 
-    def generateMethods(self,outfile,element,mode='class'):
-
+    def generateMethods(self, outfile, element, mode='class'):
         print >> outfile
-
         print >> outfile,'    #Methods'
 
         generatedMethods=[]
@@ -1002,12 +1000,11 @@ class ArchetypesGenerator(BaseGenerator):
                     print >> outfile
 
 
-    def generateMethod(self,outfile,m,klass,mode='class'):
+    def generateMethod(self, outfile, m, klass, mode='class'):
         #ignore actions and views here because they are
         #generated separately
         if m.hasStereoType(['action','view','form','portlet_view']):
             return
-
 
         paramstr=''
         params=m.getParamExpressions()
@@ -1017,7 +1014,6 @@ class ArchetypesGenerator(BaseGenerator):
         print >> outfile
 
         if mode == 'class':
-
             # [optilude] Added check for permission:mode - public (default), private or protected
             # [jensens]  You can also use the visibility value from UML (implemented for 1.2 only!)
             # tgv overrides UML-mode!
@@ -1102,8 +1098,6 @@ class ArchetypesGenerator(BaseGenerator):
         of=self.makeFile(os.path.join(element.getPackage().getFilePath(),'framework.py'))
         of.write(framework)
         of.close()
-
-
 
         return self.generateTestcaseClass(element,template)
 
