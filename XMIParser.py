@@ -541,6 +541,7 @@ class XMI1_2 (XMI1_1):
         else:
             mult_max=-1
 
+        #import pdb;pdb.set_trace()
         return (mult_min,mult_max)
 
     def getTaggedValue(self,el):
@@ -1068,7 +1069,7 @@ class XMIPackage(XMIElement, StateMachineContainer):
         return res
 
     def getAssociations(self,recursive=0):
-        classes=self.getClasses(recursive=recursive)
+        classes=self.getClassesAndInterfaces(recursive=recursive)
         res=[]
         for c in classes:
             res.extend(c.getFromAssociations())
@@ -1083,8 +1084,21 @@ class XMIPackage(XMIElement, StateMachineContainer):
         self.interfaces.append(cl)
         cl.package=self
 
-    def getInterfaces(self):
-        return self.interfaces
+    def getInterfaces(self, recursive=0):
+
+        res=[c for c in self.classes]
+        res=self.interfaces
+        
+        if recursive:
+            res=list(res)
+            for p in self.getPackages():
+                res.extend(p.getClasses(recursive=1))
+                
+        return res
+    
+    def getClassesAndInterfaces(self,recursive=0):
+        return self.getClasses(recursive=recursive)+ \
+            self.getInterfaces(recursive=recursive)
 
     def getChildren(self):
         return self.children+self.getClasses() + self.getPackages() + self.getInterfaces()

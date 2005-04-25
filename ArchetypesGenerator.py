@@ -1905,6 +1905,96 @@ class ArchetypesGenerator(BaseGenerator):
 
         self.generateStdFiles(package)
         
+    def generateRelation(self, doc, collection, relname, relid, 
+            sourcetype=None, targettype=None,
+            sourceinterface=None,targetinterface=None,
+            sourcecardinality=(None,None),
+            targetcardinality=(None,None),
+            assocclassname=None,
+            inverse_relation_id=None,
+            ):
+                
+        ruleset=doc.createElement('Ruleset')
+        ruleset.setAttribute('id',relname)
+        ruleset.setAttribute('uid',relid)
+        collection.appendChild(ruleset)
+
+        #type and interface constraints
+        if sourcetype or targettype:
+            typeconst=doc.createElement('TypeConstraint')
+            typeconst.setAttribute('id','type_constraint')
+            ruleset.appendChild(typeconst)
+
+        if sourceinterface or targetinterface:
+            ifconst=doc.createElement('InterfaceConstraint')
+            ifconst.setAttribute('id','interface_constraint')
+            ruleset.appendChild(ifconst)
+
+
+        if sourcetype:
+            el=doc.createElement('allowedSourceType')
+            typeconst.appendChild(el)
+            el.appendChild(doc.createTextNode(sourcetype))
+        if sourceinterface:
+            el=doc.createElement('allowedSourceInterface')
+            ifconst.appendChild(el)
+            el.appendChild(doc.createTextNode(sourceinterface))
+
+        if targettype:
+            el=doc.createElement('allowedTargetType')
+            typeconst.appendChild(el)
+            el.appendChild(doc.createTextNode(targettype))
+        if targetinterface:
+            ifconst.setAttribute('id','interface_constraint')
+            el=doc.createElement('allowedTargetInterface')
+            ifconst.appendChild(el)
+            el.appendChild(doc.createTextNode(targetinterface))
+            
+
+        #association constraint
+        if assocclassname:
+            contref=doc.createElement('ContentReference')
+            ruleset.appendChild(contref)
+            contref.setAttribute('id','content_reference')
+            pt=doc.createElement('portalType')
+            contref.appendChild(pt)
+            pt.appendChild(doc.createTextNode(assocclassname))
+
+            pt=doc.createElement('shareWithInverse')
+            contref.appendChild(pt)
+            pt.appendChild(doc.createTextNode('1'))
+        
+        #cardinality
+        targetcardinality=list(targetcardinality)
+        if targetcardinality[0]==-1:targetcardinality[0]=None
+        if targetcardinality[1]==-1:targetcardinality[1]=None
+
+        if targetcardinality != (None,None):
+            const=doc.createElement('CardinalityConstraint')
+            ruleset.appendChild(const)
+            const.setAttribute('id','cardinality')
+            if targetcardinality[0]:
+                el=doc.createElement('minTargetCardinality')
+                const.appendChild(el)
+                el.appendChild(doc.createTextNode(str(targetcardinality[0])))
+            if targetcardinality[1]:
+                el=doc.createElement('maxTargetCardinality')
+                const.appendChild(el)
+                el.appendChild(doc.createTextNode(str(targetcardinality[1])))
+            
+            
+        #create the inverse relation
+        if inverse_relation_id:
+            const=doc.createElement('InverseImplicator')
+            ruleset.appendChild(const)
+            const.setAttribute('id','inverse_relation')
+            el=doc.createElement('inverseRuleset')
+            const.appendChild(el)
+            el.setAttribute('uidref',inverse_relation_id)
+            
+        
+        return ruleset
+    
     def generateRelations(self,package):
         doc=minidom.Document()
         lib=doc.createElement('RelationsLibrary')
@@ -1918,45 +2008,60 @@ class ArchetypesGenerator(BaseGenerator):
             if self.getOption('relation_implementation',assoc,'basic') != 'relations':
                 continue
             
-            package.num_generated_relations += 1
-            ruleset=doc.createElement('Ruleset')
-            ruleset.setAttribute('id',assoc.getCleanName())
-            ruleset.setAttribute('uid',assoc.getId())
-            coll.appendChild(ruleset)
             source=assoc.fromEnd.obj
             target=assoc.toEnd.obj
             
-            typeconst=doc.createElement('TypeConstraint')
-            ruleset.appendChild(typeconst)
-            typeconst.setAttribute('id','type_constraint')
-            st=doc.createElement('allowedSourceType')
-            typeconst.appendChild(st)
-            st.appendChild(doc.createTextNode(source.getCleanName()))
+            targetcard=assoc.toEnd.mult
+            sourcecard=assoc.fromEnd.mult
+            print 'relation:',assoc.getName(),'target cardinality:',targetcard
+            sourcetype=None
+            targettype=None
+            sourceinterface=None
+            targetinterface=None
 
-            if not target.isInterface():
-                tt=doc.createElement('allowedTargetType')
-                typeconst.appendChild(tt)
-                tt.appendChild(doc.createTextNode(target.getCleanName()))
+            if source.isInterface():
+                sourceinterface=source.getCleanName()
             else:
-                ifconst=doc.createElement('InterfaceConstraint')
-                ruleset.appendChild(ifconst)
-                ifconst.setAttribute('id','interface_constraint')
-                ti=doc.createElement('allowedTargetInterface')
-                ifconst.appendChild(ti)
-                ti.appendChild(doc.createTextNode(target.getCleanName()))
+                sourcetype=source.getCleanName()
                 
-            
-            if getattr(assoc,'isAssociationClass',0):
-                contref=doc.createElement('ContentReference')
-                ruleset.appendChild(contref)
-                contref.setAttribute('id','content_reference')
-                pt=doc.createElement('portalType')
-                contref.appendChild(pt)
-                pt.appendChild(doc.createTextNode(assoc.getCleanName()))
+            if target.isInterface():
+                targetinterface=target.getCleanName()
+            else:
+                targettype=target.getCleanName()    
+                
+            inverse_relation_name=assoc.getTaggedValue('inverse_relation_name',None)
+                
+            self.generateRelation(doc, coll,
+                assoc.getCleanName(), 
+                assoc.getId(),
+                sourcetype=sourcetype,
+                targettype=targettype,
+                sourceinterface=sourceinterface,
+                targetinterface=targetinterface,
+                sourcecardinality=sourcecard,
+                targetcardinality=targetcard,
 
-                pt=doc.createElement('shareWithInverse')
-                contref.appendChild(pt)
-                pt.appendChild(doc.createTextNode('1'))
+                assocclassname=getattr(assoc,'isAssociationClass',0) and assoc.getCleanName(),
+                inverse_relation_id=inverse_relation_name,
+                )
+                
+            #create the counterrelation
+            if inverse_relation_name:
+                self.generateRelation(doc, coll,
+                    inverse_relation_name, 
+                    inverse_relation_name,
+                    sourcetype=targettype,
+                    targettype=sourcetype,
+                    sourceinterface=targetinterface,
+                    targetinterface=sourceinterface,
+                    sourcecardinality=targetcard,
+                    targetcardinality=sourcecard,
+    
+                    assocclassname=getattr(assoc,'isAssociationClass',0) and assoc.getCleanName(),
+                    inverse_relation_id=assoc.getId()
+                    )
+                
+            package.num_generated_relations += 1
                 
         if package.num_generated_relations:    
             of=self.makeFile(os.path.join(package.getFilePath(),'relations.xml'))
