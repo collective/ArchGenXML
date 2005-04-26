@@ -67,16 +67,17 @@ def install(self):
 <dtml-let hide_folder_tabs="[cn.getName() for cn in generator.getGeneratedClasses(package) if cn.getTaggedValue('hide_folder_tabs', False)]">
 <dtml-if "hide_folder_tabs">
     #register folderish classes in use_folder_contents
-    props=getToolByName(self,'portal_properties').site_properties
-    use_folder_tabs=list(props.use_folder_tabs)
-    print >> out, 'adding %d classes to use_folder_tabs:' % len(classes)
-    for cl in classes:
-        if cl['klass'].isPrincipiaFolderish and \
-            not cl['klass'].portal_type in <dtml-var "repr(hide_folder_tabs)">:
-            print >> out, 'portal type:',cl['klass'].portal_type
-            use_folder_tabs.append(cl['klass'].portal_type)
-
-    props.use_folder_tabs=tuple(use_folder_tabs)
+    pprops = getToolByName(self, 'portal_properties', None)
+    if props is not None:
+        sprops = getattr(props, 'site_properties',None)
+        use_folder_tabs = list(sprops.use_folder_tabs)
+        print >> out, 'adding %d classes to use_folder_tabs:' % len(classes)
+        for cl in classes:
+            if cl['klass'].isPrincipiaFolderish and \
+                not cl['klass'].portal_type in <dtml-var "repr(hide_folder_tabs)">:
+                print >> out, 'portal type:',cl['klass'].portal_type
+                use_folder_tabs.append(cl['klass'].portal_type)
+        sprops.use_folder_tabs=tuple(use_folder_tabs)
 </dtml-if>
 </dtml-let>
 <dtml-if "generator.left_slots or generator.right_slots">
@@ -106,18 +107,17 @@ def install(self):
                 raise
 </dtml-if>
 </dtml-let>
-<dtml-let all_tools="[c.getName() for c in generator.getGeneratedTools(package)]">
+<dtml-let all_tools="[c for c in generator.getGeneratedTools(package)]">
 <dtml-if "all_tools">
 
     #hide tools in the navigation
-    for t in <dtml-var "repr(all_tools)">:
-        try:
-            if t not in self.portal_properties.navtree_properties.metaTypesNotToList:
-                self.portal_properties.navtree_properties.metaTypesNotToList= \
-                   list(self.portal_properties.navtree_properties.metaTypesNotToList) + \
-                      [t]
-        except TypeError, e:
-            print 'Attention: could not set the navtree properties:',e
+    pprops = getToolByName(self, 'portal_properties', None)
+    if pprops is not None:
+        nprops = getattr(pprops, 'navtree_properties', None)
+        if nprops:
+            nprops.idsNotToList = list(nprops.idsNotToList) + \
+                                  [toolname for toolname in <dtml-var "[t.getTaggedValue('tool_instance_name') or 'portal_%s' % t.getName().lower() for t in all_tools]"> \
+                                            if toolname not in nprops.idsNotToList]
 
 </dtml-if>
 </dtml-let>
@@ -245,20 +245,19 @@ def uninstall(self):
     props.use_folder_tabs=tuple(use_folder_tabs)
 </dtml-if>
 </dtml-let>
-<dtml-let autoinstall_tools="[c.getName() for c in generator.getGeneratedClasses(package) if c.hasStereoType(generator.portal_tools) and utils.isTGVTrue(c.getTaggedValue('autoinstall')) ]">
-<dtml-if "autoinstall_tools">
-
-    # uninstall tools
-    portal=getToolByName(self,'portal_url').getPortalObject()
-    for t in <dtml-var "repr(autoinstall_tools)">:
-        # undo: tools are not content. dont list it in navtree
-        try:
-            self.portal_properties.navtree_properties.metaTypesNotToList=list(self.portal_properties.navtree_properties.metaTypesNotToList)
-            self.portal_properties.navtree_properties.metaTypesNotToList.remove(t)
-        except ValueError:
-            pass
-        except:
-            raise
+<dtml-let all_tools="[c for c in generator.getGeneratedTools(package)]">
+<dtml-if "all_tools">
+    # unhide tools
+    pprops = getToolByName(self, 'portal_properties', None)
+    if pprops is not None:
+        nprops = getattr(pprops, 'navtree_properties', None)
+        if nprops:
+            nprops.idsNotToList = list(nprops.idsNotToList)
+            for toolname in [toolname for toolname in <dtml-var "[t.getTaggedValue('tool_instance_name') or 'portal_%s' % t.getName().lower() for t in all_tools]"> \
+                                      if toolname not in nprops.idsNotToList]:
+                if toolname in nprops.idsNotToList:
+                    nprops.idsNotToList.remove(toolname)
+    
 </dtml-if>
 </dtml-let>
 <dtml-let configlet_tools="[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.portal_tools) and utils.isTGVTrue(cn.getTaggedValue('autoinstall','0') ) and cn.getTaggedValue('configlet', None)]">

@@ -1448,7 +1448,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         # tool __init__
         if element.hasStereoType(self.portal_tools):
-            tool_instance_name=element.getTaggedValue('tool_instance_name') or 'portal_'+element.getName().lower()
+            tool_instance_name=element.getTaggedValue('tool_instance_name') or 'portal_%s' % element.getName().lower()
             print >> outfile,TEMPL_CONSTR_TOOL % (baseclass,tool_instance_name)
             self.generateProtectedSection(outfile,element,'constructor-footer',2)
             print >> outfile
