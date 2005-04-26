@@ -34,7 +34,7 @@ class <dtml-var "klass.getCleanName()">(<dtml-var "parent.getCleanName()">):
 <dtml-var "parsed_class.methods[mn].getSrc()">    
     <dtml-else>
 
-    def <dtml-var "mn">(self,<dtml-var "','.join(m.getParamNames())">):
+    def <dtml-var "mn">(self):
         <dtml-let name="'temp_'+m.getParent().getCleanName()">
         
         ''' '''
