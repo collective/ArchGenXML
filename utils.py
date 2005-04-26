@@ -103,8 +103,13 @@ def isTGVFalse(tgv):
 def toBoolean(v):
     if type(v) in (StringTypes):
         v=v.lower().strip()
-
-    return v in (1,'1','true')
+    if v in (0,'0','false',False):
+        return False
+    if v in (1,'1','true',True):
+        return True
+    if v:
+        return True
+    return False
 
 def cleanName(name):
     return name.replace(' ','_').replace('.','_').replace('/','_')

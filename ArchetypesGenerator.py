@@ -1282,6 +1282,7 @@ class ArchetypesGenerator(BaseGenerator):
             # folderish
 
             if element.hasStereoType('ordered'):
+                import pdb;pdb.set_trace()
                 baseclass ='OrderedBaseFolder'
                 baseschema='OrderedBaseFolderSchema'
             elif element.hasStereoType(['large','btree']):
@@ -1330,7 +1331,7 @@ class ArchetypesGenerator(BaseGenerator):
 
 
         # [optilude] Also - ignore the standard class if this is an abstract/mixin
-        if baseclass and not isTGVFalse(element.getTaggedValue('base_class')) \
+        if baseclass and not isTGVFalse(element.getTaggedValue('base_class',1)) \
            and not element.isAbstract ():
             parentnames.insert(0,baseclass)
 
@@ -1464,8 +1465,8 @@ class ArchetypesGenerator(BaseGenerator):
         if not element.isAbstract ():
             print >> outfile, self.generateModifyFti(element)
 
-        # [optilude] Don't register type for abstract mixin
-        if not element.isAbstract ():
+        # [optilude] Don't register type for abstract classes or tools
+        if not (element.isAbstract ()):
             wrt( REGISTER_ARCHTYPE % name)
 
         # ATVocabularyManager: registration of class
