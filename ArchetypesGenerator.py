@@ -583,7 +583,7 @@ class ArchetypesGenerator(BaseGenerator):
             ctype=self.coerceMap.get(typename.lower(),'string')
         else:
             ctype=self.coerceMap.get(typename.lower(),None)
-            if not ctype:
+            if ctype is None:
                 return 'generic' #raise ValueError,'Warning: unknown datatype : >%s< (use the option --unknown-types-as-string to force unknown types to be converted to string' % typename
 
         #print ctype,'\n'
@@ -659,7 +659,11 @@ class ArchetypesGenerator(BaseGenerator):
         # to set an default just put:
         # default:widget:type = widgetname
         # as a tagged value on the package or model
-        default_widget = self.getOption('default:widget:%s' % type, element, None)
+        if hasattr(element,'type') and element.type!='NoneType':
+            atype = element.type
+        else:
+            atype=type
+        default_widget = self.getOption('default:widget:%s' % atype, element, None)
         if default_widget:
             widgetcode = default_widget+'(\n'
 
@@ -785,6 +789,7 @@ class ArchetypesGenerator(BaseGenerator):
     def getFieldStringFromAttribute(self, attr, classelement):
         ''' gets the schema field code '''
         #print 'typename:%s:'%attr.getName(),attr.type,
+        
         if not hasattr(attr,'type') or attr.type=='NoneType':
             ctype='string'
         else:
