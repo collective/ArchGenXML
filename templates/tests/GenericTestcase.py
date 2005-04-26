@@ -34,9 +34,15 @@ class <dtml-var "klass.getCleanName()">(<dtml-var "parent.getCleanName()">):
     def <dtml-var "mn">(self):
 <dtml-let name="'temp_'+m.getParent().getCleanName()">
         ''' '''
-        #o=<dtml-var "m.getParent().getCleanName()">('<dtml-var name>')
-        #self.folder.<dtml-var name>=o
-        #print self.folder.<dtml-var name>
+        #Uncomment one of the followng lines as needed
+        ##self.loginAsPortalOwner()
+        <dtml-if "m.getParent() != klass">
+        
+        ##o=<dtml-var "m.getParent().getCleanName()">('<dtml-var name>')
+        ##self.folder._setObject('<dtml-var name>',o)
+        </dtml-if>
+        
+        pass
         
 </dtml-let>
 </dtml-if>
