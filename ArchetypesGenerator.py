@@ -1175,6 +1175,11 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateTestcaseClass(self,element,template):
         print indent('Generating testcase: '+element.getName(),self.infoind)
+        #import pdb;pdb.set_trace()
+        
+        assert element.hasStereoType('plone_testcase') or element.getCleanName().startswith('test'), \
+            "names of test classes _must_ start with 'test', but this class is named '%s'" % element.getCleanName()
+        
         if element.getGenParents():
             parent=element.getGenParents()[0]
         else:
