@@ -951,7 +951,7 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             field=rel.getTaggedValue('reference_field') or rel.toEnd.getTaggedValue('back_reference_field') or self.typeMap['backreference']['field'] #the relation can override the field
             map=self.typeMap['backreference']['map'].copy()
-            if rel.fromEnd.isNavigable and (self.backreferences_support or self.getOption('backreferences_support',element,'0')=='1'):
+            if rel.fromEnd.isNavigable and (self.backreferences_support or self.getOption('backreferences_support',rel,'0')=='1'):
                 map.update({
                     'allowed_types': repr(allowed_types),
                     'multiValued':   multiValued,
