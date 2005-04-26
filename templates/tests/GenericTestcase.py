@@ -1,7 +1,7 @@
 <dtml-var "generator.getProtectedSection(parsed_class,'module-header')">
 <dtml-let allmethodnames="['test%s%s'%(m.getParent().getCleanName().capitalize(),m.getCleanName().capitalize()) for m in generator.getMethodsToGenerate(klass)[0]]">
 #
-# Skeleton test module
+# test-cases for class(es) <dtml-var "', '.join([p.getName() for p in klass.getRealizationParents()])">
 #
 
 import os, sys
@@ -10,12 +10,13 @@ if __name__ == '__main__':
 
 from Testing import ZopeTestCase
 from Products.<dtml-var "klass.getPackage().getProductName()">.<dtml-var "parent.getQualifiedModuleName(klass.getPackage())"> import <dtml-var "parent.getCleanName()">
-#import the tested classes
+# import the tested classes
 <dtml-in "klass.getRealizationParents()">
 from <dtml-var "_['sequence-item'].getQualifiedModuleName(klass.getPackage(),forcePluginRoot=1)"> import <dtml-var "_['sequence-item'].getCleanName()">
 </dtml-in>
 
 class <dtml-var "klass.getCleanName()">(<dtml-var "parent.getCleanName()">):
+    """ test-cases for class(es) <dtml-var "', '.join([p.getName() for p in klass.getRealizationParents()])">"""
     
 <dtml-var "generator.getProtectedSection(parsed_class,'class-header_'+klass.getCleanName(),1)">
     def afterSetUp(self):
@@ -42,11 +43,10 @@ class <dtml-var "klass.getCleanName()">(<dtml-var "parent.getCleanName()">):
 </dtml-let>
 </dtml-in>
     
-    #Manually created methods!!
-    <dtml-if parsed_class>
-    <dtml-in "parsed_class.methods.values()">
-    <dtml-if "_['sequence-item'].getName() not in allmethodnames+['afterSetUp']">
-    
+    # Manually created methods
+<dtml-if parsed_class>
+<dtml-in "parsed_class.methods.values()">
+<dtml-if "_['sequence-item'].getName() not in allmethodnames+['afterSetUp']">
 <dtml-var "_['sequence-item'].getSrc()">
         
 </dtml-if>
