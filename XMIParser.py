@@ -1399,11 +1399,14 @@ class XMIClass (XMIElement, StateMachineContainer):
     def addAssocTo(self,a):
         self.assocsTo.append(a)
 
-    def getToAssociations(self,aggtypes=['none']):
-        return [a for a in self.assocsTo if a.fromEnd.aggregation in aggtypes]
+    def getToAssociations(self,aggtypes=['none'],aggtypesTo=['none']):
+        return [a for a in self.assocsTo if a.fromEnd.aggregation in aggtypes  
+            and a.toEnd.aggregation in aggtypesTo]
 
-    def getFromAssociations(self,aggtypes=['none']):
-        return [a for a in self.assocsFrom if a.fromEnd.aggregation in aggtypes]
+    def getFromAssociations(self,aggtypes=['none'],aggtypesTo=['none']):
+        return [a for a in self.assocsFrom if a.fromEnd.aggregation in aggtypes 
+            and a.toEnd.aggregation in aggtypesTo]
+            
         #return self.assocsFrom
 
     def isDependent(self):
