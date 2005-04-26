@@ -98,10 +98,10 @@ def install(self):
         try:
             portal.manage_addProduct[PROJECTNAME].manage_addTool(t)
         except BadRequest:
-            pass
-        except:
             # if an instance with the same name already exists this error will
             # be swallowed. Zope raises in an unelegant manner a 'Bad Request' error
+            pass
+        except:
             e=sys.exc_info()
             if e[0] != 'Bad Request':
                 raise

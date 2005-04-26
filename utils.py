@@ -1,5 +1,6 @@
 import sys, os.path, time
 import getopt
+from types import StringTypes
 
 NameTable = {
     'class': 'klass',
@@ -94,20 +95,14 @@ def getExpression(s):
                 return '"%s"' % s
 
 def isTGVTrue(tgv):
-    if type(tgv) in (type(''),type(u'')):
-        tgv=tgv.lower()
-
-    return tgv in (1,'1','true')
+    return toBoolean(tgv) 
 
 def isTGVFalse(tgv):
-    if type(tgv) in (type(''),type(u'')):
-        tgv=tgv.lower()
-
-    return tgv in (0,'0','false')
+    return not toBoolean(tgv) 
 
 def toBoolean(v):
-    if type(v) in (type(''),type(u'')):
-        v=v.lower()
+    if type(v) in (StringTypes):
+        v=v.lower().strip()
 
     return v in (1,'1','true')
 
