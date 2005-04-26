@@ -837,8 +837,8 @@ class ArchetypesGenerator(BaseGenerator):
 
             if not vocaboptions['name'] in self.vocabularymap[currentproduct]:
                 self.vocabularymap[currentproduct] = (vocaboptions['name'],
-                                                      vocaboptions['container_type'],
-                                                      vocaboptions['item_type'])
+                                                      vocaboptions['vocabulary_type'],
+                                                      vocaboptions['term_type'])
 
         # end ATVM
 
