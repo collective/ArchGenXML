@@ -147,7 +147,7 @@ class ArchetypesGenerator(BaseGenerator):
     variable_schema='variable_schema'
     stub_stereotypes=['odStub','stub']
     archetype_stereotype = ['archetype']
-    vocabulary_item_stereotype = ['vocabulary_item']
+    vocabulary_item_stereotype = ['vocabulary_term']
     vocabulary_container_stereotype = ['vocabulary']
     cmfmember_stereotype = ['CMFMember', 'member']
     python_stereotype = ['python', 'python_class']
