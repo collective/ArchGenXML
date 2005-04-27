@@ -133,6 +133,8 @@ class BaseGenerator:
 
         parents  = element.getGenParents()
         parents += element.getRealizationParents()
+        parents += element.getClientDependencyClasses(includeParents=True)
+            
         for p in parents:
             if p.hasStereoType(self.stub_stereotypes) and \
                 p.getTaggedValue('import_from',None):

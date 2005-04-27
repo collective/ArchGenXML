@@ -101,6 +101,7 @@ class XMI1_0:
     ISABSTRACT="Foundation.Core.GeneralizableElement.isAbstract"
     INTERFACE="Foundation.Core.Interface"
     ABSTRACTION="Foundation.Core.Abstraction"
+    DEPENDENCY="Foundation.Core.Dependency"
     DEP_CLIENT="Foundation.Core.Dependency.client"
     DEP_SUPPLIER="Foundation.Core.Dependency.supplier"
 
@@ -304,6 +305,15 @@ class XMI1_0:
                 print 'ab: index error for dependencies:%s'%self.getId(ab)
                 raise
 
+    def buildDependencies(self,doc,objects):
+        deps=doc.getElementsByTagName(XMI.DEPENDENCY)
+
+        for dep in deps:
+            if not self.getId(dep):continue
+            depencency=XMIDependency(dep,allObjects=objects)
+            
+            
+
     def getExpressionBody(self,element,tagname=None):
         if not tagname:
             tagname=XMI.EXPRESSION
@@ -459,6 +469,8 @@ class XMI1_1 (XMI1_0):
     INTERFACE="UML:Interface"
 
     ABSTRACTION="UML:Abstraction"
+
+    DEPENDENCY="UML:Dependency"
     DEP_CLIENT="UML:Dependency.client"
     DEP_SUPPLIER="UML:Dependency.supplier"
 
@@ -734,10 +746,14 @@ class XMIElement:
         self.taggedValues=odict()
         self.subTypes=[]
         self.stereoTypes=[]
+        self.clientDependencies=[]
+        
         self.annotations={} # space to store values by external access. use
                              # annotate() to store values in this dict, and
                              # getAnnotation() to fetch it.
 
+        #take kwargs as attributes
+        self.__dict__.update(kwargs)
         if domElement:
             allObjects[domElement.getAttribute('xmi.id')]=self
 
@@ -985,6 +1001,25 @@ class XMIElement:
     def getAnnotation(self,name):
         return self.annotations.get(name, None)
 
+    def addClientDependency(self,dep):
+        self.clientDependencies.append(dep)
+        
+    def getClientDependencies(self, includeParents=False):
+        res=self.clientDependencies
+        
+        if includeParents:
+            o=self.getParent()
+            if o:
+                res.extend(o.getClientDependencies(includeParents=includeParents))
+                    
+                res.reverse()
+                
+        return res
+    
+    def getClientDependencyClasses(self, includeParents=False): 
+        return [dep.getSupplier() for dep in self.getClientDependencies(includeParents=includeParents) if 
+            dep.getSupplier() and dep.getSupplier().__class__.__name__ in ('XMIClass','XMIInterface')]
+    
 class StateMachineContainer:
     def __init__(self):
         self.statemachines=[]
@@ -1677,7 +1712,6 @@ class XMIAssociation (XMIElement):
         #print 'Association:',domElement,self.id
         ends=self.domElement.getElementsByTagName(XMI.ASSOCEND)
         assert len(ends)==2
-        #if len(ends) != 2:
 
         #print 'trying assoc'
         self.fromEnd=XMIAssocEnd(ends[0])
@@ -1701,6 +1735,38 @@ class XMIAssociationClass (XMIClass, XMIAssociation):
 class XMIAbstraction(XMIElement):
     pass
 
+
+class XMIDependency(XMIElement):
+    client=None
+    supplier=None
+    
+    def getSupplier(self):
+        return self.supplier
+    
+    def getClient(self):
+        return self.client
+
+    def initFromDOM(self,domElement=None):
+        XMIElement.initFromDOM(self,domElement)
+        self.calcEnds()
+
+    def calcEnds(self):
+        #print 'Association:',domElement,self.id
+        client_el=getElementByTagName(self.domElement,XMI.DEP_CLIENT)
+        clid=XMI.getIdRef(getSubElement(client_el))
+        self.client=self.allObjects[clid]
+
+        supplier_el=getElementByTagName(self.domElement,XMI.DEP_SUPPLIER)
+        suppid=XMI.getIdRef(getSubElement(supplier_el))
+        self.supplier=self.allObjects[suppid]
+        
+        self.client.addClientDependency(self)
+        
+    def getParent(self):
+        ''' '''
+        if self.client:
+            return self.client
+    
 #-----------------------------------
 # here comes the Workflow support
 #-----------------------------------
@@ -2288,6 +2354,8 @@ def buildHierarchy(doc,packagenames):
     XMI.buildRelations(doc,allObjects)
     XMI.buildGeneralizations(doc,allObjects)
     XMI.buildRealizations(doc,allObjects)
+    XMI.buildDependencies(doc,allObjects)
+    
     return res
 
 

@@ -117,6 +117,11 @@ class ArchetypesGenerator(BaseGenerator):
     uml_profile.addStereoType('relation_implementation',['XMIClass','XMIAssociation','XMIPackage'],
         description='specifies how relations should be implemented',default='basic')
 
+    uml_profile.addStereoType('field',['XMIClass'],dispatching=1,
+        generator='generateFieldClass',template='field.py')
+    uml_profile.addStereoType('widget',['XMIClass'],dispatching=1,
+        generator='generateWidgetClass',template='widget.py')
+
     infoind = 0
     force=1
     unknownTypesAsString=0
@@ -1175,19 +1180,73 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateTestcaseClass(self,element,template):
         print indent('Generating testcase: '+element.getName(),self.infoind)
-        #import pdb;pdb.set_trace()
         
         assert element.hasStereoType('plone_testcase') or element.getCleanName().startswith('test'), \
             "names of test classes _must_ start with 'test', but this class is named '%s'" % element.getCleanName()
+
+        assert element.getPackage().getCleanName() == 'tests', \
+            "testcase classes only make sense inside a package called 'tests' \
+                 but this class is named '%s' and located in package '%s'" % (element.getCleanName(),element.getPackage().getCleanName())
         
         if element.getGenParents():
             parent=element.getGenParents()[0]
         else:
             parent=None
-        # protected sections
-        # self.generateProtectedSection(outfile,element,'module-header')
 
         return BaseGenerator.generatePythonClass(self, element, template, parent=parent)
+
+    def generateWidgetClass(self,element,template,zptname='widget.pt'):
+        print indent('Generating widget: '+element.getName(),self.infoind)
+
+        #generate the template
+        templ=readTemplate(zptname)
+        d={ 'klass':element,
+            'generator':self,
+            'parsed_class':element.parsed_class,
+            'builtins'   : __builtins__,
+            'utils'       :utils,
+
+            }
+        d.update(__builtins__)
+        zptcode=HTML(templ,d)()
+
+        fp=self.makeFile(os.path.join(self.getSkinPath(element),'%s.pt' % element.getCleanName()))
+        print >>fp,zptcode
+        fp.close()
+
+        # and now the python code
+        if element.getGenParents():
+            parent=element.getGenParents()[0]
+            parentname=parent.getCleanName()
+        else:
+            parent=None
+            parentname='TypesWidget'
+
+        return BaseGenerator.generatePythonClass(self, element, template,parent=parent,parentname=parentname)
+
+    def generateFieldClass(self,element,template):
+        print indent('Generating field: '+element.getName(),self.infoind)
+
+
+        # and now the python code
+        if element.getGenParents():
+            parent=element.getGenParents()[0]
+            parentname=parent.getCleanName()
+        else:
+            parent=None
+            parentname='ObjectField'
+            
+        if element.getClientDependencyClasses():
+            widget=element.getClientDependencyClasses()[0]
+            widgetname=widget.getCleanName()
+        else:
+            widget=None
+            widgetname='StringWidget'
+            
+
+        return BaseGenerator.generatePythonClass(self, element, template,
+            parent=parent,parentname=parentname,
+            widget=widget,widgetname=widgetname)
 
 
     def generateArchetypesClass(self, element,**kw):
