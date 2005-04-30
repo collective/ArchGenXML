@@ -1,4 +1,5 @@
 <dtml-var "generator.getProtectedSection(parsed_class,'module-header')">
+<dtml-let allmethodnames="['test%s%s'%(m.getParent().getCleanName().capitalize(),m.getCleanName().capitalize()) for m in generator.getMethodsToGenerate(klass)[0]]">
 #
 # Setup tests
 #
@@ -13,6 +14,43 @@ class TestSetup(<dtml-var "klass.getGenParents()[0].getCleanName()">):
 
 <dtml-var "generator.getProtectedSection(parsed_class,'class-header_'+klass.getCleanName(),1)">
 
+<dtml-in "generator.getMethodsToGenerate(klass)[0]">
+<dtml-let m="_['sequence-item']" mn="'test%s%s'%(m.getParent().getCleanName().capitalize(),m.getCleanName().capitalize())">
+<dtml-if "m.getParent() != klass"> 
+    # from class <dtml-var "m.getParent().getName()">:
+</dtml-if>
+<dtml-if "parsed_class and mn in parsed_class.methods.keys()">
+<dtml-var "parsed_class.methods[mn].getSrc()">
+ 
+<dtml-else>
+    def <dtml-var "mn">(self):
+<dtml-let name="'temp_'+m.getParent().getCleanName()">
+        ''' '''
+        #Uncomment one of the followng lines as needed
+        ##self.loginAsPortalOwner()
+        <dtml-if "m.getParent() != klass">
+        
+        ##o=<dtml-var "m.getParent().getCleanName()">('<dtml-var name>')
+        ##self.folder._setObject('<dtml-var name>',o)
+        </dtml-if>
+        
+        pass
+        
+</dtml-let>
+</dtml-if>
+</dtml-let>
+</dtml-in>
+    
+    # Manually created methods
+<dtml-if parsed_class>
+<dtml-in "parsed_class.methods.values()">
+<dtml-if "_['sequence-item'].getName() not in allmethodnames+['afterSetUp']">
+<dtml-var "_['sequence-item'].getSrc()">
+        
+</dtml-if>
+</dtml-in>
+</dtml-if>
+    # Auto-added by testcase generation - probably bug
     def testTools(self):
         ids = self.portal.objectIds()
         self.failUnless('archetype_tool' in ids)
@@ -49,4 +87,5 @@ def test_suite():
 if __name__ == '__main__':
     framework()
 
+</dtml-let>
 <dtml-var "generator.getProtectedSection(parsed_class,'module-footer')">
