@@ -310,7 +310,7 @@ class ArchetypesGenerator(BaseGenerator):
         
         #check wether we have to import Relation's Relation Field
         for rel in element.getFromAssociations():
-            if self.getOption('relation_implementation',rel,'basic'):
+            if self.getOption('relation_implementation',rel,'basic') == 'relations':
                 useRelations=1
 
         for rel in element.getToAssociations():
@@ -321,7 +321,6 @@ class ArchetypesGenerator(BaseGenerator):
         if useRelations:
             print >> outfile,'from Products.Relations.field import RelationField'
                 
-
         if element.hasStereoType(self.variable_schema):
             print >> outfile,'from Products.Archetypes.VariableSchemaSupport import VariableSchemaSupport'
 
@@ -1341,7 +1340,6 @@ class ArchetypesGenerator(BaseGenerator):
             # folderish
 
             if element.hasStereoType('ordered'):
-                import pdb;pdb.set_trace()
                 baseclass ='OrderedBaseFolder'
                 baseschema='OrderedBaseFolderSchema'
             elif element.hasStereoType(['large','btree']):
