@@ -10,7 +10,9 @@
 # Licence:     GPL
 #-----------------------------------------------------------------------------
 
-_marker = []
+class DummyMarker:
+    pass
+_marker = DummyMarker
 
 import os
 from StringIO import StringIO

@@ -1800,6 +1800,16 @@ class ArchetypesGenerator(BaseGenerator):
         # Get the names of packages and classes to import
         packageImports = [m.getModuleName() for m in package.getAnnotation('generatedPackages') or []]
         classImports   = [m.getModuleName() for m in package.generatedModules]
+        
+        # Find additional (custom) permissions
+        additional_permissions=[]
+        addperms= self.getOption('additional_permission',package,default=[]),
+        for line in addperms:
+            line=line.split('|')
+            line[0]=line[0].strip()
+            if len(line)>1:
+                line[1]=["'%s'" % r.strip() for r in line[1].split(',')]
+            additional_permissions.append(line)
 
         # Find out if we need to initialise any tools
         generatedTools = self.getGeneratedTools(package)
@@ -1819,9 +1829,11 @@ class ArchetypesGenerator(BaseGenerator):
         # prepare DTML varibles
         d={'generator'                     : self,
            'utils'                         : utils,
+           'package'                       : package,
            'product_name'                  : package.getProductName (),
            'package_imports'               : packageImports,
            'class_imports'                 : classImports,
+           'additional_permissions'        : additional_permissions,
            'has_tools'                     : hasTools,
            'tool_names'                    : toolNames,
            'creation_permissions'          : self.creation_permissions,

@@ -34,6 +34,15 @@ from Products.<dtml-var "product_name">.config import *
 DirectoryView.registerDirectory('skins', product_globals)
 DirectoryView.registerDirectory('skins/<dtml-var "product_name">',
                                     product_globals)
+<dtml-if "additional_permissions">
+
+# register additional (custom) permissions used by this product
+<dtml-in "additional_permissions">
+<dtml-let permdef="_['sequence-item']">
+CMFCorePermissions.setDefaultRoles('<dtml-var "product_name">: <dtml-var "permdef[0]">',[<dtml-var "','.join(permdef[1])">])
+</dtml-let>
+</dtml-in>
+</dtml-if>
 
 <dtml-var "protected_init_section_head">
 
