@@ -582,6 +582,9 @@ class ArchetypesGenerator(BaseGenerator):
         typename=intypename.lower()
         if typename in self.typeMap.keys():
             return typename
+        
+        if typename=='copy':
+            return typename
 
         if self.unknownTypesAsString:
             ctype=self.coerceMap.get(typename.lower(),'string')
@@ -595,7 +598,8 @@ class ArchetypesGenerator(BaseGenerator):
 
     def getFieldAttributes(self,element):
         """ converts the tagged values of a field into extended attributes for the archetypes field """
-        noparams=['documentation','element.uuid','transient','volatile','widget']
+        noparams=['documentation','element.uuid','transient','volatile',
+                  'widget','copy_from',]
         convtostring=['expression']
         map={}
         tgv=element.getTaggedValues()
@@ -799,6 +803,11 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             ctype=self.coerceType(str(attr.type))
 
+        if ctype=='copy':
+            name = getattr(attr,'rename_to',attr.getName())
+            field="copied_fields['%s'],\n" % name
+            return field
+            
 
         map=self.typeMap[ctype]['map'].copy()
         if attr.hasDefault():
@@ -976,6 +985,20 @@ class ArchetypesGenerator(BaseGenerator):
 
     # Generate get/set/add member functions.
     def generateArcheSchema(self, outfile, element, base_schema):
+        """ generates the Schema """
+        startmarker=True
+        for attr in element.getAttributeDefs():
+            if str(attr.type)=='copy':
+                if startmarker:
+                    startmarker=False
+                    print >>outfile, 'copied_fields = {}'
+                copyfrom = getattr(attr,'copy_from','BaseSchema')
+                name = getattr(attr,'rename_to',attr.getName())
+                print >>outfile, "copied_fields['%s'] = %s['%s'].copy()" % (name, copyfrom, attr.getName())
+                map = self.getFieldAttributes(attr)
+                for key in map:
+                    print >>outfile, "copied_fields['%s'].%s = %s" % (name, key, 
+                                                                     map[key])                
 
         print >>outfile, SCHEMA_START
         aggregatedClasses=[]
