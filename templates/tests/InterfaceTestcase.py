@@ -8,7 +8,7 @@ if __name__ == '__main__':
 
 from Interface import Implements
 
-from <dtml-var "parent.getQualifiedModuleName(klass.getPackage())"> import <dtml-var "parent.getCleanName()">
+from Products.<dtml-var "klass.getPackage().getProductName()">.<dtml-var "parent.getQualifiedModuleName(klass.getPackage())"> import <dtml-var "parent.getCleanName()">
 
 
 from Interface.Verify import verifyClass

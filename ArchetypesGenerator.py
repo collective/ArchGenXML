@@ -264,7 +264,7 @@ class ArchetypesGenerator(BaseGenerator):
                 condition=m.getTaggedValue('condition') or '1'
                 dict['condition']='python:'+condition
 
-                if not isTGVFalse(m.getTaggedValue('create_action')):
+                if not (m.hasTaggedValue('create_action') and isTGVFalse(m.getTaggedValue('create_action'))):
                     print >>outfile, ACT_TEMPL % dict
 
             if m.hasStereoType('view'):

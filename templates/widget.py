@@ -1,4 +1,5 @@
-from Products.Archetypes.Widget import *
+from AccessControl import ClassSecurityInfo
+from Products.Archetypes.Widget import TypesWidget
 
 class <dtml-var "klass.getCleanName()">(<dtml-var parentname>):
     _properties = <dtml-var parentname>._properties.copy()
