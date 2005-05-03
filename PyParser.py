@@ -10,6 +10,7 @@ import types
 PROTECTED_BEGIN = '##code-section'
 PROTECTED_END = '##/code-section'
 
+
 class PyModule:
     """ This is the module being called directly from the rest of ArchGenXML
 
@@ -116,7 +117,10 @@ class PyModule:
                 self.protectedSections[sectionname] = protectedSection
 
     def isItAClass(self, c):
-        """ Woooh - heuristic method to check if a code fragment is a class
+        """ True if a code fragment is a class
+
+        Woooh - this is a very pillar of supreme machine intelligence
+        :-) 
         """
         fl = c.co_firstlineno
         if self.splittedSource[fl-1].strip().startswith('class'):
@@ -126,17 +130,25 @@ class PyModule:
         return res
 
     def isItAFunction(self, c):
-        """ Woooh - heuristic method to check if a code fragment is a
-        function
+        """ True if a code fragment is a function
+
+        Woohoo, we're advanced! Heuristics!
         """
         fl = c.co_firstlineno
         if self.splittedSource[fl-1].startswith('def'):
             return 1
 
     def getProtectedSection(self, section):
+        """ Return the named protected section
+
+        Simple wrapper function.
+        """
         return self.protectedSections.get(section)
 
     def printit(self):
+        # Can probably be removed - early testing-by-printing
+        # Perhaps something for a --verbose option? Could be very
+        # handy.
         print 'PyModule:'
 
         print '========'
@@ -162,6 +174,8 @@ class PyModule:
 
 
 class PyCodeElement:
+    """ Abstract superclass
+    """
     module = None
     code = None
     src = None
@@ -178,20 +192,26 @@ class PyCodeElement:
 
 
 class PyFunction(PyCodeElement):
-    typename='function'
+    """ Handles functions
+    """
+    typename = 'function'
+    
     def __init__(self, code, module):
+        """ Init the class by calling buildMethod
+        """
         PyCodeElement.__init__(self, code, module)
         self.buildMethod()
 
     def buildMethod(self):
         """ Prepare the method for subsequent inclusion in the
-        generated class
+        generated file
         """
         self.name = self.code.co_name
         self.start = self.code.co_firstlineno - 1
         self.src = self.extractCode()
 
     def printit(self):
+        # Something for --verbose, not used right now
         print '%s:' % self.typename, self.code.co_name
         print '-------------------------------------------------------'
         print self.src
