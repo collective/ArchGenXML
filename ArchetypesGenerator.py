@@ -1828,11 +1828,12 @@ class ArchetypesGenerator(BaseGenerator):
         additional_permissions=[]
         addperms= self.getOption('additional_permission',package,default=[]),
         for line in addperms:
-            line=line.split('|')
-            line[0]=line[0].strip()
-            if len(line)>1:
-                line[1]=["'%s'" % r.strip() for r in line[1].split(',')]
-            additional_permissions.append(line)
+            if len(line)>0:
+                line=line.split('|')
+                line[0]=line[0].strip()
+                if len(line)>1:
+                    line[1]=["'%s'" % r.strip() for r in line[1].split(',')]
+                additional_permissions.append(line)
 
         # Find out if we need to initialise any tools
         generatedTools = self.getGeneratedTools(package)
