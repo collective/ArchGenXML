@@ -1,5 +1,5 @@
-<dtml-var "generator.getProtectedSection(parsed_class,'module-header')">
-<dtml-let allmethodnames="['test%s%s'%(m.getParent().getCleanName().capitalize(),m.getCleanName().capitalize()) for m in generator.getMethodsToGenerate(klass)[0]]">
+<dtml-var "generator.getProtectedSection(parsed_class, 'module-header')">
+<dtml-let allmethodnames="['test%s%s' % (m.getParent().getCleanName().capitalize(), m.getCleanName().capitalize()) for m in generator.getMethodsToGenerate(klass)[0]]">
 #
 # Setup tests
 #
@@ -12,10 +12,10 @@ from Products.<dtml-var "klass.getPackage().getProductName()">.<dtml-var "klass.
 
 class TestSetup(<dtml-var "klass.getGenParents()[0].getCleanName()">):
 
-<dtml-var "generator.getProtectedSection(parsed_class,'class-header_'+klass.getCleanName(),1)">
+<dtml-var "generator.getProtectedSection(parsed_class, 'class-header_'+klass.getCleanName(), 1)">
 
 <dtml-in "generator.getMethodsToGenerate(klass)[0]">
-<dtml-let m="_['sequence-item']" mn="'test%s%s'%(m.getParent().getCleanName().capitalize(),m.getCleanName().capitalize())">
+<dtml-let m="_['sequence-item']" mn="'test%s%s'%(m.getParent().getCleanName().capitalize(), m.getCleanName().capitalize())">
 <dtml-if "m.getParent() != klass"> 
     # from class <dtml-var "m.getParent().getName()">:
 </dtml-if>
@@ -31,7 +31,7 @@ class TestSetup(<dtml-var "klass.getGenParents()[0].getCleanName()">):
         <dtml-if "m.getParent() != klass">
         
         ##o=<dtml-var "m.getParent().getCleanName()">('<dtml-var name>')
-        ##self.folder._setObject('<dtml-var name>',o)
+        ##self.folder._setObject('<dtml-var name>', o)
         </dtml-if>
         
         pass
@@ -54,7 +54,7 @@ class TestSetup(<dtml-var "klass.getGenParents()[0].getCleanName()">):
     def testTools(self):
         ids = self.portal.objectIds()
         self.failUnless('archetype_tool' in ids)
-        #<dtml-var "[c.getName() for c in generator.getTools(klass.getPackage().getProduct(),autoinstallOnly=1)] ">
+        #<dtml-var "[c.getName() for c in generator.getTools(klass.getPackage().getProduct(), autoinstallOnly=1)] ">
         # ...
 
     def testTypes(self):
@@ -88,4 +88,4 @@ if __name__ == '__main__':
     framework()
 
 </dtml-let>
-<dtml-var "generator.getProtectedSection(parsed_class,'module-footer')">
+<dtml-var "generator.getProtectedSection(parsed_class, 'module-footer')">

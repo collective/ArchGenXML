@@ -1,5 +1,5 @@
-<dtml-var "generator.getProtectedSection(parsed_class,'module-header')">
-<dtml-let allmethodnames="['test%s%s'%(m.getParent().getCleanName().capitalize(),m.getCleanName().capitalize()) for m in generator.getMethodsToGenerate(klass)[0]]">
+<dtml-var "generator.getProtectedSection(parsed_class, 'module-header')">
+<dtml-let allmethodnames="['test%s%s' % (m.getParent().getCleanName().capitalize(), m.getCleanName().capitalize()) for m in generator.getMethodsToGenerate(klass)[0]]">
 #
 # test-cases for class(es) <dtml-var "', '.join([p.getName() for p in klass.getRealizationParents()])">
 #
@@ -16,18 +16,18 @@ from Products.<dtml-var "klass.getPackage().getProductName()">.<dtml-var "parent
 
 # import the tested classes
 <dtml-in "klass.getRealizationParents() + klass.getClientDependencyClasses(includeParents=True)">
-from <dtml-var "_['sequence-item'].getQualifiedModuleName(klass.getPackage(),forcePluginRoot=1)"> import <dtml-var "_['sequence-item'].getCleanName()">
+from <dtml-var "_['sequence-item'].getQualifiedModuleName(klass.getPackage(), forcePluginRoot=1)"> import <dtml-var "_['sequence-item'].getCleanName()">
 </dtml-in>
 
 class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCleanName()">)</dtml-if>:
     """ test-cases for class(es) <dtml-var "', '.join([p.getName() for p in klass.getRealizationParents()])">"""
     
-<dtml-var "generator.getProtectedSection(parsed_class,'class-header_'+klass.getCleanName(),1)">
+<dtml-var "generator.getProtectedSection(parsed_class, 'class-header_'+klass.getCleanName(), 1)">
     def afterSetUp(self):
         pass
 
 <dtml-in "generator.getMethodsToGenerate(klass)[0]">
-<dtml-let m="_['sequence-item']" mn="'test%s%s'%(m.getParent().getCleanName().capitalize(),m.getCleanName().capitalize())">
+<dtml-let m="_['sequence-item']" mn="'test%s%s'%(m.getParent().getCleanName().capitalize(), m.getCleanName().capitalize())">
 <dtml-if "m.getParent() != klass"> 
     # from class <dtml-var "m.getParent().getName()">:
 </dtml-if>
@@ -43,7 +43,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
         <dtml-if "m.getParent() != klass">
         
         ##o=<dtml-var "m.getParent().getCleanName()">('<dtml-var name>')
-        ##self.folder._setObject('<dtml-var name>',o)
+        ##self.folder._setObject('<dtml-var name>', o)
         </dtml-if>
         
         pass
@@ -73,4 +73,4 @@ if __name__ == '__main__':
     framework()
 
 </dtml-let>
-<dtml-var "generator.getProtectedSection(parsed_class,'module-footer')">
+<dtml-var "generator.getProtectedSection(parsed_class, 'module-footer')">
