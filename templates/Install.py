@@ -264,7 +264,7 @@ def uninstall(self):
 <dtml-if "configlet_tools">
 
     # unregister tools as configlets
-    portal_control_panel=getToolByName(self,'portal_controlpanel' None)
+    portal_control_panel=getToolByName(self,'portal_controlpanel', None)
     if portal_control_panel is not None:
 <dtml-in "configlet_tools">
         portal_control_panel.unregisterConfiglet('<dtml-var "_['sequence-item'].getName()">')
