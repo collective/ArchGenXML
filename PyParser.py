@@ -181,13 +181,19 @@ class PyCodeElement:
     src = None
 
     def __init__(self, code, module):
+        """ Simple init to set the incoming code and containing module
+        """
         self.code = code
         self.module = module
         
     def getSrc(self):
+        """ Return the plain source
+        """
         return self.src
     
     def getName(self):
+        """ Return the name of the code element
+        """
         return self.name
 
 
@@ -197,7 +203,9 @@ class PyFunction(PyCodeElement):
     typename = 'function'
     
     def __init__(self, code, module):
-        """ Init the class by calling buildMethod
+        """ Inits the function in 'code', contained in 'module'
+
+        buildMethod() does some further preparation.
         """
         PyCodeElement.__init__(self, code, module)
         self.buildMethod()
@@ -218,6 +226,12 @@ class PyFunction(PyCodeElement):
         print '-------------------------------------------------------'
 
     def getProtectedSection(self, section):
+        """ Pass this request through to the containing module
+        """
+        # Hm. If there's a protected section inside a function, it is
+        # included in the self.src. No real sense in returning
+        # anything here, it is hopefully not used [reinout]
+        # Not tested in the unittests!
         return self.module.getProtectedSection(section)
 
     def codeLength(self):
@@ -247,6 +261,10 @@ class PyFunction(PyCodeElement):
 
         
 class PyMethod(PyFunction):
+    """ Handles methods inside classes
+
+    Basically just a copy of PyFunction.
+    """
     typename = 'method'
 
 
