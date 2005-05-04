@@ -1645,6 +1645,22 @@ class XMIMethod (XMIElement):
         if p.getName() != 'return':
             self.params.append(p)
 
+    def testmethodName(self):
+        """ Return generated name of test method
+
+        userCannotAdd => test_userCannotAdd
+        user_cannot_add => test_user_cannot_add
+        etcetera
+        """
+        # The olde way was a bit longish. Something like
+        # testTestmyclassnameTestfoldercontainssomething().
+        old = 'test%s%s' % (self.getParent().getCleanName().capitalize(),
+                            self.getCleanName().capitalize())
+        # The new version starts with 'test_' with the unmodified name
+        # after it.
+        name = 'test_%s' % self.getCleanName()
+        return name
+
 class XMIAttribute (XMIElement):
     default=None
     has_default=0

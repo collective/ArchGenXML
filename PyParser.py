@@ -248,7 +248,7 @@ class PyFunction(PyCodeElement):
         
 class PyMethod(PyFunction):
     typename = 'method'
-        
+
 
 class PyClass(PyCodeElement):
     methods = {}
