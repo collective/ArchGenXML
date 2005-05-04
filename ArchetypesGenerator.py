@@ -418,9 +418,11 @@ class ArchetypesGenerator(BaseGenerator):
         allow_discussion = element.getTaggedValue('allow_discussion','0')
 
         # Filter content types?
-        filter_content_types = not (isTGVFalse(
-                element.getTaggedValue('filter_content_types'))
-            or element.hasStereoType('folder'))
+        # Filter by default if it's a folder-like thingy
+        filter_default = self.elementIsFolderish(element)
+        # But a tagged value overrides
+        filter_content_types = isTGVTrue(element.getTaggedValue('filter_content_types',
+                                                                filter_default)) 
 
         # Set a type description.
 
@@ -1249,7 +1251,6 @@ class ArchetypesGenerator(BaseGenerator):
     def generateFieldClass(self,element,template):
         print indent('Generating field: '+element.getName(),self.infoind)
 
-
         # and now the python code
         if element.getGenParents():
             parent=element.getGenParents()[0]
@@ -1264,12 +1265,24 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             widget=None
             widgetname='StringWidget'
-            
 
         return BaseGenerator.generatePythonClass(self, element, template,
             parent=parent,parentname=parentname,
             widget=widget,widgetname=widgetname)
 
+    def elementIsFolderish(self, element):
+        # This entire method hould probably be moved off to the element classes.
+        # Copy-pasted from generateArchetypesClass()...
+        aggregatedClasses = element.getRefs() + element.getSubtypeNames(recursive=0,filter=['class'])
+        #also check if the parent classes can have subobjects
+        baseaggregatedClasses=[]
+        for b in element.getGenParents():
+            baseaggregatedClasses.extend(b.getRefs())
+            baseaggregatedClasses.extend(b.getSubtypeNames(recursive=1))
+        isFolderish = aggregatedClasses or baseaggregatedClasses or \
+                      isTGVTrue(element.getTaggedValue('folderish')) or \
+                      element.hasStereoType('folder')
+        return isFolderish
 
     def generateArchetypesClass(self, element,**kw):
         print indent('Generating class: '+element.getName(),self.infoind)
@@ -1356,10 +1369,7 @@ class ArchetypesGenerator(BaseGenerator):
         if additionalParents:
             parentnames=list(parentnames)+additionalParents.split(',')
 
-        isFolderish = aggregatedClasses or baseaggregatedClasses or \
-                      isTGVTrue(element.getTaggedValue('folderish')) or \
-                      element.hasStereoType('folder')
-        if isFolderish:
+        if self.elementIsFolderish(element):
             # folderish
 
             if element.hasStereoType('ordered'):
