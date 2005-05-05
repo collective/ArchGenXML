@@ -67,7 +67,7 @@ def install(self):
 <dtml-let hide_folder_tabs="[cn.getName() for cn in generator.getGeneratedClasses(package) if cn.getTaggedValue('hide_folder_tabs', False)]">
 <dtml-if "hide_folder_tabs">
     #register folderish classes in use_folder_contents
-    pprops = getToolByName(self, 'portal_properties', None)
+    props = getToolByName(self, 'portal_properties', None)
     if props is not None:
         sprops = getattr(props, 'site_properties',None)
         use_folder_tabs = list(sprops.use_folder_tabs)
