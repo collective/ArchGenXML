@@ -68,7 +68,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, wf):
     sdef.setProperties(title="""<dtml-var "_['sequence-item'].getDocumentation(striphtml=generator.atgenerator.striphtml) or _['sequence-item'].getName()">""",
                        transitions=<dtml-var "repr([t.getName() for t in _['sequence-item'].getOutgoingTransitions()])">)
 <dtml-in "_['sequence-item'].getPermissionsDefinitions()">
-    sdef.setPermission('<dtml-var "_['sequence-item'].get('permission')">', 0, <dtml-var "_['sequence-item'].get('roles')">)
+    sdef.setPermission('<dtml-var "_['sequence-item'].get('permission')">', <dtml-var "_['sequence-item'].get('acquisition')">, <dtml-var "_['sequence-item'].get('roles')">)
 </dtml-in>
 
 </dtml-in>

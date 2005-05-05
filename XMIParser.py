@@ -2183,7 +2183,6 @@ class XMIState(XMIElement):
 
         ret = []
 
-
         for k, v in tv.items():
             # list of tagged values that are NOT permissions
             non_permissions = ['initial_state', 'documentation']
@@ -2198,8 +2197,16 @@ class XMIState(XMIElement):
             # split roles-string into list
             roles =  [str(r.strip()) for r in v.split(',') if r.strip()]
 
+            # verify if this permission is acquired
+            nv = 'acquire'
+            acquisition = 0
+            if nv in roles:
+                acquisition = 1
+                roles.remove(nv)
+
             ret.append({'permission' : permission,
-                        'roles' : roles})
+                        'roles' : roles,
+                        'acquisition' : acquisition})
 
         # If View was defined but Access was not defined, the Access permission should
         # be generated with the same rights defined for View
@@ -2215,7 +2222,8 @@ class XMIState(XMIElement):
                 has_view = 1
         if has_view and not has_access:
             ret.append({'permission' : pm['access'],
-                        'roles' : v['roles']})
+                        'roles' : v['roles'],
+                        'acquisition' : v['acquisition']})
 
         # If not permissions were defined, uses the default values
 
