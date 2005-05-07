@@ -1,3 +1,11 @@
+""" Tests for the PyParser.py file
+
+PyParser is a bit hard to test, as everything depends on the loading
+of an initial file by PyModule's '__init__()'. Together with the
+testcases' being subclasses of eachother, this results in a lot of
+tests which are effectively called a number of times with exactly the
+same inputs. Ah well.
+"""
 import os
 import sys
 import unittest
@@ -62,8 +70,24 @@ class TestPyModule(unittest.TestCase):
         """
         self.assertEquals(len(self.parser.protectedSections), 4)
 
-    # Tests for PyCodeElement class inside PyParser
-    # Tested with the two functions
+
+class TestPyCodeElement(TestPyModule):
+    """ Tests for PyCodeElement class inside PyParser
+    """
+
+    def testGetSrc(self):
+        # To be overwritten later
+        pass
+
+    def testGetName(self):
+        # To be overwritten later
+        pass
+
+
+class TestPyFunction(TestPyCodeElement):
+    """ Tests for PyFunction class inside PyParser
+    """
+
     def testGetSrc(self):
         """ getSrc should return the source
 
@@ -82,7 +106,6 @@ class TestPyModule(unittest.TestCase):
         self.assertEquals(self.oneLineFunction.getName(), 'oneLineMethod')
         self.assertEquals(self.function.getName(), 'someMethod')
 
-    # Tests for PyFunction class inside PyParser
     def testCodeLength(self):
         """ Find the correct length of code for two examples
         """
@@ -106,23 +129,66 @@ class TestPyModule(unittest.TestCase):
         self.assertEquals(self.oneLineFunction.name, 'oneLineMethod')
         self.assertEquals(self.function.name, 'someMethod')
 
-    # Tests for PyMethod class inside PyParser
-    # Basically do the same tests, but with methods inside classes
-    # instead of loose functions.
-    def testCodeLength_method(self):
+
+class TestPyMethod(TestPyFunction):
+    """ Tests for PyMethod class inside PyParser
+    """
+
+    def testGetSrc(self):
+        """ getSrc should return the source
+
+        Pretty pedantic tests, but we want the source, just the
+        source, luke. No messing around with it.
+        """
+        self.assertEquals(self.method.getSrc(), self.method.src)
+        self.assertEquals(self.manualMethod.getSrc(),
+                          self.manualMethod.src) 
+
+    def testGetName(self):
+        """ getName should return the name
+
+        Also pretty pedantic, but safeguards against messing around!
+        """
+        self.assertEquals(self.oneLineFunction.getName(), 'oneLineMethod')
+        self.assertEquals(self.function.getName(), 'someMethod')
+
+    def testCodeLength(self):
         """ Find the correct length of code for two methods
         """
         self.assertEquals(self.method.codeLength(), 6)
         self.assertEquals(self.manualMethod.codeLength(), 6)
 
-    def testBuildMethod_method(self):
+    def testBuildMethod(self):
         """ Test method name extraction
         """
         self.assertEquals(self.method.name, 'parserMethod')
         self.assertEquals(self.manualMethod.name, 'parserMethod2')
 
-    # Tests for PyClass class inside PyParser
-    # TODO
+class TestPyClass(TestPyCodeElement):
+    """ Tests for PyClass class inside PyParser
+    """
+    def testBuildMethods(self):
+        """ Find correct number of methods in the example file
+        """
+        self.assertEquals(len(self.klass.methods), 2)
+        # The correct names are already tested in above ..._method
+        # tests.
+
+    def testGetProtectedSection(self):
+        """ Find the class's protected section
+        """
+        # There should be a 'class-header' protected section in the
+        # example file.
+        result = self.klass.getProtectedSection('class-header')
+        expected = "    someTest = 'Some value'"
+        self.assertEquals(result, expected)
+
+    def testGetMethodNames(self):
+        """ Find the correct two names
+        """
+        names = ['parserMethod', 'parserMethod2']
+        self.assertEquals(self.klass.getMethodNames().sort(),
+                          names.sort())
 
 if __name__ == '__main__':
     unittest.main()

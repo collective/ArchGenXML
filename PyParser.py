@@ -1,5 +1,5 @@
 """
-Very simple module for extracting classes and method/function codes
+Simple module for extracting classes and method/function codes
 out of a python file
 """
 import parser
@@ -269,25 +269,33 @@ class PyMethod(PyFunction):
 
 
 class PyClass(PyCodeElement):
+    """ Handles classes
+    """
     methods = {}
     module = None
     typename = 'Class'
     
     def __init__(self, code, module):
+        """ Simple init function
+
+        Calls buildMethods() to extract the class's methods.
+        """
         PyCodeElement.__init__(self, code, module)
         self.methods = {}
         self.name = code.co_name
         self.module = module
-        #print 'Class:', self.name
         self.buildMethods()
         
     def buildMethods(self):
-        meths = [o for o in self.code.co_consts if type(o) == types.CodeType]
-        for m in meths:
+        """ Extract the class's methods
+        """
+        methods = [o for o in self.code.co_consts if type(o) == types.CodeType]
+        for m in methods:
             name = m.co_name
             self.methods[name] = PyMethod(m, self.module)
 
     def printit(self):
+        # Unused right now
         print '======================================='
         print self.typename, ':', self.name
         print '======================================='
@@ -295,9 +303,13 @@ class PyClass(PyCodeElement):
             m.printit()
             
     def getProtectedSection(self, section):
+        """ Pass this request through to the containing module
+        """
         return self.module.getProtectedSection(section)
     
     def getMethodNames(self):
+        """ Return the names of the class's methods
+        """
         return self.methods.keys()
 
 
