@@ -21,9 +21,9 @@ from PyParser import PyModule
 
 class TestPyModule(unittest.TestCase):
     def setUp(self):
-        self.emptyFile = 'tests/pythonfiles/empty.py'
+        self.emptyFile = testDir + '/pythonfiles/empty.py'
         self.emptyStringFile = '# Empty python file\n# Some more'
-        self.realFile = 'tests/pythonfiles/ParserTest.py'
+        self.realFile = testDir + '/pythonfiles/ParserTest.py'
         self.parser = PyModule(self.realFile)
         self.function = self.parser.functions['someMethod']
         self.oneLineFunction = self.parser.functions['oneLineMethod']
@@ -189,6 +189,15 @@ class TestPyClass(TestPyCodeElement):
         names = ['parserMethod', 'parserMethod2']
         self.assertEquals(self.klass.getMethodNames().sort(),
                           names.sort())
+
+def test_suite():
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.makeSuite(TestPyModule))
+    suite.addTest(unittest.makeSuite(TestPyCodeElement))
+    suite.addTest(unittest.makeSuite(TestPyFunction))
+    suite.addTest(unittest.makeSuite(TestPyMethod))
+    suite.addTest(unittest.makeSuite(TestPyClass))
+    return suite
 
 if __name__ == '__main__':
     unittest.main()
