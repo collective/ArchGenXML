@@ -988,6 +988,7 @@ class ArchetypesGenerator(BaseGenerator):
     # Generate get/set/add member functions.
     def generateArcheSchema(self, outfile, element, base_schema):
         """ generates the Schema """
+        # first copy fields from other schemas if neccessary.
         startmarker=True
         for attr in element.getAttributeDefs():
             if str(attr.type)=='copy':
@@ -999,8 +1000,17 @@ class ArchetypesGenerator(BaseGenerator):
                 print >>outfile, "copied_fields['%s'] = %s['%s'].copy()" % (name, copyfrom, attr.getName())
                 map = self.getFieldAttributes(attr)
                 for key in map:
-                    print >>outfile, "copied_fields['%s'].%s = %s" % (name, key, 
-                                                                     map[key])                
+                    print >>outfile, "copied_fields['%s'].%s = %s" % (name, 
+                                        key, map[key])
+                tgv=attr.getTaggedValues()
+                for key in tgv.keys():
+                    if not key.startswith('widget:'):
+                        continue
+                    if key not in self.nonstring_tgvs:
+                        tgv[key]=getExpression(tgv[key])                    
+                    print >>outfile, "copied_fields['%s'].widget.%s = %s" % (name, 
+                                        key[7:], tgv[key])
+                           
 
         print >>outfile, SCHEMA_START
         aggregatedClasses=[]

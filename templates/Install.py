@@ -175,19 +175,19 @@ def install(self):
     else:
         print >>out,'no workflow install'
 
-    <dtml-if "[klass for klass in package.getClasses(recursive=1) if klass.getTaggedValue('use_workflow')]">
+<dtml-if "[klass for klass in package.getClasses(recursive=1) if klass.getTaggedValue('use_workflow')]">
     #bind classes to workflows
     wft = getToolByName(self,'portal_workflow')
-    <dtml-in "package.getClasses(recursive=1)">
-    <dtml-let klass="_['sequence-item']">
-    <dtml-if "klass.getTaggedValue('use_workflow')">
+<dtml-in "package.getClasses(recursive=1)">
+<dtml-let klass="_['sequence-item']">
+<dtml-if "klass.getTaggedValue('use_workflow')">
     wft.setChainForPortalTypes( ['<dtml-var "klass.getCleanName()">'],'<dtml-var "klass.getTaggedValue('use_workflow')">')
-    </dtml-if>
-    </dtml-let>
-    </dtml-in>
-    </dtml-if>
+</dtml-if>
+</dtml-let>
+</dtml-in>
+</dtml-if>
 
-    <dtml-if "package.num_generated_relations">
+<dtml-if "package.num_generated_relations">
     # configuration for Relations
     relations_tool = getToolByName(self,'relations_library')
     xmlpath = os.path.join(package_home(GLOBALS),'relations.xml')
@@ -195,7 +195,7 @@ def install(self):
     xml = f.read()
     f.close()
     relations_tool.importXML(xml)
-    </dtml-if>
+</dtml-if>
 
     # try to call a custom install method
     # in 'AppInstall.py' method 'install'
