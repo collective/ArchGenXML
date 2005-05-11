@@ -1968,7 +1968,8 @@ class XMIStateMachine(XMIStateContainer):
             dummy = [roles.append(r.strip()) \
                      for r in sroles \
                      if not (r.strip() in roles or r.strip() in ignore)]
-        return roles
+                     
+        return [r for r in roles if r]
 
 class XMIStateTransition(XMIElement):
     targetState=None
