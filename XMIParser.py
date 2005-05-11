@@ -1428,26 +1428,33 @@ class XMIClass (XMIElement, StateMachineContainer):
     def isComplex(self):
         return 1
 
-    def addAssocFrom(self,a):
+    def addAssocFrom(self, a):
         self.assocsFrom.append(a)
 
-    def addAssocTo(self,a):
+    def addAssocTo(self, a):
         self.assocsTo.append(a)
 
-    def getToAssociations(self,aggtypes=['none'],aggtypesTo=['none']):
+    def getToAssociations(self, aggtypes=['none'],
+                          aggtypesTo=['none']):
+        # This code doesn't seem to work with below isDependent method
         return [a for a in self.assocsTo if a.fromEnd.aggregation in aggtypes  
-            and a.toEnd.aggregation in aggtypesTo]
+                and a.toEnd.aggregation in aggtypesTo]
 
-    def getFromAssociations(self,aggtypes=['none'],aggtypesTo=['none']):
-        return [a for a in self.assocsFrom if a.fromEnd.aggregation in aggtypes 
-            and a.toEnd.aggregation in aggtypesTo]
-            
+
+    def getFromAssociations(self, aggtypes=['none'], aggtypesTo=['none']):
+        # This code doesn't seem to work with below isDependent method
+        return [a for a in self.assocsFrom if a.fromEnd.aggregation in
+                aggtypes and a.toEnd.aggregation in aggtypesTo]
         #return self.assocsFrom
 
     def isDependent(self):
-        ''' every object to which only composite assocs point shouldnt be created independently '''
-        aggs=self.getToAssociations(aggtypes=['aggregate'])
-        comps=self.getToAssociations(aggtypes=['composite'])
+        """ Return True if class is only accessible through composition
+
+        Every object to which only composite associations point
+        shouldn't be created independently.
+        """
+        aggs = self.getToAssociations(aggtypes=['aggregate'])
+        comps = self.getToAssociations(aggtypes=['composite'])
 
         if comps and not aggs:
             res=1

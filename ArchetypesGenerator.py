@@ -383,18 +383,27 @@ class ArchetypesGenerator(BaseGenerator):
         default_view = element.getTaggedValue('default_view') or immediate_view
 
         # global_allow
-        ga = self.getOption('global_allow', element, default=None)
+        ga = self.getOption('global_allow', element, None)
         if ga:
+            # If explicitly set, use the setting
             global_allow = int(ga)
         else:
-
-            global_allow = not element.isDependent() and \
-                           not element.hasStereoType('hidden')
-
-            if element.hasStereoType(self.portal_tools) or \
-               element.hasStereoType(self.vocabulary_item_stereotype) or \
-               element.hasStereoType(self.cmfmember_stereotype) or \
-               element.isAbstract():
+            # In principle, allow globally
+            global_allow = 1
+            # Unless it is only contained by another element
+            if element.isDependent():
+                # WARNING! isDependent() doesn't seem to work,
+                # aggregates and compositions aren't detected.
+                # 2005-05-11 reinout
+                global_allow = 0
+            # Or if it is a hidden element
+            if element.hasStereoType('hidden'):
+                global_allow = 0
+            # Or if it is a tool-like thingy
+            if (element.hasStereoType(self.portal_tools) or 
+                element.hasStereoType(self.vocabulary_item_stereotype) or
+                element.hasStereoType(self.cmfmember_stereotype) or 
+                element.isAbstract()):
                 global_allow = 0
 
         has_content_icon=''
