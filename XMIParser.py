@@ -2204,7 +2204,7 @@ class XMIState(XMIElement):
             permission = pm.get(k.lower(), k)
 
             # split roles-string into list
-            roles =  [str(r.strip()) for r in v.split(', ') if r.strip()]
+            roles = [str(r.strip()) for r in v.split(',') if r.strip()]
 
             # verify if this permission is acquired
             nv = 'acquire'
