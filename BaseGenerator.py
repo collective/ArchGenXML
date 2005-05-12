@@ -138,10 +138,13 @@ class BaseGenerator:
         parents += element.getClientDependencyClasses(includeParents=True)
             
         for p in parents:
-            if p.hasStereoType(self.stub_stereotypes) and \
-                p.getTaggedValue('import_from',None):
-                print >> outfile,'from %s import %s' % \
-                    (p.getTaggedValue('import_from'), p.getName())
+            if p.hasStereoType(self.stub_stereotypes):
+                # In principle, don't do a thing, but...
+                if p.getTaggedValue('import_from', None):
+                    print >> outfile,'from %s import %s' % \
+                          (p.getTaggedValue('import_from'), p.getName())
+                # Just a comment to keep someone from accidentally moving
+                # below 'else' to the wrong column :-)
             else:
                 print >> outfile,'from %s import %s' % (
                     p.getQualifiedModuleName(
