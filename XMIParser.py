@@ -1013,7 +1013,7 @@ class XMIElement:
                 res.extend(o.getClientDependencies(includeParents=includeParents))
                     
                 res.reverse()
-                
+
         return res
     
     def getClientDependencyClasses(self, includeParents=False): 
@@ -1549,7 +1549,7 @@ class XMIClass (XMIElement, StateMachineContainer):
         if package == ref:
             path = package.getPath(includeRoot=includeRoot, parent=ref)
         else:
-            if self.package.getProduct() != ref.getProduct() or forcePluginRoot:
+            if ref and self.package.getProduct() != ref.getProduct() or forcePluginRoot:
                 path = package.getPath(includeRoot=1, parent=ref)
                 path.insert(0, PseudoElement(name=pluginRoot))
             else:
@@ -1561,9 +1561,11 @@ class XMIClass (XMIElement, StateMachineContainer):
         return path
 
     def getQualifiedModuleName(self, ref, pluginRoot='Products', forcePluginRoot=0, includeRoot=1):
+            
         path = self.getQualifiedModulePath(ref, pluginRoot=pluginRoot, 
                                          forcePluginRoot=forcePluginRoot, 
                                          includeRoot=includeRoot)
+
         res =  '.'.join([p.getModuleName() for p in path if p])
         return res
 

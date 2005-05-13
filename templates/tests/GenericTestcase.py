@@ -7,11 +7,11 @@ if __name__ == '__main__':
     execfile(os.path.join(sys.path[0], 'framework.py'))
 from Testing import ZopeTestCase
 <dtml-if "parent is not None">
-from Products.<dtml-var "klass.getPackage().getProductName()">.<dtml-var "parent.getQualifiedModuleName(klass.getPackage())"> import <dtml-var "parent.getCleanName()">
+from <dtml-var "parent.getQualifiedModuleName(None,forcePluginRoot=1)"> import <dtml-var "parent.getCleanName()">
 </dtml-if>
 # import the tested classes
 <dtml-in "klass.getRealizationParents() + klass.getClientDependencyClasses(includeParents=True)">
-from <dtml-var "_['sequence-item'].getQualifiedModuleName(klass.getPackage(), forcePluginRoot=1)"> import <dtml-var "_['sequence-item'].getCleanName()">
+from <dtml-var "_['sequence-item'].getQualifiedModuleName(None, forcePluginRoot=1)"> import <dtml-var "_['sequence-item'].getCleanName()">
 </dtml-in>
 
 class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCleanName()">)</dtml-if>:
