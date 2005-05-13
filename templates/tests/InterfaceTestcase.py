@@ -16,7 +16,7 @@ from Interface.Verify import verifyClass
 <dtml-in "klass.getRealizationParents()">
 <dtml-let p="_['sequence-item']">
 
-from <dtml-var "p.getQualifiedModuleName(klass.getPackage(),forcePluginRoot=1)"> import <dtml-var "p.getCleanName()">
+from <dtml-var "p.getQualifiedModuleName(None,forcePluginRoot=1)"> import <dtml-var "p.getCleanName()">
 
 <dtml-in "p.getRealizationParents()">
 from <dtml-var "_['sequence-item'].getQualifiedModuleName(klass.getPackage(),forcePluginRoot=1)"> import <dtml-var "_['sequence-item'].getCleanName()">
@@ -32,7 +32,8 @@ class <dtml-var "klass.getCleanName()">(<dtml-var "parent.getCleanName()">):
     <dtml-let p="_['sequence-item']">
 
     def testInterfacesFor<dtml-var "p.getCleanName()">(self):
-
+        '''test interface compliance for class <dtml-var "p.getCleanName()">'''
+        
         <dtml-if "generator.isTGVTrue(klass.getTaggedValue('strict'))">
         
         for iface in Implements.flattenInterfaces(getattr(<dtml-var "klass.getCleanName()">,'__implements__',[])):
