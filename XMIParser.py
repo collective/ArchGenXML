@@ -2170,10 +2170,11 @@ class XMIState(XMIElement):
         return self.outgoingTransitions
 
     def getPermissionsDefinitions(self):
-        """ \
-        returns a list of dictionaries. Each dict contains a key
-        'permission' with a string value and a key 'roles' with a list of
-        strings as value.
+        """ return a list of dictionaries with permission definitions
+
+        Each dict contains a key 'permission' with a string value and
+        a key 'roles' with a list of strings as value and a key
+        'acquisition' with value 1 or 0.
         """
 
         ### for the records:
@@ -2184,55 +2185,53 @@ class XMIState(XMIElement):
 
         # permissions_mapping (abbreviations for lazy guys)
         # keys are case insensitive
-        pm = {'access' : 'Access contents information', 
+        permission_mapping = {'access' : 'Access contents information', 
               'view'   : 'View', 
               'modify' : 'Modify portal content'}
+        tagged_values = self.getTaggedValues()
+        permission_definitions = []
 
-        tv = self.getTaggedValues()
-
-        ret = []
-
-        for k, v in tv.items():
+        for tag, tag_value in tagged_values.items():
             # list of tagged values that are NOT permissions
             non_permissions = ['initial_state', 'documentation']
-            if k in non_permissions or not v:
+            if tag in non_permissions or not tag_value:
                 continue
-
-            k = k.strip()
-
+            tag = tag.strip()
             # look up abbreviations if any
-            permission = pm.get(k.lower(), k)
-
+            permission = permission_mapping.get(tag.lower(), tag)
             # split roles-string into list
-            roles = [str(r.strip()) for r in v.split(',') if r.strip()]
-
+            roles = [str(r.strip()) for r in tag_value.split(',') if r.strip()]
             # verify if this permission is acquired
             nv = 'acquire'
             acquisition = 0
             if nv in roles:
                 acquisition = 1
                 roles.remove(nv)
-
-            ret.append({'permission' : permission, 
+            permission_definitions.append({'permission' : permission, 
                         'roles' : roles, 
                         'acquisition' : acquisition})
 
-        # If View was defined but Access was not defined, the Access permission should
-        # be generated with the same rights defined for View
+        # If View was defined but Access was not defined, the Access
+        # permission should be generated with the same rights defined
+        # for View
 
         has_access = 0
         has_view = 0
         v = {}
-        for r in ret:
-            if r.get('permission', None) == pm['access']:
+        for permission_definition in permission_definitions:
+            if (permission_definition.get('permission', None) ==
+                permission_mapping['access']): 
                 has_access = 1
-            if r.get('permission', None) == pm['view']:
-                v = r
+            if (permission_definition.get('permission', None) ==
+                permission_mapping['view']):
+                v = permission_definition
                 has_view = 1
         if has_view and not has_access:
-            ret.append({'permission' : pm['access'], 
-                        'roles' : v['roles'], 
-                        'acquisition' : v['acquisition']})
+            permission = permission_mapping['access']
+            permission_definitions.append({'permission': permission,
+                                           'roles': v['roles'], 
+                                           'acquisition': v['acquisition']})
+        return permission_definitions
 
         # If not permissions were defined, uses the default values
 
@@ -2240,20 +2239,21 @@ class XMIState(XMIElement):
         # possible to avoid setting these properties so that they can be
         # acquired from parent.
 
-        # for p in pm.values():
+        # for p in permission_mapping.values():
         #    has_permission = 0
-        #    for r in ret:
+        #    for r in permission_definitions:
         #        if r.get('permission', None) == p:
         #            has_permission = 1
         #            break
         #    if not has_permission:
-        #        ret.append({'permission' : p, 
+        #        permission_definitions.append({'permission' : p, 
         #                    'roles' : ['Owner', 'Manager']})
 
-        return ret
+        # end of getPermissionsDefinitions()
 
     def isInitial(self):
         return self.isinitial
+
 
 class XMICompositeState(XMIState):
     def __init__(self, *args, **kwargs):
