@@ -13,6 +13,7 @@ __docformat__ = 'plaintext'
 __version__   = '$ Revision 0.0 $'[11:-2]
 </dtml-let>
 
+<dtml-var "generator.getProtectedSection(parsedModule,'workflow-script-header',0)">
 ## <dtml-var "parsedModule.functions.keys()">
 <dtml-in "statemachine.getAllTransitionActionNames()">
 <dtml-let actionname="_['sequence-item']">
