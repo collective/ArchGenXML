@@ -229,18 +229,17 @@ class BaseGenerator:
             generatedMethods.append(m)
 
         for interface in element.getRealizationParents():
-            meths=[m for m in interface.getMethodDefs(recursive=1) if m.getName() not in allmethnames]
-            # i dont want to extra generate methods that are already defined in the class
-            if meths:
-                for m in meths:
-                    generatedMethods.append(m)
-                    allmethnames.append(m.getName())
+            meths = [m for m in interface.getMethodDefs(recursive=1) if m.getName() not in allmethnames]
+            # I dont want to extra generate methods that are already defined in the class
+            for m in meths:
+                generatedMethods.append(m)
+                allmethnames.append(m.getName())
 
-        #contains _all_ generated method names
-        method_names=[m.getName() for m in generatedMethods]
+        # contains _all_ generated method names
+        method_names = [m.getName() for m in generatedMethods]
 
-        #if __init__ has to be generated for tools i want _not_ __init__ to be preserved
-        #if it is added to method_names it wont be recognized as a manual method (hacky but works)
+        # If __init__ has to be generated for tools i want _not_ __init__ to be preserved
+        # If it is added to method_names it wont be recognized as a manual method (hacky but works)
         if element.hasStereoType(self.portal_tools) and '__init__' not in method_names:
             method_names.append('__init__')
 
