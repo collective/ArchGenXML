@@ -40,11 +40,11 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
         """
         #Uncomment one of the following lines as needed
         ##self.loginAsPortalOwner()
-        <dtml-if "m.getParent() != klass">
+<dtml-if "m.getParent() != klass">
 
         ##o=<dtml-var "m.getParent().getCleanName()">('<dtml-var name>')
         ##self.folder._setObject('<dtml-var name>', o)
-        </dtml-if>
+</dtml-if>
         pass
         
 </dtml-let>
