@@ -756,9 +756,8 @@ class XMIElement:
         self.__dict__.update(kwargs)
         if domElement:
             allObjects[domElement.getAttribute('xmi.id')] = self
-
-        self.initFromDOM(domElement)
-        self.buildChildren(domElement)
+            self.initFromDOM(domElement)
+            self.buildChildren(domElement)
 
     def getId(self):
         return self.id
@@ -1663,8 +1662,8 @@ class XMIMethod (XMIElement):
         """
         # The olde way was a bit longish. Something like
         # testTestmyclassnameTestfoldercontainssomething().
-        old = 'test%s%s' % (self.getParent().getCleanName().capitalize(), 
-                            self.getCleanName().capitalize())
+        # old = 'test%s%s' % (self.getParent().getCleanName().capitalize(), 
+        #                     self.getCleanName().capitalize())
         # The new version starts with 'test_' with the unmodified name
         # after it.
         name = 'test_%s' % self.getCleanName()
