@@ -19,6 +19,8 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
     """
 <dtml-var "generator.getProtectedSection(parsed_class, 'class-header_'+klass.getCleanName(), 1)">
     def afterSetUp(self):
+        """
+        """
         pass
 
 <dtml-in "generator.getMethodsToGenerate(klass)[0]">
@@ -32,15 +34,15 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 <dtml-else>
     def <dtml-var "mn">(self):
 <dtml-let name="'temp_'+m.getParent().getCleanName()">
-        ''' '''
+        """
+        """
         #Uncomment one of the following lines as needed
         ##self.loginAsPortalOwner()
         <dtml-if "m.getParent() != klass">
-        
+
         ##o=<dtml-var "m.getParent().getCleanName()">('<dtml-var name>')
         ##self.folder._setObject('<dtml-var name>', o)
         </dtml-if>
-        
         pass
         
 </dtml-let>
