@@ -25,7 +25,11 @@ PloneTestCase.setupPloneSite(products=PRODUCTS)
 class <dtml-var "klass.getCleanName()">(PloneTestCase.PloneTestCase):
     """ Base TestCase for <dtml-var "klass.getPackage().getProductName()">"""
 <dtml-var "generator.getProtectedSection(parsed_class,'class-header_'+klass.getCleanName(),1)">
-    def afterSetUp(self):
-        pass
+    # Commented out for now, it gets blasted at the moment anyway.
+    # Place it in the protected section if you need it.
+    #def afterSetUp(self):
+    #    """
+    #    """
+    #    pass
 
 <dtml-var "generator.getProtectedSection(parsed_class,'module-footer')">

@@ -18,10 +18,12 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
     """ test-cases for class(es) <dtml-var "', '.join([p.getName() for p in klass.getRealizationParents()])">
     """
 <dtml-var "generator.getProtectedSection(parsed_class, 'class-header_'+klass.getCleanName(), 1)">
-    def afterSetUp(self):
-        """
-        """
-        pass
+    # Commented out for now, it gets blasted at the moment anyway.
+    # Place it in the protected section if you need it.
+    #def afterSetUp(self):
+    #    """
+    #    """
+    #    pass
 
 <dtml-in "generator.getMethodsToGenerate(klass)[0]">
 <dtml-let m="_['sequence-item']" mn="m.testmethodName()">
