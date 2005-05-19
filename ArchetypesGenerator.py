@@ -1371,8 +1371,8 @@ class ArchetypesGenerator(BaseGenerator):
         # if it's a derived class check if parent has stereotype 'archetype'
         parent_is_archetype = False
         for p in element.getGenParents():
-            parent_is_archetype=parent_is_archetype or \
-                                p.hasStereoType(self.archetype_stereotype)
+            parent_is_archetype = parent_is_archetype or \
+                                  p.hasStereoType(self.archetype_stereotype)
         #also check if the parent classes can have subobjects
         baseaggregatedClasses=[]
         for b in element.getGenParents():
