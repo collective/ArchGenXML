@@ -781,7 +781,8 @@ class ArchetypesGenerator(BaseGenerator):
             rawType = rawType[:-5]
 
         res+=indent("%s('%s',\n" % (fieldtype % {'type':rawType},name), indent_level)
-        res+=indent(',\n'.join(['%s=%s' % (key,map[key]) \
+        if map:
+            res+=indent(',\n'.join(['%s=%s' % (key,map[key]) \
                                 for key in map if key.find(':')<0 ]) ,
                     indent_level+1) + ',\n'
         res+=indent('),\n',indent_level)
@@ -824,14 +825,15 @@ class ArchetypesGenerator(BaseGenerator):
         if attr.hasDefault():
             map.update( {'default':getExpression(attr.getDefault())} )
         map.update(self.getFieldAttributes(attr))
-        map.update( {
-            'widget': self.getWidget( \
+        widget=self.getWidget( \
                 ctype,
                 attr,
                 attr.getName(),
-                classelement ),
+                classelement )
 
-        } )
+        if not widget.startswith ('GenericWidget'):
+            map.update( {
+                'widget': widget })
 
 
         # ATVocabularyManager: Add NamedVocabulary to field.
@@ -1442,7 +1444,8 @@ class ArchetypesGenerator(BaseGenerator):
         # [optilude] Also - ignore the standard class if this is an abstract/mixin
         if baseclass and not isTGVFalse(element.getTaggedValue('base_class',1)) \
            and not element.isAbstract ():
-            parentnames.insert(0,baseclass)
+              baseclasses=baseclass.split(',')
+              parentnames=parentnames+baseclasses
 
         # Remark: CMFMember support include VariableSchema support
         if element.hasStereoType(self.variable_schema) and \
