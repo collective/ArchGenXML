@@ -70,6 +70,7 @@ def indent(s,indent,prepend='',skipFirstRow=0):
 
     return '\n'.join(lines)
 
+
 def getExpression(s):
     '''
     interprets an expression (for permission settings and other taggedValues)
@@ -94,11 +95,22 @@ def getExpression(s):
             else:
                 return '"%s"' % s
 
+
 def isTGVTrue(tgv):
-    return toBoolean(tgv) 
+    if type(tgv) in (type(''),type(u'')):
+        tgv=tgv.lower()
+
+    return tgv in (1,'1','true')
+
 
 def isTGVFalse(tgv):
-    return not toBoolean(tgv) 
+    ''' checks if a tgv is _explicitly_ false, a none value is undefined
+    and _not_ false, so it sonething different than (not toBoolean(tgv)) '''
+    if type(tgv) in (type(''),type(u'')):
+        tgv=tgv.lower()
+
+    return tgv in (0,'0','false')
+
 
 def toBoolean(v):
     if type(v) in (StringTypes):

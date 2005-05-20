@@ -383,11 +383,8 @@ class ArchetypesGenerator(BaseGenerator):
         default_view = element.getTaggedValue('default_view') or immediate_view
 
         # global_allow
-        ga = self.getOption('global_allow', element, None)
+        ga = not isTGVFalse(self.getOption('global_allow', element, None))
         if ga:
-            # If explicitly set, use the setting
-            global_allow = int(ga)
-        else:
             # In principle, allow globally
             global_allow = 1
             # Unless it is only contained by another element
@@ -405,6 +402,8 @@ class ArchetypesGenerator(BaseGenerator):
                 element.hasStereoType(self.cmfmember_stereotype) or 
                 element.isAbstract()):
                 global_allow = 0
+        else:
+            global_allow=0
 
         has_content_icon=''
         content_icon=element.getTaggedValue('content_icon')
