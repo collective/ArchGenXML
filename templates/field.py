@@ -16,18 +16,14 @@ from Products.Archetypes.Registry import registerField
 from Products.Archetypes.utils import DisplayList
 from Products.Archetypes import config as atconfig
 from Products.Archetypes.Widget import *
-
-
 from Products.generator import i18n
 
-
-
-
 <dtml-var "generator.getProtectedSection(parsed_class,'module-header')">
-
 <dtml-var "generator.generateDependentImports(klass)">
 class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-var "','.join([p.getCleanName() for p in klass.getGenParents()])"><dtml-else>ObjectField</dtml-if>):
     ''' <dtml-var "klass.getDocumentation()">'''
+
+<dtml-var "generator.getProtectedSection(parsed_class,'class-header',1)">
 
     _properties = <dtml-var parentname>._properties.copy()
     _properties.update({
@@ -41,7 +37,6 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
     security.declarePrivate('get')
     
 <dtml-if "not parsed_class">
-
     def get(self, instance, **kwargs):
         value = ObjectField.get(self, instance, **kwargs)
         return encode(value, instance, **kwargs)
@@ -52,36 +47,27 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
         # Remove acquisition wrappers
         value = decode(aq_base(value), instance, **kwargs)
         self.getStorage(instance).set(self.getName(), instance, value, **kwargs)
-        
 </dtml-if>    
-
-
-
-    <dtml-in "generator.getMethodsToGenerate(klass)[0]">
-    <dtml-let m="_['sequence-item']">
-    <dtml-if "m.getParent().__class__.__name__=='XMIInterface'"> 
-    
+<dtml-in "generator.getMethodsToGenerate(klass)[0]">
+<dtml-let m="_['sequence-item']">
+<dtml-if "m.getParent().__class__.__name__=='XMIInterface'"> 
     #from Interface <dtml-var "m.getParent().getName()">:
-    </dtml-if>
-    <dtml-if "parsed_class and m.getCleanName() in parsed_class.methods.keys()">
-
+</dtml-if>
+<dtml-if "parsed_class and m.getCleanName() in parsed_class.methods.keys()">
 <dtml-var "parsed_class.methods[m.getCleanName()].getSrc()">    
-    <dtml-else>
+<dtml-else>
 
     def <dtml-var "m.getName()">(self,<dtml-var "','.join(m.getParamNames())">):
         pass
-    </dtml-if>
-    </dtml-let>
-    </dtml-in>
-
-    <dtml-in "generator.getMethodsToGenerate(klass)[1]">
-
+</dtml-if>
+</dtml-let>
+</dtml-in>
+<dtml-in "generator.getMethodsToGenerate(klass)[1]">
 <dtml-var "_['sequence-item'].getSrc()">            
-    </dtml-in>
-
-        
-    
+</dtml-in>
 
 registerField(<dtml-var "klass.getCleanName()">,
               title='<dtml-var "klass.getTaggedValue('label',klass.getCleanName())">',
               description='<dtml-var "klass.getTaggedValue('decription','')">')
+
+<dtml-var "generator.getProtectedSection(parsed_class,'module-footer')">
