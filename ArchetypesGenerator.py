@@ -1141,7 +1141,6 @@ class ArchetypesGenerator(BaseGenerator):
             # tgv overrides UML-mode!
             permissionMode = m.getVisibility() or 'public'
 
-
             # A public method means it's part of the class' public interface,
             # not to be confused with the fact that Zope has a method called
             # declareProtected() to protect a method which is *part of the
@@ -2062,7 +2061,7 @@ class ArchetypesGenerator(BaseGenerator):
                         #print 'parse module:',c.name
                         self.parsed_class_sources[package.getFilePath()+'/'+c.name]=c
                 except IOError:
-                    # print 'no source found at %s' % os.path.join(self.targetRoot, outfilepath)
+                    #print 'no source found at %s' % os.path.join(self.targetRoot, outfilepath)
                     pass
                 except :
                     print
@@ -2075,7 +2074,8 @@ class ArchetypesGenerator(BaseGenerator):
 
             try:
                 outfile=StringIO()
-                element.parsed_class=self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name,None)
+                #print element.getPackage().getFilePath()+'/'+element.name
+                element.parsed_class = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name,None)
                 self.generateModuleInfoHeader(outfile, module, element)
                 if not element.isInterface():
                     print >>outfile, self.generateClass(element)

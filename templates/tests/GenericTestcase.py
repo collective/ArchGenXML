@@ -3,8 +3,6 @@
 # test-cases for class(es) <dtml-var "', '.join([p.getName() for p in klass.getRealizationParents()])">
 #
 import os, sys
-if __name__ == '__main__':
-    execfile(os.path.join(sys.path[0], 'framework.py'))
 from Testing import ZopeTestCase
 <dtml-if "parent is not None">
 from <dtml-var "parent.getQualifiedModuleName(None,forcePluginRoot=1)"> import <dtml-var "parent.getCleanName()">
@@ -17,7 +15,7 @@ from <dtml-var "_['sequence-item'].getQualifiedModuleName(None, forcePluginRoot=
 class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCleanName()">)</dtml-if>:
     """ test-cases for class(es) <dtml-var "', '.join([p.getName() for p in klass.getRealizationParents()])">
     """
-    
+
 <dtml-var "generator.getProtectedSection(parsed_class, 'class-header_'+klass.getCleanName(), 1)">
 <dtml-if "not parsed_class or 'afterSetUp' not in parsed_class.methods.keys()">
     def afterSetUp(self):
@@ -42,7 +40,6 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
         #Uncomment one of the following lines as needed
         ##self.loginAsPortalOwner()
 <dtml-if "m.getParent() != klass">
-
         ##o=<dtml-var "m.getParent().getCleanName()">('<dtml-var name>')
         ##self.folder._setObject('<dtml-var name>', o)
 </dtml-if>
@@ -71,6 +68,6 @@ def test_suite():
     return suite
 
 if __name__ == '__main__':
-    framework()
+    execfile(os.path.join(sys.path[0], 'framework.py'))
 
 <dtml-var "generator.getProtectedSection(parsed_class, 'module-footer')">

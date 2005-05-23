@@ -1,21 +1,27 @@
 <dtml-var "generator.getProtectedSection(parsed_class, 'module-header')">
-<dtml-let allmethodnames="['test%s%s' % (m.getParent().getCleanName().capitalize(), m.getCleanName().capitalize()) for m in generator.getMethodsToGenerate(klass)[0]]">
 #
 # Setup tests
 #
 import os, sys
-if __name__ == '__main__':
-    execfile(os.path.join(sys.path[0], 'framework.py'))
+from Testing import ZopeTestCase
+<dtml-if "parent is not None">
+from <dtml-var "parent.getQualifiedModuleName(None,forcePluginRoot=1)"> import <dtml-var "parent.getCleanName()">
+</dtml-if>
 
-from Products.PloneTestCase import PloneTestCase
-from <dtml-var "klass.getGenParents()[0].getQualifiedModuleName(None,forcePluginRoot=1)"> import <dtml-var "klass.getGenParents()[0].getCleanName()">
-
-class TestSetup(<dtml-var "klass.getGenParents()[0].getCleanName()">):
+class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCleanName()">)</dtml-if>:
+    """ Test cases for the generic setup of the product
+    """
 
 <dtml-var "generator.getProtectedSection(parsed_class, 'class-header_'+klass.getCleanName(), 1)">
+<dtml-if "not parsed_class or 'afterSetUp' not in parsed_class.methods.keys()">
+    def afterSetUp(self):
+        pass
+<dtml-else>
+<dtml-var "parsed_class.methods['afterSetUp'].getSrc()">
+</dtml-if>
 
 <dtml-in "generator.getMethodsToGenerate(klass)[0]">
-<dtml-let m="_['sequence-item']" mn="'test%s%s'%(m.getParent().getCleanName().capitalize(), m.getCleanName().capitalize())">
+<dtml-let m="_['sequence-item']" mn="m.testmethodName()">
 <dtml-if "m.getParent() != klass"> 
     # from class <dtml-var "m.getParent().getName()">:
 </dtml-if>
@@ -25,31 +31,21 @@ class TestSetup(<dtml-var "klass.getGenParents()[0].getCleanName()">):
 <dtml-else>
     def <dtml-var "mn">(self):
 <dtml-let name="'temp_'+m.getParent().getCleanName()">
-        ''' '''
-        #Uncomment one of the followng lines as needed
+        """
+        """
+        #Uncomment one of the following lines as needed
         ##self.loginAsPortalOwner()
-        <dtml-if "m.getParent() != klass">
-        
+<dtml-if "m.getParent() != klass">
         ##o=<dtml-var "m.getParent().getCleanName()">('<dtml-var name>')
         ##self.folder._setObject('<dtml-var name>', o)
-        </dtml-if>
-        
+</dtml-if>
         pass
         
 </dtml-let>
 </dtml-if>
 </dtml-let>
 </dtml-in>
-    
-    # Manually created methods
-<dtml-if parsed_class>
-<dtml-in "parsed_class.methods.values()">
-<dtml-if "_['sequence-item'].getName() not in allmethodnames+['afterSetUp']">
-<dtml-var "_['sequence-item'].getSrc()">
-        
-</dtml-if>
-</dtml-in>
-</dtml-if>
+
     # Auto-added by testcase generation - probably bug
     def testTools(self):
         ids = self.portal.objectIds()
@@ -77,15 +73,25 @@ class TestSetup(<dtml-var "klass.getGenParents()[0].getCleanName()">):
         self.failUnless('plone_workflow' in getChain('Document'))
         # ...
 
+    
+    # Manually created methods
+<dtml-if parsed_class>
+<dtml-in "parsed_class.methods.values()">
+<dtml-let allmethodnames="[m.testmethodName() for m in generator.getMethodsToGenerate(klass)[0]]">
+<dtml-if "_['sequence-item'].getName() not in allmethodnames+['afterSetUp', 'testTools']">
+<dtml-var "_['sequence-item'].getSrc()">
+</dtml-if>
+</dtml-let>
+</dtml-in>
+</dtml-if>
 
 def test_suite():
     from unittest import TestSuite, makeSuite
     suite = TestSuite()
-    suite.addTest(makeSuite(TestSetup))
+    suite.addTest(makeSuite(<dtml-var "klass.getCleanName()">))
     return suite
 
 if __name__ == '__main__':
-    framework()
+    execfile(os.path.join(sys.path[0], 'framework.py'))
 
-</dtml-let>
 <dtml-var "generator.getProtectedSection(parsed_class, 'module-footer')">
