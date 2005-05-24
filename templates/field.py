@@ -1,10 +1,3 @@
-#  ReferenceField compatible field for relations.
-#
-# XXX: Note that self.relationship doesn't make much sense for a
-# "Relations field", because it takes away the flexibility to define
-# Rulesets at runtime.  Let's consider ways of doing what we want to
-# do without using a ReferenceField subclass.
-
 from types import ListType, TupleType, StringTypes
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base
@@ -18,12 +11,15 @@ from Products.Archetypes import config as atconfig
 from Products.Archetypes.Widget import *
 from Products.generator import i18n
 
+from Products.<dtml-var "klass.getPackage().getCleanName()"> import config
+
 <dtml-var "generator.getProtectedSection(parsed_class,'module-header')">
 <dtml-var "generator.generateDependentImports(klass)">
 class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-var "','.join([p.getCleanName() for p in klass.getGenParents()])"><dtml-else>ObjectField</dtml-if>):
     ''' <dtml-var "klass.getDocumentation()">'''
 
 <dtml-var "generator.getProtectedSection(parsed_class,'class-header',1)">
+<dtml-var "generator.generateImplements(klass,['ObjectField']+[p.getCleanName() for p in klass.getGenParents()])">
 
     _properties = <dtml-var parentname>._properties.copy()
     _properties.update({

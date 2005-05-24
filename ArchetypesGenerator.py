@@ -1365,6 +1365,7 @@ class ArchetypesGenerator(BaseGenerator):
         # [reinout:] I think we do need that recursive flag. If class
         # 'A' contains an abstract class 'B' which aggregates C, D and
         # E, I *do* want C, D and E to show up in A's list.
+        # [zworkb] yes we revert it back to allowed subclasses 
         aggregatedClasses = element.getRefs() + element.getSubtypeNames(recursive=1,filter=['class'])
         aggregatedInterfaces = element.getRefs() + element.getSubtypeNames(recursive=0,filter=['interface'])
 
