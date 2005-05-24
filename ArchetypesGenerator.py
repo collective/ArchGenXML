@@ -430,7 +430,7 @@ class ArchetypesGenerator(BaseGenerator):
         filter_default = self.elementIsFolderish(element)
         # But a tagged value overrides
         filter_content_types = isTGVTrue(element.getTaggedValue('filter_content_types',
-                                                                filter_default)) 
+                                                                filter_default))
 
         # Set a type description.
 
@@ -1362,7 +1362,10 @@ class ArchetypesGenerator(BaseGenerator):
         
         # Unset recursive flag (~optilude) - we don't want to get subclasses'
         # aggregation in allowable types of parent!
-        aggregatedClasses = element.getRefs() + element.getSubtypeNames(recursive=0,filter=['class'])
+        # [reinout:] I think we do need that recursive flag. If class
+        # 'A' contains an abstract class 'B' which aggregates C, D and
+        # E, I *do* want C, D and E to show up in A's list.
+        aggregatedClasses = element.getRefs() + element.getSubtypeNames(recursive=1,filter=['class'])
         aggregatedInterfaces = element.getRefs() + element.getSubtypeNames(recursive=0,filter=['interface'])
 
         if element.getTaggedValue('allowed_content_types'):
