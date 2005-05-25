@@ -1367,7 +1367,7 @@ class ArchetypesGenerator(BaseGenerator):
         # E, I *do* want C, D and E to show up in A's list.
         # [zworkb] yes we revert it back to allowed subclasses 
         aggregatedClasses = element.getRefs() + element.getSubtypeNames(recursive=1,filter=['class'])
-        # Possible bug: recursive=0 below here. yes/no?
+        # We *do* want the resursive=0 below, though!
         aggregatedInterfaces = element.getRefs() + element.getSubtypeNames(recursive=0,filter=['interface'])
 
         if element.getTaggedValue('allowed_content_types'):
