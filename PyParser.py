@@ -38,6 +38,7 @@ class PyModule:
         self.classes = {}
         self.functions = {}
         self.protectedSections = {}
+        self.protectionDeclarations = []
         # Read and mangle the file
         self.filebuf = self.readFile(file, mode)
         self.splittedSource = self.filebuf.split('\n')
@@ -50,6 +51,7 @@ class PyModule:
         # sections. Beware that the rest is left out!
         self.findClassesAndFunctions()
         self.findProtectedSections()
+        self.findProtectionDeclarations()
 
     def readFile(self, file, mode='file'):
         """ Read the file into a string
@@ -116,6 +118,24 @@ class PyModule:
                 protectedSection = '\n'.join(self.splittedSource[start+1:end])
                 self.protectedSections[sectionname] = protectedSection
 
+    def findProtectionDeclarations(self):
+        """ Find the protection declarations in the source file
+
+        The results are placed in self.protectionDeclarations, which
+        is a list. You can find the protected methods by looking for
+        their name in this list of strings. A bit brute-force, I
+        admit.
+
+        A restriction is that it has to be a one-line statement.
+        """
+        for i in xrange(0, len(self.splittedSource)):
+            line = self.splittedSource[i]
+            strippedLine = line.strip()
+            if ('declarePublic' in strippedLine or
+                'declareProtected' in strippedLine):
+                self.protectionDeclarations.append(line)
+                # note: the line, so we get the good indentation
+
     def isItAClass(self, c):
         """ True if a code fragment is a class
 
@@ -138,6 +158,19 @@ class PyModule:
         if self.splittedSource[fl-1].startswith('def'):
             return 1
 
+    def isItAComment(self, lineNumber):
+        """ True if a code fragment is a comment
+
+        Checks if the line starts with single or double quotes
+        """
+        if self.splittedSource[lineNumber].strip().startswith('"""'):
+            # three double quotes
+            return 1
+        if self.splittedSource[lineNumber].strip().startswith("'''"):
+            # three single quotes
+            return 1
+        return 0
+    
     def getProtectedSection(self, section):
         """ Return the named protected section
 
@@ -312,6 +345,33 @@ class PyClass(PyCodeElement):
         """
         return self.methods.keys()
 
+    def getDocumentation(self):
+        """ Return the docstring of the class
+
+        If there's class documentation, it is the very first part of
+        the class. Get it. Then test it.
+        """
+        try:
+            candidate = self.code.co_consts[0]
+        except:
+            return ''
+        firstLine = self.code.co_firstlineno
+        # check in code...
+        if self.module.isItAComment(firstLine):
+            return candidate
+        else:
+            return ''
+
+    def getProtectionDeclaration(self, method):
+        """ Try and find a protectiondeclaration for a method
+
+        Currently it's a brute-force string matching in module's list
+        of protection declarations.
+        """
+        for declaration in self.module.protectionDeclarations:
+            if method in declaration:
+                return declaration
+        return ''
 
 if __name__=='__main__':
     mod = PyModule(sys.argv[1])

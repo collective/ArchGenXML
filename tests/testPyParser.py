@@ -70,6 +70,14 @@ class TestPyModule(unittest.TestCase):
         """
         self.assertEquals(len(self.parser.protectedSections), 4)
 
+    def testFindProtectionDeclarations(self):
+        """ Find the correct number of protection declarations
+        
+        tests/pythonfiles/ParserTest.py contains 2 protection
+        declarations.
+        """
+        self.assertEquals(len(self.parser.protectionDeclarations), 2)
+
 
 class TestPyCodeElement(TestPyModule):
     """ Tests for PyCodeElement class inside PyParser
@@ -167,6 +175,16 @@ class TestPyMethod(TestPyFunction):
 class TestPyClass(TestPyCodeElement):
     """ Tests for PyClass class inside PyParser
     """
+    def testGetDocumentation(self):
+        """ Find the docstring of a class
+        """
+        result = """ Doctest line 1
+
+    Doctest line 2
+    """
+        # print self.klass.code.co_consts[0]
+        self.assertEquals(self.klass.getDocumentation(), result)
+
     def testBuildMethods(self):
         """ Find correct number of methods in the example file
         """
@@ -189,6 +207,13 @@ class TestPyClass(TestPyCodeElement):
         names = ['parserMethod', 'parserMethod2']
         self.assertEquals(self.klass.getMethodNames().sort(),
                           names.sort())
+
+    def testGetProtectionDeclaration(self):
+        """ Find the security.declare... for a manual method
+        """
+        expected = "    security.declarePublic('parserMethod2')"
+        self.assertEquals(self.klass.getProtectionDeclaration('parserMethod2'),
+                          expected)
 
 def test_suite():
     suite = unittest.TestSuite()

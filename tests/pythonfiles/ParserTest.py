@@ -61,6 +61,10 @@ def oneLineMethod(): pass
 ##/code-section after-schema
 
 class ParserTest(BaseContent):
+    """ Doctest line 1
+
+    Doctest line 2
+    """
     security = ClassSecurityInfo()
     __implements__ = (getattr(BaseContent,'__implements__',()),)
 
