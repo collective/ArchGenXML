@@ -8,10 +8,19 @@
 #              a plugin named (ill add the name later (brain-dead today)
 #
 # Created:     2003/19/07
-# RCS-ID:      $Id: XSDParser.py,v 1.15 2004/05/23 14:21:08 yenzenz Exp $
+# RCS-ID:      $Id$
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
+
+# DEPRECATED!!! DEPRECATED!!! DEPRECATED!!! DEPRECATED!!! DEPRECATED!!!
+# DEPRECATED!!! DEPRECATED!!! DEPRECATED!!! DEPRECATED!!! DEPRECATED!!!
+# DEPRECATED!!! DEPRECATED!!! DEPRECATED!!! DEPRECATED!!! DEPRECATED!!!
+# DEPRECATED!!! DEPRECATED!!! DEPRECATED!!! DEPRECATED!!! DEPRECATED!!!
+# DEPRECATED!!! DEPRECATED!!! DEPRECATED!!! DEPRECATED!!! DEPRECATED!!!
+# DEPRECATED!!! DEPRECATED!!! DEPRECATED!!! DEPRECATED!!! DEPRECATED!!!
+# DEPRECATED!!! DEPRECATED!!! DEPRECATED!!! DEPRECATED!!! DEPRECATED!!!
+# See remark at the top.
 
 import sys, os.path, time, string
 import getopt
