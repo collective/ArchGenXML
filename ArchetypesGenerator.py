@@ -1498,9 +1498,13 @@ class ArchetypesGenerator(BaseGenerator):
         classDeclaration = 'class %s%s%s:\n' % (self.prefix, name, parents)
 
         wrt(classDeclaration)
-        doc=element.getDocumentation(striphtml=self.striphtml)
+        doc = element.getDocumentation(striphtml=self.striphtml)
+        parsedDoc = element.parsed_class.getDocumentation()
         if doc:
             print >>outfile,indent('"""\n%s\n"""' % doc, 1)
+        elif parsedDoc:
+            # Bit tricky, parsedDoc is already indented...
+            print >>outfile, '    """%s"""' % parsedDoc
 
         print >>outfile,indent('security = ClassSecurityInfo()',1)
 
