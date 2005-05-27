@@ -126,7 +126,7 @@ from Products.CMFCore.utils import UniqueObject
 CLASS_PORTAL_TYPE    = """    portal_type = meta_type    = '%s' """
 CLASS_ARCHETYPE_NAME = """\
     # This name appears in the 'add' box
-    archetype_name             = '%s'"""
+    archetype_name             = '%s'\n"""
 CLASS_IMPLEMENTS     = """    __implements__ = %(baseclass_interfaces)s + (%(realizations)s,)"""
 CLASS_IMPLEMENTS_BASE= """    __implements__ = %(baseclass_interfaces)s"""
 CLASS_ALLOWED_CONTENT_TYPES = '''    allowed_content_types      = %s %s'''
@@ -233,7 +233,6 @@ from Products.CMFMember.MemberPermissions import \\
         VIEW_SECURITY_PERMISSION, EDIT_PASSWORD_PERMISSION, \\
         EDIT_SECURITY_PERMISSION, MAIL_PASSWORD_PERMISSION, \\
         ADD_MEMBER_PERMISSION
-from Products.Archetypes.Schema import FieldList
 from AccessControl import ModuleSecurityInfo
 """
 

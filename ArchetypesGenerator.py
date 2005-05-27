@@ -1372,8 +1372,13 @@ class ArchetypesGenerator(BaseGenerator):
         # We *do* want the resursive=0 below, though!
         aggregatedInterfaces = element.getRefs() + element.getSubtypeNames(recursive=0,filter=['interface'])
 
+        # [xiru] We need to remove duplicated values and avoid mixture 
+        # between unicode and string content types identifiers
         if element.getTaggedValue('allowed_content_types'):
-            aggregatedClasses=aggregatedClasses+element.getTaggedValue('allowed_content_types').split(',')
+            aggregatedClasses = [str(e) for e in aggregatedClasses]
+            for e in element.getTaggedValue('allowed_content_types').split(','):
+                if str(e) not in aggregatedClasses:
+                    aggregatedClasses.append(str(e))
 
         # if it's a derived class check if parent has stereotype 'archetype'
         parent_is_archetype = False
@@ -1514,7 +1519,6 @@ class ArchetypesGenerator(BaseGenerator):
         if not element.isAbstract ():
             print >> outfile, CLASS_ARCHETYPE_NAME %  archetype_name
             print >> outfile, CLASS_PORTAL_TYPE % name
-            print >> outfile
 
         #allowed_content_classes
         parentAggregates=''
