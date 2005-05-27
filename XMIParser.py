@@ -2256,6 +2256,18 @@ class XMIState(XMIElement):
     def isInitial(self):
         return self.isinitial
 
+    def getTitle(self, generator):
+        """ Return the title for a state
+
+        The original is in the templates/create_workflow.py:
+        <dtml-var "_['sequence-item'].getDocumentation(striphtml=generator.atgenerator.striphtml) or _['sequence-item'].getName()">
+
+        This method mimics that, but also looks at the TGV 'label'
+        """
+        fromDocumentation = self.getDocumentation(striphtml=generator.atgenerator.striphtml)
+        fromTaggedValue = self.getTaggedValue('label', None)
+        default = self.getName()
+        return fromTaggedValue or fromDocumentation or default
 
 class XMICompositeState(XMIState):
     def __init__(self, *args, **kwargs):
