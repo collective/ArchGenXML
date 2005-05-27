@@ -13,8 +13,9 @@ from <dtml-var "_['sequence-item'].getQualifiedModuleName(None, forcePluginRoot=
 </dtml-in>
 
 class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCleanName()">)</dtml-if>:
-    """ test-cases for class(es) <dtml-var "', '.join([p.getName() for p in klass.getRealizationParents()])">
-    """
+<dtml-if "parsed_class.getDocumentation()">    """<dtml-var "parsed_class.getDocumentation()">"""
+<dtml-else>    """ test-cases for class(es) <dtml-var "', '.join([p.getName() for p in klass.getRealizationParents()])">
+    """</dtml-if>
 
 <dtml-var "generator.getProtectedSection(parsed_class, 'class-header_'+klass.getCleanName(), 1)">
 <dtml-if "not parsed_class or 'afterSetUp' not in parsed_class.methods.keys()">
@@ -35,7 +36,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 <dtml-else>
     def <dtml-var "mn">(self):
 <dtml-let name="'temp_'+m.getParent().getCleanName()">
-        """
+        """ 
         """
         #Uncomment one of the following lines as needed
         ##self.loginAsPortalOwner()
