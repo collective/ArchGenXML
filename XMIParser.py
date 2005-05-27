@@ -1963,6 +1963,7 @@ class XMIStateMachine(XMIStateContainer):
 
     def getAllRoles(self, ignore=[]):
         roles = []
+        ignore.append('label') # reserved name to set the title
         for tran in self.getTransitions(no_duplicates=1):
             dummy = [roles.append(r.strip()) \
                      for r in tran.getGuardRoles().split(';') \
@@ -2194,7 +2195,7 @@ class XMIState(XMIElement):
 
         for tag, tag_value in tagged_values.items():
             # list of tagged values that are NOT permissions
-            non_permissions = ['initial_state', 'documentation']
+            non_permissions = ['initial_state', 'documentation', 'label']
             if tag in non_permissions or not tag_value:
                 continue
             tag = tag.strip()

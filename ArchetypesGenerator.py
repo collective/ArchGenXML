@@ -258,7 +258,9 @@ class ArchetypesGenerator(BaseGenerator):
                 dict['action']=getExpression(action_target)
                 dict['action_category']=getExpression(m.getTaggedValue('category','object'))
                 dict['action_id']=m.getTaggedValue('id',m.getName())
-                dict['action_label']=m.getTaggedValue('action_label') or m.getTaggedValue('label',m.getName()) # action_label is deprecated and for backward compability only!
+                dict['action_label'] = m.getTaggedValue('action_label') or \
+                                       m.getTaggedValue('label',m.getName())
+                # action_label is deprecated and for backward compability only!
                 dict['permission']=getExpression(m.getTaggedValue('permission','View'))
 
                 condition=m.getTaggedValue('condition') or '1'

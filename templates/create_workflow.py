@@ -1,5 +1,6 @@
 <dtml-let infoheader="atgenerator.getHeaderInfo(package)">
-""" Workflow: <dtml-var "statemachine.getCleanName()"> """
+""" Workflow: <dtml-var "statemachine.getCleanName()">
+"""
 
 # <dtml-var "infoheader['copyright']">
 #
