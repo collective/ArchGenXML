@@ -58,7 +58,16 @@ def readTemplate(fn):
     return templ
 
 
-def indent(s,indent,prepend='',skipFirstRow=0):
+def indent(s, indent, prepend='', skipFirstRow=0):
+    """ Indent string 's'
+
+    's' is a string with optional '\n's for multiple lines. 's' can be
+    empty or None, that won't barf this function.
+    'indent' is the level of indentation. 0 gives 0 spaces, 1 gives 4
+    spaces, and so on.
+    """
+    if s == None:
+        return ''
     rows=s.split('\n')
     if skipFirstRow:
         lines=[rows[0]]+['    '*indent + prepend + l for l in rows[1:]]
