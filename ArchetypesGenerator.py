@@ -1120,6 +1120,9 @@ class ArchetypesGenerator(BaseGenerator):
                     print >> outfile, '    #manually created methods\n'
 
                 for mt in manual_methods:
+                    declaration = cl.getProtectionDeclaration(mt.getName())
+                    if declaration:
+                        print >> outfile, declaration
                     print >> outfile, mt.src
                     print >> outfile
 
