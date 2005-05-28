@@ -1502,7 +1502,9 @@ class ArchetypesGenerator(BaseGenerator):
 
         wrt(classDeclaration)
         doc = element.getDocumentation(striphtml=self.striphtml)
-        parsedDoc = element.parsed_class.getDocumentation()
+        parsedDoc = ''
+        if element.parsed_class:
+            parsedDoc = element.parsed_class.getDocumentation()
         if doc:
             print >>outfile,indent('"""\n%s\n"""' % doc, 1)
         elif parsedDoc:
