@@ -9,8 +9,9 @@ from <dtml-var "parent.getQualifiedModuleName(None,forcePluginRoot=1)"> import <
 </dtml-if>
 
 class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCleanName()">)</dtml-if>:
-    """ Test cases for the generic setup of the product
-    """
+<dtml-if "parsed_class and parsed_class.getDocumentation()">    """<dtml-var "parsed_class.getDocumentation()">"""
+<dtml-else>    """ Test cases for the generic setup of the product
+    """</dtml-if>
 
 <dtml-var "generator.getProtectedSection(parsed_class, 'class-header_'+klass.getCleanName(), 1)">
 <dtml-if "not parsed_class or 'afterSetUp' not in parsed_class.methods.keys()">
@@ -31,7 +32,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 <dtml-else>
     def <dtml-var "mn">(self):
 <dtml-let name="'temp_'+m.getParent().getCleanName()">
-        """
+        """ 
         """
         #Uncomment one of the following lines as needed
         ##self.loginAsPortalOwner()

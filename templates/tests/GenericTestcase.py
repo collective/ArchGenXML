@@ -13,7 +13,7 @@ from <dtml-var "_['sequence-item'].getQualifiedModuleName(None, forcePluginRoot=
 </dtml-in>
 
 class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCleanName()">)</dtml-if>:
-<dtml-if "parsed_class.getDocumentation()">    """<dtml-var "parsed_class.getDocumentation()">"""
+<dtml-if "parsed_class and parsed_class.getDocumentation()">    """<dtml-var "parsed_class.getDocumentation()">"""
 <dtml-else>    """ test-cases for class(es) <dtml-var "', '.join([p.getName() for p in klass.getRealizationParents()])">
     """</dtml-if>
 

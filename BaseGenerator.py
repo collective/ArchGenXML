@@ -264,7 +264,8 @@ class BaseGenerator:
         return getattr(self,generator)(element,template=getattr(dispatcher,'template',None))
 
     def generatePythonClass(self,element,template,**kw):
-
+        #print "actually generating, parsed_class = %s " % element.parsed_class
+        #print template
         templ=readTemplate(template)
         d={ 'klass':element,
             'generator':self,

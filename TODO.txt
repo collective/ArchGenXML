@@ -5,7 +5,6 @@ To-do list for current HEAD code, not a feature wish list.
 A list of wished-for/planned features planned is at:
 http://plone.org/development/teams/developer/ArchGenXML
 
-* BUG: Manually created methods lose security declarations upon re-generation!
 * BUG: Method that end with a comma-newline-value lose that value. For example:
     
             return (value1,
@@ -16,10 +15,6 @@ http://plone.org/development/teams/developer/ArchGenXML
 
     - tagged value creation_permission (string or python:) on class
     - use Bricolite method for registering custom permissions
-    
-* Workflow
-
-    - tagged value workflow on class sets workflow by name, allow empty for none
     
 * Initialise uml_profile with all tagged values + steretypes + documentation
 

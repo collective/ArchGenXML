@@ -159,7 +159,7 @@ class ArchetypesGenerator(BaseGenerator):
     backreferences_support=0
 
     parsed_class_sources={} #dict containing the parsed sources by class names (for preserving method codes)
-    parsed_sources=[] #list of containing the parsed sources (for preserving method codes)
+    parsed_sources=[] #list containing the parsed sources (for preserving method codes)
 
     #taggedValues that are not strings, e.g. widget or vocabulary
     nonstring_tgvs=['widget','vocabulary','required','precision','storage',
@@ -1363,18 +1363,21 @@ class ArchetypesGenerator(BaseGenerator):
                                  'prefix':self.prefix,
                                  'name': name})
 
-        # check and collect Aggregation
-        
-        # Unset recursive flag (~optilude) - we don't want to get subclasses'
-        # aggregation in allowable types of parent!
-        # [reinout:] I think we do need that recursive flag. If class
-        # 'A' contains an abstract class 'B' which aggregates C, D and
-        # E, I *do* want C, D and E to show up in A's list.
-        # [zworkb] yes we revert it back to allowed subclasses 
-        aggregatedClasses = element.getRefs() + element.getSubtypeNames(recursive=1,filter=['class'])
+        # Normally, archgenxml also looks at the parents of the
+        # current class for allowed subitems. Likewise, subclasses of
+        # classes allowed as subitems are also allowed on this
+        # class. Classic polymorphing. In case this isn't desired, set
+        # the tagged value 'disable_polymorphing' to 1.
+        disable_polymorphing = element.getTaggedValue('disable_polymorphing', 0)
+        if disable_polymorphing:
+            recursive = 0
+        else:
+            recursive = 1
+        aggregatedClasses = element.getRefs() + element.getSubtypeNames(recursive=recursive,
+                                                                        filter=['class'])
         # We *do* want the resursive=0 below, though!
-        aggregatedInterfaces = element.getRefs() + element.getSubtypeNames(recursive=0,filter=['interface'])
-
+        aggregatedInterfaces = element.getRefs() + element.getSubtypeNames(recursive=0,
+                                                                           filter=['interface'])
         # [xiru] We need to remove duplicated values and avoid mixture 
         # between unicode and string content types identifiers
         if element.getTaggedValue('allowed_content_types'):
