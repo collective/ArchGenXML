@@ -9,30 +9,46 @@ from Products.Archetypes.Registry import registerField
 from Products.Archetypes.utils import DisplayList
 from Products.Archetypes import config as atconfig
 from Products.Archetypes.Widget import *
+from Products.Archetypes.Field  import *
+from Products.Archetypes.Schema import Schema
 from Products.generator import i18n
 
-from Products.<dtml-var "klass.getPackage().getCleanName()"> import config
+from Products.<dtml-var "klass.getPackage().getProduct().getCleanName()"> import config
+
 
 <dtml-var "generator.getProtectedSection(parsed_class,'module-header')">
 <dtml-var "generator.generateDependentImports(klass)">
-class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-var "','.join([p.getCleanName() for p in klass.getGenParents()])"><dtml-else>ObjectField</dtml-if>):
+
+<dtml-if "parentname=='CompoundField'">
+from Products.CompoundField.CompoundField import CompoundField
+<dtml-var "generator.generateArcheSchema(klass,None)" >
+</dtml-if>
+
+class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-var "','.join([p.getCleanName() for p in klass.getGenParents()])"><dtml-else><dtml-var parentname></dtml-if>):
     ''' <dtml-var "klass.getDocumentation()">'''
 
 <dtml-var "generator.getProtectedSection(parsed_class,'class-header',1)">
-<dtml-var "generator.generateImplements(klass,['ObjectField']+[p.getCleanName() for p in klass.getGenParents()])">
+<dtml-var "generator.generateImplements(klass,[parentname]+[p.getCleanName() for p in klass.getGenParents()])" >
 
     _properties = <dtml-var parentname>._properties.copy()
     _properties.update({
         'type': '<dtml-var "klass.getCleanName().lower()">',
+<dtml-if "klass.getCleanName()=='CompoundField'">
         'widget':<dtml-var widgetname>
+</dtml-if>
         })
 
     security  = ClassSecurityInfo()
 
+<dtml-if "parentname=='CompoundField'">
+    schema=schema
+</dtml-if>
+
     security.declarePrivate('set')
     security.declarePrivate('get')
+
     
-<dtml-if "not parsed_class">
+<dtml-if "not parsed_class and parentname != 'ObjectField'">
     def get(self, instance, **kwargs):
         value = ObjectField.get(self, instance, **kwargs)
         return encode(value, instance, **kwargs)

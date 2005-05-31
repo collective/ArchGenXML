@@ -137,6 +137,7 @@ class ArchetypesGenerator(BaseGenerator):
     method_preservation=1 #should the method bodies be preserved? defaults now to 0 will change to 1
     i18n_content_support=0
     i18n_at=['i18n-archetypes','i18n', 'i18n-at']
+    generate_datatypes=['field','compound_field']
 
 
     build_msgcatalog=1
@@ -998,9 +999,10 @@ class ArchetypesGenerator(BaseGenerator):
         return res
 
     # Generate get/set/add member functions.
-    def generateArcheSchema(self, outfile, element, base_schema):
+    def generateArcheSchema(self, element, base_schema):
         """ generates the Schema """
         # first copy fields from other schemas if neccessary.
+        outfile=StringIO()
         startmarker=True
         for attr in element.getAttributeDefs():
             if str(attr.type)=='copy':
@@ -1081,6 +1083,8 @@ class ArchetypesGenerator(BaseGenerator):
             print >> outfile, 'marshall='+marshaller
 
         print >> outfile,')\n'
+        
+        return outfile.getvalue()
 
     def generateMethods(self, outfile, element, mode='class'):
         print >> outfile
@@ -1280,11 +1284,16 @@ class ArchetypesGenerator(BaseGenerator):
             parent=element.getGenParents()[0]
             parentname=parent.getCleanName()
         else:
-            parent=None
-            parentname='ObjectField'
+            if element.getAttributeDefs():
+                parent=None
+                parentname='CompoundField'
+            else:
+                parent=None
+                parentname='ObjectField'
             
-        if element.getClientDependencyClasses():
-            widget=element.getClientDependencyClasses()[0]
+        widgets=element.getClientDependencyClasses(targetStereotypes=['widget'])
+        if widgets:
+            widget=widgets[0]
             widgetname=widget.getCleanName()
         else:
             widget=None
@@ -1479,7 +1488,7 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateProtectedSection(outfile,element,'module-header')
 
         # here comes the schema
-        self.generateArcheSchema(outfile,element,baseschema)
+        print >> outfile, self.generateArcheSchema(element,baseschema)
 
         # protected section
         self.generateProtectedSection(outfile,element,'after-schema')
@@ -2064,6 +2073,10 @@ class ArchetypesGenerator(BaseGenerator):
             if element.isInternal() or element.getName() in self.hide_classes \
                or element.getName().lower().startswith('java::'): # Enterprise Architect fix!
                 print indent('Ignore unnecessary class: '+element.getName(),self.infoind)
+                if element.getName() == 'XPointField':
+                    print 'hide_classes:',self.hide_classes
+                    import pdb;pdb.set_trace()
+                    
                 continue
             if element.hasStereoType(self.stub_stereotypes):
                 print indent('Ignore stub class: '+element.getName(),self.infoind)
@@ -2404,14 +2417,19 @@ class ArchetypesGenerator(BaseGenerator):
         if not self.noclass:
             if suff.lower() in ('.xmi','.xml'):
                 print 'opening xmi'
-                self.root=root=XMIParser.parse(self.xschemaFileName,packages=self.parse_packages,generator=self)
+                self.root=root=XMIParser.parse(self.xschemaFileName,
+                    packages=self.parse_packages,generator=self,    
+                    generate_datatypes=self.generate_datatypes)
+                    
             elif suff.lower() in ('.zargo','.zuml','.zip'):
                 print 'opening zargo'
                 zf=ZipFile(self.xschemaFileName)
                 xmis=[n for n in zf.namelist() if os.path.splitext(n)[1].lower()in ['.xmi','.xml']]
                 assert(len(xmis)==1)
                 buf=zf.read(xmis[0])
-                self.root=root=XMIParser.parse(xschema=buf,packages=self.parse_packages, generator=self)
+                self.root=root=XMIParser.parse(xschema=buf,
+                    packages=self.parse_packages, generator=self,
+                    generate_datatypes=self.generate_datatypes)
             elif suff.lower() == '.xsd':
                 self.root=root=XSDParser.parse(self.xschemaFileName)
             else:

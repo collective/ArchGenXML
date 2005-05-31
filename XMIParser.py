@@ -138,6 +138,11 @@ class XMI1_0:
 
     aggregates = ['composite', 'aggregate']
 
+#    generate_datatypes=['field','compound_field']
+
+    def __init__(self,**kw):
+        self.__dict__.update(kw)
+        
     def getName(self, domElement):
         try:
             return str(getAttributeValue(domElement, self.NAME)).strip()
@@ -553,7 +558,6 @@ class XMI1_2 (XMI1_1):
         else:
             mult_max = -1
 
-        #import pdb;pdb.set_trace()
         return (mult_min, mult_max)
 
     def getTaggedValue(self, el):
@@ -618,7 +622,6 @@ class XMI1_2 (XMI1_1):
                 #print 'attribute:'+self.getName(), typeid, self.type
 
 
-XMI = XMI1_0()
 
 class NoObject:
     pass
@@ -1003,7 +1006,7 @@ class XMIElement:
     def addClientDependency(self, dep):
         self.clientDependencies.append(dep)
         
-    def getClientDependencies(self, includeParents=False):
+    def getClientDependencies(self, includeParents=False, dependencyStereotypes=None):
         res = self.clientDependencies
         
         if includeParents:
@@ -1013,11 +1016,23 @@ class XMIElement:
                     
                 res.reverse()
 
+        if dependencyStereotypes:
+            res=[r for r in res if r.hasStereoType(dependencyStereotypes)]
+
         return res
     
-    def getClientDependencyClasses(self, includeParents=False): 
-        return [dep.getSupplier() for dep in self.getClientDependencies(includeParents=includeParents) if 
+    def getClientDependencyClasses(self, includeParents=False, 
+        dependencyStereotypes=None, targetStereotypes=None): 
+            
+        res=[dep.getSupplier() for dep in self.getClientDependencies(
+            includeParents=includeParents, dependencyStereotypes=dependencyStereotypes) if 
             dep.getSupplier() and dep.getSupplier().__class__.__name__ in ('XMIClass', 'XMIInterface')]
+            
+        if targetStereotypes:
+            res=[r for r in res if r.hasStereoType(targetStereotypes)]
+            
+            
+        return res
     
 class StateMachineContainer:
     def __init__(self):
@@ -2394,7 +2409,7 @@ def buildHierarchy(doc, packagenames):
     #pure datatype classes should not be generated!
     #print 'datatypenames:', datatypenames
     for c in res.getClasses(recursive=1):
-        if c.getName() in datatypenames:
+        if c.getName() in datatypenames and not c.hasStereoType(XMI.generate_datatypes):
             c.internalOnly = 1
             print 'internal class (not generated):', c.getName()
 
@@ -2406,10 +2421,9 @@ def buildHierarchy(doc, packagenames):
     return res
 
 
-def parse(xschemaFileName=None, xschema=None, packages=[], generator=None):
+def parse(xschemaFileName=None, xschema=None, packages=[], generator=None,**kw):
     """ """
     global XMI
-
     if xschemaFileName:
         doc = minidom.parse(xschemaFileName)
     else:
@@ -2421,10 +2435,13 @@ def parse(xschemaFileName=None, xschema=None, packages=[], generator=None):
         print 'XMI version:', xmiver
         if xmiver >= "1.2":
             print 'using xmi 1.2+ parser'
-            XMI = XMI1_2()
+            XMI = XMI1_2(**kw)
         elif xmiver >= "1.1":
             print 'using xmi 1.1+ parser'
-            XMI = XMI1_1()
+            XMI = XMI1_1(**kw)
+        else:
+            print 'using xmi 1.1+ parser'
+            XMI = XMI1_0(**kw)
 
     except:
         print 'no version info found, taking XMI1_0'
