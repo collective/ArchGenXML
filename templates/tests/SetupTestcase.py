@@ -16,6 +16,8 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 <dtml-var "generator.getProtectedSection(parsed_class, 'class-header_'+klass.getCleanName(), 1)">
 <dtml-if "not parsed_class or 'afterSetUp' not in parsed_class.methods.keys()">
     def afterSetUp(self):
+        """ 
+        """
         pass
 <dtml-else>
 <dtml-var "parsed_class.methods['afterSetUp'].getSrc()">
@@ -23,6 +25,8 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 
 <dtml-if "not parsed_class or 'test_tools' not in parsed_class.methods.keys()">
     def test_tools(self):
+        """ 
+        """
         ids = self.portal.objectIds()
         self.failUnless('archetype_tool' in ids)
         #<dtml-var "[c.getName() for c in generator.getTools(klass.getPackage().getProduct(), autoinstallOnly=1)] ">
@@ -33,6 +37,8 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 
 <dtml-if "not parsed_class or 'test_types' not in parsed_class.methods.keys()">
     def test_types(self):
+        """ 
+        """
         ids = self.portal.portal_types.objectIds()
         self.failUnless('Document' in ids)
         # ...
@@ -42,6 +48,8 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 
 <dtml-if "not parsed_class or 'test_skins' not in parsed_class.methods.keys()">
     def test_skins(self):
+        """ 
+        """
         ids = self.portal.portal_skins.objectIds()
         self.failUnless('plone_templates' in ids)
         # ...
@@ -51,6 +59,8 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 
 <dtml-if "not parsed_class or 'test_workflows' not in parsed_class.methods.keys()">
     def test_workflows(self):
+        """ 
+        """
         ids = self.portal.portal_workflow.objectIds()
         self.failUnless('plone_workflow' in ids)
         # ...
@@ -60,6 +70,8 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 
 <dtml-if "not parsed_class or 'test_workflowChains' not in parsed_class.methods.keys()">
     def test_workflowChains(self):
+        """ 
+        """
         getChain = self.portal.portal_workflow.getChainForPortalType
         self.failUnless('plone_workflow' in getChain('Document'))
         # ...
