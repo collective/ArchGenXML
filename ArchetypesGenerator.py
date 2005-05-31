@@ -2156,12 +2156,17 @@ class ArchetypesGenerator(BaseGenerator):
             targetcardinality=(None,None),
             assocclassname=None,
             inverse_relation_id=None,
+            primary=0,
             ):
                 
         ruleset=doc.createElement('Ruleset')
         ruleset.setAttribute('id',relname)
         ruleset.setAttribute('uid',relid)
         collection.appendChild(ruleset)
+        
+        el=doc.createElement('primary')
+        el.appendChild(doc.createTextNode(str(primary)))
+        ruleset.appendChild(el)
 
         #type and interface constraints
         if sourcetype or targettype:
@@ -2294,6 +2299,7 @@ class ArchetypesGenerator(BaseGenerator):
 
                 assocclassname=assocclassname,
                 inverse_relation_id=inverse_relation_name,
+                primary=1
                 )
                 
             #create the counterrelation
