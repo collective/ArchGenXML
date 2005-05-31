@@ -21,6 +21,52 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 <dtml-var "parsed_class.methods['afterSetUp'].getSrc()">
 </dtml-if>
 
+<dtml-if "not parsed_class or 'test_tools' not in parsed_class.methods.keys()">
+    def test_tools(self):
+        ids = self.portal.objectIds()
+        self.failUnless('archetype_tool' in ids)
+        #<dtml-var "[c.getName() for c in generator.getTools(klass.getPackage().getProduct(), autoinstallOnly=1)] ">
+        # ...
+<dtml-else>
+<dtml-var "parsed_class.methods['test_tools'].getSrc()">
+</dtml-if>
+
+<dtml-if "not parsed_class or 'test_types' not in parsed_class.methods.keys()">
+    def test_types(self):
+        ids = self.portal.portal_types.objectIds()
+        self.failUnless('Document' in ids)
+        # ...
+<dtml-else>
+<dtml-var "parsed_class.methods['test_types'].getSrc()">
+</dtml-if>
+
+<dtml-if "not parsed_class or 'test_skins' not in parsed_class.methods.keys()">
+    def test_skins(self):
+        ids = self.portal.portal_skins.objectIds()
+        self.failUnless('plone_templates' in ids)
+        # ...
+<dtml-else>
+<dtml-var "parsed_class.methods['test_skins'].getSrc()">
+</dtml-if>
+
+<dtml-if "not parsed_class or 'test_workflows' not in parsed_class.methods.keys()">
+    def test_workflows(self):
+        ids = self.portal.portal_workflow.objectIds()
+        self.failUnless('plone_workflow' in ids)
+        # ...
+<dtml-else>
+<dtml-var "parsed_class.methods['test_workflows'].getSrc()">
+</dtml-if>
+
+<dtml-if "not parsed_class or 'test_workflowChains' not in parsed_class.methods.keys()">
+    def test_workflowChains(self):
+        getChain = self.portal.portal_workflow.getChainForPortalType
+        self.failUnless('plone_workflow' in getChain('Document'))
+        # ...
+<dtml-else>
+<dtml-var "parsed_class.methods['test_workflowChains'].getSrc()">
+</dtml-if>
+
 <dtml-in "generator.getMethodsToGenerate(klass)[0]">
 <dtml-let m="_['sequence-item']" mn="m.testmethodName()">
 <dtml-if "m.getParent() != klass"> 
@@ -47,39 +93,13 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 </dtml-let>
 </dtml-in>
 
-    # Auto-added by testcase generation - probably bug
-    def testTools(self):
-        ids = self.portal.objectIds()
-        self.failUnless('archetype_tool' in ids)
-        #<dtml-var "[c.getName() for c in generator.getTools(klass.getPackage().getProduct(), autoinstallOnly=1)] ">
-        # ...
-
-    def testTypes(self):
-        ids = self.portal.portal_types.objectIds()
-        self.failUnless('Document' in ids)
-        # ...
-
-    def testSkins(self):
-        ids = self.portal.portal_skins.objectIds()
-        self.failUnless('plone_templates' in ids)
-        # ...
-
-    def testWorkflows(self):
-        ids = self.portal.portal_workflow.objectIds()
-        self.failUnless('plone_workflow' in ids)
-        # ...
-
-    def testWorkflowChains(self):
-        getChain = self.portal.portal_workflow.getChainForPortalType
-        self.failUnless('plone_workflow' in getChain('Document'))
-        # ...
 
     
     # Manually created methods
 <dtml-if parsed_class>
 <dtml-in "parsed_class.methods.values()">
 <dtml-let allmethodnames="[m.testmethodName() for m in generator.getMethodsToGenerate(klass)[0]]">
-<dtml-if "_['sequence-item'].getName() not in allmethodnames+['afterSetUp', 'testTools']">
+<dtml-if "_['sequence-item'].getName() not in allmethodnames+['afterSetUp', 'test_tools', 'test_types', 'test_skins', 'test_workflows', 'test_workflowChains']">
 <dtml-var "_['sequence-item'].getSrc()">
 </dtml-if>
 </dtml-let>
