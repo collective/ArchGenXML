@@ -34,8 +34,13 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
     _properties.update({
         'type': '<dtml-var "klass.getCleanName().lower()">',
 <dtml-if "klass.getCleanName()=='CompoundField'">
-        'widget':<dtml-var widgetname>
+        'widget':<dtml-var widgetname>,
 </dtml-if>
+<dtml-let value_classes="klass.getClientDependencyClasses(dependencyStereotypes=['value_class'])">
+<dtml-if value_classes>
+        'value_class':<dtml-var "value_classes[0].getCleanName()">,
+</dtml-if>
+</dtml-let>
         })
 
     security  = ClassSecurityInfo()

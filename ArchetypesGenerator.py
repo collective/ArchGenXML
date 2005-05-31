@@ -121,6 +121,8 @@ class ArchetypesGenerator(BaseGenerator):
         generator='generateFieldClass',template='field.py')
     uml_profile.addStereoType('widget',['XMIClass'],dispatching=1,
         generator='generateWidgetClass',template='widget.py')
+    uml_profile.addStereoType('value_class',['XMIDependency'],
+        description='declares a class to be used as value class for a certain field class (see <<field>> stereotype)')
 
     infoind = 0
     force=1
