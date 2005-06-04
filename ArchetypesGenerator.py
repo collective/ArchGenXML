@@ -436,7 +436,6 @@ class ArchetypesGenerator(BaseGenerator):
         # But a tagged value overrides
         filter_content_types = isTGVTrue(element.getTaggedValue('filter_content_types',
                                                                 filter_default))
-
         # Set a type description.
 
         typeName = element.getTaggedValue('archetype_name') or \
@@ -1317,7 +1316,7 @@ class ArchetypesGenerator(BaseGenerator):
         isFolderish = aggregatedClasses or baseaggregatedClasses or \
                       isTGVTrue(element.getTaggedValue('folderish')) or \
                       element.hasStereoType('folder')
-        return isFolderish
+        return bool(isFolderish)
 
     def generateArchetypesClass(self, element,**kw):
         print indent('Generating class: '+element.getName(),self.infoind)
@@ -2164,10 +2163,6 @@ class ArchetypesGenerator(BaseGenerator):
         ruleset.setAttribute('uid',relid)
         collection.appendChild(ruleset)
         
-        el=doc.createElement('primary')
-        el.appendChild(doc.createTextNode(str(primary)))
-        ruleset.appendChild(el)
-
         #type and interface constraints
         if sourcetype or targettype:
             typeconst=doc.createElement('TypeConstraint')
@@ -2212,6 +2207,10 @@ class ArchetypesGenerator(BaseGenerator):
             pt=doc.createElement('shareWithInverse')
             contref.appendChild(pt)
             pt.appendChild(doc.createTextNode('1'))
+
+            el=doc.createElement('primary')
+            el.appendChild(doc.createTextNode(str(primary)))
+            contref.appendChild(el)
         
         #cardinality
         targetcardinality=list(targetcardinality)
