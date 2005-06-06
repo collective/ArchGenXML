@@ -1884,8 +1884,8 @@ class ArchetypesGenerator(BaseGenerator):
         """ Generate __init__.py at product root from the DTML template"""
 
         # Get the names of packages and classes to import
-        packageImports = [m.getModuleName() for m in package.getAnnotation('generatedPackages') or []]
-        classImports   = [m.getModuleName() for m in package.generatedModules]
+        packageImports = [m.getModuleName() for m in package.getAnnotation('generatedPackages') if not m.hasStereoType('tests') or []]
+        classImports   = [m.getModuleName() for m in package.generatedModules if not m.hasStereoType('tests')]
         
         # Find additional (custom) permissions
         additional_permissions=[]
