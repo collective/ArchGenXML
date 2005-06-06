@@ -19,6 +19,10 @@ from Products.<dtml-var "klass.getPackage().getProduct().getCleanName()"> import
 <dtml-var "generator.getProtectedSection(parsed_class,'module-header')">
 <dtml-var "generator.generateDependentImports(klass)">
 
+<dtml-if "klass.getTaggedValue('validation_expression')">
+from Products.validation.validators import ExpressionValidator
+</dtml-if>
+
 <dtml-if "parentname=='CompoundField'">
 from Products.CompoundField.CompoundField import CompoundField
 <dtml-var "generator.generateArcheSchema(klass,None)" >
@@ -41,6 +45,9 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
         'value_class':<dtml-var "value_classes[0].getCleanName()">,
 </dtml-if>
 </dtml-let>
+<dtml-if "klass.getTaggedValue('validation_expression')">
+        'validators':(ExpressionValidator('''python:<dtml-var "klass.getTaggedValue('validation_expression')">'''),),
+</dtml-if>
         })
 
     security  = ClassSecurityInfo()

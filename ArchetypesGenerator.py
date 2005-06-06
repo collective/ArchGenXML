@@ -221,6 +221,21 @@ class ArchetypesGenerator(BaseGenerator):
     def getSkinPath(self,element):
         return os.path.join(element.getRootPackage().getFilePath(),'skins',element.getRootPackage().getModuleName())
 
+    def generateDependentImports(self,element):
+        res=BaseGenerator.generateDependentImports(self,element)
+        
+        generate_expression_validator=False
+        for att in element.getAttributeDefs():
+            if att.getTaggedValue('validation_expression'):
+                generate_expression_validator=True
+        
+        if generate_expression_validator:
+            out=StringIO()
+            print >>out,res
+            print >>out,'from Products.validation.validators import ExpressionValidator'
+            res=out.getvalue()
+                
+        return res
 
     def addMsgid(self,msgid,msgstr,element,fieldname):
         """add a msgid to the catalog if it not exists. if it exists and not
@@ -877,6 +892,12 @@ class ArchetypesGenerator(BaseGenerator):
             atype='I18N'+atype
 
         doc=attr.getDocumentation(striphtml=self.striphtml)
+        if map.has_key('validation_expression'):
+            expression=map['validation_expression']
+            #import pdb;pdb.set_trace()
+            map['validators']="(ExpressionValidator('python:%s'),)" % expression[1:-1]
+            del map['validation_expression']
+            
         res=self.getFieldFormatted(attr.getName(),
             atype,
             map,
@@ -1252,20 +1273,23 @@ class ArchetypesGenerator(BaseGenerator):
         print indent('Generating widget: '+element.getName(),self.infoind)
 
         #generate the template
-        templ=readTemplate(zptname)
-        d={ 'klass':element,
-            'generator':self,
-            'parsed_class':element.parsed_class,
-            'builtins'   : __builtins__,
-            'utils'       :utils,
-
-            }
-        d.update(__builtins__)
-        zptcode=HTML(templ,d)()
-
-        fp=self.makeFile(os.path.join(self.getSkinPath(element),'%s.pt' % element.getCleanName()))
-        print >>fp,zptcode
-        fp.close()
+        templpath=os.path.join(self.getSkinPath(element),'%s.pt' % element.getCleanName())
+        fieldpt=self.readFile(templpath)
+        if not fieldpt:
+            templ=readTemplate(zptname)
+            d={ 'klass':element,
+                'generator':self,
+                'parsed_class':element.parsed_class,
+                'builtins'   : __builtins__,
+                'utils'       :utils,
+    
+                }
+            d.update(__builtins__)
+            zptcode=HTML(templ,d)()
+    
+            fp=self.makeFile(templpath)
+            print >>fp,zptcode
+            fp.close()
 
         # and now the python code
         if element.getGenParents():
