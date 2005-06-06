@@ -62,15 +62,12 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
     
 <dtml-if "not parsed_class and parentname != 'ObjectField'">
     def get(self, instance, **kwargs):
-        value = ObjectField.get(self, instance, **kwargs)
-        return encode(value, instance, **kwargs)
+        return <dtml-var parentname>.get(self,instance,**kwargs)
 
     security.declarePrivate('set')
     def set(self, instance, value, **kwargs):
-        kwargs['field'] = self
-        # Remove acquisition wrappers
-        value = decode(aq_base(value), instance, **kwargs)
-        self.getStorage(instance).set(self.getName(), instance, value, **kwargs)
+        return <dtml-var parentname>.set(self,instance,value,**kwargs)
+
 </dtml-if>    
 <dtml-in "generator.getMethodsToGenerate(klass)[0]">
 <dtml-let m="_['sequence-item']">
