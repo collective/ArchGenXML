@@ -1001,7 +1001,7 @@ class XMIElement:
         self.annotations[key] = value
 
     def getAnnotation(self, name):
-        return self.annotations.get(name, None)
+        return self.annotations.get(name, [])
 
     def addClientDependency(self, dep):
         self.clientDependencies.append(dep)
