@@ -904,10 +904,10 @@ class ArchetypesGenerator(BaseGenerator):
                 
         if map.has_key('validation_expression'):
             #append the validation_expression to the validators
-            expression=map['validation_expression']
-            expval="(ExpressionValidator('python:%s'),)" % expression[1:-1]
+            expressions=attr.getTaggedValue('validation_expression').split('\n')
+            expval=["ExpressionValidator('python:%s')" % expression for expression in expressions]
             if map.has_key('validators'):
-                map['validators']=repr(map.get('validators',()))+'+'+expval
+                map['validators']=repr(map.get('validators',()))+'+('+','.join(expval)+',)'
             else:
                 map['validators']=expval
                 
