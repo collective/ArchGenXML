@@ -166,7 +166,7 @@ class ArchetypesGenerator(BaseGenerator):
 
     #taggedValues that are not strings, e.g. widget or vocabulary
     nonstring_tgvs=['widget','vocabulary','required','precision','storage',
-                    'enforceVocabulary', 'multiValued', 'visible','validators']
+                    'enforceVocabulary', 'multiValued', 'visible','validators', 'validation_expression']
 
     msgcatstack = []
 
