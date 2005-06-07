@@ -1879,9 +1879,12 @@ class ArchetypesGenerator(BaseGenerator):
 
         configpath=os.path.join(package.getFilePath(),'config.py')
         parsed_config=self.parsePythonModule(package.getFilePath(), 'config.py')
-        creation_permission = self.getOption('creation_permission', package, None) or \
-                              package.getProductName().capitalize()
-        default_creation_permission = 'Add %s Content' % creation_permission
+        creation_permission = self.getOption('creation_permission', package, None)
+        
+        if creation_permission:                    
+            default_creation_permission = creation_permission
+        else:
+            default_creation_permission = 'Add portal content'
 
         # prepare (d)TML varibles
         d={'package'                    : package,
