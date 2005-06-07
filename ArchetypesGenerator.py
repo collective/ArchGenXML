@@ -166,7 +166,7 @@ class ArchetypesGenerator(BaseGenerator):
 
     #taggedValues that are not strings, e.g. widget or vocabulary
     nonstring_tgvs=['widget','vocabulary','required','precision','storage',
-                    'enforceVocabulary', 'multiValued', 'visible']
+                    'enforceVocabulary', 'multiValued', 'visible','validators']
 
     msgcatstack = []
 
@@ -892,10 +892,25 @@ class ArchetypesGenerator(BaseGenerator):
             atype='I18N'+atype
 
         doc=attr.getDocumentation(striphtml=self.striphtml)
+        
+        if attr.hasTaggedValue('validators'):
+            #make validators to a list in order to append the ExpressionValidator
+            val=str(attr.getTaggedValue('validators'))
+            try:
+                map['validators']=tuple(eval(val))
+            except:
+                map['validators']=tuple(val.split(','))
+            
+                
         if map.has_key('validation_expression'):
+            #append the validation_expression to the validators
             expression=map['validation_expression']
-            #import pdb;pdb.set_trace()
-            map['validators']="(ExpressionValidator('python:%s'),)" % expression[1:-1]
+            expval="(ExpressionValidator('python:%s'),)" % expression[1:-1]
+            if map.has_key('validators'):
+                map['validators']=repr(map.get('validators',()))+'+'+expval
+            else:
+                map['validators']=expval
+                
             del map['validation_expression']
             
         res=self.getFieldFormatted(attr.getName(),
