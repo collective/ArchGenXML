@@ -12,7 +12,8 @@ base_class -- Explicitly set the base class of a content type, overriding the au
 
 base_schema -- Explicitly set the base schema for a content type, overriding the automatic selection of the parent's schema or BaseSchema, BaseFolderSchema or OrderedBaseFolderSchema. 
 
-import_from -- If you wish to include a class in your model (as a base class or aggregated class, for example) which is actually defined in another product, add the class to your model and set the import_from tagged value to the class that should be imported in its place. The class will not be generated, but will act as a proxy for the real class.
+import_from -- If you wish to include a class in your model (as a base class or aggregated class, for example) which is actually defined in another product, add the class to your model and set the import_from tagged value to the class that should be imported in its place. You probably don't want the class to be 
+geerated, so add a stereotype <<stub>> as well.
 
 additional_parents -- A comma-separated list of the names of classes which should be used as additional parents to this class, in addition to the Archetypes BaseContent, BaseFolder or OrderedBaseFolder. Usually used in conjunction with 'imports' to import the class before it is referenced.
 
