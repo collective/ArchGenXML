@@ -2116,10 +2116,6 @@ class ArchetypesGenerator(BaseGenerator):
             if element.isInternal() or element.getName() in self.hide_classes \
                or element.getName().lower().startswith('java::'): # Enterprise Architect fix!
                 print indent('Ignore unnecessary class: '+element.getName(),self.infoind)
-                if element.getName() == 'XPointField':
-                    print 'hide_classes:',self.hide_classes
-                    import pdb;pdb.set_trace()
-                    
                 continue
             if element.hasStereoType(self.stub_stereotypes):
                 print indent('Ignore stub class: '+element.getName(),self.infoind)

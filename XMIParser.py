@@ -17,6 +17,7 @@ from utils import wrap as doWrap
 from xml.dom import minidom
 from sets import Set
 from odict import odict
+from types import StringTypes
 
 has_stripogram = 1
 try:
@@ -480,28 +481,28 @@ class XMI1_1 (XMI1_0):
     DEP_SUPPLIER = "UML:Dependency.supplier"
 
     ASSOCIATION_CLASS = 'UML:AssociationClass'
-    BOOLEAN_EXPRESSION = "UML:BooleanExpression"
+    BOOLEAN_EXPRESSION = ["UML:BooleanExpression","UML2:OpaqueExpression"]
 
     #State Machine
 
-    STATEMACHINE = "UML:StateMachine"
+    STATEMACHINE = "UML:StateMachine","UML2:StateMachine"
     STATEMACHINE_CONTEXT = "UML:StateMachine.context"
     STATEMACHINE_TOP = "UML:StateMachine.top"
     COMPOSITESTATE = "UML:CompositeState"
     COMPOSITESTATE_SUBVERTEX = "UML:CompositeState.subvertex"
-    SIMPLESTATE = "UML:SimpleState"
-    PSEUDOSTATE = "UML:Pseudostate"
+    SIMPLESTATE = "UML:SimpleState","UML2:State"
+    PSEUDOSTATE = "UML:Pseudostate","UML2:PseudoState"
     PSEUDOSTATE_KIND = "kind"
-    FINALSTATE = "UML:FinalState"
-    STATEVERTEX_OUTGOING = "UML:StateVertex.outgoing"
-    STATEVERTEX_INCOMING = "UML:StateVertex.incoming"
-    TRANSITION = "UML:Transition"
+    FINALSTATE = "UML:FinalState","UML2:FinalState"
+    STATEVERTEX_OUTGOING = "UML:StateVertex.outgoing","UML2:Vertex.outgoing"
+    STATEVERTEX_INCOMING = "UML:StateVertex.incoming","UML2:Vertex.incoming"
+    TRANSITION = "UML:Transition","UML2:Transition"
     STATEMACHINE_TRANSITIONS = "UML:StateMachine.transitions"
-    TRANSITON_TARGET = "UML:Transition.target"
-    TRANSITION_SOURCE = "UML:Transition.source"
-    TRANSITION_EFFECT = "UML:Transition.effect"
-    TRANSITION_GUARD = "UML:Transition.guard"
-
+    TRANSITON_TARGET = "UML:Transition.target","UML2:Transition.target"
+    TRANSITION_SOURCE = "UML:Transition.source","UML2:Transition.source"
+    TRANSITION_EFFECT = "UML:Transition.effect","UML2:Transition.effect"
+    TRANSITION_GUARD = "UML:Transition.guard", "UML2:Transition.guard"
+    OWNED_BEHAVIOR = "UML2:BehavioredClassifier.ownedBehavior"
 
     ACTION_SCRIPT = "UML:Action.script"
     ACTION_EXPRESSION = "UML:ActionExpression"
@@ -647,24 +648,6 @@ def getSubElement(domElement, default=_marker, ignoremult=0):
             return default
 
 
-def getElementByTagName(domElement, tagName, default=_marker, recursive=0):
-    ''' returns a single element by name and throws an error if more than 1 exist'''
-    if recursive:
-        els = domElement.getElementsByTagName(tagName)
-    else:
-        els = [el for el in domElement.childNodes if str(getattr(el, 'tagName', None)) == tagName]
-
-    if len(els) > 1:
-        raise TypeError, 'more than 1 element found'
-
-    try:
-        return els[0]
-    except IndexError:
-        if default == _marker:
-            raise
-        else:
-            return default
-
 def getAttributeValue(domElement, tagName=None, default=_marker, recursive=0):
     el = domElement
     el.normalize()
@@ -705,12 +688,34 @@ def getElementsByTagName(domElement, tagName, recursive=0):
         parameter
         '''
 
-    if recursive:
-        els = domElement.getElementsByTagName(tagName)
+    if type(tagName) in StringTypes:
+        tagNames=[tagName]
     else:
-        els = [el for el in domElement.childNodes if str(getattr(el, 'tagName', None)) == tagName]
+        tagNames=tagName
+        
+    if recursive:
+        els = []
+        for tag in tagNames:
+            els.extend(domElement.getElementsByTagName(tag))
+    else:
+        els = [el for el in domElement.childNodes if str(getattr(el, 'tagName', None)) in tagNames]
 
     return els
+
+def getElementByTagName(domElement, tagName, default=_marker, recursive=0):
+    ''' returns a single element by name and throws an error if more than 1 exist'''
+    els = getElementsByTagName(domElement,tagName,recursive=recursive)
+
+    if len(els) > 1:
+        raise TypeError, 'more than 1 element found'
+
+    try:
+        return els[0]
+    except IndexError:
+        if default == _marker:
+             raise
+        else:
+            return default
 
 def hasClassFeatures(domClass):
 
@@ -1039,9 +1044,14 @@ class StateMachineContainer:
         self.statemachines = []
 
     def findStateMachines(self):
-        ownedElement = XMI.getOwnedElement(self.domElement)
+
+        ownedElement = getElementByTagName(self.domElement, 
+            [XMI.OWNED_ELEMENT,XMI.OWNED_BEHAVIOR], default=None)
+
+            
         if not ownedElement:
-            return []
+            ownedElement=self.domElement
+            
         statemachines = getElementsByTagName(ownedElement, XMI.STATEMACHINE)
         #print 'statemachines1:', statemachines
         return statemachines
@@ -1051,7 +1061,7 @@ class StateMachineContainer:
         statemachines = self.findStateMachines()
 
         for m in statemachines:
-            sm = XMIStateMachine(m)
+            sm = XMIStateMachine(m,parent=self)
             if sm.getName():
                 #print 'StateMachine:', sm.getName(), sm.id
                 #determine the correct product where it belongs
@@ -1850,6 +1860,7 @@ class XMIStateMachine(XMIStateContainer):
 
     def __init__(self, *args, **kwargs):
         self.init()
+        self.setParent(kwargs.get('parent',None))
         XMIStateContainer.__init__(self, *args, **kwargs)
         #print 'created statemachine:', self.getId()
 
@@ -1860,14 +1871,17 @@ class XMIStateMachine(XMIStateContainer):
         self.associateClasses()
 
     def associateClasses(self):
-        context = getElementByTagName(self.domElement, XMI.STATEMACHINE_CONTEXT)
-        clels = getSubElements(context)
-        for clel in clels:
-            clid = XMI.getIdRef(clel)
-            #print 'CLID:', clel, clid
-            cl = allObjects[clid]
-            self.addClass(cl)
-
+        context = getElementByTagName(self.domElement, XMI.STATEMACHINE_CONTEXT,None)
+        if context:
+            clels = getSubElements(context)
+            for clel in clels:
+                clid = XMI.getIdRef(clel)
+                #print 'CLID:', clel, clid
+                cl = allObjects[clid]
+                self.addClass(cl)
+        else:
+            self.addClass(self.getParent())
+            
     def addTransition(self, transition):
         self.transitions.append(transition)
         transition.setParent(self)
