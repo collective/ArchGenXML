@@ -108,9 +108,7 @@ Requirements & Optional
 
       You can find it at::
 
-        cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/plone-i18n login
-        cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/plone-i18n \
-            co i18ndude
+        svn co https://svn.plone.org/svn/collective/i18ndude/trunk/ i18ndude
 
       Then install it into your python: enter the directory and::
    
