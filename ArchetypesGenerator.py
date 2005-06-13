@@ -165,8 +165,9 @@ class ArchetypesGenerator(BaseGenerator):
     parsed_sources=[] #list containing the parsed sources (for preserving method codes)
 
     #taggedValues that are not strings, e.g. widget or vocabulary
-    nonstring_tgvs=['widget','vocabulary','required','precision','storage',
-                    'enforceVocabulary', 'multiValued', 'visible','validators', 'validation_expression']
+    nonstring_tgvs=['widget', 'vocabulary', 'required', 'precision', 'storage',
+                    'enforceVocabulary', 'multiValued', 'visible', 'validators',
+                    'validation_expression', 'sizes', 'original_size', 'max_size']
 
     msgcatstack = []
 
