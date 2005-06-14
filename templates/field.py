@@ -37,7 +37,7 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
     _properties = <dtml-var parentname>._properties.copy()
     _properties.update({
         'type': '<dtml-var "klass.getCleanName().lower()">',
-<dtml-if "klass.getCleanName()=='CompoundField'">
+<dtml-if widgetname>
         'widget':<dtml-var widgetname>,
 </dtml-if>
 <dtml-let value_classes="klass.getClientDependencyClasses(dependencyStereotypes=['value_class'])">
