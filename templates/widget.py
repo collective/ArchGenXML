@@ -28,6 +28,7 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
         'macro' : '<dtml-var "klass.getName()">',
         'size' : '30',
         'maxlength' : '255',
+<dtml-var "generator.getProtectedSection(parsed_class,'widget-properties',2)">
         })
 
     security = ClassSecurityInfo()

@@ -48,6 +48,7 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
 <dtml-if "klass.getTaggedValue('validation_expression')">
         'validators':(ExpressionValidator('''python:<dtml-var "klass.getTaggedValue('validation_expression')">'''),),
 </dtml-if>
+<dtml-var "generator.getProtectedSection(parsed_class,'field-properties',2)">
         })
 
     security  = ClassSecurityInfo()
