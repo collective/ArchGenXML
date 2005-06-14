@@ -2080,32 +2080,31 @@ class XMIStateTransition(XMIElement):
 
     def getGuardRoles(self):
         if not self.guard:
-            return 'Owner;Manager'
+            return ''
         geb = self.guard.getExpressionBody()
         for ge in geb.split('|'):
             ge = ge.strip()
             if ge.startswith('guard_roles:'):
                 return str(ge[12:])
-        return 'Owner;Manager'
+        return ''
 
     def getGuardPermissions(self):
         if not self.guard:
-            return 'View'
+            return ''
         geb = self.guard.getExpressionBody()
         for ge in geb.split('|'):
             ge = ge.strip()
             if ge.startswith('guard_permissions:'):
                 return str(ge[18:])
-        return 'View'
+        return ''
 
     def getGuardExpr(self):
         if not self.guard:
-            return None
-        geb = self.guard.getExpressionBody()
         for ge in geb.split('|'):
             ge = ge.strip()
             if ge.startswith('guard_expr:'):
                 return str(ge[11:])
+        return ''    
 
     def getTriggerType(self):
         """ Return the Trigger Type, following what is defined by DCWorkflow
