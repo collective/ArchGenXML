@@ -2100,6 +2100,8 @@ class XMIStateTransition(XMIElement):
 
     def getGuardExpr(self):
         if not self.guard:
+            return ''
+        geb = self.guard.getExpressionBody()
         for ge in geb.split('|'):
             ge = ge.strip()
             if ge.startswith('guard_expr:'):
