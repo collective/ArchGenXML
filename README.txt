@@ -11,7 +11,7 @@ ArchGenXML
   (most do). It can also work with the native formats of some UML
   editors.
 
-  In addition, it can generate applications from XSD (XMLSchema)
+  (DEPRECATED) In addition, it can generate applications from XSD (XMLSchema)
   files, though this format is less expressive than XMI from UML.
 
   For information on the authors and supporters, see the file CREDITS.
@@ -170,7 +170,7 @@ Additional Documentation
   See the docs directory for reference information. A tutorial is
   being created at
   
-    http://plone.org/documentation/tutorial/archgenxml-getting-started/view?searchterm=archgenxml
+    http://plone.org/documentation/tutorial/archgenxml-getting-started
   
 
 
