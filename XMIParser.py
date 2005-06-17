@@ -2074,7 +2074,7 @@ class XMIStateTransition(XMIElement):
                   'guard_expr' : self.getGuardExpr}
         for k, v in d_expr.items():
             g = v()
-            if g is not None:
+            if g:
                 d_ret.update({k:g})
         return repr(d_ret)
 
