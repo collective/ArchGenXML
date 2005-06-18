@@ -762,13 +762,13 @@ class ArchetypesGenerator(BaseGenerator):
                     widgetmap.update( {k: check_map[k]} )
             if 'label_msgid' in widgetmap.keys() and has_enhanced_strip_support:
                 self.addMsgid(widgetmap['label_msgid'].strip("'").strip('"'),
-                    (widgetmap.has_key('label') and widgetmap['label'].strip("'").strip('"')) or fieldname,
+                    widgetmap.has_key('label') and widgetmap['label'].strip("'").strip('"') or fieldname,
                     elementclass,
                     fieldname
                 )
             if 'description_msgid' in widgetmap.keys() and has_enhanced_strip_support:
-                self.addMsgid(widgetmap['description_msgid'].strip("'"),
-                    (widgetmap.has_key('description') and widgetmap['description'].strip("'")) or fieldname,
+                self.addMsgid(widgetmap['description_msgid'].strip("'").strip('"'),
+                    widgetmap.has_key('description') and widgetmap['description'].strip("'").strip('"') or fieldname,
                     elementclass,
                     fieldname
                 )
