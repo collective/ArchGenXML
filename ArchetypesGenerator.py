@@ -755,7 +755,7 @@ class ArchetypesGenerator(BaseGenerator):
             ## before update the widget mapping, try to make a
             ## better description based on the given label
             if widgetmap.has_key('label'):
-                check_map['description'] = "\'Enter a value for %s.\'" % widgetmap['label'][3:-3].lower()
+                check_map['description'] = "\'Enter a value for %s.\'" % widgetmap['label'].strip('"')
 
             for k in check_map:
                 if not (k in widgetmap.keys()): # XXX check if disabled
