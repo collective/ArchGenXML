@@ -33,7 +33,7 @@ except ImportError:
 <dtml-if "[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.cmfmember_stereotype)]">
 from Products.CMFMember.Extensions.toolbox import SetupMember
 </dtml-if>
-from Products.<dtml-var "package.getProductModuleName()"> import PROJECTNAME
+from Products.<dtml-var "package.getProductModuleName()">.config import PROJECTNAME
 from Products.<dtml-var "package.getProductModuleName()"> import product_globals as GLOBALS
 
 def install(self):
