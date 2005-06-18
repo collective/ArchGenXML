@@ -13,7 +13,7 @@
 
 from zLOG import LOG, INFO
 
-print LOG('<dtml-var "product_name">',INFO, 'Installing Product')
+LOG('<dtml-var "product_name">',INFO, 'Installing Product')
 
 try:
     import CustomizationPolicy
