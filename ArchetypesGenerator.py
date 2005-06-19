@@ -1433,8 +1433,9 @@ class ArchetypesGenerator(BaseGenerator):
         if element.getTaggedValue('allowed_content_types'):
             aggregatedClasses = [str(e) for e in aggregatedClasses]
             for e in element.getTaggedValue('allowed_content_types').split(','):
-                if str(e) not in aggregatedClasses:
-                    aggregatedClasses.append(str(e))
+                e=str(e).strip()
+                if e not in aggregatedClasses:
+                    aggregatedClasses.append(e)
 
         # if it's a derived class check if parent has stereotype 'archetype'
         parent_is_archetype = False
@@ -1586,7 +1587,8 @@ class ArchetypesGenerator(BaseGenerator):
         parentAggregates=''
         
         if isTGVTrue(element.getTaggedValue('inherit_allowed_types', True)) and element.getGenParents():
-            parentAggregates = '+ ' + ' + '.join(tuple(["list(getattr(%s,'allowed_content_types',[]))"%p.getCleanName() for p in element.getGenParents()]))
+            parentAggregates = '+ ' + ' + '.join(
+                               tuple(["list(getattr(%s,'allowed_content_types',[]))" % p.getTaggedValue('portal_type', False) or p.getCleanName() for p in element.getGenParents()]))
         print >> outfile, CLASS_ALLOWED_CONTENT_TYPES % (repr(aggregatedClasses),parentAggregates)
 
         #allowed_content_interfaces
