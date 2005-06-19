@@ -175,13 +175,13 @@ def install(self):
     else:
         print >>out,'no workflow install'
 
-<dtml-if "[klass for klass in package.getClasses(recursive=1) if klass.getTaggedValue('use_workflow')]">
+<dtml-if "[klass for klass in generator.getGeneratedClasses(package) if generator.getOption('use_workflow', klass, None) is not None] and not klass.getStateMachines()">
     #bind classes to workflows
     wft = getToolByName(self,'portal_workflow')
-<dtml-in "package.getClasses(recursive=1)">
+<dtml-in "generator.getGeneratedClasses(package)">
 <dtml-let klass="_['sequence-item']">
-<dtml-if "klass.getTaggedValue('use_workflow')">
-    wft.setChainForPortalTypes( ['<dtml-var "klass.getCleanName()">'],'<dtml-var "klass.getTaggedValue('use_workflow')">')
+<dtml-if "generator.getOption('use_workflow', klass, None) is not None and not klass.getStateMachine()">
+    wft.setChainForPortalTypes( ['<dtml-var "klass.getCleanName()">'], <dtml-var "utils.getExpression(generator.getOption('use_workflow', klass))">)
 </dtml-if>
 </dtml-let>
 </dtml-in>
