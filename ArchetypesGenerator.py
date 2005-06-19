@@ -711,7 +711,7 @@ class ArchetypesGenerator(BaseGenerator):
         check_map['label_msgid']        = "'%s_label_%s'" % (modulename,fieldname)
         check_map['description']        = "'Enter a value for %s.'" % fieldname
         check_map['description_msgid']  = "'%s_help_%s'" % (modulename,fieldname)
-        check_map['i18n_domain']        = "'%s'" % modulename
+        check_map['i18n_domain']        = "'%s'" % modulename.lower()
 
         wt={} # helper
         if tgv.has_key('widget'):
