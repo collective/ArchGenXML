@@ -1587,8 +1587,16 @@ class ArchetypesGenerator(BaseGenerator):
         parentAggregates=''
         
         if isTGVTrue(element.getTaggedValue('inherit_allowed_types', True)) and element.getGenParents():
-            parentAggregates = '+ ' + ' + '.join(
-                               tuple(["list(getattr(%s,'allowed_content_types',[]))" % p.getTaggedValue('portal_type', False) or p.getCleanName() for p in element.getGenParents()]))
+            act = []
+            for gp in element.getGenParents():
+                pt = gp.getTaggedValue('portal_type', None)
+                if pt is not None:
+                    act.append(pt)
+                else:
+                    act.append(gp.getCleanName())
+            act = ["list(getattr(%s,'allowed_content_types',[]))" % i for i in act]
+            if act:
+                parentAggregates = '+ ' + ' + '.join(act)
         print >> outfile, CLASS_ALLOWED_CONTENT_TYPES % (repr(aggregatedClasses),parentAggregates)
 
         #allowed_content_interfaces
