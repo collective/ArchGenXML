@@ -1047,7 +1047,7 @@ class ArchetypesGenerator(BaseGenerator):
                 if startmarker:
                     startmarker=False
                     print >>outfile, 'copied_fields = {}'
-                copyfrom = getattr(attr,'copy_from','BaseSchema')
+                copyfrom = getattr(attr,'copy_from',base_schema)
                 name = getattr(attr,'rename_to',attr.getName())
                 print >>outfile, "copied_fields['%s'] = %s['%s'].copy()" % (name, copyfrom, attr.getName())
                 map = self.getFieldAttributes(attr)
@@ -1397,7 +1397,8 @@ class ArchetypesGenerator(BaseGenerator):
             wrt('from Products.Archetypes.SQLStorage import *\n')
 
         # imports by tagged values
-        additionalImports=self.getOption('imports',element,None,True)
+        additionalImports=self.getOption('imports', element, default=None, 
+                                         aggregate=True)
         if additionalImports:
             wrt("# additional imports from tagged value 'import'\n")
             wrt(additionalImports)
@@ -1457,6 +1458,7 @@ class ArchetypesGenerator(BaseGenerator):
         if additionalParents:
             parentnames=list(parentnames)+additionalParents.split(',')
 
+        # START find bases (baseclass and baseschema)
         if self.elementIsFolderish(element):
             # folderish
 
@@ -1507,6 +1509,7 @@ class ArchetypesGenerator(BaseGenerator):
         # normally a one of the Archetypes base classes are set.
         # if you dont want it set the TGV to zero '0'
 
+        ## END find bases
 
         # [optilude] Also - ignore the standard class if this is an abstract/mixin
         if baseclass and not isTGVFalse(element.getTaggedValue('base_class',1)) \
