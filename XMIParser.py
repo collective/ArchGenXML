@@ -1584,7 +1584,7 @@ class XMIClass (XMIElement, StateMachineContainer):
 
         return path
 
-    def getQualifiedModuleName(self, ref, pluginRoot='Products', forcePluginRoot=0, includeRoot=1):
+    def getQualifiedModuleName(self, ref=None, pluginRoot='Products', forcePluginRoot=0, includeRoot=1):
             
         path = self.getQualifiedModulePath(ref, pluginRoot=pluginRoot, 
                                          forcePluginRoot=forcePluginRoot, 
@@ -1594,7 +1594,7 @@ class XMIClass (XMIElement, StateMachineContainer):
         return res
 
 
-    def getQualifiedName(self, ref, pluginRoot='Products', forcePluginRoot=0, 
+    def getQualifiedName(self, ref=None, pluginRoot='Products', forcePluginRoot=0, 
                          includeRoot=1):
         name = self.getQualifiedModuleName(ref, pluginRoot=pluginRoot, 
                                          forcePluginRoot=forcePluginRoot, 

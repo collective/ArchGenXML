@@ -6,6 +6,13 @@ and compare the output results like this:
 >>> print i
 1
 
+Lets import the necessary modules
+>>> from Products.<dtml-var "klass.getPackage().getProduct().getCleanName()"> import config
+
+<dtml-in "klass.getRealizationParents() + klass.getClientDependencyClasses()">
+>>> from <dtml-var "_['sequence-item'].getQualifiedModuleName(forcePluginRoot=1)"> import <dtml-var "_['sequence-item'].getCleanName()">
+</dtml-in>
+
 every line that starts with '>>>' will be interpreted
 as python statement.
 By writing the expected output after the python
