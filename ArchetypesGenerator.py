@@ -64,6 +64,7 @@ class DummyModel:
         self.name=name
     def getName(self):
         return self.name
+    getCleanName=getName
     getFilePath=getName
     getModuleFilePath=getName
     getProductModuleName=getName
@@ -76,6 +77,7 @@ class DummyModel:
     getInterfaces=getClasses
     getPackages=getClasses
     getStateMachines=getClasses
+    getAssociations=getClasses
     def isRoot(self):
         return 1
     
@@ -108,8 +110,11 @@ class ArchetypesGenerator(BaseGenerator):
         description='this package will be treated as test package')
     uml_profile.addStereoType('plone_testcase',['XMIClass'],dispatching=1,
         generator='generateBaseTestcaseClass',template='tests/PloneTestcase.py')
+
     uml_profile.addStereoType('testcase',['XMIClass'],dispatching=1,
         generator='generateTestcaseClass',template='tests/GenericTestcase.py')
+    uml_profile.addStereoType('doc_testcase',['XMIClass'],dispatching=1,
+        generator='generateDocTestcaseClass',template='tests/DocTestcase.py')
     uml_profile.addStereoType('setup_testcase',['XMIClass'],dispatching=1,
         generator='generateTestcaseClass',template='tests/SetupTestcase.py')
     uml_profile.addStereoType('interface_testcase',['XMIClass'],dispatching=1,
@@ -1278,7 +1283,30 @@ class ArchetypesGenerator(BaseGenerator):
 
         return self.generateTestcaseClass(element,template)
 
-    def generateTestcaseClass(self,element,template):
+    def generateDocTestcaseClass(self,element,template ):
+        #write runalltests.py and framework.py
+        testdoc_t=readTemplate('tests/testdoc.txt')
+        testdoc=HTML(testdoc_t,{'klass':element })()
+        
+        
+        testname=element.getTaggedValue('doctest_name') or element.getCleanName()
+        self.makeDir(os.path.join(element.getPackage().getProduct().getFilePath(),'doc'))
+        docfile=os.path.join(element.getPackage().getProduct().getFilePath(),'doc','%s.txt' % testname)
+        if not self.readFile(docfile):
+            of=self.makeFile(docfile)
+            of.write(testdoc)
+            of.close()
+        
+        init='#'
+        of=self.makeFile(os.path.join(element.getPackage().getProduct().getFilePath(),'doc','__init__.py' ))
+
+        of.write(init)
+        of.close()
+
+
+        return self.generateTestcaseClass(element,template,testname=testname)
+
+    def generateTestcaseClass(self,element,template,**kw):
         print indent('Generating testcase: '+element.getName(),self.infoind)
         
         assert element.hasStereoType('plone_testcase') or element.getCleanName().startswith('test'), \
@@ -1293,7 +1321,7 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             parent=None
 
-        return BaseGenerator.generatePythonClass(self, element, template, parent=parent)
+        return BaseGenerator.generatePythonClass(self, element, template, parent=parent, **kw)
 
     def generateWidgetClass(self,element,template,zptname='widget.pt'):
         print indent('Generating widget: '+element.getName(),self.infoind)

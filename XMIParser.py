@@ -1747,7 +1747,15 @@ class XMIAssocEnd (XMIElement):
 
     def getTarget(self):
         return self.obj
+    
+    def getMultiplicity(self):
+        return self.mult
 
+    def getLowerBound(self):
+        return self.getMultiplicity()[0]
+
+    def getUpperBound(self):
+        return self.getMultiplicity()[1]
 
 class XMIAssociation (XMIElement):
     fromEnd = None
