@@ -18,11 +18,10 @@ from Products.<dtml-var "klass.getPackage().getProduct().getCleanName()"> import
 
 <dtml-var "generator.getProtectedSection(parsed_class,'module-header')">
 <dtml-var "generator.generateDependentImports(klass)">
-
+<dtml-var "generator.getImportsByTaggedValues(klass)">
 <dtml-if "klass.getTaggedValue('validation_expression')">
 from Products.validation.validators import ExpressionValidator
 </dtml-if>
-
 <dtml-if "parentname=='CompoundField'">
 from Products.CompoundField.CompoundField import CompoundField
 <dtml-var "generator.generateArcheSchema(klass,None)" >

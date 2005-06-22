@@ -1,4 +1,4 @@
-#-----------------------------------------------------------------------------
+#----------------------------------------------------------------------------
 # Name:        ArchetypesGenerator.py
 # Purpose:     main class generating archetypes code out of an UML-model
 #
@@ -356,6 +356,12 @@ class ArchetypesGenerator(BaseGenerator):
         print >> outfile, ''
         return outfile.getvalue()
         
+        
+    def getImportsByTaggedValues(self, element):
+        # imports by tagged values
+        additionalImports=self.getOption('imports', element, default=None, 
+                                         aggregate=True)
+        return additionalImports
 
 
     def generateModifyFti(self,element):
@@ -1047,7 +1053,11 @@ class ArchetypesGenerator(BaseGenerator):
                 if startmarker:
                     startmarker=False
                     print >>outfile, 'copied_fields = {}'
-                copyfrom = getattr(attr,'copy_from',base_schema)
+                if element.hasStereoType(self.cmfmember_stereotype):
+                    copybase_schema = "BaseMember.content_schema"
+                else:
+                    copybase_schema = base_schema
+                copyfrom = getattr(attr,'copy_from',copybase_schema)
                 name = getattr(attr,'rename_to',attr.getName())
                 print >>outfile, "copied_fields['%s'] = %s['%s'].copy()" % (name, copyfrom, attr.getName())
                 map = self.getFieldAttributes(attr)
@@ -1338,7 +1348,7 @@ class ArchetypesGenerator(BaseGenerator):
             widgetname=widget.getCleanName()
         else:
             widget=None
-            widgetname='StringWidget'
+            widgetname=None
 
         return BaseGenerator.generatePythonClass(self, element, template,
             parent=parent,parentname=parentname,
@@ -1397,8 +1407,7 @@ class ArchetypesGenerator(BaseGenerator):
             wrt('from Products.Archetypes.SQLStorage import *\n')
 
         # imports by tagged values
-        additionalImports=self.getOption('imports', element, default=None, 
-                                         aggregate=True)
+        additionalImports = self.getImportsByTaggedValues(element)
         if additionalImports:
             wrt("# additional imports from tagged value 'import'\n")
             wrt(additionalImports)
