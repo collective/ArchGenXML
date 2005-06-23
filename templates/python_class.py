@@ -13,7 +13,11 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
 <dtml-var "generator.getProtectedSection(parsed_class,'class-init',2)">
         #attributes
 <dtml-in atts>
-        self.<dtml-var "_['sequence-item'].getCleanName()">=None
+<dtml-if "_['sequence-item'].mult[1]==1">
+        self.<dtml-var "_['sequence-item'].getCleanName()">=None 
+<dtml-else>
+        self.<dtml-var "_['sequence-item'].getCleanName()">=<dtml-var "{None:'[]','dict':'{}','list':'[]','tuple':'()'}.get(_['sequence-item'].getStereoType(),str(_['sequence-item'].getStereoType())+'()')">
+</dtml-if>
 </dtml-in>       
 
         #associations

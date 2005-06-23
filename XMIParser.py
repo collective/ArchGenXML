@@ -183,9 +183,9 @@ class XMI1_0:
             return None
         return aggs[0].getAttribute('xmi.value')
 
-    def getMultiplicity(self, el):
-        mult_min = int(getAttributeValue(el, self.MULT_MIN, default=0, recursive=1))
-        mult_max = int(getAttributeValue(el, self.MULT_MAX, default=-1, recursive=1))
+    def getMultiplicity(self, el, multmin=0, multmax=-1):
+        mult_min = int(getAttributeValue(el, self.MULT_MIN, default=multmin, recursive=1))
+        mult_max = int(getAttributeValue(el, self.MULT_MAX, default=multmax, recursive=1))
         return (mult_min, mult_max)
 
     def buildRelations(self, doc, objects):
@@ -545,19 +545,19 @@ class XMI1_2 (XMI1_1):
     def getAssocEndAggregation(self, el):
         return str(el.getAttribute('aggregation'))
 
-    def getMultiplicity(self, el):
+    def getMultiplicity(self, el, multmin=0,multmax=-1):
         min = getElementByTagName(el, self.MULTRANGE, default=None, recursive=1)
         max = getElementByTagName(el, self.MULTRANGE, default=None, recursive=1)
 
         if min:
             mult_min = int(min.getAttribute('lower'))
         else:
-            mult_min = 0
+            mult_min = multmin
 
         if max:
             mult_max = int(max.getAttribute('upper'))
         else:
-            mult_max = -1
+            mult_max = multmax
 
         return (mult_min, mult_max)
 
@@ -1722,6 +1722,8 @@ class XMIAttribute (XMIElement):
         if domElement:
             self.calcType()
             self.findDefault()
+            self.mult = XMI.getMultiplicity(domElement,1,1)
+            print 'MULT:',self.getName(),repr(self.mult)
 
     def isI18N(self):
         ''' with a stereotype 'i18N' or the taggedValue i18n == '1' an attribute is treated as i18n'''
