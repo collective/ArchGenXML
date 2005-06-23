@@ -18,7 +18,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
 
         #associations
 <dtml-in assocs>
-<dtml-if "_['sequence-item'].toEnd.getUpperBound()=='1'">
+<dtml-if "_['sequence-item'].toEnd.getUpperBound()==1">
         self.<dtml-var "_['sequence-item'].toEnd.getCleanName()">=None 
 <dtml-else>
         self.<dtml-var "_['sequence-item'].toEnd.getCleanName()">=<dtml-var "{None:'[]','dict':'{}','list':'[]','tuple':'()'}.get(_['sequence-item'].getStereoType(),str(_['sequence-item'].getStereoType())+'()')">
