@@ -60,7 +60,7 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
     security.declarePrivate('get')
 
     
-<dtml-if "not parsed_class and parentname != 'ObjectField'">
+<dtml-if "not parsed_class">
     def get(self, instance, **kwargs):
         return <dtml-var parentname>.get(self,instance,**kwargs)
 

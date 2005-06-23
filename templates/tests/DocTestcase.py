@@ -6,13 +6,15 @@ import os, sys
 from Testing import ZopeTestCase
 <dtml-if "parent is not None">
 from <dtml-var "parent.getQualifiedModuleName(None,forcePluginRoot=1)"> import <dtml-var "parent.getCleanName()">
+<dtml-else>
+from Products.PloneTestCase.PloneTestCase import PloneTestCase
 </dtml-if>
 # import the tested classes
 <dtml-in "klass.getRealizationParents() + klass.getClientDependencyClasses(includeParents=True)">
 from <dtml-var "_['sequence-item'].getQualifiedModuleName(None, forcePluginRoot=1)"> import <dtml-var "_['sequence-item'].getCleanName()">
 </dtml-in>
 
-class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCleanName()">)</dtml-if>:
+class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCleanName()">)<dtml-else>(PloneTestCase)</dtml-if>:
 <dtml-if "parsed_class and parsed_class.getDocumentation()">    """<dtml-var "parsed_class.getDocumentation()">"""
 <dtml-else>    """ test-cases for class(es) <dtml-var "', '.join([p.getName() for p in klass.getRealizationParents()])">
     """</dtml-if>

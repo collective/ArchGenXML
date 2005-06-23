@@ -1307,6 +1307,8 @@ class ArchetypesGenerator(BaseGenerator):
         return self.generateTestcaseClass(element,template,testname=testname)
 
     def generateTestcaseClass(self,element,template,**kw):
+        from XMIParser import XMIClass
+        
         print indent('Generating testcase: '+element.getName(),self.infoind)
         
         assert element.hasStereoType('plone_testcase') or element.getCleanName().startswith('test'), \
@@ -1320,7 +1322,7 @@ class ArchetypesGenerator(BaseGenerator):
             parent=element.getGenParents()[0]
         else:
             parent=None
-
+            
         return BaseGenerator.generatePythonClass(self, element, template, parent=parent, **kw)
 
     def generateWidgetClass(self,element,template,zptname='widget.pt'):

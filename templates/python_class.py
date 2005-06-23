@@ -13,15 +13,15 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
 <dtml-var "generator.getProtectedSection(parsed_class,'class-init',2)">
         #attributes
 <dtml-in atts>
-        <dtml-var "_['sequence-item'].getCleanName()">=None
+        self.<dtml-var "_['sequence-item'].getCleanName()">=None
 </dtml-in>       
 
         #associations
 <dtml-in assocs>
 <dtml-if "_['sequence-item'].toEnd.getUpperBound()=='1'">
-        <dtml-var "_['sequence-item'].toEnd.getCleanName()">=None 
+        self.<dtml-var "_['sequence-item'].toEnd.getCleanName()">=None 
 <dtml-else>
-        <dtml-var "_['sequence-item'].toEnd.getCleanName()">=<dtml-var "{None:'[]','dict':'{}','list':'[]','tuple':'()'}.get(_['sequence-item'].getStereoType(),str(_['sequence-item'].getStereoType())+'()')">
+        self.<dtml-var "_['sequence-item'].toEnd.getCleanName()">=<dtml-var "{None:'[]','dict':'{}','list':'[]','tuple':'()'}.get(_['sequence-item'].getStereoType(),str(_['sequence-item'].getStereoType())+'()')">
 </dtml-if>
 </dtml-in>       
 </dtml-if>
