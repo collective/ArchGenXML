@@ -172,14 +172,12 @@ TEMPL_CONSTR_TOOL="""
 
 TEMPLATE_HEADER = """\
 from AccessControl import ClassSecurityInfo
-from Products.Archetypes.atapi import *
-"""
+from Products.Archetypes.atapi import *"""
 
 TEMPLATE_HEADER_I18N_I18N_AT = """\
 from AccessControl import ClassSecurityInfo
 from Products.Archetypes.atapi import *
 from Products.I18NArchetypes.public import *
-
     """
 
 TEMPLATE_HEADER_I18N_LINGUAPLONE = """\
@@ -194,8 +192,7 @@ except ImportError:
     """
 
 TEMPLATE_CONFIG_IMPORT = """\
-from Products.%(module)s.config import *
-"""
+from Products.%(module)s.config import *"""
 
 
 TEMPL_APECONFIG_BEGIN = """<?xml version="1.0"?>

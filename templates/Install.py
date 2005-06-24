@@ -147,9 +147,14 @@ def install(self):
 <dtml-if "package.getProductName() in generator.vocabularymap.keys()">
 
     # Create vocabularies in vocabulary lib
-    #atvm = getToolByName(self, 'portal_vocabularies')
-    #for vocab in <dtml-var "repr([])">:
-    #    pass
+    atvm = getToolByName(self, 'portal_vocabularies')
+    vocabmap = <dtml-var "repr(generator.vocabularymap[package.getProductName()])">
+    for vocabname in vocabmap.keys():
+        if not vocabname in atvm.contentIds():
+            atvm.invokeFactory(vocabmap[vocabname][0], vocabname)
+        if len(atvm[vocabname].contentIds()) < 1:
+            atvm[vocabname].invokeFactory(vocabmap[vocabname][1],'default')
+            atvm[vocabname]['default'].setTitle('Default term, replace it by your own stuff')
 </dtml-if>
 <dtml-let cmfmembers="[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.cmfmember_stereotype)]">
 <dtml-if "cmfmembers">

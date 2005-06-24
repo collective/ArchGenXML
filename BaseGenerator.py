@@ -159,7 +159,6 @@ class BaseGenerator:
         for p in assocs:
             if getattr(p,'isAssociationClass',0):
                 # get import_from and add it to importLines
-                #import pdb; pdb.set_trace()
                 module = p.getTaggedValue('import_from', None)
                 if module:
                     importLine = 'from %s import %s' % (module, p.getName())
@@ -178,7 +177,7 @@ class BaseGenerator:
             for line in importLines:
                 print >> outfile, line
 
-        return outfile.getvalue()
+        return outfile.getvalue().strip()
 
 
     def generateImplements(self,element,parentnames):

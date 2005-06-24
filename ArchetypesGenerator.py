@@ -358,7 +358,7 @@ class ArchetypesGenerator(BaseGenerator):
         if element.hasAttributeWithTaggedValue('vocabulary:type','ATVocabularyManager'):
             print >> outfile, 'from Products.ATVocabularyManager.namedvocabulary import NamedVocabulary'
 
-        print >> outfile, ''
+        #print >> outfile, ''
         return outfile.getvalue()
         
         
@@ -835,6 +835,42 @@ class ArchetypesGenerator(BaseGenerator):
             map )
 
         return res
+    
+    def addVocabulary(self, element, attr, map):
+        # ATVocabularyManager: Add NamedVocabulary to field.
+        vocaboptions = {}
+        for t in attr.getTaggedValues().items():
+            if t[0].startswith('vocabulary:'):
+                vocaboptions[t[0][11:]]=t[1]
+        if vocaboptions:
+            if not 'name' in vocaboptions.keys():
+                vocaboptions['name'] = '%s_%s' % (element.getCleanName(), \
+                                                  attr.getName())
+            if not 'term_type' in vocaboptions.keys():
+                vocaboptions['term_type'] = 'SimpleVocabularyTerm'
+
+            if not 'vocabulary_type' in vocaboptions.keys():
+                vocaboptions['vocabulary_type'] = 'SimpleVocabulary'
+
+            map.update( {
+                'vocabulary':'NamedVocabulary("""%s""")' % vocaboptions['name']
+            } )
+
+            # remember this vocab-name and if set its portal_type
+            package = element.getPackage()
+            currentproduct = package.getProductName()
+            if not currentproduct in self.vocabularymap.keys():
+                self.vocabularymap[currentproduct] = {}
+
+            if not vocaboptions['name'] in self.vocabularymap[currentproduct].keys():
+                self.vocabularymap[currentproduct][vocaboptions['name']] = (
+                                                vocaboptions['vocabulary_type'],
+                                                vocaboptions['term_type']
+                )
+            else:
+                print "warning: vocabulary with name %s defined more than once." % vocaboptions['name']
+
+        # end ATVM
 
     def getFieldStringFromAttribute(self, attr, classelement):
         ''' gets the schema field code '''
@@ -865,38 +901,7 @@ class ArchetypesGenerator(BaseGenerator):
             map.update( {
                 'widget': widget })
 
-
-        # ATVocabularyManager: Add NamedVocabulary to field.
-        vocaboptions = {}
-        for t in attr.getTaggedValues().items():
-            if t[0].startswith('vocabulary:'):
-                vocaboptions[t[0][11:]]=t[1]
-        if vocaboptions:
-            if not 'name' in vocaboptions.keys():
-                vocaboptions['name'] = '%s_%s' % (classelement.getCleanName(), \
-                                                  attr.getName())
-            if not 'term_type' in vocaboptions.keys():
-                vocaboptions['term_type'] = 'SimpleVocabularyItem'
-
-            if not 'vocabulary_type' in vocaboptions.keys():
-                vocaboptions['vocabulary_type'] = 'SimpleVocabulary'
-
-            map.update( {
-                'vocabulary':'NamedVocabulary("""%s""")' % vocaboptions['name']
-            } )
-
-            # remember this vocab-name and if set its meta_type
-            package = classelement.getPackage()
-            currentproduct = package.getProductName()
-            if not currentproduct in self.vocabularymap.keys():
-                self.vocabularymap[currentproduct] = {}
-
-            if not vocaboptions['name'] in self.vocabularymap[currentproduct]:
-                self.vocabularymap[currentproduct] = (vocaboptions['name'],
-                                                      vocaboptions['vocabulary_type'],
-                                                      vocaboptions['term_type'])
-
-        # end ATVM
+        self.addVocabulary(classelement, attr, map)
 
         atype=self.typeMap[ctype]['field']
 
@@ -1556,7 +1561,7 @@ class ArchetypesGenerator(BaseGenerator):
               baseclasses=baseclass.split(',')
               parentnames=parentnames+baseclasses
 
-        # Remark: CMFMember support include VariableSchema support
+        # Remark: CMFMember support includes VariableSchema support
         if element.hasStereoType(self.variable_schema) and \
              not element.hasStereoType(self.cmfmember_stereotype):
             parentnames.insert(0,'VariableSchemaSupport')
@@ -2407,6 +2412,27 @@ class ArchetypesGenerator(BaseGenerator):
                     assocclassname=assocclassname,
                     inverse_relation_id=assoc.getId()
                     )
+                    
+            # ATVM integration - by jensens
+            # very special case: create a vocabulary with the association name
+            # this is needed for some use-cases, where a association class has
+            # use an vocabulary with the name ofthe relation
+            
+            if isTGVTrue(self.getOption('association_vocabulary', assoc, '0')):
+                # remember this vocab-name and if set its portal_type
+                currentproduct = package.getProductName()
+                if not currentproduct in self.vocabularymap.keys():
+                    self.vocabularymap[currentproduct] = {}
+                if not assoc.getId() in self.vocabularymap[currentproduct].keys():
+                    self.vocabularymap[currentproduct][assoc.getCleanName()] = (
+                                                    'SimpleVocabulary',
+                                                    'SimpleVocabularyTerm'
+                    )
+                else:
+                    print "warning: vocabulary with name %s defined more than once." % vocaboptions['name']
+                     
+            
+            #/ATVM
                 
             package.num_generated_relations += 1
                 
