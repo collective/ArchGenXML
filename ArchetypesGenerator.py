@@ -229,6 +229,8 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateDependentImports(self,element):
         res=BaseGenerator.generateDependentImports(self,element)
+        out=StringIO()
+        print >>out,res
         
         generate_expression_validator=False
         for att in element.getAttributeDefs():
@@ -236,11 +238,19 @@ class ArchetypesGenerator(BaseGenerator):
                 generate_expression_validator=True
         
         if generate_expression_validator:
-            out=StringIO()
-            print >>out,res
             print >>out,'from Products.validation.validators import ExpressionValidator'
-            res=out.getvalue()
                 
+        #check for necessity to import ArrayField
+        import_array_field=False
+        for att in element.getAttributeDefs():
+            if att.getUpperBound() != 1:
+                import_array_field=1
+                break
+
+        if import_array_field:
+            print >>out,'from Products.CompoundField.ArrayField import ArrayField'
+
+        res=out.getvalue()
         return res
 
     def addMsgid(self,msgid,msgstr,element,fieldname):
@@ -824,10 +834,7 @@ class ArchetypesGenerator(BaseGenerator):
         ''' gets the schema field code '''
         typename=str(element.type)
 
-        if element.getMaxOccurs()>1:
-            ctype='lines'
-        else:
-            ctype=self.coerceType(typename)
+        ctype=self.coerceType(typename)
 
         map = typeMap[ctype]['map'].copy()
 
@@ -938,7 +945,14 @@ class ArchetypesGenerator(BaseGenerator):
             rawType=attr.getType()
             )
 
+        if attr.getUpperBound() != 1:
+            indent(res,1)
+            res="""ArrayField(
+%s
+),""" % indent(res,1)
+            
         return res
+    
 
     def getFieldStringFromAssociation(self, rel, classelement):
         ''' gets the schema field code '''

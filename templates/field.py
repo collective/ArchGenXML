@@ -64,6 +64,9 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
     def get(self, instance, **kwargs):
         return <dtml-var parentname>.get(self,instance,**kwargs)
 
+    def getRaw(self, instance, **kwargs):
+        return <dtml-var parentname>.getRaw(self,instance,**kwargs)
+
     security.declarePrivate('set')
     def set(self, instance, value, **kwargs):
         return <dtml-var parentname>.set(self,instance,value,**kwargs)

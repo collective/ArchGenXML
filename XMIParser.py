@@ -1723,7 +1723,6 @@ class XMIAttribute (XMIElement):
             self.calcType()
             self.findDefault()
             self.mult = XMI.getMultiplicity(domElement,1,1)
-            print 'MULT:',self.getName(),repr(self.mult)
 
     def isI18N(self):
         ''' with a stereotype 'i18N' or the taggedValue i18n == '1' an attribute is treated as i18n'''
@@ -1731,6 +1730,15 @@ class XMIAttribute (XMIElement):
 
     def getVisibility(self):
         return self.visibility
+
+    def getMultiplicity(self):
+        return self.mult
+
+    def getLowerBound(self):
+        return self.getMultiplicity()[0]
+
+    def getUpperBound(self):
+        return self.getMultiplicity()[1]
 
 
 class XMIAssocEnd (XMIElement):
