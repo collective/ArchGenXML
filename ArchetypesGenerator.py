@@ -677,7 +677,8 @@ class ArchetypesGenerator(BaseGenerator):
 
                 if k not in self.nonstring_tgvs:
                     v=getExpression(v)
-                # [optilude] Permit python: if people forget they don't have to (I often do!)
+                # [optilude] Permit python: if people forget they
+                # don't have to (I often do!)
                 else:
                     if v.startswith ('python:'):
                         v = v[7:]
