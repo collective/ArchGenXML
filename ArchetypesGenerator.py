@@ -2395,8 +2395,7 @@ class ArchetypesGenerator(BaseGenerator):
             if not inverse_relation_name and assoc.fromEnd.isNavigable:
                 inverse_relation_name=assoc.getCleanName()+'_inverse'
                 
-            assocclassname=getattr(assoc,'isAssociationClass',0) and assoc.getCleanName() or assoc.getTaggedValue('association_class')
-                
+            assocclassname=getattr(assoc,'isAssociationClass',0) and assoc.getCleanName() or assoc.getTaggedValue('association_class') or self.getOption('association_class',assoc)
             self.generateRelation(doc, coll,
                 assoc.getCleanName(), 
                 assoc.getId(),
