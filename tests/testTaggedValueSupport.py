@@ -91,7 +91,6 @@ class TestTaggedValueRegistry(unittest.TestCase):
         self.assertEquals(True,
                           self.registry.isRegisteredTaggedValue(category='method',
                                                                 name='testmethodtgv2'))
-        self.assertEquals(2, len(self.registry._registry))
 
     def test_isRegisteredTaggedValue(self):
         """ Return False for unregistered value
