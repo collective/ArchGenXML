@@ -2,17 +2,17 @@
 
 # Requires Python 2.3
 
-from optparse import OptionParser, \
-        OptionGroup, \
-        Option, \
-        SUPPRESS_HELP, \
-        OptionValueError, \
-        TitledHelpFormatter
-
 from ConfigParser import SafeConfigParser as ConfigParser
 
-import textwrap
+from optparse import Option
+from optparse import OptionGroup
+from optparse import OptionParser
+from optparse import OptionValueError
+from optparse import SUPPRESS_HELP
+from optparse import TitledHelpFormatter
+
 import sys
+import textwrap
 
 #============================================================================
 # Custom Parsers
@@ -122,7 +122,7 @@ class AGXOptionParser(OptionParser):
                 add_help_option,
                 prog)
         # TODO: below line doesn't get called because of above return...
-        self.config_filename=config_filename
+        self.config_filename = config_filename
 
     def get_all_options(self):
         """Return all options, recursing into groups."""

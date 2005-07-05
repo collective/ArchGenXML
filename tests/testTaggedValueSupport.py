@@ -10,7 +10,7 @@ testDir = os.path.dirname(os.path.abspath(__file__))
 parentDir = testDir[:-6] # Strips off '/tests'
 # Appends the parent dir to the module search path
 sys.path.append(parentDir)
-from TaggedValueSupport import *
+from TaggedValueSupport import * # includes tgvRegistry
 from XMIParser import XMIElement
 
 class TestTaggedValueSupport(unittest.TestCase):
@@ -60,27 +60,52 @@ class TestTaggedValueSupport(unittest.TestCase):
 
 class TestTaggedValueRegistry(unittest.TestCase):
     def setUp(self):
-        self.registry = TaggedValueRegistry()
+        self.registry = tgvRegistry # from TaggedValueSupport
 
     def test_init(self):
         """ Init should create an empty registry
         """
-        self.assertEquals(len(self.registry._registry), 0)
+        localRegistry = TaggedValueRegistry()
+        self.assertEquals(len(localRegistry._registry), 0)
         
     def test_addTaggedValue1(self):
         """ Add a simple value, should be placed in the registry
         """
         self.registry.addTaggedValue(category='class', name='testtgv')
-        self.assert_(self.registry.isRegisteredTaggedValue(category='class',
-                                                           name='testtgv'))
+        self.assertEquals(True,
+                          self.registry.isRegisteredTaggedValue(category='class',
+                                                                name='testtgv'))
+
+    def test_addTaggedValue2(self):
+        """ Add two categories, should both be present
+        """
+        self.registry.addTaggedValue(category='class', name='testclasstgv')
+        self.registry.addTaggedValue(category='method', name='testmethodtgv')
+        self.registry.addTaggedValue(category='method', name='testmethodtgv2')
+        self.assertEquals(True,
+                          self.registry.isRegisteredTaggedValue(category='class',
+                                                                name='testclasstgv'))
+        self.assertEquals(True,
+                          self.registry.isRegisteredTaggedValue(category='method',
+                                                                name='testmethodtgv'))
+        self.assertEquals(True,
+                          self.registry.isRegisteredTaggedValue(category='method',
+                                                                name='testmethodtgv2'))
+        self.assertEquals(2, len(self.registry._registry))
 
     def test_isRegisteredTaggedValue(self):
-        """ Return False 
+        """ Return False for unregistered value
         """
-        self.registry.addTaggedValue(category='class', name='testtgv')
-        self.assert_(self.registry.isRegisteredTaggedValue(category='class',
-                                                           name='testtgv'))
+        self.assertEquals(False,
+                          self.registry.isRegisteredTaggedValue(category='bogus', 
+                                                                name='beer'))
 
+    def test_stuffAddedInTheFileWorks(self):
+        """ The registering of TGVs at the end of the file should work
+        """
+        self.assertEquals(True,
+                          self.registry.isRegisteredTaggedValue(category='class',
+                                                                name='archetype_name'))
 
 def test_suite():
     suite = unittest.TestSuite()

@@ -67,26 +67,30 @@ class TaggedValueRegistry:
         """
         if not category or not name:
             raise "Category and/or name for TGV needed"
-        if not self._registry.has_key('category'):
+        if not self._registry.has_key(category):
             self._registry[category] = {}
         self._registry[category][name] = explanation
 
     def isRegisteredTaggedValue(self, category='', name=''):
         """
         """
+        #import pdb; pdb.set_trace()
         if not self._registry.has_key(category):
             return False
         if not self._registry[category].has_key(name):
             return False
         return True
 
-packageTGVs = []
-classTGVs = []
-methodTGVs = []
-attributeTGVs = []
-tgvRegistry = {'package': packageTGVs,
-               'class': classTGVs,
-               'method': methodTGVs,
-               'attribute': attributeTGVs}
 
+tgvRegistry = TaggedValueRegistry()
+# Class level tagged values
+category = 'class'
+
+name = 'archetype_name'
+explanation = '''The name which will be shown in the "add new item" drop-down and other
+user-interface elements. Defaults to the class name, but whilst the
+class name must be valid and unique python identifier, the
+archetype_name can be any string.
+'''
+tgvRegistry.addTaggedValue(category=category, name=name, explanation=explanation)
 
