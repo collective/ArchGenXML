@@ -18,7 +18,7 @@ class TestTaggedValueSupport(unittest.TestCase):
         self.element = XMIElement()
         self.element.setTaggedValue('boolean1', '1')
         
-    def testIsTGVTrue1(self):
+    def test_IsTGVTrue1(self):
         """ Test if the correct True values are recognised
 
         1, '1', 'True' and 'true' are all ok.
@@ -26,7 +26,7 @@ class TestTaggedValueSupport(unittest.TestCase):
         for value in [1, '1', 'True', 'true']:
             self.assertEquals(True, isTGVTrue(value))
 
-    def testIsTGVTrue2(self):
+    def test_IsTGVTrue2(self):
         """ Test if wrong True values are rejected
 
         1, '1', 'True' and 'true' are all ok.
@@ -34,7 +34,7 @@ class TestTaggedValueSupport(unittest.TestCase):
         for value in ['j', 'y', 'yes', 'ja, meneer']:
             self.assertEquals(False, isTGVTrue(value))
 
-    def testIsTGVFalse1(self):
+    def test_IsTGVFalse1(self):
         """ Test if the correct False values are recognised
 
         '0', 0, 'false', 'False' are all ok
@@ -42,7 +42,7 @@ class TestTaggedValueSupport(unittest.TestCase):
         for value in ['0', 0, 'false', 'False']:
             self.assertEquals(True, isTGVFalse(value))
 
-    def testIsTGVFalse2(self):
+    def test_IsTGVFalse2(self):
         """ Test if wrong False values are rejected
 
         '0', 0, 'false', 'False' are all ok
@@ -50,7 +50,7 @@ class TestTaggedValueSupport(unittest.TestCase):
         for value in ['n', 'N', 'nyet', -2, 1]:
             self.assertEquals(False, isTGVFalse(value))
 
-    def testIsTGVFalse3(self):
+    def test_IsTGVFalse3(self):
         """ Test if None is rejected as a False value
 
         False must be set *explicitly*, so None doesn't qualify.
@@ -58,9 +58,34 @@ class TestTaggedValueSupport(unittest.TestCase):
         self.assertEquals(False, isTGVFalse(None))
 
 
+class TestTaggedValueRegistry(unittest.TestCase):
+    def setUp(self):
+        self.registry = TaggedValueRegistry()
+
+    def test_init(self):
+        """ Init should create an empty registry
+        """
+        self.assertEquals(len(self.registry._registry), 0)
+        
+    def test_addTaggedValue1(self):
+        """ Add a simple value, should be placed in the registry
+        """
+        self.registry.addTaggedValue(category='class', name='testtgv')
+        self.assert_(self.registry.isRegisteredTaggedValue(category='class',
+                                                           name='testtgv'))
+
+    def test_isRegisteredTaggedValue(self):
+        """ Return False 
+        """
+        self.registry.addTaggedValue(category='class', name='testtgv')
+        self.assert_(self.registry.isRegisteredTaggedValue(category='class',
+                                                           name='testtgv'))
+
+
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(TestTaggedValueSupport))
+    suite.addTest(unittest.makeSuite(TestTaggedValueRegistry))
     return suite
 
 if __name__ == '__main__':

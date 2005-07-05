@@ -121,6 +121,7 @@ class AGXOptionParser(OptionParser):
                 AGXHelpFormatter(),
                 add_help_option,
                 prog)
+        # TODO: below line doesn't get called because of above return...
         self.config_filename=config_filename
 
     def get_all_options(self):

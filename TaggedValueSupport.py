@@ -46,6 +46,40 @@ def isTGVFalse(tgv):
         tgv=tgv.lower()
     return tgv in (0,'0','false')
 
+
+class TaggedValueRegistry:
+    """ Registry for all known tagged values (TGVs)
+
+    The aim is to get them finally well-documented by providing a
+    place to actually document them.
+    """
+
+    def __init__(self):
+        """ Initialise an empty registry
+        """
+        self._registry = {}
+
+    def addTaggedValue(self, category='', name='', explanation=''):
+        """ Adds a TGV to the registry
+
+        If the category doesn't exist yet, create it in
+        '_registry'. Then add the tagged value to it.
+        """
+        if not category or not name:
+            raise "Category and/or name for TGV needed"
+        if not self._registry.has_key('category'):
+            self._registry[category] = {}
+        self._registry[category][name] = explanation
+
+    def isRegisteredTaggedValue(self, category='', name=''):
+        """
+        """
+        if not self._registry.has_key(category):
+            return False
+        if not self._registry[category].has_key(name):
+            return False
+        return True
+
 packageTGVs = []
 classTGVs = []
 methodTGVs = []
