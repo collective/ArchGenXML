@@ -86,6 +86,8 @@ tgvRegistry = TaggedValueRegistry()
 # Class level tagged values
 category = 'class'
 
+# The following tagged values can be set on classes to alter their behaviour:
+
 name = 'archetype_name'
 explanation = """The name which will be shown in the "add new item" drop-down and other
 user-interface elements. Defaults to the class name, but whilst the
@@ -173,6 +175,9 @@ tgvRegistry.addTaggedValue(category=category, name=name, explanation=explanation
 # Tool
 category = 'tool'
 
+#   The following tagged values can be set on classes with the
+#   '<<portal_tool>>' stereotype to alter their behaviour: 
+
 name = 'toolicon'
 explanation = """The name of an image file, which must be found in the skins directory of the product. This will be used to represent your tool in the Zope Management Interface."""
 tgvRegistry.addTaggedValue(category=category, name=name, explanation=explanation)
@@ -222,6 +227,9 @@ tgvRegistry.addTaggedValue(category=category, name=name, explanation=explanation
 
 category = 'method'
 
+# The following tagged values can be set on methods to alter their
+# behaviour:
+
 name = 'code'
 explanation = """The actual python code of the method. Only use this for simple one-liners. Code filled into the generated file will be preserved when the model is re-generated."""
 tgvRegistry.addTaggedValue(category=category, name=name, explanation=explanation)
@@ -233,6 +241,10 @@ tgvRegistry.addTaggedValue(category=category, name=name, explanation=explanation
 # Actions/views
 
 category = 'action'
+
+# For methods with either of the '<<action>>'', '<<form>>' or
+# '<<view>>' stereotypes, the following tagged values can be used to
+# control the generated actions: 
 
 name = 'id'
 explanation = """The id of the action. Use 'id', """
@@ -254,6 +266,9 @@ tgvRegistry.addTaggedValue(category=category, name=name, explanation=explanation
 
 category = 'portlet'
 
+#  For methods with the '<<portlet>>' or '<<portlet_view>>'
+#  stereotypes, the following tagged values can be used: 
+
 name = 'autoinstall'
 explanation = """Set to 'left' or 'right' to automatically install the portlet with the product in the left or right slots, respectively."""
 tgvRegistry.addTaggedValue(category=category, name=name, explanation=explanation)
@@ -266,6 +281,11 @@ tgvRegistry.addTaggedValue(category=category, name=name, explanation=explanation
 # Attributes
 
 category = 'attribute'
+
+# Tagged values on attributes are passed straight through to the
+# Archetypes schema as field attributes. Therefore, you should consult
+# the Archetypes documentation to find out which values you can set on
+# each field. Some of the more common ones are: 
 
 name = 'required'
 explanation = """Set to true (1) to make the field required"""
@@ -306,6 +326,10 @@ tgvRegistry.addTaggedValue(category=category, name=name, explanation=explanation
 
 # widgets (not a separate category!)
 
+# Similarly, tagged values with the prefix 'widget:' will be passed
+# through as widget parameters. Consult the Archetypes documentation
+# for details. The most common widget parameters are: 
+
 name = 'widget:type'
 explanation = """Set the name of the widget to use. Each field has an associated default widget, but if you need a different one (e.g. a SelectionWidget for a string field), use this value to override."""
 tgvRegistry.addTaggedValue(category=category, name=name, explanation=explanation)
@@ -329,3 +353,4 @@ tgvRegistry.addTaggedValue(category=category, name=name, explanation=explanation
 name = 'widget:i18n_domain'
 explanation = """Set the i18n domain. Defaults to the product name."""
 tgvRegistry.addTaggedValue(category=category, name=name, explanation=explanation)
+
