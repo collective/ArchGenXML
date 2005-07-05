@@ -822,7 +822,6 @@ class XMIElement:
                     #print 'maxOccurs:', self.maxOccurs
 
             domElement.xmiElement = self
-            self.createCleanName()
 
 
     def addChild(self, element):
@@ -841,8 +840,6 @@ class XMIElement:
         if type(res) in (type(''), type(u'')):
             res = res.strip()
         return res
-
-    def getCleanName(self): return self.cleanName
 
     def getTaggedValue(self, name, default=''):
         res = self.taggedValues.get(name, default)
@@ -891,7 +888,7 @@ class XMIElement:
         return doc
 
     def getUnmappedCleanName(self): return self.unmappedCleanName
-    def setName(self, name): self.name = name;self.createCleanName()
+    def setName(self, name): self.name = name
     def getAttrs(self): return self.attrs
     def getMaxOccurs(self): return self.maxOccurs
     def getType(self): return self.type
@@ -934,14 +931,14 @@ class XMIElement:
             self.methodDefs.append(m)
 
 
-    def createCleanName(self):
+    def getCleanName(self):
         # If there is a namespace, replace it with an underscore.
         if self.getName():
             self.unmappedCleanName = str(self.getName()).translate(clean_trans)
         else:
             self.unmappedCleanName = ''
 
-        self.cleanName = mapName(self.unmappedCleanName)
+        return mapName(self.unmappedCleanName)
 
     def isIntrinsicType(self):
         return str(self.getType()).startswith('xs:')
@@ -1742,6 +1739,21 @@ class XMIAttribute (XMIElement):
 
 
 class XMIAssocEnd (XMIElement):
+
+    def getName(self):
+        name = str(self.name)
+        if self.name:
+            res = name
+        else:
+            if self.getTarget():
+                res=self.getTarget().getName().lower()
+                if self.getUpperBound != 1:
+                    res+='s'
+                    
+                return res
+            else:
+                return self.getId()
+                
     def initFromDOM(self, el):
         XMIElement.initFromDOM(self, el)
         self.isNavigable = toBoolean(getAttributeOrElement(el, 'isNavigable', default=0))
@@ -1770,6 +1782,27 @@ class XMIAssocEnd (XMIElement):
 class XMIAssociation (XMIElement):
     fromEnd = None
     toEnd = None
+
+    def getName(self):
+        name = str(self.name)
+        if self.name:
+            res = name
+        else:
+            if self.fromEnd:
+                fromname=self.fromEnd.getName()
+            else:
+                fromname=self.getId()
+
+            if self.toEnd:
+                toname=self.toEnd.getName()
+            else:
+                toname=self.getId()
+                
+            res = '%s_%s' %(fromname,toname)
+
+        if type(res) in (type(''), type(u'')):
+            res = res.strip().lower()
+        return res
 
     def initFromDOM(self, domElement=None):
         XMIElement.initFromDOM(self, domElement)
