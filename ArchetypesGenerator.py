@@ -228,10 +228,12 @@ class ArchetypesGenerator(BaseGenerator):
         return os.path.join(element.getRootPackage().getFilePath(),'skins',element.getRootPackage().getModuleName())
 
     def generateDependentImports(self,element):
+
         res=BaseGenerator.generateDependentImports(self,element)
         out=StringIO()
         print >>out,res
         
+            
         generate_expression_validator=False
         for att in element.getAttributeDefs():
             if att.getTaggedValue('validation_expression'):
@@ -250,6 +252,14 @@ class ArchetypesGenerator(BaseGenerator):
         if import_array_field:
             print >>out,'from Products.CompoundField.ArrayField import ArrayField'
 
+        start_marker=True
+        for iface in self.getAggregatedInterfaces(element):
+            if start_marker:
+                print >>out,'from Products.Archetypes.AllowedTypesByIface import AllowedTypesByIfaceMixin' 
+                start_marker=False
+
+            print >>out,'from %s import %s' % (iface.getQualifiedModuleName(forcePluginRoot=True),iface.getCleanName())
+            
         res=out.getvalue()
         return res
 
@@ -1413,10 +1423,21 @@ class ArchetypesGenerator(BaseGenerator):
         for b in element.getGenParents():
             baseaggregatedClasses.extend(b.getRefs())
             baseaggregatedClasses.extend(b.getSubtypeNames(recursive=1))
-        isFolderish = aggregatedClasses or baseaggregatedClasses or \
+            
+        aggregatedInterfaces=self.getAggregatedInterfaces(element, includeBases=1)
+        
+        isFolderish = aggregatedInterfaces or aggregatedClasses or baseaggregatedClasses or \
                       isTGVTrue(element.getTaggedValue('folderish')) or \
                       element.hasStereoType('folder')
         return bool(isFolderish)
+
+    def getAggregatedInterfaces(self,element,includeBases=1):
+        res = element.getAggregatedClasses(recursive=0,filter=['interface'])
+        if includeBases:
+            for b in element.getGenParents(recursive=1):
+                res.extend(self.getAggregatedInterfaces(b,includeBases=0))
+                                    
+        return res                                                
 
     def generateArchetypesClass(self, element,**kw):
         print indent('Generating class: '+element.getName(),self.infoind)
@@ -1581,6 +1602,10 @@ class ArchetypesGenerator(BaseGenerator):
              not element.hasStereoType(self.cmfmember_stereotype):
             parentnames.insert(0,'VariableSchemaSupport')
 
+        # Interface aggregation
+        if self.getAggregatedInterfaces(element):
+            parentnames.insert(0,'AllowedTypesByIfaceMixin')
+
         # a tool needs to be a unique object
         if element.hasStereoType(self.portal_tools):
             print >>outfile,TEMPL_TOOL_HEADER
@@ -1668,7 +1693,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         if aggregatedInterfaces or baseaggregatedInterfaces:
             print >> outfile, CLASS_ALLOWED_CONTENT_INTERFACES % \
-                  (repr(aggregatedInterfaces),parentAggregatedInterfaces)
+                  (','.join(aggregatedInterfaces),parentAggregatedInterfaces)
 
 
         # FTI as attributes on class

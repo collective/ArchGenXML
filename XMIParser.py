@@ -1370,6 +1370,17 @@ class XMIClass (XMIElement, StateMachineContainer):
     def isInternal(self):
         ''' internal class '''
         return self.internalOnly
+    
+    def isEmpty(self):
+        return not self.getMethodDefs() and \
+            not self.getAttributeDefs() and \
+            not self.assocsTo and \
+            not self.assocsFrom and \
+            not self.genChildren and \
+            not self.genParents and \
+            not self.realizationChildren and \
+            not self.realizationParents 
+
 
     def getVisibility(self):
         return self.visibility
@@ -2475,7 +2486,8 @@ def buildHierarchy(doc, packagenames):
     #pure datatype classes should not be generated!
     #print 'datatypenames:', datatypenames
     for c in res.getClasses(recursive=1):
-        if c.getName() in datatypenames and not c.hasStereoType(XMI.generate_datatypes):
+        if c.getName() in datatypenames and not c.hasStereoType(XMI.generate_datatypes) \
+            and c.isEmpty():
             c.internalOnly = 1
             print 'internal class (not generated):', c.getName()
 
