@@ -14,14 +14,14 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
 <dtml-in "klass.getGenParents()">
         <dtml-var "_['sequence-item'].getCleanName()">.__init__(self,*args,**kwargs)
 </dtml-in>        
-        self._init_attributes()
+        self._init_attributes(*args,**kwargs)
 </dtml-if>
 <dtml-else>
 <dtml-var "parsed_class.methods['__init__'].getSrc()">
 </dtml-if >
 
 <dtml-if vars>
-    def _init_attributes(self):
+    def _init_attributes(self,*args,**kwargs):
 <dtml-if atts>
         #attributes
 </dtml-if>
@@ -43,6 +43,14 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
         self.<dtml-var "_['sequence-item'].toEnd.getCleanName()">=<dtml-var "{None:'[]','dict':'{}','list':'[]','tuple':'()'}.get(_['sequence-item'].getStereoType(),str(_['sequence-item'].getStereoType())+'()')">
 </dtml-if>
 </dtml-in>
+        # automatically set attributes where mutators exist
+        for key in kwargs.keys():
+            # camel case: variable -> setVariable
+            mutatorName = 'set'+key[0].upper()+key[1:]
+            mutator = getattr(self, mutatorName)
+            if mutator is not None and callable(mutator):
+                mutator(kwargs[key])
+
 </dtml-if>
 <dtml-in "generator.getMethodsToGenerate(klass)[0]">
 <dtml-let m="_['sequence-item']">
@@ -62,7 +70,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
 </dtml-in>
 
 <dtml-in vars>
-<dtml-let mutator="'set'+_['sequence-item'].getCleanName().capitalize()" accessor="'get'+_['sequence-item'].getCleanName().capitalize()">
+<dtml-let capname="_['sequence-item'].getCleanName()[0].upper() + _['sequence-item'].getCleanName()[1:]" mutator="'set'+capname" accessor="'get'+capname">
 <dtml-if "mutator not in [m.name for m in generator.getMethodsToGenerate(klass)[1]]">    
     def <dtml-var "mutator">(self,value):
         self.<dtml-var "_['sequence-item'].getCleanName()">=value
