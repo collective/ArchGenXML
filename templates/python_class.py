@@ -11,14 +11,17 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
 <dtml-if "not parsed_class or '__init__' not in parsed_class.methods.keys()">
 <dtml-if vars>
     def __init__(self,*args,**kwargs):
-        self.init_attributes()
+<dtml-in "klass.getGenParents()">
+        <dtml-var "_['sequence-item'].getCleanName()">.__init__(self,*args,**kwargs)
+</dtml-in>        
+        self._init_attributes()
 </dtml-if>
 <dtml-else>
 <dtml-var "parsed_class.methods['__init__'].getSrc()">
 </dtml-if >
 
 <dtml-if vars>
-    def init_attributes(self):
+    def _init_attributes(self):
 <dtml-if atts>
         #attributes
 </dtml-if>
@@ -73,7 +76,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
 </dtml-let>
 </dtml-in>
     
-<dtml-in "[m for m in generator.getMethodsToGenerate(klass)[1] if m.name not in ['__init__','init_attributes']]">
+<dtml-in "[m for m in generator.getMethodsToGenerate(klass)[1] if m.name not in ['__init__','_init_attributes']]">
 
 <dtml-var "_['sequence-item'].getSrc()">            
 </dtml-in>

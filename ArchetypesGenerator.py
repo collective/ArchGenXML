@@ -1686,10 +1686,10 @@ class ArchetypesGenerator(BaseGenerator):
                 parentAggregates = '+ ' + ' + '.join(act)
         print >> outfile, CLASS_ALLOWED_CONTENT_TYPES % (repr(aggregatedClasses),parentAggregates)
 
-        #allowed_content_interfaces
+        #allowed_interfaces
         parentAggregatedInterfaces=''
         if isTGVTrue(element.getTaggedValue('inherit_allowed_types', True)) and element.getGenParents():
-            parentAggregatedInterfaces = '+ ' + ' + '.join(tuple(['getattr('+p.getCleanName()+",'allowed_content_interfaces',[])" for p in element.getGenParents()]))
+            parentAggregatedInterfaces = '+ ' + ' + '.join(tuple(['getattr('+p.getCleanName()+",'allowed_interfaces',[])" for p in element.getGenParents()]))
 
         if aggregatedInterfaces or baseaggregatedInterfaces:
             print >> outfile, CLASS_ALLOWED_CONTENT_INTERFACES % \

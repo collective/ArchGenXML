@@ -1753,8 +1753,8 @@ class XMIAssocEnd (XMIElement):
 
     def getName(self):
         name = str(self.name)
-        if self.name:
-            res = name
+        if name:
+            return name
         else:
             if self.getTarget():
                 res=self.getTarget().getName().lower()
