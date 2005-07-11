@@ -1042,9 +1042,13 @@ class StateMachineContainer:
 
     def findStateMachines(self):
 
-        ownedElement = getElementByTagName(self.domElement, 
-            [XMI.OWNED_ELEMENT,XMI.OWNED_BEHAVIOR], default=None)
-
+        try:
+            ownedElement = getElementByTagName(self.domElement, 
+                                               [XMI.OWNED_ELEMENT,XMI.OWNED_BEHAVIOR],
+                                               default=None)
+        except:
+            # BBB backward compatible with argouml's xmi1.0
+            ownedElement = XMI.getOwnedElement(self.domElement)
             
         if not ownedElement:
             ownedElement=self.domElement
