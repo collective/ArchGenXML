@@ -1589,9 +1589,10 @@ class ArchetypesGenerator(BaseGenerator):
 
         ## END find bases
 
-        # [optilude] Also - ignore the standard class if this is an abstract/mixin
+        # [optilude] Also - ignore the standard class if this is an mixin
+        # [jensens] abstract might have an base_class!!!
         if baseclass and not isTGVFalse(element.getTaggedValue('base_class',1)) \
-           and not element.isAbstract ():
+           and not element.hasStereoType('mixin'):
               baseclasses=baseclass.split(',')
               parentnames=parentnames+baseclasses
 
