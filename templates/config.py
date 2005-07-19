@@ -25,7 +25,7 @@ ADD_CONTENT_PERMISSIONS = {
 }
 <dtml-in "creation_permissions">
 <dtml-let perm="_['sequence-item']">
-setDefaultRoles(<dtml-var "perm[0]">, <dtml-var "', '.join(perm[3] or ['Manager', 'Owner', 'Member']">)
+setDefaultRoles(<dtml-var "perm[0]">, <dtml-var "', '.join(perm[3] or ['Manager', 'Owner', 'Member'])">)
 </dtml-let>
 </dtml-in>
 </dtml-if>
