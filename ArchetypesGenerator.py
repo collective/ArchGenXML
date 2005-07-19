@@ -743,7 +743,7 @@ class ArchetypesGenerator(BaseGenerator):
         check_map['label_msgid']        = "'%s_label_%s'" % (modulename,fieldname)
         check_map['description']        = "'Enter a value for %s.'" % fieldname
         check_map['description_msgid']  = "'%s_help_%s'" % (modulename,fieldname)
-        check_map['i18n_domain']        = "'%s'" % modulename.lower()
+        check_map['i18n_domain']        = "'%s'" % modulename
 
         wt={} # helper
         if tgv.has_key('widget'):
@@ -957,9 +957,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         if attr.getUpperBound() != 1:
             indent(res,1)
-            res="""ArrayField(
-%s
-),""" % indent(res,1)
+            res="""ArrayField(%s),""" % indent(res,1)
             
         return res
     
@@ -1084,7 +1082,7 @@ class ArchetypesGenerator(BaseGenerator):
         outfile=StringIO()
         startmarker=True
         for attr in element.getAttributeDefs():
-            if str(attr.type)=='copy':
+            if str(attr.type.lower())=='copy':
                 if startmarker:
                     startmarker=False
                     print >>outfile, 'copied_fields = {}'
@@ -1428,7 +1426,7 @@ class ArchetypesGenerator(BaseGenerator):
         
         isFolderish = aggregatedInterfaces or aggregatedClasses or baseaggregatedClasses or \
                       isTGVTrue(element.getTaggedValue('folderish')) or \
-                      element.hasStereoType('folder')
+                      element.hasStereoType(['folder','ordered'])
         return bool(isFolderish)
 
     def getAggregatedInterfaces(self,element,includeBases=1):
@@ -1600,7 +1598,7 @@ class ArchetypesGenerator(BaseGenerator):
         # Remark: CMFMember support includes VariableSchema support
         if element.hasStereoType(self.variable_schema) and \
              not element.hasStereoType(self.cmfmember_stereotype):
-            parentnames.insert(0,'VariableSchemaSupport')
+            parentnames.insert(0, 'VariableSchemaSupport')
 
         # Interface aggregation
         if self.getAggregatedInterfaces(element):
@@ -1609,18 +1607,18 @@ class ArchetypesGenerator(BaseGenerator):
         # a tool needs to be a unique object
         if element.hasStereoType(self.portal_tools):
             print >>outfile,TEMPL_TOOL_HEADER
-            parentnames.insert(0,'UniqueObject')
+            parentnames.insert(0, 'UniqueObject')
 
         parents=','.join(parentnames)
 
         # protected section
-        self.generateProtectedSection(outfile,element,'module-header')
+        self.generateProtectedSection(outfile, element,'module-header')
 
         # here comes the schema
-        print >> outfile, self.generateArcheSchema(element,baseschema)
+        print >> outfile, self.generateArcheSchema(element, baseschema)
 
         # protected section
-        self.generateProtectedSection(outfile,element,'after-schema')
+        self.generateProtectedSection(outfile, element, 'after-schema')
 
         if not element.isComplex():
             print "I: stop complex: ", element.getName()
@@ -1631,7 +1629,7 @@ class ArchetypesGenerator(BaseGenerator):
         AlreadyGenerated.append(element.getType())
 
         if self.ape_support:
-            print >>outfile,TEMPL_APE_HEADER % {'class_name':name}
+            print >>outfile,TEMPL_APE_HEADER % {'class_name': name}
 
         # [optilude] It's possible parents may become empty now...
         if parents:
