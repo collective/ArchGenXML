@@ -31,8 +31,8 @@ XXX Yenzenz: please fix that piece of code, its hosed!
 setDefaultRoles(<dtml-var "perm[0]">, <dtml-var "', '.join(perm[3] or ['Manager', 'Owner', 'Member'])">)
 </dtml-let>
 </dtml-in>
-</dtml-if>
 </dtml-comment>
+</dtml-if>
 
 product_globals=globals()
 
