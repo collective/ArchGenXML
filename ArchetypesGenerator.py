@@ -457,9 +457,9 @@ class ArchetypesGenerator(BaseGenerator):
             element.isAbstract()):
             global_allow = 0
         # But the tagged value overwrites all
-        if isTGVFalse('global_allow'):
+        if isTGVFalse(element.getTaggedValue('global_allow')):
             global_allow = 0
-        if isTGVTrue('global_allow'):
+        if isTGVTrue(element.getTaggedValue('global_allow')):
             global_allow = 1
             
 
