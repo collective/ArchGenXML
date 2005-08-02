@@ -34,7 +34,7 @@ except ImportError:
 from Products.CMFMember.Extensions.toolbox import SetupMember
 </dtml-if>
 from Products.<dtml-var "package.getProductModuleName()">.config import PROJECTNAME
-from Products.<dtml-var "package.getProductModuleName()"> import product_globals as GLOBALS
+from Products.<dtml-var "package.getProductModuleName()">.config import product_globals as GLOBALS
 
 def install(self):
     """ External Method to install <dtml-var "package.getProductModuleName()"> """
