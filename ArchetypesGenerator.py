@@ -435,27 +435,33 @@ class ArchetypesGenerator(BaseGenerator):
         default_view = element.getTaggedValue('default_view') or immediate_view
 
         # global_allow
-        ga = not isTGVFalse(self.getOption('global_allow', element, None))
-        if ga:
-            # In principle, allow globally
+        # Reinout doesn't know what the below is supposed to do... There is no
+        # option 'global_allow', so this hoses everything.
+        #ga = not isTGVFalse(self.getOption('global_allow', element, None))
+
+        # In principle, allow globally
+        global_allow = 1
+        # Unless it is only contained by another element
+        if element.isDependent():
+            # WARNING! isDependent() doesn't seem to work,
+            # aggregates and compositions aren't detected.
+            # 2005-05-11 reinout
+            global_allow = 0
+        # Or if it is a hidden element
+        if element.hasStereoType('hidden'):
+            global_allow = 0
+        # Or if it is a tool-like thingy
+        if (element.hasStereoType(self.portal_tools) or 
+            element.hasStereoType(self.vocabulary_item_stereotype) or
+            element.hasStereoType(self.cmfmember_stereotype) or 
+            element.isAbstract()):
+            global_allow = 0
+        # But the tagged value overwrites all
+        if isTGVFalse('global_allow'):
+            global_allow = 0
+        if isTGVTrue('global_allow'):
             global_allow = 1
-            # Unless it is only contained by another element
-            if element.isDependent():
-                # WARNING! isDependent() doesn't seem to work,
-                # aggregates and compositions aren't detected.
-                # 2005-05-11 reinout
-                global_allow = 0
-            # Or if it is a hidden element
-            if element.hasStereoType('hidden'):
-                global_allow = 0
-            # Or if it is a tool-like thingy
-            if (element.hasStereoType(self.portal_tools) or 
-                element.hasStereoType(self.vocabulary_item_stereotype) or
-                element.hasStereoType(self.cmfmember_stereotype) or 
-                element.isAbstract()):
-                global_allow = 0
-        else:
-            global_allow=0
+            
 
         has_content_icon=''
         content_icon=element.getTaggedValue('content_icon')
