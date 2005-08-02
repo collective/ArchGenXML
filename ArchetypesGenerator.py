@@ -1466,16 +1466,21 @@ class ArchetypesGenerator(BaseGenerator):
             creation_permission = "'Add %s Content'" % element.getCleanName()
         else:
             creation_permission = None
+        creation_roles = "('Manager', 'Owner', 'Member')"
 
         cpfromoption = self.getOption('creation_permission', element, None)
         if cpfromoption:
-            creation_permission = "'%s'" % cpfromoption
+            creation_permission = self.processExpression(cpfromoption)
+        crfromoption = self.getOption('creation_roles', element, None)
+        if crfromoption:
+            creation_roles = "'%s'" % crfromoption
 
         # imports needed for CMFMember subclassing
         if element.hasStereoType(self.cmfmember_stereotype):
             wrt(CMFMEMBER_IMPORTS)
             # and set the add content permission to what CMFMember needs
             creation_permission = 'ADD_MEMBER_PERMISSION'
+            creation_roles = None
 
         # imports needed for optional support of SQLStorage
         if isTGVTrue(self.getOption('sql_storage_support',element,0)):
@@ -1775,12 +1780,16 @@ class ArchetypesGenerator(BaseGenerator):
 
         ## handle add content permissions
         if not element.hasStereoType(self.portal_tools):
+            # tgv overrules 
             cpfromtgv = element.getTaggedValue('creation_permission', None)
             if cpfromtgv:
-                creation_permission= "'%s'" % cpfromtgv
+                creation_permission= self.processExpression(cpfromtgv)
+            crfromtgv = element.getTaggedValue('creation_roles', None)
+            if crfromtgv:
+                creation_roles= self.processExpression(crfromtgv)
             ## abstract classes does not need an Add permission
             if creation_permission and not element.isAbstract():
-                self.creation_permissions.append( [element.getCleanName(), creation_permission] )
+                self.creation_permissions.append( [element.getCleanName(), creation_permission, creation_roles] )
 
         return outfile.getvalue()
 

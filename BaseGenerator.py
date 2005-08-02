@@ -48,6 +48,23 @@ class BaseGenerator:
 
     def getDefaultClassType(self):
         return self.getUMLProfile().getStereoType(self.default_class_type)
+    
+    def processExpression(self, value, asString=True):
+        """ 
+        process the string returned by tagged values:
+            * python: prefixes a python expression
+            * string: prefixes a string
+            * fallback to default, which is string, if asString isnt set to 
+              False
+        """
+        if value.startswith('python:'):
+            return value[7:]
+        elif value.startswith('string:'):
+            return "'%s'" % value[7:]
+        if asString:
+            return "'%s'" % value
+        else:
+            return value             
 
     def getOption(self,option,element,default=_marker,aggregate=False):
         ''' query a certain option for an element including 'acquisition' :

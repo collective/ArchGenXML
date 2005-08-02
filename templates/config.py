@@ -24,14 +24,13 @@ ADD_CONTENT_PERMISSIONS = {
 </dtml-in>
 }
 
-<dtml-comment>
-XXX Yenzenz: please fix that piece of code, its hosed!
 <dtml-in "creation_permissions">
 <dtml-let perm="_['sequence-item']">
-setDefaultRoles(<dtml-var "perm[0]">, <dtml-var "', '.join(perm[3] or ['Manager', 'Owner', 'Member'])">)
+<dtml-if "perm[2] is not None">
+setDefaultRoles(<dtml-var "perm[1]">, <dtml-var "perm[2]">)
+</dtml-if>
 </dtml-let>
 </dtml-in>
-</dtml-comment>
 </dtml-if>
 
 product_globals=globals()
