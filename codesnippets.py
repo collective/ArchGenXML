@@ -123,7 +123,8 @@ from Products.CMFCore.utils import UniqueObject
 
     """
 
-CLASS_PORTAL_TYPE    = """    portal_type = meta_type    = '%s' """
+CLASS_META_TYPE      = """    meta_type    = '%s' """
+CLASS_PORTAL_TYPE    = """    portal_type  = '%s' """
 CLASS_ARCHETYPE_NAME = """\
     # This name appears in the 'add' box
     archetype_name             = '%s'\n"""

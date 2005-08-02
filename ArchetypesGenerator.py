@@ -1662,12 +1662,14 @@ class ArchetypesGenerator(BaseGenerator):
         archetype_name=element.getTaggedValue('archetype_name') or element.getTaggedValue('label')
         if not archetype_name:
             archetype_name=name
+        portaltype_name=element.getTaggedValue('portal_type') or name
 
         # [optilude] Only output portal type and AT name if it's not an abstract
         # mixin
         if not element.isAbstract ():
             print >> outfile, CLASS_ARCHETYPE_NAME %  archetype_name
-            print >> outfile, CLASS_PORTAL_TYPE % name
+            print >> outfile, CLASS_META_TYPE % name
+            print >> outfile, CLASS_PORTAL_TYPE % portaltype_name
 
         #allowed_content_classes
         parentAggregates=''
