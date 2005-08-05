@@ -42,8 +42,6 @@ def setup<dtml-var "statemachine.getCleanName()">(self, workflow):
     workflow.setProperties(title='<dtml-var "statemachine.getCleanName()">')
 
 <dtml-var "generator.getProtectedSection(parsedModule,'create-workflow-setup-method-header',1)">
-    # generation of worklists is not defined yet...
-    ### XXX :-(
 
     for s in <dtml-var "repr(statemachine.getStateNames(no_duplicates = 1))">:
         workflow.states.addState(s)
@@ -56,6 +54,10 @@ def setup<dtml-var "statemachine.getCleanName()">(self, workflow):
 
     for p in <dtml-var "repr(statemachine.getAllPermissionNames())">:
         workflow.addManagedPermission(p)
+ 
+    for l in <dtml-var "repr(statemachine.getAllWorklistNames())">:
+        if not l in workflow.worklists.objectValues():
+            workflow.worklists.addWorklist(l)
 
     ## Initial State
 
@@ -66,11 +68,11 @@ def setup<dtml-var "statemachine.getCleanName()">(self, workflow):
 <dtml-in "[s for s in statemachine.getStates(no_duplicates = 1) if s.getName()]">
     stateDef = workflow.states['<dtml-var "_['sequence-item'].getName()">']
     stateDef.setProperties(title="""<dtml-var "_['sequence-item'].getTitle(generator)">""",
-                                  transitions=<dtml-var "repr([t.getName() for t in _['sequence-item'].getOutgoingTransitions()])">)
+                           transitions=<dtml-var "repr([t.getName() for t in _['sequence-item'].getOutgoingTransitions()])">)
 <dtml-in "_['sequence-item'].getPermissionsDefinitions()">
     stateDef.setPermission('<dtml-var "_['sequence-item'].get('permission')">',
-                                  <dtml-var "_['sequence-item'].get('acquisition')">,
-                                  <dtml-var "_['sequence-item'].get('roles')">)
+                           <dtml-var "_['sequence-item'].get('acquisition')">,
+                           <dtml-var "_['sequence-item'].get('roles')">)
 </dtml-in>
 
 </dtml-in>
@@ -150,11 +152,28 @@ def setup<dtml-var "statemachine.getCleanName()">(self, workflow):
                               update_always=1,
                               props=None)
 
-    # XXX Generation of worklists is not implemented yet...
-    # in the meantime, you can use the protected code section below to
-    # do it manually
+    ## Worklists Initialization
 
+<dtml-in "statemachine.getAllWorklistNames()">
+<dtml-let worklistname="_['sequence-item']">
+<dtml-let worklistStateNames="statemachine.getWorklistStateNames(worklistname)">
+    worklistDef = workflow.worklists['<dtml-var "worklistname">']
+    worklistStates = <dtml-var "repr(worklistStateNames)">
+    actbox_url = "%(portal_url)s/search?review_state=" + "&review_state=".join(worklistStates)
+    worklistDef.setProperties(description="Reviewer tasks",
+                              actbox_name="Pending (%(count)d)",
+                              actbox_url=actbox_url,
+                              actbox_category="global",
+                              props={'guard_permissions': 'Review portal content',
+                                     'var_match_review_state': ';'.join(worklistStates)})
+</dtml-let>
+</dtml-let>
+</dtml-in>
+
+    # WARNING: below protected section is deprecated.
+    # Add a tagged value 'worklist' with the worklist name to your state(s) instead.
 <dtml-var "generator.getProtectedSection(parsedModule,'create-workflow-setup-method-footer',1)">
+
 
 def create<dtml-var "statemachine.getCleanName()">(self, id):
     """Create the workflow for <dtml-var "package.getCleanName()">.

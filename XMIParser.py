@@ -2076,6 +2076,33 @@ class XMIStateMachine(XMIStateContainer):
                      
         return [r for r in roles if r]
 
+    def getAllWorklistNames(self):
+        """Return all worklists mentioned in this statemachine.
+
+        A worklist is mentioned by adding a tagged value 'worklist' to a state
+        """
+
+        # Possible bug: the encode('ascii') is needed because the workflow doesn't
+        # like to eat unicode or so...
+        names = [s.getTaggedValue('worklist').encode('ascii')
+                 for s in self.getStates(no_duplicates = 1)
+                 if s.getTaggedValue('worklist')]
+        worklists = {}
+        for name in names:
+            worklists[name] = 'just filtering out doubles'
+        return worklists.keys()
+
+    def getWorklistStateNames(self, worklistname):
+        """Return the states associated with the worklistname.
+
+        
+        """
+
+        return [s.getName()
+                for s in self.getStates(no_duplicates = 1)
+                if s.getTaggedValue('worklist') == worklistname]
+
+
 class XMIStateTransition(XMIElement):
     targetState = None
     action = None
@@ -2291,7 +2318,7 @@ class XMIState(XMIElement):
 
         for tag, tag_value in tagged_values.items():
             # list of tagged values that are NOT permissions
-            non_permissions = ['initial_state', 'documentation', 'label']
+            non_permissions = ['initial_state', 'documentation', 'label', 'worklist']
             if tag in non_permissions or not tag_value:
                 continue
             tag = tag.strip()
