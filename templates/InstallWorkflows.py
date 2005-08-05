@@ -6,18 +6,18 @@ def installWorkflows(self, package, out):
     """
     
     productname = '<dtml-var "package.getCleanName()">'
-    wft = getToolByName(self,'portal_workflow')
+    workflowTool = getToolByName(self, 'portal_workflow')
     
 <dtml-in "package.getStateMachines()">
 <dtml-let sm="_['sequence-item']">
-    iwf = ExternalMethod('temp',
+    ourProductWorkflow = ExternalMethod('temp',
                          'temp',
                          productname+'.'+'<dtml-var "generator.cleanName(sm.getName())">',
                          'create<dtml-var "generator.cleanName(sm.getName())">') 
-    wf = iwf(self, '<dtml-var "generator.cleanName(sm.getName())">')
-    wft._setObject('<dtml-var "generator.cleanName(sm.getName())">', wf)
-    wft.setChainForPortalTypes(<dtml-var "repr(sm.getClassNames())">, wf.getId())
+    workflow = ourProductWorkflow(self, '<dtml-var "generator.cleanName(sm.getName())">')
+    workflowTool._setObject('<dtml-var "generator.cleanName(sm.getName())">', workflow)
+    workflowTool.setChainForPortalTypes(<dtml-var "repr(sm.getClassNames())">, workflow.getId())
 </dtml-let>
 </dtml-in>
     
-    return wft
+    return workflowTool
