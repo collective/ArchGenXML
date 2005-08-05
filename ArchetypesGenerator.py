@@ -1693,7 +1693,7 @@ class ArchetypesGenerator(BaseGenerator):
                     act.append(pt)
                 else:
                     act.append(gp.getCleanName())
-            act = ["list(getattr(%s,'allowed_content_types',[]))" % i for i in act]
+            act = ["list(getattr(%s, 'allowed_content_types', []))" % i for i in act]
             if act:
                 parentAggregates = '+ ' + ' + '.join(act)
         print >> outfile, CLASS_ALLOWED_CONTENT_TYPES % (repr(aggregatedClasses),parentAggregates)
