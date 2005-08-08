@@ -2094,13 +2094,25 @@ class XMIStateMachine(XMIStateContainer):
 
     def getWorklistStateNames(self, worklistname):
         """Return the states associated with the worklistname.
-
-        
         """
 
         return [s.getName()
                 for s in self.getStates(no_duplicates = 1)
                 if s.getTaggedValue('worklist') == worklistname]
+
+    def getWorklistGuardPermission(self, worklistname):
+        """Return the guard permission associated with the worklistname.
+        """
+
+        default = 'Review portal content'
+        results = [s.getTaggedValue('worklist:guard_permissions')
+                   for s in self.getStates(no_duplicates = 1)
+                   if s.getTaggedValue('worklist') == worklistname
+                   and s.getTaggedValue('worklist:guard_permissions')]
+        if not results:
+            return default
+        # There might be more than one guard_permissions tgv, take the first
+        return results[0]
 
 
 class XMIStateTransition(XMIElement):
@@ -2318,7 +2330,7 @@ class XMIState(XMIElement):
 
         for tag, tag_value in tagged_values.items():
             # list of tagged values that are NOT permissions
-            non_permissions = ['initial_state', 'documentation', 'label', 'worklist']
+            non_permissions = ['initial_state', 'documentation', 'label', 'worklist', 'worklist:guard_permissions']
             if tag in non_permissions or not tag_value:
                 continue
             tag = tag.strip()

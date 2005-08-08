@@ -164,7 +164,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, workflow):
                               actbox_name="Pending (%(count)d)",
                               actbox_url=actbox_url,
                               actbox_category="global",
-                              props={'guard_permissions': 'Review portal content',
+                              props={'guard_permissions': '<dtml-var "statemachine.getWorklistGuardPermission(worklistname)">',
                                      'var_match_review_state': ';'.join(worklistStates)})
 </dtml-let>
 </dtml-let>
@@ -172,6 +172,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, workflow):
 
     # WARNING: below protected section is deprecated.
     # Add a tagged value 'worklist' with the worklist name to your state(s) instead.
+
 <dtml-var "generator.getProtectedSection(parsedModule,'create-workflow-setup-method-footer',1)">
 
 
