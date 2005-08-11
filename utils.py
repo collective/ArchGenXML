@@ -115,6 +115,7 @@ def isTGVTrue(tgv):
 def isTGVFalse(tgv):
     ''' checks if a tgv is _explicitly_ false, a none value is undefined
     and _not_ false, so it sonething different than (not toBoolean(tgv)) '''
+
     if type(tgv) in (type(''),type(u'')):
         tgv=tgv.lower()
 

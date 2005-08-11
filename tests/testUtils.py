@@ -74,6 +74,44 @@ class TestUtils(unittest.TestCase):
         result = indent(None, 0)
         self.assertEquals(result, '')
     
+    def test_IsTGVTrue1(self):
+        """ Test if the correct True values are recognised
+
+        1, '1', 'True' and 'true' are all ok.
+        """
+        for value in [1, '1', 'True', 'true']:
+            self.assertEquals(True, isTGVTrue(value))
+
+    def test_IsTGVTrue2(self):
+        """ Test if wrong True values are rejected
+
+        1, '1', 'True' and 'true' are all ok.
+        """
+        for value in ['j', 'y', 'yes', 'ja, meneer']:
+            self.assertEquals(False, isTGVTrue(value))
+
+    def test_IsTGVFalse1(self):
+        """ Test if the correct False values are recognised
+
+        '0', 0, 'false', 'False' are all ok
+        """
+        for value in ['0', 0, 'false', 'False']:
+            self.assertEquals(True, isTGVFalse(value))
+
+    def test_IsTGVFalse2(self):
+        """ Test if wrong False values are rejected
+
+        '0', 0, 'false', 'False' are all ok
+        """
+        for value in ['n', 'N', 'nyet', -2, 1]:
+            self.assertEquals(False, isTGVFalse(value))
+
+    def test_IsTGVFalse3(self):
+        """ Test if None is rejected as a False value
+
+        False must be set *explicitly*, so None doesn't qualify.
+        """
+        self.assertEquals(False, isTGVFalse(None))
 
 
 

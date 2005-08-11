@@ -18,6 +18,7 @@ from xml.dom import minidom
 from sets import Set
 from odict import odict
 from types import StringTypes
+from TaggedValueSupport import tgvRegistry
 
 has_stripogram = 1
 try:
@@ -842,6 +843,9 @@ class XMIElement:
         return res
 
     def getTaggedValue(self, name, default=''):
+        category = str(self.__class__)
+        if not tgvRegistry.isRegistered(name, category):
+            pass
         res = self.taggedValues.get(name, default)
         if type(res) in (type(''), type(u'')):
             res = res.strip()

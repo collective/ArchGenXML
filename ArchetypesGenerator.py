@@ -29,7 +29,7 @@ from codesnippets import *
 import utils
 from odict import odict
 from utils import makeFile, readFile, makeDir,mapName, wrap, indent, getExpression, \
-    isTGVTrue, isTGVFalse, readTemplate, getFileHeaderInfo
+     isTGVTrue, isTGVFalse, readTemplate, getFileHeaderInfo
 
 from BaseGenerator import BaseGenerator
 from WorkflowGenerator import WorkflowGenerator
