@@ -32,6 +32,5 @@ for test in tests:
 
 if __name__ == '__main__':
     utils.initLog('runalltests.log')
-    utils.addConsoleLogging()
     TestRunner().run(suite)
 
