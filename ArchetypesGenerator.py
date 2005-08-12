@@ -5,7 +5,6 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id$
 # Copyright:   (c) 2003-2005 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
