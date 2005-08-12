@@ -687,7 +687,7 @@ class ArchetypesGenerator(BaseGenerator):
                 else:
                     if v.startswith ('python:'):
                         v = v[7:]
-
+                         
                 map.update( {k: v} )
         return map
 
@@ -814,15 +814,27 @@ class ArchetypesGenerator(BaseGenerator):
             rawType = rawType[:-5]
 
         res+=indent("%s('%s',\n" % (fieldtype % {'type':rawType},name), indent_level)
-        if map:
-            res+=indent(',\n'.join(['%s=%s' % (key,map[key]) \
-                                for key in map if key.find(':')<0 ]) ,
-                    indent_level+1) + ',\n'
-        res+=indent('),\n',indent_level)
+        if map:      
+            prepend = ''
+            for key in map: 
+                if key.find(':')>=0:
+                    continue
+                lines = map[key]
+                linebreak = lines.find('\n')
+                if linebreak < 0:
+                    linebreak=len(lines)
+                firstline = lines[:linebreak]
+                res+=indent('%s%s=%s' % (prepend, key, firstline), indent_level+1)
+                if linebreak<len(lines):
+                    for line in lines[linebreak+1:].split('\n'):
+                        res += "\n%s" % line                    
+                prepend = ',\n'
+
+        res+=indent('),\n', indent_level)
 
         return res
 
-    def getFieldString(self, element, classelement):
+    def getFieldString(self, element, classelement, indent_level=0):
         ''' gets the schema field code '''
         typename=str(element.type)
 
@@ -832,7 +844,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         res=self.getFieldFormatted(element.getCleanName(),
             self.typeMap[ctype]['field'].copy(),
-            map )
+            map, indent_level )
 
         return res
     
@@ -872,7 +884,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         # end ATVM
 
-    def getFieldStringFromAttribute(self, attr, classelement):
+    def getFieldStringFromAttribute(self, attr, classelement, indent_level=0):
         ''' gets the schema field code '''
         #print 'typename:%s:'%attr.getName(),attr.type,
         
@@ -934,7 +946,8 @@ class ArchetypesGenerator(BaseGenerator):
             atype,
             map,
             doc,
-            rawType=attr.getType()
+            rawType=attr.getType(),
+            indent_level=indent_level
             )
 
         if attr.getUpperBound() != 1:
@@ -944,7 +957,7 @@ class ArchetypesGenerator(BaseGenerator):
         return res
     
 
-    def getFieldStringFromAssociation(self, rel, classelement):
+    def getFieldStringFromAssociation(self, rel, classelement, indent_level=0):
         ''' gets the schema field code '''
         multiValued=0
         obj=rel.toEnd.obj
@@ -1002,10 +1015,10 @@ class ArchetypesGenerator(BaseGenerator):
 
 
         doc=rel.getDocumentation(striphtml=self.striphtml)
-        res=self.getFieldFormatted(name,field,map,doc)
+        res=self.getFieldFormatted(name, field, map, doc, indent_level)
         return res
 
-    def getFieldStringFromBackAssociation(self, rel, classelement):
+    def getFieldStringFromBackAssociation(self, rel, classelement, indent_level=0):
         ''' gets the schema field code '''
         multiValued=0
         obj=rel.fromEnd.obj
@@ -1054,11 +1067,11 @@ class ArchetypesGenerator(BaseGenerator):
                 return None
 
         doc=rel.getDocumentation(striphtml=self.striphtml)
-        res=self.getFieldFormatted(name,field,map,doc)
+        res=self.getFieldFormatted(name, field, map, doc, indent_level)
         return res
 
     # Generate get/set/add member functions.
-    def generateArcheSchema(self, element, base_schema):
+    def generateArcheSchema(self, element, base_schema, indent_level=0):
         """ generates the Schema """
         # first copy fields from other schemas if neccessary.
         outfile=StringIO()
@@ -1100,7 +1113,8 @@ class ArchetypesGenerator(BaseGenerator):
 
             #print attrDef
 
-            print >> outfile, indent(self.getFieldStringFromAttribute(attrDef, element),1)
+            print >> outfile, self.getFieldStringFromAttribute(attrDef, element, 
+                                                    indent_level=indent_level+1)
 
         for child in element.getChildren():
             name = child.getCleanName()
@@ -1111,7 +1125,8 @@ class ArchetypesGenerator(BaseGenerator):
                 aggregatedClasses.append(str(child.getRef()))
 
             if child.isIntrinsicType():
-                print >> outfile, indent(self.getFieldString(child, element),1)
+                print >> outfile, self.getFieldString(child, element,
+                                                    indent_level=indent_level+1)
 
         #print 'rels:',element.getName(),element.getFromAssociations()
         # and now the associations
@@ -1123,8 +1138,8 @@ class ArchetypesGenerator(BaseGenerator):
             if name in self.reservedAtts:
                 continue
             print >> outfile
-            print >> outfile, indent(self.getFieldStringFromAssociation(rel, element),1)
-
+            print >> outfile, self.getFieldStringFromAssociation(rel, element, 
+                                                    indent_level=indent_level+1)
                 
         #Back References
         for rel in element.getToAssociations():
@@ -1134,10 +1149,11 @@ class ArchetypesGenerator(BaseGenerator):
             if name in self.reservedAtts:
                 continue
 
-            fc=self.getFieldStringFromBackAssociation(rel, element)
+            fc=self.getFieldStringFromBackAssociation(rel, element,
+                                                    indent_level=indent_level+1)
             if fc:
                 print >> outfile
-                print >> outfile, indent(fc,1)
+                print >> outfile, fc
 
 
         print >> outfile,'),'
