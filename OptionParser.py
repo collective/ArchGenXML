@@ -20,14 +20,16 @@ log = logging.getLogger("options")
 # Custom Parsers
 
 class AGXHelpFormatter(TitledHelpFormatter):
-    """Help formatter for ArchGenXML parser."""
+    """Help formatter for ArchGenXML parser.
+    """
 
     # subclassed to handle YES|NO values
 
     def format_option_strings (self, option):
-        """Return a comma-separated list of option strings & metavariables."""
+        """Return a comma-separated list of option strings & metavariables.
+        """
 
-        # Overridden to provide formatting for yesno fields.
+        # Overwritten to provide formatting for yesno fields.
 
         if option.type == 'yesno':
             metavar = "YES|NO"
@@ -86,10 +88,10 @@ class AGXOption(Option):
         else:
             Option.take_action(self, action, dest, opt, value, values, parser)
 
-    ATTRS=Option.ATTRS + ['section']
-    TYPES=Option.TYPES + ('yesno','commalist')
-    ACTIONS=Option.ACTIONS + ('sample_config','load_config',)
-    TYPE_CHECKER=Option.TYPE_CHECKER
+    ATTRS = Option.ATTRS + ['section']
+    TYPES = Option.TYPES + ('yesno','commalist')
+    ACTIONS = Option.ACTIONS + ('sample_config','load_config',)
+    TYPE_CHECKER = Option.TYPE_CHECKER
     TYPE_CHECKER['yesno'] = check_yesno
     #TYPE_CHECKER['commalist'] = check_commalist
     TYPED_ACTIONS = Option.TYPED_ACTIONS + ('load_config',)
@@ -123,17 +125,17 @@ class AGXOptionParser(OptionParser):
                 AGXHelpFormatter(),
                 add_help_option,
                 prog)
-        # TODO: below line doesn't get called because of above return...
+        # XXX: below line doesn't get called because of above return...
         self.config_filename = config_filename
 
     def get_all_options(self):
-        """Return all options, recursing into groups."""
+        """Return all options, recursing into groups.
+        """
 
         options = [ o for o in self.option_list ]
         for group in self.option_groups:
             options.extend( [ o for o in group.option_list ] )
         return options
-
 
     def options_by_section(self):
 
@@ -147,26 +149,44 @@ class AGXOptionParser(OptionParser):
         return sections
 
     def sample_config(self):
-        """Sample config file"""
+        """Print sample config file.
+        """
 
         for section, options in self.options_by_section().items():
-            print "\n\n[%s]" % section
+            print "[%s]" % section
             for opt in options:
-                if opt.help == SUPPRESS_HELP: continue
+                if opt.help == SUPPRESS_HELP:
+                    continue
                 for name in opt._long_opts:
-                    if not name: continue
+                    if not name:
+                        continue
                     name = name[2:]  # get rid of --
                     help_lines = textwrap.wrap(opt.help, 70)
-                    print
-                    for line in help_lines:
-                        print "#", line
-                    if opt.action=="store_true" or opt.action=="store_false":
-                        print name
-                    elif opt.type=="yesno":
-                        print "%s:yes|no" % name
-                    else:
-                        print "%s:%s" % ( name, opt.metavar or opt.dest.upper() )
 
+                    for line in help_lines:
+                        print "## %s" % line
+                    if opt.action == "store_true":
+                        if opt.default == 1:
+                            print '%s' % name
+                        else:
+                            print '#%s' % name
+                    elif opt.action == "store_false":
+                        if opt.default == 0:
+                            print '%s' % name
+                        else:
+                            print '#%s' % name
+                    elif opt.type=="yesno":
+                        print "#%s = yes" % name
+                        print "#%s = no" % name
+                    else:
+                        if opt.default != 'NODEFAULT':
+                            print "%s = %s" % (name, opt.default)
+                        else:
+                            print "#%s = " % name
+                    # Blank line
+                    print
+            # Blank line
+            print
 
     def read_project_configfile(self, filename, settings):
         """Read project config file into settings.
@@ -211,8 +231,6 @@ usage = "usage: %prog [ options ] <xmi-source-file>"
 description = "A program for generating Archetypes from XMI files."
 
 parser = AGXOptionParser(usage=usage, description=description, version="%prog 1.0")
-
-
 
 parser.add_option("-o",
         "--outfile",
@@ -298,7 +316,7 @@ group = OptionGroup(parser, "Generation Options")
 group.add_option("--widget-enhancement",
         dest="widget_enhancement",
         action="store_true",
-        default=True,
+        default=1,
         help="Do not create widgets with default label, label_msgid, description,"
              " description_msgid, and i18ndomain",
         section="CLASSES",
@@ -311,11 +329,10 @@ group.add_option("--no-widget-enhancement",
              " description_msgid, and i18ndomain",
         )
 
-
 group.add_option("-a",
         "--actions",
         dest="generateActions",
-        default=True,
+        default=1,
         help="Generate actions (default)",
         )
 
@@ -351,7 +368,6 @@ group.add_option("--strip-html",
              " (for UML editors, such as Poseidon, which store HTML inside docs.)",
         section="DOCUMENTATION",
         )
-
 
 group.add_option("--method-preservation",
         help="Methods in the target source will be preserved (default)",
@@ -572,9 +588,8 @@ group.add_option("--default-field-generation",
         section="CLASSES",
         )
 
-
 parser.add_option_group(group)
 
-(settings, args) = parser.parse_args()
-#parser.read_project_configfile("/tmp/config", settings)
-print settings
+if __name__ == '__main__':
+    (settings, args) = parser.parse_args()
+    print settings
