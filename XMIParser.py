@@ -19,6 +19,8 @@ from sets import Set
 from odict import odict
 from types import StringTypes
 from TaggedValueSupport import tgvRegistry
+import logging
+log = logging.getLogger('XMIparser')
 
 has_stripogram = 1
 try:
@@ -169,7 +171,8 @@ class XMI1_0:
         classifier = getSubElement(assocend)
 
         if not classifier:
-            print 'Warning: No assocEnd participant found  for: ', XMI.getId(el)
+            log.warn("No assocEnd participant found  for '%s'.",
+                     XMI.getId(el))
             return None
 
         return classifier.getAttribute('xmi.idref')
@@ -199,7 +202,7 @@ class XMI1_0:
             ends = rel.getElementsByTagName(XMI.ASSOCEND)
             #assert len(ends) == 2
             if len(ends) != 2:
-                #print 'association with != 2 ends found'
+                log.debug('association with != 2 ends found.')
                 continue
 
             if self.isAssocEndAggregation(ends[0]) :
@@ -209,33 +212,39 @@ class XMI1_0:
                 master = ends[1]
                 detail = ends[0]
 
-            if master: #ok weve found an aggregation
+            if master:
+                log.debug("Ok, weve found an aggregation.")
                 masterid = self.getAssocEndParticipantId(master)
                 detailid = self.getAssocEndParticipantId(detail)
 
-                #print 'master, detail:', master, detail
+                log.debug("Master '%s', detail '%s'.",
+                          master, detail)
                 m = objects.get(masterid, None)
                 d = objects.get(detailid, None)
 
                 if not m:
-                    print 'Warning: Master Object not found for aggregation relation: id=%s' % (XMI.getId(master))
+                    log.warn("Master Object not found for aggregation relation id='%s'.",
+                             XMI.getId(master))
                     continue
-
+                
                 if not d:
-                    print 'Warning: Child Object not found for aggregation relation: parent=%s' % (m.getName())
+                    log.warn("Child Object not found for aggregation relation: parent='%s'.",
+                             m.getName())
                     continue
 
                 try:
                     m.addSubType(d)
                 except KeyError:
-                    print 'Warning: Child Object not found for aggregation relation:Child :%s(%s), parent=%s' % (d.getId(), d.getName(), XMI.getName(m))
+                    log.warn("Child Object not found for aggregation relation: Child=%s(%s), parent=%s.",
+                             d.getId(), d.getName(), XMI.getName(m))
                     continue
 
                 assoc = XMIAssociation(rel)
                 assoc.fromEnd.obj.addAssocFrom(assoc)
                 assoc.toEnd.obj.addAssocTo(assoc)
 
-            else: #its an assoc, lets model it as association
+            else:
+                log.debug("It's an assoc, lets model it as association.")
                 try:
                     #check if an association class already exists
                     relid = self.getId(rel)
@@ -245,14 +254,16 @@ class XMI1_0:
                     else:
                         assoc = XMIAssociation(rel)
                 except KeyError:
-                    print 'Warning: Child Object not found for aggregation:%s, parent=%s' % (XMI.getId(rel), XMI.getName(master))
+                    log.warn("Child Object not found for aggregation '%s', parent='%s'.",
+                             XMI.getId(rel), XMI.getName(master))
                     continue
 
                 if getattr(assoc.fromEnd, 'obj', None) and getattr(assoc.toEnd, 'obj', None):
                     assoc.fromEnd.obj.addAssocFrom(assoc)
                     assoc.toEnd.obj.addAssocTo(assoc)
                 else:
-                    print 'Warning:Association has no ends:', assoc.getId()
+                    log.warn("Association has no ends: '%s'.",
+                             assoc.getId())
 
 
     def buildGeneralizations(self, doc, objects):
@@ -267,7 +278,8 @@ class XMI1_0:
                     #par=objects[getElementByTagName(par0, self.GEN_ELEMENT).getAttribute('xmi.idref')]
                     par = objects[getSubElement(par0).getAttribute('xmi.idref')]
                 except KeyError:
-                    print 'Warning: Parent Object not found for generalization relation:%s, parent %s' % (XMI.getId(gen), XMI.getName(par0))
+                    log.warn("Parent Object not found for generalization relation '%s', parent=%s'.",
+                             XMI.getId(gen), XMI.getName(par0))
                     continue
 
                 #child=objects[getElementByTagName(child0, self.GEN_ELEMENT).getAttribute('xmi.idref')]
@@ -276,7 +288,8 @@ class XMI1_0:
                 par.addGenChild(child)
                 child.addGenParent(par)
             except IndexError:
-                print 'gen: index error for generalization:%s'%self.getId(gen)
+                log.error("Gen: index error for generalization '%s'.",
+                          self.getId(gen))
                 raise
                 pass
 
@@ -287,7 +300,8 @@ class XMI1_0:
             if not self.getId(ab):continue
             abstraction = XMIAbstraction(ab)
             if not abstraction.hasStereoType('realize'):
-                print 'skip dep:', abstraction.getStereoType()
+                log.debug("Skipping dep: %s",
+                          abstraction.getStereoType())
                 continue
             try:
                 try:
@@ -295,7 +309,8 @@ class XMI1_0:
                     par = objects[getSubElement(par0, ignoremult=1).getAttribute('xmi.idref')]
                 #    continue
                 except (KeyError, IndexError):
-                    print 'Warning: Parent Object not found for realization relation:%s, parent %s' % (XMI.getId(ab), XMI.getName(par0))
+                    log.warn("Parent Object not found for realization relation:%s, parent %s.",
+                             XMI.getId(ab), XMI.getName(par0))
                     continue
 
                 #child=objects[getElementByTagName(child0, self.REALIZATION_ELEMENT).getAttribute('xmi.idref')]
@@ -304,12 +319,15 @@ class XMI1_0:
                     child_xmid = getSubElement(child0, ignoremult=1).getAttribute('xmi.idref')
                     child = objects[child_xmid]
                 except (KeyError, IndexError):
-                    print 'Warning: Child element for realization relation not found, parent name + relation xmi_id given:', par.getName(), XMI.getId(ab)
+                    log.warn("Child element for realization relation not found. "
+                             "Parent name = '%s' relation xmi_id = '%s'.",
+                             par.getName(), XMI.getId(ab))
 
                 par.addRealizationChild(child)
                 child.addRealizationParent(par)
             except IndexError:
-                print 'ab: index error for dependencies:%s'%self.getId(ab)
+                log.error("ab: index error for dependencies; %s",
+                          self.getId(ab))
                 raise
 
     def buildDependencies(self, doc, objects):
@@ -331,7 +349,8 @@ class XMI1_0:
             return None
 
     def getTaggedValue(self, el):
-        #print 'getTaggedValue:', el
+        log.debug("Getting tagged value for '%s'.",
+                  el)
         tagname = getAttributeValue(el, XMI.TAGGED_VALUE_TAG, recursive=0, default=None)
         if not tagname:
             raise TypeError, 'element %s has empty taggedValue' % self.getId(el)
@@ -353,7 +372,8 @@ class XMI1_0:
             for el in els:
                 if el.getAttribute('xmi.idref') == o.getId():
                     name = self.getName(st)
-                    #print 'Stereotype found:', name
+                    log.debug("Stereotype found: %s.",
+                              name)
                     o.setStereoType(name)
 
     def calcClassAbstract(self, o):
@@ -591,10 +611,11 @@ class XMI1_2 (XMI1_1):
                 if id:
                     st = stereotypes[id]
                     o.addStereoType(self.getName(st).strip())
-                    #print 'stereotype found:', id, self.getName(st), o.getStereoType()
+                    log.debug("Stereotype found: id='%s', name='%s'.",
+                              id, self.getName(st))
                 else:
-                    print 'warning: empty stereotype id for class :', o.getName(), o.getId()
-
+                    log.warn("Empty stereotype id='%s' for class '%s'",
+                             o.getId(), o.getName())
 
     def calcClassAbstract(self, o):
         o.isabstract = o.domElement.hasAttribute('isAbstract') and o.domElement.getAttribute('isAbstract') == 'true'
@@ -793,10 +814,12 @@ class XMIElement:
                 else:
                     self.taggedValues[tagname] = tagvalue
             except TypeError, e:
-                print 'Warning: broken tagged value in xmi.id %s:' % XMI.getId(self.domElement)
+                log.warn("Broken tagged value in id '%s'.",
+                         XMI.getId(self.domElement))
                 pass
 
-        #print 'taggedValues:', self.__class__, self.getName(), self.getTaggedValues()
+        log.debug("Found the following tagged values: %r.",
+                  self.getTaggedValues())
 
     def setTaggedValue(self, k, v):
         self.taggedValues[k] = v
@@ -808,7 +831,8 @@ class XMIElement:
         if domElement:
             self.id = domElement.getAttribute('xmi.id')
             self.name = XMI.getName(domElement)
-            #print 'name:', self.name, self.id
+            log.debug("Initializing from DOM: name='%s', id='%s'.",
+                      self.name, self.id)
             self.parseTaggedValues()
             self.calculateStereoType()
             mult = getElementByTagName(domElement, XMI.MULTIPLICITY, None)
@@ -820,7 +844,8 @@ class XMIElement:
                     if self.maxOccurs == -1:
                         self.maxOccurs = 99999
 
-                    #print 'maxOccurs:', self.maxOccurs
+                    log.debug("maxOccurs = '%s'.",
+                              self.maxOccurs)
 
             domElement.xmiElement = self
 
@@ -1045,20 +1070,23 @@ class StateMachineContainer:
         self.statemachines = []
 
     def findStateMachines(self):
-
+        log.debug("Trying to find statemachines...")
         try:
             ownedElement = getElementByTagName(self.domElement, 
                                                [XMI.OWNED_ELEMENT,XMI.OWNED_BEHAVIOR],
                                                default=None)
         except:
             # BBB backward compatible with argouml's xmi1.0
+            log.debug("Backward compatability mode for argouml's xmi1.0.")
             ownedElement = XMI.getOwnedElement(self.domElement)
             
         if not ownedElement:
-            ownedElement=self.domElement
+            log.debug("Setting ownedElement to self.domElement as fallback.")
+            ownedElement = self.domElement
             
         statemachines = getElementsByTagName(ownedElement, XMI.STATEMACHINE)
-        #print 'statemachines1:', statemachines
+        log.debug("Found the following statemachines: %r.",
+                  statemachines)
         return statemachines
 
     def buildStateMachines(self, recursive=1):
@@ -1093,7 +1121,6 @@ class StateMachineContainer:
             self.getProduct().addStateMachine(sm, reparent=0)
 
         if not hasattr(self, 'isProduct'):
-            print 'addStateMachine:', self, self.package
             self.getPackage().getProduct().addStateMachine(sm, reparent=0)
 
     def getStateMachines(self):
@@ -1188,7 +1215,8 @@ class XMIPackage(XMIElement, StateMachineContainer):
         #print 'buildClasses:', self.getFilePath(includeRoot=1)
         ownedElement = XMI.getOwnedElement(self.domElement)
         if not ownedElement:
-            print 'warning: empty package:', self.getName()
+            log.warn("Empty package: '%s'.",
+                     self.getName())
             return
 
         classes = getElementsByTagName(ownedElement, XMI.CLASS) + \
@@ -1209,7 +1237,8 @@ class XMIPackage(XMIElement, StateMachineContainer):
         #print 'buildInterfaces:', self.getFilePath(includeRoot=1)
         ownedElement = XMI.getOwnedElement(self.domElement)
         if not ownedElement:
-            print 'warning: empty package:', self.getName()
+            log.warn("Empty package: '%s'.",
+                     self.getName())
             return
 
         classes = getElementsByTagName(ownedElement, XMI.INTERFACE)
@@ -1332,7 +1361,8 @@ class XMIModel(XMIPackage):
         statemachines = getElementsByTagName(self.content, XMI.STATEMACHINE)
         statemachines.extend(getElementsByTagName(self.model, XMI.STATEMACHINE))
 
-        #print 'statemachines:', statemachines
+        log.debug("Found the following state machines: %r.",
+                  statemachines)
 
         ownedElement = XMI.getOwnedElement(self.domElement)
         statemachines.extend(getElementsByTagName(ownedElement, XMI.STATEMACHINE) )
@@ -1669,7 +1699,8 @@ class XMIMethod (XMIElement):
         parElements = self.domElement.getElementsByTagName(XMI.METHODPARAMETER)
         for p in parElements:
             self.addParameter(XMIMethodParameter(p))
-            #print self.params
+            log.debug("Params of the method: %r.",
+                      self.params)
 
     def initFromDOM(self, domElement):
         XMIElement.initFromDOM(self, domElement)
@@ -1782,7 +1813,8 @@ class XMIAssocEnd (XMIElement):
             self.mult = XMI.getMultiplicity(el)
             self.aggregation = XMI.getAssocEndAggregation(el)
         else:
-            print 'Association end missing for association end:'+self.getId()
+            log.debug("Association end missing for association end: '%s'.",
+                      self.getId())
 
         #print 'rel:%s navigable:%s' %(self.getName(), self.isNavigable)
 
@@ -1932,7 +1964,8 @@ class XMIStateMachine(XMIStateContainer):
         self.init()
         self.setParent(kwargs.get('parent',None))
         XMIStateContainer.__init__(self, *args, **kwargs)
-        #print 'created statemachine:', self.getId()
+        log.debug("Created statemachine '%s'.",
+                  self.getId())
 
     def initFromDOM(self, domElement=None):
         XMIStateContainer.initFromDOM(self, domElement)
@@ -1966,7 +1999,8 @@ class XMIStateMachine(XMIStateContainer):
                 continue
             if not t.getCleanName() in tran.keys():
                 tran.update({t.getCleanName():t})
-                #print "add transition", t.getCleanName(), t.getProps()
+                log.debug("Added transition '%s' with properties %r.",
+                          t.getCleanName(), t.getProps())
                 continue
             for tname in tran:
                 if t.getCleanName() == tname and t.hasStereoType('primary'):

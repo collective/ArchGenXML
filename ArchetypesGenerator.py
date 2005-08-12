@@ -1265,7 +1265,8 @@ class ArchetypesGenerator(BaseGenerator):
                 # No declaration
                 print >> outfile,indent("# Use class/module security defaults",1)
             else:
-                print indent("! Warning: method visibility should be 'public', 'private', 'protected' or 'package', got %s." % permissionMode, self.infoind)
+                log.warn("Method visibility should be 'public', 'private', 'protected' or 'package', got '%s'.",
+                         permissionMode)
 
         cls=self.parsed_class_sources.get(klass.getPackage().getFilePath()+'/'+klass.getName(),None)
 
@@ -1338,7 +1339,8 @@ class ArchetypesGenerator(BaseGenerator):
     def generateTestcaseClass(self,element,template,**kw):
         from XMIParser import XMIClass
         
-        print indent('Generating testcase: '+element.getName(),self.infoind)
+        log.info("Generating testcase '%s'.",
+                 element.getName())
         
         assert element.hasStereoType('plone_testcase') or element.getCleanName().startswith('test'), \
             "names of test classes _must_ start with 'test', but this class is named '%s'" % element.getCleanName()
@@ -1355,7 +1357,8 @@ class ArchetypesGenerator(BaseGenerator):
         return BaseGenerator.generatePythonClass(self, element, template, parent=parent, **kw)
 
     def generateWidgetClass(self,element,template,zptname='widget.pt'):
-        print indent('Generating widget: '+element.getName(),self.infoind)
+        log.debug("Generating widget '%s'.",
+                  element.getName())
 
         #generate the template
         templpath=os.path.join(self.getSkinPath(element),'%s.pt' % element.getCleanName())
@@ -1387,7 +1390,8 @@ class ArchetypesGenerator(BaseGenerator):
         return BaseGenerator.generatePythonClass(self, element, template,parent=parent,parentname=parentname)
 
     def generateFieldClass(self,element,template):
-        print indent('Generating field: '+element.getName(),self.infoind)
+        log.info("Generating field: '%s'.",
+                 element.getName())
 
         # and now the python code
         if element.getGenParents():
@@ -1439,8 +1443,8 @@ class ArchetypesGenerator(BaseGenerator):
         return res                                                
 
     def generateArchetypesClass(self, element,**kw):
-        log.info("Generating class '%s' %s ",
-                 element.getName(), self.infoind)
+        log.info("Generating class '%s'.",
+                 element.getName())
 
 ##        if element.hasStereoType(self.python_stereotype):
 ##            return BaseGenerator.generateClass(self,element)
@@ -2215,7 +2219,8 @@ class ArchetypesGenerator(BaseGenerator):
         package.generatedModules=[]
         if package.getName().lower() == 'java' or package.getName().lower().startswith('java') or not package.getName():
             #to suppress these unneccesary implicit created java packages (ArgoUML and Poseidon)
-            print indent('ignore package:'+package.getName(),self.infoind)
+            log.debug("Ignoring unneeded package '%s'.",
+                      package.getName())
             return
 
         self.makeDir(package.getFilePath())
@@ -2224,10 +2229,12 @@ class ArchetypesGenerator(BaseGenerator):
             #skip stub and internal classes
             if element.isInternal() or element.getName() in self.hide_classes \
                or element.getName().lower().startswith('java::'): # Enterprise Architect fix!
-                print indent('Ignore unnecessary class: '+element.getName(),self.infoind)
+                log.debug("Ignoring unnecessary class '%s'.",
+                          element.getName())
                 continue
             if element.hasStereoType(self.stub_stereotypes):
-                print indent('Ignore stub class: '+element.getName(),self.infoind)
+                log.info("Ignoring stub class '%s'.",
+                         element.getName())
                 continue
 
             module=element.getModuleName()
@@ -2282,14 +2289,11 @@ class ArchetypesGenerator(BaseGenerator):
         generatedPkg = package.getAnnotation('generatedPackages') or []
         for p in package.getPackages():
             if p.isProduct():
-                self.infoind+=+1
                 self.generateProduct(p)
-                self.infoind-=1
             else:
-                print indent('generating package: '+ p.getName(),self.infoind)
-                self.infoind+=1
+                log.info("Generating package '%s'.",
+                         p.getName())
                 self.generatePackage(p,recursive=1)
-                self.infoind-=1
                 generatedPkg.append(p)
                 package.annotate('generatedPackages',generatedPkg)
 
@@ -2497,16 +2501,18 @@ class ArchetypesGenerator(BaseGenerator):
         outfile=None
 
         if self.generate_packages and root.getCleanName() not in self.generate_packages:
-            print indent('Info: Skipping package:' + root.getCleanName(),self.infoind)
+            log.info("Skipping package '%s'.",
+                     root.getCleanName())
             return
 
         dirMode=1
         if root.hasStereoType(self.stub_stereotypes):
-            print indent('Skipping stub Product:' + root.getName(), self.infoind)
+            log.debug("Skipping stub Product '%s'.",
+                      root.getName())
             return
 
-        print indent(">>> Starting new Product: " +root.getName(),self.infoind)
-        self.infoind+=1
+        log.info("Starting new Product: '%s'.",
+                 root.getName())
 
         # before generate a Product we need to push the current permissions on a
         # stack in orderto reinitialize the permissions
@@ -2577,7 +2583,6 @@ class ArchetypesGenerator(BaseGenerator):
         #start Workflow creation
         wfg=WorkflowGenerator(package,self)
         wfg.generateWorkflows()
-        self.infoind-=1
         self.creation_permissions = self.creation_permission_stack.pop()
 
     def parseAndGenerate(self):

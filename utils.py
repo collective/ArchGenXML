@@ -458,7 +458,7 @@ def initLog(filename):
     
     log = logging.getLogger()
     hdlr = logging.FileHandler(filename, 'w')
-    formatter = logging.Formatter('%(name)-10s %(levelname)-6s %(message)s')
+    formatter = logging.Formatter('%(name)-10s %(levelname)-5s %(message)s')
     hdlr.setFormatter(formatter)
     log.addHandler(hdlr) 
     log.setLevel(logging.DEBUG)
@@ -471,7 +471,7 @@ def addConsoleLogging():
     
     log = logging.getLogger()
     hdlr = logging.StreamHandler(sys.stdout)
-    formatter = logging.Formatter('%(levelname)-6s %(message)s')
+    formatter = logging.Formatter('%(levelname)-5s %(message)s')
     hdlr.setLevel(logging.INFO)
     hdlr.setFormatter(formatter)
     log.addHandler(hdlr) 
