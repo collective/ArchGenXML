@@ -2590,19 +2590,20 @@ def parse(xschemaFileName=None, xschema=None, packages=[], generator=None,**kw):
     try:
         xmi = doc.getElementsByTagName('XMI')[0]
         xmiver = str(xmi.getAttribute('xmi.version'))
-        print 'XMI version:', xmiver
+        log.debug("XMI version: %s",
+                  xmiver)
         if xmiver >= "1.2":
-            print 'using xmi 1.2+ parser'
+            log.debug("Using xmi 1.2+ parser.")
             XMI = XMI1_2(**kw)
         elif xmiver >= "1.1":
-            print 'using xmi 1.1+ parser'
+            log.debug("Using xmi 1.1+ parser.")
             XMI = XMI1_1(**kw)
         else:
-            print 'using xmi 1.1+ parser'
+            log.debug("Using xmi 1.1+ parser.")
             XMI = XMI1_0(**kw)
 
     except:
-        print 'no version info found, taking XMI1_0'
+        log.debug("No version info found, taking XMI1_0.")
         pass
 
     XMI.generator = generator
