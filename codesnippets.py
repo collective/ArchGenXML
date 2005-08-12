@@ -139,10 +139,7 @@ IMPORT_INTERFACE     = """from Interface import Base"""
 
 MODULE_INFO_HEADER = """\
 # File: %(filename)s
-\"""\\
-%(purpose)s
-%(rcs_id_tag)s
-\"""
+# %(rcs_id_tag)s
 # %(copyright)s
 %(date)s# Generator: ArchGenXML Version %(version)s http://sf.net/projects/archetypes/
 #

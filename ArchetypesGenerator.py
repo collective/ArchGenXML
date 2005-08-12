@@ -688,10 +688,7 @@ class ArchetypesGenerator(BaseGenerator):
                     if v.startswith ('python:'):
                         v = v[7:]
 
-                formatted=''
-                for line in v.split('\n'):
-                    formatted+=line
-                map.update( {k:formatted.strip()} )
+                map.update( {k: v} )
         return map
 
     def getWidget(self, type, element, fieldname, elementclass):
@@ -1839,9 +1836,10 @@ class ArchetypesGenerator(BaseGenerator):
         return authors, emails, authorline
 
     def getHeaderInfo(self, element):
-        #deal with multiline docstring
-        purposeline=('\n').join( \
-            (element.getDocumentation(striphtml=self.striphtml,wrap=79) or 'unknown').split('\n') )
+        # deal with multiline docstring
+        # XXX need some work here, atm this code alway produces unknown
+        ##purposeline=('\n').join( \
+        ##    (element.getDocumentation(striphtml=self.striphtml,wrap=79) or '').split('\n') )
 
         copyright = COPYRIGHT % \
             (str(time.localtime()[0]),
@@ -1852,9 +1850,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         authors, emails, authorline = self.getAuthors(element)
 
-        rcs_id = self.getOption('rcs_id', element, False)
-
-        if rcs_id:
+        if self.getOption('rcs_id', element, False):
             rcs_id_tag = '\nRCS-ID $'+'I'+'d'+'$'
         else:
             rcs_id_tag = ''
@@ -1864,7 +1860,7 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             date = ''
 
-        moduleinfo = {  'purpose':      purposeline,
+        moduleinfo = {  #'purpose':      purposeline,
                         'authors':      ', '.join(authors),
                         'emails' :      ', '.join(emails),
                         'authorline':   authorline,
