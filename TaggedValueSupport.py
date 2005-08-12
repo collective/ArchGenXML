@@ -11,10 +11,12 @@ method::
       if not tgvRegistry.isRegistered(tagname, category):
           raise HorrificOmissionError()
       ....
-  
+
+That's the heavy-handed way. You can also just call
+'tgvRegistry.isRegistered(tagname, category)' without checking the
+return value, as the function prints a warning himself.
 
 """
-
 
 #----------------------------------------------------------------
 # Name:        TaggedValueSupport.py
@@ -30,18 +32,6 @@ method::
 
 # isTGVTrue() and isTGVFalse are originally copied from utils.py
 
-"""
-Tagged values come in two variants. Boolean tagged values and
-string-like tagged values that just set a certain value.
-
-Getting our hands on the boolean ones is easy, as they get used
-through the isTGVTrue/isTGVFalse methods. For the string-like ones we
-need to think of an additional evil scheme... Perhaps look if we can
-build a "just handle all other TGVs" method?
-
-updatedKeysFromTGV
-
-"""
 
 class TaggedValueRegistry:
     """ Registry for all known tagged values (TGVs)
@@ -70,10 +60,10 @@ class TaggedValueRegistry:
             #'XMIParser.XMIDependency': [],
             #'XMIParser.XMIStateContainer': [],
             #'XMIParser.XMIStateMachine': [],
-            #'XMIParser.XMIStateTransition': [],
+            'XMIParser.XMIStateTransition': ['state transition'],
             #'XMIParser.XMIAction': [],
             #'XMIParser.XMIGuard': [],
-            #'XMIParser.XMIState': [],
+            'XMIParser.XMIState': ['state'],
             #'XMIParser.XMICompositeState': [],
             #'XMIParser.XMIDiagram': [],
             }
@@ -116,10 +106,36 @@ class TaggedValueRegistry:
             if self._registry[category].has_key(tagname):
                 return True
         # TODO: integrate logging module
-        #print "Just a note: missing documentation for tagname '%s' in TGV registry (category=%r)." \
-        #      % (tagname, original_category)
+        #print "Just a note: missing documentation for tagname '%s' in TGV registry (category=%r)." % (tagname, original_category)
         return False
 
+    def documentation(self, indentation=0):
+        """Return the documentation for all tagged values.
+
+        The documentation is returned as a string. 'indentation' can
+        be used to get it back indented 'indentation' spaces. Handy
+        for (classic) structured text.
+        
+        """
+
+        import StringIO
+        out = StringIO.StringIO()
+        for category in self._registry:
+            print >> out
+            print >> out, category
+            print >> out
+            tagnames = self._registry[category].keys()
+            tagnames.sort()
+            for tagname in tagnames:
+                explanation = self._registry[category][tagname]
+                print >> out, " %s -- %s" % (tagname,
+                                             explanation)
+                print >> out
+        spaces = ' ' * indentation
+        lines = out.getvalue().split('\n')
+        indentedLines = [(spaces + line) for line in lines]
+        return '\n'.join(indentedLines)
+        
 
 tgvRegistry = TaggedValueRegistry()
 
@@ -132,11 +148,6 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 
 tagname = 'module_name'
 explanation = """TODO."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
-tagname = 'documentation'
-explanation = """You can add documention via this tag; it's better to
-use  your UML tool's documentation field."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 # Package level tagged values
@@ -157,6 +168,21 @@ category = 'class'
 
 tagname = 'module_name'
 explanation = """TODO."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'policy'
+explanation = """TODO."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'portal_type'
+explanation = """TODO."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'use_workflow'
+explanation = """Tie the class to the named workflow. A state diagram
+(=workflow) attached to a class in the UML diagram is automatically
+used as that class's workflow; this tagged value allows you to tie the
+workflow to other classes."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'archetype_name'
@@ -201,10 +227,6 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 tagname = 'hide_folder_tabs'
 explanation = """Hides the folder tabs for this content type. (Mostly
 the "Contents" tab)."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
-tagname = 'label'
-explanation = """Sets the readable name."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'import_from'
@@ -292,11 +314,6 @@ this isn't desired, set the tagged value 'disable_polymorphing' to 1.
 """
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-tagname = 'documentation'
-explanation = """You can add documention via this tag; it's better to
-use  your UML tool's documentation field."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 
 # Tool
 category = 'tool' 
@@ -348,11 +365,6 @@ tagname = 'configlet:icon'
 explanation = """The name of an image file, which must be in your product's skin directory, used as the configlet icon."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-tagname = 'documentation'
-explanation = """You can add documention via this tag; it's better to
-use  your UML tool's documentation field."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 
 # Methods
 
@@ -376,10 +388,6 @@ category = 'action'
 # For methods with either of the '<<action>>'', '<<form>>' or
 # '<<view>>' stereotypes, the following tagged values can be used to
 # control the generated actions: 
-
-tagname = 'label'
-explanation = """Sets the readable name."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'id'
 explanation = """The id of the action. Use 'id', """
@@ -420,11 +428,6 @@ tagname = 'view'
 explanation = """Set the name of the portlet. Defaults to the method name. This will be used as the name of the auto-created page template for the portlet."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-tagname = 'documentation'
-explanation = """You can add documention via this tag; it's better to
-use  your UML tool's documentation field."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 
 # Attributes
 
@@ -437,6 +440,15 @@ category = 'attribute'
 
 tagname = 'required'
 explanation = """Set to true (1) to make the field required"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'validation_expression'
+explanation = """Sets the expression used for run-time validation of the attribute."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'write_permission'
+explanation = """Sets the permission that determines if you're allowed
+to write to the field."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'default'
@@ -471,11 +483,6 @@ tagname = 'searchable'
 explanation = """Whether or not the field should be searchable when performing a search in the portal. """
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-tagname = 'documentation'
-explanation = """You can add documention via this tag; it's better to
-use  your UML tool's documentation field."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 
 # widgets (not a separate category!)
 
@@ -507,3 +514,44 @@ tagname = 'widget:i18n_domain'
 explanation = """Set the i18n domain. Defaults to the product name."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+# Package level tagged values
+category = 'state'
+
+tagname = 'worklist'
+explanation = """Attach objects in this state to the named
+worklist. An example of a worklist is the to-review list."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'worklist:guard_permissions'
+explanation = """Sets the permissions needed to be allowed to view the
+worklist. Default value is 'Review portal content'."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+# State transition tagged values
+category = 'state transition'
+
+tagname = 'trigger_type'
+explanation = """TODO."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+
+# Tagged values occurring everywhere
+
+for category in tgvRegistry._registry:
+    
+    tagname = 'label'
+    explanation = """Sets the readable name."""
+    if not tgvRegistry._registry[category].has_key(tagname):
+        # Making sure we don't overwrite specialised stuff :-)
+        tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+    tagname = 'documentation'
+    explanation = """You can add documention via this tag; it's better to
+    use  your UML tool's documentation field."""
+    if not tgvRegistry._registry[category].has_key(tagname):
+        # Making sure we don't overwrite specialised stuff :-)
+        tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+
+if __name__ == '__main__':
+    print tgvRegistry.documentation()
