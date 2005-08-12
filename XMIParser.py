@@ -808,7 +808,8 @@ class XMIElement:
             try:
                 tagname, tagvalue = XMI.getTaggedValue(tgv)
                 if self.taggedValues.has_key(tagname):
-                    # poseidon multiline fix
+                    log.debug("Invoking Poseidon multiline fix for tagname '%s'.",
+                              tagname)
                     self.taggedValues[tagname] += '\n'+tagvalue
                 else:
                     self.taggedValues[tagname] = tagvalue
@@ -851,10 +852,13 @@ class XMIElement:
 
     def addChild(self, element):
         self.children.append(element)
+
     def addSubType(self, st):
         self.subTypes.append(st)
 
-    def getChildren(self): return self.children
+    def getChildren(self):
+        return self.children
+
     def getName(self):
         name = str(self.name)
         if self.name:
@@ -879,40 +883,59 @@ class XMIElement:
         return self.taggedValues.has_key(name)
 
     def hasAttributeWithTaggedValue(self, tag, value=None):
-        ''' returns true, if any attribute has a TGV with tag
-            and (if given) if its equals value.
-        '''
+        """Return True if any attribute has a TGV 'tag'.
+
+        If given, also check for a matching value.
+        """
+
+        log.debug("Searching for presence of an attribute with tag '%s'.",
+                  tag)
+        if value:
+            log.debug("But the value should be '%s'.",
+                      value)
         attrs = self.getAttributeDefs()
         for attr in attrs:
             if attr.hasTaggedValue(tag):
                 if not value or attr.getTaggedValue(tag, None) == value:
+                    log.debug("Yep, we've found an attribute with that tag/value.")
                     return 1
+        log.debug("No, found nothing.")
         return 0
 
     def getTaggedValues(self):
         return self.taggedValues
 
     def getDocumentation(self, striphtml=0, wrap=-1):
-        """ return formatted documentation string:
+        """Return formatted documentation string.
 
-            try to use stripogram to remove (e.g. poseidon) HTML-tags, wrap and
-            indent text. If no stripogram is present it uses wrap and indent
-            from own utils module.
+        try to use stripogram to remove (e.g. poseidon) HTML-tags, wrap and
+        indent text. If no stripogram is present it uses wrap and indent
+        from own utils module.
 
-            striphtml(boolean) - use stripogram html2text to remove html tags
-            wrap(integer)      - default: 60, set to 0: do not wrap,
-                                 all other >0: wrap with this value
+        striphtml(boolean) -- use stripogram html2text to remove html tags
+        
+        wrap(integer) -- default: 60, set to 0: do not wrap,
+                         all other >0: wrap with this value
         """
+
+        log.debug("Trying to find documentation for this element.")
         #TODO: create an option on command line to control the page width
+        log.debug("First trying a tagged value.")
         doc = self.getTaggedValue('documentation')
         if not doc:
+            log.debug("Didn't find a tagged value 'documentation'. "
+                      "Returning empty string.")
             return ''
         if wrap == -1:
             wrap = default_wrap_width
         if has_stripogram and striphtml:
+            log.debug("Stripping html.")
             doc = html2text(doc, (), 0, 1000000).strip()
         if wrap:
+            log.debug("Wrapping the documenation.")
             doc = doWrap(doc, wrap)
+        log.debug("Returning documenation '%r'.",
+                  doc)
         return doc
 
     def getUnmappedCleanName(self): return self.unmappedCleanName
@@ -1043,7 +1066,6 @@ class XMIElement:
             o = self.getParent()
             if o:
                 res.extend(o.getClientDependencies(includeParents=includeParents))
-                    
                 res.reverse()
 
         if dependencyStereotypes:
@@ -1060,7 +1082,6 @@ class XMIElement:
             
         if targetStereotypes:
             res=[r for r in res if r.hasStereoType(targetStereotypes)]
-            
             
         return res
     
@@ -1377,12 +1398,19 @@ class XMIModel(XMIPackage):
 class XMIClass (XMIElement, StateMachineContainer):
     package = None
     isinterface = 0
+    # [Reinout] Doesn't this mean that there's just one class-wide
+    # state machine? So: no way of having a per-class-instance state
+    # machine? Bug?
     statemachine = None
 
     def __init__(self, *args, **kw):
+        log.debug("Initialising class.")
         self.setPackage(kw.get('package', None))
-        #print 'package:', self, self.package
+        log.debug("Package set to '%s'.",
+                  self.package)
+        log.debug("Running StateMachineContainer's init...")
         StateMachineContainer.__init__(self)
+        log.debug("Running XMIElement's init...")
         XMIElement.__init__(self, *args, **kw)
         self.assocsTo = []
         self.assocsFrom = []
@@ -1392,7 +1420,6 @@ class XMIClass (XMIElement, StateMachineContainer):
         self.realizationParents = []
         self.internalOnly = 0
         self.type = self.name
-
         #self.isabstract = 0
 
     def setPackage(self, p):
@@ -1418,7 +1445,6 @@ class XMIClass (XMIElement, StateMachineContainer):
             not self.realizationChildren and \
             not self.realizationParents 
 
-
     def getVisibility(self):
         return self.visibility
 
@@ -1435,14 +1461,18 @@ class XMIClass (XMIElement, StateMachineContainer):
         return a in self.getAttributeNames()
 
     def getGenChildren(self, recursive=0):
-        ''' generalization children '''
+        """Return the generalization children.
+        """
 
+        log.debug("Finding this class's children...")
         res = [c for c in self.genChildren]
-
         if recursive:
+            log.debug("Also looking recursively further down "
+                      "the family tree.")
             for r in res:
                 res.extend(r.getGenChildren(1))
-
+        log.debug("Found: '%r'.",
+                  res)
         return res
 
     def getGenChildrenNames(self, recursive=0):
@@ -2120,6 +2150,7 @@ class XMIStateMachine(XMIStateContainer):
         A worklist is mentioned by adding a tagged value 'worklist' to a state
         """
 
+        log.debug("Finding all worklists mentioned in this statemachine.")
         # Possible bug: the encode('ascii') is needed because the workflow doesn't
         # like to eat unicode or so...
         names = [s.getTaggedValue('worklist').encode('ascii')
@@ -2128,28 +2159,41 @@ class XMIStateMachine(XMIStateContainer):
         worklists = {}
         for name in names:
             worklists[name] = 'just filtering out doubles'
-        return worklists.keys()
+        result = worklists.keys()
+        log.debug("Found the following worklists: %r.",
+                  result)
+        return result
 
     def getWorklistStateNames(self, worklistname):
         """Return the states associated with the worklistname.
         """
 
-        return [s.getName()
-                for s in self.getStates(no_duplicates = 1)
-                if s.getTaggedValue('worklist') == worklistname]
+        results = [s.getName()
+                   for s in self.getStates(no_duplicates = 1)
+                   if s.getTaggedValue('worklist') == worklistname]
+        log.debug("Associated with worklist '%s' are the "
+                  "following states: %r.",
+                  worklistname,
+                  results)
+        return results
 
     def getWorklistGuardPermission(self, worklistname):
         """Return the guard permission associated with the worklistname.
         """
 
+        log.debug("Getting the guard permission for the worklist...")
         default = 'Review portal content'
         results = [s.getTaggedValue('worklist:guard_permissions')
                    for s in self.getStates(no_duplicates = 1)
                    if s.getTaggedValue('worklist') == worklistname
                    and s.getTaggedValue('worklist:guard_permissions')]
         if not results:
+            log.debug("No tagged value found, returning the default: '%s'.",
+                      default)
             return default
         # There might be more than one guard_permissions tgv, take the first
+        log.debug("Tagged value(s) found, taking the first (or only) one: '%s'.",
+                  results[0])
         return results[0]
 
 
