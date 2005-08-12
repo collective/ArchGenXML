@@ -1476,17 +1476,22 @@ class XMIClass (XMIElement, StateMachineContainer):
         return res
 
     def getGenChildrenNames(self, recursive=0):
-        ''' returns the names of the generalization children '''
+        """Return the names of the generalization children
+        """
+        
         return [o.getName() for o in self.getGenChildren(recursive=recursive) ]
 
     def getGenParents(self, recursive = 0):
-        ''' generalization parents '''
-        res = [c for c in self.genParents]
+        """Return generalization parents
+        """
 
+        log.debug("Looking for this class's parents...")
+        res = [c for c in self.genParents]
         if recursive:
+            log.debug("Also looking recursively up the family tree.")
             for r in res:
                 res.extend(r.getGenParents(1))
-
+        log.debug("Found the following parents: '%r'.")
         return res
 
     def buildChildren(self, domElement):
@@ -1528,43 +1533,87 @@ class XMIClass (XMIElement, StateMachineContainer):
         return 1
 
     def addAssocFrom(self, a):
+        """Add association originating FROM this class.
+        """
+
         self.assocsFrom.append(a)
 
     def addAssocTo(self, a):
+        """Add association pointing AT this class.
+        """
+
         self.assocsTo.append(a)
+
+    def getFromAssociations(self, aggtypes=['none'],
+                            aggtypesTo=['none']): 
+        """Return associations that point from this class.
+        """
+        
+        # This code doesn't seem to work with below isDependent
+        # method.
+        log.debug("Finding associations originating at this class...")
+        log.debug("Params: aggtypes='%r', aggtypesTo='%r'.",
+                  aggtypes, aggtypesTo)
+        result = [a for a in self.assocsFrom
+                  if a.fromEnd.aggregation in aggtypes
+                  and a.toEnd.aggregation in aggtypesTo]
+        log.debug("Associations found: %r.",
+                  result)
+        return result
 
     def getToAssociations(self, aggtypes=['none'], 
                           aggtypesTo=['none']):
-        # This code doesn't seem to work with below isDependent method
-        return [a for a in self.assocsTo if a.fromEnd.aggregation in aggtypes  
-                and a.toEnd.aggregation in aggtypesTo]
-
-
-    def getFromAssociations(self, aggtypes=['none'], aggtypesTo=['none']):
-        # This code doesn't seem to work with below isDependent method
-        return [a for a in self.assocsFrom if a.fromEnd.aggregation in
-                aggtypes and a.toEnd.aggregation in aggtypesTo]
-        #return self.assocsFrom
+        """Return associations that point at this class.
+        """
+        
+        # This code doesn't seem to work with below isDependent
+        # method. 
+        log.debug("Finding associations pointing at this class...")
+        log.debug("Params: aggtypes='%r', aggtypesTo='%r'.",
+                  aggtypes, aggtypesTo)
+        result = [a for a in self.assocsTo
+                  if a.fromEnd.aggregation in aggtypes  
+                  and a.toEnd.aggregation in aggtypesTo]
+        log.debug("Associations found: %r.",
+                  result)
+        return result
+    
 
     def isDependent(self):
         """ Return True if class is only accessible through composition
 
         Every object to which only composite associations point
         shouldn't be created independently.
+
+        To refresh the memory: an aggregation is an empty rhomb in
+        UML, a composition is a filled rhomb. (Dutch: 'wybertje').
         """
+
+        log.debug("Trying to figure out if the class is dependent.")
         aggs = self.getToAssociations(aggtypes=['aggregate'])
+        log.debug("Found aggregations that contain us: %r.",
+                  aggs)
         comps = self.getToAssociations(aggtypes=['composite'])
+        log.debug("Found compositions that contain us: %r.",
+                  comps)
 
         if comps and not aggs:
+            log.debug("We *are* part of a composition plus we are "
+                      "not part of an aggregation, so we're stuck "
+                      "inside whatever it is that 'compositions' us.")
             res = 1
         else:
+            log.debug("Our placing is not fixed, we're not dependent.")
             res = 0
-
-        # if one of the parents is dependent, count the class as dependent
+        log.debug("Check, though, if one of the parents is dependent."
+                  "If True, count the class as dependent.")
         for p in self.getGenParents():
             if p.isDependent():
+                log.debug("Yes, found a parent that is dependent. "
+                          "So we are too.")
                 res = 1
-
+        log.debug("End verdict: dependent = '%s'.",
+                  res)
         return res
 
     def isAbstract(self):
