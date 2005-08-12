@@ -1,45 +1,59 @@
 import sys, os.path, time
 import getopt
 from types import StringTypes
+import logging
+
+log = logging.getLogger('utils')
 
 NameTable = {
     'class': 'klass',
     'import': 'emport'
     }
 
-def makeFile(outFileName,force=1):
-    outFile = None
-    if (not force) and os.path.exists(outFileName):
+def makeFile(outfilename, force=1):
+    log.debug("Making file '%s' (force=%s).",
+              outfilename, force)
+    outfile = None
+    if (not force) and os.path.exists(outfilename):
+        log.debug("File already exists and we're not to force it. Returning nothing.")
         return None
-    elif (force=='ask') and os.path.exists(outFileName):
-        reply = raw_input('File %s exists.  Overwrite? (y/n): ' % outFileName)
+    elif (force=='ask') and os.path.exists(outfilename):
+        log.debug("File already exists, asking what to do.")
+        reply = raw_input('File %s exists.  Overwrite? (y/n): ' % outfilename)
         if reply == 'y':
-            outFile = open(outFileName, 'w')
+            log.debug("Got a yes: overwriting.")
+            outfile = open(outfilename, 'w')
         else:
+            log.debug("Didn't get a 'y' but a '%s', returning nothing.",
+                      reply)
             return None
     else:
-        outFile = open(outFileName, 'w')
-    return outFile
+        log.debug("Opening the file for writing and returning it.")
+        outfile = open(outfilename, 'w')
+    return outfile
 
-def readFile(fn):
+def readFile(filename):
     try:
-        file = open(fn, 'r')
-        res=file.read()
+        log.debug("Trying to open '%s' for reading.",
+                  filename)
+        file = open(filename, 'r')
+        res = file.read()
         file.close()
+        log.debug("Done, returing result.")
         return res
     except IOError:
+        log.debug("Couldn't open the file, returning nothing.")
         return None
 
-def makeDir(outFileName,force=1):
-    outFile = None
-    if (not force) and os.path.exists(outFileName):
-        reply = raw_input('File %s exists.  Overwrite? (y/n): ' % outFileName)
-        if reply == 'y':
-            os.mkdir(outFileName)
+def makeDir(directoryName, force=1):
+    log.debug("Trying to make directory '%s' (force=%s).",
+              directoryName, force)
+    directory = None
+    if os.path.exists(directoryName):
+        log.debug("Directory already exists. Fine.")
     else:
-        if not os.path.exists(outFileName):
-            os.mkdir(outFileName)
-
+        os.mkdir(directoryName)
+        log.debug("Made the directory.")
 
 
 def mapName(oldName):
@@ -51,11 +65,15 @@ def mapName(oldName):
             newName = NameTable[oldName]
     return newName.replace('-','_')
 
-def readTemplate(fn):
-    templdir=os.path.join(sys.path[0],'templates')
-    templ=open(os.path.join(templdir,fn)).read()
-
-    return templ
+def readTemplate(filename):
+    log.debug("Trying to read template '%s'.",
+              filename)
+    templatedir = os.path.join(sys.path[0], 'templates')
+    log.debug("Trying to find it in template directory '%s'.",
+              templatedir)
+    template = open(os.path.join(templatedir,filename)).read()
+    log.debug("Succesfully opened the template, returning it.")
+    return template
 
 
 def indent(s, indent, prepend='', skipFirstRow=0):
@@ -430,3 +448,30 @@ def getFileHeaderInfo(element, generator):
                       'copyright':'\n# '.join(wrap(copyright,77).split('\n')),
                       'licence':  licence,
     }
+
+def initLog(filename):
+    """Initialise the logger.
+
+    This needs only to be called from ArchGenXML.py and
+    tests/runalltests.py.
+    """
+    
+    log = logging.getLogger()
+    hdlr = logging.FileHandler(filename, 'w')
+    formatter = logging.Formatter('%(name)-10s %(levelname)-6s %(message)s')
+    hdlr.setFormatter(formatter)
+    log.addHandler(hdlr) 
+    log.setLevel(logging.DEBUG)
+
+def addConsoleLogging():
+    """Add logging to the console.
+
+    This needs only to be called from ArchGenXML.py.    
+    """
+    
+    log = logging.getLogger()
+    hdlr = logging.StreamHandler(sys.stdout)
+    formatter = logging.Formatter('%(levelname)-6s %(message)s')
+    hdlr.setLevel(logging.INFO)
+    hdlr.setFormatter(formatter)
+    log.addHandler(hdlr) 

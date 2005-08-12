@@ -32,6 +32,7 @@ return value, as the function prints a warning himself.
 
 # isTGVTrue() and isTGVFalse are originally copied from utils.py
 
+import logging
 
 class TaggedValueRegistry:
     """ Registry for all known tagged values (TGVs)
@@ -43,6 +44,8 @@ class TaggedValueRegistry:
     def __init__(self):
         """ Initialise an empty registry
         """
+
+        self.log = logging.getLogger('TGVregistry')
         self._registry = {}
         self.categoryFromClassMap = {
             #'XMIParser.XMIElement': [],
@@ -81,6 +84,8 @@ class TaggedValueRegistry:
         if not self._registry.has_key(category):
             self._registry[category] = {}
         self._registry[category][tagname] = explanation
+        self.log.debug("Added tagged value '%s' to registry.",
+                       tagname)
 
     def isRegistered(self, tagname='', category=''):
         """Return True if the TGV is in te registry
@@ -90,6 +95,8 @@ class TaggedValueRegistry:
         that cannot pass a category.
         """
 
+        self.log.debug("Checking tag '%s' (category '%s') in the registry...",
+                       tagname, category)
         original_category = category
         if category:
             # Look in 'categoryFromClassMap' for possible translations
@@ -104,9 +111,11 @@ class TaggedValueRegistry:
             categories = self._registry.keys()
         for category in categories:
             if self._registry[category].has_key(tagname):
+                self.log.debug("Tag '%s' (category '%s') exists in the registry.",
+                               tagname, category)
                 return True
-        # TODO: integrate logging module
-        #print "Just a note: missing documentation for tagname '%s' in TGV registry (category=%r)." % (tagname, original_category)
+        self.log.warn("Tag '%s' (category '%s') is not self-documented.",
+                      tagname, original_category)
         return False
 
     def documentation(self, indentation=0):

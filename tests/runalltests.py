@@ -8,9 +8,15 @@
 #   python /path/to/Zope/utilities/testrunner.py -qa
 #
 
+import logging
 import os
 import sys
 import unittest
+testDir = os.path.dirname(os.path.abspath(__file__))
+parentDir = testDir[:-6] # Strips off '/tests'
+# Appends the parent dir to the module search path
+sys.path.append(parentDir)
+import utils
 
 testDir = os.path.dirname(os.path.abspath(__file__))
 TestRunner = unittest.TextTestRunner
@@ -25,5 +31,7 @@ for test in tests:
         suite.addTest(m.test_suite())
 
 if __name__ == '__main__':
+    utils.initLog('runalltests.log')
+    utils.addConsoleLogging()
     TestRunner().run(suite)
 

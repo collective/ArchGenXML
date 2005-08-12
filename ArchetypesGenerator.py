@@ -16,7 +16,7 @@ from zipfile import ZipFile
 from StringIO import StringIO
 from shutil import copy
 from types import StringTypes
-
+import logging
 from xml.dom import minidom
 
 # AGX-specific imports
@@ -35,6 +35,7 @@ from BaseGenerator import BaseGenerator
 from WorkflowGenerator import WorkflowGenerator
 
 _marker=[]
+log = logging.getLogger('generator')
 
 try:
     from i18ndude import catalog as msgcatalog
@@ -677,7 +678,8 @@ class ArchetypesGenerator(BaseGenerator):
             if k not in noparams and not k.startswith('widget:'):
                 v=tgv[k]
                 if v is None:
-                    print '!: Warning: Empty tagged value for "%s" in field "%s"' %(k,element.getName())
+                    log.warn("Empty tagged value for tag '%s' in field '%s'.",
+                             k, element.getName())
                     continue
 
                 if k not in self.nonstring_tgvs:
@@ -880,7 +882,8 @@ class ArchetypesGenerator(BaseGenerator):
                                                 vocaboptions['term_type']
                 )
             else:
-                print "warning: vocabulary with name %s defined more than once." % vocaboptions['name']
+                log.warn("Vocabulary with name '%s' defined more than once.",
+                         vocaboptions['name'])
 
         # end ATVM
 
@@ -1436,7 +1439,8 @@ class ArchetypesGenerator(BaseGenerator):
         return res                                                
 
     def generateArchetypesClass(self, element,**kw):
-        print indent('Generating class: '+element.getName(),self.infoind)
+        log.info("Generating class '%s' %s ",
+                 element.getName(), self.infoind)
 
 ##        if element.hasStereoType(self.python_stereotype):
 ##            return BaseGenerator.generateClass(self,element)

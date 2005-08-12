@@ -17,6 +17,8 @@
 #from __future__ import generators   # only needed for Python 2.2
 
 import sys
+import logging
+import utils
 
 try:
     # for standalone use
@@ -29,6 +31,8 @@ except ImportError:
     from ArchGenXML.utils import read_project_settings, version, usage
         
 def main():
+    utils.initLog('archgenxml.log')
+    utils.addConsoleLogging()
     args = sys.argv[1:]
     settings,args=read_project_settings(args)
     if len(args) < 1 and not settings.get('noclass',0):
