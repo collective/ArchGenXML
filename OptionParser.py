@@ -13,6 +13,8 @@ from optparse import TitledHelpFormatter
 
 import sys
 import textwrap
+import logging
+log = logging.getLogger("options")
 
 #============================================================================
 # Custom Parsers
@@ -167,14 +169,18 @@ class AGXOptionParser(OptionParser):
 
 
     def read_project_configfile(self, filename, settings):
-        """Read project config file into settings."""
+        """Read project config file into settings.
+        """
 
+        log.debug("Trying to read the config file '%s'",
+                  filename)
         cp = ConfigParser()
         try:
-            fname = open(filename,"r")
+            fname = open(filename, 'r')
         except:
             self.print_version()
-            print "\nERROR: Can't open project configuration file '%s'!" % filename
+            log.error("Can't open project configuration file '%s'.",
+                      filename)
             sys.exit(2)
 
         cp.readfp(fname)

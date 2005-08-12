@@ -2591,17 +2591,16 @@ class ArchetypesGenerator(BaseGenerator):
         self.generatedModules=[]
 
         suff=os.path.splitext(self.xschemaFileName)[1].lower()
-        print 'Parsing...'
-        print '==============='
+        log.info("Parsing...")
         if not self.noclass:
             if suff.lower() in ('.xmi','.xml'):
-                print 'opening xmi'
+                log.debug("Opening xmi...")
                 self.root=root=XMIParser.parse(self.xschemaFileName,
                     packages=self.parse_packages,generator=self,    
                     generate_datatypes=self.generate_datatypes)
                     
             elif suff.lower() in ('.zargo','.zuml','.zip'):
-                print 'opening zargo'
+                log.debug("Opening zargo...")
                 zf=ZipFile(self.xschemaFileName)
                 xmis=[n for n in zf.namelist() if os.path.splitext(n)[1].lower()in ['.xmi','.xml']]
                 assert(len(xmis)==1)
@@ -2617,19 +2616,19 @@ class ArchetypesGenerator(BaseGenerator):
             if self.outfileName:
                 root.setName(os.path.split(self.outfileName)[1])
 
-            print 'outfile:',self.outfileName
+            log.info("Directory in which we're generating the files: '%s'.",
+                     self.outfileName)
         else:
             self.root=root=DummyModel(self.outfileName)
-        print 'Generating...'
-        print '=============='
+        log.info('Generating...')
         if self.method_preservation:
-            print 'method bodies will be preserved'
+            log.debug('Method bodies will be preserved')
         else:
-            print 'method bodies will be overwritten'
+            log.debug('Method bodies will be overwritten')
         if not has_enhanced_strip_support:
-            print "Warning: Can't build i18n message catalog. Needs 'python 2.3' or later."
+            log.warn("Can't build i18n message catalog. Needs 'python 2.3' or later.")
         if self.build_msgcatalog and not has_i18ndude:
-            print "Warning: Can't build i18n message catalog. Module 'i18ndude' not found."
+            log.warn("Can't build i18n message catalog. Module 'i18ndude' not found.")
         if not XMIParser.has_stripogram:
-            print "Warning: Can't strip html from doc-strings. Module 'stripogram' not found."
+            log.warn("Can't strip html from doc-strings. Module 'stripogram' not found.")
         self.generateProduct(root)

@@ -2021,7 +2021,8 @@ class XMIStateMachine(XMIStateContainer):
         for sel in sels:
             state = XMIState(sel)
             if getAttributeValue(sel, XMI.PSEUDOSTATE_KIND, None) == 'initial' or sel.getAttribute('kind') == 'initial':
-                print 'initial state:', state.getCleanName()
+                log.debug("Initial state: '%s'.",
+                          state.getCleanName())
                 state.isinitial = 1
             self.addState(state)
 
@@ -2569,7 +2570,8 @@ def buildHierarchy(doc, packagenames):
         if c.getName() in datatypenames and not c.hasStereoType(XMI.generate_datatypes) \
             and c.isEmpty():
             c.internalOnly = 1
-            print 'internal class (not generated):', c.getName()
+            log.debug("Internal class (not generated): '%s'.",
+                      c.getName())
 
     XMI.buildRelations(doc, allObjects)
     XMI.buildGeneralizations(doc, allObjects)

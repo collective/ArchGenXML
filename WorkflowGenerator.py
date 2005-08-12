@@ -6,6 +6,8 @@ from utils import readTemplate, cleanName
 import utils
 from PyParser import PyModule
 from BaseGenerator import BaseGenerator
+import logging
+log = logging.getLogger('workflow')
 
 class WorkflowGenerator(BaseGenerator):
     atgenerator=None
@@ -45,7 +47,8 @@ class WorkflowGenerator(BaseGenerator):
             d['parsedModule']=parsedModule
 
             # generate workflow script
-            print utils.indent('Generating workflow: ' + sm.getName(),self.atgenerator.infoind)
+            log.info("Generating workflow '%s'.",
+                     sm.getName())
             templ=readTemplate('create_workflow.py')
             dtml=HTML(templ,d)
             res=dtml()
@@ -56,7 +59,7 @@ class WorkflowGenerator(BaseGenerator):
             of.close()
 
             # generate workflow transition script
-            print utils.indent('Generating workflow script(s).',self.atgenerator.infoind)
+            log.info("Generating workflow script(s).")
             templ=readTemplate('create_workflow_script.py')
 
             scriptpath=os.path.join(extDir,cleanName(sm.getName())+'_scripts.py')

@@ -243,8 +243,10 @@ def set_setting(okey, value, settings):
             settings[ALLOWED_OPTIONS_MAP[okey][3]]= value
         elif ALLOWED_OPTIONS_MAP[okey][4] == 'commalist':
             settings[ALLOWED_OPTIONS_MAP[okey][3]]= value.split(',')
-        print "set %s [%s] to %s" % (ALLOWED_OPTIONS_MAP[okey][3],ALLOWED_OPTIONS_MAP[okey][4], value)
-
+        log.debug("Setting config option '%s' [%s] to '%s'.",
+                  ALLOWED_OPTIONS_MAP[okey][3],
+                  ALLOWED_OPTIONS_MAP[okey][4],
+                  value)
 
 def modify_settings(key, value, settings, shortkey=0):
     """ option is an 2-tuple, settings a dict """
@@ -256,13 +258,14 @@ def modify_settings(key, value, settings, shortkey=0):
             settings=set_setting(okey,value,settings)
 
 
-def read_project_configfile(filename,settings):
+def read_project_configfile(filename, settings):
     cp = ConfigParser()
     try:
-        fname = open(filename,"r")
+        fname = open(filename, "r")
     except:
-        print ARCHGENXML_VERSION_LINE
-        print "\nERROR: Can't open project configuration file '%s'!", filename
+        log.info(ARCHGENXML_VERSION_LINE)
+        log.error("Can't open project configuration file '%s'!",
+                  filename)
         sys.exit(2)
 
     cp.readfp(fname)
@@ -283,6 +286,7 @@ def read_project_settings(args):
     # this should use sometimes the new advenced python2.3 parser
 
     # set defaults
+    log.debug("Setting project settings to default values:")
     settings={}
     settings['version']=version()
     settings['author'] = None
@@ -296,6 +300,9 @@ def read_project_settings(args):
     settings['outfilename'] = None
     settings['rcs_id'] = 0
     settings['generated_date'] = 0
+    for setting in settings:
+        log.debug("    %s = %s",
+                  setting, settings[setting])
 
     shortoptions = ':'.join([ ALLOWED_OPTIONS_MAP[optkey][1] \
         for optkey in ALLOWED_OPTIONS_MAP.keys() \
@@ -311,7 +318,8 @@ def read_project_settings(args):
     # first run to get configfile
     for option in opts:
         if option[0] in ['--project-configuration','--cfg','-c'] and option[1]:
-            print "Use configfile", option[1]
+            log.info("Using configfile '%s'.",
+                     option[1])
             read_project_configfile(option[1],settings)
 
     # second run to overide with commandline parameters
@@ -328,12 +336,12 @@ def read_project_settings(args):
 
 ARCHGENXML_VERSION_LINE = """\
 ArchGenXML %(version)s
-(c) 2003 BlueDynamics GmbH, under GNU General Public License 2.0 or later
+(c) 2003 BlueDynamics GmbH, under GNU General Public License 2.0 or later\
 """
 
 def version():
     ver=open(os.path.join(sys.path[0],'version.txt')).read().strip()
-    print ARCHGENXML_VERSION_LINE % {'version': ver}
+    log.info(ARCHGENXML_VERSION_LINE % {'version': ver})
     return ver
 
 USAGE_TEXT = """\
