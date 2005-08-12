@@ -2232,8 +2232,8 @@ class ArchetypesGenerator(BaseGenerator):
                           element.getName())
                 continue
             if element.hasStereoType(self.stub_stereotypes):
-                log.info("Ignoring stub class '%s'.",
-                         element.getName())
+                log.debug("Ignoring stub class '%s'.",
+                          element.getName())
                 continue
 
             module=element.getModuleName()
