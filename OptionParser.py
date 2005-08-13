@@ -117,13 +117,18 @@ class AGXOption(Option):
             values.ensure_value(dest, []).extend(value)
             log.debug("After adding, the option's value is '%s'.",
                       getattr(values, dest))
+        elif action == "deprecationwarning":
+            log.warn("Option '%s' isn't in use anymore. Run ArchGenXML with "
+                     "--sample-config or --help for assistance. At the end of "
+                     "--help you can see what you should use instead.",
+                     opt)
         else:
             Option.take_action(self, action, dest, opt, value, values, parser)
 
     # Yes, this needs to be placed right at the end of the class.
     ATTRS = Option.ATTRS + ['section']
     TYPES = Option.TYPES + ('yesno', 'commalist')
-    ACTIONS = Option.ACTIONS + ('sample_config', 'load_config',)
+    ACTIONS = Option.ACTIONS + ('sample_config', 'load_config', 'deprecationwarning')
     TYPE_CHECKER = Option.TYPE_CHECKER
     TYPE_CHECKER['yesno'] = check_yesno
     TYPE_CHECKER['commalist'] = check_commalist
@@ -594,6 +599,67 @@ group.add_option("--relation-implementation",
                  type="string",
                  section="CLASSES",
                  default='basic',
+                 )
+
+parser.add_option_group(group)
+
+#----------------------------------------------------------------------------
+# Deprecated options
+
+group = OptionGroup(parser, "Deprecated")
+
+group.add_option("--ape",
+                 help="Use --ape-support=1",
+                 action="deprecationwarning",
+                 section="DEPRECATED"
+                 )
+
+group.add_option("--actions",
+                 help="Use --generate-actions=1",
+                 action="deprecationwarning",
+                 section="DEPRECATED"
+                 )
+
+group.add_option("--no-actions",
+                 help="Use --generate-actions=0",
+                 action="deprecationwarning",
+                 section="DEPRECATED"
+                 )
+
+group.add_option("--no-widget-enhancement",
+                 help="Use --widget-enhancement=0",
+                 action="deprecationwarning",
+                 section="DEPRECATED"
+                 )
+
+group.add_option("--no-method-preservation",
+                 help="Use --method-preservation=0",
+                 action="deprecationwarning",
+                 section="DEPRECATED"
+                 )
+
+group.add_option("--no-message-catalog",
+                 help="Use --message-catalog=0",
+                 action="deprecationwarning",
+                 section="DEPRECATED"
+                 )
+
+group.add_option("--no-module-info-header",
+                 help="Use --module-info-header=0",
+                 action="deprecationwarning",
+                 section="DEPRECATED"
+                 )
+
+group.add_option("--no-rcs-id",
+                 help="Use --rcs-id=0",
+                 action="deprecationwarning",
+                 section="DEPRECATED"
+                 )
+
+group.add_option("--no-generated-date",
+                 help="Use --generated-date=0",
+                 action="deprecationwarning",
+                 section="DEPRECATED"
                  )
 
 parser.add_option_group(group)
