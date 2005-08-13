@@ -23,11 +23,9 @@ from OptionParser import parser
 try:
     # for standalone use
     from ArchetypesGenerator import ArchetypesGenerator
-    from utils import version, usage
 except ImportError:
     # if installed in site-packages:
     from ArchGenXML.ArchetypesGenerator import ArchetypesGenerator
-    from ArchGenXML.utils import version, usage
         
 def main():
     utils.initLog('archgenxml.log')
