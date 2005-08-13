@@ -191,40 +191,50 @@ class AGXOptionParser(OptionParser):
         """Print sample config file.
         """
 
+        log.debug("Printing sample configuration file.")
         for section, options in self.options_by_section().items():
+            if  section == 'DEPRECATED':
+                log.debug("Skipping 'deprecated' section.")
+                continue
             print "[%s]" % section
+            print
             for opt in options:
                 if opt.help == SUPPRESS_HELP:
                     continue
-                for name in opt._long_opts:
-                    if not name:
-                        continue
-                    name = name[2:]  # get rid of --
-                    help_lines = textwrap.wrap(opt.help, 70)
+                name = opt._long_opts[0]
+                if not name:
+                    continue
+                name = name[2:]  # get rid of --
+                if name == 'license':
+                    log.debug("Skipping over multi-line license. Need to figure out how to deal with that.")
+                    # TBD
+                    continue
+                help_lines = textwrap.wrap(opt.help, 70)
 
-                    for line in help_lines:
-                        print "## %s" % line
-                    if opt.action == "store_true":
-                        if opt.default == 1:
-                            print '%s' % name
-                        else:
-                            print '#%s' % name
-                    elif opt.action == "store_false":
-                        if opt.default == 0:
-                            print '%s' % name
-                        else:
-                            print '#%s' % name
-                    elif opt.type=="yesno":
-                        # Restrict this to the default value
-                        print "#%s: yes" % name
-                        print "#%s: no" % name
+                for line in help_lines:
+                    print "## %s" % line
+                if opt.action == "store_true":
+                    if opt.default == 1:
+                        print '%s' % name
                     else:
-                        if opt.default != 'NODEFAULT':
-                            print "%s: %s" % (name, opt.default)
-                        else:
-                            print "#%s: " % name
-                    # Blank line
-                    print
+                        print '#%s' % name
+                elif opt.action == "store_false":
+                    if opt.default == 0:
+                        print '%s' % name
+                    else:
+                        print '#%s' % name
+                elif opt.type=="yesno":
+                    if opt.default:
+                        print "#%s: yes" % name
+                    else:
+                        print "#%s: no" % name
+                else:
+                    if opt.default != 'NODEFAULT':
+                        print "#%s: %s" % (name, opt.default)
+                    else:
+                        print "#%s: " % name
+                # Blank line
+                print
             # Blank line
             print
 
