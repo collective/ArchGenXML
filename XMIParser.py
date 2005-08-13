@@ -1506,6 +1506,8 @@ class XMIClass (XMIElement, StateMachineContainer):
             self.addMethodDefs(meth)
 
         if XMI.getGenerationOption('default_field_generation'):
+            log.debug("We are to generate the 'title' and 'id' fields for this class, "
+                      "whether or not they are defined in the UML model.")
             if not self.hasAttribute('title'):
                 title = XMIAttribute()
                 title.id = 'title'

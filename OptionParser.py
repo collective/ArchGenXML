@@ -2,6 +2,9 @@
 
 # Requires Python 2.3
 
+# Created by: ????????
+# Updated and integrated with agx by Reinout van Rees, Zest software.
+
 from ConfigParser import SafeConfigParser as ConfigParser
 
 from optparse import Option
@@ -14,6 +17,7 @@ from optparse import TitledHelpFormatter
 import sys
 import textwrap
 import logging
+import codesnippets
 log = logging.getLogger("options")
 
 #============================================================================
@@ -50,6 +54,7 @@ class AGXHelpFormatter(TitledHelpFormatter):
 
         return ", ".join(opts)
 
+
 class AGXOption(Option):
     """Option parser option class for ArchGenXML parser."""
 
@@ -68,33 +73,62 @@ class AGXOption(Option):
                     (opt, value, choices))
 
 
-    #def check_commalist(option, opt, value):
-    #    return value
+    def check_commalist(option, opt, value):
+        log.debug("Checking commalist value '%s' for option '%s'.",
+                  value, opt)
+        try:
+            value = value.split(",")
+            log.debug("We've splitted the value, it is now '%s'.",
+                      value)
+            return value
+        except:
+            raise OptionValueError
 
     def take_action(self, action, dest, opt, value, values, parser):
-        """Perform option."""
+        """Perform action.
+        """
 
         # Overridden to provide sample_config option and to handle
         # commalist as a list.
-
+        log.debug("Running an action '%s' for option '%s', value '%s'.",
+                  action, opt, value)
         if action == "sample_config":
+            log.debug("We'll print the sample config and exit.")
             print parser.sample_config()
             sys.exit(0)
         elif action == "load_config":
+            log.debug("We'll read in the project's config file '%s'.",
+                      value)
             parser.read_project_configfile(value, values)
         elif action == "append" and self.type == "commalist":
-            value = value.split(",")
+            log.debug("We're a commalist and we have to append value '%s'.",
+                      value)
+            log.debug("Ensuring that option '%s' exists.",
+                      dest)
+            values.ensure_value(dest, [])
+            original_value = getattr(values, dest)
+            log.debug("Before adding, the option's value was '%s'.",
+                      original_value)
+            if original_value == '':
+                # Bloody hack, but can't figure out what's wrong.
+                log.debug("Don't know why, but our list is an empty string. "
+                          "Resetting it to an empty list. (HACK).")
+                setattr(values, dest, [])
             values.ensure_value(dest, []).extend(value)
+            log.debug("After adding, the option's value is '%s'.",
+                      getattr(values, dest))
         else:
             Option.take_action(self, action, dest, opt, value, values, parser)
 
+    # Yes, this needs to be placed right at the end of the class.
     ATTRS = Option.ATTRS + ['section']
-    TYPES = Option.TYPES + ('yesno','commalist')
-    ACTIONS = Option.ACTIONS + ('sample_config','load_config',)
+    TYPES = Option.TYPES + ('yesno', 'commalist')
+    ACTIONS = Option.ACTIONS + ('sample_config', 'load_config',)
     TYPE_CHECKER = Option.TYPE_CHECKER
     TYPE_CHECKER['yesno'] = check_yesno
-    #TYPE_CHECKER['commalist'] = check_commalist
+    TYPE_CHECKER['commalist'] = check_commalist
     TYPED_ACTIONS = Option.TYPED_ACTIONS + ('load_config',)
+
 
 class AGXOptionParser(OptionParser):
     """Parser for ArchGenXML.
@@ -176,13 +210,14 @@ class AGXOptionParser(OptionParser):
                         else:
                             print '#%s' % name
                     elif opt.type=="yesno":
-                        print "#%s = yes" % name
-                        print "#%s = no" % name
+                        # Restrict this to the default value
+                        print "#%s: yes" % name
+                        print "#%s: no" % name
                     else:
                         if opt.default != 'NODEFAULT':
-                            print "%s = %s" % (name, opt.default)
+                            print "%s: %s" % (name, opt.default)
                         else:
-                            print "#%s = " % name
+                            print "#%s: " % name
                     # Blank line
                     print
             # Blank line
@@ -194,7 +229,7 @@ class AGXOptionParser(OptionParser):
 
         log.debug("Trying to read the config file '%s'",
                   filename)
-        cp = ConfigParser()
+        config_parser = ConfigParser()
         try:
             fname = open(filename, 'r')
         except:
@@ -203,12 +238,14 @@ class AGXOptionParser(OptionParser):
                       filename)
             sys.exit(2)
 
-        cp.readfp(fname)
+        config_parser.readfp(fname)
         fname.close()
 
         # Collect all options
 
         options = self.get_all_options()
+        log.debug("Options we read from the config file: %r.",
+                  options)
 
         # Walk through options, checking in config file
 
@@ -219,8 +256,8 @@ class AGXOptionParser(OptionParser):
                     if not name:
                         continue
                     name = name[2:]
-                    if cp.has_option(section, name):
-                        option.process(option, cp.get(section, name), settings, parser)
+                    if config_parser.has_option(section, name):
+                        option.process(option, config_parser.get(section, name), settings, parser)
 
 
 #============================================================================
@@ -233,12 +270,12 @@ description = "A program for generating Archetypes from XMI files."
 parser = AGXOptionParser(usage=usage, description=description, version="%prog 1.0")
 
 parser.add_option("-o",
-        "--outfile",
-        dest="outfilename",
-        metavar="PATH",
-        help="Package directory to create",
-        section="GENERAL",
-        )
+                  "--outfile",
+                  dest="outfilename",
+                  metavar="PATH",
+                  help="Package directory to create",
+                  section="GENERAL",
+                  )
 
 #----------------------------------------------------------------------------
 # Config File options
@@ -248,13 +285,13 @@ group = OptionGroup(parser, "Configuration File Options")
 group.add_option("-c",
         "--cfg",
         dest="config_file",
-        help="Use configuration file",
+        help="Use configuration file.",
         action="load_config",
         type="string",
         )
 
 group.add_option( "--sample-config",
-        help="View sample configuration file.",
+        help="Show sample configuration file.",
         action="sample_config",
         )
 
@@ -267,44 +304,45 @@ parser.add_option_group(group)
 group = OptionGroup(parser, "Parsing Options")
 
 group.add_option("-t",
-        "--unknown-types-as-string",
-        dest="unknownTypesAsString",
-        help="Unknown attribute types will be treated as strings",
-        action="store_true",
-        section="CLASSES",
+                 "--unknown-types-as-string",
+                 dest="unknownTypesAsString",
+                 type="yesno",
+                 help="Treat unknown attribute types as strings (default is 0).",
+                 default=0,
+                 section="CLASSES",
         )
 
 group.add_option("--generate-packages",
-        help="Name of packages to generate (can specify as comma-separated list, or specify several times)",
-        section="GENERAL",
-        action="append",
-        dest="generate_packages",
-        type="commalist",
-        )
+                 help="Name of packages to generate (can specify as comma-separated list, or specify several times)",
+                 section="GENERAL",
+                 action="append",
+                 dest="generate_packages",
+                 type="commalist",
+                 )
 
 # XXX: When would this be the right option to use, as opposed to
 # generate-packages, above? - WJB
 
 group.add_option("-P",
-        "--parse-packages",
-        type="commalist",
-        action="append",
-        metavar="GENERAL",
-        dest="parse_packages",
-        help="Name of packages to parse in source file (can specify several times)",
-        section="GENERAL",
-        )
-
-# XXX:
-# Not sure that this works in the current system.
-# utils.py/makeFile looks for force="ask", but not sure this is set
+                 "--parse-packages",
+                 type="commalist",
+                 action="append",
+                 metavar="GENERAL",
+                 dest="parse_packages",
+                 help="Names of packages to scan for classes (can specify "
+                 "as comma-separated list, or specify several times). "
+                 "FIXME: Leaving this empty probably means that all "
+                 "packages are scanned.",
+                 section="GENERAL",
+                 )
 
 group.add_option("-f",
-        "--force",
-        help="Overwrite files without asking?",
-        default=1,
-        section="GENERAL",
-        )
+                 "--force",
+                 help="Overwrite existing files? (Default is 1).",
+                 default=1,
+                 type="yesno",
+                 section="GENERAL",
+                 )
 
 parser.add_option_group(group)
 
@@ -314,82 +352,96 @@ parser.add_option_group(group)
 group = OptionGroup(parser, "Generation Options")
 
 group.add_option("--widget-enhancement",
-        dest="widget_enhancement",
-        action="store_true",
-        default=1,
-        help="Do not create widgets with default label, label_msgid, description,"
-             " description_msgid, and i18ndomain",
-        section="CLASSES",
-        )
-
-group.add_option("--no-widget-enhancement",
-        dest="widget_enhancement",
-        action="store_false",
-        help="Do not create widgets with default label, label_msgid, description,"
-             " description_msgid, and i18ndomain",
-        )
-
-group.add_option("-a",
-        "--actions",
-        dest="generateActions",
-        default=1,
-        help="Generate actions (default)",
-        )
-
-group.add_option("--no-actions",
-        help="Do not generate actions",
-        dest="generateActions",
-        )
+                 dest="widget_enhancement",
+                 type="yesno",
+                 default=1,
+                 help="Create widgets with default label, label_msgid, description,"
+                 " description_msgid, and i18ndomain (default is 1).",
+                 section="CLASSES",
+                 )
 
 group.add_option("--generate-actions",
-        type='yesno',
-        dest="generateActions",
-        help="",
-        section="CLASSES",
-        )
+                 type='yesno',
+                 dest="generateActions",
+                 default=1,
+                 help="Generate actions (default is 1)",
+                 section="CLASSES",
+                 )
 
 group.add_option("--default-actions",
-        help="Generate default actions explicitly for each class",
-        dest="generateDefaultActions",
-        action="store_true",
-        section="CLASSES",
-        ),
+                 help="Generate default actions explicitly for each class (default is 0).",
+                 dest="generateDefaultActions",
+                 type="yesno",
+                 default=0,
+                 section="CLASSES",
+                 ),
 
 group.add_option("--customization-policy",
-        dest="customization_policy",
-        action="store_true",
-        help="FIXME",
-        section="GENERAL",
-        )
+                 dest="customization_policy",
+                 type="yesno",
+                 default=0,
+                 help="Generate a customization policy (default is 0).",
+                 section="GENERAL",
+                 )
+
+group.add_option("--rcs_id",
+                 dest="rcs_id",
+                 type="yesno",
+                 help="Add RCS $Id$ tags to the generated file (default is 0).",
+                 default=0,
+                 section="GENERAL",
+                 )
+
+group.add_option("--generated_date",
+                 dest="generated_date",
+                 type="yesno",
+                 help="Add generation date to generated files (default is 0).",
+                 default=0,
+                 section="GENERAL",
+                 )
 
 group.add_option("--strip-html",
-        action="store_true",
-        help="Strip HTML tags from documentation strings"
-             " (for UML editors, such as Poseidon, which store HTML inside docs.)",
-        section="DOCUMENTATION",
-        )
+                 type="yesno",
+                 help="Strip HTML tags from documentation strings, "
+                 "handy for UML editors, such as Poseidon, which store HTML "
+                 "inside docs (default is 0).",
+                 default=0,
+                 section="DOCUMENTATION",
+                 )
 
 group.add_option("--method-preservation",
-        help="Methods in the target source will be preserved (default)",
-        default=1,
-        dest="method_preservation",
-        action="store_true",
-        section="CLASSES",
-        )
-
-group.add_option("--no-method-preservation",
-        help="Methods in the target source will not be preserved",
-        dest="method_preservation",
-        action="store_false",
-        section="CLASSES",
-        )
+                 help="Preserve methods in existing source files (default is 1).",
+                 dest="method_preservation",
+                 type="yesno",
+                 default=1,
+                 section="CLASSES",
+                 )
 
 group.add_option("--backreferences-support",
-        dest="backreferences_support",
-        action="store_true",
-        help="For references, create a back reference field on the referred-to class. Requires ATBackRef product to work.",
-        section="CLASSES",
-        )
+                 dest="backreferences_support",
+                 type="yesno",
+                 help="For references, create a back reference field on the "
+                 "referred-to class. Requires ATBackRef product to work. "
+                 "(Default is 0).",
+                 section="CLASSES",
+                 )
+
+group.add_option("--default-field-generation",
+                 dest="default_field_generation",
+                 help="Always generate 'id' and 'title' fields (default is 0).",
+                 type="yesno",
+                 default=0,
+                 section="CLASSES",
+                 )
+
+group.add_option("--no-classes",
+                 dest="noclass",
+                 help="Don't generate classes, so create an empty "
+                 "project with skin dir and so (default is 0).",
+                 type="yesno",
+                 default=0,
+                 section="CLASSES",
+                 )
 
 parser.add_option_group(group)
 
@@ -399,81 +451,80 @@ parser.add_option_group(group)
 group = OptionGroup(parser, "Internationalization Options")
 
 group.add_option("--message-catalog",
-        dest="build_msgcatalog",
-        help="Automatically build msgid catalogs",
-        type="yesno",
-        default=1,
-        section="I18N",
-        )
-
-group.add_option("--no-message-catalog",
-        dest="build_msgcatalog",
-        help="Do not automatically create msgid catalogs",
-        )
-
-group.add_option("--i18n-support",
-        help="Support for i18NArchetypes. Attributes with a stereotype of 'i18n'"
-             " or taggedValue of 'i18n'=1 will be multilingual.",
-        )
+                 dest="build_msgcatalog",
+                 help="Automatically build msgid catalogs (default is 1).",
+                 type="yesno",
+                 default=1,
+                 section="I18N",
+                 )
 
 group.add_option("--i18n-content-support",
-        dest="i18n_content_support",
-        help="FIXME",
-        section="I18N",
-        )
+                 help="Support for i18NArchetypes. Attributes with a stereotype of 'i18n'"
+                 " or taggedValue of i18n=1 will be multilingual (default is 0).",
+                 type="yesno",
+                 dest="i18n_content_support",
+                 default=0,
+                 section="I18N",
+                 )
 
 parser.add_option_group(group)
-
 
 #----------------------------------------------------------------------------
 # Module information options
 
 group = OptionGroup(parser, "Customization Options",
-        "These options set the defaults for the module information headers."
-        " They can be overriden by taggedValues."
-        )
+                    "These options set the defaults for the module information headers."
+                    " They can be overriden by taggedValues."
+                    )
 
 group.add_option("--module-info-header",
-        dest="module_info_header",
-        action="store",
-        default=1,
-        type="yesno",
-        help="Generate module information header",
-        section="DOCUMENTATION",
-        )
-
-group.add_option("--no-module-info-header",
-        dest="module_info_header",
-        help="Do not generate module information header",
-        action="store_false",
-        )
+                 dest="module_info_header",
+                 default=1,
+                 type="yesno",
+                 help="Generate module information header",
+                 section="DOCUMENTATION",
+                 )
 
 group.add_option("--author",
-        help="Set default author value",
-        section="DOCUMENTATION",
-        )
+                 type="commalist",
+                 action="append",
+                 dest="author",
+                 help="Set default author value (can specify as comma-separated list, "
+                 "or specify several times).",
+                 default='',
+                 section="DOCUMENTATION",
+                 )
 
 # Added US spelling of email as alternate
 
 group.add_option("--e-mail",
-        "--email",
-        dest="email",
-        help="Set default email",
-        section="DOCUMENTATION",
-        )
+                 "--email",
+                 dest="email",
+                 help="Set default email (can specify as comma-separated list, "
+                 "or specify several times).",
+                 type="commalist",
+                 action="append",
+                 default='',
+                 section="DOCUMENTATION",
+                 )
 
 group.add_option("--copyright",
-        help="Set default copyright",
-        section="DOCUMENATION",
-        )
+                 dest="copyright",
+                 help="Set default copyright",
+                 default='',
+                 type="string",
+                 section="DOCUMENTATION",
+                 )
 
 # Added US spelling of license as alternate
 
 group.add_option("--license",
-        "--licence",
-        help="Set default licence.",
-        section="DOCUMENTATION",
-        )
+                 "--licence",
+                 help="Set default licence (default is the GPL).",
+                 default=codesnippets.GPLTEXT,
+                 section="DOCUMENTATION",
+                 type="string", #xxx stringlist? 
+                 )
 
 parser.add_option_group(group)
 
@@ -484,109 +535,84 @@ parser.add_option_group(group)
 
 group = OptionGroup(parser, "Permissions")
 
-group.add_option("--creation-permission",
-        dest="creation_permission",
-        help='Specifies permission to create content'
-             ' (defaults to "Add [project] content.")',
-        section="CLASSES",
-        )
+group.add_option("--default-creation-permission",
+                 dest="default_creation_permission",
+                 help="Specifies default permission to create content"
+                 " (defaults to 'Add portal content.'). "
+                 "Warning: it used to be 'Add [CREATION_PERMISSION] content', "
+                 "so with the 'Add' and 'content' automatically added.",
+                 default="Add portal content",
+                 type="string",
+                 section="CLASSES",
+                 )
+#XXX handle creation_permission the right way.
 
 group.add_option("--detailed-created-permissions",
-        action="store_true",
-        help="Separate creation permissions per class (defaults to no)",
-        section="CLASSES",
-        )
+                 type="yesno",
+                 help="Separate creation permissions per class (defaults to no)",
+                 default=0,
+                 section="CLASSES",
+                 dest="detailed_creation_permissions",
+                 )
 
-# This was a typo, and should be deprecated.
 
-group.add_option("--detailled-creation-permissions",
-        action="store",
-        type="yesno",
-        help=SUPPRESS_HELP,
-        section="CLASSES",
-        )
 
 parser.add_option_group(group)
 
 #----------------------------------------------------------------------------
-# FIXME: Storage Options
+# Storage Options
 
 group = OptionGroup(parser, "Storage Options")
 
-group.add_option("--storage",
-        dest="storage",
-        help="FIXME",
-        section="GENERAL",
-        )
-
-
-group.add_option("--ape",
-        dest="ape_support",
-        action="store_true",
-        help="Generate configuration and generators for APE",
-        )
-
 group.add_option("--ape-support",
-        dest="ape_support",
-        action="store",
-        type="yesno",
-        help="Generate configuration and generators for APE",
-        section="STORAGE",
-        metavar="yes|no"
-        )
+                 dest="ape_support",
+                 type="yesno",
+                 help="Generate configuration and generators for APE (default is 0).",
+                 section="STORAGE",
+                 default=0,
+                 )
 
 group.add_option("--sql-storage-support",
-        dest="sql_storage_support",
-        help="FIXME",
-        action="store_true",
-        section="CLASSES",
-        )
+                 dest="sql_storage_support",
+                 type="yesno",
+                 help="FIXME: not sure it this is used. (default is 0)",
+                 section="CLASSES",
+                 default=0,
+                 )
 
 parser.add_option_group(group)
 
 #----------------------------------------------------------------------------
-# FIXME: Storage Options
+# Relation Options
 
 group = OptionGroup(parser, "Relations")
 
 group.add_option("--relation-implementation",
-        dest="relation_implementation",
-        help="specifies how relations should be implemented (default is basic')",
-        section="CLASSES",
-        default='basic',
-        )
+                 dest="relation_implementation",
+                 help="specifies how relations should be implemented"
+                 "(default is 'basic').",
+                 type="string",
+                 section="CLASSES",
+                 default='basic',
+                 )
 
 parser.add_option_group(group)
 
 #----------------------------------------------------------------------------
 # FIXME: Broken/undocumented options
 
-group = OptionGroup(parser, "Broken/Undocumented Options")
+group = OptionGroup(parser, "Possibly broken options")
 
 # FIXME: This feature doesn't seem working currently in ArchGenXML--the
 # class def gets the prefix, but nothing else does.
 
 group.add_option("--prefix",
-        help="Adds PREFIX before each class name",
-        section="GENERAL",
-        )
-
-group.add_option("-n",
-        "--noclass",
-        action="store_true",
-        help="FIXME",
-        section="CLASSES",
-        )
-group.add_option("--project-configuration",
-        help="FIXME",
-        )
-
-group.add_option("--default-field-generation",
-        dest="default_field_generation",
-        help="FIXME",
-        action="store_true",
-        section="CLASSES",
-        )
+                 help="Adds PREFIX before each class name (default is '').",
+                 default='',
+                 type="string",
+                 dest="prefix",
+                 section="GENERAL",
+                 )
 
 parser.add_option_group(group)
 

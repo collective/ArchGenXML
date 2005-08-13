@@ -6,18 +6,21 @@ import parser
 import pprint
 import sys
 import types
+import logging
+log = logging.getLogger('pyparser')
 
 PROTECTED_BEGIN = '##code-section'
 PROTECTED_END = '##/code-section'
 
 
 class PyModule:
-    """ This is the module being called directly from the rest of ArchGenXML
+    """This is the module being called directly from the rest of ArchGenXML.
 
     Through the __init__() you can feed it a file and it chops it up
     in neat chunks of classes and methods. This way the other parts of
     ArchGenXML can add/remove/augment those chunks.
     """
+
     filebuf = None
     splittedSource = None
     ast = None
@@ -28,12 +31,15 @@ class PyModule:
     protectedSections = {}
 
     def __init__(self, file, mode='file'):
-        """ Start dividing 'file' in chunks
+        """Start dividing 'file' in chunks.
 
         'file' is the to chunk up. By default it is the name of a file
         on the filesystem, but with 'mode' set to 'string', 'file' is
         passed as a string.
         """
+
+        log.debug("Initialising module parser for file '%s'.",
+                  file)
         # Dictionary inits
         self.classes = {}
         self.functions = {}

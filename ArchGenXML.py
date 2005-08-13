@@ -7,7 +7,6 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# RCS-ID:      $Id$
 # Copyright:   (c) 2003 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
@@ -19,41 +18,57 @@
 import sys
 import logging
 import utils
+from OptionParser import parser
 
 try:
     # for standalone use
     from ArchetypesGenerator import ArchetypesGenerator
-    from utils import read_project_settings, version, usage
+    from utils import version, usage
 except ImportError:
-    raise
     # if installed in site-packages:
     from ArchGenXML.ArchetypesGenerator import ArchetypesGenerator
-    from ArchGenXML.utils import read_project_settings, version, usage
+    from ArchGenXML.utils import version, usage
         
 def main():
     utils.initLog('archgenxml.log')
     utils.addConsoleLogging()
-    args = sys.argv[1:]
-    settings,args=read_project_settings(args)
-    if len(args) < 1 and not settings.get('noclass',0):
-        usage()
-        
-    if len(args):
-        xschemaFileName = args[0]
-    else:
-        xschemaFileName = ''
+    log = logging.getLogger('main')
 
-    # if outfilename is not given by the -o option try getting the second 
-    # regular argument
-    if not settings['outfilename']: 
-        if len(args) > 1:
-            settings['outfilename']=args[1]
+    print utils.ARCHGENXML_VERSION_LINE % str(utils.version())
 
-    if not settings['outfilename']:
-        usage(2)
-    
+    log.debug("Reading command line options first.")
+    (settings, args) = parser.parse_args()
+    try:
+        model = args[0]
+        log.debug("Model file is '%s'.",
+                  model)
+    except:
+        print "Hey, we need to be passed a UML file as an argument!"
+        sys.exit(2)
+    if settings.config_file:
+        log.debug("Config file indicated: '%s', reading it.",
+                  settings.config_file)
+        (settings, args) = parser.read_project_configfile(settings.config_file, settings)
+
+    # This is a little bit hacky. Probably should read optparse's doc
+    # better. [Reinout] 
+
+    log.debug("Figuring out the settings we're passing to the "
+              "main program...")
+    keys = dir(settings)
+    keys = [key for key in keys
+            if not key.startswith('_')
+            and not key in ['ensure_value', 'read_file', 'read_module']]
+    log.debug("Keys available through the option parser: %r.",
+              keys)
+    d = {}
+    for key in keys:
+        d[key] = getattr(settings, key)
+        log.debug("Option '%s' has value '%s'.",
+                  key, d[key])
+
     # start generation
-    gen=ArchetypesGenerator(xschemaFileName, **settings)
+    gen=ArchetypesGenerator(model, **d)
     gen.parseAndGenerate()
 
 if __name__ == '__main__':

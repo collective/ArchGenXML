@@ -17,16 +17,17 @@ def makeFile(outfilename, force=1):
     if (not force) and os.path.exists(outfilename):
         log.debug("File already exists and we're not to force it. Returning nothing.")
         return None
-    elif (force=='ask') and os.path.exists(outfilename):
-        log.debug("File already exists, asking what to do.")
-        reply = raw_input('File %s exists.  Overwrite? (y/n): ' % outfilename)
-        if reply == 'y':
-            log.debug("Got a yes: overwriting.")
-            outfile = open(outfilename, 'w')
-        else:
-            log.debug("Didn't get a 'y' but a '%s', returning nothing.",
-                      reply)
-            return None
+    ##Commented out, as force can only be true or false, not 'ask'.
+    # elif (force=='ask') and os.path.exists(outfilename):
+    #     log.debug("File already exists, asking what to do.")
+    #     reply = raw_input('File %s exists.  Overwrite? (y/n): ' % outfilename)
+    #     if reply == 'y':
+    #         log.debug("Got a yes: overwriting.")
+    #         outfile = open(outfilename, 'w')
+    #     else:
+    #         log.debug("Didn't get a 'y' but a '%s', returning nothing.",
+    #                   reply)
+    #         return None
     else:
         log.debug("Opening the file for writing and returning it.")
         outfile = open(outfilename, 'w')
@@ -173,258 +174,15 @@ def wrap(text, width):
 
 # end code copy
 
-try:
-    from ConfigParser import SafeConfigParser as ConfigParser
-except:
-    from ConfigParser import ConfigParser
-
-
-# key: (cmdlinekey?, shortcutkey?, cfg-file-key? -> 0 or section-name, internal settings-key, type)
-
-## FIXME: ALL THIS OPTIONS NEED A MAJOR CLEANUP!
-
-ALLOWED_OPTIONS_MAP = {
-    'outfile':                          (0, 'o', 'GENERAL',       'outfilename', 'string'),
-    'prefix':                           (0, 'p', 'GENERAL',       'prefix', 'string'),
-    'generate-packages=':               (1,  0, 'GENERAL',        'generate_packages', 'commalist'),
-    'parse-packages=':                  (1,  0, 'GENERAL',        'parse_packages', 'commalist'),
-    'force':                            (0, 'f', 'GENERAL',       'force', 'switchon'),
-    'ape':                              (1, 0,   None,            'ape_support', 'switchon'),
-    'ape-support':                      (1, 0,   'STORAGE',       'ape_support', 'yesno'), # used in conf-files, no switch here!
-    'actions':                          (1, 'a', None     ,       'generateActions', 'switchon'),
-    'no-actions':                       (1, 0,   None,            'generateActions', 'switchoff'),
-    'generate-actions':                 (0, 0,   'CLASSES',       'generateActions', 'yesno'),
-    'default-actions':                  (1, 0,   'CLASSES',       'generateDefaultActions', 'switchon'),
-    'creation-permission=':             (1, 0,   'CLASSES',       'creation_permission', 'string'),
-    'detailled-creation-permissions=':  (1, 0,   'CLASSES',       'detailled_creation_permissions', 'yesno'),
-    'widget-enhancement':               (0, 0,   'CLASSES',       'widget_enhancement', 'switchon'),
-    'no-widget-enhancement':            (1, 0,   None,            'widget_enhancement', 'switchoff'),
-    'method-preservation':              (1, 0,   'CLASSES',       'method_preservation', 'switchon'),
-    'no-method-preservation':           (1, 0,   None,            'method_preservation', 'switchoff'),
-    'noclass':                          (1, 'n', 'CLASSES',       'noclass', 'switchon,'),
-    'unknown-types-as-string':          (1, 't', 'CLASSES',       'unknownTypesAsString','switchon'),
-    'i18n-content-support=':            (1, 0,   'I18N',          'i18n_content_support','string'),
-    'i18n':                             (1, 0,   None,            'i18n_support','switchon'),
-    'message-catalog':                  (0, 0,   'I18N',          'build_msgcatalog','yesno'),
-    'no-message-catalog':               (1, 0,   None,            'build_msgcatalog','switchoff'),
-    'module-info-header':               (0, 0,   'DOCUMENTATION', 'module_info_header','yesno'),
-    'no-module-info-header':            (1, 0,   None,            'module_info_header','switchoff'),
-    'author=':                          (1, 0,   'DOCUMENTATION', 'author', 'string'),
-    'e-mail=':                          (1, 0,   'DOCUMENTATION', 'email', 'string'),
-    'copyright=':                       (1, 0,   'DOCUMENTATION', 'copyright', 'string'),
-    'license=':                         (1, 0,   'DOCUMENTATION', 'license', 'string'),
-    'strip-html':                       (1, 0,   'DOCUMENTATION', 'striphtml', 'switchon'),
-    'rcs-id':                           (1, 0,   'DOCUMENTATION', 'rcs_id','switchon'),
-    'no-rcs-id':                        (1, 0,   'DOCUMENTATION', 'rcs_id','switchoff'),
-    'generated-date':                   (1, 0,   'DOCUMENTATION', 'generated_date','switchon'),
-    'no-generated-date':                (1, 0,   'DOCUMENTATION', 'generated_date','switchoff'),
-    'cfg=':                             (1, 'c', None,            None,'string'),
-    'project-configuration=':           (1, 0,   None,            None,'string'),
-    'storage=':                         (1, 0,   'GENERAL',       'storage', 'string'),
-    'sql-storage-support':              (1, 0,   'CLASSES',       'sql_storage_support', 'switchon'),
-    'default-field-generation':         (1, 0,   'CLASSES',       'default_field_generation', 'switchon'),
-    'backreferences-support':           (1, 0,   'CLASSES',       'backreferences_support', 'switchon'),
-    'relation-implementation=':         (1, 0,   'CLASSES',       'relation_implementation', 'string'),
-    'customization-policy':             (1, 0,   'GENERAL',       'customization_policy','switchon'),
-    'noclass':                          (1, 0,   'GENERAL',       'noclass','switchon'),
-}
-
-def set_setting(okey, value, settings):
-    """ set one option """
-    yesno={'yes':1, 'y':1, 1:1, '1':1, 'no':None, 'n':None, 0:None, '0':None}
-    if ALLOWED_OPTIONS_MAP[okey][3]:
-        if ALLOWED_OPTIONS_MAP[okey][4] == 'switchon':
-            settings[ALLOWED_OPTIONS_MAP[okey][3]]= 1
-        elif ALLOWED_OPTIONS_MAP[okey][4] == 'switchoff':
-            settings[ALLOWED_OPTIONS_MAP[okey][3]]= None
-        elif ALLOWED_OPTIONS_MAP[okey][4] == 'yesno' and yesno.has_key(value):
-            settings[ALLOWED_OPTIONS_MAP[okey][3]]= yesno[value]
-        elif ALLOWED_OPTIONS_MAP[okey][4] == 'string':
-            settings[ALLOWED_OPTIONS_MAP[okey][3]]= value
-        elif ALLOWED_OPTIONS_MAP[okey][4] == 'commalist':
-            settings[ALLOWED_OPTIONS_MAP[okey][3]]= value.split(',')
-        log.debug("Setting config option '%s' [%s] to '%s'.",
-                  ALLOWED_OPTIONS_MAP[okey][3],
-                  ALLOWED_OPTIONS_MAP[okey][4],
-                  value)
-
-def modify_settings(key, value, settings, shortkey=0):
-    """ option is an 2-tuple, settings a dict """
-    okey= len(key)>2 and key[:2]=='--' and key[2:]
-    if okey:
-        if not ALLOWED_OPTIONS_MAP.has_key(okey) and ALLOWED_OPTIONS_MAP.has_key(okey+'='):
-            okey+='='
-        if ALLOWED_OPTIONS_MAP.has_key(okey) and (ALLOWED_OPTIONS_MAP[okey][0] or shortkey):
-            settings=set_setting(okey,value,settings)
-
-
-def read_project_configfile(filename, settings):
-    cp = ConfigParser()
-    try:
-        fname = open(filename, "r")
-    except:
-        log.info(ARCHGENXML_VERSION_LINE)
-        log.error("Can't open project configuration file '%s'!",
-                  filename)
-        sys.exit(2)
-
-    cp.readfp(fname)
-    fname.close()
-
-    for key in ALLOWED_OPTIONS_MAP.keys():
-        fkey = key[len(key)-1] == '=' and key[:len(key)-1] or key
-        if cp.has_option(ALLOWED_OPTIONS_MAP[key][2], fkey):
-            set_setting(key, cp.get(ALLOWED_OPTIONS_MAP[key][2], fkey), settings)
-
-##    # print a ugly sample cfg
-##    y=['['+ALLOWED_OPTIONS_MAP[key][2]+']\n'+(key[len(key)-1] == '=' and key[:len(key)-1] or key) for key in ALLOWED_OPTIONS_MAP.keys() if ALLOWED_OPTIONS_MAP[key][2]]
-##    y.sort()
-##    for x in y print x
-
-def read_project_settings(args):
-    """ reads options from args and return options array"""
-    # this should use sometimes the new advenced python2.3 parser
-
-    # set defaults
-    log.debug("Setting project settings to default values:")
-    settings={}
-    settings['version']=version()
-    settings['author'] = None
-    settings['email'] = None
-    settings['copyright'] = None
-    settings['licence'] = None
-    settings['module_info_header'] = 1
-    settings['creation_permission'] = None
-    settings['detailled_creation_permissions'] = None
-    settings['widget_enhancement'] = None
-    settings['outfilename'] = None
-    settings['rcs_id'] = 0
-    settings['generated_date'] = 0
-    for setting in settings:
-        log.debug("    %s = %s",
-                  setting, settings[setting])
-
-    shortoptions = ':'.join([ ALLOWED_OPTIONS_MAP[optkey][1] \
-        for optkey in ALLOWED_OPTIONS_MAP.keys() \
-        if ALLOWED_OPTIONS_MAP[optkey][1]]
-    )
-    longoptions = [optkey for optkey in ALLOWED_OPTIONS_MAP.keys() \
-        if ALLOWED_OPTIONS_MAP[optkey][0]]
-
-    opts, args = getopt.getopt(args, shortoptions,longoptions)
-
-    prefix = ''
-
-    # first run to get configfile
-    for option in opts:
-        if option[0] in ['--project-configuration','--cfg','-c'] and option[1]:
-            log.info("Using configfile '%s'.",
-                     option[1])
-            read_project_configfile(option[1],settings)
-
-    # second run to overide with commandline parameters
-    for option in opts:
-        modify_settings(option[0], option[1], settings)
-        shortdict = { }
-        x=[shortdict.update({ALLOWED_OPTIONS_MAP[key][1]:key}) \
-            for key in ALLOWED_OPTIONS_MAP.keys() \
-            if ALLOWED_OPTIONS_MAP[key][1]]
-
-        if len(option[0])>1 and option[0][0]=='-' and shortdict.has_key(option[0][1:]):
-            modify_settings('--'+shortdict[option[0][1:]], option[1], settings, shortkey=1)
-    return settings, args
 
 ARCHGENXML_VERSION_LINE = """\
-ArchGenXML %(version)s
+ArchGenXML %s
 (c) 2003 BlueDynamics GmbH, under GNU General Public License 2.0 or later\
 """
 
 def version():
     ver=open(os.path.join(sys.path[0],'version.txt')).read().strip()
-    log.info(ARCHGENXML_VERSION_LINE % {'version': ver})
-    return ver
-
-USAGE_TEXT = """\
-Usage: ArchGenXML.py -o <target>|-c <configfile> [ options ] <xmi-source-file>
-
-OPTIONS:
-    -o <target>
-        Output file directory path for data  representation classes. Last part
-        is used for internal directory namings.
-
-    -P <name1>,<name2>...
-        names of packages to parse in source file
-
-    -a --actions
-        generates actions (default)
-
-    --no-actions
-        do not generates actions
-
-    --method-preservation
-        methods in the target sources will be preserved (default)
-
-    --no-method-preservation
-        methods in the target sources will be preserved
-
-    -t --unknown-types-as-string
-        unknown attribute types will be treated as text
-
-    --ape-support
-        generate apeconf.xml and generators for ape (needs Archetypes 1.1+)
-
-    --i18n-support
-        support for i18NArchetypes. Attributes with a stereotype 'i18n' or a
-        taggedValue 'i18n' set to '1' are multilingual.
-
-    --no-widget-enhancements
-        do not create widgets with default label, label_msgid, description,
-        description_msgid and i18ndomain.
-
-    --no-message-catalog
-        do not automagically create msgid catalogs
-
-    --creation-permission=<perm>
-        specifies which permission to create content default:Add [project]
-        content
-
-    --detailled-creation-permissions=<boolean>
-        seperate creation permissions per class, defaults to 'no'
-
-    --no-module-info-header
-        do not generate module info header
-
-    --author=<string>
-        set default author string for module info headers, taggedValue will
-        override this
-
-    --e-mail=<string>
-        set default e-mail adress string for module info headers, taggedValue
-        will override this
-
-    --copyright=<string>
-        set default copyright string for module info headers, taggedValue will
-        override this
-
-    --licence=<string>
-        set default licence string for module info-headers, taggedValue will
-        override this
-
-    --strip-html
-        strips HTML tags from the document strings (e.g. for Poseidon which
-        uses HTML inside the entity documentation )
-
-    --no-rcs-id
-        skips the addition of an version control ID tag
-
-    --generated-date
-        adds the date the file is generated to the file's header
-
-"""
-
-def usage(returncode=-1):
-    print USAGE_TEXT
-    sys.exit(returncode)
+    return str(ver)
 
 def getFileHeaderInfo(element, generator):
     """ returns and dictionary with all info for the file-header """

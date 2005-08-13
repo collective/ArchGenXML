@@ -27,8 +27,8 @@ from documenttemplate.documenttemplate import HTML
 from codesnippets import *
 import utils
 from odict import odict
-from utils import makeFile, readFile, makeDir,mapName, wrap, indent, getExpression, \
-     isTGVTrue, isTGVFalse, readTemplate, getFileHeaderInfo
+from utils import makeFile, readFile, makeDir, mapName, wrap, indent, getExpression, \
+     isTGVTrue, isTGVFalse, readTemplate, getFileHeaderInfo, version
 
 from BaseGenerator import BaseGenerator
 from WorkflowGenerator import WorkflowGenerator
@@ -129,23 +129,20 @@ class ArchetypesGenerator(BaseGenerator):
     uml_profile.addStereoType('value_class',['XMIDependency'],
         description='declares a class to be used as value class for a certain field class (see <<field>> stereotype)')
 
-    infoind = 0
-    force=1
-    unknownTypesAsString=0
-    generateActions=1
-    generateDefaultActions=0
-    prefix=''
-    prefix=''
-    parse_packages=[] #packages to scan for classes
-    generate_packages=[] #packages to be generated
-    noclass=0   # if set no module is reverse engineered,
-                #just an empty project + skin is created
-    ape_support=0 #generate ape config and serializers/gateways for APE
-    method_preservation=1 #should the method bodies be preserved? defaults now to 0 will change to 1
-    i18n_content_support=0
-    i18n_at=['i18n-archetypes','i18n', 'i18n-at']
-    generate_datatypes=['field','compound_field']
-
+    # The defaults here are already handled by OptionParser
+    # (And we want only a single authorative source of information :-)
+    #force=1
+    #unknownTypesAsString=0
+    #generateActions=1
+    #generateDefaultActions=0
+    #prefix=''
+    #parse_packages=[] #packages to scan for classes
+    #generate_packages=[] #packages to be generated
+    #noclass=0   # if set no module is reverse engineered,
+    #            #just an empty project + skin is created
+    #ape_support=0 #generate ape config and serializers/gateways for APE
+    #method_preservation=1 #should the method bodies be preserved? defaults now to 0 will change to 1
+    #i18n_content_support=0
 
     build_msgcatalog=1
     striphtml=0
@@ -153,12 +150,16 @@ class ArchetypesGenerator(BaseGenerator):
     reservedAtts=['id',]
     portal_tools=['portal_tool','tool']
     variable_schema='variable_schema'
+
     stub_stereotypes=['odStub','stub']
     archetype_stereotype = ['archetype']
     vocabulary_item_stereotype = ['vocabulary_term']
     vocabulary_container_stereotype = ['vocabulary']
     cmfmember_stereotype = ['CMFMember', 'member']
     python_stereotype = ['python', 'python_class']
+
+    i18n_at=['i18n-archetypes','i18n', 'i18n-at']
+    generate_datatypes=['field','compound_field']
 
     left_slots=[]
     right_slots=[]
@@ -197,7 +198,7 @@ class ArchetypesGenerator(BaseGenerator):
     # the stack is needed to remind permissions while a subproduct is generated
     creation_permission_stack = []
 
-    def __init__(self,xschemaFileName, **kwargs):
+    def __init__(self, xschemaFileName, **kwargs):
         self.outfileName=kwargs['outfilename']
 
         if self.outfileName[-1] in ('/','\\'):
@@ -1198,9 +1199,15 @@ class ArchetypesGenerator(BaseGenerator):
             method_names.append('__init__')
 
         if self.method_preservation:
-            cl=self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name,None)
+            log.debug("We are to preserve methods, so we're looking for manual methods.")
+            cl=self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name,
+                                             None)
             if cl:
+                log.debug("The class has the following methods: %r.",
+                          cl.methods.keys())
                 manual_methods=[mt for mt in cl.methods.values() if mt.name not in method_names]
+                log.debug("Found the following manual methods: %r.",
+                          manual_methods)
                 if manual_methods:
                     print >> outfile, '    #manually created methods\n'
 
@@ -1461,7 +1468,7 @@ class ArchetypesGenerator(BaseGenerator):
         print >>outfile,self.generateDependentImports(element)
         print >>outfile,self.generateAdditionalImports(element)
 
-        if self.detailled_creation_permissions:
+        if self.detailed_creation_permissions:
             creation_permission = "'Add %s Content'" % element.getCleanName()
         else:
             creation_permission = None
@@ -1839,12 +1846,18 @@ class ArchetypesGenerator(BaseGenerator):
 
 
     def getAuthors(self, element):
+        log.debug("Getting the authors.")
         authors = self.getOption('author', element, self.author) or 'unknown'
-        authors = authors.split(',')
+        if not type(authors) == type([]):
+            # self.author is already a list
+            authors = authors.split(',')
         authors = [i.strip() for i in authors]
 
+        log.debug("Getting the email addresses.")
         emails = self.getOption('email', element, self.email) or 'unknown'
-        emails = emails.split(',')
+        if not type(emails) == type([]):
+            # self.email is already a list
+            emails = emails.split(',')
         emails = ['<%s>' % i.strip() for i in emails]
 
         authoremail = []
@@ -1887,7 +1900,7 @@ class ArchetypesGenerator(BaseGenerator):
                         'authors':      ', '.join(authors),
                         'emails' :      ', '.join(emails),
                         'authorline':   authorline,
-                        'version':      self.version,
+                        'version':      version(),
                         'date':         date,
                         'copyright':    '\n# '.join(wrap(copyright,77).split('\n')),
                         'licence':      licence,
@@ -2011,7 +2024,7 @@ class ArchetypesGenerator(BaseGenerator):
         if creation_permission:                    
             default_creation_permission = creation_permission
         else:
-            default_creation_permission = 'Add portal content'
+            default_creation_permission = self.default_creation_permission
 
         # prepare (d)TML varibles
         d={'package'                    : package,
@@ -2595,8 +2608,9 @@ class ArchetypesGenerator(BaseGenerator):
             if suff.lower() in ('.xmi','.xml'):
                 log.debug("Opening xmi...")
                 self.root=root=XMIParser.parse(self.xschemaFileName,
-                    packages=self.parse_packages,generator=self,    
-                    generate_datatypes=self.generate_datatypes)
+                                               packages=self.parse_packages,
+                                               generator=self,
+                                               generate_datatypes=self.generate_datatypes)
                     
             elif suff.lower() in ('.zargo','.zuml','.zip'):
                 log.debug("Opening zargo...")
