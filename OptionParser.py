@@ -662,6 +662,42 @@ group.add_option("--no-generated-date",
                  section="DEPRECATED"
                  )
 
+group.add_option("--creation-permission",
+                 help="Use --default-creation-permission",
+                 action="deprecationwarning",
+                 section="DEPRECATED"
+                 )
+
+group.add_option("--detailled-creation-permission",
+                 help="Use --detailed-creation-permission",
+                 action="deprecationwarning",
+                 section="DEPRECATED"
+                 )
+
+group.add_option("--noclass",
+                 help="Use --no-classes",
+                 action="deprecationwarning",
+                 section="DEPRECATED"
+                 )
+
+group.add_option("--i18n",
+                 help="Use --i18n-content-support",
+                 action="deprecationwarning",
+                 section="DEPRECATED"
+                 )
+
+group.add_option("--project-configuration",
+                 help="Use --cfg",
+                 action="deprecationwarning",
+                 section="DEPRECATED"
+                 )
+
+group.add_option("--storage",
+                 help="Really don't know. Perhaps --ape-support?",
+                 action="deprecationwarning",
+                 section="DEPRECATED"
+                 )
+
 parser.add_option_group(group)
 
 #----------------------------------------------------------------------------
