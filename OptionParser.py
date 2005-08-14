@@ -2,8 +2,8 @@
 
 # Requires Python 2.3
 
-# Created by: ????????
-# Updated and integrated with agx by Reinout van Rees, Zest software.
+# Created by Joel Burton
+# Updated and integrated with AGX by Reinout van Rees, Zest software.
 
 from ConfigParser import SafeConfigParser as ConfigParser
 
@@ -18,6 +18,7 @@ import sys
 import textwrap
 import logging
 import codesnippets
+import utils
 log = logging.getLogger("options")
 
 #============================================================================
@@ -271,11 +272,12 @@ class AGXOptionParser(OptionParser):
 
         config_parser.readfp(fname)
         fname.close()
-
+        log.debug("Succesfully read the configuration file.")
+        log.debug("Now trying to deal with the options that have been read.")
         # Collect all options
 
         options = self.get_all_options()
-        log.debug("Options we read from the config file: %r.",
+        log.debug("Options that we have defined: %r.",
                   options)
 
         # Walk through options, checking in config file
@@ -283,12 +285,24 @@ class AGXOptionParser(OptionParser):
         for option in options:
             section = getattr(option, 'section', None)
             if section:
+                log.debug("Found option '%s' in section '%s'.",
+                          option, section)
                 for name in option._long_opts:
                     if not name:
                         continue
                     name = name[2:]
+                    log.debug("Now looking up option '%s' in the config file",
+                              name)
                     if config_parser.has_option(section, name):
-                        option.process(option, config_parser.get(section, name), settings, parser)
+                        value = config_parser.get(section, name)
+                        log.debug("Found it, setting %s = %s.",
+                                  option, value)
+                        option.process(option, value, settings, parser)
+            else:
+                log.debug("Found section-less defined option '%s', which isn't a problem "
+                          "as long as it is --help and so.",
+                          option)
+                        
 
 
 #============================================================================
@@ -301,7 +315,9 @@ The xmi file can either be an exported *.xmi file or a Poseidon or ArgoUML
 *.zuml file.
 """
 
-parser = AGXOptionParser(usage=usage, description=description, version="%prog 1.0")
+version_string = "%prog " + utils.version()
+
+parser = AGXOptionParser(usage=usage, description=description, version=version_string)
 
 parser.add_option("-o",
                   "--outfile",
