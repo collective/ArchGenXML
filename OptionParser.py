@@ -274,34 +274,42 @@ class AGXOptionParser(OptionParser):
         fname.close()
         log.debug("Succesfully read the configuration file.")
         log.debug("Now trying to deal with the options that have been read.")
-        # Collect all options
 
-        options = self.get_all_options()
-        log.debug("Options that we have defined: %r.",
-                  options)
+        sections_in_file = config_parser.sections()
+        log.debug("Sections present in the config file: %r.",
+                  sections_in_file)
+        for section_in_file in sections_in_file:
+            for (option_in_file, value_in_file) in config_parser.items(section_in_file):
+                log.debug("Found config item '%s' in config file with value '%s'.",
+                          option_in_file, value_in_file)
+                self.handle_option_from_file(option_in_file, value_in_file, settings)
 
-        # Walk through options, checking in config file
+    def handle_option_from_file(self, option_in_file, value_in_file, settings):
 
-        for option in options:
+        config_options = self.get_all_options()
+        log.debug("Checking validity of option '%s' in config file.",
+                  option_in_file)
+        found = False
+        for option in config_options:
             section = getattr(option, 'section', None)
             if section:
-                log.debug("Found option '%s' in section '%s'.",
-                          option, section)
                 for name in option._long_opts:
                     if not name:
                         continue
                     name = name[2:]
-                    log.debug("Now looking up option '%s' in the config file",
-                              name)
-                    if config_parser.has_option(section, name):
-                        value = config_parser.get(section, name)
+                    if option_in_file == name and section != 'DEPRECATED':
+                        found = True
                         log.debug("Found it, setting %s = %s.",
-                                  option, value)
-                        option.process(option, value, settings, parser)
+                                  option_in_file, value_in_file)
+                        option.process(option_in_file, value_in_file, settings, parser)
             else:
-                log.debug("Found section-less defined option '%s', which isn't a problem "
-                          "as long as it is --help and so.",
-                          option)
+                # Section-less option like --help and --sample-config
+                pass
+        if found == False:
+            log.warn("Didn't find option '%s' (from the config file) in the list "
+                     "of allowable options. Run ArchGenXML.py with the --help option "
+                     "for information on allowable options.",
+                     option_in_file)
                         
 
 
@@ -317,7 +325,9 @@ The xmi file can either be an exported *.xmi file or a Poseidon or ArgoUML
 
 version_string = "%prog " + utils.version()
 
-parser = AGXOptionParser(usage=usage, description=description, version=version_string)
+parser = AGXOptionParser(usage=usage,
+                         description=description,
+                         version=version_string)
 
 parser.add_option("-o",
                   "--outfile",
