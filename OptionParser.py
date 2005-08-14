@@ -196,6 +196,8 @@ class AGXOptionParser(OptionParser):
             if  section == 'DEPRECATED':
                 log.debug("Skipping 'deprecated' section.")
                 continue
+            log.debug("Printing sample config section '%s'.",
+                      section)
             print "[%s]" % section
             print
             for opt in options:
@@ -205,38 +207,52 @@ class AGXOptionParser(OptionParser):
                 if not name:
                     continue
                 name = name[2:]  # get rid of --
+                log.debug("Printing option named '%s'.",
+                          name)
                 if name == 'license':
                     log.debug("Skipping over multi-line license. Need to figure out how to deal with that.")
                     # TBD
                     continue
                 help_lines = textwrap.wrap(opt.help, 70)
-
+                log.debug("Printing %s lines of help.",
+                          len(help_lines))
                 for line in help_lines:
                     print "## %s" % line
-                if opt.action == "store_true":
-                    if opt.default == 1:
-                        print '%s' % name
-                    else:
-                        print '#%s' % name
-                elif opt.action == "store_false":
-                    if opt.default == 0:
-                        print '%s' % name
-                    else:
-                        print '#%s' % name
-                elif opt.type=="yesno":
+                ##store_true and store_false aren't used anymore, keeping
+                ##this part for a few months anyway :-)
+                #if opt.action == "store_true":
+                #    if opt.default == 1:
+                #        print '%s' % name
+                #    else:
+                #        print '#%s' % name
+                #elif opt.action == "store_false":
+                #    if opt.default == 0:
+                #        print '%s' % name
+                #    else:
+                #        print '#%s' % name
+                if opt.type=="yesno":
+                    log.debug("Printing yes/no option.")
                     if opt.default:
                         print "#%s: yes" % name
                     else:
                         print "#%s: no" % name
                 else:
                     if opt.default != 'NODEFAULT':
+                        log.debug("Default string value, printing it.")
                         print "#%s: %s" % (name, opt.default)
                     else:
+                        log.debug("No default string value, "
+                                  "printing empty value.")
                         print "#%s: " % name
                 # Blank line
                 print
             # Blank line
             print
+            log.debug("Finished printing option group.")
+        log.debug("Finished printing sample configuration file.")
+        # Return an empty string, otherwise there's a 'None' on the
+        # last printed line.
+        return ''
 
     def read_project_configfile(self, filename, settings):
         """Read project config file into settings.
