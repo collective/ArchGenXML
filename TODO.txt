@@ -15,6 +15,10 @@ http://plone.org/development/teams/developer/ArchGenXML
 
     - tagged value creation_permission (string or python:) on class
     - use Bricolite method for registering custom permissions
+
+    Note: look at the --help output, some of the options changed
+    names. Also: you now have to pass in 'Add portal content' or so
+    instead of just 'portal'. 
     
 * Initialise uml_profile with all tagged values + steretypes + documentation
 
@@ -23,6 +27,13 @@ http://plone.org/development/teams/developer/ArchGenXML
     - Make getTaggedValue() and hasStereotype() fail if the tagged 
         value/stereotype is not registered in a profile to force them all
         to be documented
+	
+    [x] tagged values are now in TaggedValueSupport. Nicely
+    documented, too. Missing TGV in doc gives a warning, it doesn't
+    break off the processing.
+
+    [ ] Do the same for stereotypes. They're grouped together already,
+    so this shouldn't bee much work.
 
 * When generating docstrings, be more clever about linebreaks and whitespace. 
 
@@ -62,4 +73,12 @@ http://plone.org/development/teams/developer/ArchGenXML
   else check for TGV vocabulary_container
   fallback: use SimpleVocabulary
 
-* Define how worklists would be represented using state diagrams and implement
+[x] Define how worklists would be represented using state diagrams and
+implement
+
+[ ] Add a.a.p. makefile including checker for XXX, TBD codes (=>Reinout)
+
+[ ] Also group together the generateable documentation in that aap
+makefile and send it off to the documentation area on plone.org to
+keep it current.
+
