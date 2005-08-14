@@ -280,7 +280,10 @@ class AGXOptionParser(OptionParser):
 
 
 usage = "usage: %prog [ options ] <xmi-source-file>"
-description = "A program for generating Archetypes from XMI files."
+description = """A program for generating Archetypes from XMI files.
+The xmi file can either be an exported *.xmi file or a Poseidon or ArgoUML
+*.zuml file.
+"""
 
 parser = AGXOptionParser(usage=usage, description=description, version="%prog 1.0")
 

@@ -32,8 +32,6 @@ def main():
     utils.addConsoleLogging()
     log = logging.getLogger('main')
 
-    print utils.ARCHGENXML_VERSION_LINE % str(utils.version())
-
     log.debug("Reading command line options first.")
     (settings, args) = parser.parse_args()
     try:
@@ -41,12 +39,11 @@ def main():
         log.debug("Model file is '%s'.",
                   model)
     except:
-        print "Hey, we need to be passed a UML file as an argument!"
+        log.critical("Hey, we need to be passed a UML file as an argument!")
+        parser.print_help()
         sys.exit(2)
-    if settings.config_file:
-        log.debug("Config file indicated: '%s', reading it.",
-                  settings.config_file)
-        (settings, args) = parser.read_project_configfile(settings.config_file, settings)
+
+    print utils.ARCHGENXML_VERSION_LINE % str(utils.version())
 
     # This is a little bit hacky. Probably should read optparse's doc
     # better. [Reinout] 
