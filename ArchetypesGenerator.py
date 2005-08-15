@@ -794,11 +794,11 @@ class ArchetypesGenerator(BaseGenerator):
 
         return widgetcode
 
-    def getFieldFormatted(self, name, fieldtype, map={}, doc=None, rawType='String', indent_level=0):
+    def getFieldFormatted(self,name,fieldtype,map={},doc=None, indent_level=0, rawType='String'):
         """Return the formatted field definitions for the schema.
         """
 
-        log.debug("Trying to get formatted field. name='%s', fieldtype='%', "
+        log.debug("Trying to get formatted field. name='%s', fieldtype='%s', "
                   "doc='%s', rawType='%s'.",
                   name, fieldtype, doc, rawType)
         res = ''
@@ -823,12 +823,17 @@ class ArchetypesGenerator(BaseGenerator):
                 if key.find(':')>=0:
                     continue
                 lines = map[key]
-                linebreak = lines.find('\n')
-                if linebreak < 0:
-                    linebreak=len(lines)
-                firstline = lines[:linebreak]
+                if type(lines) in StringTypes:
+                    linebreak = lines.find('\n')
+                        
+                    if linebreak < 0:
+                        linebreak=len(lines)
+                    firstline = lines[:linebreak]
+                else:
+                    firstline = lines
+                    
                 res+=indent('%s%s=%s' % (prepend, key, firstline), indent_level+1)
-                if linebreak<len(lines):
+                if type(lines) in StringTypes and linebreak<len(lines):
                     for line in lines[linebreak+1:].split('\n'):
                         res += "\n%s" % line                    
                 prepend = ',\n'
