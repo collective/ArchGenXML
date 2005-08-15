@@ -199,19 +199,15 @@ class ArchetypesGenerator(BaseGenerator):
     creation_permission_stack = []
 
     def __init__(self, xschemaFileName, **kwargs):
-        self.outfileName=kwargs['outfilename']
-
-        if self.outfileName[-1] in ('/','\\'):
-            self.outfileName=self.outfileName[:-1]
-
-        path=os.path.split(self.outfileName)
-        self.targetRoot=path[0]
-        #print 'targetRoot:',self.targetRoot
-        #os.chdir(self.targetRoot or '.')
-
+        log.debug("We're being passed a file '%s' and keyword "
+                  "arguments %r.",
+                  xschemaFileName, kwargs)
         self.xschemaFileName=xschemaFileName
         self.__dict__.update(kwargs)
 
+        self.targetRoot = self.outfilename
+        log.debug("Targetroot is set simply to the outfilename: %s.",
+                  self.targetRoot)
 
     def makeFile(self,fn,force=1):
         ffn=os.path.join(self.targetRoot,fn)
@@ -2626,13 +2622,13 @@ class ArchetypesGenerator(BaseGenerator):
             else:
                 raise TypeError,'input file not of type .xsd, .xmi, .xml, .zargo, .zuml'
 
-            if self.outfileName:
-                root.setName(os.path.split(self.outfileName)[1])
+            if self.outfilename:
+                root.setName(os.path.split(self.outfilename)[1])
 
             log.info("Directory in which we're generating the files: '%s'.",
-                     self.outfileName)
+                     self.outfilename)
         else:
-            self.root=root=DummyModel(self.outfileName)
+            self.root=root=DummyModel(self.outfilename)
         log.info('Generating...')
         if self.method_preservation:
             log.debug('Method bodies will be preserved')
