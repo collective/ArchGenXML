@@ -794,8 +794,13 @@ class ArchetypesGenerator(BaseGenerator):
 
         return widgetcode
 
-    def getFieldFormatted(self,name,fieldtype,map={},doc=None, rawType='String', indent_level=0):
-        ''' returns the formatted field definitions for the schema '''
+    def getFieldFormatted(self, name, fieldtype, map={}, doc=None, rawType='String', indent_level=0):
+        """Return the formatted field definitions for the schema.
+        """
+
+        log.debug("Trying to get formatted field. name='%s', fieldtype='%', "
+                  "doc='%s', rawType='%s'.",
+                  name, fieldtype, doc, rawType)
         res = ''
 
         # capitalize only first letter of fields class name, keep camelcase
@@ -978,6 +983,11 @@ class ArchetypesGenerator(BaseGenerator):
             field=rel.getTaggedValue('reference_field') or \
                   rel.toEnd.getTaggedValue('reference_field') or \
                   self.typeMap['relation']['field'] #the relation can override the field
+            # TBD: poseidon reference-as-field handling or so...
+            if not field:
+                message = "Somehow we couldn't get at the fieldname. Use normal drawn associations instead of a named reference."
+                log.critical(message)
+                raise message
 
             map=self.typeMap['relation']['map'].copy()
             map.update({
@@ -991,6 +1001,11 @@ class ArchetypesGenerator(BaseGenerator):
             field=rel.getTaggedValue('reference_field') or \
                   rel.toEnd.getTaggedValue('reference_field') or \
                   self.typeMap['reference']['field'] #the relation can override the field
+            # TBD: poseidon reference-as-field handling or so...
+            if not field:
+                message = "Somehow we couldn't get at the fieldname. Use normal drawn associations instead of a named reference."
+                log.critical(message)
+                raise message
             map=self.typeMap['reference']['map'].copy()
             map.update({
                 'allowed_types': repr(allowed_types),
