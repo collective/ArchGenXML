@@ -334,7 +334,7 @@ parser.add_option("-o",
                   dest="outfilename",
                   metavar="PATH",
                   help="Package directory to create",
-                  section="GENERAL"
+                  section="GENERAL",
                   default='',
                   )
 
