@@ -1,9 +1,19 @@
+# [Reinout]: I added some logging just to make sure: this class
+# isn't used anywhere in the code. I propose clearing out this
+# file and start a StereotypeSupport.py file instead, modelled
+# on TaggedValueSupport.py and OptionParser.py.
+# We *do* want documented stereotypes! :-)
+
+import logging
+log = logging.getLogger('umlprofile')
+
 class ChainedDict(dict):
     ''' chained dict class allows to conatenate dictionaries '''
     
     parent_chain=[]
     
     def __init__(self, parent_chain=[], **kw):
+        log.debug("Initializing ChainedDict class.")
         dict.__init__(self,**kw)
         self.parent_chain=parent_chain
         self._keys = []
@@ -60,6 +70,7 @@ class ProfileEntry:
     ''' base class '''
     
     def __init__(self,name,entities,**kw):
+        log.debug("Initializing ProfileEntry class.")
         self.name=name
         self.entities=entities
         self.__dict__.update(kw)
@@ -83,17 +94,19 @@ class UMLProfile:
     ''' '''
     
     def __init__(self,parents=[]):
+        log.debug("Initializing UMLProfile.")
         if type(parents) not in (type(()),type([])):
             parents=[parents]
-        
-        self.taggedValues=ChainedDict([p.taggedValues for p in parents])
+
+        # Tagged values are handled by TaggedValueSupport.
+        # I modelled that class on OptionParser.py, I didn't know this
+        # class existed... [Reinout]
+        #self.taggedValues=ChainedDict([p.taggedValues for p in parents])
         self.stereoTypes=ChainedDict([p.stereoTypes for p in parents])
     
-    def addTaggedValue(self,name,entities,**kw):
-        tgv=Taggedvalue(name,entities,**kw)
-        self.taggedValues[name]=tgv
-        
-    def addStereoType(self,name,entities,**kw):
+    def addStereoType(self, name, entities, **kw):
+        log.debug("Adding stereotype '%s' to registry.",
+                  name)
         tgv=StereoType(name,entities,**kw)
         self.stereoTypes[name]=tgv
         
@@ -124,9 +137,6 @@ class UMLProfile:
         
         return res
     
-    def getAllTaggedValues(self):
-        return self.taggedValues.values()
-
     def getAllStereoTypes(self):
         return self.stereoTypes.values()
     
@@ -134,13 +144,6 @@ class UMLProfile:
         list=self.getAllStereoTypes()
         return self.filterObjects(list,entities,**kw)
     
-    def findTaggedValues(self,entities,**kw):
-        list=self.getAllTaggedValues()
-        return self.filterObjects(list,entities,**kw)
-    
-    def getTaggedValue(self,name):
-        return self.taggedValues.get(name,None)
-
     def getStereoType(self,name):
         return self.stereoTypes.get(name,None)
     

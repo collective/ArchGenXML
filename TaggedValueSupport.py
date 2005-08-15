@@ -118,7 +118,7 @@ class TaggedValueRegistry:
                       tagname, original_category)
         return False
 
-    def documentation(self, indentation=0):
+    def documentation(self, indentation=1):
         """Return the documentation for all tagged values.
 
         The documentation is returned as a string. 'indentation' can

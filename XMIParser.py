@@ -1011,15 +1011,20 @@ class XMIElement:
         return XMI.calculateStereoType(self)
 
     def setStereoType(self, st):
+        # TBD: stereotypesupport integration
         self.stereoTypes = [st]
 
     def getStereoType(self):
+        # TBD: stereotypesupport integration
         if self.stereoTypes:
             return self.stereoTypes[0]
         else:
             return None
 
     def addStereoType(self, st):
+        # TBD: stereotypesupport integration
+        log.debug("Adding stereotype '%s' to this element's internal list.",
+                  st)
         self.stereoTypes.append(st)
 
     def getStereoTypes(self):
@@ -1028,11 +1033,9 @@ class XMIElement:
     def hasStereoType(self, sts):
         if type(sts) in (type(''), type(u'')):
             sts = [sts]
-
         for st in sts:
             if st in self.getStereoTypes():
                 return 1
-
         return 0
 
     def getFullQualifiedName():
@@ -1074,8 +1077,9 @@ class XMIElement:
         return res
     
     def getClientDependencyClasses(self, includeParents=False, 
-        dependencyStereotypes=None, targetStereotypes=None): 
-            
+                                   dependencyStereotypes=None,
+                                   targetStereotypes=None): 
+        
         res=[dep.getSupplier() for dep in self.getClientDependencies(
             includeParents=includeParents, dependencyStereotypes=dependencyStereotypes) if 
             dep.getSupplier() and dep.getSupplier().__class__.__name__ in ('XMIClass', 'XMIInterface')]
@@ -1277,7 +1281,9 @@ class XMIPackage(XMIElement, StateMachineContainer):
         self.buildClasses()
 
     def isRoot(self):
+        # TBD Handle this through the stereotype registry
         return self.isroot or self.hasStereoType(['product', 'zopeproduct', 'Product', 'ZopeProduct'])
+    
 
     isProduct = isRoot
 
@@ -1659,8 +1665,6 @@ class XMIClass (XMIElement, StateMachineContainer):
     def isInterface(self):
         #print 'interface:', self.getName(), self.getStereoType()
         return self.isinterface  or self.getStereoType() == 'interface'
-        # the second branch is for older XMI engines where interface is just a stereotype of a class
-
 
     # for relization stuff
     def addRealizationChild(self, c):
