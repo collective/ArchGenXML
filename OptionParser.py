@@ -317,7 +317,7 @@ class AGXOptionParser(OptionParser):
 # ArchGenXML Parsing
 
 
-usage = "usage: %prog [ options ] <xmi-source-file>"
+usage = "usage: %prog [ options ] <xmi-source-file> [output directory]"
 description = """A program for generating Archetypes from XMI files.
 The xmi file can either be an exported *.xmi file or a Poseidon or ArgoUML
 *.zuml file.
@@ -333,7 +333,7 @@ parser.add_option("-o",
                   "--outfile",
                   dest="outfilename",
                   metavar="PATH",
-                  help="Package directory to create",
+                  help="Output directory in which to put everything",
                   section="GENERAL",
                   default='',
                   )

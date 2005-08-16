@@ -208,20 +208,25 @@ class ArchetypesGenerator(BaseGenerator):
         log.debug("After copying over the keyword arguments (read: "
                   "OptionParser's options), outfilename is '%s'.",
                   self.outfilename)
-        #remove trailing delimiters on purpose
-        if self.outfilename[-1] in ('/','\\'):
-            self.outfilename = self.outfilename[:-1]
-        log.debug("Stripped off the eventual trailing slashes: '%s'.",
-                  self.outfilename)
+        if self.outfilename:
+            #remove trailing delimiters on purpose
+            if self.outfilename[-1] in ('/','\\'):
+                self.outfilename = self.outfilename[:-1]
+            log.debug("Stripped off the eventual trailing slashes: '%s'.",
+                      self.outfilename)
 
-        #split off the parent directory part so that
-        #I can call ArchgenXML.py -o /tmp/prod prod.xmi
+            #split off the parent directory part so that
+            #I can call ArchgenXML.py -o /tmp/prod prod.xmi
 
-        path=os.path.split(self.outfilename)
-        self.targetRoot = path[0]
-        log.debug("Targetroot is set to everything except the last "
-                  "directory in the outfilename: %s.",
-                  self.targetRoot)
+            path=os.path.split(self.outfilename)
+            self.targetRoot = path[0]
+            log.debug("Targetroot is set to everything except the last "
+                      "directory in the outfilename: %s.",
+                      self.targetRoot)
+        else:
+            log.debug("Outfilename hasn't been set. Setting "
+                      "targetroot to the current directory.")
+            self.targetRoot = '.'
 
     def makeFile(self, fn, force=1):
         log.debug("Calling makeFile to create '%s'.",
@@ -2673,9 +2678,11 @@ class ArchetypesGenerator(BaseGenerator):
                 log.debug("We've split off the last directory name: %s.",
                           lastPart)
                 root.setName(lastPart)
-                log.debug("Set tje name of the root generator to that"
+                log.debug("Set the name of the root generator to that"
                           " directory name.")
-
+            else:
+                log.debug("No outfilename present, not changing the "
+                          "name of the root generator.")
             log.info("Directory in which we're generating the files: '%s'.",
                      self.outfilename)
         else:

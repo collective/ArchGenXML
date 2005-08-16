@@ -939,7 +939,12 @@ class XMIElement:
         return doc
 
     def getUnmappedCleanName(self): return self.unmappedCleanName
-    def setName(self, name): self.name = name
+    def setName(self, name):
+        log.debug("Setting our name to '%s' the hard way. "
+                  "The automatic mechanism set it to '%s' already.",
+                  name, self.getName())
+        self.name = name
+        
     def getAttrs(self): return self.attrs
     def getMaxOccurs(self): return self.maxOccurs
     def getType(self): return self.type

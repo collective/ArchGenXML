@@ -69,13 +69,9 @@ def main():
                   "Trying second loose commandline argument.")
         if len(args) > 1:
             d['outfilename']=args[1]
-
-    if not d['outfilename']:
-        log.error("Outfilename not specified in options or as "
-                  "the second loose commandline argument.")
-        parser.print_help()
-        sys.exit(2)
-        
+        else:
+            log.debug("No second argument found: keeping outfilename empty.")
+            # the output dir will be named after the model
     # start generation
     gen=ArchetypesGenerator(model, **d)
     gen.parseAndGenerate()
