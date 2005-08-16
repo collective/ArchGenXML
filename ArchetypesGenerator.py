@@ -205,11 +205,18 @@ class ArchetypesGenerator(BaseGenerator):
         self.outfilename=kwargs['outfilename']
 
         #remove trailing delimiters on purpose
+        # [Reinout:] This barfs however when there's no -o parameter...
+        # and: os.path.join doesn't care about trailing slashes.
         if self.outfilename[-1] in ('/','\\'):
             self.outfilename=self.outfilename[:-1]
 
         #split off the parent directory part so that
         #I can call ArchgenXML.py -o /tmp/prod prod.xmi
+
+        # os.path.split('/tmp')[0] => '/'
+        # os.path.split('tmp')[0] => ''
+        # os.path.split('tmp/where/ever')[0] => 'tmp/where'
+        # ? where goes that last element?
         path=os.path.split(self.outfilename)
         self.targetRoot=path[0]
 
