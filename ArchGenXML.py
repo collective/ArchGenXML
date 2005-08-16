@@ -69,7 +69,7 @@ def main():
             d['outfilename']=args[1]
 
     if not d['outfilename']:
-        usage(2)
+        parser.print_help()
 
     # start generation
     gen=ArchetypesGenerator(model, **d)
