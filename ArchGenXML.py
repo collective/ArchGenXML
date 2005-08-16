@@ -74,7 +74,8 @@ def main():
         log.error("Outfilename not specified in options or as "
                   "the second loose commandline argument.")
         parser.print_help()
-
+        sys.exit(2)
+        
     # start generation
     gen=ArchetypesGenerator(model, **d)
     gen.parseAndGenerate()
