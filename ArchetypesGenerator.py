@@ -199,43 +199,48 @@ class ArchetypesGenerator(BaseGenerator):
     creation_permission_stack = []
 
     def __init__(self, xschemaFileName, **kwargs):
-        log.debug("We're being passed a file '%s' and keyword "
+        log.debug("Initializing ArchetypesGenerator. "
+                  "We're being passed a file '%s' and keyword "
                   "arguments %r.",
                   xschemaFileName, kwargs)
-        self.outfilename=kwargs['outfilename']
-
+        self.xschemaFileName = xschemaFileName
+        self.__dict__.update(kwargs)
+        log.debug("After copying over the keyword arguments (read: "
+                  "OptionParser's options), outfilename is '%s'.",
+                  self.outfilename)
         #remove trailing delimiters on purpose
-        # [Reinout:] This barfs however when there's no -o parameter...
-        # and: os.path.join doesn't care about trailing slashes.
         if self.outfilename[-1] in ('/','\\'):
-            self.outfilename=self.outfilename[:-1]
+            self.outfilename = self.outfilename[:-1]
+        log.debug("Stripped off the eventual trailing slashes: '%s'.",
+                  self.outfilename)
 
         #split off the parent directory part so that
         #I can call ArchgenXML.py -o /tmp/prod prod.xmi
 
-        # os.path.split('/tmp')[0] => '/'
-        # os.path.split('tmp')[0] => ''
-        # os.path.split('tmp/where/ever')[0] => 'tmp/where'
-        # ? where goes that last element?
         path=os.path.split(self.outfilename)
-        self.targetRoot=path[0]
-
-        self.xschemaFileName=xschemaFileName
-        self.__dict__.update(kwargs)
-
-        log.debug("Targetroot is set simply to the outfilename: %s.",
+        self.targetRoot = path[0]
+        log.debug("Targetroot is set to everything except the last "
+                  "directory in the outfilename: %s.",
                   self.targetRoot)
 
-    def makeFile(self,fn,force=1):
-        ffn=os.path.join(self.targetRoot,fn)
-        return makeFile(ffn,force=force)
+    def makeFile(self, fn, force=1):
+        log.debug("Calling makeFile to create '%s'.",
+                  fn)
+        ffn=os.path.join(self.targetRoot, fn)
+        log.debug("Together with the targetroot that means '%s'.",
+                  ffn)
+        return makeFile(ffn, force=force)
 
     def readFile(self,fn):
         ffn=os.path.join(self.targetRoot,fn)
         return readFile(ffn)
 
-    def makeDir(self,fn,force=1):
+    def makeDir(self, fn, force=1):
+        log.debug("Calling makeDir to create '%s'.",
+                  fn)
         ffn=os.path.join(self.targetRoot,fn)
+        log.debug("Together with the targetroot that means '%s'.",
+                  ffn)
         return makeDir(ffn,force=force)
 
     def getSkinPath(self,element):
@@ -2257,11 +2262,13 @@ class ArchetypesGenerator(BaseGenerator):
                 res.append(c)
         return res
 
-    def generatePackage(self,package,recursive=1):
-
+    def generatePackage(self, package, recursive=1):
+        log.debug("Generating package %s.",
+                  package)
         if package.hasStereoType(self.stub_stereotypes):
+            log.debug("It's a stub stereotyped package, skipping.")
             return
-        package.generatedModules=[]
+        package.generatedModules = []
         if package.getName().lower() == 'java' or package.getName().lower().startswith('java') or not package.getName():
             #to suppress these unneccesary implicit created java packages (ArgoUML and Poseidon)
             log.debug("Ignoring unneeded package '%s'.",
@@ -2288,24 +2295,24 @@ class ArchetypesGenerator(BaseGenerator):
             #print 'writing class:',outfilepath
 
             if self.method_preservation:
+                filename = os.path.join(self.targetRoot, outfilepath)
+                log.debug("Filename (joined with targetroot) is "
+                          "'%s'.", filename)
                 try:
-                    #print 'existing sources found for:',element.getName(),outfilepath
-                    mod=PyParser.PyModule(os.path.join(self.targetRoot, outfilepath))
-                    #mod.printit()
+                    mod=PyParser.PyModule(filename)
+                    log.debug("Existing sources found for element %s: %s.",
+                              element.getName(), outfilepath)
                     self.parsed_sources.append(mod)
                     for c in mod.classes.values():
                         #print 'parse module:',c.name
                         self.parsed_class_sources[package.getFilePath()+'/'+c.name]=c
                 except IOError:
-                    #print 'no source found at %s' % os.path.join(self.targetRoot, outfilepath)
+                    log.debug("No source found at %s.",
+                              filename)
                     pass
-                except :
-                    print
-                    print '***'
-                    print '***Error while reparsing the file '+outfilepath
-                    print '***'
-                    print
-
+                except:
+                    log.critical("Error while reparsing file '%s'.",
+                                 outfilepath)
                     raise
 
             try:
@@ -2640,11 +2647,11 @@ class ArchetypesGenerator(BaseGenerator):
         if not self.noclass:
             if suff.lower() in ('.xmi','.xml'):
                 log.debug("Opening xmi...")
-                self.root=root=XMIParser.parse(self.xschemaFileName,
-                                               packages=self.parse_packages,
-                                               generator=self,
-                                               generate_datatypes=self.generate_datatypes)
-                    
+                self.root = root= XMIParser.parse(self.xschemaFileName,
+                                                  packages=self.parse_packages,
+                                                  generator=self,
+                                                  generate_datatypes=self.generate_datatypes)
+                log.debug("Created a root XMI parser.")
             elif suff.lower() in ('.zargo','.zuml','.zip'):
                 log.debug("Opening zargo...")
                 zf=ZipFile(self.xschemaFileName)
@@ -2660,7 +2667,14 @@ class ArchetypesGenerator(BaseGenerator):
                 raise TypeError,'input file not of type .xsd, .xmi, .xml, .zargo, .zuml'
 
             if self.outfilename:
-                root.setName(os.path.split(self.outfilename)[1])
+                log.debug("We've got an self.outfilename: %s.",
+                          self.outfilename)
+                lastPart = os.path.split(self.outfilename)[1]
+                log.debug("We've split off the last directory name: %s.",
+                          lastPart)
+                root.setName(lastPart)
+                log.debug("Set tje name of the root generator to that"
+                          " directory name.")
 
             log.info("Directory in which we're generating the files: '%s'.",
                      self.outfilename)
