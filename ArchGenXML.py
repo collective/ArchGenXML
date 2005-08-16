@@ -64,11 +64,15 @@ def main():
 
     # if outfilename is not given by the -o option try getting the second 
     # regular argument
-    if not d['outfilename']: 
+    if not d['outfilename']:
+        log.debug("Outfilename not specified in the options. "
+                  "Trying second loose commandline argument.")
         if len(args) > 1:
             d['outfilename']=args[1]
 
     if not d['outfilename']:
+        log.error("Outfilename not specified in options or as "
+                  "the second loose commandline argument.")
         parser.print_help()
 
     # start generation
