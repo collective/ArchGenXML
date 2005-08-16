@@ -1497,7 +1497,8 @@ class XMIClass (XMIElement, StateMachineContainer):
             log.debug("Also looking recursively up the family tree.")
             for r in res:
                 res.extend(r.getGenParents(1))
-        log.debug("Found the following parents: '%r'.")
+        log.debug("Found the following parents: '%r'.",
+                  res)
         return res
 
     def buildChildren(self, domElement):
