@@ -62,6 +62,15 @@ def main():
         log.debug("Option '%s' has value '%s'.",
                   key, d[key])
 
+    # if outfilename is not given by the -o option try getting the second 
+    # regular argument
+    if not d['outfilename']: 
+        if len(args) > 1:
+            d['outfilename']=args[1]
+
+    if not d['outfilename']:
+        usage(2)
+
     # start generation
     gen=ArchetypesGenerator(model, **d)
     gen.parseAndGenerate()

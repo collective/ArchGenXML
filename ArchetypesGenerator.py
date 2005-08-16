@@ -202,10 +202,20 @@ class ArchetypesGenerator(BaseGenerator):
         log.debug("We're being passed a file '%s' and keyword "
                   "arguments %r.",
                   xschemaFileName, kwargs)
+        self.outfilename=kwargs['outfilename']
+
+        #remove trailing delimiters on purpose
+        if self.outfilename[-1] in ('/','\\'):
+            self.outfilename=self.outfilename[:-1]
+
+        #split off the parent directory part so that
+        #I can call ArchgenXML.py -o /tmp/prod prod.xmi
+        path=os.path.split(self.outfilename)
+        self.targetRoot=path[0]
+
         self.xschemaFileName=xschemaFileName
         self.__dict__.update(kwargs)
 
-        self.targetRoot = self.outfilename
         log.debug("Targetroot is set simply to the outfilename: %s.",
                   self.targetRoot)
 
