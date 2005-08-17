@@ -79,7 +79,7 @@ class BaseGenerator:
 
         log.debug("Trying to get value of option '%s' for element '%s' "
                   "(default value is '%s', aggregate is '%s').",
-                  option, element, default, aggregate)
+                  option, element.name, default, aggregate)
         if element:
             o=element
             log.debug("Found the element.")
@@ -99,15 +99,20 @@ class BaseGenerator:
                     else:
                         log.debug("Returning value.")
                         return o.getTaggedValue(option)
-                log.debug("Trying our parent.")
                 o=o.getParent()
+                if o:
+                    log.debug("Trying our parent: %s.",
+                              o.name)
             if aggregator:
                 log.debug("Didn't find anything, return the current aggregated value.")
                 return aggregator
+            else:
+                log.debug("Found nothing in the assorted taggedvalues.")
 
         #look in the options
+        log.debug("Now looking in the options.")
         if hasattr(self, option):
-            log.debug("Found a matching option (commandline or configfile).")
+            log.debug("Found a matching option (passed on the commandline or in the configfile).")
             value = getattr(self, option)
             log.debug("The value is '%s'.",
                       value)

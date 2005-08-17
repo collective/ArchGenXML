@@ -348,8 +348,8 @@ class XMI1_0:
             return None
 
     def getTaggedValue(self, el):
-        log.debug("Getting tagged value for '%s'.",
-                  el)
+        log.debug("Getting tagged value for element '%s'. Not recursive.",
+                  el.getName())
         tagname = getAttributeValue(el, XMI.TAGGED_VALUE_TAG, recursive=0, default=None)
         if not tagname:
             raise TypeError, 'element %s has empty taggedValue' % self.getId(el)
@@ -582,6 +582,8 @@ class XMI1_2 (XMI1_1):
         return (mult_min, mult_max)
 
     def getTaggedValue(self, el):
+        log.debug("Getting tagname/tagvalue pair from tag. "
+                  "Looking recursively for that taggedvalue.")
         tdef = getElementByTagName(el, self.TAG_DEFINITION, default=None, recursive=1)
         # fetch the name from the global tagDefinitions (weird)
         tagname = self.tagDefinitions[tdef.getAttribute('xmi.idref')].getAttribute('name')
@@ -798,15 +800,21 @@ class XMIElement:
         self.parent = parent
 
     def parseTaggedValues(self):
-        ''' '''
+        """Gather the tagnames and tagvalues for the element.
+        """
+
+        log.debug("Gathering the taggedvalues for element %s.",
+                  self.name)
         tgvsm = getElementByTagName(self.domElement, XMI.TAGGED_VALUE_MODEL, default=None, recursive=0)
         if tgvsm is None:
+            log.debug("Found nothing.")
             return
-
         tgvs = getElementsByTagName(tgvsm, XMI.TAGGED_VALUE, recursive=0)
         for tgv in tgvs:
             try:
                 tagname, tagvalue = XMI.getTaggedValue(tgv)
+                log.debug("Found tag '%s' with value '%s'.",
+                          tagname, tagvalue)
                 if self.taggedValues.has_key(tagname):
                     log.debug("Invoking Poseidon multiline fix for tagname '%s'.",
                               tagname)
@@ -817,7 +825,6 @@ class XMIElement:
                 log.warn("Broken tagged value in id '%s'.",
                          XMI.getId(self.domElement))
                 pass
-
         log.debug("Found the following tagged values: %r.",
                   self.getTaggedValues())
 
@@ -871,12 +878,18 @@ class XMIElement:
         return res
 
     def getTaggedValue(self, name, default=''):
+        log.debug("Getting value for tag '%s' (default=%s). "
+                  "Note: we're not doing this recursively.",
+                  name, default)
         category = str(self.__class__)
         if not tgvRegistry.isRegistered(name, category):
+            # The registry does the complaining :-)
             pass
         res = self.taggedValues.get(name, default)
         if type(res) in (type(''), type(u'')):
             res = res.strip()
+        log.debug("Returning value '%s',",
+                  res)
         return res
 
     def hasTaggedValue(self, name):
@@ -1424,7 +1437,7 @@ class XMIClass (XMIElement, StateMachineContainer):
         log.debug("Initialising class.")
         self.setPackage(kw.get('package', None))
         log.debug("Package set to '%s'.",
-                  self.package)
+                  self.package.name)
         log.debug("Running StateMachineContainer's init...")
         StateMachineContainer.__init__(self)
         log.debug("Running XMIElement's init...")

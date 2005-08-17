@@ -227,6 +227,7 @@ class ArchetypesGenerator(BaseGenerator):
             log.debug("Outfilename hasn't been set. Setting "
                       "targetroot to the current directory.")
             self.targetRoot = '.'
+        log.debug("Initialization finished.")
 
     def makeFile(self, fn, force=1):
         log.debug("Calling makeFile to create '%s'.",
@@ -1897,19 +1898,24 @@ class ArchetypesGenerator(BaseGenerator):
 
 
     def getAuthors(self, element):
-        log.debug("Getting the authors.")
+        log.debug("Getting the authors...")
         authors = self.getOption('author', element, self.author) or 'unknown'
         if not type(authors) == type([]):
-            # self.author is already a list
+            log.debug("Trying to split authors on ','.")
             authors = authors.split(',')
+        else:
+            log.debug("self.author is already a list, no need to split it.")
         authors = [i.strip() for i in authors]
-
+        log.debug("Found the following authors: %r.",
+                  authors)
         log.debug("Getting the email addresses.")
         emails = self.getOption('email', element, self.email) or 'unknown'
         if not type(emails) == type([]):
             # self.email is already a list
             emails = emails.split(',')
         emails = ['<%s>' % i.strip() for i in emails]
+        log.debug("Found the following email addresses: %r.",
+                  emails)
 
         authoremail = []
         for author in authors:
@@ -1923,23 +1929,27 @@ class ArchetypesGenerator(BaseGenerator):
         return authors, emails, authorline
 
     def getHeaderInfo(self, element):
-        # deal with multiline docstring
-        # XXX need some work here, atm this code alway produces unknown
-        ##purposeline=('\n').join( \
-        ##    (element.getDocumentation(striphtml=self.striphtml,wrap=79) or '').split('\n') )
+        # Warning: this part of the code uses 'licence', the rest 'license'...
 
+        log.debug("Getting info for the header...")
         copyright = COPYRIGHT % \
             (str(time.localtime()[0]),
              self.getOption('copyright', element, self.copyright) or self.author)
+        log.debug("Copyright = %r.",
+                  copyright)
 
         licence = ('\n# ').join( \
-            wrap(self.getOption('license', element, GPLTEXT),77).split('\n') )
+            wrap(self.getOption('license', element, self.license),77).split('\n') )
+        log.debug("License: %r.",
+                  licence)
 
         authors, emails, authorline = self.getAuthors(element)
 
         if self.getOption('rcs_id', element, False):
+            log.debug("Adding rcs-id tag.")
             rcs_id_tag = '\nRCS-ID $'+'I'+'d'+'$'
         else:
+            log.debug("Not creating those pesky svn-unfriendly rcs-id tags.")
             rcs_id_tag = ''
 
         if self.getOption('generated_date', element, False):
@@ -1953,7 +1963,7 @@ class ArchetypesGenerator(BaseGenerator):
                         'authorline':   authorline,
                         'version':      version(),
                         'date':         date,
-                        'copyright':    '\n# '.join(wrap(copyright,77).split('\n')),
+                        'copyright':    '\n# '.join(wrap(copyright, 77).split('\n')),
                         'licence':      licence,
                         'rcs_id_tag':   rcs_id_tag
         }
@@ -2656,7 +2666,7 @@ class ArchetypesGenerator(BaseGenerator):
         # and now start off with the class files
         self.generatedModules=[]
 
-        suff=os.path.splitext(self.xschemaFileName)[1].lower()
+        suff = os.path.splitext(self.xschemaFileName)[1].lower()
         log.info("Parsing...")
         if not self.noclass:
             if suff.lower() in ('.xmi','.xml'):
@@ -2676,6 +2686,9 @@ class ArchetypesGenerator(BaseGenerator):
                     packages=self.parse_packages, generator=self,
                     generate_datatypes=self.generate_datatypes)
             elif suff.lower() == '.xsd':
+                log.warn("The XSD parser is a very old prototype. "
+                         "Not production quality. You're dragon "
+                         "fodder if you try it anyway, sorry.")
                 self.root=root=XSDParser.parse(self.xschemaFileName)
             else:
                 raise TypeError,'input file not of type .xsd, .xmi, .xml, .zargo, .zuml'
