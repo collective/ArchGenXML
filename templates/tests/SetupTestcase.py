@@ -16,7 +16,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 <dtml-var "generator.getProtectedSection(parsed_class, 'class-header_'+klass.getCleanName(), 1)">
 <dtml-if "not parsed_class or 'afterSetUp' not in parsed_class.methods.keys()">
     def afterSetUp(self):
-        """ 
+        """
         """
         pass
 <dtml-else>
@@ -25,7 +25,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 
 <dtml-if "not parsed_class or 'test_tools' not in parsed_class.methods.keys()">
     def test_tools(self):
-        """ 
+        """
         """
         ids = self.portal.objectIds()
         self.failUnless('archetype_tool' in ids)
@@ -37,7 +37,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 
 <dtml-if "not parsed_class or 'test_types' not in parsed_class.methods.keys()">
     def test_types(self):
-        """ 
+        """
         """
         ids = self.portal.portal_types.objectIds()
         self.failUnless('Document' in ids)
@@ -48,7 +48,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 
 <dtml-if "not parsed_class or 'test_skins' not in parsed_class.methods.keys()">
     def test_skins(self):
-        """ 
+        """
         """
         ids = self.portal.portal_skins.objectIds()
         self.failUnless('plone_templates' in ids)
@@ -59,7 +59,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 
 <dtml-if "not parsed_class or 'test_workflows' not in parsed_class.methods.keys()">
     def test_workflows(self):
-        """ 
+        """
         """
         ids = self.portal.portal_workflow.objectIds()
         self.failUnless('plone_workflow' in ids)
@@ -70,7 +70,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 
 <dtml-if "not parsed_class or 'test_workflowChains' not in parsed_class.methods.keys()">
     def test_workflowChains(self):
-        """ 
+        """
         """
         getChain = self.portal.portal_workflow.getChainForPortalType
         self.failUnless('plone_workflow' in getChain('Document'))
@@ -81,16 +81,16 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 
 <dtml-in "generator.getMethodsToGenerate(klass)[0]">
 <dtml-let m="_['sequence-item']" mn="m.testmethodName()">
-<dtml-if "m.getParent() != klass"> 
+<dtml-if "m.getParent() != klass">
     # from class <dtml-var "m.getParent().getName()">:
 </dtml-if>
 <dtml-if "parsed_class and mn in parsed_class.methods.keys()">
 <dtml-var "parsed_class.methods[mn].getSrc()">
- 
+
 <dtml-else>
     def <dtml-var "mn">(self):
 <dtml-let name="'temp_'+m.getParent().getCleanName()">
-        """ 
+        """
         """
         #Uncomment one of the following lines as needed
         ##self.loginAsPortalOwner()
@@ -99,14 +99,14 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
         ##self.folder._setObject('<dtml-var name>', o)
 </dtml-if>
         pass
-        
+
 </dtml-let>
 </dtml-if>
 </dtml-let>
 </dtml-in>
 
 
-    
+
     # Manually created methods
 <dtml-if parsed_class>
 <dtml-in "parsed_class.methods.values()">

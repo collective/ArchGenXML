@@ -1,11 +1,9 @@
 <html xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       i18n:domain="plone">
-
 <body>
 
 <div metal:define-macro="portlet">
-     
 
     <div class="portlet" id="portlet-%(method_name)s">
 

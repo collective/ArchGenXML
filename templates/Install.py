@@ -250,7 +250,7 @@ def uninstall(self):
                                       if toolname not in navtreeProperties.idsNotToList]:
                 if toolname in navtreeProperties.idsNotToList:
                     navtreeProperties.idsNotToList.remove(toolname)
-    
+
 </dtml-if>
 </dtml-let>
 <dtml-let configlet_tools="[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.portal_tools) and utils.isTGVTrue(cn.getTaggedValue('autoinstall','0') ) and cn.getTaggedValue('configlet', None)]">

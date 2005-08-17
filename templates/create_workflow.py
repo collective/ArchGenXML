@@ -54,7 +54,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, workflow):
 
     for p in <dtml-var "repr(statemachine.getAllPermissionNames())">:
         workflow.addManagedPermission(p)
- 
+
     for l in <dtml-var "repr(statemachine.getAllWorklistNames())">:
         if not l in workflow.worklists.objectValues():
             workflow.worklists.addWorklist(l)

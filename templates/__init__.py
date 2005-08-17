@@ -47,7 +47,6 @@ CMFCorePermissions.setDefaultRoles('<dtml-var "product_name">: <dtml-var "permde
 <dtml-var "protected_init_section_head">
 
 def initialize(context):
-    
 <dtml-var "protected_init_section_top">
     # imports packages and types for registration
 <dtml-in "package_imports">

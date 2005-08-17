@@ -10,5 +10,5 @@
  <gateway name="%(class_name)s_fields" factory="Products.%(project_name)s.%(class_name)s.ApeGateway" />
 </mapper>
 
-<store exact-class="Products.%(project_name)s.%(class_name)s.%(class_name)s" 
+<store exact-class="Products.%(project_name)s.%(class_name)s.%(class_name)s"
     using="Products.%(project_name)s.%(class_name)s.%(class_name)s"/>

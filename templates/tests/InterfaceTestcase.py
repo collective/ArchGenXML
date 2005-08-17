@@ -9,7 +9,7 @@ if __name__ == '__main__':
 from Interface import Implements
 
 from <dtml-var "parent.getQualifiedModuleName(None,forcePluginRoot=1)"> import <dtml-var "parent.getCleanName()">
-    
+
 
 from Interface.Verify import verifyClass
 
@@ -26,25 +26,25 @@ from <dtml-var "_['sequence-item'].getQualifiedModuleName(klass.getPackage(),for
 </dtml-let>
 </dtml-in>
 
- 
+
 class <dtml-var "klass.getCleanName()">(<dtml-var "parent.getCleanName()">):
     <dtml-in "klass.getRealizationParents()">
     <dtml-let p="_['sequence-item']">
 
     def testInterfacesFor<dtml-var "p.getCleanName()">(self):
         '''test interface compliance for class <dtml-var "p.getCleanName()">'''
-        
+
         <dtml-if "generator.isTGVTrue(klass.getTaggedValue('strict'))">
-        
+
         for iface in Implements.flattenInterfaces(getattr(<dtml-var "klass.getCleanName()">,'__implements__',[])):
             self.failUnless(verifyClass(iface, <dtml-var "p.getCleanName()">))
         </dtml-if>
 
     <dtml-in "p.getRealizationParents()">
-    
+
         self.failUnless(verifyClass(<dtml-var "_['sequence-item'].getCleanName()">, <dtml-var "p.getCleanName()">))
     </dtml-in>
-    
+
     </dtml-let>
     </dtml-in>
 

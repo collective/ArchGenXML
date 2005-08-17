@@ -13,7 +13,7 @@ def installWorkflows(self, package, out):
     ourProductWorkflow = ExternalMethod('temp',
                          'temp',
                          productname+'.'+'<dtml-var "generator.cleanName(sm.getName())">',
-                         'create<dtml-var "generator.cleanName(sm.getName())">') 
+                         'create<dtml-var "generator.cleanName(sm.getName())">')
     workflow = ourProductWorkflow(self, '<dtml-var "generator.cleanName(sm.getName())">')
     workflowTool._setObject('<dtml-var "generator.cleanName(sm.getName())">', workflow)
     workflowTool.setChainForPortalTypes(<dtml-var "repr(sm.getClassNames())">, workflow.getId())

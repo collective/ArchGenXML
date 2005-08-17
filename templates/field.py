@@ -59,7 +59,7 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
     security.declarePrivate('set')
     security.declarePrivate('get')
 
-    
+
 <dtml-if "not parsed_class">
     def get(self, instance, **kwargs):
         return <dtml-var parentname>.get(self,instance,**kwargs)
@@ -71,14 +71,14 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
     def set(self, instance, value, **kwargs):
         return <dtml-var parentname>.set(self,instance,value,**kwargs)
 
-</dtml-if>    
+</dtml-if>
 <dtml-in "generator.getMethodsToGenerate(klass)[0]">
 <dtml-let m="_['sequence-item']">
-<dtml-if "m.getParent().__class__.__name__=='XMIInterface'"> 
+<dtml-if "m.getParent().__class__.__name__=='XMIInterface'">
     #from Interface <dtml-var "m.getParent().getName()">:
 </dtml-if>
 <dtml-if "parsed_class and m.getCleanName() in parsed_class.methods.keys()">
-<dtml-var "parsed_class.methods[m.getCleanName()].getSrc()">    
+<dtml-var "parsed_class.methods[m.getCleanName()].getSrc()">
 <dtml-else>
 
     def <dtml-var "m.getName()">(self,<dtml-var "','.join(m.getParamNames())">):
@@ -87,7 +87,7 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
 </dtml-let>
 </dtml-in>
 <dtml-in "generator.getMethodsToGenerate(klass)[1]">
-<dtml-var "_['sequence-item'].getSrc()">            
+<dtml-var "_['sequence-item'].getSrc()">
 </dtml-in>
 
 registerField(<dtml-var "klass.getCleanName()">,
