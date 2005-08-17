@@ -390,7 +390,7 @@ tagname = 'permission'
 explanation = """For method with public visibility only, if a permission is set, declare the method to be protected by this permission. Methods with private or protected visiblity are always declared private since they are not intended for through-the-web unsafe code to access. Methods with package visibility use the class default security and do not get security declarations at all."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-# Actions/views
+# Actions/forms/views
 
 category = 'action'
 
@@ -414,9 +414,10 @@ tagname = 'category'
 explanation = """The category for the action. Defaults to 'object'."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-tagname = 'action'
-explanation = """TODO."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+for tagname in ['action', 'view', 'form']:
+    explanation = """For a stereotype '%s', this tagged value can be used to
+    overwrite the default URL ('..../name_of_method') into '..../tagged_value'.""" % tagname
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'action_label'
 explanation = """TODO."""

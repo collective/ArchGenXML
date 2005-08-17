@@ -1003,13 +1003,19 @@ class XMIElement:
         pass
 
     def getMethodDefs(self, recursive=0):
+        log.debug("Getting method definitions (recursive=%s)...",
+                  recursive)
         res = [m for m in self.methodDefs]
+        log.debug("Our own methods: %r.",
+                  res)
 
         if recursive:
+            log.debug("Also looking recursively to our parents...")
             parents = self.getGenParents(recursive=1)
             for p in parents:
                 res.extend(p.getMethodDefs())
-
+            log.debug("Our total methods: %r.",
+                      res)
         return res
 
     def calculateStereoType(self):

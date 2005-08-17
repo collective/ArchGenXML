@@ -306,16 +306,24 @@ class ArchetypesGenerator(BaseGenerator):
                 # isnt listed, so add it
                 entry[1].append((module_id, [msgstr]))
 
-    def generateMethodActions(self,element):
+    def generateMethodActions(self, element):
+        log.debug("Generating method actions...")
         outfile=StringIO()
         print >> outfile
+        log.debug("First finding our methods.")
         for m in element.getMethodDefs():
+            method_name = m.getName()
             code=indent(m.getTaggedValue('code',''),1)
-            if m.hasStereoType( ['action','view','form']):
-                action_name=m.getTaggedValue('action','').strip()
+            if m.hasStereoType( ['action', 'view', 'form']):
+                log.debug("Method has stereotype action/view/form.")
+                action_name = m.getTaggedValue('action','').strip()
                 if not action_name:
-                    action_name=m.getTaggedValue(m.getStereoType(), m.getName()).strip()
-                #print 'generating ' + m.getStereoType()+':',action_name
+                    log.debug("No tagged value 'action', trying '%s' with a "
+                              "default to the methodname.",
+                              m.getStereoType())
+                    action_name=m.getTaggedValue(m.getStereoType(), method_name).strip()
+                log.debug("Ok, generating %s for %s.",
+                          m.getStereoType(), action_name)
                 dict={}
 
                 if not action_name.startswith('string:') and not action_name.startswith('python:'):
@@ -325,9 +333,9 @@ class ArchetypesGenerator(BaseGenerator):
 
                 dict['action']=getExpression(action_target)
                 dict['action_category']=getExpression(m.getTaggedValue('category','object'))
-                dict['action_id']=m.getTaggedValue('id',m.getName())
+                dict['action_id']=m.getTaggedValue('id',method_name)
                 dict['action_label'] = m.getTaggedValue('action_label') or \
-                                       m.getTaggedValue('label',m.getName())
+                                       m.getTaggedValue('label',method_name)
                 # action_label is deprecated and for backward compability only!
                 dict['permission']=getExpression(m.getTaggedValue('permission','View'))
 
@@ -352,7 +360,7 @@ class ArchetypesGenerator(BaseGenerator):
                     f.write(viewTemplate % code)
 
             elif m.hasStereoType(['portlet_view','portlet']):
-                view_name=m.getTaggedValue('view').strip() or m.getName()
+                view_name=m.getTaggedValue('view').strip() or method_name
                 autoinstall=m.getTaggedValue('autoinstall')
                 portlet='here/%s/macros/portlet' % view_name
                 if autoinstall=='left':
@@ -364,7 +372,7 @@ class ArchetypesGenerator(BaseGenerator):
                 if f:
                     templdir=os.path.join(sys.path[0],'templates')
                     viewTemplate=open(os.path.join(templdir,'portlet_template.pt')).read()
-                    f.write(viewTemplate % {'method_name':m.getName()})
+                    f.write(viewTemplate % {'method_name':method_name})
 
         res=outfile.getvalue()
         return res
