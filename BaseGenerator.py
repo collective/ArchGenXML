@@ -27,6 +27,8 @@ import XSDParser, XMIParser, PyParser
 from utils import readTemplate, cleanName
 from codesnippets import *
 from UMLProfile import UMLProfile
+import logging
+log = logging.getLogger("basegenerator")
 
 class BaseGenerator:
     """ abstract base class for the different concrete generators """
@@ -66,34 +68,59 @@ class BaseGenerator:
         else:
             return value             
 
-    def getOption(self,option,element,default=_marker,aggregate=False):
-        ''' query a certain option for an element including 'acquisition' :
-            search the element, then the packages upwards, then global options'''
+    def getOption(self, option, element, default=_marker, aggregate=False):
+        """Query element for value of an option.
 
+        Query a certain option for an element including 'acquisition':
+        search the element, then the packages upwards, then global
+        options.
+
+        """
+
+        log.debug("Trying to get value of option '%s' for element '%s' "
+                  "(default value is '%s', aggregate is '%s').",
+                  option, element, default, aggregate)
         if element:
             o=element
-
+            log.debug("Found the element.")
             #climb up the hierarchy
             aggregator=''
+
             while o:
                 if o.hasTaggedValue(option):
+                    log.debug("The element has a matching tagged value.")
+                    value = o.getTaggedValue(option)
+                    log.debug("The value is '%s'.",
+                              value)
                     if aggregate:
-                        # create a multiline string
+                        log.debug("Adding the value to the aggregate.")
+                        #create a multiline string
                         aggregator+=o.getTaggedValue(option)+'\n'
                     else:
+                        log.debug("Returning value.")
                         return o.getTaggedValue(option)
+                log.debug("Trying our parent.")
                 o=o.getParent()
             if aggregator:
+                log.debug("Didn't find anything, return the current aggregated value.")
                 return aggregator
 
         #look in the options
-        if hasattr(self,option):
-            return getattr(self,option)
+        if hasattr(self, option):
+            log.debug("Found a matching option (commandline or configfile).")
+            value = getattr(self, option)
+            log.debug("The value is '%s'.",
+                      value)
+            return value
 
         if default != _marker:
+            log.debug("Returning default value '%s'.",
+                      default)
             return default
         else:
-            raise ValueError,"option '%s' is mandatory for element '%s'" % (option,element and element.getName())
+            message = "option '%s' is mandatory for element '%s'" % (option, element and element.getName())
+            log.error(message)
+            raise ValueError, message
 
 
 

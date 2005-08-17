@@ -148,7 +148,7 @@ class TaggedValueRegistry:
 
 tgvRegistry = TaggedValueRegistry()
 
-# Module level tagged values
+# Model level tagged values
 category = 'model'
 
 tagname = 'module'
@@ -560,6 +560,17 @@ for category in tgvRegistry._registry:
     if not tgvRegistry._registry[category].has_key(tagname):
         # Making sure we don't overwrite specialised stuff :-)
         tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+for category in ['model', 'package', 'class', 'tool', 'portlet']:
+    for tagname in ['author', 'email', 'copyright']:
+        explanation = """You can set the %s project-wide with the
+        '--%s' commandline parameter (or in the config file). This tag
+        allows you to overwrite it on a %s level.""" % (tagname,
+                                                        tagname,
+                                                        category)
+        tgvRegistry.addTaggedValue(category=category,
+                                   tagname=tagname,
+                                   explanation=explanation)
 
 
 if __name__ == '__main__':
