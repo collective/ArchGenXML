@@ -82,3 +82,8 @@ implement
 makefile and send it off to the documentation area on plone.org to
 keep it current.
 
+[ ] Longer term: add defaults to the tagged values.
+
+[ ] Changed negative tagged values to positive ones with 
+    default = True. (Tip from optilude).
+
