@@ -322,7 +322,8 @@ content are also allowed on this class. Classic polymorphing. In case
 this isn't desired, set the tagged value 'disable_polymorphing' to 1.
 """
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
+# TBD: change this into 'polymorphic_allowed_types' with a default of True.
+# Optilude is right on this one. It *does* need support for default values.
 
 # Tool
 category = 'tool' 
