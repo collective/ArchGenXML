@@ -24,6 +24,7 @@ class TestPyModule(unittest.TestCase):
         self.emptyFile = testDir + '/pythonfiles/empty.py'
         self.emptyStringFile = '# Empty python file\n# Some more'
         self.realFile = testDir + '/pythonfiles/ParserTest.py'
+        self.indentationFile = testDir + '/pythonfiles/ParserTest2.py'
         self.parser = PyModule(self.realFile)
         self.function = self.parser.functions['someMethod']
         self.oneLineFunction = self.parser.functions['oneLineMethod']
@@ -171,6 +172,12 @@ class TestPyMethod(TestPyFunction):
         """
         self.assertEquals(self.method.name, 'parserMethod')
         self.assertEquals(self.manualMethod.name, 'parserMethod2')
+
+    def testStrangeIndentation(self):
+        parser = PyModule(self.indentationFile)
+        klass = parser.classes['testAtpConnector']
+        method = klass.methods['testmethod']
+        self.assertEquals(method.codeLength(), 12)
 
 class TestPyClass(TestPyCodeElement):
     """ Tests for PyClass class inside PyParser

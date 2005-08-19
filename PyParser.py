@@ -277,7 +277,7 @@ class PyFunction(PyCodeElement):
         """ Calculate the length of a method using the code.co_lnotab
         """
         res=0
-        for i in range(0, len(self.code.co_lnotab),2):
+        for i in range(0, len(self.code.co_lnotab), 2):
             cl = ord(self.code.co_lnotab[i+1])
             # I don't know what that next test does
             if cl != 255:
