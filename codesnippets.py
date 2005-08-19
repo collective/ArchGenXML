@@ -87,7 +87,7 @@ CLASS_SCHEMA = """\
     schema= %(prefix)s + schema %(postfix)s
 """
 
-SCHEMA_START       = """schema= Schema(("""
+SCHEMA_START       = """schema=Schema(("""
 
 SCHEMA_TOOL = """\
         # a tool does not need be editable in id and title
@@ -123,8 +123,8 @@ from Products.CMFCore.utils import UniqueObject
 
     """
 
-CLASS_META_TYPE      = """    meta_type    = '%s' """
-CLASS_PORTAL_TYPE    = """    portal_type  = '%s' """
+CLASS_META_TYPE      = """    meta_type                  = '%s' """
+CLASS_PORTAL_TYPE    = """    portal_type                = '%s' """
 CLASS_ARCHETYPE_NAME = """\
     # This name appears in the 'add' box
     archetype_name             = '%s'\n"""
