@@ -1476,20 +1476,32 @@ class ArchetypesGenerator(BaseGenerator):
             widget=widget,widgetname=widgetname)
 
     def elementIsFolderish(self, element):
+        log.debug("Determining whether the element '%s' is folderish...",
+                  element.name)
         # This entire method hould probably be moved off to the element classes.
         # Copy-pasted from generateArchetypesClass()...
         aggregatedClasses = element.getRefs() + element.getSubtypeNames(recursive=0,filter=['class'])
+        log.debug("Found %s aggregated classes.",
+                  len(aggregatedClasses))
         #also check if the parent classes can have subobjects
         baseaggregatedClasses=[]
         for b in element.getGenParents():
             baseaggregatedClasses.extend(b.getRefs())
             baseaggregatedClasses.extend(b.getSubtypeNames(recursive=1))
-            
+        log.debug("Found %s parents with aggregated classes.",
+                  len(baseaggregatedClasses))
         aggregatedInterfaces=self.getAggregatedInterfaces(element, includeBases=1)
-        
+        log.debug("Found %s aggregated interfaces.",
+                  len(aggregatedInterfaces))
+        log.debug("Based on this info and the tagged value 'folderish' or the "
+                  "stereotypes 'folder' and 'ordered', we look if it's a folder.")
+        # TBD: folder, ordered: should probably be self.folderishStereotypes or so
+        # to include 'large' and 'btree' and so.
         isFolderish = aggregatedInterfaces or aggregatedClasses or baseaggregatedClasses or \
                       isTGVTrue(element.getTaggedValue('folderish')) or \
                       element.hasStereoType(['folder','ordered'])
+        log.debug("End verdict on folderish character: %s.",
+                  bool(isFolderish))
         return bool(isFolderish)
 
     def getAggregatedInterfaces(self,element,includeBases=1):
