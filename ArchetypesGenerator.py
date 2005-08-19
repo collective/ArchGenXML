@@ -2365,9 +2365,24 @@ class ArchetypesGenerator(BaseGenerator):
                 else:
                     self.generateInterface(outfile,element)
 
-                classfile=self.makeFile(outfilepath)
                 buf=outfile.getvalue()
-                print >> classfile,buf
+                log.debug("The outfile is ready to be written to disk now. "
+                          "Loading it with the pyparser just to be sure we're "
+                          "not writing broken files to disk.")
+                try:
+                    PyParser.PyModule(buf, mode='string')
+                    log.debug("Nothing wrong with the outfile '%s'.",
+                              outfilepath)
+                except:
+                    log.critical("There's something wrong with the python code we're about "
+                                 "to write to disk. Perhaps a faulty tagged value or a "
+                                 "genuine bug in parsing the previous version of the file. "
+                                 "The filename is '%s'.",
+                                 outfilepath)
+                    raise
+                classfile = self.makeFile(outfilepath)
+                # TBD perhaps check if the file is parseable
+                print >> classfile, buf
                 classfile.close()
             except:
                 #roll back the changes
