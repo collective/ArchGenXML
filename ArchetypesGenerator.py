@@ -854,7 +854,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         res+=indent("%s('%s',\n" % (fieldtype % {'type':rawType},name), indent_level)
         if map:      
-            prepend = ''
+            prepend = indent('', indent_level)
             for key in map: 
                 if key.find(':')>=0:
                     continue
@@ -868,13 +868,14 @@ class ArchetypesGenerator(BaseGenerator):
                 else:
                     firstline = lines
                     
-                res+=indent('%s%s=%s' % (prepend, key, firstline), indent_level+1)
+                res+='%s%s=%s' % (prepend, key, firstline)
                 if type(lines) in StringTypes and linebreak<len(lines):
                     for line in lines[linebreak+1:].split('\n'):
-                        res += "\n%s" % line                    
-                prepend = ',\n'
+                        res += "\n%s" % indent(line, indent_level+1)
 
-        res+=indent('),\n', indent_level)
+                prepend = ',\n%s' % indent('', indent_level+1)
+
+        res+='\n%s' % indent('),\n', indent_level)
 
         return res
 
