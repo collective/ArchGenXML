@@ -189,7 +189,7 @@ explanation = """TODO."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'portal_type'
-explanation = """TODO."""
+explanation = """Sets the CMF portal-type this class will be registered with, defaults to the class-name."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'use_workflow'
