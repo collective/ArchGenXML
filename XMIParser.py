@@ -916,6 +916,11 @@ class XMIElement:
         return 0
 
     def getTaggedValues(self):
+        category = str(self.__class__)
+        for tagname in self.taggedValues.keys():
+            if not tgvRegistry.isRegistered(tagname, category):
+                # The registry does the complaining :-)
+                pass
         return self.taggedValues
 
     def getDocumentation(self, striphtml=0, wrap=-1):
@@ -2427,6 +2432,9 @@ class XMIGuard(XMIElement):
 
 class XMIState(XMIElement):
     isinitial = 0
+    non_permissions = ['initial_state', 'documentation',
+                       'label', 'worklist',
+                       'worklist:guard_permissions']
 
     def __init__(self, *args, **kwargs):
         self.incomingTransitions = []
@@ -2468,6 +2476,15 @@ class XMIState(XMIElement):
     def getOutgoingTransitions(self):
         return self.outgoingTransitions
 
+    def getTaggedValues(self):
+        category = str(self.__class__)
+        for tagname in self.taggedValues.keys():
+            if tagname in self.non_permissions:
+                if not tgvRegistry.isRegistered(tagname, category):
+                    # The registry does the complaining :-)
+                    pass
+        return self.taggedValues
+
     def getPermissionsDefinitions(self):
         """ return a list of dictionaries with permission definitions
 
@@ -2492,8 +2509,7 @@ class XMIState(XMIElement):
 
         for tag, tag_value in tagged_values.items():
             # list of tagged values that are NOT permissions
-            non_permissions = ['initial_state', 'documentation', 'label', 'worklist', 'worklist:guard_permissions']
-            if tag in non_permissions or not tag_value:
+            if tag in self.non_permissions or not tag_value:
                 continue
             tag = tag.strip()
             # look up abbreviations if any
