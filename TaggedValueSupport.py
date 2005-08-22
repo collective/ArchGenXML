@@ -464,6 +464,13 @@ import your class (say 'MyClass') and then put 'MyClass.schema' in your 'copy_fr
 value."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'schemata'
+explanation = """If you want to split your form with many, many attibutes in multiple schemata
+("sub-forms"), add a tagged value 'schemata' to the attributes you want in a different schemata
+with the name of that schemata (for instance "personal data"). The default schemata is called
+"default", btw."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'validation_expression'
 explanation = """Sets the expression used for run-time validation of the attribute."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
