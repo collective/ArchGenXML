@@ -118,7 +118,7 @@ class TaggedValueRegistry:
                       tagname, original_category)
         return False
 
-    def documentation(self, indentation=1):
+    def documentation(self, indentation=0):
         """Return the documentation for all tagged values.
 
         The documentation is returned as a string. 'indentation' can
@@ -129,7 +129,9 @@ class TaggedValueRegistry:
 
         import StringIO
         out = StringIO.StringIO()
-        for category in self._registry:
+        categories = self._registry.keys()
+        categories.sort()
+        for category in categories:
             print >> out
             print >> out, category
             print >> out
@@ -393,7 +395,7 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 
 # Actions/forms/views
 
-category = 'action'
+category = 'action/form/view'
 
 # For methods with either of the '<<action>>'', '<<form>>' or
 # '<<view>>' stereotypes, the following tagged values can be used to
