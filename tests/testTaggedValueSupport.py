@@ -64,6 +64,15 @@ class TestTaggedValueRegistry(unittest.TestCase):
         self.assertEquals(False,
                           self.registry.isRegistered(tagname='oliebollen'))
 
+    def test_isRegistered3(self):
+        """Check special widget: tgvs
+        """
+
+        self.registry.addTaggedValue(category='attribute', tagname='testclasstgv')
+        self.assertEquals(True,
+                          self.registry.isRegistered(tagname='widget:something',
+                                                     category='attribute'))
+
     def test_stuffAddedInTheFileWorks(self):
         """ The registering of TGVs at the end of the file should work
         """

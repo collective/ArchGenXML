@@ -113,6 +113,10 @@ class TaggedValueRegistry:
                 self.log.debug("Tag '%s' (category '%s') exists in the registry.",
                                tagname, category)
                 return True
+        if 'attribute' in categories:
+            if tagname.startswith('widget:'):
+                self.log.debug("Special 'widget:' tagged value, leaving it be.")
+                return True
         self.log.warn("Tag '%s' (category '%s') is not self-documented.",
                       tagname, original_category)
         return False
