@@ -54,7 +54,7 @@ class TaggedValueRegistry:
             'XMIParser.XMIClass': ['class', 'tool', 'portlet'],
             #'XMIParser.XMIInterface': [],
             #'XMIParser.XMIMethodParameter': [],
-            'XMIParser.XMIMethod': ['method', 'action'],
+            'XMIParser.XMIMethod': ['method', 'action/form/view'],
             'XMIParser.XMIAttribute': ['attribute'],
             #'XMIParser.XMIAssocEnd': [],
             #'XMIParser.XMIAssociation': [],
