@@ -523,6 +523,14 @@ tagname = 'searchable'
 explanation = """Whether or not the field should be searchable when performing a search in the portal. """
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'vocabulary:type'
+explanation = """Enables support for Products 'ATVocabularyManager' by setting value to 'ATVocabularyManager'. """
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'vocabulary:name'
+explanation = """Togther with Products 'ATVocabularyManager' this sets the name of the vocabulary. """
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 
 # widgets (not a separate category!)
 
@@ -574,6 +582,22 @@ tagname = 'trigger_type'
 explanation = """TODO."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+# Category 'associations'
+category = 'association'
+
+tagname = 'inverse_relation_name'
+explanation = """Together with 'Relations' Product you have inverse relations. the name default to 'name_of_your_relation_inverse', but you can overrrule it using this tagged value."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'reference_field'
+explanation = """Use a custom field instead of ReferenceField."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'relation_field'
+explanation = """Use a custom field instead of RelationField. Works only together with 'Relations' Product and relation_implementation set to 'relations'."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+    
+# Tagged values for more than one category
 
 for category in ['model', 'package', 'class', 'tool', 'portlet']:
     for tagname in ['author', 'email', 'copyright']:
@@ -598,12 +622,11 @@ for category in ['model', 'package', 'association']:
     tagname = 'association_class'
     explanation = """You can use associations classes to store content on the association itself. The class used is specified by this setting. Don't forget to import the used class properly."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-    
-    tagname = 'inverse_relation_name'
-    explanation = """Together with 'Relations' Product you have inverse relations. the name default to inverse_name_of_your_relation, but you can overrrule it using this tagged value."""
+        
+    tagname = 'association_vocabulary'
+    explanation = """Switch, defaults to False. Needs Product 'ATVocabularyManager'. Generates an empty vocabulary with the name of the relation."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-    
-    
+        
 # Tagged values occurring everywhere
 for category in tgvRegistry._registry:
     

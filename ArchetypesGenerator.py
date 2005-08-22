@@ -2515,7 +2515,7 @@ class ArchetypesGenerator(BaseGenerator):
             sourcecard=list(assoc.fromEnd.mult)
             sourcecard[0]=None #temporary pragmatic fix
             targetcard[0]=None #temporary pragmatic fix
-            print 'relation:',assoc.getName(),'target cardinality:',targetcard,'sourcecard:',sourcecard
+            #print 'relation:',assoc.getName(),'target cardinality:',targetcard,'sourcecard:',sourcecard
             sourcetype=None
             targettype=None
             sourceinterface=None
