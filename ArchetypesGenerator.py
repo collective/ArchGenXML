@@ -757,7 +757,6 @@ class ArchetypesGenerator(BaseGenerator):
         check_map=odict()
         check_map['label']              = "'%s'" % fieldname.capitalize()
         check_map['label_msgid']        = "'%s_label_%s'" % (modulename,fieldname)
-        check_map['description']        = "'Enter a value for %s.'" % fieldname
         check_map['description_msgid']  = "'%s_help_%s'" % (modulename,fieldname)
         check_map['i18n_domain']        = "'%s'" % modulename
 
@@ -802,8 +801,6 @@ class ArchetypesGenerator(BaseGenerator):
 
             ## before update the widget mapping, try to make a
             ## better description based on the given label
-            if widgetmap.has_key('label'):
-                check_map['description'] = "\'Enter a value for %s.\'" % widgetmap['label'].strip('"')
 
             for k in check_map:
                 if not (k in widgetmap.keys()): # XXX check if disabled
