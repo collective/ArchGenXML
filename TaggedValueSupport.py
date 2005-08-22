@@ -57,8 +57,7 @@ class TaggedValueRegistry:
             'XMIParser.XMIMethod': ['method', 'action/form/view'],
             'XMIParser.XMIAttribute': ['attribute'],
             #'XMIParser.XMIAssocEnd': [],
-            #'XMIParser.XMIAssociation': [],
-            #'XMIParser.XMIAssociation': [],
+            'XMIParser.XMIAssociation': ['association'],
             #'XMIParser.XMIAbstraction': [],
             #'XMIParser.XMIDependency': [],
             #'XMIParser.XMIStateContainer': [],
@@ -595,6 +594,15 @@ for category in ['model', 'package', 'class', 'tool', 'portlet']:
     explanation = """A list of python import statements which will be placed at the top of the generated file. Use this to make new field and widget types available, for example. Note that in the generated code you will be able to enter additional import statements in a preserved code section near the top of the file. Prefer using the imports tagged value when it imports something that is directly used by another element in your model. You can have several import statements, one per line, or by adding several tagged values with the name 'imports'."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+for category in ['model', 'package', 'association']:
+
+    tagname = 'relation_implementation'
+    explanation = """Sets the type of implementation is used for an association: 'basic' (used as default) for classic style archetypes references or 'relations' for use of the 'Relations' Product."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+    tagname = 'association_class'
+    explanation = """You can use associations classes to store content on the association itself. The class used is specified by this setting. Don't forget to import the used class properly."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 if __name__ == '__main__':
     print tgvRegistry.documentation()
