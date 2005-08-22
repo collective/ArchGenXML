@@ -457,9 +457,11 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 
 tagname = 'copy_from'
 explanation = """To copy an attribute from another schema, give it the type 'copy'.
-The tagged value 'copy_from' is then used to specify which schema to copy it from.
-It is specified in dotted notation (for instance, '' when copying Description from
-the metadata schema)."""
+The tagged value 'copy_from' is then used to specify which schema to copy it from
+(for instance, 'BaseSchema' when copying Description from
+the base schema). For copying your own schemas, add an 'imports' tagged value to
+import your class (say 'MyClass') and then put 'MyClass.schema' in your 'copy_from'
+value."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'validation_expression'
