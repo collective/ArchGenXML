@@ -594,9 +594,13 @@ for category in ['model', 'package', 'association']:
     tagname = 'association_class'
     explanation = """You can use associations classes to store content on the association itself. The class used is specified by this setting. Don't forget to import the used class properly."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
+    
+    tagname = 'inverse_relation_name'
+    explanation = """Together with 'Relations' Product you have inverse relations. the name default to inverse_name_of_your_relation, but you can overrrule it using this tagged value."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+    
+    
 # Tagged values occurring everywhere
-
 for category in tgvRegistry._registry:
     
     tagname = 'label'
