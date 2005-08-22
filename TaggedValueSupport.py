@@ -156,33 +156,13 @@ tgvRegistry = TaggedValueRegistry()
 # Model level tagged values
 category = 'model'
 
-tagname = 'module'
-explanation = """TODO."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
-tagname = 'module_name'
-explanation = """TODO."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 # Package level tagged values
 category = 'package'
-
-tagname = 'module_name'
-explanation = """TODO."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
-tagname = 'module'
-explanation = """TODO."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 # Class level tagged values
 category = 'class'
 
 # The following tagged values can be set on classes to alter their behaviour:
-
-tagname = 'module_name'
-explanation = """TODO."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'policy'
 explanation = """TODO."""
@@ -220,10 +200,6 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 
 tagname = 'base_schema'
 explanation = """Explicitly set the base schema for a content type, overriding the automatic selection of the parent's schema or BaseSchema, BaseFolderSchema or OrderedBaseFolderSchema. """
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
-tagname = 'module'
-explanation = """TODO."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'folder_base_class'
@@ -627,6 +603,16 @@ for category in ['model', 'package', 'association']:
     explanation = """Switch, defaults to False. Needs Product 'ATVocabularyManager'. Generates an empty vocabulary with the name of the relation."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
         
+    tagname = 'module'
+    explanation = """Like 'module_name', it overwrites the name of the directory it'd be normally
+    placed in."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+    tagname = 'module_name'
+    explanation = """Like 'module', it overwrites the name of the directory it'd be normally
+    placed in."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 # Tagged values occurring everywhere
 for category in tgvRegistry._registry:
     
