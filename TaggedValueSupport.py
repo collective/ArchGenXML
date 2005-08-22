@@ -479,6 +479,14 @@ explanation = """Sets the permission that determines if you're allowed
 to write to the field."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'sizes'
+explanation = """Sets the allowed sizes for an ImageField widget."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'original_size'
+explanation = """Sets the maximum size for the original for an ImageField widget."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'default'
 explanation = """Set a value to use as the default value of the field."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
