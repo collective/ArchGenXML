@@ -309,15 +309,6 @@ explanation = """Sets the base actions in the class's factory type
 information (FTI)."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-tagname = 'creation_permission'
-explanation = """Sets the creation permission for the class. Example:
-'Add portal content'."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
-tagname = 'creation_roles'
-explanation = """TODO."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 tagname = 'disable_polymorphing'
 explanation = """Normally, archgenxml looks at the parents of the
 current class for content types that are allowed as items in a
@@ -600,7 +591,7 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 # Tagged values for more than one category
 
 for category in ['model', 'package', 'class', 'tool', 'portlet']:
-    for tagname in ['author', 'email', 'copyright']:
+    for tagname in ['author', 'email', 'copyright', 'license']:
         explanation = """You can set the %s project-wide with the
         '--%s' commandline parameter (or in the config file). This tag
         allows you to overwrite it on a %s level.""" % (tagname,
@@ -611,7 +602,16 @@ for category in ['model', 'package', 'class', 'tool', 'portlet']:
                                    explanation=explanation)
     tagname = 'imports'
     explanation = """A list of python import statements which will be placed at the top of the generated file. Use this to make new field and widget types available, for example. Note that in the generated code you will be able to enter additional import statements in a preserved code section near the top of the file. Prefer using the imports tagged value when it imports something that is directly used by another element in your model. You can have several import statements, one per line, or by adding several tagged values with the name 'imports'."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)    
+
+    tagname = 'creation_permission'
+    explanation = """Sets the creation permission for the class. Example:
+    'Add portal content'."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+    
+    tagname = 'creation_roles'
+    explanation = """You can set an own role who should be able to add a type. Use an Tuple of Strings. Default and example for this value: '("Manager", "Owner", "Member")'."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)    
 
 for category in ['model', 'package', 'association']:
 
