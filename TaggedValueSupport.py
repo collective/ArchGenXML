@@ -455,6 +455,13 @@ tagname = 'required'
 explanation = """Set to true (1) to make the field required"""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'copy_from'
+explanation = """To copy an attribute from another schema, give it the type 'copy'.
+The tagged value 'copy_from' is then used to specify which schema to copy it from.
+It is specified in dotted notation (for instance, '' when copying Description from
+the metadata schema)."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'validation_expression'
 explanation = """Sets the expression used for run-time validation of the attribute."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
