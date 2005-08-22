@@ -571,23 +571,6 @@ explanation = """TODO."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 
-# Tagged values occurring everywhere
-
-for category in tgvRegistry._registry:
-    
-    tagname = 'label'
-    explanation = """Sets the readable name."""
-    if not tgvRegistry._registry[category].has_key(tagname):
-        # Making sure we don't overwrite specialised stuff :-)
-        tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
-    tagname = 'documentation'
-    explanation = """You can add documention via this tag; it's better to
-    use  your UML tool's documentation field."""
-    if not tgvRegistry._registry[category].has_key(tagname):
-        # Making sure we don't overwrite specialised stuff :-)
-        tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 for category in ['model', 'package', 'class', 'tool', 'portlet']:
     for tagname in ['author', 'email', 'copyright']:
         explanation = """You can set the %s project-wide with the
@@ -612,5 +595,23 @@ for category in ['model', 'package', 'association']:
     explanation = """You can use associations classes to store content on the association itself. The class used is specified by this setting. Don't forget to import the used class properly."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+# Tagged values occurring everywhere
+
+for category in tgvRegistry._registry:
+    
+    tagname = 'label'
+    explanation = """Sets the readable name."""
+    if not tgvRegistry._registry[category].has_key(tagname):
+        # Making sure we don't overwrite specialised stuff :-)
+        tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+    tagname = 'documentation'
+    explanation = """You can add documention via this tag; it's better to
+    use  your UML tool's documentation field."""
+    if not tgvRegistry._registry[category].has_key(tagname):
+        # Making sure we don't overwrite specialised stuff :-)
+        tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 if __name__ == '__main__':
     print tgvRegistry.documentation()
+
