@@ -589,6 +589,16 @@ for category in ['model', 'package', 'class', 'tool', 'portlet']:
     explanation = """You can set an own role who should be able to add a type. Use an Tuple of Strings. Default and example for this value: '("Manager", "Owner", "Member")'."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)    
 
+    tagname = 'module'
+    explanation = """Like 'module_name', it overwrites the name of the directory it'd be normally
+    placed in."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+    tagname = 'module_name'
+    explanation = """Like 'module', it overwrites the name of the directory it'd be normally
+    placed in."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 for category in ['model', 'package', 'association']:
 
     tagname = 'relation_implementation'
@@ -603,16 +613,6 @@ for category in ['model', 'package', 'association']:
     explanation = """Switch, defaults to False. Needs Product 'ATVocabularyManager'. Generates an empty vocabulary with the name of the relation."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
         
-    tagname = 'module'
-    explanation = """Like 'module_name', it overwrites the name of the directory it'd be normally
-    placed in."""
-    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
-    tagname = 'module_name'
-    explanation = """Like 'module', it overwrites the name of the directory it'd be normally
-    placed in."""
-    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 # Tagged values occurring everywhere
 for category in tgvRegistry._registry:
     
