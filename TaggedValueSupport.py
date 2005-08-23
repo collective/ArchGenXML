@@ -117,6 +117,10 @@ class TaggedValueRegistry:
             if tagname.startswith('widget:'):
                 self.log.debug("Special 'widget:' tagged value, leaving it be.")
                 return True
+        if 'class' in categories:
+            if tagname in ('transient', 'volatile'):
+                self.log.debug("Special 'transient' or 'volatile' tagged value, leaving it be.")
+                return True
         self.log.warn("Tag '%s' (category '%s') is not self-documented.",
                       tagname, original_category)
         return False
