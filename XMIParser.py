@@ -1898,9 +1898,9 @@ class XMIAttribute (XMIElement):
         try:
             return self.mult
         except:
-            log.critical("Ouch, self.mult hasn't been set for '%s' (%s).",
-                         self.name, self)
-            raise
+            log.debug("Ouch, self.mult hasn't been set for '%s' (%s).",
+                      self.name, self)
+            return 1
 
     def getLowerBound(self):
         return self.getMultiplicity()[0]
@@ -1946,9 +1946,9 @@ class XMIAssocEnd (XMIElement):
         try:
             return self.mult
         except:
-            log.critical("Ouch, self.mult hasn't been set for '%s' (%s).",
+            log.debug("Ouch, self.mult hasn't been set for '%s' (%s).",
                          self.name, self)
-            raise
+            return 1
 
     def getLowerBound(self):
         return self.getMultiplicity()[0]

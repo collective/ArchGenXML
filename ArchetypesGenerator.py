@@ -280,13 +280,12 @@ class ArchetypesGenerator(BaseGenerator):
         return os.path.join(element.getRootPackage().getFilePath(),'skins',element.getRootPackage().getModuleName())
 
     def generateDependentImports(self,element):
-
+        
         res=BaseGenerator.generateDependentImports(self,element)
         out=StringIO()
         print >>out,res
-        
-            
         generate_expression_validator=False
+            
         for att in element.getAttributeDefs():
             if att.getTaggedValue('validation_expression'):
                 generate_expression_validator=True
@@ -1554,7 +1553,9 @@ class ArchetypesGenerator(BaseGenerator):
         wrt('\n')
 
         parentnames = [p.getCleanName() for p in element.getGenParents()]
+        log.debug("Generating dependent imports...")
         print >>outfile,self.generateDependentImports(element)
+        log.debug("Generating additional imports...")
         print >>outfile,self.generateAdditionalImports(element)
 
         if self.detailed_creation_permissions:
