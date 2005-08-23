@@ -99,62 +99,88 @@ class ArchetypesGenerator(BaseGenerator):
 
     uml_profile.addStereoType('portal_tool',
                               ['XMIClass'],
-                              description='turns a class into a portal tool')
+                              description='Turns a class into a portal tool.')
     uml_profile.addStereoType('stub',
                               ['XMIClass'],
-                              description='This class wont get generated')
+                              description="""Prevents a class from
+                              being generated.""")
     uml_profile.addStereoType('content_class',
                               ['XMIClass'],
-                              description='turns a class into a portal tool',
+                              description='TODO',
                               dispatching=1,
                               generator='generateArchetypesClass')
     uml_profile.addStereoType('tests',
                               ['XMIPackage'],
-                              description='this package will be treated as test package')
+                              description="""Treats a package as test
+                              package. Inside such a test package, you
+                              need at a '<<plone_testcase>>' and a
+                              '<<setup_testcase>>'.""")
     uml_profile.addStereoType('plone_testcase',
                               ['XMIClass'],
                               dispatching=1,
+                              description="""Turns a class into the
+                              (needed) base class for all other
+                              '<<testcase>>' and '<<doc_testcase>>'
+                              classes inside a '<<test>>' package.""",
                               generator='generateBaseTestcaseClass',
                               template='tests/PloneTestcase.py')
     uml_profile.addStereoType('testcase',
                               ['XMIClass'],
                               dispatching=1,
                               generator='generateTestcaseClass',
+                              description="""Turns a class into a
+                              testcase. It must subclass a
+                              '<<plone_testcase>>'. Adding an
+                              interface arrow to another class
+                              automatically adds that class's methods
+                              to the testfile for testing.""",
                               template='tests/GenericTestcase.py')
     uml_profile.addStereoType('doc_testcase',
                               ['XMIClass'],
                               dispatching=1,
                               generator='generateDocTestcaseClass',
+                              description="""Turns a class into a
+                              doctest class. It must subclass a
+                              '<<plone_testcase>>'.""",
                               template='tests/DocTestcase.py')
     uml_profile.addStereoType('setup_testcase',
                               ['XMIClass'],
                               dispatching=1,
                               generator='generateTestcaseClass',
+                              description="""Turns a class into a
+                              testcase for the setup, with pre-defined
+                              common checks.""",
                               template='tests/SetupTestcase.py')
     uml_profile.addStereoType('interface_testcase',
                               ['XMIClass'],
                               dispatching=1,
                               generator='generateTestcaseClass',
                               template='tests/InterfaceTestcase.py')
-    uml_profile.addStereoType('relation_implementation',
-                              ['XMIClass',
-                               'XMIAssociation',
-                               'XMIPackage'],
-                              description='specifies how relations should be implemented',
-                              default='basic')
+    # This looks like a tagged value...
+    #     uml_profile.addStereoType('relation_implementation',
+    #                               ['XMIClass',
+    #                                'XMIAssociation',
+    #                                'XMIPackage'],
+    #                               description='specifies how relations should be implemented',
+    #                               default='basic')
     uml_profile.addStereoType('field',
                               ['XMIClass'],
                               dispatching=1,
                               generator='generateFieldClass',
+                              description="""TODO.""",
                               template='field.py')
     uml_profile.addStereoType('widget',
                               ['XMIClass'],
                               dispatching=1,
                               generator='generateWidgetClass',
+                              description="""TODO.""",
                               template='widget.py')
     uml_profile.addStereoType('value_class',
                               ['XMIDependency'],
-                              description='declares a class to be used as value class for a certain field class (see <<field>> stereotype)')
+                              description="""Declares a class to be
+                              used as value class for a certain field
+                              class (see '<<field>>' stereotype)""")
+                              
 
     # The defaults here are already handled by OptionParser
     # (And we want only a single authorative source of information :-)
