@@ -577,6 +577,10 @@ tagname = 'reference_field'
 explanation = """Use a custom field instead of ReferenceField."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'back_reference_field'
+explanation = """Use a custom field instead of ReferenceField."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'relation_field'
 explanation = """Use a custom field instead of RelationField. Works only together with 'Relations' Product and relation_implementation set to 'relations'."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
