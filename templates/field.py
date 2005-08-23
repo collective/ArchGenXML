@@ -12,6 +12,9 @@ from Products.Archetypes.Widget import *
 from Products.Archetypes.Field  import *
 from Products.Archetypes.Schema import Schema
 from Products.generator import i18n
+<dtml-if "klass.hasAttributeWithTaggedValue('vocabulary:type','ATVocabularyManager')">
+from Products.ATVocabularyManager.namedvocabulary import NamedVocabulary
+</dtml-if>
 
 from Products.<dtml-var "klass.getPackage().getProduct().getCleanName()"> import config
 
@@ -92,6 +95,6 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
 
 registerField(<dtml-var "klass.getCleanName()">,
               title='<dtml-var "klass.getTaggedValue('label',klass.getCleanName())">',
-              description='<dtml-var "klass.getTaggedValue('decription','')">')
+              description='<dtml-var "klass.getTaggedValue('description','')">')
 
 <dtml-var "generator.getProtectedSection(parsed_class,'module-footer')">

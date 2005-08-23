@@ -51,7 +51,7 @@ class TaggedValueRegistry:
             #'XMIParser.XMIElement': [],
             'XMIParser.XMIPackage': ['package'],
             'XMIParser.XMIModel': ['model'],
-            'XMIParser.XMIClass': ['class', 'tool', 'portlet'],
+            'XMIParser.XMIClass': ['class', 'tool', 'portlet', 'field'],#, 'widget'],
             #'XMIParser.XMIInterface': [],
             #'XMIParser.XMIMethodParameter': [],
             'XMIParser.XMIMethod': ['method', 'action/form/view'],
@@ -432,6 +432,18 @@ tagname = 'view'
 explanation = """Set the name of the portlet. Defaults to the method name. This will be used as the name of the auto-created page template for the portlet."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+# Field classes
+category = 'field'
+
+# for classes with the stereotype <<field>>
+
+tagname = 'validation_expression'
+explanation = """Use an ExpressionValidator and sets the by value given expression. """
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'description'
+explanation = """Sets an description for this field. It's used for field documentation while registering inside Archetypes."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 # Attributes
 
@@ -523,6 +535,10 @@ tagname = 'vocabulary:name'
 explanation = """Togther with Products 'ATVocabularyManager' this sets the name of the vocabulary. """
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'validation_expression'
+explanation = """Use an ExpressionValidator and sets the by value given expression. """
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 
 # widgets (not a separate category!)
 
@@ -600,6 +616,12 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
     
 # Tagged values for more than one category
 
+for category in ['model', 'package', 'class']:
+    tagname = 'after_creation_rename'
+    explanation = """Setting this boolean value enables or disables explicit the after creation rename feature using '_at_after_creation_rename' class-attribute. """
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+    
+    
 for category in ['model', 'package', 'class', 'tool', 'portlet']:
     for tagname in ['author', 'email', 'copyright', 'license']:
         explanation = """You can set the %s project-wide with the

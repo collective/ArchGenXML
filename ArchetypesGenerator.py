@@ -1803,12 +1803,17 @@ class ArchetypesGenerator(BaseGenerator):
             print >> outfile, CLASS_ALLOWED_CONTENT_INTERFACES % \
                   (','.join(aggregatedInterfaces),parentAggregatedInterfaces)
 
-
         # FTI as attributes on class
         # [optilude] Don't generate FTI for abstract mixins
         if not element.isAbstract ():
             fti=self.generateFti(element,aggregatedClasses)
             print >> outfile,fti
+
+        # _at_after_creation_rename
+        after_creation_rename = self.getOption('after_creation_rename', element, default=False)
+        if after_creation_rename:
+            print >>outfile, CLASS_AFTER_CREATION_RENAME % (isTGVTrue(after_creation_rename) and 'True' or 'False')
+
 
         # prepare schema as class attribute
         parent_schema=["getattr(%s,'schema',Schema(()))" % p.getCleanName() \

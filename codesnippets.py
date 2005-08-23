@@ -125,13 +125,13 @@ from Products.CMFCore.utils import UniqueObject
 
 CLASS_META_TYPE      = """    meta_type                  = '%s' """
 CLASS_PORTAL_TYPE    = """    portal_type                = '%s' """
-CLASS_ARCHETYPE_NAME = """\
-    # This name appears in the 'add' box
+CLASS_ARCHETYPE_NAME = """    # This name appears in the 'add' box
     archetype_name             = '%s'\n"""
 CLASS_IMPLEMENTS     = """    __implements__ = %(baseclass_interfaces)s + (%(realizations)s,)"""
 CLASS_IMPLEMENTS_BASE= """    __implements__ = %(baseclass_interfaces)s"""
-CLASS_ALLOWED_CONTENT_TYPES = '''    allowed_content_types      = %s %s'''
+CLASS_ALLOWED_CONTENT_TYPES      = '''    allowed_content_types      = %s %s'''
 CLASS_ALLOWED_CONTENT_INTERFACES = '''    allowed_interfaces = [%s] %s'''
+CLASS_AFTER_CREATION_RENAME      = '''    _at_after_creation_rename  = %s \n'''
 
 REGISTER_ARCHTYPE    = """registerType(%s,PROJECTNAME)\n"""
 
