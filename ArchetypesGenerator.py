@@ -1827,8 +1827,8 @@ class ArchetypesGenerator(BaseGenerator):
         schema += ['schema']
 
         if element.hasStereoType(self.cmfmember_stereotype):
-            for addschema in ['contact_schema','plone_schema',
-                              'security_schema','login_info_schema',]:
+            for addschema in ['contact_schema', 'plone_schema',
+                              'security_schema', 'login_info_schema',]:
                 if isTGVTrue(element.getTaggedValue(addschema, '1')):
                     schema.append('BaseMember.%s' % addschema)
             if isTGVTrue(element.getTaggedValue(addschema, '1')):

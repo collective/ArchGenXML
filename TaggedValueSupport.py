@@ -297,6 +297,23 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 # TBD: change this into 'polymorphic_allowed_types' with a default of True.
 # Optilude is right on this one. It *does* need support for default values.
 
+#The following are needed for CMFMember classes
+tagname = 'contact_schema'
+explanation = """TODO. CMFMember related."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'plone_schema'
+explanation = """TODO. CMFMember related."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'security_schema'
+explanation = """TODO. CMFMember related."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'login_info_schema'
+explanation = """TODO. CMFMember related."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 # Tool
 category = 'tool' 
 
