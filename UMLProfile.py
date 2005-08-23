@@ -68,7 +68,6 @@ class ProfileEntry:
         self.entities = entities
         self.__dict__.update(kw)
         
-        
     def __repr__(self):
         return '<%s name=%s entities=%s>' % (
             self.__class__.__name__,
@@ -78,6 +77,8 @@ class ProfileEntry:
     def getName(self):
         return self.name
 
+    def get(self, key, default=None):
+        return self.__dict__.get(key, default)
 
 class TaggedValue(ProfileEntry):
     ''' represents a tagged value with its attributes '''
@@ -89,21 +90,19 @@ class StereoType(ProfileEntry):
 class UMLProfile:
     ''' '''
     
-    def __init__(self,parents=[]):
+    def __init__(self, parents=[]):
         log.debug("Initializing UMLProfile.")
         if type(parents) not in (type(()),type([])):
             parents = [parents]
 
-        # Tagged values are handled by TaggedValueSupport.
-        # I modelled that class on OptionParser.py, I didn't know this
-        # class existed... [Reinout]
-        #self.taggedValues=ChainedDict([p.taggedValues for p in parents])
         self.stereoTypes = ChainedDict([p.stereoTypes for p in parents])
     
     def addStereoType(self, name, entities, **kw):
-        log.debug("Adding stereotype '%s' to registry.",
-                  name)
-        stereotype = StereoType(name,entities,**kw)
+        log.debug("Adding stereotype '%s' to registry for entities %r.",
+                  name, entities)
+        log.debug("We're passing the extra parameters %r.",
+                  kw)
+        stereotype = StereoType(name, entities, **kw)
         self.stereoTypes[name] = stereotype
         
     def filterObjects(self,list,entities,**kw):
@@ -138,7 +137,7 @@ class UMLProfile:
     
     def findStereoTypes(self, entities=[], **kw):
         list=self.getAllStereoTypes()
-        return self.filterObjects(list,entities, **kw)
+        return self.filterObjects(list, entities, **kw)
     
     def getStereoType(self,name):
         return self.stereoTypes.get(name, None)
@@ -152,25 +151,62 @@ class UMLProfile:
         
         """
 
+        categoryFromClassMap = {
+            #'XMIElement': [],
+            'XMIPackage': 'package',
+            'XMIModel': 'model',
+            'XMIClass': 'class',
+            #'XMIInterface': ,
+            #'XMIMethodParameter': ,
+            'XMIMethod': 'method',
+            'XMIAttribute': 'attribute',
+            #'XMIAssocEnd': ,
+            'XMIAssociation': 'association',
+            #'XMIAbstraction': ,
+            'XMIDependency': 'dependency',
+            #'XMIStateContainer': ,
+            #'XMIStateMachine': ,
+            'XMIStateTransition': 'state transition',
+            #'XMIAction': ,
+            #'XMIGuard': ,
+            'XMIState': 'state',
+            #'XMICompositeState': ,
+            #'XMIDiagram': ,
+            }
         import StringIO
         out = StringIO.StringIO()
         all = self.getAllStereoTypes()
         stereotypes = []
         for item in all:
             stereotype = {}
-            stereotype['name'] = item.xxx
-        # XXX NOT FINISHED YET
-        for category in self._registry:
+            stereotype['name'] = item.name
+            stereotype['categories'] = []
+            for entity in item.entities:
+                mapped_entity = categoryFromClassMap[entity]
+                stereotype['categories'].append(mapped_entity)
+            stereotype['description'] = item.get('description', 'TODO')
+            stereotypes.append(stereotype)
+        names = [item['name'] for item in stereotypes]
+        names.sort()
+        categories = {}
+        for item in stereotypes:
+            for category in item['categories']:
+                categories[category] = "dictionary just for making keys unique"
+        categories = categories.keys()
+        categories.sort()
+        for category in categories:
             print >> out
             print >> out, category
             print >> out
-            stereotypenames = self._registry[category].keys()
-            stereotypenames.sort()
-            for stereotypename in stereotypenames:
-                explanation = self._registry[category][stereotypename]
-                print >> out, " %s -- %s" % (stereotypename,
-                                             explanation)
-                print >> out
+            for name in names:
+                for stereotype in stereotypes:
+                    if stereotype['name'] != name:
+                        continue
+                    if category not in stereotype['categories']:
+                        continue
+                    print >> out, " %s -- %s" % (name,
+                                                 stereotype['description'])
+                    print >> out
         spaces = ' ' * indentation
         lines = out.getvalue().split('\n')
         indentedLines = [(spaces + line) for line in lines]
@@ -182,5 +218,5 @@ if __name__=='__main__':
     # tests/testUMLProfile.py.
     from ArchetypesGenerator import ArchetypesGenerator
     uml_profile = ArchetypesGenerator.uml_profile
-    print uml_profile.getAllStereoTypes()
+    print uml_profile.documentation()
     
