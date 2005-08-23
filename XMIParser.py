@@ -1884,6 +1884,8 @@ class XMIAttribute (XMIElement):
             self.calcType()
             self.findDefault()
             self.mult = XMI.getMultiplicity(domElement,1,1)
+        else:
+            log.debug("There is no domElement, so for instance 'self.mult' hasn't been set.")
 
     def isI18N(self):
         ''' with a stereotype 'i18N' or the taggedValue i18n == '1' an attribute is treated as i18n'''
@@ -1893,7 +1895,12 @@ class XMIAttribute (XMIElement):
         return self.visibility
 
     def getMultiplicity(self):
-        return self.mult
+        try:
+            return self.mult
+        except:
+            log.critical("Ouch, self.mult hasn't been set for '%s' (%s).",
+                         self.name, self)
+            raise
 
     def getLowerBound(self):
         return self.getMultiplicity()[0]
@@ -1936,7 +1943,12 @@ class XMIAssocEnd (XMIElement):
         return self.obj
     
     def getMultiplicity(self):
-        return self.mult
+        try:
+            return self.mult
+        except:
+            log.critical("Ouch, self.mult hasn't been set for '%s' (%s).",
+                         self.name, self)
+            raise
 
     def getLowerBound(self):
         return self.getMultiplicity()[0]
