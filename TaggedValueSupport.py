@@ -86,7 +86,7 @@ class TaggedValueRegistry:
         self.log.debug("Added tagged value '%s' to registry.",
                        tagname)
 
-    def isRegistered(self, tagname='', category=''):
+    def isRegistered(self, tagname='', category='', silent=False):
         """Return True if the TGV is in te registry
 
         If category has been passed, check for that too. Otherwise, be
@@ -121,8 +121,12 @@ class TaggedValueRegistry:
             if tagname in ('transient', 'volatile'):
                 self.log.debug("Special 'transient' or 'volatile' tagged value, leaving it be.")
                 return True
-        self.log.warn("Tag '%s' (category '%s') is not self-documented.",
-                      tagname, original_category)
+        if silent:
+            self.log.debug("Tag '%s' (category '%s') is not self-documented.",
+                           tagname, original_category)
+        else:
+            self.log.warn("Tag '%s' (category '%s') is not self-documented.",
+                          tagname, original_category)
         return False
 
     def documentation(self, indentation=0):
@@ -458,6 +462,10 @@ tagname = 'required'
 explanation = """Set to true (1) to make the field required"""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'validators'
+explanation = """TODO."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'widget'
 explanation = """Allows you to set the widget to be used for this attribute."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
@@ -572,6 +580,11 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 
 # Package level tagged values
 category = 'state'
+
+tagname = 'initial_state'
+explanation = """Sets this state to be the initial state. This allows you to
+use a normal state in your UML diagram instead of the special round starting-state symbol."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'worklist'
 explanation = """Attach objects in this state to the named

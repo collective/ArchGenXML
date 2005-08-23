@@ -918,7 +918,7 @@ class XMIElement:
     def getTaggedValues(self):
         category = str(self.__class__)
         for tagname in self.taggedValues.keys():
-            if not tgvRegistry.isRegistered(tagname, category):
+            if not tgvRegistry.isRegistered(tagname, category, silent=True):
                 # The registry does the complaining :-)
                 pass
         return self.taggedValues
@@ -2510,7 +2510,7 @@ class XMIState(XMIElement):
         category = str(self.__class__)
         for tagname in self.taggedValues.keys():
             if tagname in self.non_permissions:
-                if not tgvRegistry.isRegistered(tagname, category):
+                if not tgvRegistry.isRegistered(tagname, category, silent=True):
                     # The registry does the complaining :-)
                     pass
         return self.taggedValues
