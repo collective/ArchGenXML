@@ -571,7 +571,12 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 category = 'state transition'
 
 tagname = 'trigger_type'
-explanation = """TODO."""
+explanation = """Sets the trigger type, following what is defined by DCWorkflow:
+
+            0 : Automatic
+            1 : User Action (default)
+            2 : Workflow Method
+"""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 # Category 'associations'
