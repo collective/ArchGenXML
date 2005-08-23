@@ -349,7 +349,7 @@ class XMI1_0:
 
     def getTaggedValue(self, el):
         log.debug("Getting tagged value for element '%s'. Not recursive.",
-                  el.getName())
+                  el.name)
         tagname = getAttributeValue(el, XMI.TAGGED_VALUE_TAG, recursive=0, default=None)
         if not tagname:
             raise TypeError, 'element %s has empty taggedValue' % self.getId(el)
