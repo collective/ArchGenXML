@@ -630,8 +630,8 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 # Tagged values for more than one category
 
 for category in ['model', 'package', 'class']:
-    tagname = 'after_creation_rename'
-    explanation = """Setting this boolean value enables or disables explicit the after creation rename feature using '_at_after_creation_rename' class-attribute. """
+    tagname = 'rename_after_creation'
+    explanation = """Setting this boolean value enables or disables explicit the after creation rename feature using '_at_rename_after_creation' class-attribute. """
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 for category in ['model', 'package', 'class', 'attribute']:

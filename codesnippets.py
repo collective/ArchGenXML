@@ -131,7 +131,7 @@ CLASS_IMPLEMENTS     = """    __implements__ = %(baseclass_interfaces)s + (%(rea
 CLASS_IMPLEMENTS_BASE= """    __implements__ = %(baseclass_interfaces)s"""
 CLASS_ALLOWED_CONTENT_TYPES      = '''    allowed_content_types      = %s %s'''
 CLASS_ALLOWED_CONTENT_INTERFACES = '''    allowed_interfaces = [%s] %s'''
-CLASS_AFTER_CREATION_RENAME      = '''    _at_after_creation_rename  = %s \n'''
+CLASS_RENAME_AFTER_CREATION      = '''    _at_rename_after_creation  = %s \n'''
 
 REGISTER_ARCHTYPE    = """registerType(%s,PROJECTNAME)\n"""
 

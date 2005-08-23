@@ -1835,10 +1835,10 @@ class ArchetypesGenerator(BaseGenerator):
             fti=self.generateFti(element,aggregatedClasses)
             print >> outfile,fti
 
-        # _at_after_creation_rename
-        after_creation_rename = self.getOption('after_creation_rename', element, default=False)
-        if after_creation_rename:
-            print >>outfile, CLASS_AFTER_CREATION_RENAME % (isTGVTrue(after_creation_rename) and 'True' or 'False')
+        # _at_rename_after_creation
+        rename_after_creation = self.getOption('rename_after_creation', element, default=False)
+        if rename_after_creation:
+            print >>outfile, CLASS_RENAME_AFTER_CREATION % (isTGVTrue(rename_after_creation) and 'True' or 'False')
 
 
         # prepare schema as class attribute
