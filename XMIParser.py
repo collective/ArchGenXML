@@ -2431,6 +2431,24 @@ class XMIAction(XMIElement):
     def getAfterActionName(self):
         return self.getSplittedName()[1]
 
+    def getUsedActionNames(self):
+        """Return just the used action names.
+
+        Used by templates/create_workflow.py, filters out the empty
+        ones.
+
+        """
+
+        result = []
+        before = self.getBeforeActionName()
+        after = self.getAfterActionName()
+        if before:
+            result.append(before)
+        if after:
+            result.append(after)
+        return result
+    
+
 class XMIGuard(XMIElement):
     expression = None
     def initFromDOM(self, domElement=None):

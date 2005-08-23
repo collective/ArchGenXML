@@ -82,7 +82,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, workflow):
 <dtml-if "transition.getAction()">
 
     ##creation of workflow scripts
-    for wf_scriptname in <dtml-var "repr(transition.getAction().getSplittedName(padding=0))">:
+    for wf_scriptname in <dtml-var "repr(transition.getAction().getUsedActionNames())">:
         if not wf_scriptname in workflow.scripts.objectIds():
             workflow.scripts._setObject(wf_scriptname,ExternalMethod(wf_scriptname, wf_scriptname,
                 productname + '.<dtml-var "statemachine.getCleanName()">_scripts',
