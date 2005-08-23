@@ -38,7 +38,10 @@ class BaseGenerator:
                               ['XMIClass'],
                               dispatching=1,
                               generator='generatePythonClass',
-                              template='python_class.py')
+                              template='python_class.py',
+                              description="""Generate this class as a
+                              plain python class instead of as an
+                              archetypes class.""")
 
     default_class_type='python_class'
 
