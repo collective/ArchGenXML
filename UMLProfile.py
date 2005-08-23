@@ -1,16 +1,10 @@
-# [Reinout]: I added some logging just to make sure: this class
-# isn't used anywhere in the code. I propose clearing out this
-# file and start a StereotypeSupport.py file instead, modelled
-# on TaggedValueSupport.py and OptionParser.py.
-# We *do* want documented stereotypes! :-)
-
 import logging
 log = logging.getLogger('umlprofile')
 
 class ChainedDict(dict):
     ''' chained dict class allows to conatenate dictionaries '''
     
-    parent_chain=[]
+    parent_chain = []
     
     def __init__(self, parent_chain=[], **kw):
         log.debug("Initializing ChainedDict class.")
@@ -52,7 +46,6 @@ class ChainedDict(dict):
         res=dict.keys(self)
         for p in self.getParentChain():
             res.extend(p.keys())
-            
         return res
 
     def values(self):
@@ -69,15 +62,18 @@ class ChainedDict(dict):
 class ProfileEntry:
     ''' base class '''
     
-    def __init__(self,name,entities,**kw):
+    def __init__(self, name, entities, **kw):
         log.debug("Initializing ProfileEntry class.")
-        self.name=name
-        self.entities=entities
+        self.name = name
+        self.entities = entities
         self.__dict__.update(kw)
         
         
     def __repr__(self):
-        return '<%s name=%s entities=%s>' %(self.__class__.__name__,self.name,repr(self.entities))
+        return '<%s name=%s entities=%s>' % (
+            self.__class__.__name__,
+            self.name,
+            repr(self.entities))
     
     def getName(self):
         return self.name
@@ -96,38 +92,38 @@ class UMLProfile:
     def __init__(self,parents=[]):
         log.debug("Initializing UMLProfile.")
         if type(parents) not in (type(()),type([])):
-            parents=[parents]
+            parents = [parents]
 
         # Tagged values are handled by TaggedValueSupport.
         # I modelled that class on OptionParser.py, I didn't know this
         # class existed... [Reinout]
         #self.taggedValues=ChainedDict([p.taggedValues for p in parents])
-        self.stereoTypes=ChainedDict([p.stereoTypes for p in parents])
+        self.stereoTypes = ChainedDict([p.stereoTypes for p in parents])
     
     def addStereoType(self, name, entities, **kw):
         log.debug("Adding stereotype '%s' to registry.",
                   name)
-        tgv=StereoType(name,entities,**kw)
-        self.stereoTypes[name]=tgv
+        stereotype = StereoType(name,entities,**kw)
+        self.stereoTypes[name] = stereotype
         
     def filterObjects(self,list,entities,**kw):
-        res=[]
+        res = []
         #import pdb;pdb.set_trace()
         for item in list:
             
             #if one of the entities aplies, its ok
             if entities:
-                ok=0
+                ok = 0
                 for e in entities:
                     if e in item.entities:
-                        ok=1
+                        ok = 1
                         continue
                     
                 if not ok:
                     continue 
-            ok=1
+            ok = 1
             for k in kw:
-                if getattr(item,k,None) != kw[k]:
+                if getattr(item, k, None) != kw[k]:
                     ok=0
 
             if not ok:
@@ -140,36 +136,51 @@ class UMLProfile:
     def getAllStereoTypes(self):
         return self.stereoTypes.values()
     
-    def findStereoTypes(self,entities=[],**kw):
+    def findStereoTypes(self, entities=[], **kw):
         list=self.getAllStereoTypes()
-        return self.filterObjects(list,entities,**kw)
+        return self.filterObjects(list,entities, **kw)
     
     def getStereoType(self,name):
-        return self.stereoTypes.get(name,None)
+        return self.stereoTypes.get(name, None)
     
+    def documentation(self, indentation=0):
+        """Return the documentation for all stereotypes.
+
+        The documentation is returned as a string. 'indentation' can
+        be used to get it back indented 'indentation' spaces. Handy
+        for (classic) structured text.
+        
+        """
+
+        import StringIO
+        out = StringIO.StringIO()
+        all = self.getAllStereoTypes()
+        stereotypes = []
+        for item in all:
+            stereotype = {}
+            stereotype['name'] = item.xxx
+        # XXX NOT FINISHED YET
+        for category in self._registry:
+            print >> out
+            print >> out, category
+            print >> out
+            stereotypenames = self._registry[category].keys()
+            stereotypenames.sort()
+            for stereotypename in stereotypenames:
+                explanation = self._registry[category][stereotypename]
+                print >> out, " %s -- %s" % (stereotypename,
+                                             explanation)
+                print >> out
+        spaces = ' ' * indentation
+        lines = out.getvalue().split('\n')
+        indentedLines = [(spaces + line) for line in lines]
+        return '\n'.join(indentedLines)
     
-# test 'em
 
 if __name__=='__main__':
-    a={'a1':'a1v','a2':'a2v'}
-    ca=ChainedDict([a],ca1='ca1v',ca2='ca2v')
-    
-    print a
-    print ca.keys()
-    print ca.get('a1')
-    print ca['a2'],ca['ca1']
-    
-    baseprofile=UMLProfile()
-    baseprofile.addStereoType('python_class',['XMIClass'])
-    baseprofile.addStereoType('portal_type',['XMIClass'],murf=1)
-    baseprofile.addStereoType('view',['XMIMethod'])
-    print baseprofile.getAllStereoTypes()
-
-
-    archprofile=UMLProfile(baseprofile)
-    archprofile.addStereoType('cmfmember',['XMIClass'])
-    
-    print archprofile.findStereoTypes(entities=['XMIClass'])
-    print archprofile.findStereoTypes(entities=['XMIMethod'])
-    print archprofile.findStereoTypes(entities=['XMIClass'],murf=1)
+    # The tests that were originally here have been moved to
+    # tests/testUMLProfile.py.
+    from ArchetypesGenerator import ArchetypesGenerator
+    uml_profile = ArchetypesGenerator.uml_profile
+    print uml_profile.getAllStereoTypes()
     
