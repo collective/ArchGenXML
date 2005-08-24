@@ -256,6 +256,7 @@ class ArchetypesGenerator(BaseGenerator):
                   "We're being passed a file '%s' and keyword "
                   "arguments %r.",
                   xschemaFileName, kwargs)
+        self.infoind = 0
         self.xschemaFileName = xschemaFileName
         self.__dict__.update(kwargs)
         log.debug("After copying over the keyword arguments (read: "
@@ -367,7 +368,7 @@ class ArchetypesGenerator(BaseGenerator):
         for m in element.getMethodDefs():
             method_name = m.getName()
             code=indent(m.getTaggedValue('code',''),1)
-            if m.hasStereoType( ['action', 'view', 'form']):
+            if m.hasStereoType( ['action', 'view', 'form'], umlprofile=self.uml_profile):
                 log.debug("Method has stereotype action/view/form.")
                 action_name = m.getTaggedValue('action','').strip()
                 if not action_name:
@@ -398,21 +399,21 @@ class ArchetypesGenerator(BaseGenerator):
                 if not (m.hasTaggedValue('create_action') and isTGVFalse(m.getTaggedValue('create_action'))):
                     print >>outfile, ACT_TEMPL % dict
 
-            if m.hasStereoType('view'):
+            if m.hasStereoType('view', umlprofile=self.uml_profile):
                 f=self.makeFile(os.path.join(self.getSkinPath(element),action_name+'.pt'),0)
                 if f:
                     templdir=os.path.join(sys.path[0],'templates')
                     viewTemplate=open(os.path.join(templdir,'action_view.pt')).read()
                     f.write(viewTemplate % code)
 
-            elif m.hasStereoType('form'):
+            elif m.hasStereoType('form', umlprofile=self.uml_profile):
                 f=self.makeFile(os.path.join(self.getSkinPath(element),action_name+'.cpt'),0)
                 if f:
                     templdir=os.path.join(sys.path[0],'templates')
                     viewTemplate=open(os.path.join(templdir,'action_view.pt')).read()
                     f.write(viewTemplate % code)
 
-            elif m.hasStereoType(['portlet_view','portlet']):
+            elif m.hasStereoType(['portlet_view','portlet'], umlprofile=self.uml_profile):
                 view_name=m.getTaggedValue('view').strip() or method_name
                 autoinstall=m.getTaggedValue('autoinstall')
                 portlet='here/%s/macros/portlet' % view_name
@@ -452,13 +453,13 @@ class ArchetypesGenerator(BaseGenerator):
         if useRelations:
             print >> outfile,'from Products.Relations.field import RelationField'
                 
-        if element.hasStereoType(self.variable_schema):
+        if element.hasStereoType(self.variable_schema, umlprofile=self.uml_profile):
             print >> outfile,'from Products.Archetypes.VariableSchemaSupport import VariableSchemaSupport'
 
         # ATVocabularyManager imports
-        if element.hasStereoType(self.vocabulary_item_stereotype):
+        if element.hasStereoType(self.vocabulary_item_stereotype, umlprofile=self.uml_profile):
             print >> outfile, 'from Products.ATVocabularyManager.tools import registerVocabularyTerm'
-        if element.hasStereoType(self.vocabulary_container_stereotype):
+        if element.hasStereoType(self.vocabulary_container_stereotype, umlprofile=self.uml_profile):
             print >> outfile, 'from Products.ATVocabularyManager.tools import registerVocabulary'
         if element.hasAttributeWithTaggedValue('vocabulary:type','ATVocabularyManager'):
             print >> outfile, 'from Products.ATVocabularyManager.namedvocabulary import NamedVocabulary'
@@ -533,12 +534,12 @@ class ArchetypesGenerator(BaseGenerator):
             # 2005-05-11 reinout
             global_allow = 0
         # Or if it is a hidden element
-        if element.hasStereoType('hidden'):
+        if element.hasStereoType('hidden', umlprofile=self.uml_profile):
             global_allow = 0
         # Or if it is a tool-like thingy
-        if (element.hasStereoType(self.portal_tools) or 
-            element.hasStereoType(self.vocabulary_item_stereotype) or
-            element.hasStereoType(self.cmfmember_stereotype) or 
+        if (element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile) or 
+            element.hasStereoType(self.vocabulary_item_stereotype, umlprofile=self.uml_profile) or
+            element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile) or 
             element.isAbstract()):
             global_allow = 0
         # But the tagged value overwrites all
@@ -556,7 +557,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         # If we are generating a tool, include the template which sets
         # a tool icon
-        if element.hasStereoType(self.portal_tools):
+        if element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile):
             ftiTempl += TOOL_FTI_TEMPL
 
         has_toolicon=''
@@ -1111,7 +1112,7 @@ class ArchetypesGenerator(BaseGenerator):
             if getattr(rel,'isAssociationClass',0):
                 #associationclasses with stereotype "stub" and tagged value "import_from" will not use ContentReferenceCreator
     
-                if rel.hasStereoType(self.stub_stereotypes) :
+                if rel.hasStereoType(self.stub_stereotypes, umlprofile=self.uml_profile) :
                     map.update({'referenceClass':"%s" % rel.getName()})
                     # do not forget the import!!!
     
@@ -1186,7 +1187,7 @@ class ArchetypesGenerator(BaseGenerator):
                 if startmarker:
                     startmarker=False
                     print >>outfile, 'copied_fields = {}'
-                if element.hasStereoType(self.cmfmember_stereotype):
+                if element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
                     copybase_schema = "BaseMember.content_schema"
                 else:
                     copybase_schema = base_schema
@@ -1297,7 +1298,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         #if __init__ has to be generated for tools i want _not_ __init__ to be preserved
         #if it is added to method_names it wont be recognized as a manual method (hacky but works)
-        if element.hasStereoType(self.portal_tools) and '__init__' not in method_names:
+        if element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile) and '__init__' not in method_names:
             method_names.append('__init__')
 
         if self.method_preservation:
@@ -1324,7 +1325,7 @@ class ArchetypesGenerator(BaseGenerator):
     def generateMethod(self, outfile, m, klass, mode='class'):
         #ignore actions and views here because they are
         #generated separately
-        if m.hasStereoType(['action','view','form','portlet_view']):
+        if m.hasStereoType(['action','view','form','portlet_view'], umlprofile=self.uml_profile):
             return
 
         paramstr=''
@@ -1447,10 +1448,11 @@ class ArchetypesGenerator(BaseGenerator):
     def generateTestcaseClass(self,element,template,**kw):
         from XMIParser import XMIClass
         
-        log.info("Generating testcase '%s'.",
+        log.info("%sGenerating testcase '%s'.",
+                 '    '*self.infoind,
                  element.getName())
         
-        assert element.hasStereoType('plone_testcase') or element.getCleanName().startswith('test'), \
+        assert element.hasStereoType('plone_testcase', umlprofile=self.uml_profile) or element.getCleanName().startswith('test'), \
             "names of test classes _must_ start with 'test', but this class is named '%s'" % element.getCleanName()
 
         assert element.getPackage().getCleanName() == 'tests', \
@@ -1498,7 +1500,8 @@ class ArchetypesGenerator(BaseGenerator):
         return BaseGenerator.generatePythonClass(self, element, template,parent=parent,parentname=parentname)
 
     def generateFieldClass(self,element,template):
-        log.info("Generating field: '%s'.",
+        log.info("%sGenerating field: '%s'.",
+                 '    '*self.infoind,
                  element.getName())
 
         # and now the python code
@@ -1549,7 +1552,7 @@ class ArchetypesGenerator(BaseGenerator):
         # to include 'large' and 'btree' and so.
         isFolderish = aggregatedInterfaces or aggregatedClasses or baseaggregatedClasses or \
                       isTGVTrue(element.getTaggedValue('folderish')) or \
-                      element.hasStereoType(['folder','ordered'])
+                      element.hasStereoType(['folder','ordered'], umlprofile=self.uml_profile)
         log.debug("End verdict on folderish character: %s.",
                   bool(isFolderish))
         return bool(isFolderish)
@@ -1563,10 +1566,11 @@ class ArchetypesGenerator(BaseGenerator):
         return res                                                
 
     def generateArchetypesClass(self, element,**kw):
-        log.info("Generating class '%s'.",
+        log.info("%sGenerating class '%s'.",
+                 '    '*self.infoind,
                  element.getName())
 
-##        if element.hasStereoType(self.python_stereotype):
+##        if element.hasStereoType(self.python_stereotype, umlprofile=self.uml_profile):
 ##            return BaseGenerator.generateClass(self,element)
 
 
@@ -1598,7 +1602,7 @@ class ArchetypesGenerator(BaseGenerator):
             creation_roles = "'%s'" % crfromoption
 
         # imports needed for CMFMember subclassing
-        if element.hasStereoType(self.cmfmember_stereotype):
+        if element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
             wrt(CMFMEMBER_IMPORTS)
             # and set the add content permission to what CMFMember needs
             creation_permission = 'ADD_MEMBER_PERMISSION'
@@ -1620,7 +1624,7 @@ class ArchetypesGenerator(BaseGenerator):
         wrt('\n')
 
         # CMFMember needs a special factory method
-        if element.hasStereoType(self.cmfmember_stereotype):
+        if element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
             wrt(CMFMEMBER_ADD % {'module':element.getRootPackage().getProductModuleName(),
                                  'prefix':self.prefix,
                                  'name': name})
@@ -1653,7 +1657,7 @@ class ArchetypesGenerator(BaseGenerator):
         parent_is_archetype = False
         for p in element.getGenParents():
             parent_is_archetype = parent_is_archetype or \
-                                  p.hasStereoType(self.archetype_stereotype)
+                                  p.hasStereoType(self.archetype_stereotype, umlprofile=self.uml_profile)
         #also check if the parent classes can have subobjects
         baseaggregatedClasses=[]
         for b in element.getGenParents():
@@ -1673,10 +1677,10 @@ class ArchetypesGenerator(BaseGenerator):
         if self.elementIsFolderish(element):
             # folderish
 
-            if element.hasStereoType('ordered'):
+            if element.hasStereoType('ordered', umlprofile=self.uml_profile):
                 baseclass ='OrderedBaseFolder'
                 baseschema='OrderedBaseFolderSchema'
-            elif element.hasStereoType(['large','btree']):
+            elif element.hasStereoType(['large','btree'], umlprofile=self.uml_profile):
                 baseclass ='BaseBTreeFolder'
                 baseschema='BaseFolderSchema'
             else:
@@ -1704,7 +1708,7 @@ class ArchetypesGenerator(BaseGenerator):
             baseclass = None
 
         # CMFMember support
-        if element.hasStereoType(self.cmfmember_stereotype):
+        if element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
             baseclass = 'BaseMember.Member'
             baseschema= 'BaseMember.id_schema'
 
@@ -1725,13 +1729,13 @@ class ArchetypesGenerator(BaseGenerator):
         # [optilude] Also - ignore the standard class if this is an mixin
         # [jensens] abstract might have an base_class!!!
         if baseclass and not isTGVFalse(element.getTaggedValue('base_class',1)) \
-           and not element.hasStereoType('mixin'):
+           and not element.hasStereoType('mixin', umlprofile=self.uml_profile):
               baseclasses=baseclass.split(',')
               parentnames=parentnames+baseclasses
 
         # Remark: CMFMember support includes VariableSchema support
-        if element.hasStereoType(self.variable_schema) and \
-             not element.hasStereoType(self.cmfmember_stereotype):
+        if element.hasStereoType(self.variable_schema, umlprofile=self.uml_profile) and \
+             not element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
             parentnames.insert(0, 'VariableSchemaSupport')
 
         # Interface aggregation
@@ -1739,7 +1743,7 @@ class ArchetypesGenerator(BaseGenerator):
             parentnames.insert(0,'AllowedTypesByIfaceMixin')
 
         # a tool needs to be a unique object
-        if element.hasStereoType(self.portal_tools):
+        if element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile):
             print >>outfile,TEMPL_TOOL_HEADER
             parentnames.insert(0, 'UniqueObject')
 
@@ -1846,7 +1850,7 @@ class ArchetypesGenerator(BaseGenerator):
                        for p in element.getGenParents()]
 
         if parent_is_archetype and \
-           not element.hasStereoType(self.cmfmember_stereotype):
+           not element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
             schema = parent_schema
         else:
             # [optilude] Ignore baseschema in abstract mixin classes
@@ -1858,7 +1862,7 @@ class ArchetypesGenerator(BaseGenerator):
         # own schema overrules base and parents
         schema += ['schema']
 
-        if element.hasStereoType(self.cmfmember_stereotype):
+        if element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
             for addschema in ['contact_schema', 'plone_schema',
                               'security_schema', 'login_info_schema',]:
                 if isTGVTrue(element.getTaggedValue(addschema, '1')):
@@ -1872,7 +1876,7 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateProtectedSection(outfile,element,'class-header',1)
 
         # tool __init__
-        if element.hasStereoType(self.portal_tools):
+        if element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile):
             tool_instance_name=element.getTaggedValue('tool_instance_name') or 'portal_%s' % element.getName().lower()
             print >> outfile,TEMPL_CONSTR_TOOL % (baseclass,tool_instance_name)
             self.generateProtectedSection(outfile,element,'constructor-footer',2)
@@ -1889,7 +1893,7 @@ class ArchetypesGenerator(BaseGenerator):
             wrt( REGISTER_ARCHTYPE % name)
 
         # ATVocabularyManager: registration of class
-        if element.hasStereoType(self.vocabulary_item_stereotype) and \
+        if element.hasStereoType(self.vocabulary_item_stereotype, umlprofile=self.uml_profile) and \
            not element.isAbstract ():
             # XXX TODO: fetch container_class - needs to be refined:
             # check if parent has vocabulary_container_stereotype and use its
@@ -1898,7 +1902,7 @@ class ArchetypesGenerator(BaseGenerator):
             # fallback: use SimpleVocabulary
             container = element.getTaggedValue('vocabulary:portal_type','SimpleVocabulary')
             wrt( REGISTER_VOCABULARY_ITEM % (name, container) )
-        if element.hasStereoType(self.vocabulary_container_stereotype):
+        if element.hasStereoType(self.vocabulary_container_stereotype, umlprofile=self.uml_profile):
             wrt( REGISTER_VOCABULARY_CONTAINER % name )
 
         wrt('# end of class %s\n\n'   % name)
@@ -1906,7 +1910,7 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateProtectedSection(outfile,element,'module-footer')
 
         ## handle add content permissions
-        if not element.hasStereoType(self.portal_tools):
+        if not element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile):
             # tgv overrules 
             cpfromtgv = element.getTaggedValue('creation_permission', None)
             if cpfromtgv:
@@ -2065,7 +2069,7 @@ class ArchetypesGenerator(BaseGenerator):
     def getTools(self,package,autoinstallOnly=0):
         """ returns a list of  generated tools """
         res=[c for c in package.getClasses(recursive=1) if
-                    c.hasStereoType(self.portal_tools)]
+                    c.hasStereoType(self.portal_tools, umlprofile=self.uml_profile)]
                   
         if autoinstallOnly:
             res=[c for c in res if isTGVTrue(c.getTaggedValue('autoinstall')) ]
@@ -2075,7 +2079,7 @@ class ArchetypesGenerator(BaseGenerator):
     def getGeneratedTools(self,package):
         """ returns a list of  generated tools """
         return [c for c in self.getGeneratedClasses(package) if
-                    c.hasStereoType(self.portal_tools)]
+                    c.hasStereoType(self.portal_tools, umlprofile=self.uml_profile)]
 
     def generateStdFiles(self, package):
         if package.isRoot():
@@ -2182,8 +2186,8 @@ class ArchetypesGenerator(BaseGenerator):
 
         # Get the names of packages and classes to import
         packageImports = [m.getModuleName() for m in package.getAnnotation('generatedPackages') or []
-                          if not m.hasStereoType('tests')]
-        classImports   = [m.getModuleName() for m in package.generatedModules if not m.hasStereoType('tests')]
+                          if not m.hasStereoType('tests', umlprofile=self.uml_profile)]
+        classImports   = [m.getModuleName() for m in package.generatedModules if not m.hasStereoType('tests', umlprofile=self.uml_profile)]
         
         # Find additional (custom) permissions
         additional_permissions=[]
@@ -2332,7 +2336,7 @@ class ArchetypesGenerator(BaseGenerator):
         of=self.makeFile(os.path.join(target,'apeconf.xml'))
         print >> of, TEMPL_APECONFIG_BEGIN
         for el in self.root.getClasses():
-            if el.isInternal() or el.hasStereoType(self.stub_stereotypes):
+            if el.isInternal() or el.hasStereoType(self.stub_stereotypes, umlprofile=self.uml_profile):
                 continue
 
             print >>of
@@ -2358,7 +2362,7 @@ class ArchetypesGenerator(BaseGenerator):
     def generatePackage(self, package, recursive=1):
         log.debug("Generating package %s.",
                   package)
-        if package.hasStereoType(self.stub_stereotypes):
+        if package.hasStereoType(self.stub_stereotypes, umlprofile=self.uml_profile):
             log.debug("It's a stub stereotyped package, skipping.")
             return
         package.generatedModules = []
@@ -2377,7 +2381,7 @@ class ArchetypesGenerator(BaseGenerator):
                 log.debug("Ignoring unnecessary class '%s'.",
                           element.getName())
                 continue
-            if element.hasStereoType(self.stub_stereotypes):
+            if element.hasStereoType(self.stub_stereotypes, umlprofile=self.uml_profile):
                 log.debug("Ignoring stub class '%s'.",
                           element.getName())
                 continue
@@ -2449,11 +2453,16 @@ class ArchetypesGenerator(BaseGenerator):
         generatedPkg = package.getAnnotation('generatedPackages') or []
         for p in package.getPackages():
             if p.isProduct():
+                self.infoind += 1
                 self.generateProduct(p)
+                self.infoind -= 1
             else:
-                log.info("Generating package '%s'.",
+                log.info("%sGenerating package '%s'.",
+                         '    '*self.infoind,
                          p.getName())
+                self.infoind += 1
                 self.generatePackage(p,recursive=1)
+                self.infoind -= 1
                 generatedPkg.append(p)
                 package.annotate('generatedPackages',generatedPkg)
 
@@ -2661,19 +2670,20 @@ class ArchetypesGenerator(BaseGenerator):
         outfile=None
 
         if self.generate_packages and root.getCleanName() not in self.generate_packages:
-            log.info("Skipping package '%s'.",
+            log.info("%sSkipping package '%s'.",
+                     '    '*self.infoind,
                      root.getCleanName())
             return
 
         dirMode=1
-        if root.hasStereoType(self.stub_stereotypes):
+        if root.hasStereoType(self.stub_stereotypes, umlprofile=self.uml_profile):
             log.debug("Skipping stub Product '%s'.",
                       root.getName())
             return
 
         log.info("Starting new Product: '%s'.",
                  root.getName())
-
+        self.infoind += 1
         # before generate a Product we need to push the current permissions on a
         # stack in orderto reinitialize the permissions
         self.creation_permission_stack.append(self.creation_permissions)
@@ -2743,6 +2753,7 @@ class ArchetypesGenerator(BaseGenerator):
         #start Workflow creation
         wfg=WorkflowGenerator(package,self)
         wfg.generateWorkflows()
+        self.infoind -= 1
         self.creation_permissions = self.creation_permission_stack.pop()
 
     def parseAndGenerate(self):

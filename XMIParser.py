@@ -1040,18 +1040,15 @@ class XMIElement:
         return XMI.calculateStereoType(self)
 
     def setStereoType(self, st):
-        # TBD: stereotypesupport integration
         self.stereoTypes = [st]
 
     def getStereoType(self):
-        # TBD: stereotypesupport integration
         if self.stereoTypes:
             return self.stereoTypes[0]
         else:
             return None
 
     def addStereoType(self, st):
-        # TBD: stereotypesupport integration
         log.debug("Adding stereotype '%s' to this element's internal list.",
                   st)
         self.stereoTypes.append(st)
@@ -1059,11 +1056,23 @@ class XMIElement:
     def getStereoTypes(self):
         return self.stereoTypes
 
-    def hasStereoType(self, sts):
-        if type(sts) in (type(''), type(u'')):
-            sts = [sts]
-        for st in sts:
-            if st in self.getStereoTypes():
+    def hasStereoType(self, stereotypes, umlprofile=None):
+        log.debug("Looking if element has stereotype %r",
+                  stereotypes)
+        if type(stereotypes) in (type(''), type(u'')):
+            stereotypes = [stereotypes]
+        if umlprofile:
+            for stereotype in stereotypes:
+                found = umlprofile.findStereoTypes(entities=[self.__class__])
+                if found:
+                    log.debug("Stereotype '%s' is registered.")
+                else:
+                    log.debug("DEVELOPERS: Stereotype '%s' isn't registered "
+                              "for element '%s'.",
+                              stereotype,
+                              self.__class__)
+        for stereotype in stereotypes:
+            if stereotype in self.getStereoTypes():
                 return 1
         return 0
 
