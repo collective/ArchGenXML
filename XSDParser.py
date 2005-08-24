@@ -5,7 +5,7 @@
 # Author:      Philipp Auersperg
 # Remark:      (jensens) The developement of this part has stopped almost.
 #              conversion from XSD to XMI can be done with Eclipse and
-#              a plugin named (ill add the name later (brain-dead today)
+#              a plugin named (i'll add the name later (brain-dead today)
 #
 # Created:     2003/19/07
 # RCS-ID:      $Id$

@@ -177,7 +177,8 @@ Additional Documentation
 
 Known Limitations
 
-  The XSD Parser is just a design study, and should be overhauled.
+  The XSD Parser is just a design study and it's markd deprecated, 
+  it and should be overhauled if someone needs this feature.
 
   See the file TODO.txt for information on planned work for
   ArchGenXML.

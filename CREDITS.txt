@@ -1,6 +1,6 @@
 Authors
 
-  Philipp Auersperg phil@bluedynamics.com
+  Philipp Auersperg (phil@bluedynamics.com)
 
     Phil was the original author of the product. He says he had to
     start this project because he is too lazy for coding.
@@ -14,9 +14,9 @@ Authors
     module-info-header support and config-file support,
     CMFMember support and several other little fixes and features.
     
-  Martin Aspeli 
+  Martin Aspeli (optilude)
 
-    Improvements and important cleanups
+    Improvements and important cleanups, documentation.
 
   Fabiano Weimar dos Santos (xiru)
 
@@ -30,6 +30,9 @@ Authors
     Joel rewrote the option handling system to use optparse, and
     worked on the product documentation.
 
+  Reinout van Rees
+
+    Reinout did lots of cleanup and added documentation features.
 
 Sponsors:
 
