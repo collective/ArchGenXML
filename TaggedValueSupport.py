@@ -429,7 +429,10 @@ category = 'portlet'
 #  stereotypes, the following tagged values can be used: 
 
 tagname = 'autoinstall'
-explanation = """Set to 'left' or 'right' to automatically install the portlet with the product in the left or right slots, respectively."""
+explanation = """Set to 'left' or 'right' to automatically install the
+portlet (a class with the stereotype '<<portlet>>') with the product
+in the left or right slots, respectively. If it already exists in the
+slot it won't get overwritten."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'view'

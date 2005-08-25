@@ -136,7 +136,12 @@ class UMLProfile:
         return self.stereoTypes.values()
     
     def findStereoTypes(self, entities=[], **kw):
-        list=self.getAllStereoTypes()
+        log.debug("Finding stereotypes for entities %r.",
+                  entities)
+        entities = [entity.replace('XMIParser.', '') for entity in entities]
+        log.debug("Stripped off 'XMIParser.': %r.",
+                  entities)
+        list = self.getAllStereoTypes()
         return self.filterObjects(list, entities, **kw)
     
     def getStereoType(self,name):

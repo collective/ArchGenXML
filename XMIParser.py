@@ -1059,11 +1059,12 @@ class XMIElement:
     def hasStereoType(self, stereotypes, umlprofile=None):
         log.debug("Looking if element has stereotype %r",
                   stereotypes)
+        category = str(self.__class__)
         if type(stereotypes) in (type(''), type(u'')):
             stereotypes = [stereotypes]
         if umlprofile:
             for stereotype in stereotypes:
-                found = umlprofile.findStereoTypes(entities=[self.__class__])
+                found = umlprofile.findStereoTypes(entities=[category])
                 if found:
                     log.debug("Stereotype '%s' is registered.")
                 else:

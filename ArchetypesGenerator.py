@@ -99,11 +99,25 @@ class ArchetypesGenerator(BaseGenerator):
 
     uml_profile.addStereoType('portal_tool',
                               ['XMIClass'],
-                              description='Turns a class into a portal tool.')
+                              description="""Turns the class into a portal
+                              tool."""
+                              )
     uml_profile.addStereoType('stub',
-                              ['XMIClass'],
-                              description="""Prevents a class from
-                              being generated.""")
+                              ['XMIClass',
+                              'XMIModel',
+                              'XMIPackage'],
+                              description="""Prevents a
+                              class/package/model from
+                              being generated."""
+                              )
+    uml_profile.addStereoType('odStub',
+                              ['XMIClass',
+                              'XMIModel',
+                              'XMIPackage'],
+                              description="""Prevents a
+                              class/package/model from
+                              being generated. Same as '<<stub>>'."""
+                              )
     uml_profile.addStereoType('content_class',
                               ['XMIClass'],
                               description='TODO',
@@ -180,7 +194,179 @@ class ArchetypesGenerator(BaseGenerator):
                               description="""Declares a class to be
                               used as value class for a certain field
                               class (see '<<field>>' stereotype)""")
+
                               
+    uml_profile.addStereoType('CMFMember',
+                              ['XMIClass'],
+                              description="""The class will be treated
+                              as a CMFMember member type. It will
+                              derive from CMFMember's Member class and
+                              be installed as a member data
+                              type. Identical to '<<member>>'."""
+                              )
+    uml_profile.addStereoType('member',
+                              ['XMIClass'],
+                              description="""The class will be treated
+                              as a CMFMember member type. It will
+                              derive from CMFMember's Member class and
+                              be installed as a member data
+                              type. Identical to '<<CMFMember>>'."""
+                              )
+    uml_profile.addStereoType('action',
+                              ['XMIMethod'],
+                              description="""Generate a CMF action
+                              which will be available on the
+                              object. The tagged values 'action'
+                              (defaults to method name), 'id'
+                              (defaults to method name), 'category'
+                              (defaults to 'object'), 'label'
+                              (defaults to method name), 'condition'
+                              (defaults to empty), and 'permission'
+                              (defaults to empty) set on the method
+                              and mapped to the equivalent fields of
+                              any CMF action can be used to control
+                              the behaviour of the action."""
+                              )
+    uml_profile.addStereoType('archetype',
+                              ['XMIClass'],
+                              description="""Explicitly specify that a
+                              class represents an Archetypes
+                              type. This may be necessary if you are
+                              including a class as a base class for
+                              another class and ArchGenXML is unable
+                              to determine whether the parent class is
+                              an Archetype or not. Without knowing
+                              that the parent class in an Archetype,
+                              ArchGenXML cannot ensure that the
+                              parent's schema is available in the
+                              derived class."""
+                              )
+    uml_profile.addStereoType('btree',
+                              ['XMIClass'],
+                              description="""Like '<<folder>>', it
+                              generates a folderish object. But it
+                              uses a BTree folder for support of large
+                              amounts of content. The same as '<<large>>'."""
+                              )
+    uml_profile.addStereoType('large',
+                              ['XMIClass'],
+                              description="""Like '<<folder>>', it
+                              generates a folderish object. But it
+                              uses a BTree folder for support of large
+                              amounts of content. The same as '<<large>>'."""
+                              )
+    uml_profile.addStereoType('folder',
+                              ['XMIClass'],
+                              description="""Turns the class into a
+                              folderish object. When a UML class
+                              contains or aggregates other classes, it
+                              is automatically turned into a folder;
+                              this stereotype can be used to turn
+                              normal classes into folders, too."""
+                              )
+    uml_profile.addStereoType('ordered',
+                              ['XMIClass'],
+                              description="""For folderish types,
+                              include folder ordering support. This
+                              will allow the user to re-order items in
+                              the folder manually."""
+                              )
+    uml_profile.addStereoType('form',
+                              ['XMIMethod'],
+                              description="""Generate an action like
+                              with the '<<action>>' stereotype, but
+                              also copy an empty controller
+                              page template to the skins directory
+                              with the same name as the method and set
+                              this up as the target of the action. If
+                              the template already exists, it is not
+                              overwritten."""
+                              )
+    uml_profile.addStereoType('hidden',
+                              ['XMIClass'],
+                              description="""Generate the class, but
+                              turn off 'global_allow', thereby making it
+                              unavailable in the portal by
+                              default. Note that if you use
+                              composition to specify that a type
+                              should be addable only inside another
+                              (folderish) type, then 'global_allow' will
+                              be turned off automatically, and the
+                              type be made addable only inside the
+                              designated parent. (You can use
+                              aggregation instead of composition to
+                              make a type both globally addable and
+                              explicitly addable inside another
+                              folderish type)."""
+                              )
+    uml_profile.addStereoType('mixin',
+                              ['XMIClass'],
+                              description="""Don't inherit
+                              automatically from 'BaseContent' and
+                              so. This makes the class suitable as a
+                              mixin class.""" #TBD: see also <<archetype>>?
+                              )
+    uml_profile.addStereoType('portlet',
+                              ['XMIMethod'],
+                              description="""Create a simple portlet
+                              page template with the same name as the
+                              method. You can override the name by
+                              setting the 'view' tagged value on the
+                              method. If you add a tagged value
+                              'autoinstall' and set it to 'left' or
+                              'right', the portlet will be
+                              automatically installed with your
+                              product in either the left or the right
+                              slot. If the page template already
+                              exists, it will not be overwritten."""
+                              )
+    uml_profile.addStereoType('portlet_view',
+                              ['XMIMethod'],
+                              description="""Create a simple portlet
+                              page template with the same name as the
+                              method. You can override the name by
+                              setting the 'view' tagged value on the
+                              method. If you add a tagged value
+                              'autoinstall' and set it to 'left' or
+                              'right', the portlet will be
+                              automatically installed with your
+                              product in either the left or the right
+                              slot. If the page template already
+                              exists, it will not be overwritten.
+                              Same as '<<portlet>>'."""
+                              )
+    uml_profile.addStereoType('tool',
+                              ['XMIClass'],
+                              description="""Turns the class into a portal
+                              tool. Similar to '<<portal_tool>>'."""
+                              )
+    uml_profile.addStereoType('variable_schema',
+                              ['XMIClass'],
+                              description="""Include variable schema
+                              support in a content type by deriving
+                              from the VariableSchema mixin class."""
+                              )
+    uml_profile.addStereoType('view',
+                              ['XMIMethod'],
+                              description="""Generate an action like
+                              with the '<<action>>' stereotype, but
+                              also copy an empty page
+                              template to the skins directory with the
+                              same name as the method and set this up
+                              as the target of the action. If the
+                              template exists, it is not overwritten."""
+                              )
+    uml_profile.addStereoType('vocabulary',
+                              ['XMIClass'],
+                              description="""TODO: Describe
+                              ATVocabularyManager support."""
+                              )
+    uml_profile.addStereoType('vocabulary_term',
+                              ['XMIClass'],
+                              description="""TODO: Describe
+                              ATVocabularyManager support."""
+                              )
+
 
     # The defaults here are already handled by OptionParser
     # (And we want only a single authorative source of information :-)
@@ -210,7 +396,8 @@ class ArchetypesGenerator(BaseGenerator):
     vocabulary_container_stereotype = ['vocabulary']
     cmfmember_stereotype = ['CMFMember', 'member']
     python_stereotype = ['python', 'python_class']
-
+    folder_stereotype = ['folder', 'ordered', 'large', 'btree']
+    
     i18n_at=['i18n-archetypes','i18n', 'i18n-at']
     generate_datatypes=['field','compound_field']
 
@@ -1548,11 +1735,9 @@ class ArchetypesGenerator(BaseGenerator):
                   len(aggregatedInterfaces))
         log.debug("Based on this info and the tagged value 'folderish' or the "
                   "stereotypes 'folder' and 'ordered', we look if it's a folder.")
-        # TBD: folder, ordered: should probably be self.folderishStereotypes or so
-        # to include 'large' and 'btree' and so.
         isFolderish = aggregatedInterfaces or aggregatedClasses or baseaggregatedClasses or \
                       isTGVTrue(element.getTaggedValue('folderish')) or \
-                      element.hasStereoType(['folder','ordered'], umlprofile=self.uml_profile)
+                      element.hasStereoType(self.folder_stereotype, umlprofile=self.uml_profile)
         log.debug("End verdict on folderish character: %s.",
                   bool(isFolderish))
         return bool(isFolderish)
