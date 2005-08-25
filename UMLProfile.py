@@ -219,7 +219,6 @@ class UMLProfile:
                     description = '\n'.join(description_lines)
                     outstring = "%s -- %s" % (name,
                                               description)
-                    outstring = textwrap.dedent(outstring)
                     outstring = wrapper.fill(outstring)
                     print >> out, outstring
                     print >> out
