@@ -1,4 +1,5 @@
 import logging
+import textwrap
 log = logging.getLogger('umlprofile')
 
 class ChainedDict(dict):
@@ -199,6 +200,10 @@ class UMLProfile:
                 categories[category] = "dictionary just for making keys unique"
         categories = categories.keys()
         categories.sort()
+        wrapper = textwrap.TextWrapper(replace_whitespace=True,
+                                       initial_indent = ' ',
+                                       subsequent_indent = '    ',
+                                       width=72)
         for category in categories:
             print >> out
             print >> out, category
@@ -209,8 +214,14 @@ class UMLProfile:
                         continue
                     if category not in stereotype['categories']:
                         continue
-                    print >> out, " %s -- %s" % (name,
-                                                 stereotype['description'])
+                    description_lines = stereotype['description'].split('\n')
+                    description_lines = [line.strip() for line in description_lines]
+                    description = '\n'.join(description_lines)
+                    outstring = "%s -- %s" % (name,
+                                              description)
+                    outstring = textwrap.dedent(outstring)
+                    outstring = wrapper.fill(outstring)
+                    print >> out, outstring
                     print >> out
         spaces = ' ' * indentation
         lines = out.getvalue().split('\n')
