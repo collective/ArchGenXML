@@ -10,6 +10,7 @@ http://plone.org/development/teams/developer/ArchGenXML
             return (value1,
                     value2)
   If this is the end of a method, the line with "value2)" is lost.
+  There is a (failing) unittest for this.
     
 * Creation permissions:
 
@@ -22,32 +23,16 @@ http://plone.org/development/teams/developer/ArchGenXML
     
 * Initialise uml_profile with all tagged values + steretypes + documentation
 
-    - See stereotype_reference.stx, tgv_reference.stx
-
-    - Make getTaggedValue() and hasStereotype() fail if the tagged 
-        value/stereotype is not registered in a profile to force them all
-        to be documented
-	
     [x] tagged values are now in TaggedValueSupport. Nicely
-    documented, too. Missing TGV in doc gives a warning, it doesn't
-    break off the processing.
+    documented, too. Missing TGVs give a warning, it doesn't break off
+    the processing.
 
-    [ ] Do the same for stereotypes. They're grouped together already,
-    so this shouldn't bee much work.
+    [x] Do the same for stereotypes. They're grouped together already,
+    so this shouldn't be much work.
 
 * When generating docstrings, be more clever about linebreaks and whitespace. 
 
 	- Poseidon does not wrap, so we need to support funny linebreaks.
-
-* New <<ordered>> stereotype on folderish items allows using OrderedBaseFolder:
-  
-    - What impact does this have on I18NBaseFolder use (I can't find it in
-        Products/Archetypes...)
-        
-    - elvix seems to think we shouldn't generate this as all, since LinguaPlone
-        supercedes i18nlayer, and I18NBaseFolder was a workaround for a 
-        weakness in i18nlayer. I can't answer to that, since I've not used
-        either.
 
 * Move remainder of templates in templates/ to DTML 
 
