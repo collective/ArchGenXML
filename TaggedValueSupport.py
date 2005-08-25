@@ -139,6 +139,11 @@ class TaggedValueRegistry:
         """
 
         import StringIO
+        import textwrap
+        wrapper = textwrap.TextWrapper(replace_whitespace=True,
+                                       initial_indent = ' ',
+                                       subsequent_indent = '    ',
+                                       width=72)
         out = StringIO.StringIO()
         categories = self._registry.keys()
         categories.sort()
@@ -150,8 +155,13 @@ class TaggedValueRegistry:
             tagnames.sort()
             for tagname in tagnames:
                 explanation = self._registry[category][tagname]
-                print >> out, " %s -- %s" % (tagname,
-                                             explanation)
+                explanation_lines = explanation.split('\n')
+                explanation_lines = [line.strip() for line in explanation_lines]
+                explanation = '\n'.join(explanation_lines)
+                outstring = "%s -- %s" % (tagname,
+                                          explanation)
+                outstring = wrapper.fill(outstring)
+                print >> out, outstring
                 print >> out
         spaces = ' ' * indentation
         lines = out.getvalue().split('\n')
