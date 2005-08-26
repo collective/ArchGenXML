@@ -1380,7 +1380,8 @@ class ArchetypesGenerator(BaseGenerator):
                     copybase_schema = base_schema
                 copyfrom = attr.getTaggedValue('copy_from', copybase_schema)
                 name = attr.getTaggedValue('source_name',attr.getName())
-                print >>outfile, "copied_fields['%s'] = %s['%s'].copy()" % (attr.getName(), copyfrom, name)
+                print >>outfile, "copied_fields['%s'] = %s['%s'].copy(%s)" % \
+                        (attr.getName(), copyfrom, name, name!=attr.getName() and ("name='%s'" % attr.getName()) or '')
                 map = self.getFieldAttributes(attr)
                 for key in map:
                     print >>outfile, "copied_fields['%s'].%s = %s" % \
