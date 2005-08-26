@@ -63,10 +63,12 @@ class ChainedDict(dict):
 class ProfileEntry:
     ''' base class '''
     
-    def __init__(self, name, entities, **kw):
-        log.debug("Initializing ProfileEntry class.")
+    def __init__(self, name, entities, description='TODO', **kw):
+        log.debug("Initializing ProfileEntry %s.",
+                  name)
         self.name = name
         self.entities = entities
+        self.description = description
         self.__dict__.update(kw)
         
     def __repr__(self):
@@ -75,18 +77,19 @@ class ProfileEntry:
             self.name,
             repr(self.entities))
     
-    def getName(self):
-        return self.name
-
     def get(self, key, default=None):
         return self.__dict__.get(key, default)
 
+
 class TaggedValue(ProfileEntry):
-    ''' represents a tagged value with its attributes '''
+    """Represents a tagged value with its attributes.
+    """
     
     
 class StereoType(ProfileEntry):
-    ''' represents a stereotype with its attributes '''
+    """Represents a stereotype with its attributes.
+    """
+
     
 class UMLProfile:
     ''' '''
