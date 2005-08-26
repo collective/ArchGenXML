@@ -918,7 +918,7 @@ class ArchetypesGenerator(BaseGenerator):
     def getFieldAttributes(self,element):
         """ converts the tagged values of a field into extended attributes for the archetypes field """
         noparams=['documentation','element.uuid','transient','volatile',
-                  'widget','copy_from',]
+                  'widget','copy_from','source_name']
         convtostring=['expression']
         map={}
         tgv=element.getTaggedValues()
@@ -1178,7 +1178,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         if ctype=='copy':
             name = getattr(attr,'rename_to',attr.getName())
-            field="copied_fields['%s'],\n" % name
+            field=indent("copied_fields['%s'],\n" % name, indent_level)
             return field
             
 
@@ -1378,21 +1378,21 @@ class ArchetypesGenerator(BaseGenerator):
                     copybase_schema = "BaseMember.content_schema"
                 else:
                     copybase_schema = base_schema
-                copyfrom = getattr(attr,'copy_from',copybase_schema)
-                name = getattr(attr,'rename_to',attr.getName())
-                print >>outfile, "copied_fields['%s'] = %s['%s'].copy()" % (name, copyfrom, attr.getName())
+                copyfrom = attr.getTaggedValue('copy_from', copybase_schema)
+                name = attr.getTaggedValue('source_name',attr.getName())
+                print >>outfile, "copied_fields['%s'] = %s['%s'].copy()" % (attr.getName(), copyfrom, name)
                 map = self.getFieldAttributes(attr)
                 for key in map:
-                    print >>outfile, "copied_fields['%s'].%s = %s" % (name, 
-                                        key, map[key])
+                    print >>outfile, "copied_fields['%s'].%s = %s" % \
+                                     (name, key, map[key])
                 tgv=attr.getTaggedValues()
                 for key in tgv.keys():
                     if not key.startswith('widget:'):
                         continue
                     if key not in self.nonstring_tgvs:
                         tgv[key]=getExpression(tgv[key])                    
-                    print >>outfile, "copied_fields['%s'].widget.%s = %s" % (name, 
-                                        key[7:], tgv[key])
+                    print >>outfile, "copied_fields['%s'].widget.%s = %s" % \
+                                     (name, key[7:], tgv[key])
                            
 
         print >>outfile, SCHEMA_START

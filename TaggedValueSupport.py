@@ -492,6 +492,11 @@ import your class (say 'MyClass') and then put 'MyClass.schema' in your 'copy_fr
 value."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'source_name'
+explanation = """With attribute type 'copy' sometimes schema-recycling is fun, together 
+with copy_from you can specify the source name of the field in the schema given by copy_from."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'schemata'
 explanation = """If you want to split your form with many, many attibutes in multiple schemata
 ("sub-forms"), add a tagged value 'schemata' to the attributes you want in a different schemata
