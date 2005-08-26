@@ -307,8 +307,8 @@ class BaseGenerator:
     def generateClass(self,element):
         dispatchers=self.getUMLProfile().findStereoTypes(entities=['XMIClass'],dispatching=1)
         dispatcher=None
-        for tgv in dispatchers:
-            if element.hasStereoType(tgv.getName()):
+        for stereotype in dispatchers:
+            if element.hasStereoType(stereotype.getName()):
                 dispatcher=tgv
 
         if not dispatcher:

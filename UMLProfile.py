@@ -80,6 +80,8 @@ class ProfileEntry:
     def get(self, key, default=None):
         return self.__dict__.get(key, default)
 
+    def getName(self):
+        return self.name
 
 class TaggedValue(ProfileEntry):
     """Represents a tagged value with its attributes.
@@ -98,8 +100,9 @@ class UMLProfile:
         log.debug("Initializing UMLProfile.")
         if type(parents) not in (type(()),type([])):
             parents = [parents]
-
-        self.stereoTypes = ChainedDict([p.stereoTypes for p in parents])
+        stereoTypes = [p.stereoTypes for p in parents]
+        log.debug(repr(stereoTypes))
+        self.stereoTypes = ChainedDict(stereoTypes)
     
     def addStereoType(self, name, entities, **kw):
         log.debug("Adding stereotype '%s' to registry for entities %r.",
@@ -137,6 +140,8 @@ class UMLProfile:
         return res
     
     def getAllStereoTypes(self):
+        log.debug("Getting all stereotypes")
+        log.debug(repr(self.stereoTypes.values()))
         return self.stereoTypes.values()
     
     def findStereoTypes(self, entities=[], **kw):
