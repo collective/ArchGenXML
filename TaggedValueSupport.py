@@ -652,6 +652,10 @@ for category in ['model', 'package', 'class']:
     explanation = """Setting this boolean value enables or disables explicit the after creation rename feature using '_at_rename_after_creation' class-attribute. """
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+    tagname = 'use_portal_factory'
+    explanation = """Setting this boolean value enables the registration of the type for use with portal_factory. """
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 for category in ['model', 'package', 'class', 'attribute']:
     tagname = 'read_permission'
     explanation = """Defines archetypes fields read-permission. Use it together with workflow to control ability to view fields based on roles/permissions."""
