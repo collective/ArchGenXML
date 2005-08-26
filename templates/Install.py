@@ -5,7 +5,7 @@
 #
 # Generated: <dtml-var "infoheader['date']">
 # Generator: ArchGenXML Version <dtml-var "infoheader['version']">
-#            http://sf.net/projects/archetypes/
+#            http://plone.org/products/archgenxml
 #
 # <dtml-var "infoheader['licence']">
 #

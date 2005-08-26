@@ -141,7 +141,8 @@ MODULE_INFO_HEADER = """\
 # File: %(filename)s
 # %(rcs_id_tag)s
 # %(copyright)s
-%(date)s# Generator: ArchGenXML Version %(version)s http://sf.net/projects/archetypes/
+%(date)s# Generator: ArchGenXML Version %(version)s 
+#            http://plone.org/products/archgenxml
 #
 # %(licence)s
 #

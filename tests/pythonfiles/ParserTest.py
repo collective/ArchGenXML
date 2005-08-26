@@ -5,7 +5,7 @@ Purpose
 """
 # Copyright (c) 2005 by Zest software 2005
 #
-# Generator: ArchGenXML Version 1.4 devel 1 http://sf.net/projects/archetypes/
+# Generator: ArchGenXML Version 1.4 devel 1 http://plone.org/products/archgenxml
 #
 # GNU General Public Licence (GPL)
 # 
