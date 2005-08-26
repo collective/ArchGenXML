@@ -215,6 +215,7 @@ class PyModule:
 class PyCodeElement:
     """ Abstract superclass
     """
+    
     module = None
     code = None
     src = None
@@ -276,13 +277,33 @@ class PyFunction(PyCodeElement):
     def codeLength(self):
         """ Calculate the length of a method using the code.co_lnotab
         """
+
+        log.debug("Calculating the code length for %s.",
+                  self.getName())
         res=0
+        log.debug("That strange self.code.co_lnotab is %r with a length of %s.",
+                  self.code.co_lnotab, len(self.code.co_lnotab))
         for i in range(0, len(self.code.co_lnotab), 2):
-            cl = ord(self.code.co_lnotab[i+1])
+            log.debug("Iterating, i=%s.",
+                      i)
+            unused_character = self.code.co_lnotab[i]
+            character = self.code.co_lnotab[i+1]
+            log.debug("Getting the ord() from %s, which is %s.",
+                      character, ord(character))
+            log.debug("The ord() from the unused other character, %s,  is %s.",
+                      unused_character, ord(unused_character))
+            cl = ord(character)
+            log.debug("cl (code length?) is %s.",
+                      cl)
             # I don't know what that next test does
             if cl != 255:
                 res += cl
-        return res+1
+                log.debug("Added it to res, total length is now %s.",
+                          res)
+        length = res+1
+        log.debug("Added 1 to the length, returning %s.",
+                  length)
+        return length
 
     def extractCode(self):
         """ Return '\n'-string containing the method code
