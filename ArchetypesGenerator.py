@@ -1385,7 +1385,7 @@ class ArchetypesGenerator(BaseGenerator):
                 map = self.getFieldAttributes(attr)
                 for key in map:
                     print >>outfile, "copied_fields['%s'].%s = %s" % \
-                                     (name, key, map[key])
+                                     (attr.getName(), key, map[key])
                 tgv=attr.getTaggedValues()
                 for key in tgv.keys():
                     if not key.startswith('widget:'):
@@ -1393,7 +1393,7 @@ class ArchetypesGenerator(BaseGenerator):
                     if key not in self.nonstring_tgvs:
                         tgv[key]=getExpression(tgv[key])                    
                     print >>outfile, "copied_fields['%s'].widget.%s = %s" % \
-                                     (name, key[7:], tgv[key])
+                                     (attr.getName(), key[7:], tgv[key])
                            
 
         print >>outfile, SCHEMA_START
