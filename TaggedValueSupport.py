@@ -286,6 +286,10 @@ tagname = 'default_view'
 explanation = """The TemplateMixin class in Archetypes allows your class to present several alternative view templates for a content type. The default_view value sets the default one. Defaults to 'base_view'. Only relevant if you use TemplateMixin."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'suppl_views'
+explanation = """The TemplateMixin class in Archetypes allows your class to present several alternative view templates for a content type. The suppl_views value sets the available views. Example: '("my_view", "myother_view")'. Defaults to '()'. Only relevant if you use TemplateMixin."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'folderish'
 explanation = """Explicitly specify that a class is folderish. It is usually better to the the '<<folder>>' stereotype instead."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)

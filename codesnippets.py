@@ -75,6 +75,7 @@ FTI_TEMPL='''\
     %(has_content_icon)scontent_icon               = '%(content_icon)s'
     immediate_view             = '%(immediate_view)s'
     default_view               = '%(default_view)s'
+    suppl_views                = %(suppl_views)s
     typeDescription            = %(typeDescription)s
     typeDescMsgId              = 'description_edit_%(type_name_lc)s'
 '''

@@ -706,6 +706,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         immediate_view = element.getTaggedValue('immediate_view') or 'base_view'
         default_view = element.getTaggedValue('default_view') or immediate_view
+        suppl_views = element.getTaggedValue('suppl_views') or '()'
 
         # global_allow
         # Reinout doesn't know what the below is supposed to do... There is no
@@ -780,6 +781,7 @@ class ArchetypesGenerator(BaseGenerator):
             'global_allow'         : global_allow,
             'immediate_view'       : immediate_view,
             'default_view'         : default_view,
+            'suppl_views'          : suppl_views,
             'filter_content_types' : filter_content_types,
             'typeDescription'      : typeDescription,
             'type_name_lc'         : element.getName ().lower ()}
