@@ -140,8 +140,6 @@ class UMLProfile:
         return res
     
     def getAllStereoTypes(self):
-        log.debug("Getting all stereotypes")
-        log.debug(repr(self.stereoTypes.values()))
         return self.stereoTypes.values()
     
     def findStereoTypes(self, entities=[], **kw):
