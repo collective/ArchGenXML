@@ -185,9 +185,10 @@ from Products.Archetypes.atapi import *
 try:
     from Products.LinguaPlone.public import *
 except ImportError:
-    # Not multilingual
-    pass
-
+    HAS_LINGUAPLONE = False
+else:
+    HAS_LINGUAPLONE = True
+    
     """
 
 TEMPLATE_CONFIG_IMPORT = """\

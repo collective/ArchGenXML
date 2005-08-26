@@ -13,6 +13,7 @@ from Products.CMFMember.MemberPermissions import ADD_MEMBER_PERMISSION
 
 PROJECTNAME = "<dtml-var "package.getProductName ()">"
 
+# Permissions
 DEFAULT_ADD_CONTENT_PERMISSION = "<dtml-var "default_creation_permission">"
 setDefaultRoles(DEFAULT_ADD_CONTENT_PERMISSION, ('Manager', 'Owner', 'Member'))
 <dtml-if "creation_permissions">
@@ -37,6 +38,7 @@ product_globals=globals()
 
 <dtml-var "generator.getProtectedSection(parsed_config,'config-bottom')">
 
+# load custom configuration not managed by ArchGenXML
 try:
     from Products.<dtml-var "package.getProductName ()">.AppConfig import *
 except ImportError:
