@@ -304,18 +304,25 @@ class BaseGenerator:
 
         return generatedMethods, manual_methods
 
-    def generateClass(self,element):
-        dispatchers=self.getUMLProfile().findStereoTypes(entities=['XMIClass'],dispatching=1)
-        dispatcher=None
-        for stereotype in dispatchers:
+    def generateClass(self, element):
+        log.debug("Finding suitable dispatching stereotype for element...")
+        dispatching_stereotypes = self.getUMLProfile().findStereoTypes(entities=['XMIClass'],
+                                                                       dispatching=1)
+        log.debug("Dispatching stereotypes found in our UML profile: %r.",
+                  dispatching_stereotypes)
+        dispatching_stereotype = None
+        for stereotype in dispatching_stereotypes:
             if element.hasStereoType(stereotype.getName()):
-                dispatcher=tgv
+                dispatching_stereotype = stereotype
 
-        if not dispatcher:
-            dispatcher=self.getDefaultClassType()
+        if not dispatching_stereotype:
+            dispatching_stereotype=self.getDefaultClassType()
 
-        generator=dispatcher.generator
-        return getattr(self,generator)(element,template=getattr(dispatcher,'template',None))
+        generator = dispatching_stereotype.generator
+        return getattr(self,generator)(element,
+                                       template=getattr(dispatching_stereotype,
+                                                        'template',
+                                                        None))
 
     def generatePythonClass(self,element,template,**kw):
         #print "Parsed_class = %s " % element.parsed_class.getName()
