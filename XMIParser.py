@@ -1998,10 +1998,10 @@ class XMIAssociation (XMIElement):
             res = '%s_%s' %(fromname,toname)
             log.debug("Combining that fromname and toname to form our relation name: '%s'.",
                       res)
-        if type(res) in (type(''), type(u'')):
-            res = res.strip().lower()
-            log.debug("Making it lowercase for good measure: '%s'.",
-                      res)
+            if type(res) in (type(''), type(u'')):
+                res = res.strip().lower()
+                log.debug("Making it lowercase for good measure: '%s'.",
+                          res)
         return res
 
     def initFromDOM(self, domElement=None):
