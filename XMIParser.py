@@ -1971,24 +1971,37 @@ class XMIAssociation (XMIElement):
     toEnd = None
 
     def getName(self):
+        log.debug("Getting name for association...")
         name = str(self.name)
         if self.name:
+            log.debug("self.name is set to '%s', returning it.",
+                      name)
             res = name
         else:
+            log.debug("self.name isn't set.")
             if self.fromEnd:
                 fromname=self.fromEnd.getName()
+                log.debug("Getting fromname from the startpoint: '%s'.",
+                          fromname)
             else:
                 fromname=self.getId()
-
+                log.debug("Getting fromname from our id: '%s'.",
+                          fromname)
             if self.toEnd:
                 toname=self.toEnd.getName()
+                log.debug("Getting toname from the endpoint: '%s'.",
+                          toname)
             else:
                 toname=self.getId()
-
+                log.debug("Getting toname from our id: '%s'.",
+                          toname)
             res = '%s_%s' %(fromname,toname)
-
+            log.debug("Combining that fromname and toname to form our relation name: '%s'.",
+                      res)
         if type(res) in (type(''), type(u'')):
             res = res.strip().lower()
+            log.debug("Making it lowercase for good measure: '%s'.",
+                      res)
         return res
 
     def initFromDOM(self, domElement=None):
