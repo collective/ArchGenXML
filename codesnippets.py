@@ -21,7 +21,7 @@ ACT_TEMPL="""
         'permissions': (%(permission)s,),
         'condition'  : '%(condition)s'
        },
-        """
+"""
 
 MODIFY_FTI = """\
 def modify_fti(fti):
@@ -130,7 +130,7 @@ CLASS_ARCHETYPE_NAME = """    # This name appears in the 'add' box
     archetype_name             = '%s'\n"""
 CLASS_IMPLEMENTS     = """    __implements__ = %(baseclass_interfaces)s + (%(realizations)s,)"""
 CLASS_IMPLEMENTS_BASE= """    __implements__ = %(baseclass_interfaces)s"""
-CLASS_ALLOWED_CONTENT_TYPES      = '''    allowed_content_types      = %s %s'''
+CLASS_ALLOWED_CONTENT_TYPES      = '''    allowed_content_types      = %s%s'''
 CLASS_ALLOWED_CONTENT_INTERFACES = '''    allowed_interfaces = [%s] %s'''
 CLASS_RENAME_AFTER_CREATION      = '''    _at_rename_after_creation  = %s\n'''
 

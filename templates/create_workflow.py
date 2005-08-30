@@ -179,7 +179,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, workflow):
 def create<dtml-var "statemachine.getCleanName()">(self, id):
     """Create the workflow for <dtml-var "package.getCleanName()">.
     """
-    
+
     ob = DCWorkflowDefinition(id)
     setup<dtml-var "statemachine.getCleanName()">(self, ob)
     return ob

@@ -1114,7 +1114,7 @@ class ArchetypesGenerator(BaseGenerator):
 
                 prepend = ',\n%s' % indent('', indent_level+1)
 
-        res+='\n%s' % indent('),\n', indent_level)
+        res+='\n%s' % indent('),', indent_level) + '\n'
 
         return res
 
@@ -2018,7 +2018,7 @@ class ArchetypesGenerator(BaseGenerator):
                     act.append(gp.getCleanName())
             act = ["list(getattr(%s, 'allowed_content_types', []))" % i for i in act]
             if act:
-                parentAggregates = '+ ' + ' + '.join(act)
+                parentAggregates = ' + ' + ' + '.join(act)
         print >> outfile, CLASS_ALLOWED_CONTENT_TYPES % (repr(aggregatedClasses),parentAggregates)
 
         #allowed_interfaces
