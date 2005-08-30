@@ -1243,11 +1243,18 @@ class ArchetypesGenerator(BaseGenerator):
 
 
     def getFieldStringFromAssociation(self, rel, classelement, indent_level=0):
-        ''' gets the schema field code '''
-        multiValued=0
-        obj=rel.toEnd.obj
-        name=rel.toEnd.getName()
-        relname=rel.getName()
+        """Return the schema field code.
+        """
+
+        log.debug("Getting the field string from an association.")
+        multiValued = 0
+        obj = rel.toEnd.obj
+        name = rel.toEnd.getName()
+        relname = rel.getName()
+        log.debug("Endpoint name: '%s'.",
+                  name)
+        log.debug("Relationship name: '%s'.",
+                  relname)
         #field=rel.getTaggedValue('reference_field') or self.typeMap['reference']['field'] #the relation can override the field
 
         if obj.isAbstract():
@@ -1261,6 +1268,7 @@ class ArchetypesGenerator(BaseGenerator):
             name=obj.getName()+'_ref'
 
         if self.getOption('relation_implementation',rel,'basic') == 'relations':
+            log.debug("Using the 'relations' relation implementation.")
             field=rel.getTaggedValue('reference_field') or \
                   rel.toEnd.getTaggedValue('reference_field') or \
                   self.typeMap['relation']['field'] #the relation can override the field
@@ -1279,6 +1287,7 @@ class ArchetypesGenerator(BaseGenerator):
             map.update(self.getFieldAttributes(rel.toEnd))
             map.update( {'widget':self.getWidget('Reference', rel.toEnd, name, classelement)} )
         else:
+            log.debug("Using the standard relation implementation.")
             field=rel.getTaggedValue('reference_field') or \
                   rel.toEnd.getTaggedValue('reference_field') or \
                   self.typeMap['reference']['field'] #the relation can override the field
