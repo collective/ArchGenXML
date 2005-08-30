@@ -135,7 +135,7 @@ class TaggedValueRegistry:
         The documentation is returned as a string. 'indentation' can
         be used to get it back indented 'indentation' spaces. Handy
         for (classic) structured text.
-        
+
         """
 
         import StringIO
@@ -167,7 +167,7 @@ class TaggedValueRegistry:
         lines = out.getvalue().split('\n')
         indentedLines = [(spaces + line) for line in lines]
         return '\n'.join(indentedLines)
-        
+
 
 tgvRegistry = TaggedValueRegistry()
 
@@ -337,10 +337,10 @@ explanation = """TODO. CMFMember related."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 # Tool
-category = 'tool' 
+category = 'tool'
 
 #   The following tagged values can be set on classes with the
-#   '<<portal_tool>>' stereotype to alter their behaviour: 
+#   '<<portal_tool>>' stereotype to alter their behaviour:
 
 tagname = 'toolicon'
 explanation = """The name of an image file, which must be found in the skins directory of the product. This will be used to represent your tool in the Zope Management Interface."""
@@ -408,7 +408,7 @@ category = 'action/form/view'
 
 # For methods with either of the '<<action>>'', '<<form>>' or
 # '<<view>>' stereotypes, the following tagged values can be used to
-# control the generated actions: 
+# control the generated actions:
 
 tagname = 'id'
 explanation = """The id of the action. Use 'id', """
@@ -440,7 +440,7 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 category = 'portlet'
 
 #  For methods with the '<<portlet>>' or '<<portlet_view>>'
-#  stereotypes, the following tagged values can be used: 
+#  stereotypes, the following tagged values can be used:
 
 tagname = 'autoinstall'
 explanation = """Set to 'left' or 'right' to automatically install the
@@ -473,7 +473,7 @@ category = 'attribute'
 # Tagged values on attributes are passed straight through to the
 # Archetypes schema as field attributes. Therefore, you should consult
 # the Archetypes documentation to find out which values you can set on
-# each field. Some of the more common ones are: 
+# each field. Some of the more common ones are:
 
 tagname = 'required'
 explanation = """Set to true (1) to make the field required"""
@@ -497,7 +497,7 @@ value."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'source_name'
-explanation = """With attribute type 'copy' sometimes schema-recycling is fun, together 
+explanation = """With attribute type 'copy' sometimes schema-recycling is fun, together
 with copy_from you can specify the source name of the field in the schema given by copy_from."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
@@ -574,7 +574,7 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 
 # Similarly, tagged values with the prefix 'widget:' will be passed
 # through as widget parameters. Consult the Archetypes documentation
-# for details. The most common widget parameters are: 
+# for details. The most common widget parameters are:
 
 tagname = 'widget:type'
 explanation = """Set the name of the widget to use. Each field has an associated default widget, but if you need a different one (e.g. a SelectionWidget for a string field), use this value to override."""
@@ -648,7 +648,7 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 tagname = 'relation_field'
 explanation = """Use a custom field instead of RelationField. Works only together with 'Relations' Product and relation_implementation set to 'relations'."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-    
+
 # Tagged values for more than one category
 
 for category in ['model', 'package', 'class']:
@@ -669,8 +669,8 @@ for category in ['model', 'package', 'class', 'attribute']:
     tagname = 'write_permission'
     explanation = """Defines archetypes fields write-permission. Use it together with workflow to control ability to write data to a field based on roles/permissions."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-    
-    
+
+
 for category in ['model', 'package', 'class', 'tool', 'portlet']:
     for tagname in ['author', 'email', 'copyright', 'license']:
         explanation = """You can set the %s project-wide with the
@@ -683,16 +683,16 @@ for category in ['model', 'package', 'class', 'tool', 'portlet']:
                                    explanation=explanation)
     tagname = 'imports'
     explanation = """A list of python import statements which will be placed at the top of the generated file. Use this to make new field and widget types available, for example. Note that in the generated code you will be able to enter additional import statements in a preserved code section near the top of the file. Prefer using the imports tagged value when it imports something that is directly used by another element in your model. You can have several import statements, one per line, or by adding several tagged values with the name 'imports'."""
-    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)    
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
     tagname = 'creation_permission'
     explanation = """Sets the creation permission for the class. Example:
     'Add portal content'."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-    
+
     tagname = 'creation_roles'
     explanation = """You can set an own role who should be able to add a type. Use an Tuple of Strings. Default and example for this value: '("Manager", "Owner", "Member")'."""
-    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)    
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
     tagname = 'module'
     explanation = """Like 'module_name', it overwrites the name of the directory it'd be normally
@@ -713,14 +713,14 @@ for category in ['model', 'package', 'association']:
     tagname = 'association_class'
     explanation = """You can use associations classes to store content on the association itself. The class used is specified by this setting. Don't forget to import the used class properly."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-        
+
     tagname = 'association_vocabulary'
     explanation = """Switch, defaults to False. Needs Product 'ATVocabularyManager'. Generates an empty vocabulary with the name of the relation."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-        
+
 # Tagged values occurring everywhere
 for category in tgvRegistry._registry:
-    
+
     tagname = 'label'
     explanation = """Sets the readable name."""
     if not tgvRegistry._registry[category].has_key(tagname):

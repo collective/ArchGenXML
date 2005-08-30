@@ -80,10 +80,10 @@ class DummyModel:
     getAssociations=getClasses
     def isRoot(self):
         return 1
-    
+
     def getAnnotation(self,*a,**kw):
         return None
-    
+
     def getDocumentation(self,**kw):
         return None
     def hasTaggedValue(*a,**kw):
@@ -195,7 +195,7 @@ class ArchetypesGenerator(BaseGenerator):
                               used as value class for a certain field
                               class (see '<<field>>' stereotype)""")
 
-                              
+
     uml_profile.addStereoType('CMFMember',
                               ['XMIClass'],
                               description="""The class will be treated
@@ -397,7 +397,7 @@ class ArchetypesGenerator(BaseGenerator):
     cmfmember_stereotype = ['CMFMember', 'member']
     python_stereotype = ['python', 'python_class']
     folder_stereotype = ['folder', 'ordered', 'large', 'btree']
-    
+
     i18n_at=['i18n-archetypes','i18n', 'i18n-at']
     generate_datatypes=['field','compound_field']
 
@@ -494,19 +494,19 @@ class ArchetypesGenerator(BaseGenerator):
         return os.path.join(element.getRootPackage().getFilePath(),'skins',element.getRootPackage().getModuleName())
 
     def generateDependentImports(self,element):
-        
+
         res=BaseGenerator.generateDependentImports(self,element)
         out=StringIO()
         print >>out,res
         generate_expression_validator=False
-            
+
         for att in element.getAttributeDefs():
             if att.getTaggedValue('validation_expression'):
                 generate_expression_validator=True
-        
+
         if generate_expression_validator:
             print >>out,'from Products.validation.validators import ExpressionValidator'
-                
+
         #check for necessity to import ArrayField
         import_array_field=False
         for att in element.getAttributeDefs():
@@ -520,11 +520,11 @@ class ArchetypesGenerator(BaseGenerator):
         start_marker=True
         for iface in self.getAggregatedInterfaces(element):
             if start_marker:
-                print >>out,'from Products.Archetypes.AllowedTypesByIface import AllowedTypesByIfaceMixin' 
+                print >>out,'from Products.Archetypes.AllowedTypesByIface import AllowedTypesByIfaceMixin'
                 start_marker=False
 
             print >>out,'from %s import %s' % (iface.getQualifiedModuleName(forcePluginRoot=True),iface.getCleanName())
-            
+
         res=out.getvalue()
         return res
 
@@ -624,9 +624,9 @@ class ArchetypesGenerator(BaseGenerator):
 
         if element.hasAssocClass:
             print >> outfile,'from Products.Archetypes.ReferenceEngine import ContentReferenceCreator'
-            
+
         useRelations=0
-        
+
         #check wether we have to import Relation's Relation Field
         for rel in element.getFromAssociations():
             if self.getOption('relation_implementation',rel,'basic') == 'relations':
@@ -639,7 +639,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         if useRelations:
             print >> outfile,'from Products.Relations.field import RelationField'
-                
+
         if element.hasStereoType(self.variable_schema, umlprofile=self.uml_profile):
             print >> outfile,'from Products.Archetypes.VariableSchemaSupport import VariableSchemaSupport'
 
@@ -653,11 +653,11 @@ class ArchetypesGenerator(BaseGenerator):
 
         #print >> outfile, ''
         return outfile.getvalue()
-        
-        
+
+
     def getImportsByTaggedValues(self, element):
         # imports by tagged values
-        additionalImports=self.getOption('imports', element, default=None, 
+        additionalImports=self.getOption('imports', element, default=None,
                                          aggregate=True)
         return additionalImports
 
@@ -725,9 +725,9 @@ class ArchetypesGenerator(BaseGenerator):
         if element.hasStereoType('hidden', umlprofile=self.uml_profile):
             global_allow = 0
         # Or if it is a tool-like thingy
-        if (element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile) or 
+        if (element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile) or
             element.hasStereoType(self.vocabulary_item_stereotype, umlprofile=self.uml_profile) or
-            element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile) or 
+            element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile) or
             element.isAbstract()):
             global_allow = 0
         # But the tagged value overwrites all
@@ -735,7 +735,7 @@ class ArchetypesGenerator(BaseGenerator):
             global_allow = 0
         if isTGVTrue(element.getTaggedValue('global_allow')):
             global_allow = 1
-            
+
 
         has_content_icon=''
         content_icon=element.getTaggedValue('content_icon')
@@ -857,7 +857,7 @@ class ArchetypesGenerator(BaseGenerator):
                     'map': {},
                     },
         }
-    
+
     widgetMap={
         'fixedpoint': 'DecimalWidget' ,
         'float': 'DecimalWidget',
@@ -903,7 +903,7 @@ class ArchetypesGenerator(BaseGenerator):
         typename=intypename.lower()
         if typename in self.typeMap.keys():
             return typename
-        
+
         if typename=='copy':
             return typename
 
@@ -963,7 +963,7 @@ class ArchetypesGenerator(BaseGenerator):
                 else:
                     if v.startswith ('python:'):
                         v = v[7:]
-                         
+
                 map.update( {k: v} )
         return map
 
@@ -1092,21 +1092,21 @@ class ArchetypesGenerator(BaseGenerator):
             rawType = rawType[:-5]
 
         res+=indent("%s('%s',\n" % (fieldtype % {'type':rawType},name), indent_level)
-        if map:      
+        if map:
             prepend = indent('', indent_level)
-            for key in map: 
+            for key in map:
                 if key.find(':')>=0:
                     continue
                 lines = map[key]
                 if type(lines) in StringTypes:
                     linebreak = lines.find('\n')
-                        
+
                     if linebreak < 0:
                         linebreak=len(lines)
                     firstline = lines[:linebreak]
                 else:
                     firstline = lines
-                    
+
                 res+='%s%s=%s' % (prepend, key, firstline)
                 if type(lines) in StringTypes and linebreak<len(lines):
                     for line in lines[linebreak+1:].split('\n'):
@@ -1131,7 +1131,7 @@ class ArchetypesGenerator(BaseGenerator):
             map, indent_level )
 
         return res
-    
+
     def addVocabulary(self, element, attr, map):
         # ATVocabularyManager: Add NamedVocabulary to field.
         vocaboptions = {}
@@ -1172,7 +1172,7 @@ class ArchetypesGenerator(BaseGenerator):
     def getFieldStringFromAttribute(self, attr, classelement, indent_level=0):
         ''' gets the schema field code '''
         #print 'typename:%s:'%attr.getName(),attr.type,
-        
+
         if not hasattr(attr,'type') or attr.type=='NoneType':
             ctype='string'
         else:
@@ -1182,7 +1182,7 @@ class ArchetypesGenerator(BaseGenerator):
             name = getattr(attr,'rename_to',attr.getName())
             field=indent("copied_fields['%s'],\n" % name, indent_level)
             return field
-            
+
 
         map=self.typeMap[ctype]['map'].copy()
         if attr.hasDefault():
@@ -1206,7 +1206,7 @@ class ArchetypesGenerator(BaseGenerator):
             atype='I18N'+atype
 
         doc=attr.getDocumentation(striphtml=self.striphtml)
-        
+
         if attr.hasTaggedValue('validators'):
             #make validators to a list in order to append the ExpressionValidator
             val=str(attr.getTaggedValue('validators'))
@@ -1214,8 +1214,8 @@ class ArchetypesGenerator(BaseGenerator):
                 map['validators']=tuple(eval(val))
             except:
                 map['validators']=tuple(val.split(','))
-            
-                
+
+
         if map.has_key('validation_expression'):
             #append the validation_expression to the validators
             expressions=attr.getTaggedValue('validation_expression').split('\n')
@@ -1224,9 +1224,9 @@ class ArchetypesGenerator(BaseGenerator):
                 map['validators']=repr(map.get('validators',()))+'+('+','.join(expval)+',)'
             else:
                 map['validators']=expval
-                
+
             del map['validation_expression']
-            
+
         res=self.getFieldFormatted(attr.getName(),
             atype,
             map,
@@ -1238,9 +1238,9 @@ class ArchetypesGenerator(BaseGenerator):
         if attr.getUpperBound() != 1:
             indent(res,1)
             res="""ArrayField(%s),""" % indent(res,1)
-            
+
         return res
-    
+
 
     def getFieldStringFromAssociation(self, rel, classelement, indent_level=0):
         ''' gets the schema field code '''
@@ -1295,16 +1295,16 @@ class ArchetypesGenerator(BaseGenerator):
                 }
             )
             map.update(self.getFieldAttributes(rel.toEnd))
-    
+
             map.update( {'widget':self.getWidget('Reference', rel.toEnd, name, classelement)} )
-    
+
             if getattr(rel,'isAssociationClass',0):
                 #associationclasses with stereotype "stub" and tagged value "import_from" will not use ContentReferenceCreator
-    
+
                 if rel.hasStereoType(self.stub_stereotypes, umlprofile=self.uml_profile) :
                     map.update({'referenceClass':"%s" % rel.getName()})
                     # do not forget the import!!!
-    
+
                 else:
                     map.update({'referenceClass':"ContentReferenceCreator('%s')" % rel.getName()})
 
@@ -1355,7 +1355,7 @@ class ArchetypesGenerator(BaseGenerator):
                 )
                 map.update(self.getFieldAttributes(rel.fromEnd))
                 map.update( {'widget':self.getWidget('BackReference', rel.fromEnd, name, classelement)} )
-        
+
                 if getattr(rel,'isAssociationClass',0):
                     map.update({'referenceClass':"ContentReferenceCreator('%s')" % rel.getName()})
             else:
@@ -1393,10 +1393,10 @@ class ArchetypesGenerator(BaseGenerator):
                     if not key.startswith('widget:'):
                         continue
                     if key not in self.nonstring_tgvs:
-                        tgv[key]=getExpression(tgv[key])                    
+                        tgv[key]=getExpression(tgv[key])
                     print >>outfile, "copied_fields['%s'].widget.%s = %s" % \
                                      (attr.getName(), key[7:], tgv[key])
-                           
+
 
         print >>outfile, SCHEMA_START
         aggregatedClasses=[]
@@ -1409,7 +1409,7 @@ class ArchetypesGenerator(BaseGenerator):
 
             #print attrDef
 
-            print >> outfile, self.getFieldStringFromAttribute(attrDef, element, 
+            print >> outfile, self.getFieldStringFromAttribute(attrDef, element,
                                                     indent_level=indent_level+1)
 
         for child in element.getChildren():
@@ -1434,9 +1434,9 @@ class ArchetypesGenerator(BaseGenerator):
             if name in self.reservedAtts:
                 continue
             print >> outfile
-            print >> outfile, self.getFieldStringFromAssociation(rel, element, 
+            print >> outfile, self.getFieldStringFromAssociation(rel, element,
                                                     indent_level=indent_level+1)
-                
+
         #Back References
         for rel in element.getToAssociations():
             name = rel.fromEnd.getName()
@@ -1458,7 +1458,7 @@ class ArchetypesGenerator(BaseGenerator):
             print >> outfile, 'marshall='+marshaller
 
         print >> outfile,')\n'
-        
+
         return outfile.getvalue()
 
     def generateMethods(self, outfile, element, mode='class'):
@@ -1616,8 +1616,8 @@ class ArchetypesGenerator(BaseGenerator):
         #write runalltests.py and framework.py
         testdoc_t=readTemplate('tests/testdoc.txt')
         testdoc=HTML(testdoc_t,{'klass':element })()
-        
-        
+
+
         testname=element.getTaggedValue('doctest_name') or element.getCleanName()
         self.makeDir(os.path.join(element.getPackage().getProduct().getFilePath(),'doc'))
         docfile=os.path.join(element.getPackage().getProduct().getFilePath(),'doc','%s.txt' % testname)
@@ -1625,7 +1625,7 @@ class ArchetypesGenerator(BaseGenerator):
             of=self.makeFile(docfile)
             of.write(testdoc)
             of.close()
-        
+
         init='#'
         of=self.makeFile(os.path.join(element.getPackage().getProduct().getFilePath(),'doc','__init__.py' ))
 
@@ -1637,23 +1637,23 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateTestcaseClass(self,element,template,**kw):
         from XMIParser import XMIClass
-        
+
         log.info("%sGenerating testcase '%s'.",
                  '    '*self.infoind,
                  element.getName())
-        
+
         assert element.hasStereoType('plone_testcase', umlprofile=self.uml_profile) or element.getCleanName().startswith('test'), \
             "names of test classes _must_ start with 'test', but this class is named '%s'" % element.getCleanName()
 
         assert element.getPackage().getCleanName() == 'tests', \
             "testcase classes only make sense inside a package called 'tests' \
                  but this class is named '%s' and located in package '%s'" % (element.getCleanName(),element.getPackage().getCleanName())
-        
+
         if element.getGenParents():
             parent=element.getGenParents()[0]
         else:
             parent=None
-            
+
         return BaseGenerator.generatePythonClass(self, element, template, parent=parent, **kw)
 
     def generateWidgetClass(self,element,template,zptname='widget.pt'):
@@ -1670,11 +1670,11 @@ class ArchetypesGenerator(BaseGenerator):
                 'parsed_class':element.parsed_class,
                 'builtins'   : __builtins__,
                 'utils'       :utils,
-    
+
                 }
             d.update(__builtins__)
             zptcode=HTML(templ,d)()
-    
+
             fp=self.makeFile(templpath)
             print >>fp,zptcode
             fp.close()
@@ -1705,7 +1705,7 @@ class ArchetypesGenerator(BaseGenerator):
             else:
                 parent=None
                 parentname='ObjectField'
-            
+
         widgets=element.getClientDependencyClasses(targetStereotypes=['widget'])
         if widgets:
             widget=widgets[0]
@@ -1750,8 +1750,8 @@ class ArchetypesGenerator(BaseGenerator):
         if includeBases:
             for b in element.getGenParents(recursive=1):
                 res.extend(self.getAggregatedInterfaces(b,includeBases=0))
-                                    
-        return res                                                
+
+        return res
 
     def generateArchetypesClass(self, element,**kw):
         log.info("%sGenerating class '%s'.",
@@ -1832,7 +1832,7 @@ class ArchetypesGenerator(BaseGenerator):
         # We *do* want the resursive=0 below, though!
         aggregatedInterfaces = element.getRefs() + element.getSubtypeNames(recursive=0,
                                                                            filter=['interface'])
-        # [xiru] We need to remove duplicated values and avoid mixture 
+        # [xiru] We need to remove duplicated values and avoid mixture
         # between unicode and string content types identifiers
         if element.getTaggedValue('allowed_content_types'):
             aggregatedClasses = [str(e) for e in aggregatedClasses]
@@ -1998,7 +1998,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         #allowed_content_classes
         parentAggregates=''
-        
+
         if isTGVTrue(element.getTaggedValue('inherit_allowed_types', True)) and element.getGenParents():
             act = []
             for gp in element.getGenParents():
@@ -2099,7 +2099,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         ## handle add content permissions
         if not element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile):
-            # tgv overrules 
+            # tgv overrules
             cpfromtgv = element.getTaggedValue('creation_permission', None)
             if cpfromtgv:
                 creation_permission= self.processExpression(cpfromtgv)
@@ -2258,10 +2258,10 @@ class ArchetypesGenerator(BaseGenerator):
         """ returns a list of  generated tools """
         res=[c for c in package.getClasses(recursive=1) if
                     c.hasStereoType(self.portal_tools, umlprofile=self.uml_profile)]
-                  
+
         if autoinstallOnly:
             res=[c for c in res if isTGVTrue(c.getTaggedValue('autoinstall')) ]
-        
+
         return res
 
     def getGeneratedTools(self,package):
@@ -2342,8 +2342,8 @@ class ArchetypesGenerator(BaseGenerator):
         configpath=os.path.join(package.getFilePath(),'config.py')
         parsed_config=self.parsePythonModule(package.getFilePath(), 'config.py')
         creation_permission = self.getOption('creation_permission', package, None)
-        
-        if creation_permission:                    
+
+        if creation_permission:
             default_creation_permission = creation_permission
         else:
             default_creation_permission = self.default_creation_permission
@@ -2376,7 +2376,7 @@ class ArchetypesGenerator(BaseGenerator):
         packageImports = [m.getModuleName() for m in package.getAnnotation('generatedPackages') or []
                           if not m.hasStereoType('tests', umlprofile=self.uml_profile)]
         classImports   = [m.getModuleName() for m in package.generatedModules if not m.hasStereoType('tests', umlprofile=self.uml_profile)]
-        
+
         # Find additional (custom) permissions
         additional_permissions=[]
         addperms= self.getOption('additional_permission',package,default=[]),
@@ -2398,7 +2398,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         # Get the preserved code section
         parsed = self.parsePythonModule(package.getFilePath (), '__init__.py')
-        
+
         protectedInitCodeH = self.getProtectedSection(parsed, 'custom-init-head', 0)
         protectedInitCodeT = self.getProtectedSection(parsed, 'custom-init-top', 1)
         protectedInitCodeB = self.getProtectedSection(parsed, 'custom-init-bottom', 1)
@@ -2655,8 +2655,8 @@ class ArchetypesGenerator(BaseGenerator):
                 package.annotate('generatedPackages',generatedPkg)
 
         self.generateStdFiles(package)
-        
-    def generateRelation(self, doc, collection, relname, relid, 
+
+    def generateRelation(self, doc, collection, relname, relid,
             sourcetype=None, targettype=None,
             sourceinterface=None,targetinterface=None,
             sourcecardinality=(None,None),
@@ -2665,12 +2665,12 @@ class ArchetypesGenerator(BaseGenerator):
             inverse_relation_id=None,
             primary=0,
             ):
-                
+
         ruleset=doc.createElement('Ruleset')
         ruleset.setAttribute('id',relname)
         ruleset.setAttribute('uid',relid)
         collection.appendChild(ruleset)
-        
+
         #type and interface constraints
         if sourcetype or targettype:
             typeconst=doc.createElement('TypeConstraint')
@@ -2701,7 +2701,7 @@ class ArchetypesGenerator(BaseGenerator):
             el=doc.createElement('allowedTargetInterface')
             ifconst.appendChild(el)
             el.appendChild(doc.createTextNode(targetinterface))
-            
+
 
         #association constraint
         if assocclassname:
@@ -2719,7 +2719,7 @@ class ArchetypesGenerator(BaseGenerator):
             el=doc.createElement('primary')
             el.appendChild(doc.createTextNode(str(primary)))
             contref.appendChild(el)
-        
+
         #cardinality
         targetcardinality=list(targetcardinality)
         if targetcardinality[0]==-1:targetcardinality[0]=None
@@ -2737,8 +2737,8 @@ class ArchetypesGenerator(BaseGenerator):
                 el=doc.createElement('maxTargetCardinality')
                 const.appendChild(el)
                 el.appendChild(doc.createTextNode(str(targetcardinality[1])))
-            
-            
+
+
         #create the inverse relation
         if inverse_relation_id:
             const=doc.createElement('InverseImplicator')
@@ -2747,10 +2747,10 @@ class ArchetypesGenerator(BaseGenerator):
             el=doc.createElement('inverseRuleset')
             const.appendChild(el)
             el.setAttribute('uidref',inverse_relation_id)
-            
-        
+
+
         return ruleset
-    
+
     def generateRelations(self,package):
         doc=minidom.Document()
         lib=doc.createElement('RelationsLibrary')
@@ -2759,14 +2759,14 @@ class ArchetypesGenerator(BaseGenerator):
         coll.setAttribute('id',package.getCleanName())
         lib.appendChild(coll)
         package.num_generated_relations=0
-        
+
         for assoc in package.getAssociations(recursive=1):
             if self.getOption('relation_implementation',assoc,'basic') != 'relations':
                 continue
-            
+
             source=assoc.fromEnd.obj
             target=assoc.toEnd.obj
-            
+
             targetcard=list(assoc.toEnd.mult)
             sourcecard=list(assoc.fromEnd.mult)
             sourcecard[0]=None #temporary pragmatic fix
@@ -2781,20 +2781,20 @@ class ArchetypesGenerator(BaseGenerator):
                 sourceinterface=source.getCleanName()
             else:
                 sourcetype=source.getCleanName()
-                
+
             if target.isInterface():
                 targetinterface=target.getCleanName()
             else:
-                targettype=target.getCleanName()    
-                
-            
-            inverse_relation_name=assoc.getTaggedValue('inverse_relation_name',None) 
+                targettype=target.getCleanName()
+
+
+            inverse_relation_name=assoc.getTaggedValue('inverse_relation_name',None)
             if not inverse_relation_name and assoc.fromEnd.isNavigable:
                 inverse_relation_name=assoc.getCleanName()+'_inverse'
-                
+
             assocclassname=getattr(assoc,'isAssociationClass',0) and assoc.getCleanName() or assoc.getTaggedValue('association_class') or self.getOption('association_class',assoc,None)
             self.generateRelation(doc, coll,
-                assoc.getCleanName(), 
+                assoc.getCleanName(),
                 assoc.getId(),
                 sourcetype=sourcetype,
                 targettype=targettype,
@@ -2807,11 +2807,11 @@ class ArchetypesGenerator(BaseGenerator):
                 inverse_relation_id=inverse_relation_name,
                 primary=1
                 )
-                
+
             #create the counterrelation
             if inverse_relation_name:
                 self.generateRelation(doc, coll,
-                    inverse_relation_name, 
+                    inverse_relation_name,
                     inverse_relation_name,
                     sourcetype=targettype,
                     targettype=sourcetype,
@@ -2819,16 +2819,16 @@ class ArchetypesGenerator(BaseGenerator):
                     targetinterface=sourceinterface,
                     sourcecardinality=targetcard,
                     targetcardinality=sourcecard,
-    
+
                     assocclassname=assocclassname,
                     inverse_relation_id=assoc.getId()
                     )
-                    
+
             # ATVM integration - by jensens
             # very special case: create a vocabulary with the association name
             # this is needed for some use-cases, where a association class has
             # use an vocabulary with the name ofthe relation
-            
+
             if isTGVTrue(self.getOption('association_vocabulary', assoc, '0')):
                 # remember this vocab-name and if set its portal_type
                 currentproduct = package.getProductName()
@@ -2841,18 +2841,18 @@ class ArchetypesGenerator(BaseGenerator):
                     )
                 else:
                     print "warning: vocabulary with name %s defined more than once." % vocaboptions['name']
-                     
-            
+
+
             #/ATVM
-                
+
             package.num_generated_relations += 1
-                
-        if package.num_generated_relations:    
+
+        if package.num_generated_relations:
             of=self.makeFile(os.path.join(package.getFilePath(),'relations.xml'))
             print >>of,doc.toprettyxml()
             of.close()
-        
-        
+
+
     def generateProduct(self, root):
         dirMode=0
         outfile=None
@@ -2928,7 +2928,7 @@ class ArchetypesGenerator(BaseGenerator):
         if self.ape_support:
             self.generateApeConf(root.getFilePath(),root)
 
-        
+
         # write messagecatalog
         if has_i18ndude and self.build_msgcatalog:
             filepath=os.path.join(root.getFilePath(),'i18n','generated.pot')

@@ -26,7 +26,7 @@ try:
 except ImportError:
     # if installed in site-packages:
     from ArchGenXML.ArchetypesGenerator import ArchetypesGenerator
-        
+
 def main():
     utils.initLog('archgenxml.log')
     utils.addConsoleLogging()
@@ -46,7 +46,7 @@ def main():
     print utils.ARCHGENXML_VERSION_LINE % str(utils.version())
 
     # This is a little bit hacky. Probably should read optparse's doc
-    # better. [Reinout] 
+    # better. [Reinout]
 
     log.debug("Figuring out the settings we're passing to the "
               "main program...")
@@ -62,7 +62,7 @@ def main():
         log.debug("Option '%s' has value '%s'.",
                   key, d[key])
 
-    # if outfilename is not given by the -o option try getting the second 
+    # if outfilename is not given by the -o option try getting the second
     # regular argument
     if not d['outfilename']:
         log.debug("Outfilename not specified in the options. "

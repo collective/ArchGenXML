@@ -32,7 +32,7 @@ log = logging.getLogger("basegenerator")
 
 class BaseGenerator:
     """ abstract base class for the different concrete generators """
-    
+
     uml_profile=UMLProfile()
     uml_profile.addStereoType('python_class',
                               ['XMIClass'],
@@ -56,13 +56,13 @@ class BaseGenerator:
 
     def getDefaultClassType(self):
         return self.getUMLProfile().getStereoType(self.default_class_type)
-    
+
     def processExpression(self, value, asString=True):
-        """ 
+        """
         process the string returned by tagged values:
             * python: prefixes a python expression
             * string: prefixes a string
-            * fallback to default, which is string, if asString isnt set to 
+            * fallback to default, which is string, if asString isnt set to
               False
         """
         if value.startswith('python:'):
@@ -72,7 +72,7 @@ class BaseGenerator:
         if asString:
             return "'%s'" % value
         else:
-            return value             
+            return value
 
     def getOption(self, option, element, default=_marker, aggregate=False):
         """Query element for value of an option.
@@ -191,7 +191,7 @@ class BaseGenerator:
         parents  = element.getGenParents()
         parents += element.getRealizationParents()
         parents += element.getClientDependencyClasses(includeParents=True)
-            
+
         for p in parents:
             if p.hasStereoType(self.stub_stereotypes):
                 # In principle, don't do a thing, but...
@@ -220,7 +220,7 @@ class BaseGenerator:
                     importLines.append(importLine)
                 element.hasAssocClass=1
                 break
-        
+
         if self.backreferences_support:
             bassocs = element.getToAssociations()
             for p in bassocs:

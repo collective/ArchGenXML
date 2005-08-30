@@ -145,7 +145,7 @@ class XMI1_0:
 
     def __init__(self,**kw):
         self.__dict__.update(kw)
-        
+
     def getName(self, domElement):
         try:
             return str(getAttributeValue(domElement, self.NAME)).strip()
@@ -225,7 +225,7 @@ class XMI1_0:
                     log.warn("Master Object not found for aggregation relation id='%s'.",
                              XMI.getId(master))
                     continue
-                
+
                 if not d:
                     log.warn("Child Object not found for aggregation relation: parent='%s'.",
                              m.getName())
@@ -335,8 +335,8 @@ class XMI1_0:
         for dep in deps:
             if not self.getId(dep):continue
             depencency = XMIDependency(dep, allObjects=objects)
-            
-            
+
+
 
     def getExpressionBody(self, element, tagname = None):
         if not tagname:
@@ -715,7 +715,7 @@ def getElementsByTagName(domElement, tagName, recursive=0):
         tagNames=[tagName]
     else:
         tagNames=tagName
-        
+
     if recursive:
         els = []
         for tag in tagNames:
@@ -778,7 +778,7 @@ class XMIElement:
         self.subTypes = []
         self.stereoTypes = []
         self.clientDependencies = []
-        
+
         self.annotations = {} # space to store values by external access. use
                              # annotate() to store values in this dict, and
                              # getAnnotation() to fetch it.
@@ -931,7 +931,7 @@ class XMIElement:
         from own utils module.
 
         striphtml(boolean) -- use stripogram html2text to remove html tags
-        
+
         wrap(integer) -- default: 60, set to 0: do not wrap,
                          all other >0: wrap with this value
         """
@@ -962,7 +962,7 @@ class XMIElement:
                   "The automatic mechanism set it to '%s' already.",
                   name, self.getName())
         self.name = name
-        
+
     def getAttrs(self): return self.attrs
     def getMaxOccurs(self): return self.maxOccurs
     def getType(self): return self.type
@@ -1100,10 +1100,10 @@ class XMIElement:
 
     def addClientDependency(self, dep):
         self.clientDependencies.append(dep)
-        
+
     def getClientDependencies(self, includeParents=False, dependencyStereotypes=None):
         res = self.clientDependencies
-        
+
         if includeParents:
             o = self.getParent()
             if o:
@@ -1114,20 +1114,20 @@ class XMIElement:
             res=[r for r in res if r.hasStereoType(dependencyStereotypes)]
 
         return res
-    
-    def getClientDependencyClasses(self, includeParents=False, 
+
+    def getClientDependencyClasses(self, includeParents=False,
                                    dependencyStereotypes=None,
-                                   targetStereotypes=None): 
-        
+                                   targetStereotypes=None):
+
         res=[dep.getSupplier() for dep in self.getClientDependencies(
-            includeParents=includeParents, dependencyStereotypes=dependencyStereotypes) if 
+            includeParents=includeParents, dependencyStereotypes=dependencyStereotypes) if
             dep.getSupplier() and dep.getSupplier().__class__.__name__ in ('XMIClass', 'XMIInterface')]
-            
+
         if targetStereotypes:
             res=[r for r in res if r.hasStereoType(targetStereotypes)]
-            
+
         return res
-    
+
 class StateMachineContainer:
     def __init__(self):
         self.statemachines = []
@@ -1135,18 +1135,18 @@ class StateMachineContainer:
     def findStateMachines(self):
         log.debug("Trying to find statemachines...")
         try:
-            ownedElement = getElementByTagName(self.domElement, 
+            ownedElement = getElementByTagName(self.domElement,
                                                [XMI.OWNED_ELEMENT,XMI.OWNED_BEHAVIOR],
                                                default=None)
         except:
             # BBB backward compatible with argouml's xmi1.0
             log.debug("Backward compatability mode for argouml's xmi1.0.")
             ownedElement = XMI.getOwnedElement(self.domElement)
-            
+
         if not ownedElement:
             log.debug("Setting ownedElement to self.domElement as fallback.")
             ownedElement = self.domElement
-            
+
         statemachines = getElementsByTagName(ownedElement, XMI.STATEMACHINE)
         log.debug("Found the following statemachines: %r.",
                   statemachines)
@@ -1214,12 +1214,12 @@ class XMIPackage(XMIElement, StateMachineContainer):
     def getClasses(self, recursive=0):
         res = [c for c in self.classes]
         res = self.classes
-        
+
         if recursive:
             res = list(res)
             for p in self.getPackages():
                 res.extend(p.getClasses(recursive=1))
-                
+
         return res
 
     def getAssociations(self, recursive=0):
@@ -1227,9 +1227,9 @@ class XMIPackage(XMIElement, StateMachineContainer):
         res = []
         for c in classes:
             res.extend(c.getFromAssociations())
-            
+
         return res
-    
+
     def addClass(self, cl):
         self.classes.append(cl)
         cl.package = self
@@ -1242,14 +1242,14 @@ class XMIPackage(XMIElement, StateMachineContainer):
 
         res = [c for c in self.classes]
         res = self.interfaces
-        
+
         if recursive:
             res = list(res)
             for p in self.getPackages():
                 res.extend(p.getClasses(recursive=1))
-                
+
         return res
-    
+
     def getClassesAndInterfaces(self, recursive=0):
         return self.getClasses(recursive=recursive)+ \
             self.getInterfaces(recursive=recursive)
@@ -1322,7 +1322,7 @@ class XMIPackage(XMIElement, StateMachineContainer):
     def isRoot(self):
         # TBD Handle this through the stereotype registry
         return self.isroot or self.hasStereoType(['product', 'zopeproduct', 'Product', 'ZopeProduct'])
-    
+
 
     isProduct = isRoot
 
@@ -1479,7 +1479,7 @@ class XMIClass (XMIElement, StateMachineContainer):
     def isInternal(self):
         ''' internal class '''
         return self.internalOnly
-    
+
     def isEmpty(self):
         return not self.getMethodDefs() and \
             not self.getAttributeDefs() and \
@@ -1488,7 +1488,7 @@ class XMIClass (XMIElement, StateMachineContainer):
             not self.genChildren and \
             not self.genParents and \
             not self.realizationChildren and \
-            not self.realizationParents 
+            not self.realizationParents
 
     def getVisibility(self):
         return self.visibility
@@ -1523,7 +1523,7 @@ class XMIClass (XMIElement, StateMachineContainer):
     def getGenChildrenNames(self, recursive=0):
         """Return the names of the generalization children
         """
-        
+
         return [o.getName() for o in self.getGenChildren(recursive=recursive) ]
 
     def getGenParents(self, recursive = 0):
@@ -1593,10 +1593,10 @@ class XMIClass (XMIElement, StateMachineContainer):
         self.assocsTo.append(a)
 
     def getFromAssociations(self, aggtypes=['none'],
-                            aggtypesTo=['none']): 
+                            aggtypesTo=['none']):
         """Return associations that point from this class.
         """
-        
+
         # This code doesn't seem to work with below isDependent
         # method.
         log.debug("Finding associations originating at this class...")
@@ -1609,23 +1609,23 @@ class XMIClass (XMIElement, StateMachineContainer):
                   result)
         return result
 
-    def getToAssociations(self, aggtypes=['none'], 
+    def getToAssociations(self, aggtypes=['none'],
                           aggtypesTo=['none']):
         """Return associations that point at this class.
         """
-        
+
         # This code doesn't seem to work with below isDependent
-        # method. 
+        # method.
         log.debug("Finding associations pointing at this class...")
         log.debug("Params: aggtypes='%r', aggtypesTo='%r'.",
                   aggtypes, aggtypesTo)
         result = [a for a in self.assocsTo
-                  if a.fromEnd.aggregation in aggtypes  
+                  if a.fromEnd.aggregation in aggtypes
                   and a.toEnd.aggregation in aggtypesTo]
         log.debug("Associations found: %r.",
                   result)
         return result
-    
+
 
     def isDependent(self):
         """ Return True if class is only accessible through composition
@@ -1755,19 +1755,19 @@ class XMIClass (XMIElement, StateMachineContainer):
         return path
 
     def getQualifiedModuleName(self, ref=None, pluginRoot='Products', forcePluginRoot=0, includeRoot=1):
-            
-        path = self.getQualifiedModulePath(ref, pluginRoot=pluginRoot, 
-                                         forcePluginRoot=forcePluginRoot, 
+
+        path = self.getQualifiedModulePath(ref, pluginRoot=pluginRoot,
+                                         forcePluginRoot=forcePluginRoot,
                                          includeRoot=includeRoot)
 
         res =  '.'.join([p.getModuleName() for p in path if p])
         return res
 
 
-    def getQualifiedName(self, ref=None, pluginRoot='Products', forcePluginRoot=0, 
+    def getQualifiedName(self, ref=None, pluginRoot='Products', forcePluginRoot=0,
                          includeRoot=1):
-        name = self.getQualifiedModuleName(ref, pluginRoot=pluginRoot, 
-                                         forcePluginRoot=forcePluginRoot, 
+        name = self.getQualifiedModuleName(ref, pluginRoot=pluginRoot,
+                                         forcePluginRoot=forcePluginRoot,
                                          includeRoot=includeRoot)
         res = name+'.'+self.getCleanName()
         return res
@@ -1858,7 +1858,7 @@ class XMIMethod (XMIElement):
         """
         # The olde way was a bit longish. Something like
         # testTestmyclassnameTestfoldercontainssomething().
-        # old = 'test%s%s' % (self.getParent().getCleanName().capitalize(), 
+        # old = 'test%s%s' % (self.getParent().getCleanName().capitalize(),
         #                     self.getCleanName().capitalize())
         # The new version starts with 'test_' with the unmodified name
         # after it.
@@ -1930,11 +1930,11 @@ class XMIAssocEnd (XMIElement):
                 res=self.getTarget().getName().lower()
                 if self.getUpperBound != 1:
                     res+='s'
-                    
+
                 return res
             else:
                 return self.getId()
-                
+
     def initFromDOM(self, el):
         XMIElement.initFromDOM(self, el)
         self.isNavigable = toBoolean(getAttributeOrElement(el, 'isNavigable', default=0))
@@ -1951,7 +1951,7 @@ class XMIAssocEnd (XMIElement):
 
     def getTarget(self):
         return self.obj
-    
+
     def getMultiplicity(self):
         try:
             return self.mult
@@ -1984,7 +1984,7 @@ class XMIAssociation (XMIElement):
                 toname=self.toEnd.getName()
             else:
                 toname=self.getId()
-                
+
             res = '%s_%s' %(fromname,toname)
 
         if type(res) in (type(''), type(u'')):
@@ -2026,10 +2026,10 @@ class XMIAbstraction(XMIElement):
 class XMIDependency(XMIElement):
     client = None
     supplier = None
-    
+
     def getSupplier(self):
         return self.supplier
-    
+
     def getClient(self):
         return self.client
 
@@ -2046,14 +2046,14 @@ class XMIDependency(XMIElement):
         supplier_el = getElementByTagName(self.domElement, XMI.DEP_SUPPLIER)
         suppid = XMI.getIdRef(getSubElement(supplier_el))
         self.supplier = self.allObjects[suppid]
-        
+
         self.client.addClientDependency(self)
-        
+
     def getParent(self):
         ''' '''
         if self.client:
             return self.client
-    
+
 #-----------------------------------
 # here comes the Workflow support
 #-----------------------------------
@@ -2120,7 +2120,7 @@ class XMIStateMachine(XMIStateContainer):
                 self.addClass(cl)
         else:
             self.addClass(self.getParent())
-            
+
     def addTransition(self, transition):
         self.transitions.append(transition)
         transition.setParent(self)
@@ -2248,7 +2248,7 @@ class XMIStateMachine(XMIStateContainer):
             dummy = [roles.append(r.strip()) \
                      for r in sroles \
                      if not (r.strip() in roles or r.strip() in ignore)]
-                     
+
         return [r for r in roles if r]
 
     def getAllWorklistNames(self):
@@ -2363,8 +2363,8 @@ class XMIStateTransition(XMIElement):
 
     def getProps(self):
         d_ret = {}
-        d_expr = {'guard_permissions' : self.getGuardPermissions, 
-                  'guard_roles' : self.getGuardRoles, 
+        d_expr = {'guard_permissions' : self.getGuardPermissions,
+                  'guard_roles' : self.getGuardRoles,
                   'guard_expr' : self.getGuardExpr}
         for k, v in d_expr.items():
             g = v()
@@ -2400,7 +2400,7 @@ class XMIStateTransition(XMIElement):
             ge = ge.strip()
             if ge.startswith('guard_expr:'):
                 return str(ge[11:])
-        return ''    
+        return ''
 
     def getTriggerType(self):
         """ Return the Trigger Type, following what is defined by DCWorkflow
@@ -2411,7 +2411,7 @@ class XMIStateTransition(XMIElement):
         try:
             return int(self.getTaggedValue('trigger_type'))
         except ValueError:
-            return 1   
+            return 1
 
 
 class XMIAction(XMIElement):
@@ -2457,7 +2457,7 @@ class XMIAction(XMIElement):
         if after:
             result.append(after)
         return result
-    
+
 
 class XMIGuard(XMIElement):
     expression = None
@@ -2541,8 +2541,8 @@ class XMIState(XMIElement):
 
         # permissions_mapping (abbreviations for lazy guys)
         # keys are case insensitive
-        permission_mapping = {'access' : 'Access contents information', 
-              'view'   : 'View', 
+        permission_mapping = {'access' : 'Access contents information',
+              'view'   : 'View',
               'modify' : 'Modify portal content'}
         tagged_values = self.getTaggedValues()
         permission_definitions = []
@@ -2562,8 +2562,8 @@ class XMIState(XMIElement):
             if nv in roles:
                 acquisition = 1
                 roles.remove(nv)
-            permission_definitions.append({'permission' : permission, 
-                        'roles' : roles, 
+            permission_definitions.append({'permission' : permission,
+                        'roles' : roles,
                         'acquisition' : acquisition})
 
         # If View was defined but Access was not defined, the Access
@@ -2575,7 +2575,7 @@ class XMIState(XMIElement):
         v = {}
         for permission_definition in permission_definitions:
             if (permission_definition.get('permission', None) ==
-                permission_mapping['access']): 
+                permission_mapping['access']):
                 has_access = 1
             if (permission_definition.get('permission', None) ==
                 permission_mapping['view']):
@@ -2584,7 +2584,7 @@ class XMIState(XMIElement):
         if has_view and not has_access:
             permission = permission_mapping['access']
             permission_definitions.append({'permission': permission,
-                                           'roles': v['roles'], 
+                                           'roles': v['roles'],
                                            'acquisition': v['acquisition']})
         return permission_definitions
 
@@ -2601,7 +2601,7 @@ class XMIState(XMIElement):
         #            has_permission = 1
         #            break
         #    if not has_permission:
-        #        permission_definitions.append({'permission' : p, 
+        #        permission_definitions.append({'permission' : p,
         #                    'roles' : ['Owner', 'Manager']})
 
         # end of getPermissionsDefinitions()
@@ -2628,7 +2628,7 @@ class XMICompositeState(XMIState):
         XMIStateMachine.init(self)
 
 
-#necessary for Poseidon because in Poseidon i cannot assign a name to a statemachine, 
+#necessary for Poseidon because in Poseidon i cannot assign a name to a statemachine,
 #so i have to pull the name of the statemachine from the diagram :(((((
 diagrams = {}
 diagramsByModel = {}
@@ -2757,7 +2757,7 @@ def buildHierarchy(doc, packagenames):
     XMI.buildGeneralizations(doc, allObjects)
     XMI.buildRealizations(doc, allObjects)
     XMI.buildDependencies(doc, allObjects)
-    
+
     return res
 
 

@@ -41,7 +41,7 @@ class XschemaElement:
         self.attributeDefs = []
         self.taggedValues={}
         self.internalOnly=0
-        
+
     def addChild(self, element):
         self.children.append(element)
     def isInternal(self):
@@ -169,7 +169,7 @@ class XschemaElement:
 
     def getStereoType(self):
         return None
-    
+
     def isI18N(self):
         return 0
 

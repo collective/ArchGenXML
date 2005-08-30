@@ -116,7 +116,7 @@ class PyModule:
                 j = start = i
                 sectionname = sline.split()[1]
                 try:
-                    while not self.splittedSource[j].strip().startswith(PROTECTED_END): 
+                    while not self.splittedSource[j].strip().startswith(PROTECTED_END):
                         j = j+1
                 except IndexError:
                     return
@@ -146,7 +146,7 @@ class PyModule:
         """ True if a code fragment is a class
 
         Woooh - this is a very pillar of supreme machine intelligence
-        :-) 
+        :-)
         """
         fl = c.co_firstlineno
         if self.splittedSource[fl-1].strip().startswith('class'):
@@ -176,7 +176,7 @@ class PyModule:
             # three single quotes
             return 1
         return 0
-    
+
     def getProtectedSection(self, section):
         """ Return the named protected section
 
@@ -215,7 +215,7 @@ class PyModule:
 class PyCodeElement:
     """ Abstract superclass
     """
-    
+
     module = None
     code = None
     src = None
@@ -225,12 +225,12 @@ class PyCodeElement:
         """
         self.code = code
         self.module = module
-        
+
     def getSrc(self):
         """ Return the plain source
         """
         return self.src
-    
+
     def getName(self):
         """ Return the name of the code element
         """
@@ -241,7 +241,7 @@ class PyFunction(PyCodeElement):
     """ Handles functions
     """
     typename = 'function'
-    
+
     def __init__(self, code, module):
         """ Inits the function in 'code', contained in 'module'
 
@@ -313,13 +313,13 @@ class PyFunction(PyCodeElement):
         start = self.start
         codelist = self.module.splittedSource
         # and now take into account the trailing backslashes
-        while (codelist[start+length].strip() and 
+        while (codelist[start+length].strip() and
                codelist[start+length].strip()[-1] == '\\'):
             length += 1
         snip = codelist[start:start+length+1]
         return '\n'.join(snip)
 
-        
+
 class PyMethod(PyFunction):
     """ Handles methods inside classes
 
@@ -334,7 +334,7 @@ class PyClass(PyCodeElement):
     methods = {}
     module = None
     typename = 'Class'
-    
+
     def __init__(self, code, module):
         """ Simple init function
 
@@ -345,7 +345,7 @@ class PyClass(PyCodeElement):
         self.name = code.co_name
         self.module = module
         self.buildMethods()
-        
+
     def buildMethods(self):
         """ Extract the class's methods
         """
@@ -361,12 +361,12 @@ class PyClass(PyCodeElement):
         print '======================================='
         for m in self.methods.values():
             m.printit()
-            
+
     def getProtectedSection(self, section):
         """ Pass this request through to the containing module
         """
         return self.module.getProtectedSection(section)
-    
+
     def getMethodNames(self):
         """ Return the names of the class's methods
         """
@@ -403,4 +403,4 @@ class PyClass(PyCodeElement):
 if __name__=='__main__':
     mod = PyModule(sys.argv[1])
     mod.printit()
-   
+

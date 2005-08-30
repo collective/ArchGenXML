@@ -310,7 +310,7 @@ class AGXOptionParser(OptionParser):
                      "of allowable options. Run ArchGenXML.py with the --help option "
                      "for information on allowable options.",
                      option_in_file)
-                        
+
 
 
 #============================================================================
@@ -584,7 +584,7 @@ group.add_option("--license",
                  help="Set default licence (default is the GPL).",
                  default=codesnippets.GPLTEXT,
                  section="DOCUMENTATION",
-                 type="string", #xxx stringlist? 
+                 type="string", #xxx stringlist?
                  )
 
 parser.add_option_group(group)

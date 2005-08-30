@@ -4,28 +4,28 @@ log = logging.getLogger('umlprofile')
 
 class ChainedDict(dict):
     ''' chained dict class allows to conatenate dictionaries '''
-    
+
     parent_chain = []
-    
+
     def __init__(self, parent_chain=[], **kw):
         log.debug("Initializing ChainedDict class.")
         dict.__init__(self,**kw)
         self.parent_chain=parent_chain
         self._keys = []
-        
+
     def __getitem__(self,key):
         if dict.has_key(self,key):
             return dict.__getitem__(self,key)
-        
+
         for p in self.getParentChain():
             if p.has_key(key):
                 return p.__getitem__(key)
-            
+
         raise KeyError,key
-            
+
     def getParentChain(self):
         return self.parent_chain
-    
+
     def addToParentChain(self,d):
         self.parent_chain.append(d)
 
@@ -40,7 +40,7 @@ class ChainedDict(dict):
         res=dict.items(self)
         for p in self.getParentChain():
             res.extend(p.items())
-            
+
         return res
 
     def keys(self):
@@ -55,14 +55,14 @@ class ChainedDict(dict):
     def get(self,key,default=None):
         if dict.has_key(self,key):
             return dict.get(self,key)
-        
+
         for p in self.getParentChain():
             if p.has_key(key):
                 return p.get(key)
 
 class ProfileEntry:
     ''' base class '''
-    
+
     def __init__(self, name, entities, description='TODO', **kw):
         log.debug("Initializing ProfileEntry %s.",
                   name)
@@ -70,13 +70,13 @@ class ProfileEntry:
         self.entities = entities
         self.description = description
         self.__dict__.update(kw)
-        
+
     def __repr__(self):
         return '<%s name=%s entities=%s>' % (
             self.__class__.__name__,
             self.name,
             repr(self.entities))
-    
+
     def get(self, key, default=None):
         return self.__dict__.get(key, default)
 
@@ -86,16 +86,16 @@ class ProfileEntry:
 class TaggedValue(ProfileEntry):
     """Represents a tagged value with its attributes.
     """
-    
-    
+
+
 class StereoType(ProfileEntry):
     """Represents a stereotype with its attributes.
     """
 
-    
+
 class UMLProfile:
     ''' '''
-    
+
     def __init__(self, parents=[]):
         log.debug("Initializing UMLProfile.")
         if type(parents) not in (type(()),type([])):
@@ -103,7 +103,7 @@ class UMLProfile:
         stereoTypes = [p.stereoTypes for p in parents]
         log.debug(repr(stereoTypes))
         self.stereoTypes = ChainedDict(stereoTypes)
-    
+
     def addStereoType(self, name, entities, **kw):
         log.debug("Adding stereotype '%s' to registry for entities %r.",
                   name, entities)
@@ -111,12 +111,12 @@ class UMLProfile:
                   kw)
         stereotype = StereoType(name, entities, **kw)
         self.stereoTypes[name] = stereotype
-        
+
     def filterObjects(self,list,entities,**kw):
         res = []
         #import pdb;pdb.set_trace()
         for item in list:
-            
+
             #if one of the entities aplies, its ok
             if entities:
                 ok = 0
@@ -124,9 +124,9 @@ class UMLProfile:
                     if e in item.entities:
                         ok = 1
                         continue
-                    
+
                 if not ok:
-                    continue 
+                    continue
             ok = 1
             for k in kw:
                 if getattr(item, k, None) != kw[k]:
@@ -134,14 +134,14 @@ class UMLProfile:
 
             if not ok:
                 continue
-            
+
             res.append(item)
-        
+
         return res
-    
+
     def getAllStereoTypes(self):
         return self.stereoTypes.values()
-    
+
     def findStereoTypes(self, entities=[], **kw):
         log.debug("Finding stereotypes for entities %r.",
                   entities)
@@ -150,17 +150,17 @@ class UMLProfile:
                   entities)
         list = self.getAllStereoTypes()
         return self.filterObjects(list, entities, **kw)
-    
+
     def getStereoType(self,name):
         return self.stereoTypes.get(name, None)
-    
+
     def documentation(self, indentation=0):
         """Return the documentation for all stereotypes.
 
         The documentation is returned as a string. 'indentation' can
         be used to get it back indented 'indentation' spaces. Handy
         for (classic) structured text.
-        
+
         """
 
         categoryFromClassMap = {
@@ -232,7 +232,7 @@ class UMLProfile:
         lines = out.getvalue().split('\n')
         indentedLines = [(spaces + line) for line in lines]
         return '\n'.join(indentedLines)
-    
+
 
 if __name__=='__main__':
     # The tests that were originally here have been moved to
@@ -240,4 +240,4 @@ if __name__=='__main__':
     from ArchetypesGenerator import ArchetypesGenerator
     uml_profile = ArchetypesGenerator.uml_profile
     print uml_profile.documentation()
-    
+
