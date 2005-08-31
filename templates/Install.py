@@ -33,6 +33,14 @@ except ImportError:
 <dtml-if "[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.cmfmember_stereotype)]">
 from Products.CMFMember.Extensions.toolbox import SetupMember
 </dtml-if>
+<dtml-if "[klass for klass in generator.getGeneratedClasses(package) if generator.getOption('migrate_dynamic_view_fti', klass, None)]">
+try:
+    from Products.CMFDynamicViewFTI.migrate import migrateFTIs
+except:
+    HAS_DYNAMIC_VIEW_FTI = True
+else:
+    HAS_DYNAMIC_VIEW_FTI = False
+</dtml-if>
 from Products.<dtml-var "package.getProductModuleName()">.config import PROJECTNAME
 from Products.<dtml-var "package.getProductModuleName()">.config import product_globals as GLOBALS
 
@@ -61,6 +69,17 @@ def install(self):
                  PROJECTNAME)
     install_subskin(self, out, GLOBALS)
 
+<dtml-if "[klass for klass in generator.getGeneratedClasses(package) if generator.getOption('migrate_dynamic_view_fti', klass, None)]">
+    # Migrate FTI, to make sure we get the necessary infrastructure for the
+    # "display" menu to work.
+    if HAS_DYNAMIC_VIEW_FTI:
+<dtml-in "[klass for klass in generator.getGeneratedClasses(package) if generator.getOption('migrate_dynamic_view_fti', klass, None)]">
+<dtml-let klass="_['sequence-item']">
+        migrated = migrateFTIs(self, product=PROJECTNAME, fti_meta_type='<dtml-var "klass.getCleanName()">')
+        print >>out, "Switched to DynamicViewFTI: %s" % ', '.join(migrated)        
+</dtml-let>
+</dtml-in>        
+</dtml-if>
 <dtml-let hide_folder_tabs="[cn.getName() for cn in generator.getGeneratedClasses(package) if cn.getTaggedValue('hide_folder_tabs', False)]">
 <dtml-if "hide_folder_tabs">
     #register folderish classes in use_folder_contents
