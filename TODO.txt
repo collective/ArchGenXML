@@ -42,6 +42,12 @@ http://plone.org/development/teams/developer/ArchGenXML
     - generated.pot
     - portlet_template.pt
 
+* stereotype <<portlet>> does not work, but <<portlet_view>> does. Documentation 
+  points to portlet. Tagged value autoinstall is registered for <<portlet>> only.
+  Here a clean up is needed. 
+
+* portlet sample code is Plone 2.0.x style and doenst work with Plone 2.1. 
+
 * Move class, interface generation to DTML. There are too many conditionals and
     strings being generated in the current code. :-) Having DTML conditionals
     and loops would make it much clearer and easier to manipulate. 
@@ -71,4 +77,6 @@ keep it current.
 
 [ ] Changed negative tagged values to positive ones with 
     default = True. (Tip from optilude).
+
+[ ] Add BrowserDefault/ new style FTI support (Plone 2.1 et al style)
 
