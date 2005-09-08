@@ -1,3 +1,7 @@
+import os, sys
+if __name__ == '__main__':
+    execfile(os.path.join(sys.path[0], 'framework.py'))
+
 <dtml-var "generator.getProtectedSection(parsed_class, 'module-header')">
 #
 # test-cases for class(es) <dtml-var "', '.join([p.getName() for p in klass.getRealizationParents()])">
@@ -78,7 +82,7 @@ def test_suite():
     ))
 
 
-if __name__ == '__main__':
-    execfile(os.path.join(sys.path[0], 'framework.py'))
-
 <dtml-var "generator.getProtectedSection(parsed_class, 'module-footer')">
+
+if __name__ == '__main__':
+    framework()

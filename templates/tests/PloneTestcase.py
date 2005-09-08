@@ -1,3 +1,7 @@
+import os, sys
+if __name__ == '__main__':
+    execfile(os.path.join(sys.path[0], 'framework.py'))
+
 <dtml-var "generator.getProtectedSection(parsed_class,'module-header')">
 #
 # Base TestCase for <dtml-var "klass.getPackage().getProductName()">
@@ -40,4 +44,13 @@ class <dtml-var "klass.getCleanName()">(testcase):
     #    """
     #    pass
 
+def test_suite():
+    from unittest import TestSuite, makeSuite
+    suite = TestSuite()
+    suite.addTest(makeSuite(<dtml-var "klass.getCleanName()">))
+    return suite
+
 <dtml-var "generator.getProtectedSection(parsed_class,'module-footer')">
+
+if __name__ == '__main__':
+    framework()
