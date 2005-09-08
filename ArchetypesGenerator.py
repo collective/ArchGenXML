@@ -1761,42 +1761,107 @@ class ArchetypesGenerator(BaseGenerator):
                 res.extend(self.getAggregatedInterfaces(b,includeBases=0))
 
         return res
+    
+    def getArchetypesBase(self, element, parentnames, parent_is_archetype):
+        """ find bases (baseclass and baseschema) and return a
+            3-tuple (baseclass, baseschema, parentnames)
+            
+            Normally a one of the Archetypes base classes are set.
+            if you dont want it set the TGV to zero '0'
+        """
+        if self.elementIsFolderish(element):
+            # folderish
 
+            if element.hasStereoType('ordered', umlprofile=self.uml_profile):
+                baseclass ='OrderedBaseFolder'
+                baseschema ='OrderedBaseFolderSchema'
+            elif element.hasStereoType(['large','btree'], umlprofile=self.uml_profile):
+                baseclass ='BaseBTreeFolder'
+                baseschema ='BaseFolderSchema'
+            else:
+                baseclass ='BaseFolder'
+                baseschema ='BaseFolderSchema'
+
+            # XXX: How should <<ordered>> affect this?
+            if self.i18n_content_support in self.i18n_at and element.isI18N():
+                baseclass = 'I18NBaseFolder'
+                baseschema = 'I18NBaseFolderSchema'
+
+            if element.getTaggedValue('folder_base_class'):
+                raise ValueError, "DEPRECATED: Usage of Tagged Value "\
+                      "folder_base_class' in class %s" % element.getCleanName
+        else:
+            # contentish
+            baseclass = 'BaseContent'
+            baseschema = 'BaseSchema'
+            if self.i18n_content_support in self.i18n_at and element.isI18N():
+                baseclass ='I18NBaseContent'
+                baseschema ='I18NBaseSchema'
+
+        # if a parent is already an archetype we dont need a baseschema!
+        if parent_is_archetype:
+            baseclass = None
+
+        # CMFMember support
+        if element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
+            baseclass = 'BaseMember.Member'
+            baseschema = 'BaseMember.id_schema'
+
+        ## however: tagged values have priority
+        # tagged values for base-class overrule
+        if element.getTaggedValue('base_class'):
+            baseclass = element.getTaggedValue('base_class')
+
+        # tagged values for base-schema overrule
+        if element.getTaggedValue('base_schema'):
+            baseschema = element.getTaggedValue('base_schema')
+
+        # [optilude] Ignore the standard class if this is an mixin
+        # [jensens] An abstract class might have an base_class!
+        if baseclass and not isTGVFalse(element.getTaggedValue('base_class',1)) \
+           and not element.hasStereoType('mixin', umlprofile=self.uml_profile):
+              baseclasses = baseclass.split(',')
+              parentnames += baseclasses
+            
+        return baseclass, baseschema, parentnames
+        
     def generateArchetypesClass(self, element,**kw):
+        """this is the all singing all dancing core generator logic for a
+           full featured Archetypes class 
+        """
         log.info("%sGenerating class '%s'.",
                  '    '*self.infoind,
                  element.getName())
-
-##        if element.hasStereoType(self.python_stereotype, umlprofile=self.uml_profile):
-##            return BaseGenerator.generateClass(self,element)
-
-
-        outfile=StringIO()
-        print >>outfile, self.generateHeader(element)
-
+                 
         name = element.getCleanName()
-
+        
+        # prepare file
+        outfile=StringIO()
         wrt = outfile.write
         wrt('\n')
-
-        parentnames = [p.getCleanName() for p in element.getGenParents()]
-        log.debug("Generating dependent imports...")
-        print >>outfile,self.generateDependentImports(element)
-        log.debug("Generating additional imports...")
-        print >>outfile,self.generateAdditionalImports(element)
-
+        
+        # dealing with creation-permissions and -roles for this type
         if self.detailed_creation_permissions:
             creation_permission = "'Add %s Content'" % element.getCleanName()
         else:
             creation_permission = None
         creation_roles = "('Manager', 'Owner', 'Member')"
-
         cpfromoption = self.getOption('creation_permission', element, None)
         if cpfromoption:
             creation_permission = self.processExpression(cpfromoption)
         crfromoption = self.getOption('creation_roles', element, None)
         if crfromoption:
             creation_roles = "'%s'" % crfromoption
+
+        # generate header
+        wrt(self.generateHeader(element)+'\n')
+
+        # generate basic imports
+        parentnames = [p.getCleanName() for p in element.getGenParents()]
+        log.debug("Generating dependent imports...")
+        wrt(self.generateDependentImports(element)+'\n')
+        log.debug("Generating additional imports...")
+        wrt(self.generateAdditionalImports(element)+'\n')
 
         # imports needed for CMFMember subclassing
         if element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
@@ -1854,8 +1919,9 @@ class ArchetypesGenerator(BaseGenerator):
         parent_is_archetype = False
         for p in element.getGenParents():
             parent_is_archetype = parent_is_archetype or \
-                                  p.hasStereoType(self.archetype_stereotype, umlprofile=self.uml_profile)
-        #also check if the parent classes can have subobjects
+                                  p.hasStereoType(self.archetype_stereotype, umlprofile=self.uml_profile)                                  
+                                  
+        # also check if the parent classes can have subobjects
         baseaggregatedClasses=[]
         for b in element.getGenParents():
             baseaggregatedClasses.extend(b.getRefs())
@@ -1870,65 +1936,8 @@ class ArchetypesGenerator(BaseGenerator):
         if additionalParents:
             parentnames=list(parentnames)+additionalParents.split(',')
 
-        # START find bases (baseclass and baseschema)
-        if self.elementIsFolderish(element):
-            # folderish
-
-            if element.hasStereoType('ordered', umlprofile=self.uml_profile):
-                baseclass ='OrderedBaseFolder'
-                baseschema='OrderedBaseFolderSchema'
-            elif element.hasStereoType(['large','btree'], umlprofile=self.uml_profile):
-                baseclass ='BaseBTreeFolder'
-                baseschema='BaseFolderSchema'
-            else:
-                baseclass ='BaseFolder'
-                baseschema='BaseFolderSchema'
-
-            # XXX: How should <<ordered>> affect this?
-            if self.i18n_content_support in self.i18n_at and element.isI18N():
-                baseclass='I18NBaseFolder'
-                baseschema='I18NBaseFolderSchema'
-
-            if element.getTaggedValue('folder_base_class'):
-                raise ValueError, "DEPRECATED: Usage of Tagged Value "\
-                      "folder_base_class' in class %s" % element.getCleanName
-        else:
-            # contentish
-            baseclass ='BaseContent'
-            baseschema='BaseSchema'
-            if self.i18n_content_support in self.i18n_at and element.isI18N():
-                baseclass ='I18NBaseContent'
-                baseschema='I18NBaseSchema'
-
-        # if a parent is already an archetype we dont need a baseschema!
-        if parent_is_archetype:
-            baseclass = None
-
-        # CMFMember support
-        if element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
-            baseclass = 'BaseMember.Member'
-            baseschema= 'BaseMember.id_schema'
-
-        ## however: tagged values have priority
-        # tagged values for base-class overrule
-        if element.getTaggedValue('base_class'):
-            baseclass=element.getTaggedValue('base_class')
-
-        # tagged values for base-schema overrule
-        if element.getTaggedValue('base_schema'):
-            baseschema =  element.getTaggedValue('base_schema')
-
-        # normally a one of the Archetypes base classes are set.
-        # if you dont want it set the TGV to zero '0'
-
-        ## END find bases
-
-        # [optilude] Also - ignore the standard class if this is an mixin
-        # [jensens] abstract might have an base_class!!!
-        if baseclass and not isTGVFalse(element.getTaggedValue('base_class',1)) \
-           and not element.hasStereoType('mixin', umlprofile=self.uml_profile):
-              baseclasses=baseclass.split(',')
-              parentnames=parentnames+baseclasses
+        # find base
+        baseclass, baseschema, parentnames = self.getArchetypesBase(element, parentnames, parent_is_archetype)
 
         # Remark: CMFMember support includes VariableSchema support
         if element.hasStereoType(self.variable_schema, umlprofile=self.uml_profile) and \
@@ -1949,8 +1958,41 @@ class ArchetypesGenerator(BaseGenerator):
         # protected section
         self.generateProtectedSection(outfile, element,'module-header')
 
-        # here comes the schema
+        # generate local Schema
         print >> outfile, self.generateArcheSchema(element, baseschema)
+
+        # protected section
+        self.generateProtectedSection(outfile, element, 'after-local-schema')
+
+        # generate complete Schmema
+        # prepare schema as class attribute
+        parent_schema=["getattr(%s,'schema',Schema(()))" % p.getCleanName() \
+                       for p in element.getGenParents()]
+
+        if parent_is_archetype and \
+           not element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
+            schema = parent_schema
+        else:
+            # [optilude] Ignore baseschema in abstract mixin classes
+            if element.isAbstract ():
+                schema = parent_schema
+            else:
+                schema = [baseschema] + parent_schema
+
+        # own schema overrules base and parents
+        schema += ['schema']
+
+        if element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
+            for addschema in ['contact_schema', 'plone_schema',
+                              'security_schema', 'login_info_schema',]:
+                if isTGVTrue(element.getTaggedValue(addschema, '1')):
+                    schema.append('BaseMember.%s' % addschema)
+            if isTGVTrue(element.getTaggedValue(addschema, '1')):
+                schema.append('ExtensibleMetadata.schema')
+        schemaName = '%s_schema' % name
+        print >> outfile, indent(schemaName + ' = ' + ' + \\\n    '.join(schema),0)
+        print >> outfile
+
 
         # protected section
         self.generateProtectedSection(outfile, element, 'after-schema')
@@ -2040,35 +2082,9 @@ class ArchetypesGenerator(BaseGenerator):
         rename_after_creation = self.getOption('rename_after_creation', element, default=False)
         if rename_after_creation:
             print >>outfile, CLASS_RENAME_AFTER_CREATION % (isTGVTrue(rename_after_creation) and 'True' or 'False')
-
-
-        # prepare schema as class attribute
-        parent_schema=["getattr(%s,'schema',Schema(()))" % p.getCleanName() \
-                       for p in element.getGenParents()]
-
-        if parent_is_archetype and \
-           not element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
-            schema = parent_schema
-        else:
-            # [optilude] Ignore baseschema in abstract mixin classes
-            if element.isAbstract ():
-                schema = parent_schema
-            else:
-                schema = [baseschema] + parent_schema
-
-        # own schema overrules base and parents
-        schema += ['schema']
-
-        if element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
-            for addschema in ['contact_schema', 'plone_schema',
-                              'security_schema', 'login_info_schema',]:
-                if isTGVTrue(element.getTaggedValue(addschema, '1')):
-                    schema.append('BaseMember.%s' % addschema)
-            if isTGVTrue(element.getTaggedValue(addschema, '1')):
-                schema.append('ExtensibleMetadata.schema')
-
-        print >> outfile, indent('schema = ' + ' + \\\n         '.join(schema),1)
-        print >> outfile
+ 
+        # schema attribute
+        wrt(indent('schema = %s' % schemaName,1)+'\n\n')
 
         self.generateProtectedSection(outfile,element,'class-header',1)
 
