@@ -325,8 +325,9 @@ class BaseGenerator:
                                                         None))
 
     def generatePythonClass(self,element,template,**kw):
-        #print "Parsed_class = %s " % element.parsed_class.getName()
-        #print template
+        log.debug("Executing generatePythonClass")
+        log.debug("Parsed_class = %s ", element.parsed_class and element.parsed_class.getName())
+        log.debug("Template name : %s", template)
         templ=readTemplate(template)
         d={ 'klass':element,
             'generator':self,

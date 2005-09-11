@@ -34,6 +34,8 @@ testcase = <dtml-if "parent is not None"><dtml-var "parent.getCleanName()"><dtml
 
 PloneTestCase.setupPloneSite(products=PRODUCTS<dtml-if "klass.getTaggedValue('policy', None)">, policy="<dtml-var "klass.getTaggedValue('policy')">"</dtml-if>)
 
+<dtml-var "generator.getProtectedSection(parsed_class, 'module-beforeclass')">
+
 class <dtml-var "klass.getCleanName()">(testcase):
     """ Base TestCase for <dtml-var "klass.getPackage().getProductName()">"""
 <dtml-var "generator.getProtectedSection(parsed_class,'class-header_'+klass.getCleanName(),1)">

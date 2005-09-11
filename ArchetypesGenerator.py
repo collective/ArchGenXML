@@ -123,6 +123,12 @@ class ArchetypesGenerator(BaseGenerator):
                               description='TODO',
                               dispatching=1,
                               generator='generateArchetypesClass')
+    uml_profile.addStereoType('python_class',
+                              ['XMIClass'],
+                              description="""Create a python class 
+                              without Zope security or Archetypes fields.""",
+                              dispatching=1,
+                              generator='generatePurePythonClass')
     uml_profile.addStereoType('tests',
                               ['XMIPackage'],
                               description="""Treats a package as test
@@ -1530,11 +1536,15 @@ class ArchetypesGenerator(BaseGenerator):
         paramstr=''
         params=m.getParamExpressions()
         if params:
-            paramstr=','+','.join(params)
+            paramstr=', '+', '.join(params)
             #print paramstr
         print >> outfile
 
-        if mode == 'class':
+        pure_python_class = False
+        if hasattr(klass, 'pure_python_class'):
+            pure_python_class = klass.pure_python_class
+
+        if mode == 'class' and not pure_python_class:
             # [optilude] Added check for permission:mode - public (default), private or protected
             # [jensens]  You can also use the visibility value from UML (implemented for 1.2 only!)
             # tgv overrides UML-mode!
@@ -1771,7 +1781,6 @@ class ArchetypesGenerator(BaseGenerator):
         """
         if self.elementIsFolderish(element):
             # folderish
-
             if element.hasStereoType('ordered', umlprofile=self.uml_profile):
                 baseclass ='OrderedBaseFolder'
                 baseschema ='OrderedBaseFolderSchema'
@@ -1824,7 +1833,127 @@ class ArchetypesGenerator(BaseGenerator):
               parentnames += baseclasses
             
         return baseclass, baseschema, parentnames
+
+    def generatePurePythonClass(self, element,**kw):
+        log.info("%sGenerating pure Python class '%s'.",
+                 '    '*self.infoind,
+                 element.getName())
+                 
+        element.pure_python_class = True
         
+        outfile=StringIO()
+
+        name = element.getCleanName()
+
+        wrt = outfile.write
+        wrt('\n')
+
+        parentnames = [p.getCleanName() for p in element.getGenParents()]
+        log.debug("Generating dependent imports...")
+        print >>outfile,self.generateDependentImports(element)
+        log.debug("Generating additional imports...")
+        print >>outfile,self.generateAdditionalImports(element)
+
+        # imports by tagged values
+        additionalImports = self.getImportsByTaggedValues(element)
+        if additionalImports:
+            wrt("# additional imports from tagged value 'import'\n")
+            wrt(additionalImports)
+            wrt('\n')
+
+        # [optilude] Import config.py
+        wrt(TEMPLATE_CONFIG_IMPORT % {'module' : element.getRootPackage().getProductModuleName()})
+        wrt('\n')
+        wrt('\n')
+
+        # parent has not stereotype 'archetype'
+        parent_is_archetype = False
+        
+        #also check if the parent classes can have subobjects
+        baseaggregatedClasses=[]
+        for b in element.getGenParents():
+            baseaggregatedClasses.extend(b.getRefs())
+            baseaggregatedClasses.extend(b.getSubtypeNames(recursive=1))
+
+        #also check if the interfaces used can have subobjects
+        baseaggregatedInterfaces=[]
+        for b in element.getGenParents(recursive=1):
+            baseaggregatedInterfaces.extend(b.getSubtypeNames(recursive=1,filter=['interface']))
+
+        additionalParents=element.getTaggedValue('additional_parents')
+        if additionalParents:
+            parentnames=list(parentnames)+additionalParents.split(',')
+
+        baseclass=''
+        ## however: tagged values have priority
+        # tagged values for base-class overrule
+        if element.getTaggedValue('base_class'):
+            baseclass=element.getTaggedValue('base_class')
+
+        # no schema
+        baseschema=''
+
+        # [optilude] Also - ignore the standard class if this is an mixin
+        # [jensens] abstract might have an base_class!!!
+        if baseclass and not isTGVFalse(element.getTaggedValue('base_class',1)) \
+           and not element.hasStereoType('mixin', umlprofile=self.uml_profile):
+              baseclasses=baseclass.split(',')
+              parentnames=parentnames+baseclasses
+
+        # Interface aggregation
+        if self.getAggregatedInterfaces(element):
+            parentnames.insert(0,'AllowedTypesByIfaceMixin')
+
+        parents=','.join(parentnames)
+
+        # protected section
+        self.generateProtectedSection(outfile, element,'module-header')
+
+
+        if not element.isComplex():
+            print "I: stop complex: ", element.getName()
+            return outfile.getvalue()
+        if element.getType() in AlreadyGenerated:
+            print "I: stop already generated:", element.getName()
+            return outfile.getvalue()
+        AlreadyGenerated.append(element.getType())
+
+        # [optilude] It's possible parents may become empty now...
+        if parents:
+            parents = "(%s)" % (parents,)
+        else:
+            parents = ''
+        # [optilude] ... so we can't have () around the last %s
+        classDeclaration = 'class %s%s%s:\n' % (self.prefix, name, parents)
+
+        wrt(classDeclaration)
+        doc = element.getDocumentation(striphtml=self.striphtml)
+        parsedDoc = ''
+        if element.parsed_class:
+            parsedDoc = element.parsed_class.getDocumentation()
+        if doc:
+            print >>outfile,indent('"""\n%s\n"""' % doc, 1)
+        elif parsedDoc:
+            # Bit tricky, parsedDoc is already indented...
+            print >>outfile, '    """%s"""' % parsedDoc
+
+        print >>outfile,self.generateImplements(element,parentnames)
+        print >>outfile
+        header=element.getTaggedValue('class_header')
+        if header:
+            print >>outfile,indent(header, 1)
+
+        self.generateProtectedSection(outfile,element,'class-header',1)
+
+        self.generateMethods(outfile,element)
+
+        wrt('# end of class %s\n\n'   % name)
+
+        self.generateProtectedSection(outfile,element,'module-footer')
+
+        return outfile.getvalue()
+    
+    
     def generateArchetypesClass(self, element,**kw):
         """this is the all singing all dancing core generator logic for a
            full featured Archetypes class 
