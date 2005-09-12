@@ -1136,16 +1136,25 @@ class StateMachineContainer:
         log.debug("Trying to find statemachines...")
         try:
             ownedElement = getElementByTagName(self.domElement,
-                                               [XMI.OWNED_ELEMENT,XMI.OWNED_BEHAVIOR],
+                                               [XMI.OWNED_ELEMENT, XMI.OWNED_BEHAVIOR],
                                                default=None)
         except:
-            # BBB backward compatible with argouml's xmi1.0
-            log.debug("Backward compatability mode for argouml's xmi1.0.")
-            ownedElement = XMI.getOwnedElement(self.domElement)
+            log.debug("Getting the owned element the normal way didn't work.")
+            try:
+                ownedElement = getElementByTagName(self.domElement,
+                                                   [XMI.OWNED_BEHAVIOR],
+                                                   default=None, recursive=1)
+            except:
+                log.debug("Getting the owned element the poseidon 3.1 way also didn't work.")
+                # BBB backward compatible with argouml's xmi1.0
+                log.debug("Backward compatability mode for argouml's xmi1.0.")
+                ownedElement = XMI.getOwnedElement(self.domElement)
 
         if not ownedElement:
             log.debug("Setting ownedElement to self.domElement as fallback.")
             ownedElement = self.domElement
+        log.debug("We set the owned element as: %s.",
+                  ownedElement)
 
         statemachines = getElementsByTagName(ownedElement, XMI.STATEMACHINE)
         log.debug("Found the following statemachines: %r.",
