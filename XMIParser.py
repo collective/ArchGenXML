@@ -511,7 +511,7 @@ class XMI1_1 (XMI1_0):
     COMPOSITESTATE = "UML:CompositeState"
     COMPOSITESTATE_SUBVERTEX = "UML:CompositeState.subvertex"
     SIMPLESTATE = "UML:SimpleState","UML2:State"
-    PSEUDOSTATE = "UML:Pseudostate","UML2:PseudoState"
+    PSEUDOSTATE = "UML:Pseudostate", "UML2:PseudoState", "UML2:Pseudostate"
     PSEUDOSTATE_KIND = "kind"
     FINALSTATE = "UML:FinalState","UML2:FinalState"
     STATEVERTEX_OUTGOING = "UML:StateVertex.outgoing","UML2:Vertex.outgoing"
@@ -2171,12 +2171,17 @@ class XMIStateMachine(XMIStateContainer):
         return [t.getName() for t in self.getTransitions(no_duplicates=no_duplicates) if t.getName()]
 
     def buildStates(self):
+        log.debug("Building states...")
         sels = getElementsByTagName(self.domElement, XMI.SIMPLESTATE, recursive=1)
+        log.debug("Found %s simple states.",
+                  len(sels))
         for sel in sels:
             state = XMIState(sel)
             self.addState(state)
 
-        sels = getElementsByTagName(self.domElement, XMI.PSEUDOSTATE, recursive=1)
+        sels = getElementsByTagName(self.domElement, XMI.PSEUDOSTATE, recursive=1) #xxx
+        log.debug("Found %s pseudo states (like initial states).",
+                  len(sels))
         for sel in sels:
             state = XMIState(sel)
             if getAttributeValue(sel, XMI.PSEUDOSTATE_KIND, None) == 'initial' or sel.getAttribute('kind') == 'initial':
