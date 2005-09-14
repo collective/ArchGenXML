@@ -158,6 +158,18 @@ def install(self):
     # set title of tool:
     tool = getToolByName(self, '<dtml-var "tool_instance_name">')
     tool.title = '<dtml-var "c.getTaggedValue('configlet:title',c.getName())">'
+
+    portalTypes = getToolByName(self, 'portal_types', None)
+    if portalTypes is not None:
+        existingTypes = portalTypes.listContentTypes()
+        if '<dtml-var "c.getName()">' in existingTypes:
+            portalTypes.manage_delObjects(ids=['<dtml-var "c.getName()">'])
+
+    portal = getToolByName(self,'portal_url').getPortalObject()
+    objIds = portal.objectIds()
+    if '<dtml-var "tool_instance_name">' in objIds:
+        portal['<dtml-var "tool_instance_name">'].unindexObject()
+
 </dtml-let>
 </dtml-let>
 </dtml-in>
