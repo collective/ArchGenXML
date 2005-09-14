@@ -1144,10 +1144,10 @@ class ArchetypesGenerator(BaseGenerator):
                                                   attr.getName())
             if not 'term_type' in vocaboptions.keys():
                 vocaboptions['term_type'] = 'SimpleVocabularyTerm'
-
+            
             if not 'vocabulary_type' in vocaboptions.keys():
                 vocaboptions['vocabulary_type'] = 'SimpleVocabulary'
-
+                
             map.update( {
                 'vocabulary':'NamedVocabulary("""%s""")' % vocaboptions['name']
             } )

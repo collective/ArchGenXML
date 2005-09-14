@@ -164,10 +164,10 @@ def install(self):
 </dtml-if>
 </dtml-let>
 <dtml-if "package.getProductName() in generator.vocabularymap.keys()">
-
+               
     # Create vocabularies in vocabulary lib
     atvm = getToolByName(self, 'portal_vocabularies')
-    vocabmap = <dtml-var "repr(generator.vocabularymap[package.getProductName()])">
+    vocabmap = {<dtml-var "'),\n        '.join( [s[1:] for s in repr(generator.vocabularymap[package.getProductName()]).split(')')] )">}
     for vocabname in vocabmap.keys():
         if not vocabname in atvm.contentIds():
             atvm.invokeFactory(vocabmap[vocabname][0], vocabname)
