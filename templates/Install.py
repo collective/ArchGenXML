@@ -171,7 +171,8 @@ def install(self):
     for vocabname in vocabmap.keys():
         if not vocabname in atvm.contentIds():
             atvm.invokeFactory(vocabmap[vocabname][0], vocabname)
-        if len(atvm[vocabname].contentIds()) < 1:
+        if vocabmap[vocabname][0] != "VdexVocabulary" and \
+           len(atvm[vocabname].contentIds()) < 1:
             atvm[vocabname].invokeFactory(vocabmap[vocabname][1],'default')
             atvm[vocabname]['default'].setTitle('Default term, replace it by your own stuff')
 </dtml-if>
