@@ -1777,7 +1777,7 @@ class ArchetypesGenerator(BaseGenerator):
                 baseschema ='OrderedBaseFolderSchema'
             elif element.hasStereoType(['large','btree'], umlprofile=self.uml_profile):
                 baseclass ='BaseBTreeFolder'
-                baseschema ='BaseFolderSchema'
+                baseschema ='BaseBTreeFolderSchema'
             else:
                 baseclass ='BaseFolder'
                 baseschema ='BaseFolderSchema'
