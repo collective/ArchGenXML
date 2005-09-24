@@ -93,7 +93,7 @@ class DummyModel:
 
 class ArchetypesGenerator(BaseGenerator):
     generator_generator='archetypes'
-    default_class_type='content_class'
+    default_class_type='python_class'
 
     uml_profile = UMLProfile(BaseGenerator.uml_profile)
 
@@ -122,7 +122,8 @@ class ArchetypesGenerator(BaseGenerator):
                               ['XMIClass'],
                               description='TODO',
                               dispatching=1,
-                              generator='generateArchetypesClass')
+                              generator='generatePythonClass',
+                              template='python_class.py',)
     uml_profile.addStereoType('tests',
                               ['XMIPackage'],
                               description="""Treats a package as test
@@ -2435,33 +2436,6 @@ class ArchetypesGenerator(BaseGenerator):
             target=target[:-1]
 
         templdir=os.path.join(sys.path[0],'templates')
-
-        # Create a tool.gif if necessary
-        if self.getGeneratedTools(package):
-            toolgif=open(os.path.join(templdir,'tool.gif')).read()
-            of=self.makeFile(os.path.join(package.getFilePath(),'tool.gif'))
-            of.write(toolgif)
-            of.close()
-
-        # Generate a refresh.txt for the product
-        of=self.makeFile(os.path.join(package.getFilePath(),'refresh.txt'))
-        of.close()
-
-        # Increment version.txt build number
-        self.updateVersionForProduct(package)
-
-        # Generate product root __init__.py
-        self.generateProductInitPy(package)
-
-        # Create a customisation policy if required
-        if self.customization_policy:
-            of=self.makeFile(os.path.join(package.getFilePath(),'CustomizationPolicy.py'),0)
-            if of:
-                cpTemplate=readTemplate('CustomizationPolicy.py')
-                d={'package':package,'generator':self}
-                cp=HTML(cpTemplate,d)()
-                of.write(cp)
-                of.close()
 
 
 
