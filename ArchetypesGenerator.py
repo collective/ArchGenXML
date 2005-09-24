@@ -2330,70 +2330,6 @@ class ArchetypesGenerator(BaseGenerator):
         print >>of,version,
         of.close()
 
-    def generateInstallPy(self, package):
-        """Generate Extensions/Install.py from the DTML template"""
-
-        # create Extension directory
-        installTemplate=open(os.path.join(sys.path[0],'templates','Install.py')).read()
-        extDir=os.path.join(package.getFilePath(),'Extensions')
-        self.makeDir(extDir)
-
-        # make __init__.py
-        ipy=self.makeFile(os.path.join(extDir,'__init__.py'))
-        ipy.write('# make me a python module\n')
-        ipy.close()
-
-        # prepare (d)TML varibles
-        d={'package'    : package,
-           'generator'  : self,
-           'builtins'   : __builtins__,
-           'utils'       :utils,
-        }
-        d.update(__builtins__)
-
-        templ=readTemplate('Install.py')
-        dtml=HTML(templ,d)
-        res=dtml()
-
-        of=self.makeFile(os.path.join(extDir,'Install.py'))
-        of.write(res)
-        of.close()
-
-        return
-
-    def generateConfigPy(self, package):
-        """ generates: config.py """
-
-        configpath=os.path.join(package.getFilePath(),'config.py')
-        parsed_config=self.parsePythonModule(package.getFilePath(), 'config.py')
-        creation_permission = self.getOption('creation_permission', package, None)
-
-        if creation_permission:
-            default_creation_permission = creation_permission
-        else:
-            default_creation_permission = self.default_creation_permission
-
-        # prepare (d)TML varibles
-        d={'package'                    : package,
-           'generator'                  : self,
-           'builtins'                   : __builtins__,
-           'utils'                      : utils,
-           'creation_permissions'       : self.creation_permissions,
-           'parsed_config'              : parsed_config,
-           'default_creation_permission': default_creation_permission,
-        }
-        d.update(__builtins__)
-
-        templ=readTemplate('config.py')
-        dtml=HTML(templ,d)
-        res=dtml()
-
-        of=self.makeFile(configpath)
-        of.write(res)
-        of.close()
-
-        return
-
     def generateProductInitPy(self, package):
         """ Generate __init__.py at product root from the DTML template"""
 
@@ -2526,12 +2462,6 @@ class ArchetypesGenerator(BaseGenerator):
                 cp=HTML(cpTemplate,d)()
                 of.write(cp)
                 of.close()
-
-        # Generate config.py from template
-        self.generateConfigPy(package)
-
-        # Generate Extensions/Install.py
-        self.generateInstallPy(package)
 
 
 
@@ -2904,68 +2834,12 @@ class ArchetypesGenerator(BaseGenerator):
 
         #create the directories
         self.makeDir(root.getFilePath())
-        self.makeDir(os.path.join(root.getFilePath(),'skins'))
-        self.makeDir(os.path.join(root.getFilePath(),'skins',
-            root.getProductModuleName()))
-        self.makeDir(os.path.join(root.getFilePath(),'skins',
-            root.getProductModuleName()+'_public'))
-
-        of=self.makeFile(os.path.join(root.getFilePath(),'skins',
-            root.getProductModuleName()+'_public','readme.txt')
-        )
-        print >> of, READMEHIGHEST % root.getProductName()
-        of.close()
-
-        of=self.makeFile(os.path.join(root.getFilePath(),'skins',
-                                root.getProductModuleName(),'readme.txt'))
-        print >> of, READMELOWEST % root.getProductName()
-        of.close()
-
-        # prepare messagecatalog
-        if has_i18ndude and self.build_msgcatalog:
-            self.makeDir(os.path.join(root.getFilePath(),'i18n'))
-            filepath=os.path.join(root.getFilePath(),'i18n','generated.pot')
-            if not os.path.exists(filepath):
-                templdir=os.path.join(sys.path[0],'templates')
-                PotTemplate = open(os.path.join(sys.path[0],'templates','generated.pot')).read()
-                PotTemplate = PotTemplate % {
-                    'author':self.author or 'unknown author',
-                    'email':self.email or 'unknown@email.address',
-                    'year': str(time.localtime()[0]),
-                    'datetime': time.ctime(),
-                    'charset':sys.getdefaultencoding(),
-                    'package': root.getProductName(),
-                }
-                of=self.makeFile(filepath)
-                of.write(PotTemplate)
-                of.close()
-            self.msgcatstack.append(msgcatalog.MessageCatalog(
-                    filename=os.path.join(self.targetRoot, filepath) ))
-
-
-
 
         package=root
 
         self.generateRelations(root)
         self.generatePackage(root)
 
-        if self.ape_support:
-            self.generateApeConf(root.getFilePath(),root)
-
-
-        # write messagecatalog
-        if has_i18ndude and self.build_msgcatalog:
-            filepath=os.path.join(root.getFilePath(),'i18n','generated.pot')
-            of=self.makeFile(filepath) or open(filepath,'w')
-            pow=msgcatalog.POWriter(of,self.msgcatstack.pop() )
-            pow.write()
-            of.close()
-
-
-        #start Workflow creation
-        wfg=WorkflowGenerator(package,self)
-        wfg.generateWorkflows()
         self.infoind -= 1
         self.creation_permissions = self.creation_permission_stack.pop()
 
