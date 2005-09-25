@@ -2397,7 +2397,7 @@ class ArchetypesGenerator(BaseGenerator):
         # Get the names of packages and classes to import
         packageImports = [m.getModuleName () for m in package.getAnnotation('generatedPackages') or []]
         classImports   = [m.getModuleName () for m in package.generatedModules]
-
+        importedClasses = [m for m in package.generatedModules]
         # Get the preserved code sections
         parsed = self.parsePythonModule(package.getFilePath (), '__init__.py')
         headerCode = self.getProtectedSection(parsed, 'init-module-header')
@@ -2409,6 +2409,7 @@ class ArchetypesGenerator(BaseGenerator):
            'utils'                         : utils,
            'package_imports'               : packageImports,
            'class_imports'                 : classImports,
+           'importedClasses'               : importedClasses,
            'protected_module_header'       : headerCode,
            'protected_module_footer'       : footerCode,
            }
@@ -2503,12 +2504,14 @@ class ArchetypesGenerator(BaseGenerator):
                           element.getName())
                 continue
 
-            module=element.getModuleName()
-            if element.hasStereoType('python_class'):
-                modulename=module.lower()
-            modulename=module.lower() # do it anyway
+            module = element.getModuleName()
+            modulename = module.lower()
+            log.debug("Modulename, lowercased, is %s.",
+                      modulename)
             package.generatedModules.append(element)
             outfilepath = os.path.join(package.getFilePath(), modulename+'.py')
+            log.debug("Still lowercased: outfilepath is %s",
+                      outfilepath)
             #print 'writing class:',outfilepath
 
             if self.method_preservation:

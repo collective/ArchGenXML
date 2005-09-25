@@ -10,8 +10,8 @@ import <dtml-var sequence-item>
 
 #classes
 <dtml-if "not package.hasStereoType(['tests'])">
-<dtml-in "class_imports">
-import <dtml-var sequence-item>
+<dtml-in "importedClasses">
+from <dtml-var "_['sequence-item'].getModuleName()"> import <dtml-var "_['sequence-item'].getCleanName()">
 </dtml-in>
 </dtml-if>
 

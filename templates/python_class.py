@@ -80,7 +80,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
 
 </dtml-if>
 <dtml-if "accessor not in [m.name for m in generator.getMethodsToGenerate(klass)[1]]">
-    def <dtml-var "accessor">(self, value):
+    def <dtml-var "accessor">(self):
         """Generated method, just return self.<dtml-var "_['sequence-item'].getCleanName()">.
         """
 
