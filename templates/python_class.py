@@ -3,7 +3,7 @@
 <dtml-var "generator.getProtectedSection(parsed_class,'module-header')">
 
 <dtml-var "generator.generateDependentImports(klass)">
-class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(object, <dtml-var "','.join([p.getCleanName() for p in klass.getGenParents()])">)</dtml-if>:
+class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-var "','.join([p.getCleanName() for p in klass.getGenParents()])">)</dtml-if>:
     ''' <dtml-var "klass.getDocumentation()">'''
 <dtml-var "generator.generateImplements(klass,[p.getCleanName() for p in klass.getGenParents()])">
 <dtml-var "generator.getProtectedSection(parsed_class,'class-header_'+klass.getCleanName(),1)">
@@ -73,16 +73,37 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(object,
 <dtml-let capname="_['sequence-item'].getCleanName()[0].upper() + _['sequence-item'].getCleanName()[1:]" mutator="'set'+capname" accessor="'get'+capname">
 <dtml-if "mutator not in [m.name for m in generator.getMethodsToGenerate(klass)[1]]">
     def <dtml-var "mutator">(self, value):
-        self.<dtml-var "_['sequence-item'].getCleanName()">=value
+        """Generated method, replaces self.<dtml-var "_['sequence-item'].getCleanName()"> with value.
+        """
+
+        self.<dtml-var "_['sequence-item'].getCleanName()"> = value
 
 </dtml-if>
 <dtml-if "accessor not in [m.name for m in generator.getMethodsToGenerate(klass)[1]]">
     def <dtml-var "accessor">(self, value):
-        self.<dtml-var "_['sequence-item'].getCleanName()">=value
+        """Generated method, just return self.<dtml-var "_['sequence-item'].getCleanName()">.
+        """
+
+        self.<dtml-var "_['sequence-item'].getCleanName()"> = value
 
 </dtml-if>
 </dtml-let>
 </dtml-in>
+
+#    def addSomething(self, something):
+#        """
+#        """
+#
+#        self.somethings.append(something)
+#        something.__parent__ = self
+
+#    def getParent(self):
+#        """
+#        """
+#
+#        if self.__parent__:
+#            return self.__parent__
+#        return None
 
 <dtml-in "[m for m in generator.getMethodsToGenerate(klass)[1] if m.name not in ['__init__','_init_attributes']]">
 
