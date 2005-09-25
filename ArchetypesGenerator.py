@@ -2506,8 +2506,9 @@ class ArchetypesGenerator(BaseGenerator):
             module=element.getModuleName()
             if element.hasStereoType('python_class'):
                 modulename=module.lower()
+            modulename=module.lower() # do it anyway
             package.generatedModules.append(element)
-            outfilepath=os.path.join(package.getFilePath(), modulename+'.py')
+            outfilepath = os.path.join(package.getFilePath(), modulename+'.py')
             #print 'writing class:',outfilepath
 
             if self.method_preservation:

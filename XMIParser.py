@@ -1005,6 +1005,8 @@ class XMIElement:
             self.methodDefs.append(m)
 
     def getCleanSingularName(self):
+        log.debug("Getting singular name for %s.",
+                  self.getCleanName())
         name = self.getCleanName()
         if name.endswith('ses'):
             return name[:-2]

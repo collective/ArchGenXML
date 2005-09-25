@@ -70,24 +70,18 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(object,
 </dtml-in>
 
 <dtml-in vars>
-<dtml-if "_['sequence-item'].mult[1]==1">
 <dtml-let capname="_['sequence-item'].getCleanName()[0].upper() + _['sequence-item'].getCleanName()[1:]" mutator="'set'+capname" accessor="'get'+capname">
 <dtml-if "mutator not in [m.name for m in generator.getMethodsToGenerate(klass)[1]]">
     def <dtml-var "mutator">(self, value):
         self.<dtml-var "_['sequence-item'].getCleanName()">=value
 
 </dtml-if>
-#Add something like property = Property()
-</dtml-let>
-<dtml-else>
-<dtml-let capname="_['sequence-item'].getCleanSingularName()[0].upper() + _['sequence-item'].getCleanSingularName()[1:]" adder="'add'+capname" accessor="'get'+capname">
-<dtml-if "adder not in [m.name for m in generator.getMethodsToGenerate(klass)[1]]">
-    def <dtml-var "adder">(self, value):
-        self.<dtml-var "_['sequence-item'].getCleanName()">.append(value)
+<dtml-if "accessor not in [m.name for m in generator.getMethodsToGenerate(klass)[1]]">
+    def <dtml-var "accessor">(self, value):
+        self.<dtml-var "_['sequence-item'].getCleanName()">=value
 
 </dtml-if>
 </dtml-let>
-</dtml-if>
 </dtml-in>
 
 <dtml-in "[m for m in generator.getMethodsToGenerate(klass)[1] if m.name not in ['__init__','_init_attributes']]">
