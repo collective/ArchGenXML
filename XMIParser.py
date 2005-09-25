@@ -1004,6 +1004,13 @@ class XMIElement:
         if m.getName():
             self.methodDefs.append(m)
 
+    def getCleanSingularName(self):
+        name = self.getCleanName()
+        if name.endswith('ses'):
+            return name[:-2]
+        if name.endswith('s'):
+            return name[:-1]
+        
 
     def getCleanName(self):
         # If there is a namespace, replace it with an underscore.

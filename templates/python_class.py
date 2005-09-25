@@ -3,33 +3,33 @@
 <dtml-var "generator.getProtectedSection(parsed_class,'module-header')">
 
 <dtml-var "generator.generateDependentImports(klass)">
-class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-var "','.join([p.getCleanName() for p in klass.getGenParents()])">)</dtml-if>:
+class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(object, <dtml-var "','.join([p.getCleanName() for p in klass.getGenParents()])">)</dtml-if>:
     ''' <dtml-var "klass.getDocumentation()">'''
 <dtml-var "generator.generateImplements(klass,[p.getCleanName() for p in klass.getGenParents()])">
 <dtml-var "generator.getProtectedSection(parsed_class,'class-header_'+klass.getCleanName(),1)">
 
 <dtml-if "not parsed_class or '__init__' not in parsed_class.methods.keys()">
 <dtml-if vars>
-    def __init__(self,*args,**kwargs):
+    def __init__(self, *args, **kwargs):
 <dtml-in "klass.getGenParents()">
         <dtml-var "_['sequence-item'].getCleanName()">.__init__(self,*args,**kwargs)
 </dtml-in>
-        self._init_attributes(*args,**kwargs)
+        self._init_attributes(*args, **kwargs)
 </dtml-if>
 <dtml-else>
 <dtml-var "parsed_class.methods['__init__'].getSrc()">
 </dtml-if >
 
 <dtml-if vars>
-    def _init_attributes(self,*args,**kwargs):
+    def _init_attributes(self, *args, **kwargs):
 <dtml-if atts>
         #attributes
 </dtml-if>
 <dtml-in atts>
 <dtml-if "_['sequence-item'].mult[1]==1">
-        self.<dtml-var "_['sequence-item'].getCleanName()">=None
+        self.<dtml-var "_['sequence-item'].getCleanName()"> = None
 <dtml-else>
-        self.<dtml-var "_['sequence-item'].getCleanName()">=<dtml-var "{None:'[]','dict':'{}','list':'[]','tuple':'()'}.get(_['sequence-item'].getStereoType(),str(_['sequence-item'].getStereoType())+'()')">
+        self.<dtml-var "_['sequence-item'].getCleanName()"> = <dtml-var "{None:'[]','dict':'{}','list':'[]','tuple':'()'}.get(_['sequence-item'].getStereoType(),str(_['sequence-item'].getStereoType())+'()')">
 </dtml-if>
 </dtml-in>
 
@@ -63,25 +63,31 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
 <dtml-var "parsed_class.methods[m.getCleanName()].getSrc()">
 <dtml-else>
 
-    def <dtml-var "m.getName()">(self,<dtml-var "','.join(m.getParamNames())">):
+    def <dtml-var "m.getName()">(self, <dtml-var "','.join(m.getParamNames())">):
         pass
 </dtml-if>
 </dtml-let>
 </dtml-in>
 
 <dtml-in vars>
+<dtml-if "_['sequence-item'].mult[1]==1">
 <dtml-let capname="_['sequence-item'].getCleanName()[0].upper() + _['sequence-item'].getCleanName()[1:]" mutator="'set'+capname" accessor="'get'+capname">
 <dtml-if "mutator not in [m.name for m in generator.getMethodsToGenerate(klass)[1]]">
-    def <dtml-var "mutator">(self,value):
+    def <dtml-var "mutator">(self, value):
         self.<dtml-var "_['sequence-item'].getCleanName()">=value
 
 </dtml-if>
-<dtml-if "accessor not in [m.name for m in generator.getMethodsToGenerate(klass)[1]]">
-    def <dtml-var "accessor">(self):
-        return self.<dtml-var "_['sequence-item'].getCleanName()">
+#Add something like property = Property()
+</dtml-let>
+<dtml-else>
+<dtml-let capname="_['sequence-item'].getCleanSingularName()[0].upper() + _['sequence-item'].getCleanSingularName()[1:]" adder="'add'+capname" accessor="'get'+capname">
+<dtml-if "adder not in [m.name for m in generator.getMethodsToGenerate(klass)[1]]">
+    def <dtml-var "adder">(self, value):
+        self.<dtml-var "_['sequence-item'].getCleanName()">.append(value)
 
 </dtml-if>
 </dtml-let>
+</dtml-if>
 </dtml-in>
 
 <dtml-in "[m for m in generator.getMethodsToGenerate(klass)[1] if m.name not in ['__init__','_init_attributes']]">
