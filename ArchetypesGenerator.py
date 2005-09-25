@@ -2166,7 +2166,7 @@ class ArchetypesGenerator(BaseGenerator):
             parentnames=list(parentnames)+additionalParents.split(',')
 
         if not [c for c in element.getGenParents() if c.isInterface()]:
-            parentnames.insert(0,'Base')
+            parentnames.insert(0,'zope.interface')
         parents=','.join(parentnames)
 
         s1 = 'class %s%s(%s):\n' % (self.prefix, name, parents)
