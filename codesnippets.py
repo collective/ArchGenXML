@@ -136,7 +136,7 @@ CLASS_RENAME_AFTER_CREATION      = '''    _at_rename_after_creation  = %s\n'''
 
 REGISTER_ARCHTYPE    = """registerType(%s,PROJECTNAME)\n"""
 
-IMPORT_INTERFACE     = """from Interface import Base"""
+IMPORT_INTERFACE     = """import zope.interface"""
 
 MODULE_INFO_HEADER = """\
 # File: %(filename)s
