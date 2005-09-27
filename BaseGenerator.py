@@ -188,6 +188,9 @@ class BaseGenerator:
         #imports for stub-association classes
         importLines=[]
 
+        if element.getRealizationParents():
+            print >> outfile,'from zope import interface'
+            
         parents  = element.getGenParents()
         parents += element.getRealizationParents()
         parents += element.getClientDependencyClasses(includeParents=True)
