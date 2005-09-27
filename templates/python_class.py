@@ -11,7 +11,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
     def __init__(self, *args, **kwargs):
         # WARNING: this method is overwritten!
 <dtml-in "klass.getGenParents()">
-        <dtml-var "_['sequence-item'].getCleanName()">.__init__(self,*args,**kwargs)
+        <dtml-var "_['sequence-item'].getCleanName()">.__init__(self)
 </dtml-in>
 <dtml-if atts>
         #attributes
@@ -68,7 +68,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
         """Generated method, replaces self.<dtml-var "_['sequence-item'].getCleanName()"> with value.
         """
 
-        self.<dtml-var "_['sequence-item'].getCleanName()"> = value
+        self._<dtml-var "_['sequence-item'].getCleanName()"> = value
 
 </dtml-if>
 <dtml-if "accessor not in [m.name for m in generator.getMethodsToGenerate(klass)[1]]">
@@ -76,7 +76,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
         """Generated method, just return self.<dtml-var "_['sequence-item'].getCleanName()">.
         """
 
-        self.<dtml-var "_['sequence-item'].getCleanName()"> = value
+        return self._<dtml-var "_['sequence-item'].getCleanName()">
 
 </dtml-if>
 </dtml-let>
@@ -86,7 +86,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
 #        """
 #        """
 #
-#        self.somethings.append(something)
+#        self._somethings.append(something)
 #        something.__parent__ = self
 
 #    def getParent(self):
@@ -101,6 +101,13 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
 
 <dtml-var "_['sequence-item'].getSrc()">
 </dtml-in>
+
+<dtml-in vars>
+<dtml-let capname="_['sequence-item'].getCleanName()[0].upper() + _['sequence-item'].getCleanName()[1:]" mutator="'set'+capname" accessor="'get'+capname">
+    <dtml-var "_['sequence-item'].getCleanName()"> = property(<dtml-var "accessor">, <dtml-var "mutator">)
+</dtml-let>
+</dtml-in>
+
 
 <dtml-var "generator.getProtectedSection(parsed_class,'module-footer')">
 </dtml-let>
