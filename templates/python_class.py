@@ -1,11 +1,16 @@
 <dtml-let assocs="klass.getFromAssociations(aggtypes=['none','aggregation','composite'])" atts="klass.getAttributeDefs()" vars="atts+[a.toEnd for a in assocs]" >
+from zope.interface import implements
+from interfaces import I<dtml-var "klass.getCleanName()">
 
 <dtml-var "generator.getProtectedSection(parsed_class,'module-header')">
 
 <dtml-var "generator.generateDependentImports(klass)">
 class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-var "','.join([p.getCleanName() for p in klass.getGenParents()])">)</dtml-if>:
-    ''' <dtml-var "klass.getDocumentation()">'''
-<dtml-var "generator.generateImplements(klass,[p.getCleanName() for p in klass.getGenParents()])">
+    """<dtml-var "klass.getDocumentation()">
+    """
+
+    implements(I<dtml-var "klass.getCleanName()">)
+#<dtml-var "generator.generateImplements(klass,[p.getCleanName() for p in klass.getGenParents()])">
 <dtml-var "generator.getProtectedSection(parsed_class,'class-header_'+klass.getCleanName(),1)">
 
     def __init__(self, *args, **kwargs):

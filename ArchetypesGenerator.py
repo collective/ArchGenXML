@@ -2306,6 +2306,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         # Generate an __init__.py
         self.generatePackageInitPy(package)
+        self.generatePackageInterfacesPy(package)
 
     def updateVersionForProduct(self, package):
         """Increment the build number in verion.txt"""
@@ -2419,6 +2420,35 @@ class ArchetypesGenerator(BaseGenerator):
         res=dtml()
 
         of=self.makeFile(os.path.join(package.getFilePath(),'__init__.py'))
+        of.write(res)
+        of.close()
+
+        return
+
+    def generatePackageInterfacesPy(self, package):
+        """ Generate interfaces.py for packages from the DTML template"""
+
+        # Get the names of packages and classes to import
+        classes = [m for m in package.generatedModules]
+        # We need to sort the classes.
+        def sortClasses(x, y):
+            if x in y.getGenParents(recursive=1):
+                return -1
+            if y in x.getGenParents(recursive=1):
+                return 1
+            return 0
+        classes.sort(sortClasses)
+
+        # Prepare DTML varibles
+        d={'package'                       : self,
+           'classes'                       : classes,
+           }
+
+        templ=readTemplate('interfaces.py')
+        dtml=HTML(templ,d)
+        res=dtml()
+
+        of=self.makeFile(os.path.join(package.getFilePath(),'interfaces.py'))
         of.write(res)
         of.close()
 
