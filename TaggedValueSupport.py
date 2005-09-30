@@ -186,6 +186,14 @@ tagname = 'policy'
 explanation = """TODO."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'doctest_name'
+explanation = """In a tests package, setting the stereotype '<<doc_testcase>>' on a
+class turns it into a doctest. The doctest itself is placed in the
+doc/ subdirectory. The 'doctest_name' tagged value overwrites the default name for the file
+(which is the name of the doctestcase class + '.txt'). ArchGenXML appends the '.txt'
+extension automatically, so you don't need to specify it."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'portal_type'
 explanation = """Sets the CMF portal-type this class will be registered with, defaults to the class-name."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
