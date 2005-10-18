@@ -69,11 +69,19 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
 <dtml-in vars>
 <dtml-let capname="_['sequence-item'].getCleanName()[0].upper() + _['sequence-item'].getCleanName()[1:]" mutator="'set'+capname" accessor="'get'+capname">
 <dtml-if "mutator not in [m.name for m in generator.getMethodsToGenerate(klass)[1]]">
+<dtml-if "_['sequence-item'].getStereoType() != 'dict'">
     def <dtml-var "mutator">(self, value):
         """Generated method, replaces self.<dtml-var "_['sequence-item'].getCleanName()"> with value.
         """
-
+        
         self._<dtml-var "_['sequence-item'].getCleanName()"> = value
+<dtml-else>
+    def <dtml-var "mutator">(self, **kw):
+        """Generated method, updates self.<dtml-var "_['sequence-item'].getCleanName()"> with the keyword arguments.
+        """
+        
+        self._<dtml-var "_['sequence-item'].getCleanName()">.update(kw)
+</dtml-if>
 
 </dtml-if>
 <dtml-if "accessor not in [m.name for m in generator.getMethodsToGenerate(klass)[1]]">

@@ -304,6 +304,8 @@ class BaseGenerator:
             cl=self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name,None)
             if cl:
                 manual_methods=[mt for mt in cl.methods.values() if mt.name not in method_names]
+        generatedMethods.sort()
+        manual_methods.sort()
 
         return generatedMethods, manual_methods
 
