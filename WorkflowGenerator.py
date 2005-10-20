@@ -34,7 +34,6 @@ class WorkflowGenerator(BaseGenerator):
         }
         d.update(__builtins__)
 
-
         for sm in statemachines:
 
             extDir=os.path.join(self.package.getFilePath(),'Extensions')

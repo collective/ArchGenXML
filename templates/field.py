@@ -1,3 +1,8 @@
+#<dtml-var "klass.getName()">
+
+
+
+
 from types import ListType, TupleType, StringTypes
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base
@@ -29,6 +34,7 @@ from Products.CompoundField.CompoundField import CompoundField
 ######<dtml-var parentname>
 <dtml-var "generator.generateArcheSchema(klass,None)" >
 </dtml-if>
+
 
 class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-var "','.join([p.getCleanName() for p in klass.getGenParents()])"><dtml-else><dtml-var parentname></dtml-if>):
     ''' <dtml-var "klass.getDocumentation()">'''

@@ -1164,7 +1164,8 @@ class StateMachineContainer:
     def buildStateMachines(self, recursive=1):
         #print 'buildClasses:',self.getFilePath(includeRoot=1)
         statemachines = self.findStateMachines()
-
+        res={}
+        
         for m in statemachines:
             sm = XMIStateMachine(m,parent=self)
             if sm.getName():
@@ -1178,10 +1179,13 @@ class StateMachineContainer:
                     products = self
 
                 product.addStateMachine(sm)
+                res[sm.getName()]=sm
 
         if recursive:
             for p in self.getPackages():
-                p.buildStateMachines()
+                res.update(p.buildStateMachines())
+                
+        return res
 
     def addStateMachine(self, sm, reparent=1):
         if not sm in self.statemachines:
@@ -1448,6 +1452,31 @@ class XMIModel(XMIPackage):
             diagram = XMIDiagram(el)
             self.diagrams[diagram.getId()] = diagram
             self.diagramsByModel[diagram.getModelElementId()] = diagram
+            
+    def getAllStateMachines(self):
+        res=[]
+        res.extend(self.getStateMachines())
+        for p in self.getPackages():
+            res.extend(p.getStateMachines())
+            
+        return res
+    
+    def associateClassesToStateMachines(self):
+        sms=self.getAllStateMachines()
+        smdict={}
+        for sm in sms:
+            smdict[sm.getName()]=sm
+            
+        for cl in self.getClasses(recursive=1):
+            uf=cl.getTaggedValue('use_workflow')
+            if uf:
+                wf=smdict.get(uf)
+                if not wf:
+                    log.debug('associated workflow does not exist: %s' % uf)
+                    continue
+                    
+                smdict[uf].addClass(cl)
+                
 
 class XMIClass (XMIElement, StateMachineContainer):
     package = None
@@ -2142,6 +2171,7 @@ class XMIStateMachine(XMIStateContainer):
                 self.addClass(cl)
         else:
             self.addClass(self.getParent())
+            
 
     def addTransition(self, transition):
         self.transitions.append(transition)
@@ -2767,8 +2797,10 @@ def buildHierarchy(doc, packagenames):
     res.buildPackages()
     res.buildClassesAndInterfaces()
     res.buildStateMachines()
-    res.buildDiagrams()
 
+    res.buildDiagrams()
+    res.associateClassesToStateMachines()
+    
     #print 'res:', res.getName()
 
     #pure datatype classes should not be generated!
