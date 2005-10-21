@@ -1845,7 +1845,7 @@ class ArchetypesGenerator(BaseGenerator):
             creation_permission = "'Add %s Content'" % element.getCleanName()
         else:
             creation_permission = None
-        creation_roles = "('Manager', 'Owner', 'Member')"
+        creation_roles = "('Manager', 'Owner')"
         cpfromoption = self.getOption('creation_permission', element, None)
         if cpfromoption:
             creation_permission = self.processExpression(cpfromoption)

@@ -15,7 +15,7 @@ PROJECTNAME = "<dtml-var "package.getProductName ()">"
 
 # Permissions
 DEFAULT_ADD_CONTENT_PERMISSION = "<dtml-var "default_creation_permission">"
-setDefaultRoles(DEFAULT_ADD_CONTENT_PERMISSION, ('Manager', 'Owner', 'Member'))
+setDefaultRoles(DEFAULT_ADD_CONTENT_PERMISSION, ('Manager', 'Owner'))
 <dtml-if "creation_permissions">
 ADD_CONTENT_PERMISSIONS = {
 <dtml-in "creation_permissions">
