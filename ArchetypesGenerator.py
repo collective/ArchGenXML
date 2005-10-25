@@ -2102,7 +2102,7 @@ class ArchetypesGenerator(BaseGenerator):
             print >> outfile, self.generateModifyFti(element)
 
         # [optilude] Don't register type for abstract classes or tools
-        if not (element.isAbstract ()):
+        if not (element.isAbstract() or element.hasStereoType('mixin', umlprofile=self.uml_profile)):
             wrt( REGISTER_ARCHTYPE % name)
 
         # ATVocabularyManager: registration of class
