@@ -1524,7 +1524,7 @@ class ArchetypesGenerator(BaseGenerator):
     def generateMethod(self, outfile, m, klass, mode='class'):
         #ignore actions and views here because they are
         #generated separately
-        if m.hasStereoType(['action','view','form','portlet_view'], umlprofile=self.uml_profile):
+        if m.hasStereoType(['action','view','form','portlet_view', 'portlet'], umlprofile=self.uml_profile):
             return
 
         paramstr=''
