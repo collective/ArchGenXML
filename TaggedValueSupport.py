@@ -406,6 +406,12 @@ tagname = 'code'
 explanation = """The actual python code of the method. Only use this for simple one-liners. Code filled into the generated file will be preserved when the model is re-generated."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'autoinstall'
+explanation = """Set this to 'right' or 'left' on a method with a
+stereotype '<<portlet>>', this adds the portlet to 'left_slots' or
+'right_slots'. See the documentation for the stereotype."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'permission'
 explanation = """For method with public visibility only, if a permission is set, declare the method to be protected by this permission. Methods with private or protected visiblity are always declared private since they are not intended for through-the-web unsafe code to access. Methods with package visibility use the class default security and do not get security declarations at all."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
