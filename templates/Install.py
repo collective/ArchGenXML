@@ -256,6 +256,10 @@ def install(self):
         portal_css = getToolByName(portal, 'portal_css')
         portal_javascripts = getToolByName(portal, 'portal_javascripts')
         for stylesheet in STYLESHEETS:
+            try:
+                portal_css.unregisterResource(stylesheet['id'])
+            except:
+                pass
             defaulttitle = '%s %s' % (PROJECTNAME, stylesheet['id'])
             defaults = {'id': '',
             'expression': None,
@@ -265,6 +269,10 @@ def install(self):
             defaults.update(stylesheet)
             portal_css.manage_addStylesheet(**defaults)
         for javascript in JAVASCRIPTS:
+            try:
+                portal_javascripts.unregisterResource(stylesheet['id'])
+            except:
+                pass
             defaults = {'id': '',
             'expression': '', 
             'inline': False,
