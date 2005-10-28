@@ -279,7 +279,7 @@ def install(self):
             'enabled': True,
             'cookable': True}
             defaults.update(javascript)
-            js_tool.registerScript(**defaults)
+            portal_javascripts.registerScript(**defaults)
 
     # try to call a custom install method
     # in 'AppInstall.py' method 'install'
