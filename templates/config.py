@@ -13,6 +13,13 @@ from Products.CMFMember.MemberPermissions import ADD_MEMBER_PERMISSION
 
 PROJECTNAME = "<dtml-var "package.getProductName ()">"
 
+# Check for Plone 2.1
+try:
+    from Products.CMFPlone.migrations import v2_1
+except ImportError:
+    HAS_PLONE21 = False
+else:
+    HAS_PLONE21 = True
 # Permissions
 DEFAULT_ADD_CONTENT_PERMISSION = "<dtml-var "default_creation_permission">"
 setDefaultRoles(DEFAULT_ADD_CONTENT_PERMISSION, ('Manager', 'Owner'))
@@ -45,3 +52,8 @@ except ImportError:
     pass
 
 # End of config.py
+# Things you can do in an AppConfig.py:
+# STYLESHEETS = [{'id': 'my_global_stylesheet.css'},
+#                {'id': 'my_contenttype.css',
+#                 'expression': 'python:object.getTypeInfo().getId() == "MyType"}]
+# You can do the same with JAVASCRIPTS.

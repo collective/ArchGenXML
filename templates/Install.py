@@ -242,6 +242,37 @@ def install(self):
 </dtml-in>] + factory_tool.getFactoryTypes().keys()
     factory_tool.manage_setPortalFactoryTypes(listOfTypeIds=factory_types)
 
+    # For plone 2.1, allow the easy registering of stylesheets
+    from Products.<dtml-var "package.getProductModuleName()">.config import HAS_PLONE21
+    if HAS_PLONE21:
+        try:
+            from Products.<dtml-var "package.getProductModuleName()">.config import STYLESHEETS
+        except:
+            STYLESHEETS = []
+        try:
+            from Products.<dtml-var "package.getProductModuleName()">.config import JAVASCRIPTS
+        except:
+            JAVASCRIPTS = []
+        portal_css = getToolByName(portal, 'portal_css')
+        portal_javascripts = getToolByName(portal, 'portal_javascripts')
+        for stylesheet in STYLESHEETS:
+            defaulttitle = '%s %s' % (PROJECTNAME, stylesheet['id'])
+            defaults = {'id': '',
+            'expression': None,
+            'media': 'all',
+            'title': defaulttitle,
+            'enabled': True}
+            defaults.update(stylesheet)
+            portal_css.manage_addStylesheet(**defaults)
+        for javascript in JAVASCRIPTS:
+            defaults = {'id': '',
+            'expression': '', 
+            'inline': False,
+            'enabled': True,
+            'cookable': True}
+            defaults.update(javascript)
+            js_tool.registerScript(**defaults)
+
     # try to call a custom install method
     # in 'AppInstall.py' method 'install'
     try:
