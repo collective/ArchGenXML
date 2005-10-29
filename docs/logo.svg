@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<!-- Created with Sodipodi ("http://www.sodipodi.com/") -->
+<svg
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   id="svg559"
+   sodipodi:version="0.34"
+   width="841.8900pt"
+   height="595.2800pt"
+   sodipodi:docbase="/home/jensens/Desktop/ALOCAL/AGX/"
+   sodipodi:docname="/home/jensens/Desktop/ALOCAL/AGX/logo.svg">
+  <defs
+     id="defs561">
+    <linearGradient
+       id="linearGradient570">
+      <stop
+         style="stop-color:#000;stop-opacity:1;"
+         offset="0"
+         id="stop571" />
+      <stop
+         style="stop-color:#fff;stop-opacity:1;"
+         offset="1"
+         id="stop572" />
+    </linearGradient>
+    <linearGradient
+       xlink:href="#linearGradient570"
+       id="linearGradient573" />
+    <radialGradient
+       xlink:href="#linearGradient570"
+       id="radialGradient574"
+       cx="0.500000"
+       cy="0.500000"
+       r="0.500000"
+       fx="0.500000"
+       fy="0.500000" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     snaptogrid="true"
+     snaptoguides="true"
+     guidetolerance="1mm"
+     borderlayer="top"
+     gridspacingx="1mm"
+     gridspacingy="1mm"
+     gridtolerance="1mm"
+     showgrid="true">
+    <sodipodi:guide
+       orientation="vertical"
+       position="-34.15541"
+       id="guide640" />
+    <sodipodi:guide
+       orientation="vertical"
+       position="623.6851"
+       id="guide641" />
+    <sodipodi:guide
+       orientation="vertical"
+       position="909.184509"
+       id="guide586" />
+    <sodipodi:guide
+       orientation="horizontal"
+       position="283.6830"
+       id="guide595" />
+  </sodipodi:namedview>
+  <text
+     style="fill:black;stroke:none;font-family:Verdana;font-style:normal;font-weight:normal;font-size:72;fill-opacity:1;stroke-opacity:1;stroke-width:1pt;stroke-linejoin:miter;stroke-linecap:butt;text-anchor:start;writing-mode:lr;"
+     x="244.759285"
+     y="56.3216976"
+     id="text594"
+     sodipodi:linespacing="100%"
+     transform="scale(1.945717,1.945717)">
+    <tspan
+       x="244.759293"
+       y="56.3216972"
+       sodipodi:role="line"
+       id="tspan627">Arch</tspan>
+    <tspan
+       x="244.759293"
+       y="128.321697"
+       sodipodi:role="line"
+       id="tspan629">Gen</tspan>
+    <tspan
+       x="244.759293"
+       y="200.321697"
+       sodipodi:role="line"
+       id="tspan631">XML</tspan>
+  </text>
+  <text
+     style="fill:black;stroke:none;font-family:Verdana;font-style:normal;font-weight:normal;font-size:48.00000;fill-opacity:1;stroke-opacity:1;stroke-width:1pt;stroke-linejoin:miter;stroke-linecap:butt;text-anchor:start;writing-mode:lr;"
+     x="0.71878889"
+     y="422.346178"
+     id="text633"
+     sodipodi:linespacing="100%"
+     transform="scale(1.090236,1.090235)">
+    <tspan
+       x="0.71878886"
+       y="422.346191"
+       sodipodi:role="line"
+       id="tspan642">generate your webapplication</tspan>
+  </text>
+  <path
+     style="font-size:12;fill:#ffb000;fill-rule:evenodd;stroke-linecap:round;fill-opacity:1;"
+     d="M 379.4126 125.5164 C 294.9820 59.10727 198.7462 25.82587 121.5766 67.36317 C 51.96157 104.8345 20.72227 194.5050 57.44657 265.1467 C 90.23647 328.2204 170.0005 355.3670 233.4553 320.1805 C 289.4037 289.1561 314.3292 216.2637 283.6404 159.4255 C 257.0036 110.0922 193.6772 89.06427 143.9523 117.9267 C 101.6562 142.4772 83.02097 198.6415 107.7120 241.6531 C 128.1564 277.2675 175.1191 292.2118 211.0795 269.6170 C 239.7548 251.5995 252.1587 212.0421 233.3752 182.9190 C 219.2193 160.9710 188.4087 152.0048 166.3281 168.4902 C 151.1869 179.7944 144.7879 203.2034 157.9772 218.1594 C 165.4290 226.6098 181.4052 230.1525 188.7037 219.0536 C 192.1594 213.7988 190.5867 204.7987 183.1097 206.4127 C 183.1097 206.4127 183.1097 206.4127 182.9237 206.4656 C 192.5537 204.8550 194.0219 216.4503 189.3019 222.9564 C 179.3328 236.6979 159.1732 231.2053 150.1756 219.9570 C 134.2507 200.0487 143.8075 170.5230 163.7889 156.9929 C 192.9281 137.2619 231.6800 150.5814 248.4201 179.4824 C 270.6326 217.8317 252.4548 267.6295 214.8148 288.9197 C 167.6128 315.6186 108.6223 293.6844 84.67927 246.9401 C 55.76307 190.4867 82.87787 119.8447 138.2760 91.02957 C 203.4037 57.15357 282.8968 87.85047 313.9165 152.4994 C 349.6548 226.9834 313.5207 318.6206 240.3279 354.8831 C 157.3156 396.0106 57.22827 356.5017 19.18287 273.9230 C -23.42763 181.4360 21.75907 68.74057 112.7629 25.06607 C 213.6423 -23.34793 334.3668 24.99567 379.4126 125.5164 z "
+     id="path569"
+     sodipodi:nodetypes="cccccccccccccccccccccccccc"
+     transform="matrix(1.057644,0,0,1.057644,-0.452461,-2.935638)" />
+  <path
+     sodipodi:type="arc"
+     style="font-size:12;fill:#ffb000;fill-rule:evenodd;stroke-width:1;fill-opacity:1;"
+     id="path644"
+     d="M 134.3441 751.8103 A 16.36242 16.36243 0 1 0 101.6193 751.8103 A 16.36242 16.36243 0 1 0  134.3441 751.8103 z"
+     sodipodi:cx="117.9817"
+     sodipodi:cy="751.8103"
+     sodipodi:rx="16.36242"
+     sodipodi:ry="16.36243"
+     transform="matrix(0.890648,0,0,0.890648,187.1859,-453.7131)" />
+  <path
+     sodipodi:type="arc"
+     style="font-size:12;fill:#ffb000;fill-rule:evenodd;stroke-width:1;fill-opacity:1;"
+     id="path645"
+     d="M 134.3441 751.8103 A 16.36242 16.36243 0 1 0 101.6193 751.8103 A 16.36242 16.36243 0 1 0  134.3441 751.8103 z"
+     sodipodi:cx="117.9817"
+     sodipodi:cy="751.8103"
+     sodipodi:rx="16.36242"
+     sodipodi:ry="16.36243"
+     transform="matrix(0.890648,0,0,0.890648,96.10365,-535.6872)" />
+  <path
+     sodipodi:type="arc"
+     style="font-size:12;fill:#ffb000;fill-rule:evenodd;stroke-width:1;fill-opacity:1;"
+     id="path646"
+     d="M 134.3441 751.8103 A 16.36242 16.36243 0 1 0 101.6193 751.8103 A 16.36242 16.36243 0 1 0  134.3441 751.8103 z"
+     sodipodi:cx="117.9817"
+     sodipodi:cy="751.8103"
+     sodipodi:rx="16.36242"
+     sodipodi:ry="16.36243"
+     transform="matrix(0.890648,0,0,0.890648,72.42226,-402.7072)" />
+</svg>
