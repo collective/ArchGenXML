@@ -11,6 +11,7 @@
 
 import sys, os.path, time, string
 import getopt
+from types import UnicodeType
 from utils import mapName,toBoolean
 from utils import wrap as doWrap
 from xml.dom import minidom
@@ -872,7 +873,12 @@ class XMIElement:
             res = name
         else:
             res = self.id
-
+            if type(res) is UnicodeType: 
+                res = res.encode('utf-8') 
+                log.debug("getName has to fallback to unicode id. " 
+                          "id=%s. " 
+                          "Converting to utf-8.", res)
+                
         if type(res) in (type(''), type(u'')):
             res = res.strip()
         return res
