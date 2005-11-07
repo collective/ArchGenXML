@@ -22,6 +22,13 @@ ZopeTestCase.installProduct('MimetypesRegistry', quiet=1)
 ZopeTestCase.installProduct('<dtml-var "klass.getPackage().getProductName()">')
 # If the products's config includes DEPENDENCIES, install them too
 try:
+    from Products.<dtml-var "klass.getPackage().getProductName()">.config import PRODUCT_DEPENDENCIES
+except:
+    PRODUCT_DEPENDENCIES = []
+for dependency in PRODUCT_DEPENDENCIES:
+    ZopeTestCase.installProduct(dependency)
+
+try:
     from Products.<dtml-var "klass.getPackage().getProductName()">.config import DEPENDENCIES
 except:
     DEPENDENCIES = []
