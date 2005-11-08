@@ -568,7 +568,7 @@ class ArchetypesGenerator(BaseGenerator):
                 dict={}
 
                 if not action_name.startswith('string:') and not action_name.startswith('python:'):
-                    action_target='string:$object_url/'+action_name
+                    action_target='string:${object_url}/'+action_name
                 else:
                     action_target=action_name
 
