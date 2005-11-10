@@ -20,6 +20,7 @@ except ImportError:
     HAS_PLONE21 = False
 else:
     HAS_PLONE21 = True
+    
 # Permissions
 DEFAULT_ADD_CONTENT_PERMISSION = "<dtml-var "default_creation_permission">"
 setDefaultRoles(DEFAULT_ADD_CONTENT_PERMISSION, ('Manager', 'Owner'))
@@ -42,6 +43,14 @@ setDefaultRoles(<dtml-var "perm[1]">, <dtml-var "perm[2]">)
 </dtml-if>
 
 product_globals=globals()
+
+# Dependencies of Products to be installed by quick-installer
+# override in custom configuration
+DEPENDENCIES = []
+
+# Dependend products - not quick-installed - used in testcase
+# override in custom configuration
+PRODUCT_DEPENDENCIES = []
 
 <dtml-var "generator.getProtectedSection(parsed_config,'config-bottom')">
 

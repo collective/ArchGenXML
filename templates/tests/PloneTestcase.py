@@ -1,11 +1,11 @@
+#
+# Base TestCase for <dtml-var "klass.getPackage().getProductName()">
+#
 import os, sys
 if __name__ == '__main__':
     execfile(os.path.join(sys.path[0], 'framework.py'))
 
 <dtml-var "generator.getProtectedSection(parsed_class,'module-header')">
-#
-# Base TestCase for <dtml-var "klass.getPackage().getProductName()">
-#
 from Testing import ZopeTestCase
 from Products.PloneTestCase import PloneTestCase
 <dtml-if "parent is not None">
@@ -15,29 +15,33 @@ from <dtml-var "parent.getTaggedValue('import_from')"> import <dtml-var "parent.
 from <dtml-var "parent.getQualifiedModuleName(None,forcePluginRoot=1)"> import <dtml-var "parent.getCleanName()">
 </dtml-if>
 </dtml-if>
+from Products.<dtml-var "klass.getPackage().getProductName()">.config import HAS_PLONE21
+from Products.<dtml-var "klass.getPackage().getProductName()">.config import PRODUCT_DEPENDENCIES
+from Products.<dtml-var "klass.getPackage().getProductName()">.config import DEPENDENCIES
 
-ZopeTestCase.installProduct('Archetypes')
-ZopeTestCase.installProduct('PortalTransforms', quiet=1)
-ZopeTestCase.installProduct('MimetypesRegistry', quiet=1)
+# add common dependencies
+if not HAS_PLONE21:
+    DEPENDENCIES.append('Archetypes')
+    PRODUCT_DEPENDENCIES.append('MimetypesRegistry')
+PRODUCT_DEPENDENCIES.append('<dtml-var "klass.getPackage().getProductName()">')
+    
+# install all (product-) dependencies, install them too
+for dependency in PRODUCT_DEPENDENCIES + DEPENDENCIES:
+    ZopeTestCase.installProduct(dependency)
+
 ZopeTestCase.installProduct('<dtml-var "klass.getPackage().getProductName()">')
-# If the products's config includes DEPENDENCIES, install them too
-try:
-    from Products.<dtml-var "klass.getPackage().getProductName()">.config import PRODUCT_DEPENDENCIES
-except:
-    PRODUCT_DEPENDENCIES = []
-for dependency in PRODUCT_DEPENDENCIES:
-    ZopeTestCase.installProduct(dependency)
 
-try:
-    from Products.<dtml-var "klass.getPackage().getProductName()">.config import DEPENDENCIES
-except:
-    DEPENDENCIES = []
-for dependency in DEPENDENCIES:
-    ZopeTestCase.installProduct(dependency)
-
-PRODUCTS = ('Archetypes', '<dtml-var "klass.getPackage().getProductName()">')
+PRODUCTS = list()
+<dtml-if "klass.getTaggedValue('quickinstall_dependencies', '1') == '1'">
+PRODUCTS += DEPENDENCIES
+</dtml-if>
+<dtml-if "klass.getTaggedValue('quickinstall_self', '1') == '1'">
+PRODUCTS.append('<dtml-var "klass.getPackage().getProductName()">')
+</dtml-if>
 
 testcase = <dtml-if "parent is not None"><dtml-var "parent.getCleanName()"><dtml-else>PloneTestCase.PloneTestCase</dtml-if>
+
+<dtml-var "generator.getProtectedSection(parsed_class,'module-before-plone-site-setup')">
 
 PloneTestCase.setupPloneSite(products=PRODUCTS<dtml-if "klass.getTaggedValue('policy', None)">, policy="<dtml-var "klass.getTaggedValue('policy')">"</dtml-if>)
 

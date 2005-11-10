@@ -194,6 +194,19 @@ doc/ subdirectory. The 'doctest_name' tagged value overwrites the default name f
 extension automatically, so you don't need to specify it."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'quickinstall_dependencies'
+explanation = """In a tests package, setting the stereotype '<<plone_testcase>>' 
+on a class turns it into a base testcase. The base testcase will install
+all listed products to the test portal using CMFQuickInstallerTool. 
+The list has the form:  '"ProductsA", "ProductB"."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'quickinstall_self'
+explanation = """In a tests package, setting the stereotype '<<plone_testcase>>' 
+on a class turns it into a base testcase. The base testcase will install
+the current Product (where the testcase resides in) using CMFQuickInstallerTool."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'portal_type'
 explanation = """Sets the CMF portal-type this class will be registered with, defaults to the class-name."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)

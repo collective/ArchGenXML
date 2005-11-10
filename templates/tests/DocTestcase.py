@@ -33,32 +33,6 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 <dtml-var "parsed_class.methods['afterSetUp'].getSrc()">
 </dtml-if>
 
-<dtml-in "generator.getMethodsToGenerate(klass)[0]">
-<dtml-let m="_['sequence-item']" mn="m.testmethodName()">
-<dtml-if "m.getParent() != klass">
-    # from class <dtml-var "m.getParent().getName()">:
-</dtml-if>
-<dtml-if "parsed_class and mn in parsed_class.methods.keys()">
-<dtml-var "parsed_class.methods[mn].getSrc()">
-
-<dtml-else>
-    def <dtml-var "mn">(self):
-<dtml-let name="'temp_'+m.getParent().getCleanName()">
-        """
-        """
-        #Uncomment one of the following lines as needed
-        ##self.loginAsPortalOwner()
-<dtml-if "m.getParent() != klass">
-        ##o=<dtml-var "m.getParent().getCleanName()">('<dtml-var name>')
-        ##self.folder._setObject('<dtml-var name>', o)
-</dtml-if>
-        pass
-
-</dtml-let>
-</dtml-if>
-</dtml-let>
-</dtml-in>
-
     # Manually created methods
 <dtml-if parsed_class>
 <dtml-in "parsed_class.methods.values()">
