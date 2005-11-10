@@ -66,8 +66,10 @@ def initialize(context):
     tools = [<dtml-var "', '.join (tool_names)">]
     ToolInit( PROJECTNAME +' Tools',
                 tools = tools,
+<dtml-if "generator.getOption('cmf_target_version', package, '1.4') == '1.4'">
                 product_name = PROJECTNAME,
                 icon='tool.gif'
+</dtml-if>
                 ).initialize( context )
 
 </dtml-if>

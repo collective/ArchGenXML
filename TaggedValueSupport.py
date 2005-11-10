@@ -691,6 +691,12 @@ for category in ['model', 'package', 'class']:
     explanation = """Migrates FTI of a type/class to CMFDynamicViewFTI. This works only if the class derives from an ATContentType, from ATCTMixIn or direct from CMFDynamicViewFTI.browserdefault.BrowserDefaultMixin. """
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+    tagname = 'cmf_target_version'
+    explanation = """Controls CMF Version specific behaviour, primary to avoid 'Deprecation warnings.' Defaults to '1.4'."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+    
+    
+
 for category in ['model', 'package', 'class', 'attribute']:
     tagname = 'read_permission'
     explanation = """Defines archetypes fields read-permission. Use it together with workflow to control ability to view fields based on roles/permissions."""
