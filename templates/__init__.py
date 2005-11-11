@@ -24,7 +24,7 @@ from Globals import package_home
 from Products.CMFCore import utils as cmfutils
 from Products.CMFCore import CMFCorePermissions
 from Products.CMFCore import DirectoryView
-from Products.CMFPlone.utils import ToolInit
+from Products.CMFPlone.PloneUtilities import ToolInit
 from Products.Archetypes.public import *
 from Products.Archetypes import listTypes
 from Products.Archetypes.utils import capitalize
