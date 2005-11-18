@@ -273,11 +273,7 @@ def install(self):
                 portal_javascripts.unregisterResource(stylesheet['id'])
             except:
                 pass
-            defaults = {'id': '',
-            'expression': '', 
-            'inline': False,
-            'enabled': True,
-            'cookable': True}
+            defaults = {'id': ''}
             defaults.update(javascript)
             portal_javascripts.registerScript(**defaults)
 
