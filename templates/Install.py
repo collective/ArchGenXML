@@ -260,11 +260,8 @@ def install(self):
                 portal_css.unregisterResource(stylesheet['id'])
             except:
                 pass
-            defaulttitle = '%s %s' % (PROJECTNAME, stylesheet['id'])
             defaults = {'id': '',
-            'expression': None,
             'media': 'all',
-            'title': defaulttitle,
             'enabled': True}
             defaults.update(stylesheet)
             portal_css.manage_addStylesheet(**defaults)
