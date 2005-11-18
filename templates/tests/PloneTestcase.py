@@ -23,6 +23,7 @@ from Products.<dtml-var "klass.getPackage().getProductName()">.config import DEP
 if not HAS_PLONE21:
     DEPENDENCIES.append('Archetypes')
     PRODUCT_DEPENDENCIES.append('MimetypesRegistry')
+    PRODUCT_DEPENDENCIES.append('PortalTransforms')
 PRODUCT_DEPENDENCIES.append('<dtml-var "klass.getPackage().getProductName()">')
     
 # install all (product-) dependencies, install them too
