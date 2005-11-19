@@ -535,17 +535,7 @@ class ArchetypesGenerator(BaseGenerator):
             msgcat=self.msgcatstack[len(self.msgcatstack)-1]
             package=element.getPackage()
             module_id=os.path.join(element.getPackage().getFilePath(includeRoot=0),element.getName()+'.py')
-            if not msgcat.has_key(msgid):
-                # add new msgid
-                msgcat[msgid] = (msgstr, [(module_id, [msgstr])], [])
-            else:
-                # check if occurrence is listed
-                entry=msgcat[msgid]
-                for entry_id, entry_ex in entry[1]:
-                    if entry_id == module_id:
-                        return
-                # isnt listed, so add it
-                entry[1].append((module_id, [msgstr]))
+            msgcat.add(msgid, msgstr=msgstr, references=[module_id])
 
     def generateMethodActions(self, element):
         log.debug("Generating method actions...")
@@ -2928,9 +2918,10 @@ class ArchetypesGenerator(BaseGenerator):
             if not os.path.exists(filepath):
                 templdir=os.path.join(sys.path[0],'templates')
                 PotTemplate = open(os.path.join(sys.path[0],'templates','generated.pot')).read()
+                authors, emails, authorline = self.getAuthors(root)
                 PotTemplate = PotTemplate % {
-                    'author':self.author or 'unknown author',
-                    'email':self.email or 'unknown@email.address',
+                    'author':', '.join(authors) or 'unknown author',
+                    'email':', '.join([email[1:-1] for email in emails]) or 'unknown@email.address',
                     'year': str(time.localtime()[0]),
                     'datetime': time.ctime(),
                     'charset':sys.getdefaultencoding(),
@@ -2959,7 +2950,7 @@ class ArchetypesGenerator(BaseGenerator):
             filepath=os.path.join(root.getFilePath(),'i18n','generated.pot')
             of=self.makeFile(filepath) or open(filepath,'w')
             pow=msgcatalog.POWriter(of,self.msgcatstack.pop() )
-            pow.write()
+            pow.write(sort=True, msgstrToComment=True)
             of.close()
 
 
