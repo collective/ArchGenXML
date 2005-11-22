@@ -535,7 +535,23 @@ class ArchetypesGenerator(BaseGenerator):
             msgcat=self.msgcatstack[len(self.msgcatstack)-1]
             package=element.getPackage()
             module_id=os.path.join(element.getPackage().getFilePath(includeRoot=0),element.getName()+'.py')
-            msgcat.add(msgid, msgstr=msgstr, references=[module_id])
+            try:
+                #i18ndude 2.0
+                msgcat.add(msgid, msgstr=msgstr, references=[module_id])
+            except:
+                # old i18ndude
+                if not msgcat.has_key(msgid):
+                    # add new msgid
+                    msgcat[msgid] = (msgstr, [(module_id, [msgstr])], [])
+                else:
+                    # check if occurrence is listed
+                    entry=msgcat[msgid]
+                    for entry_id, entry_ex in entry[1]:
+                        if entry_id == module_id:
+                            return
+                    # isnt listed, so add it
+                    entry[1].append((module_id, [msgstr]))
+                 
 
     def generateMethodActions(self, element):
         log.debug("Generating method actions...")
