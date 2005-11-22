@@ -2953,7 +2953,9 @@ class ArchetypesGenerator(BaseGenerator):
 
 
         package=root
-
+        if self.noclass:
+            # skip the other generation steps
+            return
         self.generateRelations(root)
         self.generatePackage(root)
 
