@@ -69,8 +69,8 @@ class DummyModel:
     getModuleFilePath=getName
     getProductModuleName=getName
     getProductName=getName
-    def hasStereoType(self,s):
-        return 0
+    def hasStereoType(self, s, umlprofile=None):
+        return True
 
     def getClasses(self,*a,**kw):
         return []
