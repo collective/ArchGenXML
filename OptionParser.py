@@ -731,7 +731,8 @@ group.add_option("--no-classes",
                  dest="noclass",
                  help="Never really implemented, intention "
                  "was to generate a plain skeleton. Use an empty "
-                 "UML model instead.",
+                 "UML model instead (with one stub class, archgenxml "
+                 "doesn't like a completely empty model).",
                  type="yesno",
                  default=0,
                  section="CLASSES",
