@@ -495,15 +495,6 @@ group.add_option("--default-field-generation",
                  section="CLASSES",
                  )
 
-group.add_option("--no-classes",
-                 dest="noclass",
-                 help="Don't generate classes, so create an empty "
-                 "project with skin dir and so (default is 0).",
-                 type="yesno",
-                 default=0,
-                 section="CLASSES",
-                 )
-
 parser.add_option_group(group)
 
 #----------------------------------------------------------------------------
@@ -731,9 +722,19 @@ group.add_option("--detailled-creation-permission",
                  )
 
 group.add_option("--noclass",
-                 help="Use --no-classes",
+                 help="Never really implemented.",
                  action="deprecationwarning",
                  section="DEPRECATED"
+                 )
+
+group.add_option("--no-classes",
+                 dest="noclass",
+                 help="Never really implemented, intention "
+                 "was to generate a plain skeleton. Use an empty "
+                 "UML model instead.",
+                 type="yesno",
+                 default=0,
+                 section="CLASSES",
                  )
 
 group.add_option("--i18n",
