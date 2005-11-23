@@ -211,13 +211,6 @@ tagname = 'portal_type'
 explanation = """Sets the CMF portal-type this class will be registered with, defaults to the class-name."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-tagname = 'use_workflow'
-explanation = """Tie the class to the named workflow. A state diagram
-(=workflow) attached to a class in the UML diagram is automatically
-used as that class's workflow; this tagged value allows you to tie the
-workflow to other classes."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 tagname = 'archetype_name'
 explanation = """The name which will be shown in the "add new item" drop-down and other
 user-interface elements. Defaults to the class name, but whilst the
@@ -695,7 +688,10 @@ for category in ['model', 'package', 'class']:
     explanation = """Controls CMF Version specific behaviour, primary to avoid 'Deprecation warnings.' Defaults to '1.4'."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
     
-    
+    tagname = 'use_workflow'
+    explanation = """Tie the class to the named workflow. A state diagram (=workflow) attached to a class in the UML diagram is automatically used as that class's workflow; this tagged value allows you to tie the  workflow to other classes."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 
 for category in ['model', 'package', 'class', 'attribute']:
     tagname = 'read_permission'

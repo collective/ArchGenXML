@@ -33,7 +33,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, workflow):
     portal = getToolByName(self,'portal_url').getPortalObject()
     data = list(portal.__ac_roles__)
     for role in <dtml-var "additional_roles">:
-        if not role in self.__ac_roles__:
+        if not role in data:
             data.append(role)
     portal.__ac_roles__ = tuple(data)
 </dtml-if>

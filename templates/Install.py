@@ -155,20 +155,6 @@ def install(self):
         '<dtml-var "c.getTaggedValue('configlet:description','Configuration for tool %s.' % c.getName())">',
         None,
     )
-##    # set title of tool:
-##    tool = getToolByName(self, '<dtml-var "tool_instance_name">')
-##    tool.title = '<dtml-var "c.getTaggedValue('configlet:title',c.getName())">'
-##
-##    portalTypes = getToolByName(self, 'portal_types', None)
-##    if portalTypes is not None:
-##        existingTypes = portalTypes.listContentTypes()
-##        if '<dtml-var "c.getName()">' in existingTypes:
-##            portalTypes.manage_delObjects(ids=['<dtml-var "c.getName()">'])
-##
-##    portal = getToolByName(self,'portal_url').getPortalObject()
-##    objIds = portal.objectIds()
-##    if '<dtml-var "tool_instance_name">' in objIds:
-##        portal['<dtml-var "tool_instance_name">'].unindexObject()
 
 </dtml-let>
 </dtml-let>
@@ -183,10 +169,26 @@ def install(self):
     for vocabname in vocabmap.keys():
         if not vocabname in atvm.contentIds():
             atvm.invokeFactory(vocabmap[vocabname][0], vocabname)
-        if vocabmap[vocabname][0] != "VdexVocabulary" and \
-           len(atvm[vocabname].contentIds()) < 1:
-            atvm[vocabname].invokeFactory(vocabmap[vocabname][1],'default')
-            atvm[vocabname]['default'].setTitle('Default term, replace it by your own stuff')
+            
+        if len(atvm[vocabname].contentIds()) < 1:
+            if vocabmap[vocabname][0] == "VdexVocabulary":
+                vdexpath = os.path.join(
+                    package_home(GLOBALS), 'data', '%s.vdex' % vocabname)
+                if not (os.path.exists(vdexpath) and os.path.isfile(vdexpath)):
+                    print >>out, 'No VDEX import file provided at %s.' % vdexpath 
+                    continue
+                try:
+                    #read data
+                    f = open(vdexpath, 'r')
+                    data = f.read()
+                    f.close()
+                except:
+                    print >>out, 'Problems while reading VDEX import file provided at %s.' % vdexpath 
+                    continue
+                atvm[vocabname].importXMLBinding(data)                   
+            else:
+                atvm[vocabname].invokeFactory(vocabmap[vocabname][1],'default')
+                atvm[vocabname]['default'].setTitle('Default term, replace it by your own stuff')
 </dtml-if>
 <dtml-let cmfmembers="[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.cmfmember_stereotype)]">
 <dtml-if "cmfmembers">
