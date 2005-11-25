@@ -413,7 +413,8 @@ class ArchetypesGenerator(BaseGenerator):
     #taggedValues that are not strings, e.g. widget or vocabulary
     nonstring_tgvs=['widget', 'vocabulary', 'required', 'precision', 'storage',
                     'enforceVocabulary', 'multiValued', 'visible', 'validators',
-                    'validation_expression', 'sizes', 'original_size', 'max_size']
+                    'validation_expression', 'sizes', 'original_size', 
+                    'max_size', 'searchable']
 
     msgcatstack = []
 
@@ -952,7 +953,12 @@ class ArchetypesGenerator(BaseGenerator):
         perm=self.getOption('write_permission',element,default=None)
         if perm:
             tgv.update({'write_permission':perm})
-
+            
+        # check for global settings
+        searchable = self.getOption('searchable', element, default = _marker)
+        if searchable is not _marker:
+             tgv.update({'searchable': searchable})
+            
         # set attributes from tgv
         for k in tgv.keys():
             if k not in noparams and not k.startswith('widget:'):
@@ -1232,6 +1238,7 @@ class ArchetypesGenerator(BaseGenerator):
                 map['validators']=expval
 
             del map['validation_expression']
+            
 
         res=self.getFieldFormatted(attr.getName(),
             atype,
@@ -1439,33 +1446,37 @@ class ArchetypesGenerator(BaseGenerator):
                 print >> outfile, self.getFieldString(child, element,
                                                     indent_level=indent_level+1)
 
-        #print 'rels:',element.getName(),element.getFromAssociations()
-        # and now the associations
-        for rel in element.getFromAssociations():
-            name = rel.fromEnd.getName()
-            end=rel.fromEnd
-
-            #print 'generating from assoc'
-            if name in self.reservedAtts:
-                continue
-            print >> outfile
-            print >> outfile, self.getFieldStringFromAssociation(rel, element,
-                                                    indent_level=indent_level+1)
-
-        #Back References
-        for rel in element.getToAssociations():
-            name = rel.fromEnd.getName()
-
-            #print "backreference"
-            if name in self.reservedAtts:
-                continue
-
-            fc=self.getFieldStringFromBackAssociation(rel, element,
-                                                    indent_level=indent_level+1)
-            if fc:
+        # only add reference fields if tgv generate_reference_fields
+        if utils.toBoolean(
+                self.getOption('generate_reference_fields', element, True) ):
+            #print 'rels:',element.getName(),element.getFromAssociations()
+            # and now the associations
+            for rel in element.getFromAssociations():
+                name = rel.fromEnd.getName()
+                end=rel.fromEnd
+    
+                #print 'generating from assoc'
+                if name in self.reservedAtts:
+                    continue
                 print >> outfile
-                print >> outfile, fc
-
+                print >> outfile, self.getFieldStringFromAssociation(rel, 
+                                                    element,
+                                                    indent_level=indent_level+1)
+    
+            #Back References
+            for rel in element.getToAssociations():
+                name = rel.fromEnd.getName()
+    
+                #print "backreference"
+                if name in self.reservedAtts:
+                    continue
+                fc=self.getFieldStringFromBackAssociation(rel, 
+                                                    element,
+                                                    indent_level=indent_level+1)
+                if fc:
+                    print >> outfile
+                    print >> outfile, fc
+    
 
         print >> outfile,'),'
         marshaller=element.getTaggedValue('marshaller') or element.getTaggedValue('marshall')

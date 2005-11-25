@@ -581,6 +581,13 @@ tagname = 'vocabulary:type'
 explanation = """Enables support for Products 'ATVocabularyManager' by setting value to 'ATVocabularyManager'. """
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'vocabulary:vocabulary_type'
+explanation = """For use with 'ATVocabularyManager'. Defaults to 'Simplevocabulary'.
+Let you define the portal_type of the vocabulary used as initial vocabulary at 
+Product install time. If VdexVocabulary is used, the install-script tries to 
+install a vocabulary from a vdex file names 'Products/PRODUCTNAME/data/VOCABULARYNAME.vdex'. """
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'vocabulary:name'
 explanation = """Togther with Products 'ATVocabularyManager' this sets the name of the vocabulary. """
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
@@ -692,17 +699,22 @@ for category in ['model', 'package', 'class']:
     explanation = """Tie the class to the named workflow. A state diagram (=workflow) attached to a class in the UML diagram is automatically used as that class's workflow; this tagged value allows you to tie the  workflow to other classes."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+    tagname = 'searchable'
+    explanation = """Per default a fields 'searchable' property is set to False. Sometimes you want it for all fields True. This tgv let you define the default for a class, package or model."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+    tagname = 'generate_reference_fields'
+    explanation = """Per default (True) navigable reference (or relation) ends are resulting in a ReferenceField (or RelationField). Setting this value to False results in not generating ReferenceFields automagically."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 for category in ['model', 'package', 'class', 'attribute']:
     tagname = 'read_permission'
     explanation = """Defines archetypes fields read-permission. Use it together with workflow to control ability to view fields based on roles/permissions."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
-for category in ['model', 'package', 'class', 'attribute']:
+    
     tagname = 'write_permission'
     explanation = """Defines archetypes fields write-permission. Use it together with workflow to control ability to write data to a field based on roles/permissions."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 
 for category in ['model', 'package', 'class', 'tool', 'portlet']:
     for tagname in ['author', 'email', 'copyright', 'license']:
