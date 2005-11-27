@@ -2556,7 +2556,9 @@ class XMIState(XMIElement):
     isinitial = 0
     non_permissions = ['initial_state', 'documentation',
                        'label', 'worklist',
-                       'worklist:guard_permissions']
+                       'worklist:guard_permissions',
+                       'worklist:guard_roles'
+                       ]
 
     def __init__(self, *args, **kwargs):
         self.incomingTransitions = []
