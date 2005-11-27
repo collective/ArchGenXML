@@ -165,6 +165,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, workflow):
                               actbox_url=actbox_url,
                               actbox_category="global",
                               props={'guard_permissions': '<dtml-var "statemachine.getWorklistGuardPermission(worklistname)">',
+                                     'guard_roles': '<dtml-var "statemachine.getWorklistGuardRole(worklistname)">',
                                      'var_match_review_state': ';'.join(worklistStates)})
 </dtml-let>
 </dtml-let>

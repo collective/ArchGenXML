@@ -645,6 +645,12 @@ explanation = """Sets the permissions needed to be allowed to view the
 worklist. Default value is 'Review portal content'."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'worklist:guard_roles'
+explanation = """Sets the roles needed to be allowed to view the
+worklist. No default value"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+
 # State transition tagged values
 category = 'state transition'
 

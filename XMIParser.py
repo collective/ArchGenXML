@@ -2347,6 +2347,25 @@ class XMIStateMachine(XMIStateContainer):
                   results)
         return results
 
+    def getWorklistGuardRole(self, worklistname):
+        """Return the guard role associated with the worklistname.
+        """
+
+        log.debug("Getting the guard role for the worklist...")
+        default = ''
+        results = [s.getTaggedValue('worklist:guard_roles')
+                   for s in self.getStates(no_duplicates = 1)
+                   if s.getTaggedValue('worklist') == worklistname
+                   and s.getTaggedValue('worklist:guard_roles')]
+        if not results:
+            log.debug("No tagged value found, returning the default: '%s'.",
+                      default)
+            return default
+        log.debug("Tagged value(s) found, taking the first (or only) one: '%s'.",
+                  results[0])
+        return results[0]
+
+
     def getWorklistGuardPermission(self, worklistname):
         """Return the guard permission associated with the worklistname.
         """
