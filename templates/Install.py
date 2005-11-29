@@ -339,15 +339,18 @@ def uninstall(self):
 </dtml-let>
     # try to call a workflow uninstall method
     # in 'InstallWorkflows.py' method 'uninstallWorkflows'
+    
+    # TODO: this is buggy code. There is no workflow uninstaller in
+    # the generated InstallWorkflows.py.
     try:
-        installWorkflows = ExternalMethod('temp','temp',PROJECTNAME+'.InstallWorkflows', 'uninstallWorkflows').__of__(self)
+        uninstallWorkflows = ExternalMethod('temp','temp',PROJECTNAME+'.InstallWorkflows', 'uninstallWorkflows').__of__(self)
     except NotFound:
-        installWorkflows = None
+        uninstallWorkflows = None
 
-    if installWorkflows:
-        print >>out,'Workflow Uninstall:'
-        res = uninstallWorkflows(self,out)
-        print >>out,res or 'no output'
+    if uninstallWorkflows:
+        print >>out, 'Workflow Uninstall:'
+        res = uninstallWorkflows(self, out)
+        print >>out, res or 'no output'
     else:
         print >>out,'no workflow uninstall'
 
