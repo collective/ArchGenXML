@@ -1,4 +1,4 @@
-ArchGenXML
+ArchGenXML - Python/Zope/Plone code generator
 
   Generates Plone/Archetypes applications from UML.
 
@@ -11,9 +11,6 @@ ArchGenXML
   (most do). It can also work with the native formats of some UML
   editors.
 
-  (DEPRECATED) In addition, it can generate applications from XSD (XMLSchema)
-  files, though this format is less expressive than XMI from UML.
-
   For information on the authors and supporters, see the file CREDITS.
 
 
@@ -21,7 +18,9 @@ Supported Features
 
   The XMI parser/generator supports the following UML entities:
 
-    - Classes
+    - Classes 
+
+    - Interfaces
     
     - Attributes
 
@@ -33,76 +32,27 @@ Supported Features
 
     - Generalization
 
+    - Realization
+
     - State-Diagrams
 
-
-UML Editors
-
-  ObjectDomain (commercial, free demo for <= 30 classes)
-    
-    www.objectdomain.com
-    
-    ObjectDomain can export its diagrams in XMI. At this time,
-    ObjectDomain's workflow diagrams cannot be turned into workflow by
-    the tool, however class creation works fine.
-
-  ArgoUML   (free and Open Source)
-    
-    argouml.tigris.org
-
-    ArgoUML stores the model natively as XMI, along with diagram
-    information. This file format, a .zargo file, is just a zip with
-    these two files in it. It uses XMI version 1.0.
-
-  Poseidon  (commercial, based on ArgoUML)
-
-    www.gentleware.com
-
-    Poseidon uses .zargo files, as ArgoUML does. It uses XMI version
-    1.2.
-
-    There is a Community Edition of Poseidon, which is free to use,
-    but not Open Source.
-
-  Sybase Powerdesigner (commercial, demo download)
-
-    www.sybase.com
-
-    Supports model export as XMI (XMI version 1.1).
-
-  Umbrello  (free and Open Source)
-
-    www.umbrello.org
-
-    Umbrello is a native KDE application for creating UML. It stores
-    the model natively in XMI.
-
-    As of Umbrello 1.3.2, the XMI generated is not standards
-    compliant, and cannot be used with ArchGenXML. This may be changed
-    in version 1.4 or later of Umbrello.
 
 
 Requirements & Optional
 
   Required:
   
-    - PyXML
+	- Python 2.3.5 or 2.4 (might work with different versions too)
 
-      An XML parser for Python. 
+  Required to run generated code
 
-      You can find it at:
+    - Plone 2.0.5 or better Plone 2.1.0+
 
-        http://pyxml.sourceforge.net/
-
-      Then, unpack the PyXML archive and enter the directory,   
-      the regular Distutils commands should work::
-
-        python setup.py build
-        python setup.py install
+    - Archetypes 1.3.4+
 
   Optional:
 
-    - i18ndude
+    - i18ndude 2.0+
 
       Required for translation POT file generation.
 
@@ -114,11 +64,6 @@ Requirements & Optional
    
         python setup.py install
 
-    - ATBackRef
-
-      A field type for backreferences in Archetypes. You can download
-      from http://cvs.bluedynamics.org/viewcvs/ATBackRef/. Required to
-      use backreferences feature.
 
     - stripogram
 
@@ -139,6 +84,27 @@ Requirements & Optional
 
         python setup.py install
 
+  Optional to run generated code:
+
+    - ATBackRef
+
+      A field type for backreferences in Archetypes. You can download
+      from http://svn.plone.org/svn/archetypes/MoreFieldsAndWidgets/ATBackRef/trunk/
+      Required to use backreferences feature.
+
+    - ATVocabularyManager
+
+      Dynamic ttw vocabularies:
+
+      http://plone.org/products/atvocabularymanager
+
+    - Relations
+
+      Relations allows for the definition of sets of rules for validation, creation 
+      and lifetime of Archetypes references.
+
+      http://plone.org/products/relations
+
 
 Quick Start
 
@@ -149,36 +115,27 @@ Quick Start
   2) Use the ArchGenXML.py script to convert an input file to a
      product. For example::
 
-       $ ./ArchGenXML.py -o Outline samples/test-examples/outline.zargo
+       $ ./ArchGenXML.py samples/SimpleSample.xmi
 
      This converts the Poseidon-created UML diagrams in
-     "outline.zargo" to a new product, Outline, stored in the current
-     directory.
+     "samples/SimpleSample.xmi to a new product, ArchGenXMLSimpleSample, 
+     stored in the current directory.
 
-  3) Copy the Outline product directory into your Plone Products
-     directory and restart Plone. Outline should now be an installable
+  3) Copy the ArchGenXMLSimpleSample product directory into your Plone Products
+     directory and restart Plone. ArchGenXMLSimpleSample should now be an installable
      product.
 
-  ArchGenXML ships with many demo files in samples/test-examples.
-  There is a script there, mkdemo, which makes several products from
-  the sample UML/XSD files.
+  ArchGenXML ships with some demo files in samples/test-examples.
 
 
+Documentation
 
-Additional Documentation
-
-  See the docs directory for reference information. A tutorial is
-  being created at
+  A tutorial and manual is located at 
   
     http://plone.org/documentation/tutorial/archgenxml-getting-started
   
 
-
-
 Known Limitations
-
-  The XSD Parser is just a design study and it's markd deprecated, 
-  it and should be overhauled if someone needs this feature.
 
   See the file TODO.txt for information on planned work for
   ArchGenXML.
@@ -186,8 +143,8 @@ Known Limitations
 
 License
 
-  This is licensed under the General Public License. See LICENSE.txt
-  for full information.
+  This software is licensed under the General Public License. i
+  See LICENSE.txt for full information.
 
   (c) Philipp Auersperg, phil at bluedynamics.com
 
