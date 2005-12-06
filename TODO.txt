@@ -1,7 +1,7 @@
 TODO's for ArchGenXML
 ---------------------
 
-To-do list for current HEAD code, not a feature wish list. 
+To-do list for current trunk code, not a feature wish list. 
 A list of wished-for/planned features planned is at:
 http://plone.org/development/teams/developer/ArchGenXML
 
@@ -11,28 +11,16 @@ http://plone.org/development/teams/developer/ArchGenXML
                     value2)
   If this is the end of a method, the line with "value2)" is lost.
   There is a (failing) unittest for this.
+  Workaround: add a 'pass' as last statement in method.
     
 * Creation permissions:
 
     - tagged value creation_permission (string or python:) on class
     - use Bricolite method for registering custom permissions
 
-    Note: look at the --help output, some of the options changed
-    names. Also: you now have to pass in 'Add portal content' or so
-    instead of just 'portal'. 
-    
-* Initialise uml_profile with all tagged values + steretypes + documentation
-
-    [x] tagged values are now in TaggedValueSupport. Nicely
-    documented, too. Missing TGVs give a warning, it doesn't break off
-    the processing.
-
-    [x] Do the same for stereotypes. They're grouped together already,
-    so this shouldn't be much work.
-
 * When generating docstrings, be more clever about linebreaks and whitespace. 
 
-	- Poseidon does not wrap, so we need to support funny linebreaks.
+    - Poseidon does not wrap, so we need to support funny linebreaks.
 
 * Move remainder of templates in templates/ to DTML 
 
@@ -63,9 +51,6 @@ http://plone.org/development/teams/developer/ArchGenXML
   name as container
   else check for TGV vocabulary_container
   fallback: use SimpleVocabulary
-
-[x] Define how worklists would be represented using state diagrams and
-implement
 
 [ ] Add a.a.p. makefile including checker for XXX, TBD codes (=>Reinout)
 

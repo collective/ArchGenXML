@@ -1,1 +1,1 @@
-1.4.0-RC2 svn/development
+1.4.0-final

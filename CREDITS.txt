@@ -3,16 +3,16 @@ Authors
   Philipp Auersperg (phil@bluedynamics.com)
 
     Phil was the original author of the product. He says he had to
-    start this project because he is too lazy for coding.
+    start this project because he is too lazy for coding. He added
+    tons of features and core functionality
 
-  Jens Klein (jensquadrat.com)
+  Jens Klein (jens@bluedynamics.com)
     
     Jens hates copy and paste and loves code generation. He created  
-    much of the documentation and new features.
-    He added tool support and control panel integration,
-    automatic msgid/pot generation with i18ndude integration,
-    module-info-header support and config-file support,
-    CMFMember support and several other little fixes and features.
+    much of the documentation and new featuresxi, like tool and control 
+    panel integration, automatic msgid/pot generation with i18ndude,
+    module-info-header support and config-file support, CMFMember support 
+    and several other little fixes and features.
     
   Martin Aspeli (optilude)
 
@@ -36,6 +36,10 @@ Authors
 
 Sponsors:
 
+  BlueDynamics Alliance, Austria
+
+  ZestSoftware, Netherlands
+
   Xiru.org, Brazil (Fabiano Weimar dos Santos)
       sponsors a valuable amount of money into workflow support.
 
@@ -45,5 +49,12 @@ Sponsors:
 
   Telesis.at, Austria (Jodok Batlogg)
 
+  Lots of features in this code was created for and sponsored by the 
+  ZUCCARO project.  ZUCCARO (Zope-based Universally Configurable Classes 
+  for Academic Research Online) is a database framework for the Humanities 
+  developed by the Bibliotheca Hertziana, Max Planck Institute for Art History
+  For further information: "zuccaro.biblhertz.it":http://zuccaro.biblhertz.it/
 
-This tool was inspired by David Kuhlman's GenerateDS
+  and others.
+
+  This tool was inspired by David Kuhlman's GenerateDS
