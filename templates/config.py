@@ -10,6 +10,7 @@ from Products.CMFCore.CMFCorePermissions import setDefaultRoles
 <dtml-if "[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.cmfmember_stereotype)]">
 from Products.CMFMember.MemberPermissions import ADD_MEMBER_PERMISSION
 </dtml-if>
+<dtml-var "generator.getProtectedSection(parsed_config,'config-head')">
 
 PROJECTNAME = "<dtml-var "package.getProductName ()">"
 
