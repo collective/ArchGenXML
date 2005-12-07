@@ -36,6 +36,11 @@ Authors
 
 Sponsors:
 
+  Bibliotheca Hertziana, Max-Planck-Institut fuer Kunstgeschichte
+    
+    sponsored a lot of new features during the ZUCCARO project (zuccaro.biblhertz.it)
+    Special thanks go to Dr. Martin Raspe and Dr. Georg Schelbert
+
   BlueDynamics Alliance, Austria
 
   ZestSoftware, Netherlands

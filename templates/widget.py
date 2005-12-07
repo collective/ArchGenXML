@@ -14,7 +14,7 @@ from Products.Archetypes import config as atconfig
 from Products.Archetypes.Widget import *
 from Products.generator import i18n
 
-from Products.<dtml-var "klass.getPackage().getCleanName()"> import config
+from Products.<dtml-var "klass.getPackage().getProduct().getName()"> import config
 
 <dtml-var "generator.getProtectedSection(parsed_class,'module-header')">
 <dtml-var "generator.generateDependentImports(klass)">
