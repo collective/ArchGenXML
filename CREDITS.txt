@@ -37,9 +37,13 @@ Authors
 Sponsors:
 
   Bibliotheca Hertziana, Max-Planck-Institut fuer Kunstgeschichte
-    
-    sponsored a lot of new features during the ZUCCARO project (zuccaro.biblhertz.it)
-    Special thanks go to Dr. Martin Raspe and Dr. Georg Schelbert
+
+    Special thanks go to Dr. Martin Raspe and Dr. Georg Schelbert.
+    Lots of features in this code was created for and sponsored by the 
+    ZUCCARO project.  ZUCCARO (Zope-based Universally Configurable Classes 
+    for Academic Research Online) is a database framework for the Humanities 
+    developed by the Bibliotheca Hertziana, Max Planck Institute for Art History
+    For further information: "zuccaro.biblhertz.it":http://zuccaro.biblhertz.it/
 
   BlueDynamics Alliance, Austria
 
@@ -53,12 +57,6 @@ Sponsors:
   OpenSource.ag, Innsbruck, Austria (Georg Pleger)
 
   Telesis.at, Austria (Jodok Batlogg)
-
-  Lots of features in this code was created for and sponsored by the 
-  ZUCCARO project.  ZUCCARO (Zope-based Universally Configurable Classes 
-  for Academic Research Online) is a database framework for the Humanities 
-  developed by the Bibliotheca Hertziana, Max Planck Institute for Art History
-  For further information: "zuccaro.biblhertz.it":http://zuccaro.biblhertz.it/
 
   and others.
 
