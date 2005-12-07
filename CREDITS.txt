@@ -36,13 +36,12 @@ Authors
 
 Sponsors:
 
-  Bibliotheca Hertziana, Max-Planck-Institut fuer Kunstgeschichte
+  Bibliotheca Hertziana, Max Planck Institute for Art History
 
     Special thanks go to Dr. Martin Raspe and Dr. Georg Schelbert.
     Lots of features in this code was created for and sponsored by the 
     ZUCCARO project.  ZUCCARO (Zope-based Universally Configurable Classes 
-    for Academic Research Online) is a database framework for the Humanities 
-    developed by the Bibliotheca Hertziana, Max Planck Institute for Art History
+    for Academic Research Online) is a database framework for the Humanities.
     For further information: "zuccaro.biblhertz.it":http://zuccaro.biblhertz.it/
 
   BlueDynamics Alliance, Austria
