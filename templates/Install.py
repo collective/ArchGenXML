@@ -100,10 +100,14 @@ def install(self):
     portal = getToolByName(self,'portal_url').getPortalObject()
 </dtml-if>
 <dtml-if "generator.left_slots">
-    portal.left_slots = list(portal.left_slots)+<dtml-var "repr(generator.left_slots)">
+    for slot in <dtml-var "repr(generator.left_slots)">:
+       if slot not in portal.left_slots:
+           portal.left_slots = list(portal.left_slots) + [slot]
 </dtml-if>
 <dtml-if "generator.right_slots">
-    portal.right_slots = list(portal.right_slots)+<dtml-var "repr(generator.right_slots)">
+    for slot in <dtml-var "repr(generator.right_slots)">:
+       if slot not in portal.right_slots:
+           portal.right_slots = list(portal.right_slots) + [slot]
 </dtml-if>
 <dtml-let autoinstall_tools="[c.getName() for c in generator.getGeneratedTools(package) if utils.isTGVTrue(c.getTaggedValue('autoinstall')) ]">
 <dtml-if "autoinstall_tools">
