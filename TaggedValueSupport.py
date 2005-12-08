@@ -183,7 +183,9 @@ category = 'class'
 # The following tagged values can be set on classes to alter their behaviour:
 
 tagname = 'policy'
-explanation = """TODO."""
+explanation = """On a class with stereotype '<<plone_testcase>>', this
+sets the customization policy used by the test case to setup the site
+(e.g. 'CMFMember Site')."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'doctest_name'
