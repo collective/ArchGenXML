@@ -34,13 +34,13 @@ ADD_CONTENT_PERMISSIONS = {
 </dtml-in>
 }
 
-<dtml-in "creation_permissions">
-<dtml-let perm="_['sequence-item']">
-<dtml-if "perm[2] is not None">
-setDefaultRoles(<dtml-var "perm[1]">, <dtml-var "perm[2]">)
-</dtml-if>
+<dtml-if "len(creation_roles) > 0">
+<dtml-in "range(0, len(creation_roles) )">
+<dtml-let index="_['sequence-item']">
+setDefaultRoles(<dtml-var "creation_roles[index][0]">, <dtml-var "creation_roles[index][1]">)
 </dtml-let>
 </dtml-in>
+</dtml-if>
 </dtml-if>
 
 product_globals=globals()

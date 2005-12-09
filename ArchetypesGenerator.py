@@ -10,7 +10,7 @@
 #-----------------------------------------------------------------------------
 
 import getopt, os.path, time, sys
-
+import sets
 from zipfile import ZipFile
 from StringIO import StringIO
 from shutil import copy
@@ -1868,7 +1868,7 @@ class ArchetypesGenerator(BaseGenerator):
             creation_permission = self.processExpression(cpfromoption)
         crfromoption = self.getOption('creation_roles', element, None)
         if crfromoption:
-            creation_roles = "'%s'" % crfromoption
+            creation_roles = self.processExpression(crfromoption)
 
         # generate header
         wrt(self.generateHeader(element)+'\n')
@@ -2145,9 +2145,9 @@ class ArchetypesGenerator(BaseGenerator):
             cpfromtgv = element.getTaggedValue('creation_permission', None)
             if cpfromtgv:
                 creation_permission= self.processExpression(cpfromtgv)
-            crfromtgv = self.getOption('creation_roles', element, None)
+            crfromtgv = element.getTaggedValue('creation_roles', None)
             if crfromtgv:
-                creation_roles= self.processExpression(crfromtgv)
+                creation_roles= crfromtgv
             ## abstract classes does not need an Add permission
             if creation_permission and not element.isAbstract():
                 self.creation_permissions.append( [element.getCleanName(), creation_permission, creation_roles] )
@@ -2389,15 +2389,24 @@ class ArchetypesGenerator(BaseGenerator):
             default_creation_permission = creation_permission
         else:
             default_creation_permission = self.default_creation_permission
+            
+        roles = []
+        creation_roles = []
+        for perm in self.creation_permissions:
+            if not perm[1] in roles and perm[2] is not None:
+                roles.append(perm[1])
+                creation_roles.append( (perm[1], perm[2]) )            
+        
 
         # prepare (d)TML varibles
         d={'package'                    : package,
            'generator'                  : self,
            'builtins'                   : __builtins__,
            'utils'                      : utils,
-           'creation_permissions'       : self.creation_permissions,
-           'parsed_config'              : parsed_config,
            'default_creation_permission': default_creation_permission,
+           'creation_permissions'       : self.creation_permissions,
+           'creation_roles'             : creation_roles,
+           'parsed_config'              : parsed_config,
         }
         d.update(__builtins__)
 
