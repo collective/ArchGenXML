@@ -511,11 +511,14 @@ group.add_option("--message-catalog",
                  )
 
 group.add_option("--i18n-content-support",
-                 help="Support for i18NArchetypes. Attributes with a stereotype of 'i18n'"
-                 " or taggedValue of i18n=1 will be multilingual (default is 0).",
-                 type="yesno",
+                 help="Support for internationalised archetypes."
+                 "Attributes with a stereotype of 'i18n' "
+                 "or taggedValue of i18n=1 will be multilingual. "
+                 "Possible values for this option are 'linguaplone' "
+                 "and 'i18n-archetypes'.",
+                 type="string",
                  dest="i18n_content_support",
-                 default=0,
+                 default='',
                  section="I18N",
                  )
 
