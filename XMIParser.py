@@ -2633,11 +2633,18 @@ class XMIState(XMIElement):
 
         for tag, tag_value in tagged_values.items():
             # list of tagged values that are NOT permissions
-            if tag in self.non_permissions or not tag_value:
+            if tag in self.non_permissions:
                 continue
             tag = tag.strip()
             # look up abbreviations if any
             permission = permission_mapping.get(tag.lower(), tag)
+            if not tag_value:
+                log.debug("Empty tag value, treating it as a reset "
+                          "for acquisition, so acquisition=0.")
+                permission_definitions.append({'permission' : permission,
+                                               'roles' : [],
+                                               'acquisition' : 0})
+                continue
             # split roles-string into list
             roles = [str(r.strip()) for r in tag_value.split(',') if r.strip()]
             # verify if this permission is acquired
