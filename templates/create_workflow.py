@@ -4,7 +4,6 @@
 
 # <dtml-var "infoheader['copyright']">
 #
-<dtml-var "infoheader['date']">
 # Generator: ArchGenXML Version <dtml-var "infoheader['version']">
 #            http://plone.org/products/archgenxml
 #
@@ -52,8 +51,9 @@ def setup<dtml-var "statemachine.getCleanName()">(self, workflow):
     for v in ['review_history', 'comments', 'time', 'actor', 'action']:
         workflow.variables.addVariable(v)
 
-    for p in <dtml-var "repr(statemachine.getAllPermissionNames())">:
-        workflow.addManagedPermission(p)
+<dtml-in "generator.getAllPermissionNames(statemachine)">
+    workflow.addManagedPermission(<dtml-var "_['sequence-item']">)
+</dtml-in>
 
     for l in <dtml-var "repr(statemachine.getAllWorklistNames())">:
         if not l in workflow.worklists.objectValues():
@@ -69,8 +69,8 @@ def setup<dtml-var "statemachine.getCleanName()">(self, workflow):
     stateDef = workflow.states['<dtml-var "_['sequence-item'].getName()">']
     stateDef.setProperties(title="""<dtml-var "_['sequence-item'].getTitle(generator)">""",
                            transitions=<dtml-var "repr([t.getName() for t in _['sequence-item'].getOutgoingTransitions()])">)
-<dtml-in "_['sequence-item'].getPermissionsDefinitions()">
-    stateDef.setPermission('<dtml-var "_['sequence-item'].get('permission')">',
+<dtml-in "generator.getPermissionsDefinitions(_['sequence-item'])">
+    stateDef.setPermission(<dtml-var "_['sequence-item'].get('permission')">,
                            <dtml-var "_['sequence-item'].get('acquisition')">,
                            <dtml-var "_['sequence-item'].get('roles')">)
 </dtml-in>

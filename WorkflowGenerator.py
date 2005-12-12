@@ -18,6 +18,25 @@ class WorkflowGenerator(BaseGenerator):
         self.atgenerator=atgenerator
         self.targetRoot=atgenerator.targetRoot
         self.method_preservation=atgenerator.method_preservation
+        
+    # XXX
+    # now i start here something ugly, but i dont have time to cleanup
+    # XMIParsers code - it has too much logic in, which should be in 
+    # this class:
+    # permissions from XMI are supposed to be strings upon here. But
+    # we may have an import of an class containing the permissions as 
+    # attributes. So lets do an processExpression on each permission.        
+    def getPermissionsDefinitions(self, state):
+        pdefs = state.getPermissionsDefinitions()
+        for pdefdict in pdefs:
+            pdefdict['permission'] = self.processExpression(pdefdict['permission'])
+        return pdefs
+    
+    # XXX almost same again
+    def getAllPermissionNames(self, statemachine):
+        source_pdefs = statemachine.getAllPermissionNames()
+        result_pdefs = [self.processExpression(pdef) for pdef in source_pdefs]
+        return result_pdefs
 
 
     def generateWorkflows(self):
@@ -41,7 +60,8 @@ class WorkflowGenerator(BaseGenerator):
 
             filesrc=self.atgenerator.readFile(scriptpath) or ''
             parsedModule=PyModule(filesrc,mode='string')
-
+        
+            
             d['statemachine']=sm
             d['parsedModule']=parsedModule
 

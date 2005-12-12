@@ -2672,22 +2672,6 @@ class XMIState(XMIElement):
                                            'acquisition': v['acquisition']})
         return permission_definitions
 
-        # If not permissions were defined, uses the default values
-
-        # Removed (~optilude) - this is a terrible mis-feature. It must be
-        # possible to avoid setting these properties so that they can be
-        # acquired from parent.
-
-        # for p in permission_mapping.values():
-        #    has_permission = 0
-        #    for r in permission_definitions:
-        #        if r.get('permission', None) == p:
-        #            has_permission = 1
-        #            break
-        #    if not has_permission:
-        #        permission_definitions.append({'permission' : p,
-        #                    'roles' : ['Owner', 'Manager']})
-
         # end of getPermissionsDefinitions()
 
     def isInitial(self):
