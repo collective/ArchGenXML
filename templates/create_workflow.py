@@ -18,6 +18,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.WorkflowTool import addWorkflowFactory
 from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
 from Products.ExternalMethod.ExternalMethod import ExternalMethod
+from Products.<dtml-var "package.getCleanName()">.config import *
 
 <dtml-var "generator.getProtectedSection(parsedModule,'create-workflow-module-header')">
 
