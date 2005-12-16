@@ -2628,9 +2628,12 @@ class XMIState(XMIElement):
 
         # permissions_mapping (abbreviations for lazy guys)
         # keys are case insensitive
-        permission_mapping = {'access' : 'Access contents information',
-              'view'   : 'View',
-              'modify' : 'Modify portal content'}
+        permission_mapping = {
+            'access' : 'Access contents information',
+            'view'   : 'View',
+            'modify' : 'Modify portal content',
+            'list'   : 'List folder contents',
+        }
         tagged_values = self.getTaggedValues()
         permission_definitions = []
 
