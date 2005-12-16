@@ -711,6 +711,10 @@ for category in ['model', 'package', 'class']:
     explanation = """Setting this boolean value enables the registration of the type for use with portal_factory. """
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+    tagname = 'version_info'
+    explanation = """Add ArchGenXML version information to the generated file (default is 1)."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
     tagname = 'migrate_dynamic_view_fti'
     explanation = """Migrates FTI of a type/class to CMFDynamicViewFTI. This works only if the class derives from an ATContentType, from ATCTMixIn or direct from CMFDynamicViewFTI.browserdefault.BrowserDefaultMixin. """
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)

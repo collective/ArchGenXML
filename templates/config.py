@@ -1,11 +1,20 @@
+"""config.py, product configuration.
+
+The contents of this module will be imported into __init__.py, the
+workflow configuration and every content type module.
+
+If you wish to perform custom configuration, you may put a file
+AppConfig.py in your product's root directory. This will be included
+in this file if found.
+"""
+
+<dtml-let infoheader="generator.getHeaderInfo(package)">
+# <dtml-var "infoheader['copyright']">
 #
-# Product configuration. This contents of this module will be imported into
-# __init__.py and every content type module.
-#
-# If you wish to perform custom configuration, you may put a file AppConfig.py
-# in your product's root directory. This will be included in this file if
-# found.
-#
+# Generator: ArchGenXML <dtml-var "infoheader['version']">
+#            http://plone.org/products/archgenxml
+</dtml-let>
+
 from Products.CMFCore.CMFCorePermissions import setDefaultRoles
 <dtml-if "[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.cmfmember_stereotype)]">
 from Products.CMFMember.MemberPermissions import ADD_MEMBER_PERMISSION

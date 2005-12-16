@@ -182,7 +182,7 @@ ArchGenXML %s
 
 def version():
     ver=open(os.path.join(sys.path[0],'version.txt')).read().strip()
-    return str(ver)
+    return "Version " + str(ver)
 
 def getFileHeaderInfo(element, generator):
     """ returns and dictionary with all info for the file-header """

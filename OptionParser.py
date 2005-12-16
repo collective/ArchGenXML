@@ -453,6 +453,14 @@ group.add_option("--rcs_id",
                  section="GENERAL",
                  )
 
+group.add_option("--version-info",
+                 dest="version_info",
+                 type="yesno",
+                 help="Add ArchGenXML version information to the generated file (default is 1).",
+                 default=1,
+                 section="GENERAL",
+                 )
+
 group.add_option("--generated_date",
                  dest="generated_date",
                  type="yesno",

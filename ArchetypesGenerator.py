@@ -2260,11 +2260,25 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             date = ''
 
+        if isTGVTrue(self.getOption('version_info',
+                                    element,
+                                    True)):
+            log.debug("We want version info in every file.")
+            versiontext = version()
+        elif element.__class__ == XMIParser.XMIModel:
+            log.debug("We don't want version info in all files, "
+                      "but we do want them in the config and Install.")
+            log.error('XXXXX')
+            versiontext = version()
+        else:
+            log.debug("We don't want version info in this file.")
+            versiontext = ''
+
         moduleinfo = {  #'purpose':      purposeline,
                         'authors':      ', '.join(authors),
                         'emails' :      ', '.join(emails),
                         'authorline':   authorline,
-                        'version':      version(),
+                        'version':      versiontext,
                         'date':         date,
                         'copyright':    '\n# '.join(wrap(copyright, 77).split('\n')),
                         'licence':      licence,
