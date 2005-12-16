@@ -2444,15 +2444,18 @@ class XMIStateTransition(XMIElement):
             return self.action.getExpression()
 
     def getProps(self):
-        d_ret = {}
-        d_expr = {'guard_permissions' : self.getGuardPermissions,
-                  'guard_roles' : self.getGuardRoles,
-                  'guard_expr' : self.getGuardExpr}
-        for k, v in d_expr.items():
-            g = v()
-            if g:
-                d_ret.update({k:g})
-        return repr(d_ret)
+        result = {}
+        d_expr = {'guard_permissions' : self.getGuardPermissions(),
+                  'guard_roles' : self.getGuardRoles(),
+                  'guard_expr' : self.getGuardExpr()}
+        for key, value in d_expr.items():
+            guard = value
+            if guard:
+                # Only include if it has a value
+                # And don't forget to strip whitespace
+                guard = guard.strip() 
+                result.update({key:guard})
+        return repr(result)
 
     def getGuardRoles(self):
         if not self.guard:
