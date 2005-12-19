@@ -3,7 +3,7 @@
 
 # <dtml-var "infoheader['copyright']">
 #
-<dtml-var "infoheader['date']"># Generator: ArchGenXML Version <dtml-var "infoheader['version']">
+<dtml-var "infoheader['date']"># Generator: ArchGenXML <dtml-var "infoheader['version']">
 #            http://sf.net/projects/archetypes/
 #
 # <dtml-var "infoheader['licence']">

@@ -1858,8 +1858,21 @@ class ArchetypesGenerator(BaseGenerator):
         wrt('\n')
         
         # dealing with creation-permissions and -roles for this type
-        if self.detailed_creation_permissions:
-            creation_permission = "'Add %s Content'" % element.getCleanName()
+        if self.detailed_created_permissions:
+            creation_permission = ("'Add %s Content'" %
+                                   element.getCleanName())
+            # TODO: looks a bit shitty, ^^^^^. 'Add Event Content'...
+            # 'Add MyProduct Content' is ok, but the prefixed way
+            # 'Myproduct: Add Event' is preferrable to the above
+            # version.
+            # As luck would have it, there was a typo
+            # --detailed-created-permissions, so I fixed the non-typo
+            # --detailed-creation-permissions up with the new
+            # generated syntax.
+        elif self.detailed_creation_permissions:
+            creation_permission =("'%s: Add %s'" %
+                                  (element.getPackage().getCleanName(),
+                                   element.getCleanName()))
         else:
             creation_permission = None
         creation_roles = "('Manager', 'Owner')"
@@ -1957,8 +1970,16 @@ class ArchetypesGenerator(BaseGenerator):
         baseclass, baseschema, parentnames = self.getArchetypesBase(element, parentnames, parent_is_archetype)
 
         # Remark: CMFMember support includes VariableSchema support
-        if element.hasStereoType(self.variable_schema, umlprofile=self.uml_profile) and \
-             not element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
+        # Remark Reinout: since cmfmember 1.1, there's no more
+        # variableschema support.
+        if element.hasStereoType(self.variable_schema,
+                                 umlprofile=self.uml_profile):
+            if element.hasStereoType(self.cmfmember_stereotype,
+                                     umlprofile=self.uml_profile):
+                log.warn("Adding VariableSchema to cmfmember, "
+                         "be careful as cmfmember 1.0 already "
+                         "includes it.")
+            # Including it by default anyway, since 1.4.0/dev.
             parentnames.insert(0, 'VariableSchemaSupport')
 
         # Interface aggregation

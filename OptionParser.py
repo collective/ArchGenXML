@@ -620,13 +620,21 @@ group.add_option("--default-creation-roles",
 
 group.add_option("--detailed-created-permissions",
                  type="yesno",
+                 help="""DEPRECATED: use
+                 --detailed-creation-permissions, which generates a
+                 slightly different syntax, though.""",
+                 default=0,
+                 section="CLASSES",
+                 dest="detailed_created_permissions",
+                 )
+
+group.add_option("--detailed-creation-permissions",
+                 type="yesno",
                  help="Separate creation permissions per class (defaults to no)",
                  default=0,
                  section="CLASSES",
                  dest="detailed_creation_permissions",
                  )
-
-
 
 parser.add_option_group(group)
 
