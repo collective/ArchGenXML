@@ -1871,7 +1871,7 @@ class ArchetypesGenerator(BaseGenerator):
             # generated syntax.
         elif self.detailed_creation_permissions:
             creation_permission =("'%s: Add %s'" %
-                                  (element.getPackage().getCleanName(),
+                                  (element.getProduct().getCleanName(),
                                    element.getCleanName()))
         else:
             creation_permission = None
