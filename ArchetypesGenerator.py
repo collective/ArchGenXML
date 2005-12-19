@@ -2268,7 +2268,6 @@ class ArchetypesGenerator(BaseGenerator):
         elif element.__class__ == XMIParser.XMIModel:
             log.debug("We don't want version info in all files, "
                       "but we do want them in the config and Install.")
-            log.error('XXXXX')
             versiontext = version()
         else:
             log.debug("We don't want version info in this file.")
