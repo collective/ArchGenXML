@@ -2168,7 +2168,7 @@ class ArchetypesGenerator(BaseGenerator):
                 creation_permission= self.processExpression(cpfromtgv)
             crfromtgv = element.getTaggedValue('creation_roles', None)
             if crfromtgv:
-                creation_roles= crfromtgv
+                creation_roles= self.processExpression(crfromtgv)
             ## abstract classes does not need an Add permission
             if creation_permission and not element.isAbstract():
                 self.creation_permissions.append( [element.getCleanName(), creation_permission, creation_roles] )
