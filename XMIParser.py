@@ -910,14 +910,21 @@ class XMIElement:
         log.debug("Searching for presence of an attribute with tag '%s'.",
                   tag)
         if value:
-            log.debug("But the value should be '%s'.",
+            log.debug("But, extra condition, the value should be '%s'.",
                       value)
         attrs = self.getAttributeDefs()
         for attr in attrs:
             if attr.hasTaggedValue(tag):
-                if not value or attr.getTaggedValue(tag, None) == value:
-                    log.debug("Yep, we've found an attribute with that tag/value.")
+                log.debug("Yep, we've found an attribute with that tag.")
+                if not value:
+                    # We don't have to have a specific value
                     return 1
+                else:
+                    # We need a specific value
+                    if attr.getTaggedValue(tag, None) == value:
+                        return 1
+                    else:
+                        log.debug("But, alas, the value isn't right.")
         log.debug("No, found nothing.")
         return 0
 
