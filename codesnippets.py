@@ -219,6 +219,14 @@ BSDTEXT = """\
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."""
 
+ZPLTEXT = """\
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL). A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE."""
+
 LICENSES = {
 
     'GPL': {
@@ -234,6 +242,11 @@ LICENSES = {
     'BSD': {
         'name': 'Berkeley Software Distribution License (BSD)',
         'text': BSDTEXT,
+    },
+
+    'ZPL': {
+        'name': 'Zope Public License (ZPL)',
+        'text': ZPLTEXT,
     },
 
 }
