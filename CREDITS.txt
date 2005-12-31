@@ -7,13 +7,13 @@ Authors
     tons of features and core functionality
 
   Jens Klein (jens@bluedynamics.com)
-    
-    Jens hates copy and paste and loves code generation. He created  
-    much of the documentation and new featuresxi, like tool and control 
+
+    Jens hates copy and paste and loves code generation. He created
+    much of the documentation and new featuresxi, like tool and control
     panel integration, automatic msgid/pot generation with i18ndude,
-    module-info-header support and config-file support, CMFMember support 
+    module-info-header support and config-file support, CMFMember support
     and several other little fixes and features.
-    
+
   Martin Aspeli (optilude)
 
     Improvements and important cleanups, documentation.
@@ -34,13 +34,18 @@ Authors
 
     Reinout did lots of cleanup and added documentation features.
 
+  Dorneles Tremea (deo)
+
+    Dorneles cleaned up the license/licence mess and killed the
+    undesired whitespaces generation.
+
 Sponsors:
 
   Bibliotheca Hertziana, Max Planck Institute for Art History
 
     Special thanks goes to Dr. Martin Raspe and Dr. Georg Schelbert.
-    Lots of features in this code was created for and sponsored by the 
-    ZUCCARO project.  ZUCCARO (Zope-based Universally Configurable Classes 
+    Lots of features in this code was created for and sponsored by the
+    ZUCCARO project.  ZUCCARO (Zope-based Universally Configurable Classes
     for Academic Research Online) is a database framework for the Humanities.
     For further information: "zuccaro.biblhertz.it":http://zuccaro.biblhertz.it/
 
@@ -52,7 +57,7 @@ Sponsors:
       sponsors a valuable amount of money into workflow support.
 
   PilotSystems, Paris, France (David Sapiro)
-  
+
   OpenSource.ag, Innsbruck, Austria (Georg Pleger)
 
   Telesis.at, Austria (Jodok Batlogg)

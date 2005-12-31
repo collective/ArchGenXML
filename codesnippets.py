@@ -12,20 +12,19 @@
 # Licence:     GPL
 #-----------------------------------------------------------------------------
 
-
-ACT_TEMPL="""
-       {'action':      %(action)s,
-        'category':    %(action_category)s,
-        'id':          '%(action_id)s',
-        'name':        '%(action_label)s',
+ACT_TEMPL = """
+       {'action': %(action)s,
+        'category': %(action_category)s,
+        'id': '%(action_id)s',
+        'name': '%(action_label)s',
         'permissions': (%(permission)s,),
-        'condition'  : '%(condition)s'
+        'condition': '%(condition)s'
        },
 """
 
 MODIFY_FTI = """\
 def modify_fti(fti):
-    # hide unnecessary tabs (usability enhancement)
+    # Hide unnecessary tabs (usability enhancement)
     for a in fti['actions']:
         if a['id'] in [%(hideactions)s]:
             a['visible'] = 0
@@ -57,7 +56,7 @@ DEFAULT_ACTIONS = """
 
 """
 
-DEFAULT_ACTIONS_FOLDERISH ="""
+DEFAULT_ACTIONS_FOLDERISH = """
        {'action': 'string:${folder_url}/folder_listing',
         'category': 'folder',
         'condition': 'object/isPrincipiaFolderish',
@@ -68,38 +67,42 @@ DEFAULT_ACTIONS_FOLDERISH ="""
 
 """
 
-FTI_TEMPL='''\
-    filter_content_types       = %(filter_content_types)d
-    global_allow               = %(global_allow)d
-    allow_discussion           = %(allow_discussion)s
-    %(has_content_icon)scontent_icon               = '%(content_icon)s'
-    immediate_view             = '%(immediate_view)s'
-    default_view               = '%(default_view)s'
-    suppl_views                = %(suppl_views)s
-    typeDescription            = %(typeDescription)s
-    typeDescMsgId              = 'description_edit_%(type_name_lc)s'
-'''
-
-TOOL_FTI_TEMPL='''\
-    %(has_toolicon)stoolicon                   = '%(toolicon)s'
-'''
-
-CLASS_SCHEMA = """\
-    schema= %(prefix)s + schema %(postfix)s
+FTI_TEMPL = """\
+    filter_content_types = %(filter_content_types)d
+    global_allow = %(global_allow)d
+    allow_discussion = %(allow_discussion)s
+    %(has_content_icon)scontent_icon = '%(content_icon)s'
+    immediate_view = '%(immediate_view)s'
+    default_view = '%(default_view)s'
+    suppl_views = %(suppl_views)s
+    typeDescription = %(typeDescription)s
+    typeDescMsgId = 'description_edit_%(type_name_lc)s'
 """
 
-SCHEMA_START       = """schema=Schema(("""
+TOOL_FTI_TEMPL = """\
+    %(has_toolicon)stoolicon = '%(toolicon)s'
+"""
+
+CLASS_SCHEMA = """\
+    schema = %(prefix)s + schema %(postfix)s
+"""
+
+SCHEMA_START = """schema = Schema((
+"""
 
 SCHEMA_TOOL = """\
         # a tool does not need be editable in id and title
-        StringField('id',
+        StringField(
+            name='id',
             required=0,
-            mode="r",
-            accessor="getId",
-            mutator="setId",
+            mode='r',
+            accessor='getId',
+            mutator='setId',
             default='',
         ),
-        StringField('title',
+
+        StringField(
+            name='title',
             required=1,
             searchable=0,
             default='',
@@ -124,47 +127,121 @@ from Products.CMFCore.utils import UniqueObject
 
     """
 
-CLASS_META_TYPE      = """    meta_type                  = '%s'"""
-CLASS_PORTAL_TYPE    = """    portal_type                = '%s'"""
+CLASS_META_TYPE = """    meta_type = '%s'"""
+CLASS_PORTAL_TYPE = """    portal_type = '%s'"""
 CLASS_ARCHETYPE_NAME = """    # This name appears in the 'add' box
-    archetype_name             = '%s'\n"""
-CLASS_IMPLEMENTS     = """    __implements__ = %(baseclass_interfaces)s + (%(realizations)s,)"""
-CLASS_IMPLEMENTS_BASE= """    __implements__ = %(baseclass_interfaces)s"""
-CLASS_ALLOWED_CONTENT_TYPES      = '''    allowed_content_types      = %s%s'''
+    archetype_name = '%s'\n"""
+CLASS_IMPLEMENTS = """    __implements__ = %(baseclass_interfaces)s + (%(realizations)s,)"""
+CLASS_IMPLEMENTS_BASE = """    __implements__ = %(baseclass_interfaces)s"""
+CLASS_ALLOWED_CONTENT_TYPES = '''    allowed_content_types = %s%s'''
 CLASS_ALLOWED_CONTENT_INTERFACES = '''    allowed_interfaces = [%s] %s'''
-CLASS_RENAME_AFTER_CREATION      = '''    _at_rename_after_creation  = %s\n'''
+CLASS_RENAME_AFTER_CREATION = '''    _at_rename_after_creation = %s\n'''
 
-REGISTER_ARCHTYPE    = """registerType(%s,PROJECTNAME)\n"""
+REGISTER_ARCHTYPE = """registerType(%s,PROJECTNAME)\n"""
 
-IMPORT_INTERFACE     = """from Interface import Base"""
+IMPORT_INTERFACE = """from Interface import Base"""
 
-MODULE_INFO_HEADER = """\
-# File: %(filename)s
-# %(rcs_id_tag)s
+MODULE_INFO_HEADER = '''\
+# %(filename_or_id)s
+#
 # %(copyright)s
-%(date)s# Generator: ArchGenXML %(version)s 
+%(date)s# Generator: ArchGenXML %(version)s
 #            http://plone.org/products/archgenxml
 #
-# %(licence)s
+# %(license)s
 #
-__author__  = '''%(authorline)s'''
+
+__author__ = """%(authorline)s"""
 __docformat__ = 'plaintext'
 
-"""
+'''
 
-COPYRIGHT  = """Copyright (c) %s by %s"""
+COPYRIGHT = """Copyright (c) %s by %s"""
 
 GPLTEXT = """\
-GNU General Public Licence (GPL)
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA."""
 
-This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA"""
+LGPLTEXT = """\
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA."""
 
-REGISTER_VOCABULARY_ITEM      = """registerVocabularyTerm(%s, '%s')"""
+BSDTEXT = """\
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+  * Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+
+  * Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in
+    the documentation and/or other materials provided with the
+    distribution.
+
+  * Neither the name of the Plone Foundation nor the names of its
+    contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."""
+
+LICENSES = {
+
+    'GPL': {
+        'name': 'GNU General Public License (GPL)',
+        'text': GPLTEXT,
+    },
+
+    'LGPL': {
+        'name': 'GNU Lesser General Public License (LGPL)',
+        'text': LGPLTEXT,
+    },
+
+    'BSD': {
+        'name': 'Berkeley Software Distribution License (BSD)',
+        'text': BSDTEXT,
+    },
+
+}
+
+REGISTER_VOCABULARY_ITEM = """registerVocabularyTerm(%s, '%s')"""
 REGISTER_VOCABULARY_CONTAINER = """registerVocabulary(%s)"""
 
-TEMPL_CONSTR_TOOL="""
+TEMPL_CONSTR_TOOL = """
     # tool-constructors have no id argument, the id is fixed
     def __init__(self, id=None):
         %s.__init__(self,'%s')
@@ -178,6 +255,7 @@ TEMPLATE_HEADER_I18N_I18N_AT = """\
 from AccessControl import ClassSecurityInfo
 from Products.Archetypes.atapi import *
 from Products.I18NArchetypes.public import *
+
     """
 
 TEMPLATE_HEADER_I18N_LINGUAPLONE = """\
@@ -189,7 +267,7 @@ except ImportError:
     HAS_LINGUAPLONE = False
 else:
     HAS_LINGUAPLONE = True
-    
+
     """
 
 TEMPLATE_CONFIG_IMPORT = """\
@@ -202,7 +280,7 @@ TEMPL_APECONFIG_BEGIN = """<?xml version="1.0"?>
 
 <configuration>"""
 
-TEMPL_APECONFIG_END   = """</configuration>"""
+TEMPL_APECONFIG_END = """</configuration>"""
 
 READMEHIGHEST = """\
 Directory 'skins/%s_public':
