@@ -138,6 +138,7 @@ class PyModule:
             line = self.splittedSource[i]
             strippedLine = line.strip()
             if ('declarePublic' in strippedLine or
+                'declarePrivate' in strippedLine or
                 'declareProtected' in strippedLine):
                 self.protectionDeclarations.append(line)
                 # note: the line, so we get the good indentation
