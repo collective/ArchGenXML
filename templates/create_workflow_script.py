@@ -6,7 +6,7 @@
 <dtml-var "infoheader['date']"># Generator: ArchGenXML <dtml-var "infoheader['version']">
 #            http://sf.net/projects/archetypes/
 #
-# <dtml-var "infoheader['licence']">
+# <dtml-var "infoheader['license']">
 #
 __author__    = '''<dtml-var "infoheader['authorline']">'''
 __docformat__ = 'plaintext'

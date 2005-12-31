@@ -31,10 +31,10 @@ class TestPyModule(unittest.TestCase):
         self.klass = self.parser.classes['ParserTest']
         self.method = self.klass.methods['parserMethod']
         self.manualMethod = self.klass.methods['parserMethod2']
-        
+
     def testReadFile1(self):
         """ Don't barf on an empty file
-        """ 
+        """
         self.parser.readFile(self.emptyFile)
 
     def testReadFile2(self):
@@ -53,7 +53,7 @@ class TestPyModule(unittest.TestCase):
         """ Barf on an empty string-file without correct mode
         """
         self.assertRaises(IOError, self.parser.readFile,
-                          self.emptyStringFile) 
+                          self.emptyStringFile)
 
     def testFindClassesAndFunctions(self):
         """ Find the correct number of classes and functions
@@ -65,7 +65,7 @@ class TestPyModule(unittest.TestCase):
 
     def testFindProtectedSections(self):
         """ Find the correct number of protected sections
-        
+
         tests/pythonfiles/ParserTest.py contains 4 protected sections:
         module-header, after-schema, class-header, module-footer.
         """
@@ -73,7 +73,7 @@ class TestPyModule(unittest.TestCase):
 
     def testFindProtectionDeclarations(self):
         """ Find the correct number of protection declarations
-        
+
         tests/pythonfiles/ParserTest.py contains 2 protection
         declarations.
         """
@@ -105,7 +105,7 @@ class TestPyFunction(TestPyCodeElement):
         """
         self.assertEquals(self.function.getSrc(), self.function.src)
         self.assertEquals(self.oneLineFunction.getSrc(),
-                          self.oneLineFunction.src) 
+                          self.oneLineFunction.src)
 
     def testGetName(self):
         """ getName should return the name
@@ -151,7 +151,7 @@ class TestPyMethod(TestPyFunction):
         """
         self.assertEquals(self.method.getSrc(), self.method.src)
         self.assertEquals(self.manualMethod.getSrc(),
-                          self.manualMethod.src) 
+                          self.manualMethod.src)
 
     def testGetName(self):
         """ getName should return the name

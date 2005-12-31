@@ -7,7 +7,7 @@
 # Generator: ArchGenXML <dtml-var "infoheader['version']">
 #            http://plone.org/products/archgenxml
 #
-# <dtml-var "infoheader['licence']">
+# <dtml-var "infoheader['license']">
 #
 __author__    = '''<dtml-var "infoheader['authorline']">'''
 __docformat__ = 'plaintext'

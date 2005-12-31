@@ -18,10 +18,10 @@ Supported Features
 
   The XMI parser/generator supports the following UML entities:
 
-    - Classes 
+    - Classes
 
     - Interfaces
-    
+
     - Attributes
 
     - Methods
@@ -41,7 +41,7 @@ Supported Features
 Requirements & Optional
 
   Required:
-  
+
 	- Python 2.3.5 or 2.4 (might work with different versions too)
 
   Required to run generated code
@@ -61,7 +61,7 @@ Requirements & Optional
         svn co https://svn.plone.org/svn/collective/i18ndude/trunk/ i18ndude
 
       Then install it into your python: enter the directory and::
-   
+
         python setup.py install
 
 
@@ -100,7 +100,7 @@ Requirements & Optional
 
     - Relations
 
-      Relations allows for the definition of sets of rules for validation, creation 
+      Relations allows for the definition of sets of rules for validation, creation
       and lifetime of Archetypes references.
 
       http://plone.org/products/relations
@@ -118,7 +118,7 @@ Quick Start
        $ ./ArchGenXML.py samples/SimpleSample.xmi
 
      This converts the Poseidon-created UML diagrams in
-     "samples/SimpleSample.xmi to a new product, ArchGenXMLSimpleSample, 
+     "samples/SimpleSample.xmi to a new product, ArchGenXMLSimpleSample,
      stored in the current directory.
 
   3) Copy the ArchGenXMLSimpleSample product directory into your Plone Products
@@ -130,10 +130,10 @@ Quick Start
 
 Documentation
 
-  A tutorial and manual is located at 
-  
+  A tutorial and manual is located at
+
     http://plone.org/documentation/tutorial/archgenxml-getting-started
-  
+
 
 Known Limitations
 

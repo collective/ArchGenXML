@@ -197,14 +197,14 @@ extension automatically, so you don't need to specify it."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'quickinstall_dependencies'
-explanation = """In a tests package, setting the stereotype '<<plone_testcase>>' 
+explanation = """In a tests package, setting the stereotype '<<plone_testcase>>'
 on a class turns it into a base testcase. The base testcase will install
-all listed products to the test portal using CMFQuickInstallerTool. 
+all listed products to the test portal using CMFQuickInstallerTool.
 The list has the form:  '"ProductsA", "ProductB"."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'quickinstall_self'
-explanation = """In a tests package, setting the stereotype '<<plone_testcase>>' 
+explanation = """In a tests package, setting the stereotype '<<plone_testcase>>'
 on a class turns it into a base testcase. The base testcase will install
 the current Product (where the testcase resides in) using CMFQuickInstallerTool."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
@@ -601,8 +601,8 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 
 tagname = 'vocabulary:vocabulary_type'
 explanation = """For use with 'ATVocabularyManager'. Defaults to 'Simplevocabulary'.
-Let you define the portal_type of the vocabulary used as initial vocabulary at 
-Product install time. If VdexVocabulary is used, the install-script tries to 
+Let you define the portal_type of the vocabulary used as initial vocabulary at
+Product install time. If VdexVocabulary is used, the install-script tries to
 install a vocabulary from a vdex file names 'Products/PRODUCTNAME/data/VOCABULARYNAME.vdex'. """
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
@@ -722,7 +722,7 @@ for category in ['model', 'package', 'class']:
     tagname = 'cmf_target_version'
     explanation = """Controls CMF Version specific behaviour, primary to avoid 'Deprecation warnings.' Defaults to '1.4'."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-    
+
     tagname = 'use_workflow'
     explanation = """Tie the class to the named workflow. A state diagram (=workflow) attached to a class in the UML diagram is automatically used as that class's workflow; this tagged value allows you to tie the  workflow to other classes."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
@@ -739,7 +739,7 @@ for category in ['model', 'package', 'class', 'attribute']:
     tagname = 'read_permission'
     explanation = """Defines archetypes fields read-permission. Use it together with workflow to control ability to view fields based on roles/permissions."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-    
+
     tagname = 'write_permission'
     explanation = """Defines archetypes fields write-permission. Use it together with workflow to control ability to write data to a field based on roles/permissions."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
