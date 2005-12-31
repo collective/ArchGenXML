@@ -2259,8 +2259,8 @@ class ArchetypesGenerator(BaseGenerator):
         authors, emails, authorline = self.getAuthors(element)
 
         if self.getOption('rcs_id', element, False):
-            log.debug("Using $id$ keyword.")
-            filename_or_id = '$Id$'
+            log.debug("Using id keyword.")
+            filename_or_id = '$'+'id'+'$'
         else:
             log.debug("Using filename.")
             filename_or_id = ''
