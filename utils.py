@@ -184,37 +184,6 @@ def version():
     ver=open(os.path.join(sys.path[0],'version.txt')).read().strip()
     return "Version " + str(ver)
 
-def getFileHeaderInfo(element, generator):
-    """ returns and dictionary with all info for the file-header """
-
-    #deal with multiline docstring
-    purposeline=('\n').join( \
-        (element.getDocumentation(striphtml=self.striphtml,wrap=79) or 'unknown').split('\n') )
-
-    author= self.getOption('author', element, self.author) or 'unknown'
-
-    copyright = COPYRIGHT % \
-        (str(time.localtime()[0]),
-         self.getOption('copyright', element, self.copyright) or author)
-
-    licence = ('\n# ').join( \
-        wrap(self.getOption('license', element, GPLTEXT),77).split('\n') )
-
-    email=self.getOption('email', element, self.email) or 'unknown'
-    email=email.split(',')
-    email = [i.strip() for i in email]
-    email ="<"+">, <".join([i.strip() for i in email])+">"
-
-    fileheaderinfo = {'filename': modulename+'.py',
-                      'purpose':  purposeline,
-                      'author':   author,
-                      'email':    email,
-                      'version':  self.version,
-                      'date':     time.ctime(),
-                      'copyright':'\n# '.join(wrap(copyright,77).split('\n')),
-                      'licence':  licence,
-    }
-
 def initLog(filename):
     """Initialise the logger.
 
