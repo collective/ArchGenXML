@@ -2002,7 +2002,7 @@ class ArchetypesGenerator(BaseGenerator):
             schema = parent_schema
         else:
             # [optilude] Ignore baseschema in abstract mixin classes
-            if element.isAbstract ():
+            if element.isAbstract():
                 schema = parent_schema
             else:
                 schema = [baseschema] + parent_schema
@@ -2018,7 +2018,7 @@ class ArchetypesGenerator(BaseGenerator):
             if utils.isTGVTrue(element.getTaggedValue(addschema, '1')):
                 schema.append('ExtensibleMetadata.schema')
         schemaName = '%s_schema' % name
-        print >> outfile, utils.indent(schemaName + ' = ' + ' + \\\n    '.join(schema),0)
+        print >> outfile, utils.indent(schemaName + ' = ' + ' + \\\n    '.join(['%s.copy()' % s for s in schema]), 0)
         print >> outfile
 
 
