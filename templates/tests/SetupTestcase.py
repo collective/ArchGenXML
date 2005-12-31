@@ -6,6 +6,7 @@ if __name__ == '__main__':
 #
 # Setup tests
 #
+
 import os, sys
 from Testing import ZopeTestCase
 <dtml-if "parent is not None">
@@ -14,8 +15,8 @@ from <dtml-var "parent.getQualifiedModuleName(None,forcePluginRoot=1)"> import <
 
 class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCleanName()">)</dtml-if>:
 <dtml-if "parsed_class and parsed_class.getDocumentation()">    """<dtml-var "parsed_class.getDocumentation()">"""
-<dtml-else>    """ Test cases for the generic setup of the product
-    """</dtml-if>
+<dtml-else>    """Test cases for the generic setup of the product."""
+</dtml-if>
 
 <dtml-var "generator.getProtectedSection(parsed_class, 'class-header_'+klass.getCleanName(), 1)">
 <dtml-if "not parsed_class or 'afterSetUp' not in parsed_class.methods.keys()">
@@ -24,8 +25,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
         """
         pass
 <dtml-else>
-<dtml-var "parsed_class.methods['afterSetUp'].getSrc()">
-</dtml-if>
+<dtml-var "parsed_class.methods['afterSetUp'].getSrc()"></dtml-if>
 
 <dtml-if "not parsed_class or 'test_tools' not in parsed_class.methods.keys()">
     def test_tools(self):
@@ -33,7 +33,9 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
         """
         ids = self.portal.objectIds()
         self.failUnless('archetype_tool' in ids)
-        #<dtml-var "[c.getName() for c in generator.getTools(klass.getPackage().getProduct(), autoinstallOnly=1)] ">
+<dtml-if "generator.getTools(klass.getPackage().getProduct())">
+        # <dtml-var "[c.getName() for c in generator.getTools(klass.getPackage().getProduct(), autoinstallOnly=1)]">
+</dtml-if>
         # ...
 <dtml-else>
 <dtml-var "parsed_class.methods['test_tools'].getSrc()">
@@ -108,9 +110,6 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 </dtml-if>
 </dtml-let>
 </dtml-in>
-
-
-
     # Manually created methods
 <dtml-if parsed_class>
 <dtml-in "parsed_class.methods.values()">
@@ -121,6 +120,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 </dtml-let>
 </dtml-in>
 </dtml-if>
+
 
 def test_suite():
     from unittest import TestSuite, makeSuite
