@@ -210,27 +210,11 @@ class AGXOptionParser(OptionParser):
                 name = name[2:]  # get rid of --
                 log.debug("Printing option named '%s'.",
                           name)
-                if name == 'license':
-                    log.debug("Skipping over multi-line license. Need to figure out how to deal with that.")
-                    # TBD
-                    continue
                 help_lines = textwrap.wrap(opt.help, 70)
                 log.debug("Printing %s lines of help.",
                           len(help_lines))
                 for line in help_lines:
                     print "## %s" % line
-                ##store_true and store_false aren't used anymore, keeping
-                ##this part for a few months anyway :-)
-                #if opt.action == "store_true":
-                #    if opt.default == 1:
-                #        print '%s' % name
-                #    else:
-                #        print '#%s' % name
-                #elif opt.action == "store_false":
-                #    if opt.default == 0:
-                #        print '%s' % name
-                #    else:
-                #        print '#%s' % name
                 if opt.type=="yesno":
                     log.debug("Printing yes/no option.")
                     if opt.default:
@@ -311,11 +295,8 @@ class AGXOptionParser(OptionParser):
                      "for information on allowable options.",
                      option_in_file)
 
-
-
 #============================================================================
 # ArchGenXML Parsing
-
 
 usage = "usage: %prog [ options ] <xmi-source-file> [output directory]"
 description = """A program for generating Archetypes from XMI files.
@@ -445,7 +426,7 @@ group.add_option("--customization-policy",
                  section="GENERAL",
                  )
 
-group.add_option("--rcs_id",
+group.add_option("--rcs-id",
                  dest="rcs_id",
                  type="yesno",
                  help="Add RCS $Id$ tags to the generated file (default is 0).",
@@ -583,10 +564,11 @@ group.add_option("--copyright",
 
 group.add_option("--license",
                  "--licence",
-                 help="Set default licence (default is the GPL).",
-                 default=codesnippets.GPLTEXT,
+                 help="Set default license (default is the GPL).",
+                 default='GPL',
                  section="DOCUMENTATION",
-                 type="string", #xxx stringlist?
+                 type="choice",
+                 choices=codesnippets.LICENSES.keys(),
                  )
 
 parser.add_option_group(group)
