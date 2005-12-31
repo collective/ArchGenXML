@@ -24,16 +24,14 @@ from UMLProfile import UMLProfile
 
 from documenttemplate.documenttemplate import HTML
 
-from codesnippets import *
 import utils
+from codesnippets import *
 from odict import odict
-from utils import makeFile, readFile, makeDir, mapName, wrap, indent, getExpression, \
-     isTGVTrue, isTGVFalse, readTemplate, getFileHeaderInfo, version
 
 from BaseGenerator import BaseGenerator
 from WorkflowGenerator import WorkflowGenerator
 
-_marker=[]
+_marker = []
 log = logging.getLogger('generator')
 
 try:
@@ -413,7 +411,7 @@ class ArchetypesGenerator(BaseGenerator):
     #taggedValues that are not strings, e.g. widget or vocabulary
     nonstring_tgvs=['widget', 'vocabulary', 'required', 'precision', 'storage',
                     'enforceVocabulary', 'multiValued', 'visible', 'validators',
-                    'validation_expression', 'sizes', 'original_size', 
+                    'validation_expression', 'sizes', 'original_size',
                     'max_size', 'searchable']
 
     msgcatstack = []
@@ -477,11 +475,11 @@ class ArchetypesGenerator(BaseGenerator):
         ffn=os.path.join(self.targetRoot, fn)
         log.debug("Together with the targetroot that means '%s'.",
                   ffn)
-        return makeFile(ffn, force=force)
+        return utils.makeFile(ffn, force=force)
 
     def readFile(self,fn):
         ffn=os.path.join(self.targetRoot,fn)
-        return readFile(ffn)
+        return utils.readFile(ffn)
 
     def makeDir(self, fn, force=1):
         log.debug("Calling makeDir to create '%s'.",
@@ -489,7 +487,7 @@ class ArchetypesGenerator(BaseGenerator):
         ffn=os.path.join(self.targetRoot,fn)
         log.debug("Together with the targetroot that means '%s'.",
                   ffn)
-        return makeDir(ffn,force=force)
+        return utils.makeDir(ffn,force=force)
 
     def getSkinPath(self,element):
         return os.path.join(element.getRootPackage().getFilePath(),'skins',element.getRootPackage().getModuleName())
@@ -552,7 +550,7 @@ class ArchetypesGenerator(BaseGenerator):
                             return
                     # isnt listed, so add it
                     entry[1].append((module_id, [msgstr]))
-                 
+
 
     def generateMethodActions(self, element):
         log.debug("Generating method actions...")
@@ -561,8 +559,8 @@ class ArchetypesGenerator(BaseGenerator):
         log.debug("First finding our methods.")
         for m in element.getMethodDefs():
             method_name = m.getName()
-            code=indent(m.getTaggedValue('code',''),1)
-            if m.hasStereoType( ['action', 'view', 'form'], umlprofile=self.uml_profile):
+            code = utils.indent(m.getTaggedValue('code', ''), 1)
+            if m.hasStereoType(['action', 'view', 'form'], umlprofile=self.uml_profile):
                 log.debug("Method has stereotype action/view/form.")
                 action_name = m.getTaggedValue('action','').strip()
                 if not action_name:
@@ -579,18 +577,18 @@ class ArchetypesGenerator(BaseGenerator):
                 else:
                     action_target=action_name
 
-                dict['action']=getExpression(action_target)
-                dict['action_category']=getExpression(m.getTaggedValue('category','object'))
+                dict['action']=utils.getExpression(action_target)
+                dict['action_category']=utils.getExpression(m.getTaggedValue('category','object'))
                 dict['action_id']=m.getTaggedValue('id',method_name)
                 dict['action_label'] = m.getTaggedValue('action_label') or \
                                        m.getTaggedValue('label',method_name)
                 # action_label is deprecated and for backward compability only!
-                dict['permission']=getExpression(m.getTaggedValue('permission','View'))
+                dict['permission']=utils.getExpression(m.getTaggedValue('permission','View'))
 
                 condition=m.getTaggedValue('condition') or '1'
                 dict['condition']='python:'+condition
 
-                if not (m.hasTaggedValue('create_action') and isTGVFalse(m.getTaggedValue('create_action'))):
+                if not (m.hasTaggedValue('create_action') and utils.isTGVFalse(m.getTaggedValue('create_action'))):
                     print >>outfile, ACT_TEMPL % dict
 
             if m.hasStereoType('view', umlprofile=self.uml_profile):
@@ -715,33 +713,28 @@ class ArchetypesGenerator(BaseGenerator):
         default_view = element.getTaggedValue('default_view') or immediate_view
         suppl_views = element.getTaggedValue('suppl_views') or '()'
 
-        # global_allow
-        # Reinout doesn't know what the below is supposed to do... There is no
-        # option 'global_allow', so this hoses everything.
-        #ga = not isTGVFalse(self.getOption('global_allow', element, None))
-
         # In principle, allow globally
-        global_allow = 1
+        global_allow = True
         # Unless it is only contained by another element
         if element.isDependent():
             # WARNING! isDependent() doesn't seem to work,
             # aggregates and compositions aren't detected.
             # 2005-05-11 reinout
-            global_allow = 0
+            global_allow = False
         # Or if it is a hidden element
         if element.hasStereoType('hidden', umlprofile=self.uml_profile):
-            global_allow = 0
+            global_allow = False
         # Or if it is a tool-like thingy
         if (element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile) or
             element.hasStereoType(self.vocabulary_item_stereotype, umlprofile=self.uml_profile) or
             element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile) or
             element.isAbstract()):
-            global_allow = 0
+            global_allow = False
         # But the tagged value overwrites all
-        if isTGVFalse(element.getTaggedValue('global_allow')):
-            global_allow = 0
-        if isTGVTrue(element.getTaggedValue('global_allow')):
-            global_allow = 1
+        if utils.isTGVFalse(element.getTaggedValue('global_allow')):
+            global_allow = False
+        if utils.isTGVTrue(element.getTaggedValue('global_allow')):
+            global_allow = True
 
 
         has_content_icon=''
@@ -762,13 +755,13 @@ class ArchetypesGenerator(BaseGenerator):
             toolicon = element.getCleanName()+'.gif'
 
         # Allow discussion?
-        allow_discussion = element.getTaggedValue('allow_discussion','0')
+        allow_discussion = element.getTaggedValue('allow_discussion', False)
 
         # Filter content types?
         # Filter by default if it's a folder-like thingy
         filter_default = self.elementIsFolderish(element)
         # But a tagged value overrides
-        filter_content_types = isTGVTrue(element.getTaggedValue('filter_content_types',
+        filter_content_types = utils.isTGVTrue(element.getTaggedValue('filter_content_types',
                                                                 filter_default))
         # Set a type description.
 
@@ -776,7 +769,7 @@ class ArchetypesGenerator(BaseGenerator):
                     element.getTaggedValue('label') or \
                     element.getName ()
 
-        typeDescription = getExpression(element.getTaggedValue('typeDescription', typeName))
+        typeDescription = utils.getExpression(element.getTaggedValue('typeDescription', typeName))
 
         res=ftiTempl % {
             'subtypes'             : repr(tuple(subtypes)),
@@ -791,7 +784,7 @@ class ArchetypesGenerator(BaseGenerator):
             'suppl_views'          : suppl_views,
             'filter_content_types' : filter_content_types,
             'typeDescription'      : typeDescription,
-            'type_name_lc'         : element.getName ().lower ()}
+            'type_name_lc'         : element.getName().lower()}
 
         return res
 
@@ -899,9 +892,9 @@ class ArchetypesGenerator(BaseGenerator):
         None:'string',
     }
 
-    hide_classes=['EARootClass','int','float','boolean','long','bool','void','string',
-        'dict','tuple','list','object','integer',
-        'integer','java::lang::int','java::lang::string','java::lang::long',
+    hide_classes=['EARootClass','int','float','boolean','long','bool',
+        'void','string', 'dict','tuple','list','object','integer',
+        'java::lang::int','java::lang::string','java::lang::long',
         'java::lang::float','java::lang::void']+\
         list(typeMap.keys())+list(coerceMap.keys()) # Enterprise Architect and other automagically created crap Dummy Class
 
@@ -953,30 +946,30 @@ class ArchetypesGenerator(BaseGenerator):
         perm=self.getOption('write_permission',element,default=None)
         if perm:
             tgv.update({'write_permission':perm})
-            
+
         # check for global settings
         searchable = self.getOption('searchable', element, default = _marker)
         if searchable is not _marker:
              tgv.update({'searchable': searchable})
-            
+
         # set attributes from tgv
         for k in tgv.keys():
             if k not in noparams and not k.startswith('widget:'):
-                v=tgv[k]
+                v = tgv[k]
                 if v is None:
                     log.warn("Empty tagged value for tag '%s' in field '%s'.",
                              k, element.getName())
                     continue
 
                 if k not in self.nonstring_tgvs:
-                    v=getExpression(v)
+                    v=utils.getExpression(v)
                 # [optilude] Permit python: if people forget they
                 # don't have to (I often do!)
                 else:
-                    if v.startswith ('python:'):
+                    if v.startswith('python:'):
                         v = v[7:]
 
-                map.update( {k: v} )
+                map.update({k: v})
         return map
 
     def getWidget(self, type, element, fieldname, elementclass):
@@ -1021,7 +1014,7 @@ class ArchetypesGenerator(BaseGenerator):
             formatted=''
             for line in tgv['widget'].split('\n'):
                 if formatted:
-                    line=indent(line.strip(),1)
+                    line = utils.indent(line.strip(), 1)
                 formatted+=line+'\n'
             widgetcode =  formatted
 
@@ -1042,7 +1035,7 @@ class ArchetypesGenerator(BaseGenerator):
                 if key == 'type':
                     continue
                 if key not in self.nonstring_tgvs:
-                    val=getExpression(val)
+                    val=utils.getExpression(val)
                 # [optilude] Permit python: if people forget they don't have to (I often do!)
                 else:
                     if val.startswith ('python:'):
@@ -1072,7 +1065,7 @@ class ArchetypesGenerator(BaseGenerator):
                     fieldname
                 )
 
-            widgetcode += indent( \
+            widgetcode += utils.indent( \
                 ',\n'.join(['%s=%s' % (key,widgetmap[key]) for key in widgetmap]),
                 1,
                 skipFirstRow=0) \
@@ -1086,26 +1079,26 @@ class ArchetypesGenerator(BaseGenerator):
         """
 
         log.debug("Trying to get formatted field. name='%s', fieldtype='%s', "
-                  "doc='%s', rawType='%s'.",
-                  name, fieldtype, doc, rawType)
+                  "doc='%s', rawType='%s'.", name, fieldtype, doc, rawType)
         res = ''
 
-        # capitalize only first letter of fields class name, keep camelcase
-        a=rawType[0].upper()
-        rawType=a+rawType[1:]
+        # Capitalize only first letter of fields class name, keep camelcase
+        a = rawType[0].upper()
+        rawType = a + rawType[1:]
 
-        # add comment
+        # Add comment
         if doc:
-            res+=indent(doc,indent_level,'#')+'\n'+res
+            res += utils.indent(doc, indent_level, '#') + '\n' + res
 
         # If this is a generic field and the user entered MySpecialField,
         # then don't suffix it with 'field''
         if rawType.endswith('Field'):
             rawType = rawType[:-5]
 
-        res+=indent("%s('%s',\n" % (fieldtype % {'type':rawType},name), indent_level)
+        res += utils.indent("%s(\n    name='%s',\n" % (
+                   fieldtype % {'type': rawType}, name), indent_level)
         if map:
-            prepend = indent('', indent_level)
+            prepend = utils.indent('', indent_level)
             for key in map:
                 if key.find(':')>=0:
                     continue
@@ -1114,19 +1107,19 @@ class ArchetypesGenerator(BaseGenerator):
                     linebreak = lines.find('\n')
 
                     if linebreak < 0:
-                        linebreak=len(lines)
+                        linebreak = len(lines)
                     firstline = lines[:linebreak]
                 else:
                     firstline = lines
 
-                res+='%s%s=%s' % (prepend, key, firstline)
-                if type(lines) in StringTypes and linebreak<len(lines):
+                res += '%s%s=%s' % (prepend, key, firstline)
+                if type(lines) in StringTypes and linebreak < len(lines):
                     for line in lines[linebreak+1:].split('\n'):
-                        res += "\n%s" % indent(line, indent_level+1)
+                        res += "\n%s" % utils.indent(line, indent_level+1)
 
-                prepend = ',\n%s' % indent('', indent_level+1)
+                prepend = ',\n%s' % utils.indent('', indent_level+1)
 
-        res+='\n%s' % indent('),', indent_level) + '\n'
+        res += '\n%s' % utils.indent('),', indent_level) + '\n'
 
         return res
 
@@ -1156,10 +1149,10 @@ class ArchetypesGenerator(BaseGenerator):
                                                   attr.getName())
             if not 'term_type' in vocaboptions.keys():
                 vocaboptions['term_type'] = 'SimpleVocabularyTerm'
-            
+
             if not 'vocabulary_type' in vocaboptions.keys():
                 vocaboptions['vocabulary_type'] = 'SimpleVocabulary'
-                
+
             map.update( {
                 'vocabulary':'NamedVocabulary("""%s""")' % vocaboptions['name']
             } )
@@ -1192,13 +1185,13 @@ class ArchetypesGenerator(BaseGenerator):
 
         if ctype=='copy':
             name = getattr(attr,'rename_to',attr.getName())
-            field=indent("copied_fields['%s'],\n" % name, indent_level)
+            field = utils.indent("copied_fields['%s'],\n" % name, indent_level)
             return field
 
 
         map=self.typeMap[ctype]['map'].copy()
         if attr.hasDefault():
-            map.update( {'default':getExpression(attr.getDefault())} )
+            map.update( {'default':utils.getExpression(attr.getDefault())} )
         map.update(self.getFieldAttributes(attr))
         widget=self.getWidget( \
                 ctype,
@@ -1238,7 +1231,7 @@ class ArchetypesGenerator(BaseGenerator):
                 map['validators']=expval
 
             del map['validation_expression']
-            
+
 
         res=self.getFieldFormatted(attr.getName(),
             atype,
@@ -1249,8 +1242,8 @@ class ArchetypesGenerator(BaseGenerator):
             )
 
         if attr.getUpperBound() != 1:
-            indent(res,1)
-            res="""ArrayField(%s),""" % indent(res,1)
+            utils.indent(res, 1)
+            res="""ArrayField(%s),""" % utils.indent(res,1)
 
         return res
 
@@ -1415,7 +1408,7 @@ class ArchetypesGenerator(BaseGenerator):
                     if not key.startswith('widget:'):
                         continue
                     if key not in self.nonstring_tgvs:
-                        tgv[key]=getExpression(tgv[key])
+                        tgv[key]=utils.getExpression(tgv[key])
                     print >>outfile, "copied_fields['%s'].widget.%s = %s" % \
                                      (attr.getName(), key[7:], tgv[key])
 
@@ -1427,7 +1420,7 @@ class ArchetypesGenerator(BaseGenerator):
             name = attrDef.getName()
             #if name in self.reservedAtts:
             #    continue
-            mappedName = mapName(name)
+            mappedName = utils.mapName(name)
 
             #print attrDef
 
@@ -1454,29 +1447,29 @@ class ArchetypesGenerator(BaseGenerator):
             for rel in element.getFromAssociations():
                 name = rel.fromEnd.getName()
                 end=rel.fromEnd
-    
+
                 #print 'generating from assoc'
                 if name in self.reservedAtts:
                     continue
                 print >> outfile
-                print >> outfile, self.getFieldStringFromAssociation(rel, 
+                print >> outfile, self.getFieldStringFromAssociation(rel,
                                                     element,
                                                     indent_level=indent_level+1)
-    
+
             #Back References
             for rel in element.getToAssociations():
                 name = rel.fromEnd.getName()
-    
+
                 #print "backreference"
                 if name in self.reservedAtts:
                     continue
-                fc=self.getFieldStringFromBackAssociation(rel, 
+                fc=self.getFieldStringFromBackAssociation(rel,
                                                     element,
                                                     indent_level=indent_level+1)
                 if fc:
                     print >> outfile
                     print >> outfile, fc
-    
+
 
         print >> outfile,'),'
         marshaller=element.getTaggedValue('marshaller') or element.getTaggedValue('marshall')
@@ -1519,14 +1512,11 @@ class ArchetypesGenerator(BaseGenerator):
 
         if self.method_preservation:
             log.debug("We are to preserve methods, so we're looking for manual methods.")
-            cl=self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name,
-                                             None)
+            cl = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name, None)
             if cl:
-                log.debug("The class has the following methods: %r.",
-                          cl.methods.keys())
+                log.debug("The class has the following methods: %r.", cl.methods.keys())
                 manual_methods=[mt for mt in cl.methods.values() if mt.name not in method_names]
-                log.debug("Found the following manual methods: %r.",
-                          manual_methods)
+                log.debug("Found the following manual methods: %r.", manual_methods)
                 if manual_methods:
                     print >> outfile, '    #manually created methods\n'
 
@@ -1565,14 +1555,14 @@ class ArchetypesGenerator(BaseGenerator):
             # declareProtected() by that permission.
             if permissionMode == 'public':
                 rawPerm=m.getTaggedValue('permission',None)
-                permission=getExpression(rawPerm)
+                permission=utils.getExpression(rawPerm)
                 if rawPerm:
-                    print >> outfile,indent("security.declareProtected(%s, '%s')" % (permission,m.getName()),1)
+                    print >> outfile, utils.indent("security.declareProtected(%s, '%s')" % (permission,m.getName()),1)
                 else:
-                    print >> outfile,indent("security.declarePublic('%s')" % (m.getName(),),1)
+                    print >> outfile, utils.indent("security.declarePublic('%s')" % (m.getName(),),1)
             # A private method is always declarePrivate()'d
             elif permissionMode == 'private':
-                print >> outfile,indent("security.declarePrivate('%s')" % (m.getName(),),1)
+                print >> outfile, utils.indent("security.declarePrivate('%s')" % (m.getName(),),1)
 
             # A protected method is also declarePrivate()'d. The semantic
             # meaning of 'protected' is that is hidden from the outside world,
@@ -1581,14 +1571,14 @@ class ArchetypesGenerator(BaseGenerator):
             # such protection). In this case, it's still a privately declared
             # method as far as TTW code is concerned.
             elif permissionMode == 'protected':
-                print >> outfile,indent("security.declarePrivate('%s')" % (m.getName(),),1)
+                print >> outfile, utils.indent("security.declarePrivate('%s')" % (m.getName(),),1)
 
             # A package-level method should be without security declarartion -
             # it is accessible to other methods in the same module, and will
             # use the class/module defaults as far as TTW code is concerned.
             elif permissionMode == 'package':
                 # No declaration
-                print >> outfile,indent("# Use class/module security defaults",1)
+                print >> outfile,utils.indent("# Use class/module security defaults",1)
             else:
                 log.warn("Method visibility should be 'public', 'private', 'protected' or 'package', got '%s'.",
                          permissionMode)
@@ -1613,20 +1603,20 @@ class ArchetypesGenerator(BaseGenerator):
             code=m.taggedValues.get('code','')
             doc=m.getDocumentation(striphtml=self.striphtml)
             if doc is not None:
-                print >> outfile, indent('"""\n%s\n"""' % doc ,2)
+                print >> outfile, utils.indent('"""\n%s\n"""' % doc ,2)
 
             if code and mode=='class':
-                print >> outfile, indent('\n'+code,2)
+                print >> outfile, utils.indent('\n'+code,2)
             else:
-                print >> outfile, indent('\n'+'pass',2)
+                print >> outfile, utils.indent('\n'+'pass',2)
 
         print >> outfile
 
 
     def generateBaseTestcaseClass(self,element,template):
         #write runalltests.py and framework.py
-        runalltests=readTemplate('tests/runalltests.py')
-        framework=readTemplate('tests/framework.py')
+        runalltests=utils.readTemplate('tests/runalltests.py')
+        framework=utils.readTemplate('tests/framework.py')
 
         of=self.makeFile(os.path.join(element.getPackage().getFilePath(),'runalltests.py'))
         of.write(runalltests)
@@ -1640,7 +1630,7 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateDocTestcaseClass(self,element,template ):
         #write runalltests.py and framework.py
-        testdoc_t=readTemplate('tests/testdoc.txt')
+        testdoc_t=utils.readTemplate('tests/testdoc.txt')
         testdoc=HTML(testdoc_t,{'klass':element })()
 
 
@@ -1690,7 +1680,7 @@ class ArchetypesGenerator(BaseGenerator):
         templpath=os.path.join(self.getSkinPath(element),'%s.pt' % element.getCleanName())
         fieldpt=self.readFile(templpath)
         if not fieldpt:
-            templ=readTemplate(zptname)
+            templ=utils.readTemplate(zptname)
             d={ 'klass':element,
                 'generator':self,
                 'parsed_class':element.parsed_class,
@@ -1765,7 +1755,7 @@ class ArchetypesGenerator(BaseGenerator):
         log.debug("Based on this info and the tagged value 'folderish' or the "
                   "stereotypes 'folder' and 'ordered', we look if it's a folder.")
         isFolderish = aggregatedInterfaces or aggregatedClasses or baseaggregatedClasses or \
-                      isTGVTrue(element.getTaggedValue('folderish')) or \
+                      utils.isTGVTrue(element.getTaggedValue('folderish')) or \
                       element.hasStereoType(self.folder_stereotype, umlprofile=self.uml_profile)
         log.debug("End verdict on folderish character: %s.",
                   bool(isFolderish))
@@ -1778,11 +1768,11 @@ class ArchetypesGenerator(BaseGenerator):
                 res.extend(self.getAggregatedInterfaces(b,includeBases=0))
 
         return res
-    
+
     def getArchetypesBase(self, element, parentnames, parent_is_archetype):
         """ find bases (baseclass and baseschema) and return a
             3-tuple (baseclass, baseschema, parentnames)
-            
+
             Normally a one of the Archetypes base classes are set.
             if you dont want it set the TGV to zero '0'
         """
@@ -1835,28 +1825,28 @@ class ArchetypesGenerator(BaseGenerator):
 
         # [optilude] Ignore the standard class if this is an mixin
         # [jensens] An abstract class might have an base_class!
-        if baseclass and not isTGVFalse(element.getTaggedValue('base_class',1)) \
+        if baseclass and not utils.isTGVFalse(element.getTaggedValue('base_class',1)) \
            and not element.hasStereoType('mixin', umlprofile=self.uml_profile):
               baseclasses = baseclass.split(',')
               parentnames += baseclasses
-            
+
         return baseclass, baseschema, parentnames
-        
+
     def generateArchetypesClass(self, element,**kw):
         """this is the all singing all dancing core generator logic for a
-           full featured Archetypes class 
+           full featured Archetypes class
         """
         log.info("%sGenerating class '%s'.",
                  '    '*self.infoind,
                  element.getName())
-                 
+
         name = element.getCleanName()
-        
+
         # prepare file
         outfile=StringIO()
         wrt = outfile.write
         wrt('\n')
-        
+
         # dealing with creation-permissions and -roles for this type
         if self.detailed_created_permissions:
             creation_permission = ("'Add %s Content'" %
@@ -1901,7 +1891,7 @@ class ArchetypesGenerator(BaseGenerator):
             creation_roles = None
 
         # imports needed for optional support of SQLStorage
-        if isTGVTrue(self.getOption('sql_storage_support',element,0)):
+        if utils.isTGVTrue(self.getOption('sql_storage_support',element,0)):
             wrt('from Products.Archetypes.SQLStorage import *\n')
 
         # imports by tagged values
@@ -1949,8 +1939,8 @@ class ArchetypesGenerator(BaseGenerator):
         parent_is_archetype = False
         for p in element.getGenParents():
             parent_is_archetype = parent_is_archetype or \
-                                  p.hasStereoType(self.archetype_stereotype, umlprofile=self.uml_profile)                                  
-                                  
+                                  p.hasStereoType(self.archetype_stereotype, umlprofile=self.uml_profile)
+
         # also check if the parent classes can have subobjects
         baseaggregatedClasses=[]
         for b in element.getGenParents():
@@ -2023,12 +2013,12 @@ class ArchetypesGenerator(BaseGenerator):
         if element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
             for addschema in ['contact_schema', 'plone_schema',
                               'security_schema', 'login_info_schema',]:
-                if isTGVTrue(element.getTaggedValue(addschema, '1')):
+                if utils.isTGVTrue(element.getTaggedValue(addschema, '1')):
                     schema.append('BaseMember.%s' % addschema)
-            if isTGVTrue(element.getTaggedValue(addschema, '1')):
+            if utils.isTGVTrue(element.getTaggedValue(addschema, '1')):
                 schema.append('ExtensibleMetadata.schema')
         schemaName = '%s_schema' % name
-        print >> outfile, indent(schemaName + ' = ' + ' + \\\n    '.join(schema),0)
+        print >> outfile, utils.indent(schemaName + ' = ' + ' + \\\n    '.join(schema),0)
         print >> outfile
 
 
@@ -2060,18 +2050,18 @@ class ArchetypesGenerator(BaseGenerator):
         if element.parsed_class:
             parsedDoc = element.parsed_class.getDocumentation()
         if doc:
-            print >>outfile,indent('"""\n%s\n"""' % doc, 1)
+            print >>outfile,utils.indent('"""\n%s\n"""' % doc, 1)
         elif parsedDoc:
             # Bit tricky, parsedDoc is already indented...
             print >>outfile, '    """%s"""' % parsedDoc
 
-        print >>outfile,indent('security = ClassSecurityInfo()',1)
+        print >>outfile,utils.indent('security = ClassSecurityInfo()',1)
 
         print >>outfile,self.generateImplements(element,parentnames)
         print >>outfile
         header=element.getTaggedValue('class_header')
         if header:
-            print >>outfile,indent(header, 1)
+            print >>outfile,utils.indent(header, 1)
 
         archetype_name=element.getTaggedValue('archetype_name') or element.getTaggedValue('label')
         if not archetype_name:
@@ -2088,7 +2078,7 @@ class ArchetypesGenerator(BaseGenerator):
         #allowed_content_classes
         parentAggregates=''
 
-        if isTGVTrue(element.getTaggedValue('inherit_allowed_types', True)) and element.getGenParents():
+        if utils.isTGVTrue(element.getTaggedValue('inherit_allowed_types', True)) and element.getGenParents():
             act = []
             for gp in element.getGenParents():
                 pt = gp.getTaggedValue('portal_type', None)
@@ -2103,7 +2093,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         #allowed_interfaces
         parentAggregatedInterfaces=''
-        if isTGVTrue(element.getTaggedValue('inherit_allowed_types', True)) and element.getGenParents():
+        if utils.isTGVTrue(element.getTaggedValue('inherit_allowed_types', True)) and element.getGenParents():
             parentAggregatedInterfaces = '+ ' + ' + '.join(tuple(['getattr('+p.getCleanName()+",'allowed_interfaces',[])" for p in element.getGenParents()]))
 
         if aggregatedInterfaces or baseaggregatedInterfaces:
@@ -2119,10 +2109,10 @@ class ArchetypesGenerator(BaseGenerator):
         # _at_rename_after_creation
         rename_after_creation = self.getOption('rename_after_creation', element, default=False)
         if rename_after_creation:
-            print >>outfile, CLASS_RENAME_AFTER_CREATION % (isTGVTrue(rename_after_creation) and 'True' or 'False')
- 
+            print >>outfile, CLASS_RENAME_AFTER_CREATION % (utils.isTGVTrue(rename_after_creation) and 'True' or 'False')
+
         # schema attribute
-        wrt(indent('schema = %s' % schemaName,1)+'\n\n')
+        wrt(utils.indent('schema = %s' % schemaName, 1) + '\n\n')
 
         self.generateProtectedSection(outfile,element,'class-header',1)
 
@@ -2210,15 +2200,15 @@ class ArchetypesGenerator(BaseGenerator):
 
         wrt(s1)
         doc=element.getDocumentation(striphtml=self.striphtml)
-        print >>outfile,indent('"""\n%s\n"""' % doc, 1)
+        print >>outfile,utils.indent('"""\n%s\n"""' % doc, 1)
 
         header=element.getTaggedValue('class_header')
         if header:
-            print >>outfile,indent(header, 1)
+            print >>outfile, utils.indent(header, 1)
 
-        self.generateMethods(outfile,element,mode='interface')
+        self.generateMethods(outfile, element, mode='interface')
 
-        wrt('# end of class %s\n'   % name)
+        wrt('# end of class %s\n' % name)
 
 
     def getAuthors(self, element):
@@ -2230,16 +2220,14 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             log.debug("self.author is already a list, no need to split it.")
         authors = [i.strip() for i in authors]
-        log.debug("Found the following authors: %r.",
-                  authors)
+        log.debug("Found the following authors: %r.", authors)
         log.debug("Getting the email addresses.")
         emails = self.getOption('email', element, self.email) or 'unknown'
         if not type(emails) == type([]):
             # self.email is already a list
             emails = emails.split(',')
         emails = ['<%s>' % i.strip() for i in emails]
-        log.debug("Found the following email addresses: %r.",
-                  emails)
+        log.debug("Found the following email addresses: %r.", emails)
 
         authoremail = []
         for author in authors:
@@ -2248,61 +2236,60 @@ class ArchetypesGenerator(BaseGenerator):
             else:
                 authoremail.append("%s <unknown>" % author)
 
-        authorline = wrap(", ".join(authoremail),77)
+        authorline = utils.wrap(", ".join(authoremail), 77)
 
         return authors, emails, authorline
 
-    def getHeaderInfo(self, element):
-        # Warning: this part of the code uses 'licence', the rest 'license'...
+    def getLicenseInfo(self, element):
+        license_name = self.getOption('license', element, self.license)
+        license = LICENSES.get(license_name)
+        license_text = '%(name)s\n#\n%(text)s' % license
+        log.debug("License: %r.", license_text)
+        return license_text
 
+    def getHeaderInfo(self, element):
         log.debug("Getting info for the header...")
+
         copyright = COPYRIGHT % \
             (str(time.localtime()[0]),
              self.getOption('copyright', element, self.copyright) or self.author)
-        log.debug("Copyright = %r.",
-                  copyright)
+        log.debug("Copyright = %r.", copyright)
 
-        licence = ('\n# ').join( \
-            wrap(self.getOption('license', element, self.license),77).split('\n') )
-        log.debug("License: %r.",
-                  licence)
-
+        license = self.getLicenseInfo(element)
         authors, emails, authorline = self.getAuthors(element)
 
         if self.getOption('rcs_id', element, False):
-            log.debug("Adding rcs-id tag.")
-            rcs_id_tag = '\nRCS-ID $'+'I'+'d'+'$'
+            log.debug("Using $id$ keyword.")
+            filename_or_id = '$Id$'
         else:
-            log.debug("Not creating those pesky svn-unfriendly rcs-id tags.")
-            rcs_id_tag = ''
+            log.debug("Using filename.")
+            filename_or_id = ''
 
         if self.getOption('generated_date', element, False):
             date = '# Generated: %s\n' % time.ctime()
         else:
             date = ''
 
-        if isTGVTrue(self.getOption('version_info',
-                                    element,
-                                    True)):
+        if utils.isTGVTrue(self.getOption('version_info', element, True)):
             log.debug("We want version info in every file.")
-            versiontext = version()
+            versiontext = utils.version()
         elif element.__class__ == XMIParser.XMIModel:
             log.debug("We don't want version info in all files, "
                       "but we do want them in the config and Install.")
-            versiontext = version()
+            versiontext = utils.version()
         else:
             log.debug("We don't want version info in this file.")
             versiontext = ''
 
-        moduleinfo = {  #'purpose':      purposeline,
-                        'authors':      ', '.join(authors),
-                        'emails' :      ', '.join(emails),
-                        'authorline':   authorline,
-                        'version':      versiontext,
-                        'date':         date,
-                        'copyright':    '\n# '.join(wrap(copyright, 77).split('\n')),
-                        'licence':      licence,
-                        'rcs_id_tag':   rcs_id_tag
+        moduleinfo = {
+            'authors': ', '.join(authors),
+            'emails': ', '.join(emails),
+            'authorline': authorline,
+            'version': versiontext,
+            'date': date,
+            'copyright': '\n# '.join(utils.wrap(copyright, 77).split('\n')),
+            'license': license,
+            'filename_or_id': filename_or_id,
         }
 
         return moduleinfo
@@ -2311,7 +2298,8 @@ class ArchetypesGenerator(BaseGenerator):
         if not self.module_info_header:
             return
         fileheaderinfo = self.getHeaderInfo(element)
-        fileheaderinfo.update({'filename': modulename+'.py'})
+        if not fileheaderinfo.get('filename_or_id'):
+            fileheaderinfo.update({'filename_or_id': 'File: %s.py' % modulename})
         outfile.write(MODULE_INFO_HEADER % fileheaderinfo)
 
     def generateHeader(self, element):
@@ -2336,7 +2324,7 @@ class ArchetypesGenerator(BaseGenerator):
                     c.hasStereoType(self.portal_tools, umlprofile=self.uml_profile)]
 
         if autoinstallOnly:
-            res=[c for c in res if isTGVTrue(c.getTaggedValue('autoinstall')) ]
+            res=[c for c in res if utils.isTGVTrue(c.getTaggedValue('autoinstall')) ]
 
         return res
 
@@ -2402,7 +2390,7 @@ class ArchetypesGenerator(BaseGenerator):
         }
         d.update(__builtins__)
 
-        templ=readTemplate('Install.py')
+        templ=utils.readTemplate('Install.py')
         dtml=HTML(templ,d)
         res=dtml()
 
@@ -2423,14 +2411,13 @@ class ArchetypesGenerator(BaseGenerator):
             default_creation_permission = creation_permission
         else:
             default_creation_permission = self.default_creation_permission
-            
+
         roles = []
         creation_roles = []
         for perm in self.creation_permissions:
             if not perm[1] in roles and perm[2] is not None:
                 roles.append(perm[1])
-                creation_roles.append( (perm[1], perm[2]) )            
-        
+                creation_roles.append( (perm[1], perm[2]) )
 
         # prepare (d)TML varibles
         d={'package'                    : package,
@@ -2444,7 +2431,7 @@ class ArchetypesGenerator(BaseGenerator):
         }
         d.update(__builtins__)
 
-        templ=readTemplate('config.py')
+        templ=utils.readTemplate('config.py')
         dtml=HTML(templ,d)
         res=dtml()
 
@@ -2504,7 +2491,7 @@ class ArchetypesGenerator(BaseGenerator):
            'protected_init_section_bottom' : protectedInitCodeB,
         }
 
-        templ=readTemplate('__init__.py')
+        templ=utils.readTemplate('__init__.py')
         dtml=HTML(templ,d)
         res=dtml()
 
@@ -2536,7 +2523,7 @@ class ArchetypesGenerator(BaseGenerator):
            'protected_module_footer'       : footerCode,
            }
 
-        templ=readTemplate('__init_package__.py')
+        templ=utils.readTemplate('__init_package__.py')
         dtml=HTML(templ,d)
         res=dtml()
 
@@ -2581,7 +2568,7 @@ class ArchetypesGenerator(BaseGenerator):
         if self.customization_policy:
             of=self.makeFile(os.path.join(package.getFilePath(),'CustomizationPolicy.py'),0)
             if of:
-                cpTemplate=readTemplate('CustomizationPolicy.py')
+                cpTemplate=utils.readTemplate('CustomizationPolicy.py')
                 d={'package':package,'generator':self}
                 cp=HTML(cpTemplate,d)()
                 of.write(cp)
@@ -2914,7 +2901,7 @@ class ArchetypesGenerator(BaseGenerator):
             # this is needed for some use-cases, where a association class has
             # use an vocabulary with the name ofthe relation
 
-            if isTGVTrue(self.getOption('association_vocabulary', assoc, '0')):
+            if utils.isTGVTrue(self.getOption('association_vocabulary', assoc, '0')):
                 # remember this vocab-name and if set its portal_type
                 currentproduct = package.getProductName()
                 if not currentproduct in self.vocabularymap.keys():
