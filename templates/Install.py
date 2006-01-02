@@ -1,19 +1,4 @@
-<dtml-let infoheader="generator.getHeaderInfo(package)">
-""" Extensions/Install.py """
-
-# <dtml-var "infoheader['copyright']">
-#
-# Generated: <dtml-var "infoheader['date']">
-# Generator: ArchGenXML <dtml-var "infoheader['version']">
-#            http://plone.org/products/archgenxml
-#
-# <dtml-var "infoheader['license']">
-#
-__author__    = '''<dtml-var "infoheader['authorline']">'''
-__docformat__ = 'plaintext'
-__version__   = '$ Revision 0.0 $'[11:-2]
-</dtml-let>
-
+<dtml-var "generator.generateModuleInfoHeader(package)">
 import os.path
 import sys
 from StringIO import StringIO

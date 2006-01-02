@@ -1,19 +1,12 @@
-"""config.py, product configuration.
-
-The contents of this module will be imported into __init__.py, the
-workflow configuration and every content type module.
-
-If you wish to perform custom configuration, you may put a file
-AppConfig.py in your product's root directory. This will be included
-in this file if found.
-"""
-
-<dtml-let infoheader="generator.getHeaderInfo(package)">
-# <dtml-var "infoheader['copyright']">
+<dtml-var "generator.generateModuleInfoHeader(package)">
+# Product configuration.
 #
-# Generator: ArchGenXML <dtml-var "infoheader['version']">
-#            http://plone.org/products/archgenxml
-</dtml-let>
+# The contents of this module will be imported into __init__.py, the
+# workflow configuration and every content type module.
+#
+# If you wish to perform custom configuration, you may put a file
+# AppConfig.py in your product's root directory. This will be included
+# in this file if found.
 
 from Products.CMFCore.CMFCorePermissions import setDefaultRoles
 <dtml-if "[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.cmfmember_stereotype)]">
@@ -30,7 +23,7 @@ except ImportError:
     HAS_PLONE21 = False
 else:
     HAS_PLONE21 = True
-    
+
 # Permissions
 DEFAULT_ADD_CONTENT_PERMISSION = "<dtml-var "default_creation_permission">"
 setDefaultRoles(DEFAULT_ADD_CONTENT_PERMISSION, ('Manager', 'Owner'))
@@ -52,7 +45,7 @@ setDefaultRoles(<dtml-var "creation_roles[index][0]">, <dtml-var "creation_roles
 </dtml-if>
 </dtml-if>
 
-product_globals=globals()
+product_globals = globals()
 
 # Dependencies of Products to be installed by quick-installer
 # override in custom configuration
@@ -72,10 +65,8 @@ JAVASCRIPTS = []
 
 <dtml-var "generator.getProtectedSection(parsed_config,'config-bottom')">
 
-# load custom configuration not managed by ArchGenXML
+# Load custom configuration not managed by ArchGenXML
 try:
     from Products.<dtml-var "package.getProductName ()">.AppConfig import *
 except ImportError:
     pass
-
-# End of config.py

@@ -1,9 +1,9 @@
+<dtml-var "generator.generateModuleInfoHeader(package)">
 from Products.CMFCore.utils import getToolByName
 from Products.ExternalMethod.ExternalMethod import ExternalMethod
 
 def installWorkflows(self, package, out):
-    """Install the custom workflows for this product.
-    """
+    """Install the custom workflows for this product."""
 
     productname = '<dtml-var "package.getCleanName()">'
     workflowTool = getToolByName(self, 'portal_workflow')

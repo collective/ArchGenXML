@@ -1,19 +1,4 @@
-<dtml-let infoheader="atgenerator.getHeaderInfo(package)">
-"""Workflow: <dtml-var "statemachine.getCleanName()">
-"""
-
-# <dtml-var "infoheader['copyright']">
-#
-# Generator: ArchGenXML <dtml-var "infoheader['version']">
-#            http://plone.org/products/archgenxml
-#
-# <dtml-var "infoheader['license']">
-#
-__author__    = '''<dtml-var "infoheader['authorline']">'''
-__docformat__ = 'plaintext'
-__version__   = '$ Revision 0.0 $'[11:-2]
-</dtml-let>
-
+<dtml-var "generator.generateModuleInfoHeader(package)">
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.WorkflowTool import addWorkflowFactory
 from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition

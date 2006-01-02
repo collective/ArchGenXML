@@ -1,16 +1,15 @@
-from Products.CMFPlone.CustomizationPolicy import DefaultCustomizationPolicy
-from Products.CMFPlone.Portal import addPolicy
-from config import PROJECTNAME
+<dtml-var "generator.generateModuleInfoHeader(package)">
 from zLOG import LOG, INFO
+from Products.CMFPlone.Portal import addPolicy
+from Products.CMFPlone.CustomizationPolicy import DefaultCustomizationPolicy
+from config import PROJECTNAME
 
 
 class <dtml-var "package.getProductName()">CustomizationPolicy(DefaultCustomizationPolicy):
-    """ Make a custom Plone for <dtml-var "package.getProductName()"> """
-
+    """Make a custom Plone for <dtml-var "package.getProductName()">."""
 
     def customize(self, portal):
-        """ custom customize method
-        """
+        """Custom customize method."""
         # If the customization Policy id called inside an already existing
         # portal, calling the DefaultCustomizationPolicy.customize is a
         # problem
@@ -21,7 +20,7 @@ class <dtml-var "package.getProductName()">CustomizationPolicy(DefaultCustomizat
         except:
             pass
 
-        # call all methods starting with 'customize'
+        # Call all methods starting with 'customize'
         LOG(PROJECTNAME, INFO, "Customization Policy applied:")
         for method in dir(self):
             if method.startswith('customize') and method!='customize':
@@ -29,7 +28,7 @@ class <dtml-var "package.getProductName()">CustomizationPolicy(DefaultCustomizat
                 eval('self.%s(portal)' % method)
 
     def customize_1_InstallProducts(self, portal):
-        """ Install the product
+        """Install the product.
 
         Note that you can add dependencies to the DEPENDENCIES list in
         config.py, these are auto-installed by Install.py so no need
@@ -38,7 +37,8 @@ class <dtml-var "package.getProductName()">CustomizationPolicy(DefaultCustomizat
         portal.portal_quickinstaller.installProduct(PROJECTNAME)
         get_transaction().commit(1)
 
-    # define your own customize_#_name methods after this line:
+    # Define your own customize_#_name methods after this line
+
 
 def register(context):
     addPolicy('<dtml-var "package.getProductName()">', <dtml-var "package.getProductName()">CustomizationPolicy())

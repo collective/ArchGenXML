@@ -1,17 +1,5 @@
-<dtml-let infoheader="atgenerator.getHeaderInfo(package)">
-""" Workflow Scripts for: <dtml-var "statemachine.getCleanName()"> """
-
-# <dtml-var "infoheader['copyright']">
-#
-<dtml-var "infoheader['date']"># Generator: ArchGenXML <dtml-var "infoheader['version']">
-#            http://sf.net/projects/archetypes/
-#
-# <dtml-var "infoheader['license']">
-#
-__author__    = '''<dtml-var "infoheader['authorline']">'''
-__docformat__ = 'plaintext'
-__version__   = '$ Revision 0.0 $'[11:-2]
-</dtml-let>
+<dtml-var "generator.generateModuleInfoHeader(package)">
+# Workflow Scripts for: <dtml-var "statemachine.getCleanName()">
 
 <dtml-var "generator.getProtectedSection(parsedModule,'workflow-script-header',0)">
 ## <dtml-var "parsedModule.functions.keys()">

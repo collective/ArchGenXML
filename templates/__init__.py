@@ -1,15 +1,13 @@
+<dtml-var "generator.generateModuleInfoHeader(package)">
+# There are three ways to inject custom code here:
 #
-# Initialise the product's module. There are three ways to inject custom code
-# here:
-#
-#   - To set global configuration variables, create a file AppConfig.py. This
-#       will be imported in config.py, which in turn is imported in each
-#       generated class and in this file.
-#   - To perform custom initialisation after types have been registered, use
-#       the protected code section at the bottom of initialize().
+#   - To set global configuration variables, create a file AppConfig.py.
+#       This will be imported in config.py, which in turn is imported in
+#       each generated class and in this file.
+#   - To perform custom initialisation after types have been registered,
+#       use the protected code section at the bottom of initialize().
 #   - To register a customisation policy, create a file CustomizationPolicy.py
-#       with a method register(context) to register the policy
-#
+#       with a method register(context) to register the policy.
 
 from zLOG import LOG, INFO
 
@@ -18,7 +16,7 @@ LOG('<dtml-var "product_name">',INFO, 'Installing Product')
 try:
     import CustomizationPolicy
 except ImportError:
-    CustomizationPolicy=None
+    CustomizationPolicy = None
 
 from Globals import package_home
 from Products.CMFCore import utils as cmfutils
@@ -38,7 +36,7 @@ DirectoryView.registerDirectory('skins/<dtml-var "product_name">',
                                     product_globals)
 <dtml-if "additional_permissions">
 
-# register additional (custom) permissions used by this product
+# Register additional (custom) permissions used by this product
 <dtml-in "additional_permissions">
 <dtml-let permdef="_['sequence-item']">
 CMFCorePermissions.setDefaultRoles('<dtml-var "product_name">: <dtml-var "permdef[0]">',[<dtml-var "','.join(permdef[1])">])
@@ -62,7 +60,7 @@ def initialize(context):
 </dtml-in>
 
 <dtml-if "has_tools">
-    # initialize portal tools
+    # Initialize portal tools
     tools = [<dtml-var "', '.join (tool_names)">]
     ToolInit( PROJECTNAME +' Tools',
                 tools = tools,
@@ -73,7 +71,7 @@ def initialize(context):
                 ).initialize( context )
 
 </dtml-if>
-    # initialize portal content
+    # Initialize portal content
 <dtml-if "creation_permissions">
     all_content_types, all_constructors, all_ftis = process_types(
         listTypes(PROJECTNAME),
@@ -87,7 +85,7 @@ def initialize(context):
         fti                = all_ftis,
         ).initialize(context)
 
-    # give it some extra permissions to control them on a per class limit
+    # Give it some extra permissions to control them on a per class limit
     for i in range(0,len(all_content_types)):
         klassname=all_content_types[i].__name__
         if not klassname in ADD_CONTENT_PERMISSIONS:
@@ -110,7 +108,7 @@ def initialize(context):
         ).initialize(context)
 </dtml-if>
 
-    # apply customization-policy, if theres any
+    # Apply customization-policy, if theres any
     if CustomizationPolicy and hasattr(CustomizationPolicy, 'register'):
         CustomizationPolicy.register(context)
         print 'Customization policy for <dtml-var "product_name"> installed'

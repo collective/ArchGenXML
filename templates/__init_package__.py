@@ -1,14 +1,12 @@
-# Initialise this package. You may add your own code in the protected sections
-# below.
-
+<dtml-var "generator.generateModuleInfoHeader(package)">
 <dtml-var "protected_module_header">
 
-#subpackages
+# Subpackages
 <dtml-in "package_imports">
 import <dtml-var sequence-item>
 </dtml-in>
 
-#classes
+# Classes
 <dtml-if "not package.hasStereoType(['tests'])">
 <dtml-in "class_imports">
 import <dtml-var sequence-item>
