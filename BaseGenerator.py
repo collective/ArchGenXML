@@ -15,6 +15,8 @@ class DummyMarker:
 _marker = DummyMarker()
 
 import os
+import time
+import logging
 from StringIO import StringIO
 
 from documenttemplate.documenttemplate import HTML
@@ -24,21 +26,20 @@ from codesnippets import *
 
 import XSDParser, XMIParser, PyParser
 from UMLProfile import UMLProfile
-import logging
+
 log = logging.getLogger("basegenerator")
 
+
 class BaseGenerator:
-    """ abstract base class for the different concrete generators """
+    """Abstract base class for the different concrete generators."""
 
     uml_profile = UMLProfile()
-    uml_profile.addStereoType('python_class',
-                              ['XMIClass'],
-                              dispatching=1,
-                              generator='generatePythonClass',
-                              template='python_class.py',
-                              description="""Generate this class as a
-                              plain python class instead of as an
-                              archetypes class.""")
+    uml_profile.addStereoType('python_class', ['XMIClass'],
+        dispatching=1,
+        generator='generatePythonClass',
+        template='python_class.py',
+        description='Generate this class as a plain python class '
+                    'instead of as an Archetypes class.')
 
     default_class_type = 'python_class'
 
@@ -55,12 +56,11 @@ class BaseGenerator:
         return self.getUMLProfile().getStereoType(self.default_class_type)
 
     def processExpression(self, value, asString=True):
-        """
-        process the string returned by tagged values:
-            * python: prefixes a python expression
-            * string: prefixes a string
-            * fallback to default, which is string, if asString isnt set to
-              False
+        """Process the string returned by tagged values.
+
+        * python: prefixes a python expression
+        * string: prefixes a string
+        * fallback to default, which is string, if asString isnt set to False
         """
         if value.startswith('python:'):
             return value[7:]
@@ -131,8 +131,10 @@ class BaseGenerator:
         return name.replace(' ','_').replace('.','_').replace('/','_')
 
     def parsePythonModule(self, packagePath, fileName):
-        """Parse a python module and return the module object. This can then
-        be passed to getProtectedSection() to generate protected sections
+        """Parse a python module and return the module object.
+
+        This can then be passed to getProtectedSection() to
+        generate protected sections.
         """
 
         targetPath = os.path.join(self.targetRoot, packagePath, fileName)
@@ -313,7 +315,7 @@ class BaseGenerator:
                                        template=getattr(dispatching_stereotype,
                                                         'template', None))
 
-    def generatePythonClass(self,element,template,**kw):
+    def generatePythonClass(self, element, template, **kw):
         templ = utils.readTemplate(template)
         d = {
             'klass': element,
@@ -324,5 +326,93 @@ class BaseGenerator:
         }
         d.update(__builtins__)
         d.update(kw)
-        res = HTML(templ,d)()
+        res = HTML(templ, d)()
         return res
+
+    def getLicenseInfo(self, element):
+        license_name = self.getOption('license', element, self.license)
+        license = LICENSES.get(license_name)
+        license_text = '%(name)s\n#\n%(text)s' % license
+        log.debug("License: %r.", license_text)
+        return license_text
+
+    def getHeaderInfo(self, element):
+        log.debug("Getting info for the header...")
+
+        copyright = COPYRIGHT % \
+            (str(time.localtime()[0]),
+             self.getOption('copyright', element, self.copyright) or self.author)
+        log.debug("Copyright = %r.", copyright)
+
+        license = self.getLicenseInfo(element)
+        authors, emails, authorline = self.getAuthors(element)
+
+        if self.getOption('rcs_id', element, False):
+            log.debug("Using id keyword.")
+            filename_or_id = '$'+'Id'+'$'
+        else:
+            log.debug("Using filename.")
+            filename_or_id = 'File: %s.py' % element.getModuleName()
+
+        if self.getOption('generated_date', element, False):
+            date = '# Generated: %s\n' % time.ctime()
+        else:
+            date = ''
+
+        if utils.isTGVTrue(self.getOption('version_info', element, True)):
+            log.debug("We want version info in every file.")
+            versiontext = utils.version()
+        elif element.__class__ == XMIParser.XMIModel:
+            log.debug("We don't want version info in all files, "
+                      "but we do want them in the config and Install.")
+            versiontext = utils.version()
+        else:
+            log.debug("We don't want version info in this file.")
+            versiontext = ''
+
+        moduleinfo = {
+            'authors': ', '.join(authors),
+            'emails': ', '.join(emails),
+            'authorline': authorline,
+            'version': versiontext,
+            'date': date,
+            'copyright': '\n# '.join(utils.wrap(copyright, 77).split('\n')),
+            'license': license,
+            'filename_or_id': filename_or_id,
+        }
+        return moduleinfo
+
+    def generateModuleInfoHeader(self, element):
+        if not self.module_info_header:
+            return
+        fileheaderinfo = self.getHeaderInfo(element)
+        return MODULE_INFO_HEADER % fileheaderinfo
+
+    def getAuthors(self, element):
+        log.debug("Getting the authors...")
+        authors = self.getOption('author', element, self.author) or 'unknown'
+        if not type(authors) == type([]):
+            log.debug("Trying to split authors on ','.")
+            authors = authors.split(',')
+        else:
+            log.debug("self.author is already a list, no need to split it.")
+        authors = [i.strip() for i in authors]
+        log.debug("Found the following authors: %r.", authors)
+        log.debug("Getting the email addresses.")
+        emails = self.getOption('email', element, self.email) or 'unknown'
+        if not type(emails) == type([]):
+            # self.email is already a list
+            emails = emails.split(',')
+        emails = ['<%s>' % i.strip() for i in emails]
+        log.debug("Found the following email addresses: %r.", emails)
+
+        authoremail = []
+        for author in authors:
+            if authors.index(author) < len(emails):
+                authoremail.append("%s %s" % (author, emails[authors.index(author)]))
+            else:
+                authoremail.append("%s <unknown>" % author)
+
+        authorline = utils.wrap(", ".join(authoremail), 77)
+
+        return authors, emails, authorline

@@ -9,27 +9,30 @@
 # Licence:     GPL
 #-----------------------------------------------------------------------------
 
-import getopt, os.path, time, sys
-import sets
-from zipfile import ZipFile
-from StringIO import StringIO
-from shutil import copy
-from types import StringTypes
+import sys
+import time
+import os.path
 import logging
-from xml.dom import minidom
-
-# AGX-specific imports
-import XSDParser, XMIParser, PyParser
-from UMLProfile import UMLProfile
-
-from documenttemplate.documenttemplate import HTML
 
 import utils
-from codesnippets import *
 from odict import odict
+from codesnippets import *
+
+from xml.dom import minidom
+from zipfile import ZipFile
+from types import StringTypes
+from StringIO import StringIO
+
+# AGX-specific imports
+import PyParser
+import XMIParser
+import XSDParser
+from UMLProfile import UMLProfile
 
 from BaseGenerator import BaseGenerator
 from WorkflowGenerator import WorkflowGenerator
+
+from documenttemplate.documenttemplate import HTML
 
 _marker = []
 log = logging.getLogger('generator')
@@ -42,353 +45,288 @@ else:
     has_i18ndude = True
 
 try:
-    "abca".strip('a')
+    'abca'.strip('a')
 except:
     has_enhanced_strip_support = False
 else:
     has_enhanced_strip_support = True
 
-
 #
 # Global variables etc.
 #
+
 Elements = []
 AlreadyGenerated = []
 Force = 0
 
 
 class DummyModel:
-    def __init__(self,name=''):
-        self.name=name
+
+    def __init__(self, name=''):
+        self.name = name
+
     def getName(self):
         return self.name
-    getCleanName=getName
-    getFilePath=getName
-    getModuleFilePath=getName
-    getProductModuleName=getName
-    getProductName=getName
+
+    getCleanName = getName
+    getFilePath = getName
+    getModuleFilePath = getName
+    getProductModuleName = getName
+    getProductName = getName
+
     def hasStereoType(self, s, umlprofile=None):
         return True
 
-    def getClasses(self,*a,**kw):
+    def getClasses(self, *a, **kw):
         return []
-    getInterfaces=getClasses
-    getPackages=getClasses
-    getStateMachines=getClasses
-    getAssociations=getClasses
+
+    getInterfaces = getClasses
+    getPackages = getClasses
+    getStateMachines = getClasses
+    getAssociations = getClasses
+
     def isRoot(self):
         return 1
 
-    def getAnnotation(self,*a,**kw):
+    def getAnnotation(self, *a, **kw):
         return None
 
-    def getDocumentation(self,**kw):
+    def getDocumentation(self, **kw):
         return None
-    def hasTaggedValue(*a,**kw):
+
+    def hasTaggedValue(self, *a, **kw):
         return None
-    def getParent(*a,**kw):
+
+    def getParent(self, *a, **kw):
         return None
+
 
 class ArchetypesGenerator(BaseGenerator):
-    generator_generator='archetypes'
-    default_class_type='content_class'
+
+    generator_generator = 'archetypes'
+    default_class_type = 'content_class'
 
     uml_profile = UMLProfile(BaseGenerator.uml_profile)
 
-    uml_profile.addStereoType('portal_tool',
-                              ['XMIClass'],
-                              description="""Turns the class into a portal
-                              tool."""
-                              )
-    uml_profile.addStereoType('stub',
-                              ['XMIClass',
-                              'XMIModel',
-                              'XMIPackage'],
-                              description="""Prevents a
-                              class/package/model from
-                              being generated."""
-                              )
-    uml_profile.addStereoType('odStub',
-                              ['XMIClass',
-                              'XMIModel',
-                              'XMIPackage'],
-                              description="""Prevents a
-                              class/package/model from
-                              being generated. Same as '<<stub>>'."""
-                              )
-    uml_profile.addStereoType('content_class',
-                              ['XMIClass'],
-                              description='TODO',
-                              dispatching=1,
-                              generator='generateArchetypesClass')
-    uml_profile.addStereoType('tests',
-                              ['XMIPackage'],
-                              description="""Treats a package as test
-                              package. Inside such a test package, you
-                              need at a '<<plone_testcase>>' and a
-                              '<<setup_testcase>>'.""")
-    uml_profile.addStereoType('plone_testcase',
-                              ['XMIClass'],
-                              dispatching=1,
-                              description="""Turns a class into the
-                              (needed) base class for all other
-                              '<<testcase>>' and '<<doc_testcase>>'
-                              classes inside a '<<test>>' package.""",
-                              generator='generateBaseTestcaseClass',
-                              template='tests/PloneTestcase.py')
-    uml_profile.addStereoType('testcase',
-                              ['XMIClass'],
-                              dispatching=1,
-                              generator='generateTestcaseClass',
-                              description="""Turns a class into a
-                              testcase. It must subclass a
-                              '<<plone_testcase>>'. Adding an
-                              interface arrow to another class
-                              automatically adds that class's methods
-                              to the testfile for testing.""",
-                              template='tests/GenericTestcase.py')
-    uml_profile.addStereoType('doc_testcase',
-                              ['XMIClass'],
-                              dispatching=1,
-                              generator='generateDocTestcaseClass',
-                              description="""Turns a class into a
-                              doctest class. It must subclass a
-                              '<<plone_testcase>>'.""",
-                              template='tests/DocTestcase.py')
-    uml_profile.addStereoType('setup_testcase',
-                              ['XMIClass'],
-                              dispatching=1,
-                              generator='generateTestcaseClass',
-                              description="""Turns a class into a
-                              testcase for the setup, with pre-defined
-                              common checks.""",
-                              template='tests/SetupTestcase.py')
-    uml_profile.addStereoType('interface_testcase',
-                              ['XMIClass'],
-                              dispatching=1,
-                              generator='generateTestcaseClass',
-                              template='tests/InterfaceTestcase.py')
+    uml_profile.addStereoType('portal_tool', ['XMIClass'],
+        description='Turns the class into a portal tool.')
+
+    uml_profile.addStereoType('stub', ['XMIClass', 'XMIModel', 'XMIPackage'],
+        description='Prevents a class/package/model from being generated.')
+
+    uml_profile.addStereoType('odStub', ['XMIClass', 'XMIModel', 'XMIPackage'],
+        description='Prevents a class/package/model from being generated. '
+                    'Same as "<<stub>>".')
+
+    uml_profile.addStereoType('content_class', ['XMIClass'],
+        dispatching=1,
+        generator='generateArchetypesClass',
+        description='TODO')
+
+    uml_profile.addStereoType('tests', ['XMIPackage'],
+        description='Treats a package as test package. Inside such a test '
+                    'package, you need at a "<<plone_testcase>>" and a '
+                    '"<<setup_testcase>>".')
+
+    uml_profile.addStereoType('plone_testcase', ['XMIClass'],
+        dispatching=1,
+        template='tests/PloneTestcase.py',
+        generator='generateBaseTestcaseClass',
+        description='Turns a class into the (needed) base class for all '
+                    'other "<<testcase>>" and "<<doc_testcase>>" classes '
+                    'inside a "<<test>>" package.')
+
+    uml_profile.addStereoType('testcase', ['XMIClass'],
+        dispatching=1,
+        template='tests/GenericTestcase.py',
+        generator='generateTestcaseClass',
+        description='Turns a class into a testcase. It must subclass a '
+                    '"<<plone_testcase>>". Adding an interface arrow to '
+                    'another class automatically adds that class\'s '
+                    'methods to the testfile for testing.')
+
+    uml_profile.addStereoType('doc_testcase', ['XMIClass'],
+        dispatching=1,
+        template='tests/DocTestcase.py',
+        generator='generateDocTestcaseClass',
+        description='Turns a class into a doctest class. It must subclass '
+                    'a "<<plone_testcase>>".')
+
+    uml_profile.addStereoType('setup_testcase', ['XMIClass'],
+        dispatching=1,
+        generator='generateTestcaseClass',
+        template='tests/SetupTestcase.py',
+        description='Turns a class into a testcase for the setup, with '
+                    'pre-defined common checks.')
+
+    uml_profile.addStereoType('interface_testcase', ['XMIClass'],
+        dispatching=1,
+        generator='generateTestcaseClass',
+        template='tests/InterfaceTestcase.py',
+        description='Turns a class into a testcase for the interfaces.')
+
     # This looks like a tagged value...
-    #     uml_profile.addStereoType('relation_implementation',
-    #                               ['XMIClass',
-    #                                'XMIAssociation',
-    #                                'XMIPackage'],
-    #                               description='specifies how relations should be implemented',
-    #                               default='basic')
-    uml_profile.addStereoType('field',
-                              ['XMIClass'],
-                              dispatching=1,
-                              generator='generateFieldClass',
-                              description="""TODO.""",
-                              template='field.py')
-    uml_profile.addStereoType('widget',
-                              ['XMIClass'],
-                              dispatching=1,
-                              generator='generateWidgetClass',
-                              description="""TODO.""",
-                              template='widget.py')
-    uml_profile.addStereoType('value_class',
-                              ['XMIDependency'],
-                              description="""Declares a class to be
-                              used as value class for a certain field
-                              class (see '<<field>>' stereotype)""")
+    #uml_profile.addStereoType('relation_implementation',
+    #    ['XMIClass', 'XMIAssociation', 'XMIPackage'],
+    #    default='basic',
+    #    description='specifies how relations should be implemented')
 
+    uml_profile.addStereoType('field', ['XMIClass'],
+        dispatching=1,
+        generator='generateFieldClass',
+        template='field.py',
+        description='TODO')
 
-    uml_profile.addStereoType('CMFMember',
-                              ['XMIClass'],
-                              description="""The class will be treated
-                              as a CMFMember member type. It will
-                              derive from CMFMember's Member class and
-                              be installed as a member data
-                              type. Identical to '<<member>>'."""
-                              )
-    uml_profile.addStereoType('member',
-                              ['XMIClass'],
-                              description="""The class will be treated
-                              as a CMFMember member type. It will
-                              derive from CMFMember's Member class and
-                              be installed as a member data
-                              type. Identical to '<<CMFMember>>'."""
-                              )
-    uml_profile.addStereoType('action',
-                              ['XMIMethod'],
-                              description="""Generate a CMF action
-                              which will be available on the
-                              object. The tagged values 'action'
-                              (defaults to method name), 'id'
-                              (defaults to method name), 'category'
-                              (defaults to 'object'), 'label'
-                              (defaults to method name), 'condition'
-                              (defaults to empty), and 'permission'
-                              (defaults to empty) set on the method
-                              and mapped to the equivalent fields of
-                              any CMF action can be used to control
-                              the behaviour of the action."""
-                              )
-    uml_profile.addStereoType('archetype',
-                              ['XMIClass'],
-                              description="""Explicitly specify that a
-                              class represents an Archetypes
-                              type. This may be necessary if you are
-                              including a class as a base class for
-                              another class and ArchGenXML is unable
-                              to determine whether the parent class is
-                              an Archetype or not. Without knowing
-                              that the parent class in an Archetype,
-                              ArchGenXML cannot ensure that the
-                              parent's schema is available in the
-                              derived class."""
-                              )
-    uml_profile.addStereoType('btree',
-                              ['XMIClass'],
-                              description="""Like '<<folder>>', it
-                              generates a folderish object. But it
-                              uses a BTree folder for support of large
-                              amounts of content. The same as '<<large>>'."""
-                              )
-    uml_profile.addStereoType('large',
-                              ['XMIClass'],
-                              description="""Like '<<folder>>', it
-                              generates a folderish object. But it
-                              uses a BTree folder for support of large
-                              amounts of content. The same as '<<large>>'."""
-                              )
-    uml_profile.addStereoType('folder',
-                              ['XMIClass'],
-                              description="""Turns the class into a
-                              folderish object. When a UML class
-                              contains or aggregates other classes, it
-                              is automatically turned into a folder;
-                              this stereotype can be used to turn
-                              normal classes into folders, too."""
-                              )
-    uml_profile.addStereoType('ordered',
-                              ['XMIClass'],
-                              description="""For folderish types,
-                              include folder ordering support. This
-                              will allow the user to re-order items in
-                              the folder manually."""
-                              )
-    uml_profile.addStereoType('form',
-                              ['XMIMethod'],
-                              description="""Generate an action like
-                              with the '<<action>>' stereotype, but
-                              also copy an empty controller
-                              page template to the skins directory
-                              with the same name as the method and set
-                              this up as the target of the action. If
-                              the template already exists, it is not
-                              overwritten."""
-                              )
-    uml_profile.addStereoType('hidden',
-                              ['XMIClass'],
-                              description="""Generate the class, but
-                              turn off 'global_allow', thereby making it
-                              unavailable in the portal by
-                              default. Note that if you use
-                              composition to specify that a type
-                              should be addable only inside another
-                              (folderish) type, then 'global_allow' will
-                              be turned off automatically, and the
-                              type be made addable only inside the
-                              designated parent. (You can use
-                              aggregation instead of composition to
-                              make a type both globally addable and
-                              explicitly addable inside another
-                              folderish type)."""
-                              )
-    uml_profile.addStereoType('mixin',
-                              ['XMIClass'],
-                              description="""Don't inherit
-                              automatically from 'BaseContent' and
-                              so. This makes the class suitable as a
-                              mixin class.""" #TBD: see also <<archetype>>?
-                              )
-    uml_profile.addStereoType('portlet',
-                              ['XMIMethod'],
-                              description="""Create a simple portlet
-                              page template with the same name as the
-                              method. You can override the name by
-                              setting the 'view' tagged value on the
-                              method. If you add a tagged value
-                              'autoinstall' and set it to 'left' or
-                              'right', the portlet will be
-                              automatically installed with your
-                              product in either the left or the right
-                              slot. If the page template already
-                              exists, it will not be overwritten."""
-                              )
-    uml_profile.addStereoType('portlet_view',
-                              ['XMIMethod'],
-                              description="""Create a simple portlet
-                              page template with the same name as the
-                              method. You can override the name by
-                              setting the 'view' tagged value on the
-                              method. If you add a tagged value
-                              'autoinstall' and set it to 'left' or
-                              'right', the portlet will be
-                              automatically installed with your
-                              product in either the left or the right
-                              slot. If the page template already
-                              exists, it will not be overwritten.
-                              Same as '<<portlet>>'."""
-                              )
-    uml_profile.addStereoType('tool',
-                              ['XMIClass'],
-                              description="""Turns the class into a portal
-                              tool. Similar to '<<portal_tool>>'."""
-                              )
-    uml_profile.addStereoType('variable_schema',
-                              ['XMIClass'],
-                              description="""Include variable schema
-                              support in a content type by deriving
-                              from the VariableSchema mixin class."""
-                              )
-    uml_profile.addStereoType('view',
-                              ['XMIMethod'],
-                              description="""Generate an action like
-                              with the '<<action>>' stereotype, but
-                              also copy an empty page
-                              template to the skins directory with the
-                              same name as the method and set this up
-                              as the target of the action. If the
-                              template exists, it is not overwritten."""
-                              )
-    uml_profile.addStereoType('vocabulary',
-                              ['XMIClass'],
-                              description="""TODO: Describe
-                              ATVocabularyManager support."""
-                              )
-    uml_profile.addStereoType('vocabulary_term',
-                              ['XMIClass'],
-                              description="""TODO: Describe
-                              ATVocabularyManager support."""
-                              )
+    uml_profile.addStereoType('widget', ['XMIClass'],
+        dispatching=1,
+        generator='generateWidgetClass',
+        template='widget.py',
+        description='TODO')
 
+    uml_profile.addStereoType('value_class', ['XMIDependency'],
+        description='Declares a class to be used as value class for a '
+                    'certain field class (see "<<field>>" stereotype).')
+
+    uml_profile.addStereoType('CMFMember', ['XMIClass'],
+        description='The class will be treated as a CMFMember member '
+                    'type. It will derive from CMFMember\'s Member '
+                    'class and be installed as a member data type. '
+                    'Identical to "<<member>>".')
+
+    uml_profile.addStereoType('member', ['XMIClass'],
+        description='The class will be treated as a CMFMember member '
+                    'type. It will derive from CMFMember\'s Member '
+                    'class and be installed as a member data type. '
+                    'Identical to "<<CMFMember>>".')
+
+    uml_profile.addStereoType('action', ['XMIMethod'],
+        description='Generate a CMF action which will be available on the '
+                    'object. The tagged values "action" (defaults to method '
+                    'name), "id" (defaults to method name), "category" '
+                    '(defaults to "object"), "label" (defaults to method '
+                    'name), "condition" (defaults to empty), and "permission" '
+                    '(defaults to empty) set on the method and mapped to '
+                    'the equivalent fields of any CMF action can be used to '
+                    'control the behaviour of the action.')
+
+    uml_profile.addStereoType('archetype', ['XMIClass'],
+        description='Explicitly specify that a class represents an Archetypes '
+                    'type. This may be necessary if you are including a class '
+                    'as a base class for another class and ArchGenXML is unable '
+                    'to determine whether the parent class is an Archetype '
+                    'or not. Without knowing that the parent class in an '
+                    'Archetype, ArchGenXML cannot ensure that the parent\'s '
+                    'schema is available in the derived class.')
+
+    uml_profile.addStereoType('btree', ['XMIClass'],
+        description='Like "<<folder>>", it generates a folderish object. '
+                    'But it uses a BTree folder for support of large amounts '
+                    'of content. The same as "<<large>>".')
+
+    uml_profile.addStereoType('large', ['XMIClass'],
+        description='Like "<<folder>>", it generates a folderish object. '
+                    'But it uses a BTree folder for support of large amounts '
+                    'of content. The same as "<<large>>".')
+
+    uml_profile.addStereoType('folder', ['XMIClass'],
+        description='Turns the class into a folderish object. When a UML '
+                    'class contains or aggregates other classes, it is '
+                    'automatically turned into a folder; this stereotype '
+                    'can be used to turn normal classes into folders, too.')
+
+    uml_profile.addStereoType('ordered', ['XMIClass'],
+        description='For folderish types, include folder ordering support. '
+                    'This will allow the user to re-order items in the folder '
+                    'manually.')
+
+    uml_profile.addStereoType('form', ['XMIMethod'],
+        description='Generate an action like with the "<<action>>" stereotype, '
+                    'but also copy an empty controller page template to the '
+                    'skins directory with the same name as the method and set '
+                    'this up as the target of the action. If the template '
+                    'already exists, it is not overwritten.')
+
+    uml_profile.addStereoType('hidden', ['XMIClass'],
+        description='Generate the class, but turn off "global_allow", thereby '
+                    'making it unavailable in the portal by default. Note that '
+                    'if you use composition to specify that a type should be '
+                    'addable only inside another (folderish) type, then '
+                    '"global_allow" will be turned off automatically, and the '
+                    'type be made addable only inside the designated parent. '
+                    '(You can use aggregation instead of composition to make a '
+                    'type both globally addable and explicitly addable inside '
+                    'another folderish type).')
+
+    uml_profile.addStereoType('mixin', ['XMIClass'],
+        description='Don\'t inherit automatically from "BaseContent" and so. '
+                    'This makes the class suitable as a mixin class. See also '
+                    '"<<archetype>>".')
+
+    uml_profile.addStereoType('portlet', ['XMIMethod'],
+        description='Create a simple portlet page template with the same '
+                    'name as the method. You can override the name by setting '
+                    'the "view" tagged value on the method. If you add a '
+                    'tagged value "autoinstall" and set it to "left" or '
+                    '"right", the portlet will be automatically installed '
+                    'with your product in either the left or the right slot. '
+                    'If the page template already exists, it will not be '
+                    'overwritten.')
+
+    uml_profile.addStereoType('portlet_view', ['XMIMethod'],
+        description='Create a simple portlet page template with the same '
+                    'name as the method. You can override the name by setting '
+                    'the "view" tagged value on the method. If you add a '
+                    'tagged value "autoinstall" and set it to "left" or '
+                    '"right", the portlet will be automatically installed '
+                    'with your product in either the left or the right slot. '
+                    'If the page template already exists, it will not be '
+                    'overwritten. Same as "<<portlet>>".')
+
+    uml_profile.addStereoType('tool', ['XMIClass'],
+        description='Turns the class into a portal tool. Similar to '
+                    '"<<portal_tool>>".')
+
+    uml_profile.addStereoType('variable_schema', ['XMIClass'],
+        description='Include variable schema support in a content type by '
+                    'deriving from the VariableSchema mixin class.')
+
+    uml_profile.addStereoType('view', ['XMIMethod'],
+        description='Generate an action like with the "<<action>>" stereotype, '
+                    'but also copy an empty page template to the skins '
+                    'directory with the same name as the method and set this '
+                    'up as the target of the action. If the template exists, '
+                    'it is not overwritten.')
+
+    uml_profile.addStereoType('vocabulary', ['XMIClass'],
+        description='TODO')
+
+    uml_profile.addStereoType('vocabulary_term', ['XMIClass'],
+        description='TODO')
 
     # The defaults here are already handled by OptionParser
     # (And we want only a single authorative source of information :-)
-    #force=1
-    #unknownTypesAsString=0
-    #generateActions=1
-    #generateDefaultActions=0
-    #prefix=''
-    #parse_packages=[] #packages to scan for classes
-    #generate_packages=[] #packages to be generated
-    #noclass=0   # if set no module is reverse engineered,
-    #            #just an empty project + skin is created
-    #ape_support=0 #generate ape config and serializers/gateways for APE
-    #method_preservation=1 #should the method bodies be preserved? defaults now to 0 will change to 1
-    #i18n_content_support=0
 
-    build_msgcatalog=1
-    striphtml=0
+    # force = 1
+    # unknownTypesAsString = 0
+    # generateActions = 1
+    # generateDefaultActions = 0
+    # prefix = ''
+    # parse_packages = [] # Packages to scan for classes
+    # generate_packages = [] # Packages to be generated
+    # noclass = 0 # If set no module is reverse engineered,
+    #             # just an empty project + skin is created
+    # ape_support = 0 # Generate APE config and serializers/gateways?
+    # method_preservation = 1 # Should the method bodies be preserved?
+    # i18n_content_support = 0
 
-    reservedAtts=['id',]
-    portal_tools=['portal_tool','tool']
-    variable_schema='variable_schema'
+    build_msgcatalog = 1
+    striphtml = 0
 
-    stub_stereotypes=['odStub','stub']
+    reservedAtts = ['id']
+    portal_tools = ['portal_tool', 'tool']
+    variable_schema = 'variable_schema'
+
+    stub_stereotypes = ['odStub','stub']
     archetype_stereotype = ['archetype']
     vocabulary_item_stereotype = ['vocabulary_term']
     vocabulary_container_stereotype = ['vocabulary']
@@ -396,39 +334,41 @@ class ArchetypesGenerator(BaseGenerator):
     python_stereotype = ['python', 'python_class']
     folder_stereotype = ['folder', 'ordered', 'large', 'btree']
 
-    i18n_at=['i18n-archetypes','i18n', 'i18n-at']
-    generate_datatypes=['field','compound_field']
+    i18n_at = ['i18n-archetypes', 'i18n', 'i18n-at']
+    generate_datatypes = ['field', 'compound_field']
 
-    left_slots=[]
-    right_slots=[]
-    force_plugin_root=1 #should be 'Products.' be prepended to all absolute paths?
-    customization_policy=0
-    backreferences_support=0
+    left_slots = []
+    right_slots = []
 
-    parsed_class_sources={} #dict containing the parsed sources by class names (for preserving method codes)
-    parsed_sources=[] #list containing the parsed sources (for preserving method codes)
+    # Should be 'Products.' be prepended to all absolute paths?
+    force_plugin_root = 1
 
-    #taggedValues that are not strings, e.g. widget or vocabulary
-    nonstring_tgvs=['widget', 'vocabulary', 'required', 'precision', 'storage',
-                    'enforceVocabulary', 'multiValued', 'visible', 'validators',
-                    'validation_expression', 'sizes', 'original_size',
-                    'max_size', 'searchable']
+    customization_policy = 0
+    backreferences_support = 0
+
+    # Contains the parsed sources by class names (for preserving method codes)
+    parsed_class_sources = {}
+
+    # Contains the parsed sources (for preserving method codes)
+    parsed_sources = []
+
+    # TaggedValues that are not strings, e.g. widget or vocabulary
+    nonstring_tgvs = ['widget', 'vocabulary', 'required', 'precision',
+                      'storage', 'enforceVocabulary', 'multiValued',
+                      'visible', 'validators', 'validation_expression',
+                      'sizes', 'original_size', 'max_size', 'searchable']
 
     msgcatstack = []
 
-    # ATVM integration
-
-    # a vocabularymap collects all used vocabularies
-    # format { productsname: (name, meta_type) }
-    # if metatype is None, it defaults to SimpleVocabulary
+    # ATVM: collects all used vocabularies in the format:
+    # { productsname: (name, meta_type) }
+    # If metatype is None, it defaults to SimpleVocabulary.
     vocabularymap = {}
 
-    # End ATVM integrationer
-
-    # if a reference has the same name as another _and_
-    # its source object is the same, we want only one ReferenceWidget _unless_
-    # we have a tagged value 'single' on the reference
-    reference_groups = list()
+    # If a reference has the same name as another _and_
+    # its source object is the same, we want only one ReferenceWidget
+    # _unless_ we have a tagged value 'single' on the reference
+    reference_groups = []
 
     # for each class an own permission can be defined, how should be able to add
     # it. It default to "Add Portal Content" and
@@ -440,8 +380,7 @@ class ArchetypesGenerator(BaseGenerator):
     def __init__(self, xschemaFileName, **kwargs):
         log.debug("Initializing ArchetypesGenerator. "
                   "We're being passed a file '%s' and keyword "
-                  "arguments %r.",
-                  xschemaFileName, kwargs)
+                  "arguments %r.", xschemaFileName, kwargs)
         self.infoind = 0
         self.xschemaFileName = xschemaFileName
         self.__dict__.update(kwargs)
@@ -449,20 +388,18 @@ class ArchetypesGenerator(BaseGenerator):
                   "OptionParser's options), outfilename is '%s'.",
                   self.outfilename)
         if self.outfilename:
-            #remove trailing delimiters on purpose
+            # Remove trailing delimiters on purpose
             if self.outfilename[-1] in ('/','\\'):
                 self.outfilename = self.outfilename[:-1]
             log.debug("Stripped off the eventual trailing slashes: '%s'.",
                       self.outfilename)
 
-            #split off the parent directory part so that
-            #I can call ArchgenXML.py -o /tmp/prod prod.xmi
-
-            path=os.path.split(self.outfilename)
+            # Split off the parent directory part so that
+            # we can call ArchgenXML.py -o /tmp/prod prod.xmi
+            path = os.path.split(self.outfilename)
             self.targetRoot = path[0]
             log.debug("Targetroot is set to everything except the last "
-                      "directory in the outfilename: %s.",
-                      self.targetRoot)
+                      "directory in the outfilename: %s.", self.targetRoot)
         else:
             log.debug("Outfilename hasn't been set. Setting "
                       "targetroot to the current directory.")
@@ -470,66 +407,63 @@ class ArchetypesGenerator(BaseGenerator):
         log.debug("Initialization finished.")
 
     def makeFile(self, fn, force=1):
-        log.debug("Calling makeFile to create '%s'.",
-                  fn)
-        ffn=os.path.join(self.targetRoot, fn)
-        log.debug("Together with the targetroot that means '%s'.",
-                  ffn)
+        log.debug("Calling makeFile to create '%s'.", fn)
+        ffn = os.path.join(self.targetRoot, fn)
+        log.debug("Together with the targetroot that means '%s'.", ffn)
         return utils.makeFile(ffn, force=force)
 
     def readFile(self,fn):
-        ffn=os.path.join(self.targetRoot,fn)
+        ffn = os.path.join(self.targetRoot, fn)
         return utils.readFile(ffn)
 
     def makeDir(self, fn, force=1):
-        log.debug("Calling makeDir to create '%s'.",
-                  fn)
-        ffn=os.path.join(self.targetRoot,fn)
-        log.debug("Together with the targetroot that means '%s'.",
-                  ffn)
-        return utils.makeDir(ffn,force=force)
+        log.debug("Calling makeDir to create '%s'.", fn)
+        ffn = os.path.join(self.targetRoot, fn)
+        log.debug("Together with the targetroot that means '%s'.", ffn)
+        return utils.makeDir(ffn, force=force)
 
     def getSkinPath(self,element):
-        return os.path.join(element.getRootPackage().getFilePath(),'skins',element.getRootPackage().getModuleName())
+        fp = element.getRootPackage().getFilePath()
+        mn = element.getRootPackage().getModuleName()
+        return os.path.join(fp, 'skins', mn)
 
     def generateDependentImports(self,element):
-
-        res=BaseGenerator.generateDependentImports(self,element)
-        out=StringIO()
-        print >>out,res
-        generate_expression_validator=False
+        out = StringIO()
+        res = BaseGenerator.generateDependentImports(self, element)
+        print >>out, res
+        generate_expression_validator = False
 
         for att in element.getAttributeDefs():
             if att.getTaggedValue('validation_expression'):
-                generate_expression_validator=True
+                generate_expression_validator = True
 
         if generate_expression_validator:
-            print >>out,'from Products.validation.validators import ExpressionValidator'
+            print >>out, 'from Products.validation.validators import ExpressionValidator'
 
-        #check for necessity to import ArrayField
-        import_array_field=False
+        # Check for necessity to import ArrayField
+        import_array_field = False
         for att in element.getAttributeDefs():
             if att.getUpperBound() != 1:
-                import_array_field=1
+                import_array_field = True
                 break
 
         if import_array_field:
-            print >>out,'from Products.CompoundField.ArrayField import ArrayField'
+            print >>out, 'from Products.CompoundField.ArrayField import ArrayField'
 
-        start_marker=True
+        start_marker = True
         for iface in self.getAggregatedInterfaces(element):
             if start_marker:
-                print >>out,'from Products.Archetypes.AllowedTypesByIface import AllowedTypesByIfaceMixin'
-                start_marker=False
+                print >>out, 'from Products.Archetypes.AllowedTypesByIface import AllowedTypesByIfaceMixin'
+                start_marker = False
+            print >>out, 'from %s import %s' % (iface.getQualifiedModuleName(forcePluginRoot=True),iface.getCleanName())
 
-            print >>out,'from %s import %s' % (iface.getQualifiedModuleName(forcePluginRoot=True),iface.getCleanName())
-
-        res=out.getvalue()
-        return res
+        return out.getvalue()
 
     def addMsgid(self,msgid,msgstr,element,fieldname):
-        """add a msgid to the catalog if it not exists. if it exists and not
-           listed in occurrences, then add its occurence."""
+        """Adds a msgid to the catalog if it not exists.
+
+        If it exists and not listed in occurrences, then add its occurence.
+        """
         if has_i18ndude and self.build_msgcatalog and len(self.msgcatstack):
             msgcat=self.msgcatstack[len(self.msgcatstack)-1]
             package=element.getPackage()
@@ -1842,7 +1776,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         name = element.getCleanName()
 
-        # prepare file
+        # Prepare file
         outfile=StringIO()
         wrt = outfile.write
         wrt('\n')
@@ -2210,43 +2144,6 @@ class ArchetypesGenerator(BaseGenerator):
 
         wrt('# end of class %s\n' % name)
 
-
-    def getAuthors(self, element):
-        log.debug("Getting the authors...")
-        authors = self.getOption('author', element, self.author) or 'unknown'
-        if not type(authors) == type([]):
-            log.debug("Trying to split authors on ','.")
-            authors = authors.split(',')
-        else:
-            log.debug("self.author is already a list, no need to split it.")
-        authors = [i.strip() for i in authors]
-        log.debug("Found the following authors: %r.", authors)
-        log.debug("Getting the email addresses.")
-        emails = self.getOption('email', element, self.email) or 'unknown'
-        if not type(emails) == type([]):
-            # self.email is already a list
-            emails = emails.split(',')
-        emails = ['<%s>' % i.strip() for i in emails]
-        log.debug("Found the following email addresses: %r.", emails)
-
-        authoremail = []
-        for author in authors:
-            if authors.index(author) < len(emails):
-                authoremail.append("%s %s" % (author, emails[authors.index(author)]))
-            else:
-                authoremail.append("%s <unknown>" % author)
-
-        authorline = utils.wrap(", ".join(authoremail), 77)
-
-        return authors, emails, authorline
-
-    def getLicenseInfo(self, element):
-        license_name = self.getOption('license', element, self.license)
-        license = LICENSES.get(license_name)
-        license_text = '%(name)s\n#\n%(text)s' % license
-        log.debug("License: %r.", license_text)
-        return license_text
-
     def getHeaderInfo(self, element):
         log.debug("Getting info for the header...")
 
@@ -2263,7 +2160,7 @@ class ArchetypesGenerator(BaseGenerator):
             filename_or_id = '$'+'Id'+'$'
         else:
             log.debug("Using filename.")
-            filename_or_id = ''
+            filename_or_id = 'File: %s.py' % element.getModuleName()
 
         if self.getOption('generated_date', element, False):
             date = '# Generated: %s\n' % time.ctime()
@@ -2294,13 +2191,11 @@ class ArchetypesGenerator(BaseGenerator):
 
         return moduleinfo
 
-    def generateModuleInfoHeader(self, outfile, modulename, element):
+    def generateModuleInfoHeader(self, element):
         if not self.module_info_header:
             return
         fileheaderinfo = self.getHeaderInfo(element)
-        if not fileheaderinfo.get('filename_or_id'):
-            fileheaderinfo.update({'filename_or_id': 'File: %s.py' % modulename})
-        outfile.write(MODULE_INFO_HEADER % fileheaderinfo)
+        return MODULE_INFO_HEADER % fileheaderinfo
 
     def generateHeader(self, element):
         outfile=StringIO()
@@ -2649,7 +2544,6 @@ class ArchetypesGenerator(BaseGenerator):
             module=element.getModuleName()
             package.generatedModules.append(element)
             outfilepath=os.path.join(package.getFilePath(), module+'.py')
-            #print 'writing class:',outfilepath
 
             if self.method_preservation:
                 filename = os.path.join(self.targetRoot, outfilepath)
@@ -2661,7 +2555,6 @@ class ArchetypesGenerator(BaseGenerator):
                               element.getName(), outfilepath)
                     self.parsed_sources.append(mod)
                     for c in mod.classes.values():
-                        #print 'parse module:',c.name
                         self.parsed_class_sources[package.getFilePath()+'/'+c.name]=c
                 except IOError:
                     log.debug("No source found at %s.",
@@ -2674,9 +2567,8 @@ class ArchetypesGenerator(BaseGenerator):
 
             try:
                 outfile=StringIO()
-                #print element.getPackage().getFilePath()+'/'+element.name
                 element.parsed_class = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name,None)
-                self.generateModuleInfoHeader(outfile, module, element)
+                outfile.write(self.generateModuleInfoHeader(element))
                 if not element.isInterface():
                     print >>outfile, self.generateClass(element)
                     generated_classes = package.getAnnotation('generatedClasses') or []
@@ -2914,7 +2806,6 @@ class ArchetypesGenerator(BaseGenerator):
                 else:
                     print "warning: vocabulary with name %s defined more than once." % vocaboptions['name']
 
-
             #/ATVM
 
             package.num_generated_relations += 1
@@ -2923,7 +2814,6 @@ class ArchetypesGenerator(BaseGenerator):
             of=self.makeFile(os.path.join(package.getFilePath(),'relations.xml'))
             print >>of,doc.toprettyxml()
             of.close()
-
 
     def generateProduct(self, root):
         dirMode=0
@@ -2990,9 +2880,6 @@ class ArchetypesGenerator(BaseGenerator):
             self.msgcatstack.append(msgcatalog.MessageCatalog(
                     filename=os.path.join(self.targetRoot, filepath) ))
 
-
-
-
         package=root
         if self.noclass:
             # skip the other generation steps
@@ -3002,7 +2889,6 @@ class ArchetypesGenerator(BaseGenerator):
 
         if self.ape_support:
             self.generateApeConf(root.getFilePath(),root)
-
 
         # write messagecatalog
         if has_i18ndude and self.build_msgcatalog:
@@ -3014,7 +2900,7 @@ class ArchetypesGenerator(BaseGenerator):
 
 
         #start Workflow creation
-        wfg=WorkflowGenerator(package,self)
+        wfg=WorkflowGenerator(package, self)
         wfg.generateWorkflows()
         self.infoind -= 1
         self.creation_permissions = self.creation_permission_stack.pop()
