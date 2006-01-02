@@ -7,11 +7,10 @@ def installWorkflows(self, package, out):
 
     productname = '<dtml-var "package.getCleanName()">'
     workflowTool = getToolByName(self, 'portal_workflow')
-
 <dtml-in "package.getStateMachines()">
 <dtml-let sm="_['sequence-item']">
-    ourProductWorkflow = ExternalMethod('temp',
-                         'temp',
+
+    ourProductWorkflow = ExternalMethod('temp', 'temp',
                          productname+'.'+'<dtml-var "generator.cleanName(sm.getName())">',
                          'create<dtml-var "generator.cleanName(sm.getName())">')
     workflow = ourProductWorkflow(self, '<dtml-var "generator.cleanName(sm.getName())">')

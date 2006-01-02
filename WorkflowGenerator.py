@@ -18,20 +18,19 @@ class WorkflowGenerator(BaseGenerator):
         self.atgenerator = atgenerator
         self.__dict__.update(atgenerator.__dict__)
 
-    # XXX
-    # now i start here something ugly, but i dont have time to cleanup
-    # XMIParsers code - it has too much logic in, which should be in
-    # this class:
-    # permissions from XMI are supposed to be strings upon here. But
-    # we may have an import of an class containing the permissions as
-    # attributes. So lets do an processExpression on each permission.
+    # XXX: now i start here something ugly, but i dont have time to
+    # cleanup XMIParsers code - it has too much logic in, which should
+    # be in this class.
+    # Permissions from XMI are supposed to be strings upon here. But
+    # we may have an import of a class containing the permissions as
+    # attributes. So lets do a processExpression on each permission.
     def getPermissionsDefinitions(self, state):
         pdefs = state.getPermissionsDefinitions()
-        for pdefdict in pdefs:
-            pdefdict['permission'] = self.processExpression(pdefdict['permission'])
+        for p_dict in pdefs:
+            p_dict['permission'] = self.processExpression(p_dict['permission'])
         return pdefs
 
-    # XXX almost same again
+    # XXX: Almost the same again.
     def getAllPermissionNames(self, statemachine):
         source_pdefs = statemachine.getAllPermissionNames()
         result_pdefs = [self.processExpression(pdef) for pdef in source_pdefs]
@@ -52,52 +51,48 @@ class WorkflowGenerator(BaseGenerator):
         }
         d.update(__builtins__)
 
+        extDir = os.path.join(self.package.getFilePath(), 'Extensions')
+        self.atgenerator.makeDir(extDir)
+
         for sm in statemachines:
-
-            extDir = os.path.join(self.package.getFilePath(), 'Extensions')
-            scriptpath = os.path.join(extDir, utils.cleanName(sm.getName())+'.py')
-
-            filesrc = self.atgenerator.readFile(scriptpath) or ''
-            parsedModule = PyModule(filesrc,mode='string')
-
             d['statemachine'] = sm
-            d['parsedModule'] = parsedModule
+            sm_name = utils.cleanName(sm.getName())
 
             # Generate workflow script
-            log.info("Generating workflow '%s'.", sm.getName())
+            log.info("Generating workflow '%s'.", sm_name)
             templ = utils.readTemplate('create_workflow.py')
-            dtml = HTML(templ, d)
-            res = dtml()
-
-            self.atgenerator.makeDir(extDir)
-            of = self.atgenerator.makeFile(scriptpath)
-            of.write(res)
-            of.close()
-
-            # Generate workflow transition script
-            log.info("Generating workflow script(s).")
-            templ = utils.readTemplate('create_workflow_script.py')
-
-            scriptpath = os.path.join(extDir, utils.cleanName(sm.getName())+'_scripts.py')
+            scriptpath = os.path.join(extDir, sm_name + '.py')
             filesrc = self.atgenerator.readFile(scriptpath) or ''
-            parsedModule = PyModule(filesrc,mode='string')
+            parsedModule = PyModule(filesrc, mode='string')
             d['parsedModule'] = parsedModule
             dtml = HTML(templ, d)
-            res=dtml()
-
-            self.atgenerator.makeDir(extDir)
+            res = dtml()
             of = self.atgenerator.makeFile(scriptpath)
             of.write(res)
             of.close()
+
+            # Generate workflow transition script, if any
+            if sm.getAllTransitionActionNames():
+                log.info("Generating workflow script(s).")
+                templ = utils.readTemplate('create_workflow_script.py')
+                scriptpath = os.path.join(extDir, sm_name + '_scripts.py')
+                filesrc = self.atgenerator.readFile(scriptpath) or ''
+                parsedModule = PyModule(filesrc, mode='string')
+                d['parsedModule'] = parsedModule
+                dtml = HTML(templ, d)
+                res = dtml()
+                of = self.atgenerator.makeFile(scriptpath)
+                of.write(res)
+                of.close()
+            else:
+                log.info("Workflow %s has no script(s)." % sm_name)
 
         del d['statemachine']
         templ = utils.readTemplate('InstallWorkflows.py')
-        dtml = HTML(templ,d)
+        dtml = HTML(templ, d)
         res = dtml()
-
-        extDir = os.path.join(self.package.getFilePath(),'Extensions')
-        self.atgenerator.makeDir(extDir)
-        of = self.atgenerator.makeFile(os.path.join(extDir, 'InstallWorkflows.py'))
+        scriptpath = os.path.join(extDir, 'InstallWorkflows.py')
+        of = self.atgenerator.makeFile(scriptpath)
         of.write(res)
         of.close()
 
