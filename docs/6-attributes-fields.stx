@@ -1,0 +1,40 @@
+id: attributes-fields
+title: Basics: Attributes / Fields
+allowDiscussion: 1
+subject: CMFMember
+  Archetypes
+  Workflow
+  Content Types
+  ArchGenXML
+  Information Architecture
+description: How to control the fields of your schema.
+creators: jensens
+effectiveDate: 2004/11/30 18:34:22 Universal
+expirationDate: None
+language: en
+creation_date: 2004/11/30 18:18:18.395 US/Eastern
+modification_date: 2005/12/09 14:21:16.603 Universal
+Content-Type: text/structured
+
+The schema of your content types, generated from the attributes of your model and their tagged values, contains Archetypes fields. Each field has a type and a widget. The "Archetypes documentation":/documentation/archetypes and the quick reference at the end of this document describes which fields are available and what parameters they take as configuration.
+
+usage of tagged values 
+
+ If you set a tagged value on an attribute of your class, in general that tagged value will be passed through as a parameter to the generated Archetypes field. Hence, if you set a tagged value 'enforceVocabulary' to the value '1' on an attribute, you will get 'enforceVocabulary=1' for that field in the generated schema. Similarly, you can set a field's widget properties by prefixing the tagged value with 'widget:'. 'widget:label' sets the label of a widget, for instance.
+
+non-string tagged values
+
+ As before, when reading tagged values, ArchGenXML will generally treat them as strings, with a few exceptions where only non-string values are permitted, such as the 'required' tagged value. If you do not wish your value to be quoted as a string, prefix it with 'python:'. For example, if you set the tagged value 'default' to 'python:["high", "low"]' on a 'lines' attribute, you will get 'default=["high", "low"]' in a LinesField in your schema.
+
+index in catalog
+
+ To create an index in portal_catalog for this field add the tagged value 
+'index' with value 'FieldIndex'. An FieldIndex with the name of the fields 
+accessor (e.g. get<Fieldname>) gets created.
+
+Multiple indexes can be defined in a tuple, indexes for special catalogs can 
+be prefixed with the catalog name following a '/' (e.g. 'python:("FieldIndex", 
+"member_catalog/TextIndex")')
+
+To include the index in catalog metadata (and have the attribute ready to use 
+in the brain objects), append ':brains' (same as older ':schema'), (e.g. 'FieldIndex:brains')

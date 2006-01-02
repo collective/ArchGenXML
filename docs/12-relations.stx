@@ -1,0 +1,48 @@
+id: relations
+title: Third Party Product Integration: Relations
+allowDiscussion: 1
+subject: 
+description: Create relations between portal-types model-driven. Support for Relations Product (complex references). Define sets of rules for validation, creation and lifetime of Archetypes references. ArchGenXML can generate the necessary code and XML-configuration data to use this product.
+creators: jensens
+effectiveDate: 2005/06/09 11:35:36.544 GMT-4
+expirationDate: None
+language: en
+creation_date: 2005/06/09 10:47:16.713 GMT-4
+modification_date: 2005/06/09 13:29:58.042 GMT-4
+Content-Type: text/structured
+
+Prerequisites
+
+ To enable Relations install the Product ("code-location":http://svn.plone.org/archetypes/Relations/).
+
+Basics
+
+ As an option on command line,  up to a tagged-value on model-level or on a single UML-Assoziation you just define the 
+'relation_implementation' and set it to 'relations'. A directed Assoziation results in one Relation. 
+
+ Give the assoziation and its assoziation ends names. They'll be used as the names for the RelationField. 
+
+Inverse Relation
+
+ If the assoziation is not directed (navigable on both assoziation ends) an inverse relation will be created. 
+
+ The tagged-value 'inverse_relation_name' will be used for the back-relation on undirected assoziations. It defaults to the assoziation name postfixed by '_inverse'.
+
+Cardinality
+
+ You can use the Multiplicity on in UML to  define the cardinality of an Relation. 
+You can use the minimum and maximun value here using the syntax '1..5' which means at least one relationrelated objects but not more than five.
+
+Constraints
+ 
+ type-constraint -- as described above an assoziation between two portal-types will be created.
+
+ interface-constraint -- an assoziation between an archetypes class and an interface will create an interface-constraint. the relation is allowed to all classes implementing this interface.
+
+Assoziation classes
+
+ Assoziation classes can be used to store data on the relation as an object. You can model it using the UML assoziation class or using a tagged value 'association_class' on the assoziation.
+
+
+
+

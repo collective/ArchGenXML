@@ -1,0 +1,110 @@
+id: installation
+title: Installation
+allowDiscussion: 1
+subject: 
+description: How to install ArchGenXML and get up and running.
+creators: jensens
+effectiveDate: 2004/11/30 18:34:22 Universal
+expirationDate: None
+language: en
+creation_date: 2004/11/30 16:01:05.604 US/Eastern
+modification_date: 2005/12/09 14:21:15.940 Universal
+Content-Type: text/structured
+
+ArchGenXML
+
+ Preconditions
+
+  - You will need a working Python interpreter, version 2.3 or later.
+
+  - You will need Plone 2 installed (choose the latest stable release) and its dependencies to see your generated code in action.
+
+  - We also recommend to upgrade Archetypes to the latest stable release, preferrably 1.3.x or later.
+
+ Download
+
+  You need to download the release tarball of ArchGenXML from Sourceforge. You'll find it in the 'files' area of the "Archetypes-project":http://sourceforge.net/project/showfiles.php?group_id=75272&package_id=103241. Choose the most recent version or use the bleeding edge development version from the "Subversion repository":http://svn.plone.org/archetypes/ArchGenXML/trunk/.
+
+ Installation
+
+  Simply un-tar the downloaded file to a directory of your choice and remember the path to ArchGenXML.py. You *do not* have to put it in Zope's Products directory!
+
+  If you are running on a unix-like operating system, we suggest you give the file execution permissions and make a symbolic link at a place mentioned in your 'PATH' environment variable. That way, you can execute ArchGenXML simply with the command 'ArchGenXML.py'.
+
+  **Note:** The installation will be handled by dist-utils in one of the next releases, which should make it a lot easier. :-)
+
+ Additional software
+
+  To get all the features of ArchGenXML, you may need some of the following.
+
+  For code generation:
+
+   i18ndude -- Without this, the generation of translatable user interface strings is disabled. Download and install i18ndude from the "plone-i18n":http://sourceforge.net/projects/plone-i18n project on Sourceforge.net.
+
+   Stripogram -- Some UML tools produce HTML in the documentation elements in XMI. Stripogram converts them into plain text. Without having Stripogram installed this feature is disabled. Download and install stripogram from the "squishdot":http://sourceforge.net/project/showfiles.php?group_id=1083&package_id=34645 project on sourceforge.net.
+
+  For running the generated code
+
+   ATVocabularyManager -- Enables usage of custom dynamic vocabularies. Download and install ATVocabularyManager directly from "Archetypes SVN":http://svn.plone.org/archetypes/ATVocabularyManager/trunk/.
+
+UML Tools
+
+ ArchGenXML processes models stored in "XMI":http://www.omg.org/technology/documents/formal/xmi.htm. This XML format isn't intended to be written in a plain text editor nor in a tree based XML editor, so you will almost certainly use a UML design tool. Below is a more or less complete list of such tools. If you know about any others tools missing from this list, have more detailed information or have experience with a tool in combination with ArchGenXML, please write the author a short e-mail.
+
+Poseidon (by Gentleware) -- Website and download: "www.gentleware.com":http://www.gentleware.com/, 
+
+ * <div class="portalMessage">Do <b>not use Version 3.1</b>, there are problems with reading of old models and generation of workflows! <b>Use 3.0.x instead.</b></div>
+ 
+ * Commercial software - Community Edition freely available, supports XMI version 1.2
+
+ * Written in Java, runs on most platforms
+
+ * Based on ArgoUML
+
+ * Stores the model natively as XMI + diagram information in .zuml files (zip files)
+
+ * Is very slow
+
+ * Needs lots of memory and a fast CPU
+
+ * This author's preferred choice
+
+ArgoUML -- Website and download: "argouml.tigris.org":http://argouml.tigris.org/
+
+ * Free software 
+
+ * Written in Java
+
+ * Runs on most platforms
+
+ * Stores the model natively as XMI + diagram information in .zuml files (zip files)
+
+ * Some known, but non-critical bugs
+
+ObjectDomain -- Website and download: "objectdomain.com":http://objectdomain.com/
+
+ * Commercial, free time-limited demo for <= 30 classes
+
+ * Written in Java
+
+ * Runs on most platforms
+
+ * Needs to export model from its native .odm format
+
+Powerdesigner (by Sybase) -- Website and download: "sybase.com":http://www.sybase.com/
+
+ * XMI version 1.1
+
+ * Needs to export model
+
+Umbrello (KDE) -- Website and download: "uml.sourceforge.net":http://uml.sourceforge.net/
+
+ * Free software
+
+ * Runs under Linux/KDE
+
+ * Stores the model natively as XMI
+
+ * At the time of testing (somewhere in the first half of 2004), Umbrello wasn't complete and the XMI not 100% standards compliant. Umbrello "promises":http://uml.sourceforge.net/feature.php to support XMI correctly on version 1.4, which will be shipped with KDE 3.4.
+
+An almost complete list of UML tools can be found at "www.jeckle.de/umltools.htm":http://www.jeckle.de/umltools.htm.
