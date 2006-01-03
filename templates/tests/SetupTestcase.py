@@ -129,6 +129,5 @@ def test_suite():
     return suite
 
 <dtml-var "generator.getProtectedSection(parsed_class, 'module-footer')">
-
 if __name__ == '__main__':
     framework()

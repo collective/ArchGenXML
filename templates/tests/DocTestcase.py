@@ -4,24 +4,26 @@ if __name__ == '__main__':
 
 <dtml-var "generator.getProtectedSection(parsed_class, 'module-header')">
 #
-# test-cases for class(es) <dtml-var "', '.join([p.getName() for p in klass.getRealizationParents()])">
+# Test-cases for class(es) <dtml-var "', '.join([p.getName() for p in klass.getRealizationParents()])">
 #
-import os, sys
+
 from Testing import ZopeTestCase
 <dtml-if "parent is not None">
 from <dtml-var "parent.getQualifiedModuleName(None,forcePluginRoot=1)"> import <dtml-var "parent.getCleanName()">
 <dtml-else>
 from Products.PloneTestCase.PloneTestCase import PloneTestCase
 </dtml-if>
-# import the tested classes
+
+# Import the tested classes
 <dtml-in "klass.getRealizationParents() + klass.getClientDependencyClasses(includeParents=True)">
 from <dtml-var "_['sequence-item'].getQualifiedModuleName(None, forcePluginRoot=1)"> import <dtml-var "_['sequence-item'].getCleanName()">
 </dtml-in>
 
+
 class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCleanName()">)<dtml-else>(PloneTestCase)</dtml-if>:
 <dtml-if "parsed_class and parsed_class.getDocumentation()">    """<dtml-var "parsed_class.getDocumentation()">"""
-<dtml-else>    """ test-cases for class(es) <dtml-var "', '.join([p.getName() for p in klass.getRealizationParents()])">
-    """</dtml-if>
+<dtml-else>    """Test-cases for class(es) <dtml-var "', '.join([p.getName() for p in klass.getRealizationParents()])">."""
+</dtml-if>
 
 <dtml-var "generator.getProtectedSection(parsed_class, 'class-header_'+klass.getCleanName(), 1)">
 <dtml-if "not parsed_class or 'afterSetUp' not in parsed_class.methods.keys()">
@@ -30,8 +32,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
         """
         pass
 <dtml-else>
-<dtml-var "parsed_class.methods['afterSetUp'].getSrc()">
-</dtml-if>
+<dtml-var "parsed_class.methods['afterSetUp'].getSrc()"></dtml-if>
 
     # Manually created methods
 <dtml-if parsed_class>
@@ -55,8 +56,6 @@ def test_suite():
                          test_class=<dtml-var "klass.getCleanName()">),
     ))
 
-
 <dtml-var "generator.getProtectedSection(parsed_class, 'module-footer')">
-
 if __name__ == '__main__':
     framework()

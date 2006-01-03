@@ -1416,7 +1416,7 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateMethods(self, outfile, element, mode='class'):
         print >> outfile
-        print >> outfile,'    #Methods'
+        print >> outfile,'    # Methods'
 
         generatedMethods=[]
         allmethnames=[m.getName() for m in element.getMethodDefs(recursive=1)]
@@ -1430,7 +1430,7 @@ class ArchetypesGenerator(BaseGenerator):
             meths=[m for m in interface.getMethodDefs(recursive=1) if m.getName() not in allmethnames]
             # i dont want to extra generate methods that are already defined in the class
             if meths:
-                print >>outfile,'    #methods from Interface %s'%interface.getName()
+                print >>outfile,'    # Methods from Interface %s'%interface.getName()
                 for m in meths:
                     self.generateMethod(outfile,m,element,mode=mode)
                     generatedMethods.append(m)
@@ -1452,7 +1452,7 @@ class ArchetypesGenerator(BaseGenerator):
                 manual_methods=[mt for mt in cl.methods.values() if mt.name not in method_names]
                 log.debug("Found the following manual methods: %r.", manual_methods)
                 if manual_methods:
-                    print >> outfile, '    #manually created methods\n'
+                    print >> outfile, '    # Manually created methods\n'
 
                 for mt in manual_methods:
                     declaration = cl.getProtectionDeclaration(mt.getName())
@@ -1473,7 +1473,6 @@ class ArchetypesGenerator(BaseGenerator):
         if params:
             paramstr=','+','.join(params)
             #print paramstr
-        print >> outfile
 
         if mode == 'class':
             # [optilude] Added check for permission:mode - public (default), private or protected
@@ -1543,9 +1542,6 @@ class ArchetypesGenerator(BaseGenerator):
                 print >> outfile, utils.indent('\n'+code,2)
             else:
                 print >> outfile, utils.indent('\n'+'pass',2)
-
-        print >> outfile
-
 
     def generateBaseTestcaseClass(self,element,template):
         #write runalltests.py and framework.py
