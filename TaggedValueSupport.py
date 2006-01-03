@@ -599,6 +599,13 @@ tagname = 'vocabulary:type'
 explanation = """Enables support for Products 'ATVocabularyManager' by setting value to 'ATVocabularyManager'. """
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'vocabulary:term_type'
+explanation = """For use with 'ATVocabularyManager'. Defaults to
+'SimplevocabularyTerm'. Let you define the portal_type of the
+vocabularyterm used for the default term that is created in
+Install.py."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'vocabulary:vocabulary_type'
 explanation = """For use with 'ATVocabularyManager'. Defaults to 'Simplevocabulary'.
 Let you define the portal_type of the vocabulary used as initial vocabulary at
