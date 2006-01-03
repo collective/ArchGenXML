@@ -42,7 +42,6 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 </dtml-if>
 <dtml-if "parsed_class and mn in parsed_class.methods.keys()">
 <dtml-var "parsed_class.methods[mn].getSrc()">
-
 <dtml-else>
     def <dtml-var "mn">(self):
 <dtml-let name="'temp_'+m.getParent().getCleanName()">
