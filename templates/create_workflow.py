@@ -14,7 +14,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, workflow):
     """
 <dtml-let additional_roles="statemachine.getAllRoles(ignore=['Owner','Manager','Member','Reviewer','Authenticated','Anonymous'])">
 <dtml-if "additional_roles">
-    # add additional roles to portal
+    # Add additional roles to portal
     portal = getToolByName(self,'portal_url').getPortalObject()
     data = list(portal.__ac_roles__)
     for role in <dtml-var "additional_roles">:
@@ -67,10 +67,11 @@ def setup<dtml-var "statemachine.getCleanName()">(self, workflow):
 <dtml-let transition="_['sequence-item']">
 <dtml-if "transition.getAction()">
 
-    ##creation of workflow scripts
+    ## Creation of workflow scripts
     for wf_scriptname in <dtml-var "repr(transition.getAction().getUsedActionNames())">:
         if not wf_scriptname in workflow.scripts.objectIds():
-            workflow.scripts._setObject(wf_scriptname,ExternalMethod(wf_scriptname, wf_scriptname,
+            workflow.scripts._setObject(wf_scriptname,
+                ExternalMethod(wf_scriptname, wf_scriptname,
                 productname + '.<dtml-var "statemachine.getCleanName()">_scripts',
                 wf_scriptname))
 </dtml-if>
