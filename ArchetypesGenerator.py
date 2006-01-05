@@ -1162,7 +1162,7 @@ class ArchetypesGenerator(BaseGenerator):
             if map.has_key('validators'):
                 map['validators']=repr(map.get('validators',()))+'+('+','.join(expval)+',)'
             else:
-                map['validators']=expval
+                map['validators'] = '(' + ','.join(expval) + ',)'
 
             del map['validation_expression']
 
