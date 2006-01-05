@@ -494,6 +494,10 @@ tagname = 'validation_expression'
 explanation = """Use an ExpressionValidator and sets the by value given expression. """
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'validation_expression_errormsg'
+explanation = """Sets the error message to the ExpressionValidator (use with validation_expression to define the validation expression to which this error message applies). """
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'description'
 explanation = """Sets an description for this field. It's used for field documentation while registering inside Archetypes."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
