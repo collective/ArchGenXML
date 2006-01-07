@@ -45,7 +45,7 @@ testcase = <dtml-if "parent is not None"><dtml-var "parent.getCleanName()"><dtml
 
 
 <dtml-var "generator.getProtectedSection(parsed_class,'module-before-plone-site-setup')">
-PloneTestCase.setupPloneSite(products=PRODUCTS<dtml-if "klass.getTaggedValue('policy', None)">, policy="<dtml-var "klass.getTaggedValue('policy')">"</dtml-if>)
+PloneTestCase.setupPloneSite(products=PRODUCTS<dtml-if "klass.getTaggedValue('policy', None)">, policy=<dtml-var "generator.processExpression(klass.getTaggedValue('policy'))"></dtml-if>)
 
 class <dtml-var "klass.getCleanName()">(testcase):
     """Base TestCase for <dtml-var "klass.getPackage().getProductName()">."""
@@ -53,7 +53,7 @@ class <dtml-var "klass.getCleanName()">(testcase):
 <dtml-var "generator.getProtectedSection(parsed_class,'class-header_'+klass.getCleanName(),1)">
     # Commented out for now, it gets blasted at the moment anyway.
     # Place it in the protected section if you need it.
-    #def afterSetUp(self):
+    #def afterSetup(self):
     #    """
     #    """
     #    pass
