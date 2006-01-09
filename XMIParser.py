@@ -454,13 +454,11 @@ class XMI1_1 (XMI1_0):
     PACKAGE = 'UML:Package'
 
     # To match up a CR with the right start state, we look out for the context
-    MULTIPLICITY = ['UML:StructuralFeature.multiplicity',
-                    'UML2:TypedElement.multiplicity']
+    MULTIPLICITY = 'UML:StructuralFeature.multiplicity'
     ATTRIBUTE = 'UML:Attribute'
     DATATYPE = 'UML:DataType'
     FEATURE = 'UML:Classifier.feature'
-    TYPE = ['UML:StructuralFeature.type',
-            'UML2:TypedElement.type']
+    TYPE = 'UML:StructuralFeature.type'
     CLASSIFIER = 'UML:Classifier'
     ASSOCIATION = 'UML:Association'
     AGGREGATION = 'UML:AssociationEnd.aggregation'
