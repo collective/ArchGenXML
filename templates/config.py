@@ -58,7 +58,7 @@ PRODUCT_DEPENDENCIES = []
 # You can overwrite these two in an AppConfig.py:
 # STYLESHEETS = [{'id': 'my_global_stylesheet.css'},
 #                {'id': 'my_contenttype.css',
-#                 'expression': 'python:object.getTypeInfo().getId() == "MyType"}]
+#                 'expression': 'python:object.getTypeInfo().getId() == "MyType"'}]
 # You can do the same with JAVASCRIPTS.
 STYLESHEETS = []
 JAVASCRIPTS = []
