@@ -8,6 +8,7 @@ if __name__ == '__main__':
 #
 
 from Testing import ZopeTestCase
+from Products.<dtml-var "klass.getPackage().getProductName()">.config import *
 <dtml-if "parent is not None">
 from <dtml-var "parent.getQualifiedModuleName(None,forcePluginRoot=1)"> import <dtml-var "parent.getCleanName()">
 <dtml-else>
