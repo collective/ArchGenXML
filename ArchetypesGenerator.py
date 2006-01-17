@@ -355,7 +355,7 @@ class ArchetypesGenerator(BaseGenerator):
     # TaggedValues that are not strings, e.g. widget or vocabulary
     nonstring_tgvs = ['widget', 'vocabulary', 'required', 'precision',
                       'storage', 'enforceVocabulary', 'multiValued',
-                      'visible', 'validators', 'validation_expression',
+                      'visible', 'validators', 'validation_expression',                      
                       'sizes', 'original_size', 'max_size', 'searchable']
 
     msgcatstack = []
@@ -1173,6 +1173,8 @@ class ArchetypesGenerator(BaseGenerator):
                 map['validators'] = '(' + ','.join(expval) + ',)'
 
             del map['validation_expression']
+            if map.has_key('validation_expression_errormsg'):
+                del map['validation_expression_errormsg']
 
 
         res=self.getFieldFormatted(attr.getName(),
