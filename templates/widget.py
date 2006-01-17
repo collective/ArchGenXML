@@ -1,14 +1,11 @@
-from AccessControl import ClassSecurityInfo
-from Products.Archetypes.Widget import TypesWidget
-
 from types import ListType, TupleType, StringTypes
+
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base
 
 from Products.CMFCore.utils import getToolByName
 
-from Products.Archetypes.Field import ObjectField,encode,decode
-from Products.Archetypes.Registry import registerField
+from Products.Archetypes.Registry import registerWidget
 from Products.Archetypes.utils import DisplayList
 from Products.Archetypes import config as atconfig
 from Products.Archetypes.Widget import *
@@ -25,9 +22,11 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
 <dtml-var "generator.generateImplements(klass,['TypesWidget']+[p.getCleanName() for p in klass.getGenParents()])">
     _properties = <dtml-var parentname>._properties.copy()
     _properties.update({
-        'macro' : '<dtml-var "klass.getName()">',
+        'macro' : '<dtml-var "klass.getTaggedValue('macro', klass.getCleanName())">',
+<dtml-if "not klass.getGenParents()">        
         'size' : '30',
         'maxlength' : '255',
+</dtml-if>
 <dtml-var "generator.getProtectedSection(parsed_class,'widget-properties',2)">
         })
 
@@ -52,7 +51,12 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
 <dtml-var "_['sequence-item'].getSrc()">
 </dtml-in>
 
-
+registerWidget(<dtml-var "klass.getCleanName()">,
+               title='<dtml-var "klass.getTaggedValue('title', klass.getCleanName())">',
+               
+               description=('<dtml-var "klass.getTaggedValue('description', 'no description given')">'),
+               used_for=('<dtml-var "klass.getTaggedValue('description', 'Products.Archetypes.Field.StringField')">',)
+               )
 <dtml-var "generator.getProtectedSection(parsed_class,'module-footer')">
 
 

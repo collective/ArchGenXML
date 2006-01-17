@@ -1158,15 +1158,14 @@ class ArchetypesGenerator(BaseGenerator):
         if map.has_key('validation_expression'):
             #append the validation_expression to the validators
             expressions = attr.getTaggedValue('validation_expression').split('\n')
-            expval = ["ExpressionValidator('python:%s')" % expression for expression in expressions]
             errormsgs = attr.getTaggedValue('validation_expression_errormsg').split('\n')
             if errormsgs and errormsgs != [''] and len(errormsgs) != len(expressions):
-                log.critical('validation_expression and validation_expression_errormsg tagged value must have the same size (%s,%s)' %(expressions,errormsgs))
-            def corresponding_error(errormsgs,ind):
+                log.critical('validation_expression and validation_expression_errormsg tagged value must have the same size (%s, %s)' %(expressions,errormsgs))
+            def corresponding_error(errormsgs, ind):
                 if errormsgs and errormsgs != ['']:
-                    return ",'"+errormsgs[ind]+"'"
+                    return ", '"+errormsgs[ind]+"'"
                 return ""
-            expval = ["ExpressionValidator('python:%s'%s)" %(expression,corresponding_error(errormsgs,exp_index)) for exp_index,expression in enumerate(expressions)]
+            expval = ["""ExpressionValidator('''python:%s'''%s)""" %(expression,corresponding_error(errormsgs,exp_index)) for exp_index,expression in enumerate(expressions)]
 
             if map.has_key('validators'):
                 map['validators']=repr(map.get('validators',()))+'+('+','.join(expval)+',)'
@@ -1611,20 +1610,21 @@ class ArchetypesGenerator(BaseGenerator):
 
         return BaseGenerator.generatePythonClass(self, element, template, parent=parent, **kw)
 
-    def generateWidgetClass(self,element,template,zptname='widget.pt'):
-        log.debug("Generating widget '%s'.",
+    def generateWidgetClass(self, element, template, zptname='widget.pt'):
+        log.info("Generating widget '%s'.",
                   element.getName())
 
         #generate the template
-        templpath=os.path.join(self.getSkinPath(element),'%s.pt' % element.getCleanName())
+        macroname = '%s.pt' % element.getTaggedValue('macro', element.getCleanName())
+        templpath=os.path.join(self.getSkinPath(element), macroname)
         fieldpt=self.readFile(templpath)
         if not fieldpt:
             templ=utils.readTemplate(zptname)
-            d={ 'klass':element,
-                'generator':self,
-                'parsed_class':element.parsed_class,
-                'builtins'   : __builtins__,
-                'utils'       :utils,
+            d={ 'klass':        element,
+                'generator':    self,
+                'parsed_class': element.parsed_class,
+                'builtins':     __builtins__,
+                'utils':        utils,
 
                 }
             d.update(__builtins__)
