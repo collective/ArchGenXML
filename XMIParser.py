@@ -335,7 +335,10 @@ class XMI1_0:
 
         for dep in deps:
             if not self.getId(dep):continue
-            depencency = XMIDependency(dep, allObjects=objects)
+            try:
+                depencency = XMIDependency(dep, allObjects=objects)
+            except KeyError:
+                log.warn('couldnt resolve dependency relation %s' , dep.getAttribute('xmi.id'))
 
 
 
