@@ -1355,6 +1355,22 @@ class ArchetypesGenerator(BaseGenerator):
                         tgv[key]=utils.getExpression(tgv[key])
                     print >>outfile, "copied_fields['%s'].widget.%s = %s" % \
                                      (attr.getName(), key[7:], tgv[key])
+                    # add pot msgid if necessary
+                    widgetkey = key[7:]
+                    widgetvalue = tgv[key]
+                    fieldname = attr.getName()
+                    if widgetkey=='label_msgid':
+                        self.addMsgid(widgetvalue.strip("'").strip('"'),
+                        tgv.has_key('widget:label') and tgv['widget:label'].strip("'").strip('"') or fieldname,
+                        element,
+                        fieldname
+                        )
+                    if widgetkey=='description_msgid':
+                        self.addMsgid(widgetvalue.strip("'").strip('"'),
+                        tgv.has_key('widget:description') and tgv['widget:description'].strip("'").strip('"') or fieldname,
+                        element,
+                        fieldname
+                        )
 
 
         print >>outfile, SCHEMA_START
