@@ -537,6 +537,8 @@ class XMI1_1 (XMI1_0):
     DIAGRAM_SEMANTICMODEL_BRIDGE = "UML:Uml1SemanticModelBridge"
     DIAGRAM_SEMANTICMODEL_BRIDGE_ELEMENT = "UML:Uml1SemanticModelBridge.element"
     ACTOR = "UML:Actor"
+    
+    UML2TYPE='UML2:TypedElement.type'
 
     def getName(self, domElement):
         if domElement:
@@ -632,7 +634,7 @@ class XMI1_2 (XMI1_1):
 
     def calcDatatype(self, att):
         global datatypes
-        typeinfos = att.domElement.getElementsByTagName(XMI.TYPE)
+        typeinfos = att.domElement.getElementsByTagName(XMI.TYPE)+att.domElement.getElementsByTagName(XMI.UML2TYPE)
         if len(typeinfos):
             classifiers = [cn for cn in typeinfos[0].childNodes if cn.nodeType == cn.ELEMENT_NODE] #getElementsByTagName(XMI.CLASS)
             #assert len(classifiers) == 1
