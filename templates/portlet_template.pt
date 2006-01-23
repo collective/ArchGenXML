@@ -3,24 +3,15 @@
       i18n:domain="plone">
 <body>
 
-<div metal:define-macro="portlet">
-
-    <div class="portlet" id="portlet-%(method_name)s">
-
-        <h5 i18n:translate="">%(method_name)s</h5>
-
-        <div class="portletBody">
-
-             Fill in your portlet code here
-             <div class="portletDetails">
-             </div>
-
-        </div>
-
+   <div metal:define-macro="portlet" tal:omit-tag="">
+        <tal:block>
+            <dl class="portlet" id="portlet-%(method_name)s">
+                <dt class="portletHeader" i18n:translate="">%(method_name)s</dt>
+                <dd class="portletItemSingle odd" >place your portlet code here</dd>
+            </dl>
+        </tal:block>
     </div>
-
-</div>
-
 </body>
 
 </html>
+
