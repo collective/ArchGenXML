@@ -986,6 +986,11 @@ class ArchetypesGenerator(BaseGenerator):
             for k in check_map:
                 if not (k in widgetmap.keys()): # XXX check if disabled
                     widgetmap.update( {k: check_map[k]} )
+            
+            # remove description_msgid if there is no description
+            if 'description' not in widgetmap.keys() and 'description_msgid' in widgetmap.keys():
+                del widgetmap['description_msgid']
+            
             if 'label_msgid' in widgetmap.keys() and has_enhanced_strip_support:
                 self.addMsgid(widgetmap['label_msgid'].strip("'").strip('"'),
                     widgetmap.has_key('label') and widgetmap['label'].strip("'").strip('"') or fieldname,
