@@ -123,7 +123,7 @@ def install(self):
                                             if toolname not in navtreeProperties.idsNotToList]
 </dtml-if>
 </dtml-let>
-<dtml-let configlet_tools="[cn for cn in generator.getGeneratedTools(package) if utils.isTGVTrue(cn.getTaggedValue('autoinstall','0') ) and cn.getTaggedValue('configlet', None)]">
+<dtml-let configlet_tools="[cn for cn in generator.getGeneratedTools(package) if not utils.isTGVFalse(cn.getTaggedValue('autoinstall')) and cn.getTaggedValue('configlet', None)]">
 <dtml-if "configlet_tools">
     # register tools as configlets
     portal_controlpanel = getToolByName(self,'portal_controlpanel')
