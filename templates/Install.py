@@ -94,7 +94,7 @@ def install(self):
        if slot not in portal.right_slots:
            portal.right_slots = list(portal.right_slots) + [slot]
 </dtml-if>
-<dtml-let autoinstall_tools="[c.getName() for c in generator.getGeneratedTools(package) if utils.isTGVTrue(c.getTaggedValue('autoinstall')) ]">
+<dtml-let autoinstall_tools="[c.getName() for c in generator.getGeneratedTools(package) if not utils.isTGVFalse(c.getTaggedValue('autoinstall')) ]">
 <dtml-if "autoinstall_tools">
     #autoinstall tools
     portal = getToolByName(self,'portal_url').getPortalObject()
