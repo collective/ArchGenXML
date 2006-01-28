@@ -2549,7 +2549,7 @@ class ArchetypesGenerator(BaseGenerator):
             log.debug("It's a stub stereotyped package, skipping.")
             return
         package.generatedModules = []
-        if package.getName().lower() == 'java' or package.getName().lower().startswith('java') or not package.getName():
+        if package.getName().lower().startswith('java') or not package.getName():
             #to suppress these unneccesary implicit created java packages (ArgoUML and Poseidon)
             log.debug("Ignoring unneeded package '%s'.",
                       package.getName())
@@ -2861,7 +2861,10 @@ class ArchetypesGenerator(BaseGenerator):
 
         log.info("Starting new Product: '%s'.",
                  root.getName())
+                 
+        # increment indent of output
         self.infoind += 1
+        
         # before generate a Product we need to push the current permissions on a
         # stack in orderto reinitialize the permissions
         self.creation_permission_stack.append(self.creation_permissions)
@@ -2918,6 +2921,10 @@ class ArchetypesGenerator(BaseGenerator):
         if self.ape_support:
             self.generateApeConf(root.getFilePath(),root)
 
+        #start Workflow creation
+        wfg=WorkflowGenerator(package, self)
+        wfg.generateWorkflows()
+
         # write messagecatalog
         if has_i18ndude and self.build_msgcatalog:
             filepath=os.path.join(root.getFilePath(),'i18n','generated.pot')
@@ -2925,11 +2932,8 @@ class ArchetypesGenerator(BaseGenerator):
             pow=msgcatalog.POWriter(of,self.msgcatstack.pop() )
             pow.write(sort=True, msgstrToComment=True)
             of.close()
-
-
-        #start Workflow creation
-        wfg=WorkflowGenerator(package, self)
-        wfg.generateWorkflows()
+            
+        # post-creation
         self.infoind -= 1
         self.creation_permissions = self.creation_permission_stack.pop()
 

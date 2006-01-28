@@ -1412,7 +1412,7 @@ class XMIPackage(XMIElement, StateMachineContainer):
         return o
 
     def getProductName(self):
-        return self.getProduct().getName()
+        return self.getProduct().getCleanName()
 
     def getProductModuleName(self):
         return self.getProduct().getModuleName()
