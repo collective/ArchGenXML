@@ -1043,6 +1043,7 @@ class XMIElement:
                 res.extend(p.getMethodDefs())
             log.debug("Our total methods: %r.",
                       res)
+        res.sort()
         return res
 
     def calculateStereoType(self):
