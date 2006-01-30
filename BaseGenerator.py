@@ -6,7 +6,7 @@
 #
 # Created:     2005-01-10
 # RCS-ID:      $Id: BaseGenerator.py 3411 2005-01-05 01:55:45Z yenzenz $
-# Copyright:   (c) 2005 BlueDynamics
+# Copyright:   (c) 2005-2006 BlueDynamics Alliance, Austria
 # Licence:     GPL
 #-----------------------------------------------------------------------------
 
@@ -231,7 +231,8 @@ class BaseGenerator:
         outfile = StringIO()
         # "__implements__" line -> handle realization parents
         reparents = element.getRealizationParents()
-        reparentnames = [p.getName() for p in reparents]
+        reparentnames = [p.getName() for p in reparents if not p.hasStereoType('z3')]
+        z3parentnames = [p.getName() for p in reparents if p.hasStereoType('z3')]
         if reparents:
 
             # [optilude] Add extra () around getattr() call, in case the
@@ -262,6 +263,11 @@ class BaseGenerator:
 
             print >> outfile, CLASS_IMPLEMENTS_BASE % \
                     {'baseclass_interfaces': parentInterfacesConcatenation,}
+        
+        if z3parentnames:
+            print >> outfile, utils.indent('# zope3 interfaces', 1)
+            for z3iface in z3parentnames:
+                print >> outfile, utils.indent("zope.interface.implements(%s)" % z3iface, 1)
 
         return outfile.getvalue()
 

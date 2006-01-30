@@ -1837,7 +1837,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         # generate header
         wrt(self.generateHeader(element)+'\n')
-
+        
         # generate basic imports
         parentnames = [p.getCleanName() for p in element.getGenParents()]
         log.debug("Generating dependent imports...")
@@ -2238,6 +2238,15 @@ class ArchetypesGenerator(BaseGenerator):
             s1 = TEMPLATE_HEADER
 
         outfile.write(s1)
+        
+        genparentsstereotype = element.getRealizationParents()
+        hasz3parent = False
+        for gpst in genparentsstereotype:
+            if gpst.hasStereoType('z3'):
+                hasz3parent = True
+                break
+        if hasz3parent or element.hasStereoType('z3'):
+            outfile.write('import zope')
 
         return outfile.getvalue()
 
