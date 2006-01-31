@@ -34,6 +34,12 @@ class BaseGenerator:
     """Abstract base class for the different concrete generators."""
 
     uml_profile = UMLProfile()
+    uml_profile.addStereoType('zope.interface', ['XMIClass'],
+        dispatching=1,
+        generator='generateZope3Interface',
+        template='zope3_interface.py',
+        description='Generate this class as zope 3 interface class '
+                    'instead of as an Archetypes class.')
     uml_profile.addStereoType('python_class', ['XMIClass'],
         dispatching=1,
         generator='generatePythonClass',
@@ -319,6 +325,20 @@ class BaseGenerator:
                                                         'template', None))
 
     def generatePythonClass(self, element, template, **kw):
+        templ = utils.readTemplate(template)
+        d = {
+            'klass': element,
+            'generator': self,
+            'parsed_class': element.parsed_class,
+            'builtins': __builtins__,
+            'utils': utils,
+        }
+        d.update(__builtins__)
+        d.update(kw)
+        res = HTML(templ, d)()
+        return res
+
+    def generateZope3Interface(self, element, template, **kw):
         templ = utils.readTemplate(template)
         d = {
             'klass': element,
