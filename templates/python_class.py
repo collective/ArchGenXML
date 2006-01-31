@@ -3,6 +3,10 @@
 <dtml-var "generator.getProtectedSection(parsed_class,'module-header')">
 
 <dtml-var "generator.generateDependentImports(klass)">
+<dtml-if "klass.hasStereoType('z3') or 'z3' in ['z3' for p in klass.getRealizationParents() if p.hasStereoType('z3')]">
+import zope
+
+</dtml-if>
 class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-var "','.join([p.getCleanName() for p in klass.getGenParents()])">)</dtml-if>:
     ''' <dtml-var "klass.getDocumentation()">'''
 <dtml-var "generator.generateImplements(klass,[p.getCleanName() for p in klass.getGenParents()])">
