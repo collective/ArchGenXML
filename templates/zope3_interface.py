@@ -5,22 +5,10 @@
 <dtml-var "generator.generateDependentImports(klass)">
 import zope
 
-class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-var "','.join([p.getCleanName() for p in klass.getGenParents()])">)</dtml-if>:
+class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-var "','.join([p.getCleanName() for p in klass.getGenParents()])">)</dtml-if><dtml-if "not klass.getGenParents()">(zope.interface.Interface)</dtml-if>:
     ''' <dtml-var "klass.getDocumentation()">'''
 <dtml-var "generator.generateImplements(klass,[p.getCleanName() for p in klass.getGenParents()])">
 <dtml-var "generator.getProtectedSection(parsed_class,'class-header_'+klass.getCleanName(),1)">
-
-<dtml-if "not parsed_class or '__init__' not in parsed_class.methods.keys()">
-<dtml-if vars>
-    def __init__(self,*args,**kwargs):
-<dtml-in "klass.getGenParents()">
-        <dtml-var "_['sequence-item'].getCleanName()">.__init__(self,*args,**kwargs)
-</dtml-in>
-        self._init_attributes(*args,**kwargs)
-</dtml-if>
-<dtml-else>
-<dtml-var "parsed_class.methods['__init__'].getSrc()">
-</dtml-if >
 
 <dtml-if vars>
     def _init_attributes(self,*args,**kwargs):
@@ -56,32 +44,16 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
 </dtml-if>
 <dtml-in "generator.getMethodsToGenerate(klass)[0]">
 <dtml-let m="_['sequence-item']">
-<dtml-if "m.getParent().__class__.__name__=='XMIInterface'">
 
-    #from Interface <dtml-var "m.getParent().getName()">:
-</dtml-if>
 <dtml-if "parsed_class and m.getCleanName() in parsed_class.methods.keys()">
 
 <dtml-var "parsed_class.methods[m.getCleanName()].getSrc()">
 <dtml-else>
 
-    def <dtml-var "m.getName()">(self,<dtml-var "','.join(m.getParamNames())">):
-        pass
-</dtml-if>
-</dtml-let>
-</dtml-in>
+    def <dtml-var "m.getName()">(<dtml-var "', '.join(m.getParamNames())">):
+       """
 
-<dtml-in vars>
-<dtml-let capname="_['sequence-item'].getCleanName()[0].upper() + _['sequence-item'].getCleanName()[1:]" mutator="'set'+capname" accessor="'get'+capname">
-<dtml-if "mutator not in [m.name for m in generator.getMethodsToGenerate(klass)[1]]">
-    def <dtml-var "mutator">(self,value):
-        self.<dtml-var "_['sequence-item'].getCleanName()">=value
-
-</dtml-if>
-<dtml-if "accessor not in [m.name for m in generator.getMethodsToGenerate(klass)[1]]">
-    def <dtml-var "accessor">(self):
-        return self.<dtml-var "_['sequence-item'].getCleanName()">
-
+       """ 
 </dtml-if>
 </dtml-let>
 </dtml-in>
