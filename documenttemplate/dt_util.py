@@ -13,12 +13,9 @@
 ##############################################################################
 """DTML utilities
 
-$Id: dt_util.py,v 1.2 2004/07/27 18:08:51 zworkb Exp $
+$Id$
 """
 import re
-
-from types import ListType, StringType, TupleType
-
 from pdocumenttemplate import \
      InstanceDict, TemplateDict, render_blocks
 
@@ -52,7 +49,7 @@ def int_param(params, md, name, default=0):
             v = v.atoi()
         except:
             v = md[v]
-            if isinstance(v, StringType):
+            if isinstance(v, str):
                 v = v.atoi()
     return v or 0
 
@@ -281,7 +278,7 @@ def parse_params(text,
 
     if result.has_key(name):
         p = parms[name]
-        if type(p) is not ListType or p:
+        if not isinstance(p, list) or p:
             raise ParseError, (
                 u'Duplicate values for attribute "%s"' % name, tag)
 

@@ -312,7 +312,7 @@
         - The 'next' attribute was used and their are no
           next batches, or
 
-$Id: dt_in.py,v 1.2 2004/07/27 18:08:51 zworkb Exp $
+$Id$
 """
 
 from dt_util import \
@@ -322,7 +322,6 @@ from dt_util import \
 
 import re
 from dt_insv import sequence_variables, opt
-from types import StringType, ListType, TupleType, IntType, FloatType, NoneType
 
 
 class InFactory:
@@ -385,7 +384,7 @@ class InClass:
 
         if has_key('start'):
             v = args['start']
-            if isinstance(v, StringType):
+            if isinstance(v, str):
                 try: v.atoi()
                 except:
                     self.start_name_re = re.compile(
@@ -426,7 +425,7 @@ class InClass:
                 return render_blocks(self.elses, md)
             return ''
 
-        if isinstance(sequence, StringType):
+        if isinstance(sequence, str):
             raise 'InError', (
                 'Strings are not allowed as input to the in tag.')
 
@@ -577,7 +576,7 @@ class InClass:
                             raise ValidationError, index
 
                     kw['sequence-index'] = index
-                    if isinstance(client, TupleType) and len(client) == 2:
+                    if isinstance(client, tuple) and len(client) == 2:
                         client = client[1]
 
                     if mapping:
@@ -618,7 +617,7 @@ class InClass:
                 return render_blocks(self.elses, md)
             return ''
 
-        if isinstance(sequence, StringType):
+        if isinstance(sequence, str):
             raise 'InError', (
                 'Strings are not allowed as input to the in tag.')
 
@@ -674,7 +673,7 @@ class InClass:
                         raise ValidationError, index
 
                 kw['sequence-index'] = index
-                if isinstance(client, TupleType) and len(client) == 2:
+                if isinstance(client, tuple) and len(client) == 2:
                     client = client[1]
 
                 if mapping:
@@ -712,7 +711,7 @@ class InClass:
         s = []
         for client in sequence:
             k = None
-            if isinstance(client, TupleType) and len(client)==2:
+            if isinstance(client, tuple) and len(client)==2:
                 if isort:
                     k = client[0]
                 v = client[1]
@@ -768,10 +767,10 @@ class InClass:
         return s
 
 
-basic_type = {StringType: 1, IntType: 1, FloatType: 1, TupleType: 1,
-              ListType: 1, NoneType: 1}.has_key
+basic_type = {str: 1, int: 1, float: 1, tuple: 1,
+              list: 1, type(None): 1}.has_key
 
-def int_param(params, md, name, default=0, st=StringType):
+def int_param(params, md, name, default=0, st=str):
     try:
         v = params[name]
     except:

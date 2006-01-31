@@ -1,7 +1,6 @@
 import sys
 import logging
 import os.path
-from types import StringTypes
 
 log = logging.getLogger('utils')
 
@@ -99,7 +98,7 @@ def getExpression(s):
                 return '"%s"' % s
 
 def isTGVTrue(tgv):
-    if type(tgv) in StringTypes:
+    if isinstance(tgv, (str, unicode)):
         tgv = tgv.lower()
     return tgv in (1, '1', 'true')
 
@@ -109,12 +108,12 @@ def isTGVFalse(tgv):
     A 'None' value is undefined and _not_ False, so it's something
     different than (not toBoolean(tgv)).
     """
-    if type(tgv) in StringTypes:
+    if isinstance(tgv, (str, unicode)):
         tgv = tgv.lower()
     return tgv in (0, '0', 'false')
 
 def toBoolean(v):
-    if type(v) in StringTypes:
+    if isinstance(v, (str, unicode)):
         v = v.lower().strip()
     if v in (0, '0', 'false', False):
         return False

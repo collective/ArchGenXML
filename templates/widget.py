@@ -1,5 +1,3 @@
-from types import ListType, TupleType, StringTypes
-
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base
 
@@ -23,7 +21,7 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
     _properties = <dtml-var parentname>._properties.copy()
     _properties.update({
         'macro' : '<dtml-var "klass.getTaggedValue('macro', klass.getCleanName())">',
-<dtml-if "not klass.getGenParents()">        
+<dtml-if "not klass.getGenParents()">
         'size' : '30',
         'maxlength' : '255',
 </dtml-if>
@@ -53,12 +51,8 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
 
 registerWidget(<dtml-var "klass.getCleanName()">,
                title='<dtml-var "klass.getTaggedValue('title', klass.getCleanName())">',
-               
+
                description=('<dtml-var "klass.getTaggedValue('description', 'no description given')">'),
                used_for=('<dtml-var "klass.getTaggedValue('description', 'Products.Archetypes.Field.StringField')">',)
                )
 <dtml-var "generator.getProtectedSection(parsed_class,'module-footer')">
-
-
-
-

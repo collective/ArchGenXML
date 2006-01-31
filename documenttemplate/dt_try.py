@@ -13,7 +13,7 @@
 ##############################################################################
 """
 
-$Id: dt_try.py,v 1.2 2004/07/27 18:08:51 zworkb Exp $
+$Id$
 """
 
 import sys, traceback
@@ -22,8 +22,6 @@ from dt_util \
      import ParseError, parse_params, render_blocks
 from dt_util import InstanceDict
 from dt_return import DTReturn
-
-from types import StringType
 
 
 class Try:
@@ -163,7 +161,7 @@ class Try:
         except:
             # but an error occurs.. save the info.
             t, v = sys.exc_info()[:2]
-            if isinstance(t, StringType):
+            if isinstance(t, str):
                 errname = t
             else:
                 errname = t.__name__
@@ -207,7 +205,7 @@ class Try:
 
     def find_handler(self,exception):
         "recursively search for a handler for a given exception"
-        if isinstance(exception, StringType):
+        if isinstance(exception, str):
             for e,h in self.handlers:
                 if exception==e or e=='':
                     return h

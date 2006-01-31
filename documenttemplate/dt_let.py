@@ -39,12 +39,10 @@
    reference and/or overwrite the results of previous assignments,
    as desired.
 
-$Id: dt_let.py,v 1.2 2004/07/27 18:08:51 zworkb Exp $
+$Id$
 """
-from dt_util import render_blocks, Eval, ParseError
-
-from types import StringType
 import re
+from dt_util import render_blocks, Eval, ParseError
 
 class Let:
     blockContinuations = ()
@@ -76,7 +74,7 @@ class Let:
         md._push(d)
         try:
             for name,expr in self.args:
-                if isinstance(expr, StringType):
+                if isinstance(expr, str):
                     d[name] = md[expr]
                 else:
                     d[name] = expr(md)

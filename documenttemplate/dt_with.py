@@ -32,14 +32,12 @@
    should be treated as mapping object, rather than as an object with
    named attributes.
 
-$Id: dt_with.py,v 1.2 2004/07/27 18:08:51 zworkb Exp $
+$Id$
 """
 
 from dt_util import \
      parse_params, name_param, InstanceDict, render_blocks
 from dt_util import TemplateDict
-
-from types import StringTypes, TupleType
 
 
 class With:
@@ -65,13 +63,13 @@ class With:
 
     def render(self, md):
         expr = self.expr
-        if isinstance(expr, StringTypes):
+        if isinstance(expr, (str, unicode)):
             v = md[expr]
         else:
             v = expr(md)
 
         if not self.mapping:
-            if isinstance(v, TupleType) and len(v) == 1:
+            if isinstance(v, tuple) and len(v) == 1:
                 v = v[0]
             v = InstanceDict(v, md)
 

@@ -1,9 +1,5 @@
 #<dtml-var "klass.getName()">
 
-
-
-
-from types import ListType, TupleType, StringTypes
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base
 

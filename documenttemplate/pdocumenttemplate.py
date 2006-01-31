@@ -12,11 +12,10 @@
 ##############################################################################
 """Python implementations of document template some features
 
-$Id: pdocumenttemplate.py,v 1.1 2004/07/27 02:42:53 zworkb Exp $
+$Id$
 """
 import sys
-from types import StringTypes, TupleType, ClassType
-ClassTypes = [ClassType]
+from types import ClassType
 
 
 def safe_callable(ob):
@@ -25,7 +24,7 @@ def safe_callable(ob):
         if hasattr(ob, '__call__'):
             return 1
         else:
-            return type(ob) in ClassTypes
+            return isinstance(ob, ClassType)
     else:
         return callable(ob)
 
@@ -232,7 +231,7 @@ class TemplateDict:
             with = s
         d = {}
         for i in s:
-            if isinstance(i, TupleType) and len(i) == 2:
+            if isinstance(i, tuple) and len(i) == 2:
                 k, v = i
             else:
                 k = v = i
@@ -242,7 +241,7 @@ class TemplateDict:
         h = d.has_key
 
         for i in without:
-            if isinstance(i, TupleType) and len(i) == 2:
+            if isinstance(i, tuple) and len(i) == 2:
                 k, v = i
             else:
                 k= v = i
@@ -250,7 +249,7 @@ class TemplateDict:
                 del d[k]
 
         for i in with:
-            if isinstance(i, TupleType) and len(i) == 2:
+            if isinstance(i, tuple) and len(i) == 2:
                 k, v = i
             else:
                 k= v = i
@@ -271,12 +270,12 @@ for name in ('None', 'abs', 'chr', 'divmod', 'float', 'hash', 'hex', 'int',
 def render_blocks(blocks, md):
     rendered = []
     for section in blocks:
-        if type(section) is TupleType:
+        if isinstance(section, tuple):
             l = len(section)
             if l == 1:
                 # Simple var
                 section = section[0]
-                if isinstance(section, StringTypes):
+                if isinstance(section, (str, unicode)):
                     section = md[section]
                 else:
                     section = section(md)
@@ -290,7 +289,7 @@ def render_blocks(blocks, md):
                     m = l-1
                     while i < m:
                         cond = section[i]
-                        if isinstance(cond, StringTypes):
+                        if isinstance(cond, (str, unicode)):
                             n = cond
                             try:
                                 cond = md[cond]
@@ -318,7 +317,7 @@ def render_blocks(blocks, md):
 
                 finally: md._pop()
 
-        elif not isinstance(section, StringTypes):
+        elif not isinstance(section, (str, unicode)):
             section = section(md)
 
         if section:
