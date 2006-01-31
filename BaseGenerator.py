@@ -231,43 +231,40 @@ class BaseGenerator:
         outfile = StringIO()
         # "__implements__" line -> handle realization parents
         reparents = element.getRealizationParents()
-        reparentnames = [p.getName() for p in reparents if not p.hasStereoType('z3')]
-        z3parentnames = [p.getName() for p in reparents if p.hasStereoType('z3')]
-        if reparents:
+        z2reparentnames = [p.getName() for p in reparents if not p.hasStereoType('z3')]
+        z3reparentnames = [p.getName() for p in reparents if p.hasStereoType('z3')]
+        if z2reparentnames:
 
             # [optilude] Add extra () around getattr() call, in case the
             # base __implements__ is a single interface, not a tuple. Arbitrary
             # nesting of tuples in interface declaration is permitted.
             # Also, handle now-possible case where parentnames is empty
 
-            if parentnames:
+            if z2reparentnames:
                 parentInterfacesConcatenation = \
-                    ' + '.join(["(getattr(%s,'__implements__',()),)" % i for i in parentnames])
+                    ' + '.join(["(getattr(%s,'__implements__',()),)" % i for i in z2reparentnames])
             else:
                 parentInterfacesConcatenation = '()'
-
-            realizationsConcatenation = ','.join(reparentnames)
+            
+            realizationsConcatenation = ','.join(z2reparentnames)
 
             print >> outfile, CLASS_IMPLEMENTS % \
                     {'baseclass_interfaces': parentInterfacesConcatenation,
                      'realizations': realizationsConcatenation, }
-        else:
+        else: #  might be zope 2 but no zope 2 realization parents
 
             # [optilude] Same as above
 
             if parentnames:
                 parentInterfacesConcatenation = \
                     ' + '.join(["(getattr(%s,'__implements__',()),)" % i for i in parentnames])
-            else:
-                parentInterfacesConcatenation = '()'
-
-            print >> outfile, CLASS_IMPLEMENTS_BASE % \
-                    {'baseclass_interfaces': parentInterfacesConcatenation,}
+                print >> outfile, CLASS_IMPLEMENTS_BASE % \
+                        {'baseclass_interfaces': parentInterfacesConcatenation,}
         
-        if z3parentnames:
+        if z3reparentnames:
             print >> outfile, utils.indent('# zope3 interfaces', 1)
-            for z3iface in z3parentnames:
-                print >> outfile, utils.indent("zope.interface.implements(%s)" % z3iface, 1)
+            concatstring = ', '.join(z3reparentnames)
+            print >> outfile, utils.indent("zope.interface.implements(%s)" % concatstring, 1)
 
         return outfile.getvalue()
 
