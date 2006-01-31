@@ -20,7 +20,6 @@ from codesnippets import *
 
 from xml.dom import minidom
 from zipfile import ZipFile
-from types import StringTypes
 from StringIO import StringIO
 
 # AGX-specific imports
@@ -1042,7 +1041,7 @@ class ArchetypesGenerator(BaseGenerator):
                 if key.find(':')>=0:
                     continue
                 lines = map[key]
-                if type(lines) in StringTypes:
+                if isinstance(lines, (str, unicode)):
                     linebreak = lines.find('\n')
 
                     if linebreak < 0:
@@ -1052,7 +1051,7 @@ class ArchetypesGenerator(BaseGenerator):
                     firstline = lines
 
                 res += '%s%s=%s' % (prepend, key, firstline)
-                if type(lines) in StringTypes and linebreak < len(lines):
+                if isinstance(lines, (str, unicode)) and linebreak < len(lines):
                     for line in lines[linebreak+1:].split('\n'):
                         res += "\n%s" % utils.indent(line, indent_level+1)
 
@@ -2603,8 +2602,8 @@ class ArchetypesGenerator(BaseGenerator):
                     raise
 
             try:
-                outfile=StringIO()
-                element.parsed_class = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name,None)
+                outfile = StringIO()
+                element.parsed_class = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name, None)
                 outfile.write(self.generateModuleInfoHeader(element))
                 if not element.isInterface():
                     print >>outfile, self.generateClass(element)
@@ -2612,9 +2611,11 @@ class ArchetypesGenerator(BaseGenerator):
                     generated_classes.append(element)
                     package.annotate('generatedClasses', generated_classes)
                 else:
-                    self.generateInterface(outfile,element)
+                    self.generateInterface(outfile, element)
 
-                buf=outfile.getvalue()
+                buf = outfile.getvalue()
+                if isinstance(buf, unicode):
+                    buf = buf.encode('utf8')
                 log.debug("The outfile is ready to be written to disk now. "
                           "Loading it with the pyparser just to be sure we're "
                           "not writing broken files to disk.")

@@ -11,13 +11,11 @@
 
 import sys, os.path, time, string
 import getopt
-from types import UnicodeType
 from utils import mapName,toBoolean
 from utils import wrap as doWrap
 from xml.dom import minidom
 from sets import Set
 from odict import odict
-from types import StringTypes
 from TaggedValueSupport import tgvRegistry
 import logging
 log = logging.getLogger('XMIparser')
@@ -717,7 +715,7 @@ def getElementsByTagName(domElement, tagName, recursive=0):
         parameter
         '''
 
-    if type(tagName) in StringTypes:
+    if isinstance(tagName, (str, unicode)):
         tagNames=[tagName]
     else:
         tagNames=tagName
@@ -873,19 +871,15 @@ class XMIElement:
         return self.children
 
     def getName(self):
-        name = str(self.name)
         if self.name:
-            res = name
+            res = self.name
         else:
             res = self.id
-            if type(res) is UnicodeType: 
-                res = res.encode('utf-8') 
-                log.debug("getName has to fallback to unicode id. " 
-                          "id=%s. " 
-                          "Converting to utf-8.", res)
-                
-        if type(res) in (type(''), type(u'')):
-            res = res.strip()
+        if isinstance(res, unicode):
+            res = res.encode('utf-8')
+            log.debug("getName has to fallback to unicode: %s. "
+                      "Converting to utf-8.", res)
+        res = res.strip()
         return res
 
     def getTaggedValue(self, name, default=''):
@@ -897,10 +891,9 @@ class XMIElement:
             # The registry does the complaining :-)
             pass
         res = self.taggedValues.get(name, default)
-        if type(res) in (type(''), type(u'')):
+        if isinstance(res, (str, unicode)):
             res = res.strip()
-        log.debug("Returning value '%s',",
-                  res)
+        log.debug("Returning value '%s',", res)
         return res
 
     def hasTaggedValue(self, name):
@@ -1078,7 +1071,7 @@ class XMIElement:
         log.debug("Looking if element has stereotype %r",
                   stereotypes)
         category = str(self.__class__)
-        if type(stereotypes) in (type(''), type(u'')):
+        if isinstance(stereotypes, (str, unicode)):
             stereotypes = [stereotypes]
         if umlprofile:
             for stereotype in stereotypes:
@@ -2054,7 +2047,7 @@ class XMIAssociation (XMIElement):
             res = '%s_%s' %(fromname,toname)
             log.debug("Combining that fromname and toname to form our relation name: '%s'.",
                       res)
-            if type(res) in (type(''), type(u'')):
+            if isinstance(res, (str, unicode)):
                 res = res.strip().lower()
                 log.debug("Making it lowercase for good measure: '%s'.",
                           res)
