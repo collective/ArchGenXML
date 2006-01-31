@@ -34,12 +34,13 @@ class BaseGenerator:
     """Abstract base class for the different concrete generators."""
 
     uml_profile = UMLProfile()
-    uml_profile.addStereoType('zope.interface', ['XMIClass'],
+    uml_profile.addStereoType('z3', ['XMIInterface'],
         dispatching=1,
         generator='generateZope3Interface',
         template='zope3_interface.py',
         description='Generate this class as zope 3 interface class '
                     'instead of as an Archetypes class.')
+                    
     uml_profile.addStereoType('python_class', ['XMIClass'],
         dispatching=1,
         generator='generatePythonClass',
@@ -48,6 +49,7 @@ class BaseGenerator:
                     'instead of as an Archetypes class.')
 
     default_class_type = 'python_class'
+    default_interface_type = 'z3'
 
     def isTGVTrue(self,v):
         return utils.isTGVTrue(v)
@@ -60,6 +62,9 @@ class BaseGenerator:
 
     def getDefaultClassType(self):
         return self.getUMLProfile().getStereoType(self.default_class_type)
+
+    def getDefaultInterfaceType(self):
+        return self.getUMLProfile().getStereoType(self.default_interface_type)
 
     def processExpression(self, value, asString=True):
         """Process the string returned by tagged values.
@@ -305,7 +310,7 @@ class BaseGenerator:
 
         return generatedMethods, manual_methods
 
-    def generateClass(self, element):
+    def dispatchXMIClass(self, element):
         log.debug("Finding suitable dispatching stereotype for element...")
         dispatching_stereotypes = self.getUMLProfile().findStereoTypes(entities=['XMIClass'],
                                                                        dispatching=1)
@@ -318,6 +323,25 @@ class BaseGenerator:
 
         if not dispatching_stereotype:
             dispatching_stereotype = self.getDefaultClassType()
+
+        generator = dispatching_stereotype.generator
+        return getattr(self,generator)(element,
+                                       template=getattr(dispatching_stereotype,
+                                                        'template', None))
+
+    def dispatchXMIInterface(self, element):
+        log.debug("Finding suitable dispatching stereotype for element...")
+        dispatching_stereotypes = self.getUMLProfile().findStereoTypes(entities=['XMIInterface'],
+                                                                       dispatching=1)
+        log.debug("Dispatching stereotypes found in our UML profile: %r.",
+                  dispatching_stereotypes)
+        dispatching_stereotype = None
+        for stereotype in dispatching_stereotypes:
+            if element.hasStereoType(stereotype.getName()):
+                dispatching_stereotype = stereotype
+
+        if not dispatching_stereotype:
+            dispatching_stereotype = self.getDefaultInterfaceType()
 
         generator = dispatching_stereotype.generator
         return getattr(self,generator)(element,
@@ -339,6 +363,10 @@ class BaseGenerator:
         return res
 
     def generateZope3Interface(self, element, template, **kw):
+        log.info("%sGenerating zope3 interface '%s'.",
+                 '    ',
+                 element.getName())
+        
         templ = utils.readTemplate(template)
         d = {
             'klass': element,

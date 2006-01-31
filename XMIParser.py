@@ -1830,7 +1830,6 @@ class XMIClass (XMIElement, StateMachineContainer):
 
 class XMIInterface(XMIClass):
     isinterface = 1
-    pass
 
 
 class XMIMethodParameter(XMIElement):

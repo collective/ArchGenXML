@@ -104,6 +104,7 @@ class ArchetypesGenerator(BaseGenerator):
 
     generator_generator = 'archetypes'
     default_class_type = 'content_class'
+    default_interface_type = 'z2'
 
     uml_profile = UMLProfile(BaseGenerator.uml_profile)
 
@@ -120,6 +121,11 @@ class ArchetypesGenerator(BaseGenerator):
     uml_profile.addStereoType('content_class', ['XMIClass'],
         dispatching=1,
         generator='generateArchetypesClass',
+        description='TODO')
+        
+    uml_profile.addStereoType('z2', ['XMIInterface'],
+        dispatching=1,
+        generator='generateZope2Interface',
         description='TODO')
 
     uml_profile.addStereoType('tests', ['XMIPackage'],
@@ -1793,7 +1799,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         return baseclass, baseschema, parentnames
 
-    def generateArchetypesClass(self, element,**kw):
+    def generateArchetypesClass(self, element, **kw):
         """this is the all singing all dancing core generator logic for a
            full featured Archetypes class
         """
@@ -2126,7 +2132,12 @@ class ArchetypesGenerator(BaseGenerator):
 
         return outfile.getvalue()
 
-    def generateInterface(self, outfile, element):
+    def generateZope2Interface(self, element, **kw):
+        outfile = StringIO()
+        log.info("%sGenerating zope2 interface '%s'.",
+                 '    '*self.infoind,
+                 element.getName())
+        
         wrt = outfile.write
 ##        print 'Interface:',element.getName()
 ##        print 'parents:',element.getGenParents()
@@ -2170,6 +2181,7 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateMethods(outfile, element, mode='interface')
 
         wrt('# end of class %s\n' % name)
+        return outfile.getvalue()
 
     def getHeaderInfo(self, element):
         log.debug("Getting info for the header...")
@@ -2603,19 +2615,22 @@ class ArchetypesGenerator(BaseGenerator):
 
             try:
                 outfile = StringIO()
-                element.parsed_class = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name, None)
-                outfile.write(self.generateModuleInfoHeader(element))
+                element.parsed_class = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name,None)                
                 if not element.isInterface():
-                    print >>outfile, self.generateClass(element)
+                    outfile.write(self.generateModuleInfoHeader(element))
+                    print >>outfile, self.dispatchXMIClass(element)
                     generated_classes = package.getAnnotation('generatedClasses') or []
                     generated_classes.append(element)
                     package.annotate('generatedClasses', generated_classes)
                 else:
-                    self.generateInterface(outfile, element)
+                    outfile = StringIO()
+                    outfile.write(self.generateModuleInfoHeader(element))
+                    print >>outfile, self.dispatchXMIInterface(element)
+                    generated_interfaces = package.getAnnotation('generatedInterfaces') or []
+                    generated_interfaces.append(element)
+                    package.annotate('generatedInterfaces', generated_interfaces)
 
-                buf = outfile.getvalue()
-                if isinstance(buf, unicode):
-                    buf = buf.encode('utf8')
+                buf=outfile.getvalue()
                 log.debug("The outfile is ready to be written to disk now. "
                           "Loading it with the pyparser just to be sure we're "
                           "not writing broken files to disk.")
