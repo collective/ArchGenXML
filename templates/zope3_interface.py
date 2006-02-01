@@ -5,7 +5,7 @@
 <dtml-var "generator.generateDependentImports(klass)">
 import zope
 
-class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-var "','.join([p.getCleanName() for p in klass.getGenParents()])">)</dtml-if><dtml-if "not klass.getGenParents()">(zope.interface.Interface)</dtml-if>:
+class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-var "','.join([p.getCleanName() for p in klass.getGenParents()])">)</dtml-if><dtml-if "not klass.getGenParents() and klass.isinterface">(zope.interface.Interface)</dtml-if>:
     ''' <dtml-var "klass.getDocumentation()">'''
 <dtml-var "generator.generateImplements(klass,[p.getCleanName() for p in klass.getGenParents()])">
 <dtml-var "generator.getProtectedSection(parsed_class,'class-header_'+klass.getCleanName(),1)">
