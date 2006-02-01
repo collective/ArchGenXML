@@ -122,7 +122,7 @@ class ArchetypesGenerator(BaseGenerator):
         dispatching=1,
         generator='generateArchetypesClass',
         description='TODO')
-        
+
     uml_profile.addStereoType('z2', ['XMIInterface'],
         dispatching=1,
         generator='generateZope2Interface',
@@ -360,7 +360,7 @@ class ArchetypesGenerator(BaseGenerator):
     # TaggedValues that are not strings, e.g. widget or vocabulary
     nonstring_tgvs = ['widget', 'vocabulary', 'required', 'precision',
                       'storage', 'enforceVocabulary', 'multiValued',
-                      'visible', 'validators', 'validation_expression',                      
+                      'visible', 'validators', 'validation_expression',
                       'sizes', 'original_size', 'max_size', 'searchable']
 
     msgcatstack = []
@@ -991,11 +991,11 @@ class ArchetypesGenerator(BaseGenerator):
             for k in check_map:
                 if not (k in widgetmap.keys()): # XXX check if disabled
                     widgetmap.update( {k: check_map[k]} )
-            
+
             # remove description_msgid if there is no description
             if 'description' not in widgetmap.keys() and 'description_msgid' in widgetmap.keys():
                 del widgetmap['description_msgid']
-            
+
             if 'label_msgid' in widgetmap.keys() and has_enhanced_strip_support:
                 self.addMsgid(widgetmap['label_msgid'].strip("'").strip('"'),
                     widgetmap.has_key('label') and widgetmap['label'].strip("'").strip('"') or fieldname,
@@ -1842,7 +1842,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         # generate header
         wrt(self.generateHeader(element)+'\n')
-        
+
         # generate basic imports
         parentnames = [p.getCleanName() for p in element.getGenParents()]
         log.debug("Generating dependent imports...")
@@ -2137,7 +2137,7 @@ class ArchetypesGenerator(BaseGenerator):
         log.info("%sGenerating zope2 interface '%s'.",
                  '    '*self.infoind,
                  element.getName())
-        
+
         wrt = outfile.write
 ##        print 'Interface:',element.getName()
 ##        print 'parents:',element.getGenParents()
@@ -2249,7 +2249,7 @@ class ArchetypesGenerator(BaseGenerator):
             s1 = TEMPLATE_HEADER
 
         outfile.write(s1)
-        
+
         genparentsstereotype = element.getRealizationParents()
         hasz3parent = False
         for gpst in genparentsstereotype:
@@ -2615,7 +2615,7 @@ class ArchetypesGenerator(BaseGenerator):
 
             try:
                 outfile = StringIO()
-                element.parsed_class = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name,None)                
+                element.parsed_class = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name,None)
                 if not element.isInterface():
                     outfile.write(self.generateModuleInfoHeader(element))
                     print >>outfile, self.dispatchXMIClass(element)
@@ -2630,7 +2630,10 @@ class ArchetypesGenerator(BaseGenerator):
                     generated_interfaces.append(element)
                     package.annotate('generatedInterfaces', generated_interfaces)
 
-                buf=outfile.getvalue()
+                buf = outfile.getvalue()
+                if isinstance(buf, unicode):
+                    buf = buf.encode('utf8')
+
                 log.debug("The outfile is ready to be written to disk now. "
                           "Loading it with the pyparser just to be sure we're "
                           "not writing broken files to disk.")
@@ -2886,10 +2889,10 @@ class ArchetypesGenerator(BaseGenerator):
 
         log.info("Starting new Product: '%s'.",
                  root.getName())
-                 
+
         # increment indent of output
         self.infoind += 1
-        
+
         # before generate a Product we need to push the current permissions on a
         # stack in orderto reinitialize the permissions
         self.creation_permission_stack.append(self.creation_permissions)
@@ -2957,7 +2960,7 @@ class ArchetypesGenerator(BaseGenerator):
             pow=msgcatalog.POWriter(of,self.msgcatstack.pop() )
             pow.write(sort=True, msgstrToComment=True)
             of.close()
-            
+
         # post-creation
         self.infoind -= 1
         self.creation_permissions = self.creation_permission_stack.pop()
