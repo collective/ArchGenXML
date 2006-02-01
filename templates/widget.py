@@ -7,6 +7,7 @@ from Products.Archetypes.Registry import registerWidget
 from Products.Archetypes.utils import DisplayList
 from Products.Archetypes import config as atconfig
 from Products.Archetypes.Widget import *
+from Products.Archetypes.Widget import TypesWidget
 from Products.generator import i18n
 
 from Products.<dtml-var "klass.getPackage().getProduct().getName()"> import config
@@ -51,8 +52,7 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
 
 registerWidget(<dtml-var "klass.getCleanName()">,
                title='<dtml-var "klass.getTaggedValue('title', klass.getCleanName())">',
-
                description=('<dtml-var "klass.getTaggedValue('description', 'no description given')">'),
-               used_for=('<dtml-var "klass.getTaggedValue('description', 'Products.Archetypes.Field.StringField')">',)
+               used_for=('<dtml-var "klass.getTaggedValue('used_for', 'Products.Archetypes.Field.StringField')">',)
                )
 <dtml-var "generator.getProtectedSection(parsed_class,'module-footer')">
