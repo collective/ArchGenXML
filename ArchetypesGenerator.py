@@ -1499,8 +1499,7 @@ class ArchetypesGenerator(BaseGenerator):
 
 
     def generateMethod(self, outfile, m, klass, mode='class'):
-        #ignore actions and views here because they are
-        #generated separately
+        #ignore actions and views here because they are generated separately
         if m.hasStereoType(['action','view','form','portlet_view', 'portlet'], umlprofile=self.uml_profile):
             return
 
@@ -1567,7 +1566,7 @@ class ArchetypesGenerator(BaseGenerator):
             if mode=='class':
                 print >> outfile,'    def %s(self%s):' % (m.getName(),paramstr)
             elif mode=='interface':
-                print >> outfile,'    def %s(%s):' % (m.getName(),paramstr[1:])
+                print >> outfile,'\n    def %s(%s):' % (m.getName(),paramstr[1:])
 
             code=m.taggedValues.get('code','')
             doc=m.getDocumentation(striphtml=self.striphtml)
@@ -1577,7 +1576,7 @@ class ArchetypesGenerator(BaseGenerator):
             if code and mode=='class':
                 print >> outfile, utils.indent('\n'+code,2)
             else:
-                print >> outfile, utils.indent('\n'+'pass',2)
+                print >> outfile, utils.indent('pass',2)
 
     def generateBaseTestcaseClass(self,element,template):
         #write runalltests.py and framework.py
@@ -2113,9 +2112,9 @@ class ArchetypesGenerator(BaseGenerator):
         if element.hasStereoType(self.vocabulary_container_stereotype, umlprofile=self.uml_profile):
             wrt( REGISTER_VOCABULARY_CONTAINER % name )
 
-        wrt('# end of class %s\n\n'   % name)
+        wrt('# end of class %s\n\n' % name)
 
-        self.generateProtectedSection(outfile,element,'module-footer')
+        self.generateProtectedSection(outfile, element, 'module-footer')
 
         ## handle add content permissions
         if not element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile):
@@ -2179,8 +2178,7 @@ class ArchetypesGenerator(BaseGenerator):
             print >>outfile, utils.indent(header, 1)
 
         self.generateMethods(outfile, element, mode='interface')
-
-        wrt('# end of class %s\n' % name)
+        wrt('\n# end of class %s' % name)
         return outfile.getvalue()
 
     def getHeaderInfo(self, element):
@@ -2389,7 +2387,8 @@ class ArchetypesGenerator(BaseGenerator):
 
         # Get the names of packages and classes to import
         packageImports = [m.getModuleName() for m in package.getAnnotation('generatedPackages') or []
-                          if not m.hasStereoType('tests', umlprofile=self.uml_profile)]
+                          if not (m.hasStereoType('tests', umlprofile=self.uml_profile) or
+                                  m.hasStereoType('stub', umlprofile=self.uml_profile))]
         classImports   = [m.getModuleName() for m in package.generatedModules if not m.hasStereoType('tests', umlprofile=self.uml_profile)]
 
         # Find additional (custom) permissions
