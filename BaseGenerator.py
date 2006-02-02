@@ -266,7 +266,6 @@ class BaseGenerator:
         if z2iface_implements is not None:
             z2implements_line += z2iface_implements
         if z2implements_line is not None:
-            print z2implements_line
             print >> outfile, utils.indent(z2implements_line, 1)
 
         # Zope 3 interfaces
