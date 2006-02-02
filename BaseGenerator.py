@@ -240,38 +240,37 @@ class BaseGenerator:
 
     def generateImplements(self,element,parentnames):
         outfile = StringIO()
+        # Zope 2 Interfaces
         # "__implements__" line -> handle realization parents
         reparents = element.getRealizationParents()
         z2reparentnames = [p.getName() for p in reparents if not p.hasStereoType('z3')]
-        z3reparentnames = [p.getName() for p in reparents if p.hasStereoType('z3')]
         if z2reparentnames:
+            z2iface_implements = \
+                ' + '.join(["(getattr(%s,'__implements__',()),)" % i for i in z2reparentnames])
+        else:
+            z2iface_implements = None
 
-            # [optilude] Add extra () around getattr() call, in case the
-            # base __implements__ is a single interface, not a tuple. Arbitrary
-            # nesting of tuples in interface declaration is permitted.
-            # Also, handle now-possible case where parentnames is empty
-
-            if z2reparentnames:
-                parentInterfacesConcatenation = \
-                    ' + '.join(["(getattr(%s,'__implements__',()),)" % i for i in z2reparentnames])
-            else:
-                parentInterfacesConcatenation = '()'
-            
-            realizationsConcatenation = ','.join(z2reparentnames)
-
-            print >> outfile, CLASS_IMPLEMENTS % \
-                    {'baseclass_interfaces': parentInterfacesConcatenation,
-                     'realizations': realizationsConcatenation, }
-        else: #  might be zope 2 but no zope 2 realization parents
-
-            # [optilude] Same as above
-
-            if parentnames:
-                parentInterfacesConcatenation = \
+        if parentnames:
+            z2parentclasses_implements = \
                     ' + '.join(["(getattr(%s,'__implements__',()),)" % i for i in parentnames])
-                print >> outfile, CLASS_IMPLEMENTS_BASE % \
-                        {'baseclass_interfaces': parentInterfacesConcatenation,}
+        else:
+            z2parentclasses_implements = None
         
+        z2implements_line = None
+        if z2iface_implements is not None and z2parentclasses_implements is not None:            
+            z2implements_line = '__implements__ = '
+        if z2parentclasses_implements is not None:
+            z2implements_line += z2parentclasses_implements
+        if z2iface_implements and z2parentclasses_implements:
+            z2implements_line += ' + ' 
+        if z2iface_implements is not None:
+            z2implements_line += z2iface_implements
+        if z2implements_line is not None:
+            print z2implements_line
+            print >> outfile, utils.indent(z2implements_line, 1)
+
+        # Zope 3 interfaces
+        z3reparentnames = [p.getName() for p in reparents if p.hasStereoType('z3')]
         if z3reparentnames:
             print >> outfile, utils.indent('# zope3 interfaces', 1)
             concatstring = ', '.join(z3reparentnames)
