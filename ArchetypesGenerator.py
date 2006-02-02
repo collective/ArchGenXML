@@ -1468,7 +1468,7 @@ class ArchetypesGenerator(BaseGenerator):
             if meths:
                 print >>outfile,'    # Methods from Interface %s'%interface.getName()
                 for m in meths:
-                    self.generateMethod(outfile,m,element,mode=mode)
+                    self.generateMethod(outfile, m, element, mode=mode)
                     generatedMethods.append(m)
                     allmethnames.append(m.getName())
 
@@ -1572,11 +1572,13 @@ class ArchetypesGenerator(BaseGenerator):
             doc=m.getDocumentation(striphtml=self.striphtml)
             if doc is not None:
                 print >> outfile, utils.indent('"""\n%s\n"""' % doc ,2)
-
             if code and mode=='class':
                 print >> outfile, utils.indent('\n'+code,2)
             else:
                 print >> outfile, utils.indent('pass',2)
+		
+	if m.isStatic():
+            print >> outfile, '    %s = staticmethod(%s)\n' % (m.getName(),m.getName())
 
     def generateBaseTestcaseClass(self,element,template):
         #write runalltests.py and framework.py

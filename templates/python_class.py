@@ -70,6 +70,8 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
     def <dtml-var "m.getName()">(self,<dtml-var "','.join(m.getParamNames())">):
         pass
 </dtml-if>
+
+    <dtml-if "m.isStatic()"><dtml-var "m.getName()"> = staticmethod(<dtml-var "m.getName()">)</dtml-if>
 </dtml-let>
 </dtml-in>
 

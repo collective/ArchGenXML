@@ -388,6 +388,10 @@ class XMI1_0:
         # visibility detection unimplemented for XMI 1.0
         o.visibility = None
 
+    def calcOwnerScope(self, o):
+        # ownerScope detection unimplemented for XMI 1.0
+	    o.ownerScope = None
+
     def calcDatatype(self, att):
         global datatypes
         typeinfos = att.domElement.getElementsByTagName(XMI.TYPE)
@@ -629,6 +633,9 @@ class XMI1_2 (XMI1_1):
     def calcVisibility(self, o):
         o.visibility = o.domElement.hasAttribute('visibility') and o.domElement.getAttribute('visibility')
         #print 'xmi12_calcVisibility:', o.getName(), o.getVisibility()
+
+    def calcOwnerScope(self, o):
+	    o.ownerScope = o.domElement.hasAttribute('ownerScope') and o.domElement.getAttribute('ownerScope')
 
     def calcDatatype(self, att):
         global datatypes
@@ -1523,6 +1530,7 @@ class XMIClass (XMIElement, StateMachineContainer):
         XMIElement.initFromDOM(self, domElement)
         XMI.calcClassAbstract(self)
         XMI.calcVisibility(self)
+        XMI.calcOwnerScope(self)
         self.buildStateMachines(recursive=0)
 
     def isInternal(self):
@@ -1877,11 +1885,15 @@ class XMIMethod (XMIElement):
     def initFromDOM(self, domElement):
         XMIElement.initFromDOM(self, domElement)
         XMI.calcVisibility(self)
+        XMI.calcOwnerScope(self)
         if domElement:
             self.findParameters()
 
     def getVisibility(self):
         return self.visibility
+
+    def isStatic(self):
+        return self.ownerScope == 'classifier'
 
     def getParams(self):
         return self.params

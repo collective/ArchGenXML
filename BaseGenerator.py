@@ -349,6 +349,10 @@ class BaseGenerator:
                                                         'template', None))
 
     def generatePythonClass(self, element, template, **kw):
+        log.info("%sGenerating python class '%s'.",
+                 '    ',
+                 element.getName())
+        
         templ = utils.readTemplate(template)
         d = {
             'klass': element,
