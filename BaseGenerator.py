@@ -257,7 +257,7 @@ class BaseGenerator:
             z2parentclasses_implements = None
         
         z2implements_line = None
-        if z2iface_implements is not None and z2parentclasses_implements is not None:            
+        if z2iface_implements is not None or z2parentclasses_implements is not None:            
             z2implements_line = '__implements__ = '
         if z2parentclasses_implements is not None:
             z2implements_line += z2parentclasses_implements
