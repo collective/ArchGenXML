@@ -10,11 +10,9 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
     """
 
     implements(I<dtml-var "klass.getCleanName()">)
-#<dtml-var "generator.generateImplements(klass,[p.getCleanName() for p in klass.getGenParents()])">
 <dtml-var "generator.getProtectedSection(parsed_class,'class-header_'+klass.getCleanName(),1)">
 
     def __init__(self, *args, **kwargs):
-        # WARNING: this method is overwritten!
 <dtml-in "klass.getGenParents()">
         <dtml-var "_['sequence-item'].getCleanName()">.__init__(self)
 </dtml-in>
@@ -47,7 +45,6 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
             if mutator is not None and callable(mutator):
                 mutator(kwargs[key])
 <dtml-var "generator.getProtectedSection(parsed_class,'init_method_'+klass.getCleanName(),2)">
-
 
 <dtml-in "generator.getMethodsToGenerate(klass)[0]">
 <dtml-let m="_['sequence-item']">
@@ -90,28 +87,11 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
         """
 
         return self._<dtml-var "_['sequence-item'].getCleanName()">
-
 </dtml-if>
 </dtml-let>
 </dtml-in>
 
-#    def addSomething(self, something):
-#        """
-#        """
-#
-#        self._somethings.append(something)
-#        something.__parent__ = self
-
-#    def getParent(self):
-#        """
-#        """
-#
-#        if self.__parent__:
-#            return self.__parent__
-#        return None
-
 <dtml-in "[m for m in generator.getMethodsToGenerate(klass)[1] if m.name not in ['__init__','_init_attributes']]">
-
 <dtml-var "_['sequence-item'].getSrc()">
 </dtml-in>
 
@@ -120,7 +100,6 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
     <dtml-var "_['sequence-item'].getCleanName()"> = property(<dtml-var "accessor">, <dtml-var "mutator">)
 </dtml-let>
 </dtml-in>
-
 
 <dtml-var "generator.getProtectedSection(parsed_class,'module-footer')">
 </dtml-let>
