@@ -894,7 +894,10 @@ class ArchetypesGenerator(BaseGenerator):
         searchable = self.getOption('searchable', element, default = _marker)
         if searchable is not _marker:
              tgv.update({'searchable': searchable})
-
+        index = self.getOption('index', element, default=_marker)
+        if index is not _marker:
+             tgv.update({'index': index})
+             
         # set attributes from tgv
         for k in tgv.keys():
             if k not in noparams and not k.startswith('widget:'):
