@@ -347,10 +347,12 @@ class BaseGenerator:
                                                         'template', None))
 
     def generatePythonClass(self, element, template, **kw):
-        log.info("%sGenerating python class '%s'.",
-                 '    ',
+        log.debug("Generating python class '%s'.",
                  element.getName())
-        
+        # ^^^^ This was changed into log.info during the snow sprint.
+        # With incorrect indentation.
+        # And resulting in double messages for test class files.
+        # => reverted to log.debug [reinout]
         templ = utils.readTemplate(template)
         d = {
             'klass': element,
