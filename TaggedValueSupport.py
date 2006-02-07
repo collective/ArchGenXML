@@ -591,6 +591,10 @@ explanation = """Sets the macro used by the widget. This will be used as
 the name of the auto-created page template for the widget."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'show_hm'
+explanation = """Setting this boolean value to False will show only the date entry."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 # Attributes
 
 category = 'attribute'

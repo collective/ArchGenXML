@@ -361,7 +361,8 @@ class ArchetypesGenerator(BaseGenerator):
     nonstring_tgvs = ['widget', 'vocabulary', 'required', 'precision',
                       'storage', 'enforceVocabulary', 'multiValued',
                       'visible', 'validators', 'validation_expression',
-                      'sizes', 'original_size', 'max_size', 'searchable']
+                      'sizes', 'original_size', 'max_size', 'searchable',
+                      'show_hm']
 
     msgcatstack = []
 
