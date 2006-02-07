@@ -387,9 +387,15 @@ class BaseGenerator:
     def getLicenseInfo(self, element):
         license_name = self.getOption('license', element, self.license)
         license = LICENSES.get(license_name)
+        if license is None:
+            license = {
+                'name': license_name,
+                'text': self.getOption('license_text', element, ''),
+            }
         license_text = '%(name)s\n#\n%(text)s' % license
         log.debug("License: %r.", license_text)
         return license_text
+
 
     def getHeaderInfo(self, element):
         log.debug("Getting info for the header...")

@@ -227,6 +227,11 @@ ZPLTEXT = """\
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 # FOR A PARTICULAR PURPOSE."""
 
+DFSLTEXT = """\
+# This Program may be used by anyone in accordance with the terms of the 
+# German Free Software License
+# The License may be obtained under <http://www.d-fsl.org>."""
+
 LICENSES = {
 
     'GPL': {
@@ -248,6 +253,10 @@ LICENSES = {
         'name': 'Zope Public License (ZPL)',
         'text': ZPLTEXT,
     },
+    'DFSL': {
+        'name': 'German Free Software License (D-FSL)',
+        'text': DFSLTEXT,
+    }
 
 }
 
