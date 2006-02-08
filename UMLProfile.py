@@ -168,7 +168,7 @@ class UMLProfile:
             'XMIPackage': 'package',
             'XMIModel': 'model',
             'XMIClass': 'class',
-            #'XMIInterface': ,
+            'XMIInterface': 'interface',
             #'XMIMethodParameter': ,
             'XMIMethod': 'method',
             'XMIAttribute': 'attribute',
