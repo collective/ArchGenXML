@@ -49,7 +49,9 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 def test_suite():
     from unittest import TestSuite
     from Testing.ZopeTestCase.zopedoctest import ZopeDocFileSuite
-
+    
+    <dtml-var "generator.getProtectedSection(parsed_class, 'test-suite-in-between')">
+    
     return TestSuite((
         ZopeDocFileSuite('<dtml-var "testname">.txt',
                          package='Products.<dtml-var "klass.getPackage().getProduct().getCleanName()">.doc',
