@@ -38,7 +38,7 @@ class BaseGenerator:
         dispatching=1,
         generator='generateZope3Interface',
         template='zope3_interface.py',
-        description='Generate this interface class as zope 3 interface. This'
+        description='Generate this interface class as zope 3 interface. This '
                     'will inherit from zope.interface.Interface.')
                     
     uml_profile.addStereoType('python_class', ['XMIClass'],
