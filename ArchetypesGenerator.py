@@ -126,7 +126,7 @@ class ArchetypesGenerator(BaseGenerator):
     uml_profile.addStereoType('z2', ['XMIInterface'],
         dispatching=1,
         generator='generateZope2Interface',
-        description='TODO')
+        description='Generates a Zope 2 Interface inheriting from Zope.Interface.Base.')
 
     uml_profile.addStereoType('tests', ['XMIPackage'],
         description='Treats a package as test package. Inside such a test '
