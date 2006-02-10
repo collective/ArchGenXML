@@ -448,7 +448,8 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 
 tagname = 'configlet:section'
 explanation = """The section of the control panel where the configlet
-should be displayed. One of 'Plone', 'Products' (default) or 'Members'."""
+should be displayed. One of 'Plone', 'Products' (default) or 'Member'.
+**warning**: older documentation versions mentioned 'Members' here."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'configlet:icon'

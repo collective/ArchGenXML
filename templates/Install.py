@@ -137,7 +137,7 @@ def install(self):
         'string:${portal_url}/<dtml-var "tool_instance_name"><dtml-var "configlet_view">/',
         '<dtml-var "c.getTaggedValue('configlet:condition','python:True')">', # a condition
         '<dtml-var "c.getTaggedValue('configlet:permission','Manage Portal')">', # access permission
-        '<dtml-var "c.getTaggedValue('configlet:section','Products')">', # section to which the configlet should be added: (Plone,Products,Members)
+        '<dtml-var "c.getTaggedValue('configlet:section','Products')">', # section to which the configlet should be added: (Plone, Products (default) or Member)
         1, # visibility
         '<dtml-var "c.getName()">ID',
         '<dtml-var "c.getTaggedValue('configlet:icon','site_icon.gif')">', # icon in control_panel
