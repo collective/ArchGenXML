@@ -238,7 +238,7 @@ class BaseGenerator:
 
         return outfile.getvalue().strip()
 
-    def generateImplements(self,element,parentnames):
+    def generateImplements(self, element, parentnames):
         outfile = StringIO()
         # Zope 2 Interfaces
         # "__implements__" line -> handle realization parents
@@ -246,7 +246,7 @@ class BaseGenerator:
         z2reparentnames = [p.getName() for p in reparents if not p.hasStereoType('z3')]
         if z2reparentnames:
             z2iface_implements = \
-                ' + '.join(["(getattr(%s,'__implements__',()),)" % i for i in z2reparentnames])
+                ' + '.join(["(%s,)" % i for i in z2reparentnames])
         else:
             z2iface_implements = None
 
