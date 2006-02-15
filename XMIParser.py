@@ -2509,8 +2509,11 @@ class XMIStateTransition(XMIElement):
             1 : User Action (default)
             2 : Workflow Method
         """
+        trigger_types={'automatic':0,'user action':1,'workflow method':2}
+        trigger_type=self.getTaggedValue('trigger_type').lower()
+        trigger_type=trigger_types.get(trigger_type,trigger_type)
         try:
-            return int(self.getTaggedValue('trigger_type'))
+            return int(trigger_type)
         except ValueError:
             return 1
 
