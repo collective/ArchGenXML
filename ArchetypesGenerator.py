@@ -1838,7 +1838,7 @@ class ArchetypesGenerator(BaseGenerator):
            and not element.hasStereoType('mixin', umlprofile=self.uml_profile):
               baseclasses = baseclass.split(',')
               parentnames += baseclasses
-
+        parentnames = [klass.strip() for klass in parentnames]
         return baseclass, baseschema, parentnames
 
     def generateArchetypesClass(self, element, **kw):
@@ -1951,19 +1951,19 @@ class ArchetypesGenerator(BaseGenerator):
                                   p.hasStereoType(self.archetype_stereotype, umlprofile=self.uml_profile)
 
         # also check if the parent classes can have subobjects
-        baseaggregatedClasses=[]
+        baseaggregatedClasses = []
         for b in element.getGenParents():
             baseaggregatedClasses.extend(b.getRefs())
             baseaggregatedClasses.extend(b.getSubtypeNames(recursive=1))
 
         #also check if the interfaces used can have subobjects
-        baseaggregatedInterfaces=[]
+        baseaggregatedInterfaces = []
         for b in element.getGenParents(recursive=1):
             baseaggregatedInterfaces.extend(b.getSubtypeNames(recursive=1,filter=['interface']))
 
-        additionalParents=element.getTaggedValue('additional_parents')
+        additionalParents = element.getTaggedValue('additional_parents')
         if additionalParents:
-            parentnames=list(parentnames)+additionalParents.split(',')
+            parentnames = additionalParents.split(',') + list(parentnames)
 
         # find base
         baseclass, baseschema, parentnames = self.getArchetypesBase(element, parentnames, parent_is_archetype)
@@ -1990,10 +1990,10 @@ class ArchetypesGenerator(BaseGenerator):
             print >>outfile,TEMPL_TOOL_HEADER
             parentnames.insert(0, 'UniqueObject')
 
-        parents=','.join(parentnames)
+        parents = ', '.join(parentnames)
 
         # protected section
-        self.generateProtectedSection(outfile, element,'module-header')
+        self.generateProtectedSection(outfile, element, 'module-header')
 
         # generate local Schema
         print >> outfile, self.generateArcheSchema(element, baseschema)
