@@ -1621,10 +1621,11 @@ class ArchetypesGenerator(BaseGenerator):
             print >> outfile, '    %s = staticmethod(%s)\n' % (m.getName(),m.getName())
 
     def generateBaseTestcaseClass(self,element,template):
-        #write runalltests.py and framework.py
+        log.debug('write runalltests.py and framework.py')
         runalltests=utils.readTemplate('tests/runalltests.py')
         framework=utils.readTemplate('tests/framework.py')
 
+        log.debug('generate base testcase class')
         of=self.makeFile(os.path.join(element.getPackage().getFilePath(),'runalltests.py'))
         of.write(runalltests)
         of.close()
