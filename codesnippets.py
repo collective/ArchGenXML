@@ -131,6 +131,7 @@ CLASS_META_TYPE = """    meta_type = '%s'"""
 CLASS_PORTAL_TYPE = """    portal_type = '%s'"""
 CLASS_ARCHETYPE_NAME = """    # This name appears in the 'add' box
     archetype_name = '%s'\n"""
+CLASS_FOLDER_TABS = """    use_folder_tabs = %s\n"""
 CLASS_IMPLEMENTS = """    __implements__ = %(baseclass_interfaces)s + (%(realizations)s,)"""
 CLASS_IMPLEMENTS_BASE = """    __implements__ = %(baseclass_interfaces)s"""
 CLASS_ALLOWED_CONTENT_TYPES = '''    allowed_content_types = %s%s'''
