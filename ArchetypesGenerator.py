@@ -1033,7 +1033,8 @@ class ArchetypesGenerator(BaseGenerator):
                     widgetmap.update( {k: check_map[k]} )
 
             # remove description_msgid if there is no description
-            if 'description' not in widgetmap.keys() and 'description_msgid' in widgetmap.keys():
+            if 'description' not in widgetmap.keys() and 'description_msgid' in widgetmap.keys() \
+                and not self.default_description_generation:
                 del widgetmap['description_msgid']
 
             if 'label_msgid' in widgetmap.keys() and has_enhanced_strip_support:

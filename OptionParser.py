@@ -484,6 +484,14 @@ group.add_option("--default-field-generation",
                  section="CLASSES",
                  )
 
+group.add_option("--default-description-generation",
+                 dest="default_description_generation",
+                 help="Generate the default widget descriptions (default is 0).",
+                 type="yesno",
+                 default=0,
+                 section="CLASSES",
+                 )
+
 parser.add_option_group(group)
 
 #----------------------------------------------------------------------------
