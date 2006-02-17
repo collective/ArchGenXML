@@ -123,6 +123,8 @@ class PyModule:
                 end = j
                 protectedSection = '\n'.join(self.splittedSource[start+1:end])
                 self.protectedSections[sectionname] = protectedSection
+        log.debug("In total, we found %s protected sections.",
+                  len(self.protectedSections))
 
     def findProtectionDeclarations(self):
         """ Find the protection declarations in the source file
