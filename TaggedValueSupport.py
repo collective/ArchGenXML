@@ -881,6 +881,21 @@ for category in ['model', 'package', 'class']:
     automagically."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+    tagname = 'catalogmultiplex:white'
+    explanation = """Add an archetypes class (identified by meta_type) to one or 
+    more catalogs to be cataloged in. Comma-separated list of catalogs.
+    Example-value: 'myfancy_catalog, another_catalog'. 
+    Explaination: Additionally to the default 'portal_catalog' the instances of
+    this class will be catalogged in the two given catalogs."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+    tagname = 'catalogmultiplex:black'
+    explanation = """Remove an archetypes class (identified by meta_type) 
+    from one or more catalogs to be cataloged in. Comma-separated list of 
+    catalogs. Example-value: 'portal_catalog, another_catalog'. Explaination: 
+    Instances of the class wont be catalogged in portal_catalog anymore."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 for category in ['model', 'package', 'class', 'attribute']:
     tagname = 'read_permission'
     explanation = """Defines archetypes fields read-permission. Use it
