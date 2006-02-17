@@ -40,7 +40,7 @@ class BaseGenerator:
         template='zope3_interface.py',
         description='Generate this interface class as zope 3 interface. This '
                     'will inherit from zope.interface.Interface.')
-                    
+
     uml_profile.addStereoType('python_class', ['XMIClass'],
         dispatching=1,
         generator='generatePythonClass',
@@ -185,11 +185,11 @@ class BaseGenerator:
         parsed = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.getName(), None)
         print >> outfile, self.getProtectedSection(parsed, section, indent)
 
-    def generateDependentImports(self,element):
+    def generateDependentImports(self, element):
         outfile = StringIO()
         package = element.getPackage()
 
-        #imports for stub-association classes
+        # Imports for stub-association classes
         importLines = []
 
         parents = element.getGenParents()
@@ -256,14 +256,14 @@ class BaseGenerator:
                     ' + '.join(["(getattr(%s,'__implements__',()),)" % i for i in parentnames])
         else:
             z2parentclasses_implements = None
-        
+
         z2implements_line = None
-        if z2iface_implements is not None or z2parentclasses_implements is not None:            
+        if z2iface_implements is not None or z2parentclasses_implements is not None:
             z2implements_line = '__implements__ = '
         if z2parentclasses_implements is not None:
             z2implements_line += z2parentclasses_implements
         if z2iface_implements and z2parentclasses_implements:
-            z2implements_line += ' + ' 
+            z2implements_line += ' + '
         if z2iface_implements is not None:
             z2implements_line += z2iface_implements
         if z2implements_line is not None:
@@ -371,7 +371,7 @@ class BaseGenerator:
         log.info("%sGenerating zope3 interface '%s'.",
                  '    ',
                  element.getName())
-        
+
         templ = utils.readTemplate(template)
         d = {
             'klass': element,

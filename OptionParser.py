@@ -535,7 +535,7 @@ group.add_option("--author",
                  dest="author",
                  help="Set default author value (can specify as comma-separated list, "
                  "or specify several times).",
-                 default='',
+                 default=[],
                  section="DOCUMENTATION",
                  )
 
@@ -548,7 +548,7 @@ group.add_option("--e-mail",
                  "or specify several times).",
                  type="commalist",
                  action="append",
-                 default='',
+                 default=[],
                  section="DOCUMENTATION",
                  )
 
