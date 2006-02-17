@@ -63,22 +63,7 @@ def install(self):
 </dtml-let>
 </dtml-in>        
 </dtml-if>
-<dtml-let hide_folder_tabs="[cn.getName() for cn in generator.getGeneratedClasses(package) if cn.getTaggedValue('hide_folder_tabs', False)]">
-<dtml-if "hide_folder_tabs">
-    #register folderish classes in use_folder_contents
-    portalProperties = getToolByName(self, 'portal_properties', None)
-    if portalProperties is not None:
-        siteProperties = getattr(portalProperties, 'site_properties',None)
-        use_folder_tabs = list(siteProperties.use_folder_tabs)
-        print >> out, 'adding %d classes to use_folder_tabs:' % len(classes)
-        for cl in classes:
-            if cl['klass'].isPrincipiaFolderish and \
-                not cl['klass'].portal_type in <dtml-var "repr(hide_folder_tabs)">:
-                print >> out, 'portal type:',cl['klass'].portal_type
-                use_folder_tabs.append(cl['klass'].portal_type)
-        siteProperties.use_folder_tabs = tuple(use_folder_tabs)
-</dtml-if>
-</dtml-let>
+
 <dtml-let klasses="[klass for klass in generator.getGeneratedClasses(package) if generator.getOption('catalogmultiplex:white', klass, None) or generator.getOption('catalogmultiplex:black', klass, None)]">
 <dtml-if "klasses">
 
@@ -322,21 +307,6 @@ def install(self):
 def uninstall(self):
     out = StringIO()
 
-<dtml-let hide_folder_tabs="[cn.getName() for cn in generator.getGeneratedClasses(package) if cn.getTaggedValue('hide_folder_tabs', False)]">
-<dtml-if "hide_folder_tabs">
-    # unregister folderish classes in use_folder_contents
-    classes = listTypes(PROJECTNAME)
-    siteProperties = getToolByName(self,'portal_properties').site_properties
-    use_folder_tabs = list(siteProperties.use_folder_tabs)
-    print >> out, 'removing %d classes from use_folder_tabs:' % len(classes)
-    for cl in classes:
-        if cl['klass'].isPrincipiaFolderish and \
-            not cl['klass'].portal_type in <dtml-var "repr(hide_folder_tabs)">:
-            print >> out, 'portal type:',cl['klass'].portal_type
-            use_folder_tabs.remove(cl['klass'].portal_type)
-    siteProperties.use_folder_tabs = tuple(use_folder_tabs)
-</dtml-if>
-</dtml-let>
 <dtml-let all_tools="[c for c in generator.getGeneratedTools(package)]">
 <dtml-if "all_tools">
     # unhide tools
@@ -365,9 +335,6 @@ def uninstall(self):
 </dtml-let>
     # try to call a workflow uninstall method
     # in 'InstallWorkflows.py' method 'uninstallWorkflows'
-    
-    # TODO: this is buggy code. There is no workflow uninstaller in
-    # the generated InstallWorkflows.py.
     try:
         uninstallWorkflows = ExternalMethod('temp', 'temp',
                                             PROJECTNAME+'.InstallWorkflows', 

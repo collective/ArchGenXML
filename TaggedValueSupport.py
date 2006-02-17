@@ -254,8 +254,10 @@ allowed as content."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'hide_folder_tabs'
-explanation = """Hides the folder tabs for this content type. (Mostly the
-"Contents" tab)."""
+explanation = """Deprecated. If you want to hide the "contents" tab,
+just set a tagged value 'use_folder_tabs=0', which just sets that
+archetypes property. (The old hide_folder_tabs implementation was
+                      horribly broken)."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'import_from'

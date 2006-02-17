@@ -18,5 +18,18 @@ def installWorkflows(self, package, out):
     workflowTool.setChainForPortalTypes(<dtml-var "repr(sm.getClassNames())">, workflow.getId())
 </dtml-let>
 </dtml-in>
+<dtml-var "generator.getProtectedSection(parsedModule,
+'after-workflow-install', 1)">
 
     return workflowTool
+
+def uninstallWorkflows(self, package, out):
+    """Deinstall the workflows.
+
+    This code doesn't really do anything, but you can place custom
+    code here in the protected section.
+    """
+
+<dtml-var "generator.getProtectedSection(parsedModule,
+'workflow-uninstall', 1)">
+    pass

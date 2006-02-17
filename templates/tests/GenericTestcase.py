@@ -32,6 +32,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
     def afterSetUp(self):
         pass
 <dtml-else><dtml-var "parsed_class.methods['afterSetUp'].getSrc()"></dtml-if>
+
 <dtml-in "generator.getMethodsToGenerate(klass)[0]">
 
 <dtml-let m="_['sequence-item']" mn="m.testmethodName()">
