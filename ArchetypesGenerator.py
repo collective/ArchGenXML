@@ -2227,58 +2227,6 @@ class ArchetypesGenerator(BaseGenerator):
 
         return outfile.getvalue()
 
-    def getHeaderInfo(self, element):
-        log.debug("Getting info for the header...")
-
-        copyright = COPYRIGHT % \
-            (str(time.localtime()[0]),
-             self.getOption('copyright', element, self.copyright) or self.author)
-        log.debug("Copyright = %r.", copyright)
-
-        license = self.getLicenseInfo(element)
-        authors, emails, authorline = self.getAuthors(element)
-
-        if self.getOption('rcs_id', element, False):
-            log.debug("Using id keyword.")
-            filename_or_id = '$'+'Id'+'$'
-        else:
-            log.debug("Using filename.")
-            filename_or_id = 'File: %s.py' % element.getModuleName()
-
-        if self.getOption('generated_date', element, False):
-            date = '# Generated: %s\n' % time.ctime()
-        else:
-            date = ''
-
-        if utils.isTGVTrue(self.getOption('version_info', element, True)):
-            log.debug("We want version info in every file.")
-            versiontext = utils.version()
-        elif element.__class__ == XMIParser.XMIModel:
-            log.debug("We don't want version info in all files, "
-                      "but we do want them in the config and Install.")
-            versiontext = utils.version()
-        else:
-            log.debug("We don't want version info in this file.")
-            versiontext = ''
-
-        moduleinfo = {
-            'authors': ', '.join(authors),
-            'emails': ', '.join(emails),
-            'authorline': authorline,
-            'version': versiontext,
-            'date': date,
-            'copyright': '\n# '.join(utils.wrap(copyright, 77).split('\n')),
-            'license': license,
-            'filename_or_id': filename_or_id,
-        }
-
-        return moduleinfo
-
-    def generateModuleInfoHeader(self, element):
-        if not self.module_info_header:
-            return
-        fileheaderinfo = self.getHeaderInfo(element)
-        return MODULE_INFO_HEADER % fileheaderinfo
 
     def generateHeader(self, element):
         outfile=StringIO()
