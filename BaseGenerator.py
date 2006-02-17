@@ -398,7 +398,7 @@ class BaseGenerator:
         return license_text
 
 
-    def getHeaderInfo(self, element):
+    def getHeaderInfo(self, element, name=None):
         log.debug("Getting info for the header...")
 
         copyright = COPYRIGHT % \
@@ -414,7 +414,7 @@ class BaseGenerator:
             filename_or_id = '$'+'Id'+'$'
         else:
             log.debug("Using filename.")
-            filename_or_id = 'File: %s.py' % element.getModuleName()
+            filename_or_id = 'File: %s.py' % (name or element.getModuleName())
 
         if self.getOption('generated_date', element, False):
             date = '# Generated: %s\n' % time.ctime()
@@ -444,10 +444,10 @@ class BaseGenerator:
         }
         return moduleinfo
 
-    def generateModuleInfoHeader(self, element):
+    def generateModuleInfoHeader(self, element, name=None):
         if not self.module_info_header:
             return
-        fileheaderinfo = self.getHeaderInfo(element)
+        fileheaderinfo = self.getHeaderInfo(element, name=name)
         return MODULE_INFO_HEADER % fileheaderinfo
 
     def getAuthors(self, element):
