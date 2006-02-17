@@ -2085,7 +2085,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         # Let's see if we have to set use_folder_tabs to 0.
         if utils.isTGVTrue(element.getTaggedValue('hide_folder_tabs', False)):
-            print >> outfile, CLASS_FOLDER_TABS % 1
+            print >> outfile, CLASS_FOLDER_TABS % 0
 
         #allowed_content_classes
         parentAggregates = ''
