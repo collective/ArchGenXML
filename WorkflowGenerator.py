@@ -88,6 +88,7 @@ class WorkflowGenerator(BaseGenerator):
                 log.info("Workflow %s has no script(s)." % sm_name)
 
         del d['statemachine']
+        log.debug("Creating InstallWorkflows.py file.")
         templ = utils.readTemplate('InstallWorkflows.py')
         scriptpath = os.path.join(extDir, 'InstallWorkflows.py')
         filesrc = self.atgenerator.readFile(scriptpath) or ''
