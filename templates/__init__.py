@@ -23,7 +23,7 @@ from Products.CMFCore import utils as cmfutils
 from Products.CMFCore import CMFCorePermissions
 from Products.CMFCore import DirectoryView
 from Products.CMFPlone.PloneUtilities import ToolInit
-from Products.Archetypes.public import *
+from Products.Archetypes.atapi import *
 from Products.Archetypes import listTypes
 from Products.Archetypes.utils import capitalize
 
