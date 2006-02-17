@@ -25,7 +25,7 @@ __author__  = '''Reinout van Rees <r.van.rees@zestsoftware.nl>'''
 __docformat__ = 'plaintext'
 
 from AccessControl import ClassSecurityInfo
-from Products.Archetypes.public import *
+from Products.Archetypes.atapi import *
 
 
 
