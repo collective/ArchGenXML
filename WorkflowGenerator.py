@@ -89,9 +89,12 @@ class WorkflowGenerator(BaseGenerator):
 
         del d['statemachine']
         templ = utils.readTemplate('InstallWorkflows.py')
+        scriptpath = os.path.join(extDir, 'InstallWorkflows.py')
+        filesrc = self.atgenerator.readFile(scriptpath) or ''
+        parsedModule = PyModule(filesrc, mode='string')
+        d['parsedModule'] = parsedModule
         dtml = HTML(templ, d)
         res = dtml()
-        scriptpath = os.path.join(extDir, 'InstallWorkflows.py')
         of = self.atgenerator.makeFile(scriptpath)
         of.write(res)
         of.close()
