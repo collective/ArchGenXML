@@ -1,8 +1,8 @@
-<dtml-var "generator.generateModuleInfoHeader(package)">
+<dtml-var "generator.generateModuleInfoHeader(package, name='Install')">
 import os.path
 import sys
 from StringIO import StringIO
-
+from sets import Set
 from App.Common import package_home
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import manage_addTool
@@ -11,10 +11,8 @@ from zExceptions import NotFound, BadRequest
 
 from Products.Archetypes.Extensions.utils import installTypes
 from Products.Archetypes.Extensions.utils import install_subskin
-try:
-    from Products.Archetypes.lib.register import listTypes
-except ImportError:
-    from Products.Archetypes.public import listTypes
+from Products.Archetypes.config import TOOL_NAME as ARCHETYPETOOLNAME
+from Products.Archetypes.atapi import listTypes
 <dtml-if "[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.cmfmember_stereotype)]">
 from Products.CMFMember.Extensions.toolbox import SetupMember
 </dtml-if>
@@ -81,6 +79,41 @@ def install(self):
         siteProperties.use_folder_tabs = tuple(use_folder_tabs)
 </dtml-if>
 </dtml-let>
+<dtml-let klasses="[klass for klass in generator.getGeneratedClasses(package) if generator.getOption('catalogmultiplex:white', klass, None) or generator.getOption('catalogmultiplex:black', klass, None)]">
+<dtml-if "klasses">
+
+    # Configure CatalogMultiplex: 
+    # explicit add classes (meta_types) be indexed in catalogs (white) 
+    # or removed from indexing in a catalog (black)
+    atool = getToolByName(self, ARCHETYPETOOLNAME)
+    catalogmap = {}
+<dtml-in "klasses">
+<dtml-let klass="_['sequence-item']">
+    catalogmap['<dtml-var "klass.getCleanName()">'] = {}
+<dtml-if "generator.getOption('catalogmultiplex:white', klass, None)">
+    catalogmap['<dtml-var "klass.getCleanName()">']['white'] = [<dtml-var "', '.join( ['\'%s\'' % s.strip() for s in generator.getOption('catalogmultiplex:white', klass).split(',')])">]
+</dtml-if>    
+<dtml-if "generator.getOption('catalogmultiplex:black', klass, None)">
+    catalogmap['<dtml-var "klass.getCleanName()">']['black'] = [<dtml-var "', '.join( ['\'%s\'' % s.strip() for s in generator.getOption('catalogmultiplex:black', klass).split(',')])">]
+</dtml-if>    
+</dtml-let>
+</dtml-in>
+    for meta_type in catalogmap:
+        submap = catalogmap[meta_type]
+        current_catalogs = Set([c.id for c in atool.getCatalogsByType(meta_type)])
+        if 'white' in submap:
+            for catalog in submap['white']:
+                if not getToolByName(self, catalog, False):
+                    raise AttributeError, 'Catalog "%s" does not exist!' % catalog
+                current_catalogs.update([catalog])
+        if 'black' in submap:
+            for catalog in submap['black']:
+                if catalog in current_catalogs:
+                    current_catalogs.remove(catalog)
+        atool.setCatalogsByType(meta_type, list(current_catalogs))
+</dtml-if>
+</dtml-let>
+
 <dtml-if "generator.left_slots or generator.right_slots">
     portal = getToolByName(self,'portal_url').getPortalObject()
 </dtml-if>
@@ -192,7 +225,10 @@ def install(self):
     # try to call a workflow install method
     # in 'InstallWorkflows.py' method 'installWorkflows'
     try:
-        installWorkflows = ExternalMethod('temp','temp',PROJECTNAME+'.InstallWorkflows', 'installWorkflows').__of__(self)
+        installWorkflows = ExternalMethod('temp',
+                                          'temp',
+                                          PROJECTNAME+'.InstallWorkflows', 
+                                          'installWorkflows').__of__(self)
     except NotFound:
         installWorkflows = None
 
@@ -267,7 +303,8 @@ def install(self):
     # try to call a custom install method
     # in 'AppInstall.py' method 'install'
     try:
-        install = ExternalMethod('temp','temp',PROJECTNAME+'.AppInstall', 'install')
+        install = ExternalMethod('temp', 'temp',
+                                 PROJECTNAME+'.AppInstall', 'install')
     except NotFound:
         install = None
 
@@ -332,7 +369,9 @@ def uninstall(self):
     # TODO: this is buggy code. There is no workflow uninstaller in
     # the generated InstallWorkflows.py.
     try:
-        uninstallWorkflows = ExternalMethod('temp','temp',PROJECTNAME+'.InstallWorkflows', 'uninstallWorkflows').__of__(self)
+        uninstallWorkflows = ExternalMethod('temp', 'temp',
+                                            PROJECTNAME+'.InstallWorkflows', 
+                                            'uninstallWorkflows').__of__(self)
     except NotFound:
         uninstallWorkflows = None
 
@@ -346,7 +385,8 @@ def uninstall(self):
     # try to call a custom uninstall method
     # in 'AppInstall.py' method 'uninstall'
     try:
-        uninstall = ExternalMethod('temp','temp',PROJECTNAME+'.AppInstall', 'uninstall')
+        uninstall = ExternalMethod('temp', 'temp', 
+                                   PROJECTNAME+'.AppInstall', 'uninstall')
     except:
         uninstall = None
 
