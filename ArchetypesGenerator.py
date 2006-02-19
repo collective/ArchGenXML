@@ -445,11 +445,11 @@ class ArchetypesGenerator(BaseGenerator):
             self.targetRoot = '.'
         log.debug("Initialization finished.")
 
-    def makeFile(self, fn, force=1):
+    def makeFile(self, fn, force=1, binary=0):
         log.debug("Calling makeFile to create '%s'.", fn)
         ffn = os.path.join(self.targetRoot, fn)
         log.debug("Together with the targetroot that means '%s'.", ffn)
-        return utils.makeFile(ffn, force=force)
+        return utils.makeFile(ffn, force=force, binary=binary)
 
     def readFile(self,fn):
         ffn = os.path.join(self.targetRoot, fn)
@@ -2491,10 +2491,11 @@ class ArchetypesGenerator(BaseGenerator):
 
         # Create a tool.gif if necessary
         if self.getGeneratedTools(package):
-            toolgif=open(os.path.join(templdir,'tool.gif')).read()
-            of=self.makeFile(os.path.join(package.getFilePath(),'tool.gif'))
-            of.write(toolgif)
-            of.close()
+            toolgif = open(os.path.join(templdir,'tool.gif'),'rb').read()
+            of=self.makeFile(os.path.join(package.getFilePath(),'tool.gif'), self.force, 1)
+            if of:
+                of.write(toolgif)
+                of.close()
 
         # Generate a refresh.txt for the product
         of=self.makeFile(os.path.join(package.getFilePath(),'refresh.txt'))

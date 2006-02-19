@@ -9,7 +9,7 @@ NameTable = {
     'import': 'emport'
     }
 
-def makeFile(outfilename, force=1):
+def makeFile(outfilename, force=1, binary=0):
     log.debug("Making file '%s' (force=%s).", outfilename, force)
     outfile = None
     if (not force) and os.path.exists(outfilename):
@@ -17,7 +17,10 @@ def makeFile(outfilename, force=1):
         return None
     else:
         log.debug("Opening the file for writing and returning it.")
-        outfile = open(outfilename, 'w')
+        if binary:
+            outfile = open(outfilename, 'wb')
+        else:
+            outfile = open(outfilename, 'w')
     return outfile
 
 def readFile(filename):
