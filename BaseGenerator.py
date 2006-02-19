@@ -24,7 +24,7 @@ from documenttemplate.documenttemplate import HTML
 import utils
 from codesnippets import *
 
-import XSDParser, XMIParser, PyParser
+import XMIParser, PyParser
 from UMLProfile import UMLProfile
 
 log = logging.getLogger("basegenerator")

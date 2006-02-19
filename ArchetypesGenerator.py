@@ -25,7 +25,6 @@ from StringIO import StringIO
 # AGX-specific imports
 import PyParser
 import XMIParser
-import XSDParser
 from UMLProfile import UMLProfile
 
 from BaseGenerator import BaseGenerator
@@ -2981,7 +2980,7 @@ class ArchetypesGenerator(BaseGenerator):
                                                   generate_datatypes=self.generate_datatypes)
                 log.debug("Created a root XMI parser.")
             elif suff.lower() in ('.zargo','.zuml','.zip'):
-                log.debug("Opening zargo...")
+                log.debug("Opening %s ..." % suff.lower())
                 zf=ZipFile(self.xschemaFileName)
                 xmis=[n for n in zf.namelist() if os.path.splitext(n)[1].lower()in ['.xmi','.xml']]
                 assert(len(xmis)==1)
@@ -2989,13 +2988,8 @@ class ArchetypesGenerator(BaseGenerator):
                 self.root=root=XMIParser.parse(xschema=buf,
                     packages=self.parse_packages, generator=self,
                     generate_datatypes=self.generate_datatypes)
-            elif suff.lower() == '.xsd':
-                log.warn("The XSD parser is a very old prototype. "
-                         "Not production quality. You're dragon "
-                         "fodder if you try it anyway, sorry.")
-                self.root=root=XSDParser.parse(self.xschemaFileName)
             else:
-                raise TypeError,'input file not of type .xsd, .xmi, .xml, .zargo, .zuml'
+                raise TypeError,'input file not of type .xmi, .xml, .zargo, .zuml'
 
             if self.outfilename:
                 log.debug("We've got an self.outfilename: %s.",
