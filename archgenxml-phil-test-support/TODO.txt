@@ -1,0 +1,75 @@
+TODO's for ArchGenXML
+---------------------
+
+To-do list for current HEAD code, not a feature wish list. 
+A list of wished-for/planned features planned is at:
+http://plone.org/development/teams/developer/ArchGenXML
+
+* Finish writing documentation: current is a tutorial at plone.org
+
+	- optilude and natoka want to help :)
+	
+	- need to grep source code for stereotype and TGV checks and document
+	   each one. Also need to classify which ones are in 1.2 and which ones
+	   are only in trunk.
+
+* New <<ordered>> stereotype on folderish items allows using OrderedBaseFolder:
+  
+    - What impact does this have on I18NBaseFolder use (I can't find it in
+        Products/Archetypes...)
+        
+    - elvix seems to think we shouldn't generate this as all, since LinguaPlone
+        supercedes i18nlayer, and I18NBaseFolder was a workaround for a 
+        weakness in i18nlayer. I can't answer to that, since I've not used
+        either.
+
+* Move remainder of templates in templates/ to DTML 
+
+    - action_view.pt
+    - apeconf_folder.xml
+    - apeconf_object.xml
+    - generated.pot
+    - portlet_template.pt
+
+* Move class, interface generation to DTML. There are too many conditionals and
+    strings being generated in the current code. :-) Having DTML conditionals
+    and loops would make it much clearer and easier to manipulate. 
+    
+* Tool support:
+  automagically disable uneccessary tabs (like base_view, metadata 
+  and maybe references) on classes with stereotype 'portal_tool'
+    
+* ATVocabularyManager integration, part registration of class:
+  fetch container_class - needs to be refined:
+  check if parent has vocabulary_container_stereotype and use its 
+  name as container
+  else check for TGV vocabulary_container
+  fallback: use SimpleVocabulary
+
+* On Workflow definitions generation
+
+  * Define how worklists would be represented using state diagrams
+
+  * Define custom initial state using a tagged value mark (to enable the correct 
+    generation of initial state on workflow definitions, when the initial state 
+    is not the first state created on the model.) 
+
+      jensens: i think this is solved, using the UML-initial-state-symbol (solid circle).
+      
+      xiru: it is already supported using a tagged valued called initial_state on the 
+      state definition. However, support the UML initial state symbol would be ok too.
+
+  * Test the transitions scripts generation
+
+      xiru: It is already supported, but the code is a bit ugly yet.
+
+  * Add support for conditions on transitions
+
+      xiru: It is already supported too, but not documented :-P
+
+* Write documentation about workflow generation features (I think that only xiru knows all these features)
+  Jensens: I created a sample model: InExWorkflow in collective CVS
+
+* Update README
+
+  

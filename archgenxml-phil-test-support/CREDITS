@@ -1,0 +1,29 @@
+Authors:
+
+    Philipp Auersperg phil@bluedynamics.com --
+       had to start this project because he is too lazy for coding.
+
+    Jens Klein (jensquadrat.com) --
+       hates copy and paste and loves code generation, he made a 
+       great documentation and buzzes Phil to bring in new features.
+       He added tool support and control panel integration,
+       automatic msgid/pot generation with i18ndude integration,
+       module-info-header support and config-file support,
+       cmfmember support and several other little fixes and features.
+
+    Fabiano Weimar dos Santos (xiru) --
+       brought in some good ideas from his project (UML2AT). He did lots of 
+       testing and bug fixing and more bugfixing. Fabiano is our workflow 
+       hero: He wrote several code generation improvements for workflow 
+       definition.
+    
+    Martin Aspeli --
+       Improvements and important cleanups
+
+Sponsors:
+    Xiru.org, Brazil (Fabiano Weimar dos Santos)
+        sponsors a valuable amount of money into workflow support.
+
+    PilotSystems, Paris, France (David Sapiro)
+    OpenSource.ag, Innsbruck, Austria (Georg Pleger)
+    Telesis.at, Austria (Jodok Batlogg)
