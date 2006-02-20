@@ -1,0 +1,34 @@
+TODO's for ArchGenXML
+---------------------
+
+this are todos for current HEAD code, not a feature wish list. 
+A list of iwished/plannedi features planned is at:
+http://plone.org/development/teams/developer/ArchGenXML
+
+* finish writing documentation for 1.1
+
+* ATVocabularyManager integration, part registration of class:
+  fetch container_class - needs to be refined:
+  check if parent has vocabulary_container_stereotype and use its 
+  name as container
+  else check for TGV vocabulary_container
+  fallback: use SimpleVocabulary
+
+* Tool support:
+  automagically disable uneccessary tabs (like base_view, metadata 
+  and maybe references) on classes with stereotype 'portal_tool'
+
+* On Workflow definitions generation
+
+  * Define how worklists would be represented using state diagrams
+
+  * Define custom initial state using a tagged value mark (to enable the correct generation of initial state on workflow definitions, when the initial state is not the first state created on the model.)
+
+  * Test the transitions scripts generation
+
+  * Add support for conditions on transitions
+
+* Write documentation about workflow generation features (I think that only xiru knows all these features)
+
+* Update README
+

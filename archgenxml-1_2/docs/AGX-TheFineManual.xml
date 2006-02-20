@@ -1,0 +1,810 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<book>
+  <title>ArchGenXML</title>
+
+  <subtitle>The Fine Manual</subtitle>
+
+  <bookinfo>
+    <date>2004-05-21</date>
+
+    <author>
+      <firstname>Jens</firstname>
+
+      <surname>Klein</surname>
+
+      <email>jens.klein@jensquadrat.de</email>
+    </author>
+
+    <copyright>
+      <year>jens quadrat OEG, Austria; <ulink
+      url="http://creativecommons.org/licenses/by-nc-sa/1.0/">Creative Commons
+      Attribution-NonCommercial-ShareAlike License</ulink></year>
+    </copyright>
+
+    <releaseinfo>This manual targets ArchGenXML Version 1.1</releaseinfo>
+  </bookinfo>
+
+  <chapter>
+    <title>Introduction</title>
+
+    <sect1>
+      <title>What is ArchGenXML?</title>
+
+      <para>With ArchGenXML you can create working python code without writing
+      one single line of python. It is is a commandline utility that generates
+      fully operational Plone applications (Products) based on the Archetypes
+      framework from UML models using XMI (.xmi, .zargo, .zuml) files.</para>
+
+      <para>Design your Archetypes (code for content objects in plone) offline
+      using a UML design tool like Poseidon or ObjectDomain. Export the UML to
+      XMI or XSD and use ArchGenXML to generate Phyton code for use as a
+      Product. This new Product is available as a new item (document) type in
+      the Plone userinterface.</para>
+
+      <para>This time the tool is not round-trip enabled: Generated code can't
+      be back-converted into XMI. But you can re-generate over existing code:
+      The Method bodys and some other protected sections are kept.</para>
+
+      <para>ArchGenXML is hosted at <ulink
+      url="http://sourceforge.net/projects/archetypes">sourceforge.net as a
+      subproject of the archetypes project</ulink>. It's under GNU General
+      Public Licence 2 or later.</para>
+    </sect1>
+
+    <sect1>
+      <title>Why should I use ArchGenXML?</title>
+
+      <para>Major reasons:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>You want to save time,</para>
+        </listitem>
+
+        <listitem>
+          <para>You are a lazy programmer,</para>
+        </listitem>
+
+        <listitem>
+          <para>You don't like to reinvent the wheel,</para>
+        </listitem>
+
+        <listitem>
+          <para>You dont like copy and pasting code and bugs,</para>
+        </listitem>
+
+        <listitem>
+          <para>You make heavy use of references and interfaces,</para>
+        </listitem>
+
+        <listitem>
+          <para>You have big projects with many different custom types,</para>
+        </listitem>
+
+        <listitem>
+          <para>You like structured model- and pattern-driven software
+          development,</para>
+        </listitem>
+
+        <listitem>
+          <para>You want to maintain your project also in future without
+          getting headache,</para>
+        </listitem>
+
+        <listitem>
+          <para>and many more good and odd other reasons.</para>
+        </listitem>
+      </itemizedlist>
+    </sect1>
+
+    <sect1>
+      <title>Contribution</title>
+
+      <para>The project initially started by Phil Auersperg. Thanks his
+      laziness :-)</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Authors:</term>
+
+          <listitem>
+            <para>Phil Auersperg (Project Leader), BlueDynamics GmbH,
+            <email>phil@bluedynamics.com</email>,</para>
+
+            <para>Jens Klein (Developer and Doc-Writer), jens quadrat OEG,
+            <email>jens.klein@jensquadrat.de</email>,</para>
+
+            <para>Fabiano Weimar dos Santos (Ideas, Testing, Bugfixing),
+            Weimar Desenvolvimento e Consultoria em Informatica Ltda.,
+            xiru@xiru.org</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Sponsors</term>
+
+          <listitem>
+            <itemizedlist>
+              <listitem>
+                <para>Xiru.org, Brazil (Fabiano Weimar dos Santos) sponsors a
+                valuable amount of money into workflow support (State diagrams
+                -&gt; DCWorkflow, will go into release 1.2),</para>
+              </listitem>
+
+              <listitem>
+                <para>PilotSystems, Paris, France (David Sapiro),</para>
+              </listitem>
+
+              <listitem>
+                <para>OpenSource.ag, Innsbruck, Austria (Georg Pleger).</para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>If you want to contribute ArchGenXML by improving the code,
+      helping with documentation or sponsoring money to make us improve it:
+      Just contact one of us.</para>
+    </sect1>
+  </chapter>
+
+  <chapter>
+    <title>Installation</title>
+
+    <sect1>
+      <title>ArchGenXML</title>
+
+      <sect2>
+        <title>Preconditions</title>
+
+        <para>You need a working Python Version 2.1 or later. Version 2.3 is
+        recommended, with 2.1 some minor features are disabled.</para>
+
+        <para>Also you need Plone 2 (choose latest stable release) and its
+        dependencies to see your generated code in action.</para>
+      </sect2>
+
+      <sect2>
+        <title>Download</title>
+
+        <para>You need to download a release tar-ball from sourceforge. You'll
+        find it in the <ulink
+        url="http://sourceforge.net/project/showfiles.php?group_id=75272&amp;package_id=103241">releases
+        area of archetypes</ulink>. Choose the latest version of your flavor:
+        Final, or one of the cutting edge development releases.</para>
+
+        <para>Its also possible to fetch the code of cutting edge development
+        from CVS. How to check it out is described well in sourceforge's
+        manuals. Project name is <literal>archetypes</literal> and module name
+        is <literal>ArchGenXML</literal>.</para>
+      </sect2>
+
+      <sect2>
+        <title>Installation</title>
+
+        <para>Simply un-tar downloaded file to a place of your choice and
+        remember the path to <filename>ArchGenXML.py</filename>.</para>
+
+        <para>I suggest to give the file execution permissions and make a
+        symbolic link at a place mentioned in your PATH environment
+        settings.</para>
+
+        <para>Note: The installation will be handled bei dist-utils in one of
+        the next releases and will become much easier then.</para>
+      </sect2>
+
+      <sect2>
+        <title>Additional Suggested Software</title>
+
+        <para>The following modules are suggested for full featured default
+        behaviour.</para>
+
+        <sect3>
+          <title>Suggested for code generation process with ArchGenXML</title>
+
+          <variablelist>
+            <varlistentry>
+              <term>i18ndude</term>
+
+              <listitem>
+                <para>Without it the generation of user interface i18n
+                features are disabled. Download and install
+                <literal>i18ndude</literal> from project <ulink
+                url="http://sourceforge.net/projects/plone-i18n">plone-i18n on
+                sourceforge.net</ulink>.</para>
+              </listitem>
+            </varlistentry>
+
+            <varlistentry>
+              <term>stripogram</term>
+
+              <listitem>
+                <para>Some UML Tools are producing HTML documentation elements
+                in XMI. Stripogram converts them into plain text. Without
+                having stripogram installed this feature is disabled. Download
+                and install stripogram from project <ulink
+                url="http://sourceforge.net/project/showfiles.php?group_id=1083&amp;package_id=34645">squishdot
+                on sourceforge.net</ulink>.</para>
+              </listitem>
+            </varlistentry>
+          </variablelist>
+        </sect3>
+
+        <sect3>
+          <title>Suggested for running generated code</title>
+
+          <variablelist>
+            <varlistentry>
+              <term>I18NArchetypes</term>
+
+              <listitem>
+                <para>XXX TODO</para>
+              </listitem>
+            </varlistentry>
+
+            <varlistentry>
+              <term>ATVocabularyManager</term>
+
+              <listitem>
+                <para>Enables usage of custom dynamic vocabularies. Download
+                and install <literal>ATVocabularyManager</literal> from <ulink
+                url="http://cvs.sourceforge.net/viewcvs.py/archetypes/ATVocabularyManager/">archetypes
+                CVS</ulink>.</para>
+              </listitem>
+            </varlistentry>
+          </variablelist>
+        </sect3>
+      </sect2>
+    </sect1>
+
+    <sect1>
+      <title>UML Tools</title>
+
+      <para>ArchGenXML processes models stored in <ulink
+      url="???">XMI</ulink>. This XML format isn't intended to be written in a
+      plain text editor nor in a tree based XML editor. It's a good idea to
+      use a UML design tool. Here is more or less complete list of tools. If
+      you dear reader know another tool, have more detailed information or
+      have experience with a tool in combination with ArchGenXML please write
+      the author a short e-mail.</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Poseidon (by Gentleware)</term>
+
+          <listitem>
+            <para>Website and download: <ulink
+            url="http://www.gentleware.com/">gentleware.com</ulink></para>
+
+            <itemizedlist>
+              <listitem>
+                <para>commercial, Community Edition free available,</para>
+              </listitem>
+
+              <listitem>
+                <para>xmi version 1.2,</para>
+              </listitem>
+
+              <listitem>
+                <para>written in JAVA, runs on most platforms,</para>
+              </listitem>
+
+              <listitem>
+                <para>based on ArgoUML,</para>
+              </listitem>
+
+              <listitem>
+                <para>stores the model native as xmi + diagram information in
+                .zuml files (zip files),</para>
+              </listitem>
+
+              <listitem>
+                <para>some known, but non-critical bugs (see Appendix UML Tool
+                Tricks),</para>
+              </listitem>
+
+              <listitem>
+                <para>needs lots of memory and a fast CPU,</para>
+              </listitem>
+
+              <listitem>
+                <para>authors choice.</para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>ArgoUML</term>
+
+          <listitem>
+            <para>Website and download: <ulink
+            url="???">argouml.tigris.org</ulink></para>
+
+            <itemizedlist>
+              <listitem>
+                <para>free software</para>
+              </listitem>
+
+              <listitem>
+                <para>written in JAVA, runs on most platforms,</para>
+              </listitem>
+
+              <listitem>
+                <para>stores the model native as xmi + diagram information in
+                .zargo files (zip files),</para>
+              </listitem>
+
+              <listitem>
+                <para>some known, but non-critical bugs,</para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>ObjectDomain</term>
+
+          <listitem>
+            <para>Website and download: <ulink
+            url="???">objectdomain.com</ulink></para>
+
+            <itemizedlist>
+              <listitem>
+                <para>commercial, free demo for &lt;= 30 classes,</para>
+              </listitem>
+
+              <listitem>
+                <para>written in JAVA, runs on most platforms,</para>
+              </listitem>
+
+              <listitem>
+                <para>needs to export model. Stores in own text-based
+                format.</para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Powerdesigner (by Sybase)</term>
+
+          <listitem>
+            <para>Website and download: <ulink
+            url="???">sybase.com</ulink></para>
+
+            <itemizedlist>
+              <listitem>
+                <para>xmi version 1.1,</para>
+              </listitem>
+
+              <listitem>
+                <para>needs to export model.</para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Umbrello (KDE)</term>
+
+          <listitem>
+            <para>Website and download: <ulink
+            url="???">uml.sourceforge.net</ulink></para>
+
+            <itemizedlist>
+              <listitem>
+                <para>free software,</para>
+              </listitem>
+
+              <listitem>
+                <para>runs under Linux/KDE,</para>
+              </listitem>
+
+              <listitem>
+                <para>stores the model native as XMI,</para>
+              </listitem>
+
+              <listitem>
+                <para>at the time of testing it, Umbrello wasn't complete and
+                the XMI not 100% standard compliant.</para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>A much more complete list of UML tools can be found at <ulink
+      url="???">www.jeckle.de/umltools.htm</ulink>.</para>
+    </sect1>
+  </chapter>
+
+  <chapter>
+    <title>UML</title>
+
+    <para>UML - the Unified Modelling Language is a graphical language
+    designed to describe software. To attain that goal this language has got
+    several different diagram-types defined.</para>
+
+    <para>This manual does not target in teaching you UML and object-oriented,
+    model-driven software developement. There are several other fine manuals
+    out in the WWW. A very good starting point is OMG's <ulink
+    url="???">UML&trade; Resource Page</ulink> including it's web-links to
+    tutorials.</para>
+
+    <para>For ArchGenXML are from interest: the class-diagramm and it's
+    different associations. In future versions of ArchGenXML it may be
+    possible to define the workflow with state diagrams.</para>
+
+    <para>With this language you're able to define object-oriented
+    data-models. A class is the outline of an object like a building-plan.
+    With ArchGenXML you define this plan. If a building can have relations to
+    an other kind of building you define this with associations.</para>
+  </chapter>
+
+  <chapter id="cha_getting_started">
+    <title>Getting started</title>
+
+    <para>This chapter describes the minimum to do to generate a Product with
+    ArchGenXML and get it running.</para>
+
+    <sect1>
+      <title>Creating a minimal content type in UML</title>
+
+      <para>Open the UML tools of your choice. Make a new UML and add a class
+      diagram. Choose the tool for class creation and add a class to the
+      diagram. Give it a name <classname>MyFirstAGXContent</classname> and add
+      an attribute <classname>MyTextField</classname> and choose type text.
+      See <xref linkend="fig_first_min_example" />. For all examples files are
+      shipped with the release package, in this case you'll find it in
+      directory
+      <filename>ArchGenXML/samples/AGX-TheFineManual/example-4_1/4_1_a.xmi</filename>,
+      for other samples modify the path according to the name of the
+      example.</para>
+
+      <figure id="fig_first_min_example">
+        <title>Example First Minimal Content Type</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="example-4_1_a.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </sect1>
+
+    <sect1>
+      <title>Generating the product</title>
+
+      <para>After saving the new created UML as XMI and call it
+      <filename>MyFirstExample.xmi</filename> (or an XMI-container format like
+      .zargo or .zuml), go to your command line and write:</para>
+
+      <para><command>ArchGenXML.py -o
+      <replaceable>MyFirstAGXContent</replaceable>
+      <replaceable>MyFirstAGXExample.xmi</replaceable></command></para>
+
+      <para>Now code generation is started. After the run a new folder
+      <filename>MyFirstAGXContent</filename> is created in your file
+      system.</para>
+    </sect1>
+
+    <sect1>
+      <title>Installing and using the generated product</title>
+
+      <para>Move the whole folder <filename>MyFirstAGXContent</filename> to
+      your Plone/Zopes <filename>Products</filename> folder. Restart your
+      Zope, open your Plone in a browser and log in as manager. Choose
+      <guilabel>Plone Setup</guilabel> on your personal bar and choose
+      <guilabel>Add/Remove Products</guilabel>. Your Product
+      <literal>MyFirstAGXContent</literal> should now appear in the list of
+      <literal>Products available for install</literal>. Choose it and click
+      <guibutton>install</guibutton>. Go to your <guilabel>my
+      folder</guilabel>. In the list of addable items you'll find the new
+      product as an addable content type. Choose it and use it.</para>
+    </sect1>
+  </chapter>
+
+  <chapter>
+    <title>Tutorial Basic Features</title>
+
+    <para>This chapter containes information about the features needed for
+    simple content type creation.</para>
+
+    <sect1>
+      <title>Classes</title>
+
+      <para>How to create very simple class describes already the <xref
+      linkend="cha_getting_started" /> above.</para>
+    </sect1>
+
+    <sect1>
+      <title>Fields (Attributes)</title>
+
+      <para></para>
+    </sect1>
+
+    <sect1>
+      <title>Widgets</title>
+
+      <para></para>
+    </sect1>
+
+    <sect1>
+      <title>Methods</title>
+
+      <para></para>
+    </sect1>
+
+    <sect1>
+      <title>Actions</title>
+
+      <para></para>
+    </sect1>
+
+    <sect1>
+      <title>Folderish</title>
+
+      <para></para>
+    </sect1>
+
+    <sect1>
+      <title>References</title>
+
+      <para></para>
+    </sect1>
+  </chapter>
+
+  <chapter>
+    <title>Tutorial Advanced Usage</title>
+
+    <sect1>
+      <title>Tools and Configlets</title>
+
+      <para></para>
+    </sect1>
+
+    <sect1>
+      <title>Dynamic Vocabularies</title>
+
+      <sect2>
+        <title>Basic Usage</title>
+
+        <para>Using this feature needs the Product
+        <filename>ATVocabularyManager</filename>. It provides you the
+        possibility to create dynamic complex Vocabularies. In several
+        projects we needed rich vocabularies, providing both: key-value-lists
+        and additional archetypish content. ATVocabularyManager provides this
+        with simple well-known folderish and contentish archetypes
+        implementing interfaces from Archetypes and
+        ATVocabularyManager.</para>
+
+        <para>Using this feature with a standard dynamic key-value Vocabulary
+        is simple, just define the <link linkend="???">following three
+        TaggedValues</link> on your StringField:</para>
+
+        <table id="TGV_VOCAB_2_1">
+          <title>TaggedValues needed to define a simple key-value
+          vocabulary</title>
+
+          <tgroup cols="2">
+            <tbody>
+              <row>
+                <entry><literal>vocabulary:type</literal></entry>
+
+                <entry><literal>ATVocabularyManager</literal></entry>
+              </row>
+
+              <row>
+                <entry><literal>vocabulary:meta_type</literal></entry>
+
+                <entry><literal>SimpleVocabularyItem</literal></entry>
+              </row>
+
+              <row>
+                <entry><literal>vocabulary:name</literal></entry>
+
+                <entry><replaceable>&lt;your name of the custom
+                vocabulary&gt;</replaceable></entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+
+        <para><literal>vocabulary:type</literal> is used to define the type of
+        the vocabulary. At the moment theres just this one type
+        <literal>ATVocabularyManager</literal>.
+        <literal>vocabulary:meta_type</literal> is in fact type from
+        portal_types tool, this defines the type used for the vocabulary.
+        <literal>ATVocabularyManager</literal> provides one built-in type
+        <literal>SimpleVocabularyItem</literal>. You can use this also to
+        inherit from if you want to set up your custom vocabulary item (or
+        implement the interface <literal>IVocabularyItem</literal>). The
+        vocabulary:name is the name of the vocabulary. While quickinstalling
+        your new Product it will be set up an empty vocabulary of the given
+        type in <literal><literal>vocabulary_tool</literal></literal> if it
+        does not exist.</para>
+      </sect2>
+
+      <sect2>
+        <title>Defining a Custom Vocabulary Item</title>
+
+        <para>Instead of using the default
+        <literal>SimpleVocabularyItem</literal> you can also define an own
+        type used as vocabulary item.</para>
+
+        <para>The easiest way is to derive from SimpleVocabularyItem (see
+        <xref linkend="fig_custom_derived_vocab" />). A classnamed
+        <literal>SimpleVocabularyItem</literal> with stereotype stub is the
+        base to derive from. Set a TaggedValue with key
+        <literal>import_form</literal> and value
+        <literal>Products.ATVocabularyManager.types.SimpleVocabularyItem</literal>
+        on it. </para>
+
+        <para>Add another class, that inherits from
+        <literal>SimpleVocabularyItem</literal> and name it
+        <replaceable>MyCustomVocabularyItem</replaceable>. Like
+        <literal>SimpleVocabularyItem</literal> <literal>id</literal> becomes
+        be the key and <literal>Title</literal> the value. You are free to add
+        fields, relations and all the nice Archetypes stuff as needed.</para>
+
+        <para>Now you have to tell the string attribute
+        <replaceable>select</replaceable> on content type
+        <replaceable>MyContentType</replaceable> to use this Vocabulary.
+        Define the three TaggedValues as shown in <xref
+        linkend="TGV_VOCAB_2_1" />, but give
+        <literal>vocabulary:meta_type</literal> the value
+        <replaceable>MyCustomVocabularyItem</replaceable>. </para>
+
+        <figure id="fig_custom_derived_vocab">
+          <title>Example Custom derived vocabulary</title>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="example_6_2_2_a.png" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+
+        <para>If you don't want id as key and/ or title as value you have also
+        the possibility to implement the interface
+        <literal>IVocabularyItem</literal>: Add an interface with this name an
+        implement it (see xref) the interface have two methods:
+        <literal>getKey</literal> and <literal>getValue</literal>. Don't
+        forget to set the appropiate TaggedValue
+        <literal>import_from</literal> on it.</para>
+      </sect2>
+
+      <sect2>
+        <title>Defining a Custom Vocabulary Containers</title>
+
+        <para></para>
+      </sect2>
+    </sect1>
+
+    <sect1>
+      <title>Interfaces</title>
+
+      <para></para>
+    </sect1>
+
+    <sect1>
+      <title>Association Classes</title>
+
+      <para></para>
+    </sect1>
+
+    <sect1>
+      <title>Internationalization</title>
+
+      <para></para>
+    </sect1>
+
+    <sect1>
+      <title>Storage</title>
+
+      <para></para>
+    </sect1>
+  </chapter>
+
+  <chapter>
+    <title>Reference Manual</title>
+
+    <para></para>
+
+    <sect1>
+      <title>Command Line Options and Config File</title>
+
+      <para></para>
+    </sect1>
+
+    <sect1>
+      <title>UML Diagram</title>
+
+      <para></para>
+
+      <sect2>
+        <title>Packages</title>
+
+        <para></para>
+
+        <sect3>
+          <title>Stereotypes</title>
+
+          <para></para>
+        </sect3>
+
+        <sect3>
+          <title>Tagged Values</title>
+
+          <para></para>
+        </sect3>
+      </sect2>
+
+      <sect2>
+        <title>Classes</title>
+
+        <para></para>
+
+        <sect3>
+          <title>Stereotypes</title>
+
+          <para></para>
+        </sect3>
+
+        <sect3>
+          <title>Tagged Values</title>
+
+          <para></para>
+        </sect3>
+      </sect2>
+
+      <sect2>
+        <title>Attributes (Fields)</title>
+
+        <para></para>
+
+        <sect3>
+          <title>Stereotypes</title>
+
+          <para></para>
+        </sect3>
+
+        <sect3>
+          <title>TaggedValues</title>
+
+          <para></para>
+        </sect3>
+      </sect2>
+    </sect1>
+  </chapter>
+
+  <chapter>
+    <title>Further Information</title>
+
+    <para></para>
+  </chapter>
+
+  <appendix>
+    <title>UML Tool Tricks</title>
+
+    <para></para>
+  </appendix>
+
+  <appendix>
+    <title>Copyright and License</title>
+
+    <para>Copyright 2004 by Jens Klein/ Germany,
+    <email>jens.klein@jensquadrat.de</email></para>
+
+    <para>This work is licensed under the Creative Commons
+    Attribution-NonCommercial-ShareAlike License. To view a copy of this
+    license, visit <ulink
+    url="???">http://creativecommons.org/licenses/by-nc-sa/1.0/</ulink> or
+    send a letter to Creative Commons, 559 Nathan Abbott Way, Stanford,
+    California 94305, USA.</para>
+  </appendix>
+</book>

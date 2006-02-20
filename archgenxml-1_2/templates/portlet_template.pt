@@ -1,0 +1,28 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      i18n:domain="plone">
+
+<body>
+
+<div metal:define-macro="portlet">
+     
+
+    <div class="portlet" id="portlet-%(method_name)s">
+
+        <h5 i18n:translate="">%(method_name)s</h5>
+
+        <div class="portletBody">
+
+             Fill in your portlet code here
+             <div class="portletDetails">
+             </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
