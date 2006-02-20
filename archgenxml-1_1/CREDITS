@@ -1,0 +1,24 @@
+Authors:
+    Philipp Auersperg phil@bluedynamics.com 
+       had to start this project becase he is too lazy for coding
+
+    Jens Klein (jensquadrat.de) made a great documentation
+       and buzzes me to bring in new features,
+       added tool support and control panel integration,
+       automatic msgid/pot generation with i18ndude integration,
+       module-info-header support and config-file support.
+
+    Fabiano Weimar dos Santos (xiru) brings in some
+       good ideas from his project (UML2AT).
+       + testing and bug fixing
+       + bugfixing
+
+
+Sponsors:
+    Xiru.org, Brazil (Fabiano Weimar dos Santos)
+        sponsors a valuable amount of money into 
+        workflow support (State diags -> DCWorkflow, will come with release 1.2)
+
+    PilotSystems, Paris, France (David Sapiro)
+    OpenSource.ag, Innsbruck, Austria (Georg Pleger)
+    Telesis.at, Austria (Jodok Batlogg)
