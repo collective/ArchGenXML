@@ -1,0 +1,17 @@
+Post 1.4
+    * added before-class section in PloneTestCase.py
+
+    * implemented python_class stereotype as a class
+    with no Zope security or Archetypes schema
+    was implemented with methods calls instead of DTML templating
+
+    might need to move to BaseGenerator
+    [gotcha]
+
+    * added space between arguments in method defs according
+    to Python style
+    [gotcha]
+
+1.4
+
+

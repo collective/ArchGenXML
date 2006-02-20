@@ -1,0 +1,82 @@
+TODO's for ArchGenXML
+---------------------
+
+To-do list for current HEAD code, not a feature wish list. 
+A list of wished-for/planned features planned is at:
+http://plone.org/development/teams/developer/ArchGenXML
+
+* BUG: Method that end with a comma-newline-value lose that value. For example:
+    
+            return (value1,
+                    value2)
+  If this is the end of a method, the line with "value2)" is lost.
+  There is a (failing) unittest for this.
+    
+* Creation permissions:
+
+    - tagged value creation_permission (string or python:) on class
+    - use Bricolite method for registering custom permissions
+
+    Note: look at the --help output, some of the options changed
+    names. Also: you now have to pass in 'Add portal content' or so
+    instead of just 'portal'. 
+    
+* Initialise uml_profile with all tagged values + steretypes + documentation
+
+    [x] tagged values are now in TaggedValueSupport. Nicely
+    documented, too. Missing TGVs give a warning, it doesn't break off
+    the processing.
+
+    [x] Do the same for stereotypes. They're grouped together already,
+    so this shouldn't be much work.
+
+* When generating docstrings, be more clever about linebreaks and whitespace. 
+
+	- Poseidon does not wrap, so we need to support funny linebreaks.
+
+* Move remainder of templates in templates/ to DTML 
+
+    - action_view.pt
+    - apeconf_folder.xml
+    - apeconf_object.xml
+    - generated.pot
+    - portlet_template.pt
+
+* stereotype <<portlet>> does not work, but <<portlet_view>> does. Documentation 
+  points to portlet. Tagged value autoinstall is registered for <<portlet>> only.
+  Here a clean up is needed. 
+
+* portlet sample code is Plone 2.0.x style and doenst work with Plone 2.1. 
+
+* Move class, interface generation to DTML. There are too many conditionals and
+    strings being generated in the current code. :-) Having DTML conditionals
+    and loops would make it much clearer and easier to manipulate. 
+    
+* Tool support:
+  automagically disable uneccessary tabs (like base_view, metadata 
+  and maybe references) on classes with stereotype 'portal_tool'. Must be
+  possible to explicitly enable them again.
+    
+* ATVocabularyManager integration, part registration of class:
+  fetch container_class - needs to be refined:
+  check if parent has vocabulary_container_stereotype and use its 
+  name as container
+  else check for TGV vocabulary_container
+  fallback: use SimpleVocabulary
+
+[x] Define how worklists would be represented using state diagrams and
+implement
+
+[ ] Add a.a.p. makefile including checker for XXX, TBD codes (=>Reinout)
+
+[ ] Also group together the generateable documentation in that aap
+makefile and send it off to the documentation area on plone.org to
+keep it current.
+
+[ ] Longer term: add defaults to the tagged values.
+
+[ ] Changed negative tagged values to positive ones with 
+    default = True. (Tip from optilude).
+
+[ ] Add BrowserDefault/ new style FTI support (Plone 2.1 et al style)
+
