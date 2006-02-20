@@ -1,0 +1,370 @@
+ObjectDomain_Model 15
+{2rxcn5_-gc5_dgd0uvn8_-p8z 0
+}[objectdomain.uml.core.TypeExpression $16
+objectdomain.uml.mechanisms.UmlPackage-owns $6
+objectdomain.uml.core.Projection $15
+objectdomain.uml.core.UmlAttribute-features $9
+objectdomain.uml.core.UmlAssociationEnd-connections $11
+objectdomain.uml.view.ClassView-owns $4
+objectdomain.uml.core.UmlAssociation-owns $10
+objectdomain.uml.view.Diagram-owns $3
+objectdomain.uml.core.UmlOperation-features $8
+objectdomain.domain.ModelEnvironment-owns $2
+objectdomain.uml.mechanisms.StylePackage-owns $14
+objectdomain.uml.mechanisms.StereotypePackage-owns $12
+objectdomain.uml.core.UmlClass-owns $7
+objectdomain.domain.DomainLockObject $17
+objectdomain.uml.view.AssociationView-owns $5
+objectdomain.uml.mechanisms.UmlModel-models $1
+objectdomain.uml.core.Stereotype-owns $13
+]
+($1 1 > 2rxcn5_-gc5_dgd0uvn8_-p8z 0
+(name "Model"
+)
+(namespaceRoot true)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8z"))
+($2 2 < 2rxcn5_-gc5_dgd0uvn8_-p8y "ModelEnvironment" 1
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8y"))
+($6 7 < 2rxcn5_-gc5_dgd0uvn8_-p98 "Logical" 1
+(name "Logical"
+)
+(namespaceRoot true)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p98"))
+($3 3 < 2rxcn5_-gc5_dgd0uvn8_-p8x "Class Diagram" 7
+(name "Class Diagram"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8x")
+(diagramType "class"))
+($4 4 < 2rxcn5_-gc5_dgd0uvn8_-p8w "outline" 3
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8w")
+(bbx 170 60 100 50))
+($4 5 < 2rxcn5_-gc5_dgd0uvn8_-p8v "node" 3
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8v")
+(bbx 260 230 100 80))
+($5 6 < 2rxcn5_-gc5_dgd0uvn8_-p8u "" 3
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8u")
+(points 252 150 291 230)
+(lineStyle "oblique"))
+($7 8 < 2rxcn5_-gc5_dgd0uvn8_-p97 "outline" 7
+(name "outline"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p97"))
+($8 9 < 2rxcn5_-gc5_dgd0uvn8_-p94 "test" 8
+(name "test"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p94"))
+($9 10 < 2rxcn5_-gc5_dgd0uvn8_-p93 "name" 8
+(name "name"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p93"))
+($9 11 < 2rxcn5_-gc5_dgd0uvn8_-p92 "description" 8
+(name "description"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p92"))
+($10 12 < 2rxcn5_-gc5_dgd0uvn8_-p95 "#<anon> (outline, node)" 8
+(name "")
+(uid "2rxcn5_-gc5_dgd0uvn8_-p95"))
+($11 13 < 2rxcn5_-gc5_dgd0uvn8_-p8t "#0" 12
+(aggregation "composite")
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8t"))
+($11 14 < 2rxcn5_-gc5_dgd0uvn8_-p8s "#1" 12
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8s"))
+($7 15 < 2rxcn5_-gc5_dgd0uvn8_-p96 "node" 7
+(name "node"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p96"))
+($9 16 < 2rxcn5_-gc5_dgd0uvn8_-p91 "label" 15
+(name "label"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p91"))
+($9 17 < 2rxcn5_-gc5_dgd0uvn8_-p90 "text" 15
+(name "text"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p90"))
+($12 18 < 2rxcn5_-gc5_dgd0uvn8_-p8r "stereotypes" 1
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8r"))
+($13 19 < 2rxcn5_-gc5_dgd0uvn8_-p8q "_odPackage" 18
+(name "_odPackage"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8q")
+(baseClass "Package"))
+($13 20 < 2rxcn5_-gc5_dgd0uvn8_-p8p "odStub" 18
+(name "odStub"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8p"))
+($13 21 < 2rxcn5_-gc5_dgd0uvn8_-p8o "access" 18
+(name "access"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8o")
+(baseClass "Dependency"))
+($13 22 < 2rxcn5_-gc5_dgd0uvn8_-p8n "association" 18
+(name "association"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8n")
+(baseClass "AssociationEnd"))
+($13 23 < 2rxcn5_-gc5_dgd0uvn8_-p8m "create" 18
+(name "create"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8m")
+(baseClass "BehavioralFeature"))
+($13 24 < 2rxcn5_-gc5_dgd0uvn8_-p8l "destroy" 18
+(name "destroy"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8l")
+(baseClass "BehavioralFeature"))
+($13 25 < 2rxcn5_-gc5_dgd0uvn8_-p8k "document" 18
+(name "document"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8k")
+(baseClass "Component"))
+($13 26 < 2rxcn5_-gc5_dgd0uvn8_-p8j "executable" 18
+(name "executable"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8j")
+(baseClass "Component"))
+($13 27 < 2rxcn5_-gc5_dgd0uvn8_-p8i "extend" 18
+(name "extend"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8i")
+(baseClass "Dependency"))
+($13 28 < 2rxcn5_-gc5_dgd0uvn8_-p8h "facade" 18
+(name "facade"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8h")
+(baseClass "Package"))
+($13 29 < 2rxcn5_-gc5_dgd0uvn8_-p8g "file" 18
+(name "file"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8g")
+(baseClass "Component"))
+($13 30 < 2rxcn5_-gc5_dgd0uvn8_-p8f "framework" 18
+(name "framework"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8f")
+(baseClass "Package"))
+($13 31 < 2rxcn5_-gc5_dgd0uvn8_-p8e "friend" 18
+(name "friend"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8e")
+(baseClass "Dependency"))
+($13 32 < 2rxcn5_-gc5_dgd0uvn8_-p8d "global" 18
+(name "global"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8d")
+(baseClass "AssociationEnd"))
+($13 33 < 2rxcn5_-gc5_dgd0uvn8_-p8c "implementation" 18
+(name "implementation"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8c")
+(baseClass "Generalization"))
+($13 34 < 2rxcn5_-gc5_dgd0uvn8_-p8b "implementationClass" 18
+(name "implementationClass"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8b")
+(baseClass "Class"))
+($13 35 < 2rxcn5_-gc5_dgd0uvn8_-p8a "import" 18
+(name "import"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p8a")
+(baseClass "Dependency"))
+($13 36 < 2rxcn5_-gc5_dgd0uvn8_-p89 "include" 18
+(name "include"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p89")
+(baseClass "Dependency"))
+($13 37 < 2rxcn5_-gc5_dgd0uvn8_-p88 "invariant" 18
+(name "invariant"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p88")
+(baseClass "Constraint"))
+($13 38 < 2rxcn5_-gc5_dgd0uvn8_-p87 "library" 18
+(name "library"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p87")
+(baseClass "Component"))
+($13 39 < 2rxcn5_-gc5_dgd0uvn8_-p86 "local" 18
+(name "local"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p86")
+(baseClass "AssociationEnd"))
+($13 40 < 2rxcn5_-gc5_dgd0uvn8_-p85 "metaclass" 18
+(name "metaclass"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p85")
+(baseClass "Classifier"))
+($13 41 < 2rxcn5_-gc5_dgd0uvn8_-p84 "metamodel" 18
+(name "metamodel"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p84")
+(baseClass "Package"))
+($13 42 < 2rxcn5_-gc5_dgd0uvn8_-p83 "parameter" 18
+(name "parameter"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p83")
+(baseClass "AssociationEnd"))
+($13 43 < 2rxcn5_-gc5_dgd0uvn8_-p82 "postcondition" 18
+(name "postcondition"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p82")
+(baseClass "Constraint"))
+($13 44 < 2rxcn5_-gc5_dgd0uvn8_-p81 "powertype" 18
+(name "powertype"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p81")
+(baseClass "Classifier"))
+($13 45 < 2rxcn5_-gc5_dgd0uvn8_-p80 "precondition" 18
+(name "precondition"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p80")
+(baseClass "Constraint"))
+($13 46 < 2rxcn5_-gc5_dgd0uvn8_-p7z "process" 18
+(name "process"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p7z")
+(baseClass "Classifier"))
+($13 47 < 2rxcn5_-gc5_dgd0uvn8_-p7y "requirement" 18
+(name "requirement"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p7y")
+(baseClass "Comment"))
+($13 48 < 2rxcn5_-gc5_dgd0uvn8_-p7x "responsibility" 18
+(name "responsibility"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p7x")
+(baseClass "Comment"))
+($13 49 < 2rxcn5_-gc5_dgd0uvn8_-p7w "self" 18
+(name "self"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p7w")
+(baseClass "AssociationEnd"))
+($13 50 < 2rxcn5_-gc5_dgd0uvn8_-p7v "stub" 18
+(name "stub"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p7v")
+(baseClass "Package"))
+($13 51 < 2rxcn5_-gc5_dgd0uvn8_-p7u "systemModel" 18
+(name "systemModel"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p7u")
+(baseClass "Package"))
+($13 52 < 2rxcn5_-gc5_dgd0uvn8_-p7t "table" 18
+(name "table"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p7t")
+(baseClass "Component"))
+($13 53 < 2rxcn5_-gc5_dgd0uvn8_-p7s "thread" 18
+(name "thread"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p7s")
+(baseClass "Classifier"))
+($13 54 < 2rxcn5_-gc5_dgd0uvn8_-p7r "topLevel" 18
+(name "topLevel"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p7r")
+(baseClass "Package"))
+($13 55 < 2rxcn5_-gc5_dgd0uvn8_-p7q "type" 18
+(name "type"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p7q")
+(baseClass "Class"))
+($13 56 < 2rxcn5_-gc5_dgd0uvn8_-p7p "utility" 18
+(name "utility"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p7p")
+(baseClass "Classifier"))
+($13 57 < 2rxcn5_-gc5_dgd0uvn8_-p7o "boundary" 18
+(smallImageFile stereotype/image/small/boundary.gif)
+(name "boundary"
+)
+(defaultIconWidth 65)
+(iconFile stereotype/icon/boundary.wmf)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p7o")
+(baseClass "Class"))
+($13 58 < 2rxcn5_-gc5_dgd0uvn8_-p7n "entity" 18
+(smallImageFile stereotype/image/small/entity.gif)
+(name "entity"
+)
+(iconFile stereotype/icon/entity.wmf)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p7n")
+(baseClass "Class"))
+($13 59 < 2rxcn5_-gc5_dgd0uvn8_-p7m "control" 18
+(smallImageFile stereotype/image/small/control.gif)
+(name "control"
+)
+(defaultIconWidth 60)
+(iconFile stereotype/icon/control.wmf)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p7m")
+(defaultIconHeight 60)
+(baseClass "Class"))
+($13 60 < 2rxcn5_-gc5_dgd0uvn8_-p7l "interface" 18
+(name "interface"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p7l")
+(baseClass "Class"))
+($13 61 < 2rxcn5_-gc5_dgd0uvn8_-p7k "body" 18
+(name "body"
+)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p7k")
+(baseClass "Component"))
+($14 62 < 2rxcn5_-gc5_dgd0uvn8_-p7j "styles" 1
+(uid "2rxcn5_-gc5_dgd0uvn8_-p7j"))
+($6 63 < 2rxcn5_-gc5_dgd0uvn8_-p7i "Component" 1
+(name "Component"
+)
+(namespaceRoot true)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p7i"))
+($6 64 < 2rxcn5_-gc5_dgd0uvn8_-p7h "Usecase" 1
+(name "Usecase"
+)
+(namespaceRoot true)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p7h"))
+($6 65 < 2rxcn5_-gc5_dgd0uvn8_-p7g "Deployment" 1
+(name "Deployment"
+)
+(namespaceRoot true)
+(uid "2rxcn5_-gc5_dgd0uvn8_-p7g"))
+($15 66)
+($16 67
+(body "string"
+))
+($16 68
+(body "text"
+))
+($16 69
+(body "string"
+))
+($16 70
+(body "text"
+))
+($15 71)
+($15 72)
+($17 73
+(name "DomainLockObject"
+))
+(typeAssn 13 8)
+(assocEndAssn 8 13)
+(typeExpression 10 67)
+(typeExpression 11 68)
+(assocEndAssn 15 14)
+(typeExpression 16 69)
+(typeExpression 17 70)
+(typeAssn 14 15)
+(projectionAssn 4 8 66)
+(projectionAssn 5 15 71)
+(to 6 5)
+(from 6 4)
+(projectionAssn 6 12 72)
+(openDiagrams 2 3)
+(selection 2 17)
+(lockedBy 19 73)
+(stereotypeAssn 7 19)
+(lockedBy 7 73)
+(lockedBy 18 73)
+(lockedBy 62 73)
+(stereotypeAssn 63 19)
+(lockedBy 63 73)
+(stereotypeAssn 64 19)
+(lockedBy 64 73)
+(stereotypeAssn 65 19)
+(lockedBy 65 73)
+(lockedBy 1 73)
