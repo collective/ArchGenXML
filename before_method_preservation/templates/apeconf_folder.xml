@@ -1,0 +1,11 @@
+
+<mapper name="Products.%(project_name)s.%(class_name)s.%(class_name)s" extends="base_p" parent="root">
+ <use-for class="Products.%(project_name)s.%(class_name)s.%(class_name)s" />
+
+ <gateway name="items" factory="apelib.sql.structure.SQLFolderItems" />
+ <gateway name="%(class_name)s_fields" factory="Products.%(project_name)s.%(class_name)s.ApeGateway" />
+
+ <serializer name="items" factory="apelib.zope2.ofsserial.FolderItems" />
+ <serializer name="%(class_name)s_fields" factory="Products.%(project_name)s.%(class_name)s.ApeSerializer" />
+</mapper>
+ 
