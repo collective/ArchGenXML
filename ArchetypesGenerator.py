@@ -1496,12 +1496,12 @@ class ArchetypesGenerator(BaseGenerator):
             self.generateMethod(outfile, m, element, mode=mode)
             allmethnames.append(m.getName())
             generatedMethods.append(m)
-
+    
         for interface in element.getRealizationParents():
             meths = [m for m in interface.getMethodDefs(recursive=1) if m.getName() not in allmethnames]
             # We don't want to extra generate methods that are already defined in the class
             if meths:
-                print >> outfile, '    # Methods from Interface %s' % interface.getName()
+                print >> outfile, '\n    # Methods from Interface %s' % interface.getName()
                 for m in meths:
                     self.generateMethod(outfile, m, element, mode=mode)
                     generatedMethods.append(m)
