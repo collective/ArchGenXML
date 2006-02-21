@@ -387,6 +387,10 @@ tagname = 'plone_schema'
 explanation = """TODO. CMFMember related."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'plone_2_1_schema'
+explanation = """TODO. CMFMember related."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'security_schema'
 explanation = """TODO. CMFMember related."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)

@@ -138,7 +138,7 @@ CLASS_ALLOWED_CONTENT_TYPES = '''    allowed_content_types = %s%s'''
 CLASS_ALLOWED_CONTENT_INTERFACES = '''    allowed_interfaces = [%s] %s'''
 CLASS_RENAME_AFTER_CREATION = '''    _at_rename_after_creation = %s\n'''
 
-REGISTER_ARCHTYPE = """registerType(%s,PROJECTNAME)\n"""
+REGISTER_ARCHTYPE = """registerType(%s, PROJECTNAME)\n"""
 
 IMPORT_INTERFACE = """from Interface import Base"""
 

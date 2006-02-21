@@ -2021,7 +2021,7 @@ class ArchetypesGenerator(BaseGenerator):
         schema += ['schema']
 
         if element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
-            for addschema in ['contact_schema', 'plone_schema',
+            for addschema in ['contact_schema', 'plone_schema', 'plone_2_1_schema',
                               'security_schema', 'login_info_schema',]:
                 if utils.isTGVTrue(element.getTaggedValue(addschema, '1')):
                     schema.append('BaseMember.%s' % addschema)
