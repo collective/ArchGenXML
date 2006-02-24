@@ -483,7 +483,7 @@ class XMI1_1 (XMI1_0):
     GEN_ELEMENT = "UML:Class"
 
     ATTRIBUTE_INIT_VALUE = "UML:Attribute.initialValue"
-    EXPRESSION = "UML:Expression"
+    EXPRESSION = ["UML:Expression","UML2:OpaqueExpression"]
     PARAM_DEFAULT = "UML:Parameter.defaultValue"
 
     TAG_DEFINITION = "UML:TagDefinition"
