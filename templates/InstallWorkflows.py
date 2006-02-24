@@ -1,9 +1,9 @@
 <dtml-var "generator.generateModuleInfoHeader(package)">
 from Products.CMFCore.utils import getToolByName
 from Products.ExternalMethod.ExternalMethod import ExternalMethod
+
 <dtml-var "generator.getProtectedSection(parsedModule,
 'module-header', 0)">
-
 def installWorkflows(self, package, out):
     """Install the custom workflows for this product."""
 
@@ -20,9 +20,9 @@ def installWorkflows(self, package, out):
     workflowTool.setChainForPortalTypes(<dtml-var "repr(sm.getClassNames())">, workflow.getId())
 </dtml-let>
 </dtml-in>
+
 <dtml-var "generator.getProtectedSection(parsedModule,
 'after-workflow-install', 1)">
-
     return workflowTool
 
 def uninstallWorkflows(self, package, out):

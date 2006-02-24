@@ -60,16 +60,16 @@ class <dtml-var "klass.getCleanName()">(testcase):
 
     def interact(self, locals=None):
         """Provides an interactive shell aka console inside your testcase.
-        
+
         It looks exact like in a doctestcase and you can copy and paste
-        code from the shell into your doctest. The locals in the testcase are 
+        code from the shell into your doctest. The locals in the testcase are
         available, becasue you are in the testcase.
-    
+
         In your testcase or doctest you can invoke the shell at any point by
         calling::
-            
-            >>> self.interact( locals() )        
-            
+
+            >>> self.interact( locals() )
+
         locals -- passed to InteractiveInterpreter.__init__()
         """
         savestdout = sys.stdout
@@ -92,8 +92,6 @@ def test_suite():
     suite = TestSuite()
     suite.addTest(makeSuite(<dtml-var "klass.getCleanName()">))
     return suite
-
-
 
 <dtml-var "generator.getProtectedSection(parsed_class,'module-footer')">
 if __name__ == '__main__':

@@ -51,24 +51,24 @@ def install(self):
                  classes,
                  PROJECTNAME)
     install_subskin(self, out, GLOBALS)
-
 <dtml-if "[klass for klass in generator.getGeneratedClasses(package) if generator.getOption('migrate_dynamic_view_fti', klass, None)]">
+
     # Migrate FTI, to make sure we get the necessary infrastructure for the
     # "display" menu to work.
     if HAS_DYNAMIC_VIEW_FTI:
 <dtml-in "[klass for klass in generator.getGeneratedClasses(package) if generator.getOption('migrate_dynamic_view_fti', klass, None)]">
 <dtml-let klass="_['sequence-item']">
         migrated = migrateFTIs(self, product=PROJECTNAME, fti_meta_type='<dtml-var "klass.getCleanName()">')
-        print >>out, "Switched to DynamicViewFTI: %s" % ', '.join(migrated)        
+        print >>out, "Switched to DynamicViewFTI: %s" % ', '.join(migrated)
 </dtml-let>
-</dtml-in>        
+</dtml-in>
 </dtml-if>
 
 <dtml-let klasses="[klass for klass in generator.getGeneratedClasses(package) if generator.getOption('catalogmultiplex:white', klass, None) or generator.getOption('catalogmultiplex:black', klass, None)]">
 <dtml-if "klasses">
 
-    # Configure CatalogMultiplex: 
-    # explicit add classes (meta_types) be indexed in catalogs (white) 
+    # Configure CatalogMultiplex:
+    # explicit add classes (meta_types) be indexed in catalogs (white)
     # or removed from indexing in a catalog (black)
     atool = getToolByName(self, ARCHETYPETOOLNAME)
     catalogmap = {}
@@ -77,10 +77,10 @@ def install(self):
     catalogmap['<dtml-var "klass.getCleanName()">'] = {}
 <dtml-if "generator.getOption('catalogmultiplex:white', klass, None)">
     catalogmap['<dtml-var "klass.getCleanName()">']['white'] = [<dtml-var "', '.join( ['\'%s\'' % s.strip() for s in generator.getOption('catalogmultiplex:white', klass).split(',')])">]
-</dtml-if>    
+</dtml-if>
 <dtml-if "generator.getOption('catalogmultiplex:black', klass, None)">
     catalogmap['<dtml-var "klass.getCleanName()">']['black'] = [<dtml-var "', '.join( ['\'%s\'' % s.strip() for s in generator.getOption('catalogmultiplex:black', klass).split(',')])">]
-</dtml-if>    
+</dtml-if>
 </dtml-let>
 </dtml-in>
     for meta_type in catalogmap:
@@ -98,7 +98,6 @@ def install(self):
         atool.setCatalogsByType(meta_type, list(current_catalogs))
 </dtml-if>
 </dtml-let>
-
 <dtml-if "generator.left_slots or generator.right_slots">
     portal = getToolByName(self,'portal_url').getPortalObject()
 </dtml-if>
@@ -169,20 +168,20 @@ def install(self):
 </dtml-if>
 </dtml-let>
 <dtml-if "package.getProductName() in generator.vocabularymap.keys()">
-               
+
     # Create vocabularies in vocabulary lib
     atvm = getToolByName(self, 'portal_vocabularies')
     vocabmap = {<dtml-var "'),\n        '.join( [s[1:] for s in repr(generator.vocabularymap[package.getProductName()]).split(')')] )">}
     for vocabname in vocabmap.keys():
         if not vocabname in atvm.contentIds():
             atvm.invokeFactory(vocabmap[vocabname][0], vocabname)
-            
+
         if len(atvm[vocabname].contentIds()) < 1:
             if vocabmap[vocabname][0] == "VdexVocabulary":
                 vdexpath = os.path.join(
                     package_home(GLOBALS), 'data', '%s.vdex' % vocabname)
                 if not (os.path.exists(vdexpath) and os.path.isfile(vdexpath)):
-                    print >>out, 'No VDEX import file provided at %s.' % vdexpath 
+                    print >>out, 'No VDEX import file provided at %s.' % vdexpath
                     continue
                 try:
                     #read data
@@ -190,9 +189,9 @@ def install(self):
                     data = f.read()
                     f.close()
                 except:
-                    print >>out, 'Problems while reading VDEX import file provided at %s.' % vdexpath 
+                    print >>out, 'Problems while reading VDEX import file provided at %s.' % vdexpath
                     continue
-                atvm[vocabname].importXMLBinding(data)                   
+                atvm[vocabname].importXMLBinding(data)
             else:
                 atvm[vocabname].invokeFactory(vocabmap[vocabname][1],'default')
                 atvm[vocabname]['default'].setTitle('Default term, replace it by your own stuff')
@@ -210,9 +209,8 @@ def install(self):
     # try to call a workflow install method
     # in 'InstallWorkflows.py' method 'installWorkflows'
     try:
-        installWorkflows = ExternalMethod('temp',
-                                          'temp',
-                                          PROJECTNAME+'.InstallWorkflows', 
+        installWorkflows = ExternalMethod('temp', 'temp',
+                                          PROJECTNAME+'.InstallWorkflows',
                                           'installWorkflows').__of__(self)
     except NotFound:
         installWorkflows = None
@@ -337,7 +335,7 @@ def uninstall(self):
     # in 'InstallWorkflows.py' method 'uninstallWorkflows'
     try:
         uninstallWorkflows = ExternalMethod('temp', 'temp',
-                                            PROJECTNAME+'.InstallWorkflows', 
+                                            PROJECTNAME+'.InstallWorkflows',
                                             'uninstallWorkflows').__of__(self)
     except NotFound:
         uninstallWorkflows = None
@@ -352,7 +350,7 @@ def uninstall(self):
     # try to call a custom uninstall method
     # in 'AppInstall.py' method 'uninstall'
     try:
-        uninstall = ExternalMethod('temp', 'temp', 
+        uninstall = ExternalMethod('temp', 'temp',
                                    PROJECTNAME+'.AppInstall', 'uninstall')
     except:
         uninstall = None
