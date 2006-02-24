@@ -497,15 +497,18 @@ class ArchetypesGenerator(BaseGenerator):
 
         return out.getvalue()
 
-    def addMsgid(self,msgid,msgstr,element,fieldname):
+    def addMsgid(self, msgid, msgstr, element, fieldname):
         """Adds a msgid to the catalog if it not exists.
 
         If it exists and not listed in occurrences, then add its occurence.
         """
         if has_i18ndude and self.build_msgcatalog and len(self.msgcatstack):
-            msgcat=self.msgcatstack[len(self.msgcatstack)-1]
-            package=element.getPackage()
-            module_id=os.path.join(element.getPackage().getFilePath(includeRoot=0),element.getName()+'.py')
+            msgcat = self.msgcatstack[len(self.msgcatstack)-1]
+            package = element.getPackage()
+            module_id = os.path.join(element.getPackage().getFilePath(includeRoot=0),
+                                     element.getName()+'.py')
+            if isinstance(msgstr, unicode):
+                msgstr = msgstr.encode('utf8')
             try:
                 #i18ndude 2.0
                 msgcat.add(msgid, msgstr=msgstr, references=[module_id])
@@ -522,7 +525,6 @@ class ArchetypesGenerator(BaseGenerator):
                             return
                     # isnt listed, so add it
                     entry[1].append((module_id, [msgstr]))
-
 
     def generateMethodActions(self, element):
         log.debug("Generating method actions...")
@@ -2905,40 +2907,39 @@ class ArchetypesGenerator(BaseGenerator):
         self.makeDir(os.path.join(root.getFilePath(),'skins',
             root.getProductModuleName()+'_public'))
 
-        of=self.makeFile(os.path.join(root.getFilePath(),'skins',
-            root.getProductModuleName()+'_public','readme.txt')
-        )
+        of = self.makeFile(os.path.join(root.getFilePath(), 'skins',
+                           root.getProductModuleName()+'_public', 'readme.txt'))
         print >> of, READMEHIGHEST % root.getProductName()
         of.close()
 
-        of=self.makeFile(os.path.join(root.getFilePath(),'skins',
-                                root.getProductModuleName(),'readme.txt'))
+        of = self.makeFile(os.path.join(root.getFilePath(), 'skins',
+                           root.getProductModuleName(), 'readme.txt'))
         print >> of, READMELOWEST % root.getProductName()
         of.close()
 
         # prepare messagecatalog
         if has_i18ndude and self.build_msgcatalog:
-            self.makeDir(os.path.join(root.getFilePath(),'i18n'))
-            filepath=os.path.join(root.getFilePath(),'i18n','generated.pot')
+            self.makeDir(os.path.join(root.getFilePath(), 'i18n'))
+            filepath = os.path.join(root.getFilePath(), 'i18n', 'generated.pot')
             if not os.path.exists(filepath):
-                templdir=os.path.join(sys.path[0],'templates')
-                PotTemplate = open(os.path.join(sys.path[0],'templates','generated.pot')).read()
+                templdir = os.path.join(sys.path[0], 'templates')
+                PotTemplate = open(os.path.join(sys.path[0], 'templates', 'generated.pot')).read()
                 authors, emails, authorline = self.getAuthors(root)
                 PotTemplate = PotTemplate % {
                     'author':', '.join(authors) or 'unknown author',
                     'email':', '.join([email[1:-1] for email in emails]) or 'unknown@email.address',
                     'year': str(time.localtime()[0]),
                     'datetime': time.ctime(),
-                    'charset':sys.getdefaultencoding(),
+                    'charset': 'UTF-8',
                     'package': root.getProductName(),
                 }
-                of=self.makeFile(filepath)
+                of = self.makeFile(filepath)
                 of.write(PotTemplate)
                 of.close()
             self.msgcatstack.append(msgcatalog.MessageCatalog(
-                    filename=os.path.join(self.targetRoot, filepath) ))
+                    filename=os.path.join(self.targetRoot, filepath)))
 
-        package=root
+        package = root
         if self.noclass:
             # skip the other generation steps
             return
@@ -2949,14 +2950,14 @@ class ArchetypesGenerator(BaseGenerator):
             self.generateApeConf(root.getFilePath(),root)
 
         #start Workflow creation
-        wfg=WorkflowGenerator(package, self)
+        wfg = WorkflowGenerator(package, self)
         wfg.generateWorkflows()
 
         # write messagecatalog
         if has_i18ndude and self.build_msgcatalog:
-            filepath=os.path.join(root.getFilePath(),'i18n','generated.pot')
-            of=self.makeFile(filepath) or open(filepath,'w')
-            pow=msgcatalog.POWriter(of,self.msgcatstack.pop() )
+            filepath = os.path.join(root.getFilePath(), 'i18n', 'generated.pot')
+            of = self.makeFile(filepath) or open(filepath, 'w')
+            pow = msgcatalog.POWriter(of, self.msgcatstack.pop())
             pow.write(sort=True, msgstrToComment=True)
             of.close()
 
