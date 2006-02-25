@@ -148,6 +148,7 @@ def install(self):
 <dtml-let c="_['sequence-item']">
 <dtml-let tool_instance_name="c.getTaggedValue('tool_instance_name', 'portal_'+ c.getName().lower() )"
     configlet_view="'/'+c.getTaggedValue('configlet:view')">
+    portal_controlpanel.unregisterConfiglet('<dtml-var "c.getName()">')
     portal_controlpanel.registerConfiglet(
         '<dtml-var "c.getName()">', #id of your Tool
         '<dtml-var "c.getTaggedValue('configlet:title',c.getName())">', # Title of your Troduct
