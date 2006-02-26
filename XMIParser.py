@@ -9,15 +9,18 @@
 # Licence:     GPL
 #-----------------------------------------------------------------------------
 
-import sys, os.path, time, string
-import getopt
-from utils import mapName,toBoolean
-from utils import wrap as doWrap
-from xml.dom import minidom
+import string
+import os.path
+import logging
 from sets import Set
 from odict import odict
+from utils import mapName
+from utils import toBoolean
+from utils import normalize
+from utils import wrap as doWrap
+from xml.dom import minidom
 from TaggedValueSupport import tgvRegistry
-import logging
+
 log = logging.getLogger('XMIparser')
 
 has_stripogram = 1
@@ -28,12 +31,12 @@ except ImportError:
     def html2text(s, *args, **kwargs):
         return s
 
-#set default wrap width
+# Set default wrap width
 default_wrap_width = 64
 
-#tag constants
-
+# Tag constants
 clean_trans = string.maketrans(':-. /$', '______')
+
 
 class XMI1_0:
     XMI_CONTENT = "XMI.content"
@@ -146,10 +149,8 @@ class XMI1_0:
         self.__dict__.update(kw)
 
     def getName(self, domElement):
-        try:
-            return str(getAttributeValue(domElement, self.NAME)).strip()
-        except:
-            return None
+        name = getAttributeValue(domElement, self.NAME)
+        return normalize(name)
 
     def getId(self, domElement):
         return domElement.getAttribute('xmi.id').strip()
@@ -186,27 +187,29 @@ class XMI1_0:
         return aggs[0].getAttribute('xmi.value')
 
     def getMultiplicity(self, el, multmin=0, multmax=-1):
-        mult_min = int(getAttributeValue(el, self.MULT_MIN, default=multmin, recursive=1))
-        mult_max = int(getAttributeValue(el, self.MULT_MAX, default=multmax, recursive=1))
+        mult_min = int(getAttributeValue(el, self.MULT_MIN, default=multmin,
+                                         recursive=1))
+        mult_max = int(getAttributeValue(el, self.MULT_MAX, default=multmax,
+                                         recursive=1))
         return (mult_min, mult_max)
 
     def buildRelations(self, doc, objects):
         #XXX: needs refactoring
         rels = doc.getElementsByTagName(XMI.ASSOCIATION) + \
-            doc.getElementsByTagName(XMI.ASSOCIATION_CLASS)
+               doc.getElementsByTagName(XMI.ASSOCIATION_CLASS)
         for rel in rels:
             master = None
             detail = None
             ends = rel.getElementsByTagName(XMI.ASSOCEND)
-            #assert len(ends) == 2
+
             if len(ends) != 2:
                 log.debug('association with != 2 ends found.')
                 continue
 
-            if self.isAssocEndAggregation(ends[0]) :
+            if self.isAssocEndAggregation(ends[0]):
                 master = ends[0]
                 detail = ends[1]
-            if self.isAssocEndAggregation(ends[1]) :
+            if self.isAssocEndAggregation(ends[1]):
                 master = ends[1]
                 detail = ends[0]
 
@@ -215,25 +218,25 @@ class XMI1_0:
                 masterid = self.getAssocEndParticipantId(master)
                 detailid = self.getAssocEndParticipantId(detail)
 
-                log.debug("Master '%s', detail '%s'.",
-                          master, detail)
+                log.debug("Master '%s', detail '%s'.", master, detail)
                 m = objects.get(masterid, None)
                 d = objects.get(detailid, None)
 
                 if not m:
-                    log.warn("Master Object not found for aggregation relation id='%s'.",
-                             XMI.getId(master))
+                    log.warn("Master Object not found for aggregation "
+                             "relation id='%s'.", XMI.getId(master))
                     continue
 
                 if not d:
-                    log.warn("Child Object not found for aggregation relation: parent='%s'.",
-                             m.getName())
+                    log.warn("Child Object not found for aggregation "
+                             "relation: parent='%s'.", m.getName())
                     continue
 
                 try:
                     m.addSubType(d)
                 except KeyError:
-                    log.warn("Child Object not found for aggregation relation: Child=%s(%s), parent=%s.",
+                    log.warn("Child Object not found for aggregation "
+                             "relation: Child=%s(%s), parent=%s.",
                              d.getId(), d.getName(), XMI.getName(m))
                     continue
 
@@ -252,17 +255,18 @@ class XMI1_0:
                     else:
                         assoc = XMIAssociation(rel)
                 except KeyError:
-                    log.warn("Child Object not found for aggregation '%s', parent='%s'.",
+                    log.warn("Child Object not found for aggregation "
+                             "'%s', parent='%s'.",
                              XMI.getId(rel), XMI.getName(master))
                     continue
 
-                if getattr(assoc.fromEnd, 'obj', None) and getattr(assoc.toEnd, 'obj', None):
+                if getattr(assoc.fromEnd, 'obj', None) and \
+                   getattr(assoc.toEnd, 'obj', None):
                     assoc.fromEnd.obj.addAssocFrom(assoc)
                     assoc.toEnd.obj.addAssocTo(assoc)
                 else:
                     log.warn("Association has no ends: '%s'.",
                              assoc.getId())
-
 
     def buildGeneralizations(self, doc, objects):
         gens = doc.getElementsByTagName(XMI.GENERALIZATION)
@@ -273,14 +277,13 @@ class XMI1_0:
                 par0 = getElementByTagName(gen, self.GEN_PARENT, recursive=1)
                 child0 = getElementByTagName(gen, self.GEN_CHILD, recursive=1)
                 try:
-                    #par=objects[getElementByTagName(par0, self.GEN_ELEMENT).getAttribute('xmi.idref')]
                     par = objects[getSubElement(par0).getAttribute('xmi.idref')]
                 except KeyError:
-                    log.warn("Parent Object not found for generalization relation '%s', parent=%s'.",
+                    log.warn("Parent Object not found for generalization "
+                             "relation '%s', parent=%s'.",
                              XMI.getId(gen), XMI.getName(par0))
                     continue
 
-                #child=objects[getElementByTagName(child0, self.GEN_ELEMENT).getAttribute('xmi.idref')]
                 child = objects[getSubElement(child0).getAttribute('xmi.idref')]
 
                 par.addGenChild(child)
@@ -289,7 +292,6 @@ class XMI1_0:
                 log.error("Gen: index error for generalization '%s'.",
                           self.getId(gen))
                 raise
-                pass
 
     def buildRealizations(self, doc, objects):
         abs = doc.getElementsByTagName(XMI.ABSTRACTION)
@@ -298,23 +300,25 @@ class XMI1_0:
             if not self.getId(ab):continue
             abstraction = XMIAbstraction(ab)
             if not abstraction.hasStereoType('realize'):
-                log.debug("Skipping dep: %s",
-                          abstraction.getStereoType())
+                log.debug("Skipping dep: %s", abstraction.getStereoType())
                 continue
             try:
                 try:
-                    par0 = getElementByTagName   (ab, self.DEP_SUPPLIER, recursive=1)
-                    par = objects[getSubElement(par0, ignoremult=1).getAttribute('xmi.idref')]
-                #    continue
+                    par0 = getElementByTagName(ab, self.DEP_SUPPLIER,
+                                               recursive=1)
+                    sub = getSubElement(par0, ignoremult=1)
+                    par = objects[sub.getAttribute('xmi.idref')]
                 except (KeyError, IndexError):
-                    log.warn("Parent Object not found for realization relation:%s, parent %s.",
+                    log.warn("Parent Object not found for realization "
+                             "relation:%s, parent %s.",
                              XMI.getId(ab), XMI.getName(par0))
                     continue
 
-                #child=objects[getElementByTagName(child0, self.REALIZATION_ELEMENT).getAttribute('xmi.idref')]
                 try:
-                    child0 = getElementByTagName (ab, self.DEP_CLIENT, recursive=1)
-                    child_xmid = getSubElement(child0, ignoremult=1).getAttribute('xmi.idref')
+                    child0 = getElementByTagName(ab, self.DEP_CLIENT,
+                                                 recursive=1)
+                    sub = getSubElement(child0, ignoremult=1)
+                    child_xmid = sub.getAttribute('xmi.idref')
                     child = objects[child_xmid]
                 except (KeyError, IndexError):
                     log.warn("Child element for realization relation not found. "
@@ -330,20 +334,19 @@ class XMI1_0:
 
     def buildDependencies(self, doc, objects):
         deps = doc.getElementsByTagName(XMI.DEPENDENCY)
-
         for dep in deps:
             if not self.getId(dep):continue
             try:
                 depencency = XMIDependency(dep, allObjects=objects)
             except KeyError:
-                log.warn('couldnt resolve dependency relation %s' , dep.getAttribute('xmi.id'))
-
-
+                log.warn('couldnt resolve dependency relation %s',
+                         dep.getAttribute('xmi.id'))
 
     def getExpressionBody(self, element, tagname = None):
         if not tagname:
             tagname = XMI.EXPRESSION
-        exp = getElementByTagName(element, XMI.EXPRESSION_BODY, recursive=1, default=None)
+        exp = getElementByTagName(element, XMI.EXPRESSION_BODY,
+                                  recursive=1, default=None)
         if exp and exp.firstChild:
             return exp.firstChild.nodeValue
         else:
@@ -352,15 +355,16 @@ class XMI1_0:
     def getTaggedValue(self, el):
         log.debug("Getting tagged value for element '%s'. Not recursive.",
                   self.getId(el))
-        tagname = getAttributeValue(el, XMI.TAGGED_VALUE_TAG, recursive=0, default=None)
+        tagname = normalize(getAttributeValue(el, XMI.TAGGED_VALUE_TAG,
+                                              recursive=0, default=None))
         if not tagname:
             raise TypeError, 'element %s has empty taggedValue' % self.getId(el)
-
-        tagvalue = getAttributeValue(el, XMI.TAGGED_VALUE_VALUE, recursive=0, default=None)
+        tagvalue = normalize(getAttributeValue(el, XMI.TAGGED_VALUE_VALUE,
+                                               recursive=0, default=None))
         return tagname, tagvalue
 
     def collectTagDefinitions(self, el):
-        ''' dummy function, only needed in xmi >=1.1'''
+        """Dummy function, only needed in xmi >=1.1"""
         pass
 
     def calculateStereoType(self, o):
@@ -390,7 +394,7 @@ class XMI1_0:
 
     def calcOwnerScope(self, o):
         # ownerScope detection unimplemented for XMI 1.0
-	    o.ownerScope = None
+        o.ownerScope = None
 
     def calcDatatype(self, att):
         global datatypes
@@ -400,14 +404,14 @@ class XMI1_0:
             if len(classifiers):
                 typeid = str(classifiers[0].getAttribute('xmi.idref'))
                 typeElement = datatypes[typeid]
-                #self.type=getAttributeValue(typeElement, XMI.NAME)
                 att.type = XMI.getName(typeElement)
-                if att.type not in datatypenames: #collect all datatype names (to prevent pure datatype classes from being generated)
+                # Collects all datatype names (to prevent pure datatype
+                # classes from being generated)
+                if att.type not in datatypenames:
                     datatypenames.append(att.type)
-                #print 'attribute:'+self.getName(), typeid, self.type
 
     def getPackageElements(self, el):
-        ''' gets all package nodes below the current node (only one level)'''
+        """Gets all package nodes below the current node (only one level)."""
         res = []
         #in case the el is a document we have to crawl down until we have ownedElements
         ownedElements = getElementByTagName(el, self.OWNED_ELEMENT, default=None)
@@ -415,26 +419,20 @@ class XMI1_0:
             if el.tagName == self.PACKAGE:
                 return []
             el = getElementByTagName(el, self.MODEL, recursive=1)
-
-
         ownedElements = getElementByTagName(el, self.OWNED_ELEMENT)
         res = getElementsByTagName(ownedElements, self.PACKAGE)
-
         return res
-
 
     def getOwnedElement(self, el):
         return getElementByTagName(el, self.OWNED_ELEMENT, default=None)
 
     def getContent(self, doc):
         content = getElementByTagName(doc, XMI.XMI_CONTENT, recursive=1)
-
         return content
 
     def getModel(self, doc):
         content = self.getContent(doc)
         model = getElementByTagName(content, XMI.MODEL, recursive=0)
-
         return model
 
     def getGenerator(self):
@@ -453,7 +451,8 @@ class XMI1_1 (XMI1_0):
     OWNED_ELEMENT = "UML:Namespace.ownedElement"
 
     MODEL = 'UML:Model'
-    #Collaboration stuff: a
+
+    # Collaboration
     COLLAB = 'Behavioral_Elements.Collaborations.Collaboration'
     CLASS = 'UML:Class'
     PACKAGE = 'UML:Package'
@@ -539,19 +538,18 @@ class XMI1_1 (XMI1_0):
     DIAGRAM_SEMANTICMODEL_BRIDGE = "UML:Uml1SemanticModelBridge"
     DIAGRAM_SEMANTICMODEL_BRIDGE_ELEMENT = "UML:Uml1SemanticModelBridge.element"
     ACTOR = "UML:Actor"
-    
-    UML2TYPE='UML2:TypedElement.type'
+
+    UML2TYPE = 'UML2:TypedElement.type'
 
     def getName(self, domElement):
+        name = ''
         if domElement:
-            return domElement.getAttribute('name').strip()
-        else:
-            return ''
+            name = normalize(domElement.getAttribute('name'))
+        return name
 
     def getExpressionBody(self, element, tagname=None):
         if not tagname:
             tagname = XMI.EXPRESSION
-
         exp = getElementByTagName(element, tagname, recursive=1, default=None)
         if exp:
             return exp.getAttribute('body')
@@ -559,13 +557,9 @@ class XMI1_1 (XMI1_0):
             return None
 
 
-
 class XMI1_2 (XMI1_1):
     TAGGED_VALUE_VALUE = "UML:TaggedValue.dataValue"
     # XMI version specific stuff goes there
-
-    #def getAssocEndParticipantId(self, el):
-    #    return getElementByTagName(getElementByTagName(el, self.ASSOCEND_PARTICIPANT), self.CLASS).getAttribute('xmi.idref')
 
     def isAssocEndAggregation(self, el):
         return str(el.getAttribute('aggregation')) in self.aggregates
@@ -576,43 +570,42 @@ class XMI1_2 (XMI1_1):
     def getMultiplicity(self, el, multmin=0,multmax=-1):
         min = getElementByTagName(el, self.MULTRANGE, default=None, recursive=1)
         max = getElementByTagName(el, self.MULTRANGE, default=None, recursive=1)
-
         if min:
             mult_min = int(min.getAttribute('lower'))
         else:
             mult_min = multmin
-
         if max:
             mult_max = int(max.getAttribute('upper'))
         else:
             mult_max = multmax
-
         return (mult_min, mult_max)
 
     def getTaggedValue(self, el):
         log.debug("Getting tagname/tagvalue pair from tag. "
                   "Looking recursively for that taggedvalue.")
-        tdef = getElementByTagName(el, self.TAG_DEFINITION, default=None, recursive=1)
-        # fetch the name from the global tagDefinitions (weird)
-        tagname = self.tagDefinitions[tdef.getAttribute('xmi.idref')].getAttribute('name')
-        tagvalue = getAttributeValue(el, self.TAGGED_VALUE_VALUE, default=None)
+        tdef = getElementByTagName(el, self.TAG_DEFINITION, default=None,
+                                   recursive=1)
+        # Fetch the name from the global tagDefinitions (weird)
+        idref = tdef.getAttribute('xmi.idref')
+        tagname = normalize(self.tagDefinitions[idref].getAttribute('name'))
+        tagvalue = normalize(getAttributeValue(el, self.TAGGED_VALUE_VALUE,
+                                               default=None))
         return tagname, tagvalue
 
     def collectTagDefinitions(self, el):
         tagdefs = el.getElementsByTagName(self.TAG_DEFINITION)
         if self.tagDefinitions is None:
             self.tagDefinitions = {}
-
         for t in tagdefs:
             if t.hasAttribute('name'):
                 self.tagDefinitions[t.getAttribute('xmi.id')] = t
 
     def calculateStereoType(self, o):
-        #in xmi its weird, because all objects to which a
-        #stereotype applies are stored in the stereotype
-        #while in xmi 1.2 its opposite
+        # In xmi its weird, because all objects to which a stereotype
+        # applies are stored in the stereotype while in xmi 1.2 its opposite
 
-        sts = getElementsByTagName(o.domElement, self.STEREOTYPE_MODELELEMENT, recursive=0)
+        sts = getElementsByTagName(o.domElement, self.STEREOTYPE_MODELELEMENT,
+                                   recursive=0)
         for st in sts:
             strefs = getSubElements(st)
             for stref in strefs:
@@ -627,42 +620,42 @@ class XMI1_2 (XMI1_1):
                              o.getId(), o.getName())
 
     def calcClassAbstract(self, o):
-        o.isabstract = o.domElement.hasAttribute('isAbstract') and o.domElement.getAttribute('isAbstract') == 'true'
-        #print 'xmi12_calcabstract:', o.getName(), o.isAbstract()
+        o.isabstract = o.domElement.hasAttribute('isAbstract') and \
+                       o.domElement.getAttribute('isAbstract') == 'true'
 
     def calcVisibility(self, o):
-        o.visibility = o.domElement.hasAttribute('visibility') and o.domElement.getAttribute('visibility')
-        #print 'xmi12_calcVisibility:', o.getName(), o.getVisibility()
+        o.visibility = o.domElement.hasAttribute('visibility') and \
+                       o.domElement.getAttribute('visibility')
 
     def calcOwnerScope(self, o):
-	    o.ownerScope = o.domElement.hasAttribute('ownerScope') and o.domElement.getAttribute('ownerScope')
+        o.ownerScope = o.domElement.hasAttribute('ownerScope') and \
+                       o.domElement.getAttribute('ownerScope')
 
     def calcDatatype(self, att):
         global datatypes
-        typeinfos = att.domElement.getElementsByTagName(XMI.TYPE)+att.domElement.getElementsByTagName(XMI.UML2TYPE)
+        typeinfos = att.domElement.getElementsByTagName(XMI.TYPE) + \
+                    att.domElement.getElementsByTagName(XMI.UML2TYPE)
         if len(typeinfos):
-            classifiers = [cn for cn in typeinfos[0].childNodes if cn.nodeType == cn.ELEMENT_NODE] #getElementsByTagName(XMI.CLASS)
-            #assert len(classifiers) == 1
+            classifiers = [cn for cn in typeinfos[0].childNodes
+                           if cn.nodeType == cn.ELEMENT_NODE]
             if len(classifiers):
-                #print 'classifier found for 1.2'
                 typeid = str(classifiers[0].getAttribute('xmi.idref'))
                 try:
                     typeElement = datatypes[typeid]
                 except KeyError:
                     raise ValueError, 'datatype %s not defined' % typeid
-                #self.type=getAttributeValue(typeElement, XMI.NAME)
                 att.type = XMI.getName(typeElement)
-                if att.type not in datatypenames: #collect all datatype names (to prevent pure datatype classes from being generated)
+                # Collect all datatype names (to prevent pure datatype
+                # classes from being generated)
+                if att.type not in datatypenames:
                     datatypenames.append(att.type)
-                #print 'attribute:'+self.getName(), typeid, self.type
-
 
 
 class NoObject:
     pass
 
-_marker = NoObject()
 
+_marker = NoObject()
 allObjects = {}
 
 def getSubElements(domElement):
@@ -672,7 +665,6 @@ def getSubElement(domElement, default=_marker, ignoremult=0):
     els = getSubElements(domElement)
     if len(els) > 1 and not ignoremult:
         raise TypeError, 'more than 1 element found'
-
     try:
         return els[0]
     except IndexError:
@@ -681,68 +673,59 @@ def getSubElement(domElement, default=_marker, ignoremult=0):
         else:
             return default
 
-
 def getAttributeValue(domElement, tagName=None, default=_marker, recursive=0):
     el = domElement
     el.normalize()
-
-
     if tagName:
         try:
             el = getElementByTagName(domElement, tagName, recursive=recursive)
-
         except IndexError:
             if default == _marker:
                 raise
             else:
                 return default
-
     if el.hasAttribute('xmi.value'):
         return el.getAttribute('xmi.value')
-
     if not el.firstChild and default != _marker:
         return default
-
     return el.firstChild.nodeValue
 
 def getAttributeOrElement(domElement, name, default=_marker, recursive=0):
-    ''' tries t get the value from an attribute, if not found, it tries to get
-        it from a subelement that has the name {element.name}.{name}
-        '''
+    """Tries to get the value from an attribute, if not found, it tries
+    to get it from a subelement that has the name {element.name}.{name}.
+    """
     val = domElement.getAttribute(name)
-
     if not val:
-        val = getAttributeValue(domElement, domElement.tagName+'.'+name, default, recursive)
-
+        val = getAttributeValue(domElement, domElement.tagName+'.'+name,
+                                default, recursive)
     return val
 
 def getElementsByTagName(domElement, tagName, recursive=0):
-    ''' returns elements by tag name , the only difference
-        to the original getElementsByTagName is, that the optional recursive
-        parameter
-        '''
+    """Returns elements by tag name.
 
-    if isinstance(tagName, (str, unicode)):
-        tagNames=[tagName]
+    The only difference from the original getElementsByTagName is
+    the optional recursive parameter.
+    """
+    if isinstance(tagName, basestring):
+        tagNames = [tagName]
     else:
-        tagNames=tagName
-
+        tagNames = tagName
     if recursive:
         els = []
         for tag in tagNames:
             els.extend(domElement.getElementsByTagName(tag))
     else:
-        els = [el for el in domElement.childNodes if str(getattr(el, 'tagName', None)) in tagNames]
-
+        els = [el for el in domElement.childNodes
+               if str(getattr(el, 'tagName', None)) in tagNames]
     return els
 
 def getElementByTagName(domElement, tagName, default=_marker, recursive=0):
-    ''' returns a single element by name and throws an error if more than 1 exist'''
-    els = getElementsByTagName(domElement,tagName,recursive=recursive)
-
+    """Returns a single element by name and throws an error if more
+    than one exists.
+    """
+    els = getElementsByTagName(domElement, tagName, recursive=recursive)
     if len(els) > 1:
         raise TypeError, 'more than 1 element found'
-
     try:
         return els[0]
     except IndexError:
@@ -752,10 +735,10 @@ def getElementByTagName(domElement, tagName, default=_marker, recursive=0):
             return default
 
 def hasClassFeatures(domClass):
-
-    return len(domClass.getElementsByTagName(XMI.FEATURE)) or           \
-                len(domClass.getElementsByTagName(XMI.ATTRIBUTE)) or    \
+    return len(domClass.getElementsByTagName(XMI.FEATURE)) or \
+                len(domClass.getElementsByTagName(XMI.ATTRIBUTE)) or \
                 len(domClass.getElementsByTagName(XMI.METHOD))
+
 
 class PseudoElement:
     #urgh, needed to pretend a class
@@ -789,12 +772,10 @@ class XMIElement:
         self.subTypes = []
         self.stereoTypes = []
         self.clientDependencies = []
-
-        self.annotations = {} # space to store values by external access. use
-                             # annotate() to store values in this dict, and
-                             # getAnnotation() to fetch it.
-
-        #take kwargs as attributes
+        # Space to store values by external access. Use annotate() to
+        # store values in this dict, and getAnnotation() to fetch it.
+        self.annotations = {}
+        # Take kwargs as attributes
         self.__dict__.update(kwargs)
         if domElement:
             allObjects[domElement.getAttribute('xmi.id')] = self
@@ -813,10 +794,9 @@ class XMIElement:
     def parseTaggedValues(self):
         """Gather the tagnames and tagvalues for the element.
         """
-
-        log.debug("Gathering the taggedvalues for element %s.",
-                  self.name)
-        tgvsm = getElementByTagName(self.domElement, XMI.TAGGED_VALUE_MODEL, default=None, recursive=0)
+        log.debug("Gathering the taggedvalues for element %s.", self.name)
+        tgvsm = getElementByTagName(self.domElement, XMI.TAGGED_VALUE_MODEL,
+                                    default=None, recursive=0)
         if tgvsm is None:
             log.debug("Found nothing.")
             return
@@ -824,18 +804,16 @@ class XMIElement:
         for tgv in tgvs:
             try:
                 tagname, tagvalue = XMI.getTaggedValue(tgv)
-                log.debug("Found tag '%s' with value '%s'.",
-                          tagname, tagvalue)
+                log.debug("Found tag '%s' with value '%s'.", tagname, tagvalue)
                 if self.taggedValues.has_key(tagname):
-                    log.debug("Invoking Poseidon multiline fix for tagname '%s'.",
-                              tagname)
+                    log.debug("Invoking Poseidon multiline fix for "
+                              "tagname '%s'.", tagname)
                     self.taggedValues[tagname] += '\n'+tagvalue
                 else:
                     self.taggedValues[tagname] = tagvalue
             except TypeError, e:
                 log.warn("Broken tagged value in id '%s'.",
                          XMI.getId(self.domElement))
-                pass
         log.debug("Found the following tagged values: %r.",
                   self.getTaggedValues())
 
@@ -847,7 +825,7 @@ class XMIElement:
             domElement = self.domElement
 
         if domElement:
-            self.id = domElement.getAttribute('xmi.id')
+            self.id = str(domElement.getAttribute('xmi.id'))
             self.name = XMI.getName(domElement)
             log.debug("Initializing from DOM: name='%s', id='%s'.",
                       self.name, self.id)
@@ -861,12 +839,8 @@ class XMIElement:
                     self.maxOccurs = int(getAttributeValue(maxNode))
                     if self.maxOccurs == -1:
                         self.maxOccurs = 99999
-
-                    log.debug("maxOccurs = '%s'.",
-                              self.maxOccurs)
-
+                    log.debug("maxOccurs = '%s'.", self.maxOccurs)
             domElement.xmiElement = self
-
 
     def addChild(self, element):
         self.children.append(element)
@@ -882,12 +856,7 @@ class XMIElement:
             res = self.name
         else:
             res = self.id
-        if isinstance(res, unicode):
-            res = res.encode('utf-8')
-            log.debug("getName has to fallback to unicode: %s. "
-                      "Converting to utf-8.", res)
-        res = res.strip()
-        return res
+        return normalize(res)
 
     def getTaggedValue(self, name, default=''):
         log.debug("Getting value for tag '%s' (default=%s). "
@@ -898,8 +867,6 @@ class XMIElement:
             # The registry does the complaining :-)
             pass
         res = self.taggedValues.get(name, default)
-        if isinstance(res, (str, unicode)):
-            res = res.strip()
         log.debug("Returning value '%s',", res)
         return res
 
@@ -911,27 +878,24 @@ class XMIElement:
 
         If given, also check for a matching value.
         """
-
-        log.debug("Searching for presence of an attribute with tag '%s'.",
-                  tag)
+        log.debug("Searching for presence of an attribute with tag '%s'.", tag)
         if value:
-            log.debug("But, extra condition, the value should be '%s'.",
-                      value)
+            log.debug("But, extra condition, the value should be '%s'.", value)
         attrs = self.getAttributeDefs()
         for attr in attrs:
             if attr.hasTaggedValue(tag):
                 log.debug("Yep, we've found an attribute with that tag.")
                 if not value:
                     # We don't have to have a specific value
-                    return 1
+                    return True
                 else:
                     # We need a specific value
                     if attr.getTaggedValue(tag, None) == value:
-                        return 1
+                        return True
                     else:
                         log.debug("But, alas, the value isn't right.")
         log.debug("No, found nothing.")
-        return 0
+        return False
 
     def getTaggedValues(self):
         category = str(self.__class__)
@@ -974,31 +938,41 @@ class XMIElement:
                   doc)
         return doc
 
-    def getUnmappedCleanName(self): return self.unmappedCleanName
+    def getUnmappedCleanName(self):
+        return self.unmappedCleanName
+
     def setName(self, name):
         log.debug("Setting our name to '%s' the hard way. "
                   "The automatic mechanism set it to '%s' already.",
                   name, self.getName())
         self.name = name
 
-    def getAttrs(self): return self.attrs
-    def getMaxOccurs(self): return self.maxOccurs
-    def getType(self): return self.type
-    def isComplex(self): return self.complex
+    def getAttrs(self):
+        return self.attrs
+
+    def getMaxOccurs(self):
+        return self.maxOccurs
+
+    def getType(self):
+        return self.type
+
+    def isComplex(self):
+        return self.complex
+
     def addAttributeDef(self, attrs, pos=None):
         if pos is None:
             self.attributeDefs.append(attrs)
         else:
             self.attributeDefs.insert(0, attrs)
 
-    def getAttributeDefs(self): return self.attributeDefs
+    def getAttributeDefs(self):
+        return self.attributeDefs
 
     def getRef(self):
         return None
 
     def getRefs(self):
-        ''' return all referenced schema names '''
-
+        """Returns all referenced schema names."""
         return [str(c.getRef()) for c in self.getChildren() if c.getRef()]
 
     def show(self, outfile, level):
@@ -1022,14 +996,12 @@ class XMIElement:
         if m.getName():
             self.methodDefs.append(m)
 
-
     def getCleanName(self):
         # If there is a namespace, replace it with an underscore.
         if self.getName():
             self.unmappedCleanName = str(self.getName()).translate(clean_trans)
         else:
             self.unmappedCleanName = ''
-
         return mapName(self.unmappedCleanName)
 
     def isIntrinsicType(self):
@@ -1039,19 +1011,15 @@ class XMIElement:
         pass
 
     def getMethodDefs(self, recursive=0):
-        log.debug("Getting method definitions (recursive=%s)...",
-                  recursive)
+        log.debug("Getting method definitions (recursive=%s)...", recursive)
         res = [m for m in self.methodDefs]
-        log.debug("Our own methods: %r.",
-                  res)
-
+        log.debug("Our own methods: %r.", res)
         if recursive:
             log.debug("Also looking recursively to our parents...")
             parents = self.getGenParents(recursive=1)
             for p in parents:
                 res.extend(p.getMethodDefs())
-            log.debug("Our total methods: %r.",
-                      res)
+            log.debug("Our total methods: %r.", res)
         return res
 
     def calculateStereoType(self):
@@ -1067,16 +1035,14 @@ class XMIElement:
             return None
 
     def addStereoType(self, st):
-        log.debug("Adding stereotype '%s' to this element's internal list.",
-                  st)
+        log.debug("Adding stereotype '%s' to this element's internal list.", st)
         self.stereoTypes.append(st)
 
     def getStereoTypes(self):
         return self.stereoTypes
 
     def hasStereoType(self, stereotypes, umlprofile=None):
-        log.debug("Looking if element has stereotype %r",
-                  stereotypes)
+        log.debug("Looking if element has stereotype %r", stereotypes)
         category = str(self.__class__)
         if isinstance(stereotypes, (str, unicode)):
             stereotypes = [stereotypes]
@@ -1087,27 +1053,26 @@ class XMIElement:
                     log.debug("Stereotype '%s' is registered.")
                 else:
                     log.debug("DEVELOPERS: Stereotype '%s' isn't registered "
-                              "for element '%s'.",
-                              stereotype,
-                              self.__class__)
+                              "for element '%s'.", stereotype, self.__class__)
         for stereotype in stereotypes:
             if stereotype in self.getStereoTypes():
-                return 1
-        return 0
+                return True
+        return False
 
     def getFullQualifiedName():
         return self.getName()
 
     def getPackage(self):
-        ''' returns the package to which this object belongs '''
+        """Returns the package to which this object belongs."""
         return self.package
 
     def getPath(self):
         return [self.getName()]
 
     def getModuleName(self):
-        ''' gets the name of the module the class is in '''
-        return self.getTaggedValue('module') or self.getTaggedValue('module_name') or self.getCleanName()
+        """Gets the name of the module the class is in."""
+        return self.getTaggedValue('module') or \
+               self.getTaggedValue('module_name') or self.getCleanName()
 
     def annotate(self, key, value):
         #print "annotate", key, value
@@ -1119,30 +1084,31 @@ class XMIElement:
     def addClientDependency(self, dep):
         self.clientDependencies.append(dep)
 
-    def getClientDependencies(self, includeParents=False, dependencyStereotypes=None):
+    def getClientDependencies(self, includeParents=False,
+                              dependencyStereotypes=None):
         res = self.clientDependencies
-
         if includeParents:
             o = self.getParent()
             if o:
                 res.extend(o.getClientDependencies(includeParents=includeParents))
                 res.reverse()
-
         if dependencyStereotypes:
-            res=[r for r in res if r.hasStereoType(dependencyStereotypes)]
-
+            res = [r for r in res if r.hasStereoType(dependencyStereotypes)]
         return res
 
     def getClientDependencyClasses(self, includeParents=False,
                                    dependencyStereotypes=None,
                                    targetStereotypes=None):
-
-        res=[dep.getSupplier() for dep in self.getClientDependencies(
-            includeParents=includeParents, dependencyStereotypes=dependencyStereotypes) if
-            dep.getSupplier() and dep.getSupplier().__class__.__name__ in ('XMIClass', 'XMIInterface')]
+        res = [dep.getSupplier()
+               for dep in self.getClientDependencies(
+                   includeParents=includeParents,
+                   dependencyStereotypes=dependencyStereotypes)
+               if dep.getSupplier() and
+                  dep.getSupplier().__class__.__name__
+                  in ('XMIClass', 'XMIInterface')]
 
         if targetStereotypes:
-            res=[r for r in res if r.hasStereoType(targetStereotypes)]
+            res = [r for r in res if r.hasStereoType(targetStereotypes)]
 
         return res
 
@@ -1154,7 +1120,8 @@ class StateMachineContainer:
         log.debug("Trying to find statemachines...")
         try:
             ownedElement = getElementByTagName(self.domElement,
-                                               [XMI.OWNED_ELEMENT, XMI.OWNED_BEHAVIOR],
+                                               [XMI.OWNED_ELEMENT,
+                                                XMI.OWNED_BEHAVIOR],
                                                default=None)
         except:
             log.debug("Getting the owned element the normal way didn't work.")
@@ -1163,7 +1130,8 @@ class StateMachineContainer:
                                                    [XMI.OWNED_BEHAVIOR],
                                                    default=None, recursive=1)
             except:
-                log.debug("Getting the owned element the poseidon 3.1 way also didn't work.")
+                log.debug("Getting the owned element the poseidon 3.1 "
+                          "way also didn't work.")
                 # BBB backward compatible with argouml's xmi1.0
                 log.debug("Backward compatability mode for argouml's xmi1.0.")
                 ownedElement = XMI.getOwnedElement(self.domElement)
@@ -1171,38 +1139,31 @@ class StateMachineContainer:
         if not ownedElement:
             log.debug("Setting ownedElement to self.domElement as fallback.")
             ownedElement = self.domElement
-        log.debug("We set the owned element as: %s.",
-                  ownedElement)
+        log.debug("We set the owned element as: %s.", ownedElement)
 
         statemachines = getElementsByTagName(ownedElement, XMI.STATEMACHINE)
-        log.debug("Found the following statemachines: %r.",
-                  statemachines)
+        log.debug("Found the following statemachines: %r.", statemachines)
         return statemachines
 
     def buildStateMachines(self, recursive=1):
-        #print 'buildClasses:',self.getFilePath(includeRoot=1)
+        res = {}
         statemachines = self.findStateMachines()
-        res={}
-        
         for m in statemachines:
             sm = XMIStateMachine(m,parent=self)
             if sm.getName():
-                #print 'StateMachine:', sm.getName(), sm.id
-                #determine the correct product where it belongs
-                products = [c.getPackage().getProduct() for c in sm.getClasses()]
-                #associate the WF with the first product
+                # Determine the correct product where it belongs
+                products = [c.getPackage().getProduct()
+                            for c in sm.getClasses()]
+                # Associate the WF with the first product
                 if products:
                     product = products[0]
                 else:
                     products = self
-
                 product.addStateMachine(sm)
-                res[sm.getName()]=sm
-
+                res[sm.getName()] = sm
         if recursive:
             for p in self.getPackages():
                 res.update(p.buildStateMachines())
-                
         return res
 
     def addStateMachine(self, sm, reparent=1):
@@ -1210,10 +1171,8 @@ class StateMachineContainer:
             self.statemachines.append(sm)
             if reparent:
                 sm.setParent(self)
-
         if hasattr(self, 'isProduct') and not self.isProduct():
             self.getProduct().addStateMachine(sm, reparent=0)
-
         if not hasattr(self, 'isProduct'):
             self.getPackage().getProduct().addStateMachine(sm, reparent=0)
 
@@ -1245,12 +1204,10 @@ class XMIPackage(XMIElement, StateMachineContainer):
     def getClasses(self, recursive=0):
         res = [c for c in self.classes]
         res = self.classes
-
         if recursive:
             res = list(res)
             for p in self.getPackages():
                 res.extend(p.getClasses(recursive=1))
-
         return res
 
     def getAssociations(self, recursive=0):
@@ -1258,7 +1215,6 @@ class XMIPackage(XMIElement, StateMachineContainer):
         res = []
         for c in classes:
             res.extend(c.getFromAssociations())
-
         return res
 
     def addClass(self, cl):
@@ -1270,23 +1226,21 @@ class XMIPackage(XMIElement, StateMachineContainer):
         cl.package = self
 
     def getInterfaces(self, recursive=0):
-
         res = [c for c in self.classes]
         res = self.interfaces
-
         if recursive:
             res = list(res)
             for p in self.getPackages():
                 res.extend(p.getClasses(recursive=1))
-
         return res
 
     def getClassesAndInterfaces(self, recursive=0):
-        return self.getClasses(recursive=recursive)+ \
-            self.getInterfaces(recursive=recursive)
+        return self.getClasses(recursive=recursive) + \
+               self.getInterfaces(recursive=recursive)
 
     def getChildren(self):
-        return self.children+self.getClasses() + self.getPackages() + self.getInterfaces()
+        return self.children + self.getClasses() + \
+               self.getPackages() + self.getInterfaces()
 
     def addPackage(self, p):
         self.packages.append(p)
@@ -1294,7 +1248,6 @@ class XMIPackage(XMIElement, StateMachineContainer):
 
     def getPackages(self):
         return self.packages
-
 
     def buildPackages(self):
         packEls = XMI.getPackageElements(self.domElement)
@@ -1306,7 +1259,6 @@ class XMIPackage(XMIElement, StateMachineContainer):
             package.buildPackages()
 
     def buildClasses(self):
-        #print 'buildClasses:', self.getFilePath(includeRoot=1)
         ownedElement = XMI.getOwnedElement(self.domElement)
         if not ownedElement:
             log.warn("Empty package: '%s'.",
@@ -1321,14 +1273,12 @@ class XMIPackage(XMIElement, StateMachineContainer):
             else:
                 xc = XMIClass(c, package=self)
             if xc.getName():
-                #print 'Class:', xc.getName(), xc.id
                 self.addClass(xc)
 
         for p in self.getPackages():
             p.buildClasses()
 
     def buildInterfaces(self):
-        #print 'buildInterfaces:', self.getFilePath(includeRoot=1)
         ownedElement = XMI.getOwnedElement(self.domElement)
         if not ownedElement:
             log.warn("Empty package: '%s'.",
@@ -1340,7 +1290,6 @@ class XMIPackage(XMIElement, StateMachineContainer):
         for c in classes:
             xc = XMIInterface(c, package=self)
             if xc.getName():
-                #print 'Interface:', xc.getName(), xc.id
                 self.addInterface(xc)
 
         for p in self.getPackages():
@@ -1352,8 +1301,8 @@ class XMIPackage(XMIElement, StateMachineContainer):
 
     def isRoot(self):
         # TBD Handle this through the stereotype registry
-        return self.isroot or self.hasStereoType(['product', 'zopeproduct', 'Product', 'ZopeProduct'])
-
+        return self.isroot or self.hasStereoType(['product', 'zopeproduct',
+                                                  'Product', 'ZopeProduct'])
 
     isProduct = isRoot
 
@@ -1362,38 +1311,33 @@ class XMIPackage(XMIElement, StateMachineContainer):
         o = self
 
         if self.isProduct():
-            #products are always handled as top-level
+            # Products are always handled as top-level
             if includeRoot:
                 return [o]
             else:
                 return []
 
-        while 1:
+        while True:
             if includeRoot:
                 res.append(o)
-
             if o.isProduct():
                 break
-
             if not o.getParent():
                 break
-
             if o == parent:
                 break
-
             if not includeRoot:
                 res.append(o)
-
             o = o.getParent()
 
         res.reverse()
         return res
 
     def getFilePath(self, includeRoot=1, absolute=0):
-        names = [p.getModuleName() for p in self.getPath(includeRoot=includeRoot, absolute=absolute)]
+        names = [p.getModuleName() for p in
+                 self.getPath(includeRoot=includeRoot, absolute=absolute)]
         if not names:
             return ''
-
         res = os.path.join(*names)
         return res
 
@@ -1401,14 +1345,12 @@ class XMIPackage(XMIElement, StateMachineContainer):
         o = self
         while not o.isRoot():
             o = o.getParent()
-
         return o
 
     def getProduct(self):
         o = self
         while not o.isProduct():
             o = o.getParent()
-
         return o
 
     def getProductName(self):
@@ -1417,27 +1359,21 @@ class XMIPackage(XMIElement, StateMachineContainer):
     def getProductModuleName(self):
         return self.getProduct().getModuleName()
 
-
     def isSubPackageOf(self, parent):
         o = self
-        #print 'isSubPackage:', self.getName(), parent.getName()
         while o:
-            #print 'compare:', o.getName()
             if o == parent:
-                #print 'ys'
-                return 1
-
+                return True
             o = o.getParent()
-
-        return 0
+        return False
 
     def getQualifiedName(self, ref, includeRoot=True):
-        ''' returns the qualified name of that package, depending of the
-            reference package 'ref' it generates an absolute path or
-            a relative path if the pack(self) is a subpack of 'ref' '''
+        """Returns the qualified name of that package.
 
+        Depending of the reference package 'ref' it generates an absolute
+        path or a relative path if the pack(self) is a subpack of 'ref'.
+        """
         path = self.getPath(includeRoot=includeRoot, parent=ref)
-
         return path
 
 
@@ -1456,12 +1392,10 @@ class XMIModel(XMIPackage):
     def findStateMachines(self):
         statemachines = getElementsByTagName(self.content, XMI.STATEMACHINE)
         statemachines.extend(getElementsByTagName(self.model, XMI.STATEMACHINE))
-
-        log.debug("Found the following state machines: %r.",
-                  statemachines)
-
+        log.debug("Found the following state machines: %r.", statemachines)
         ownedElement = XMI.getOwnedElement(self.domElement)
-        statemachines.extend(getElementsByTagName(ownedElement, XMI.STATEMACHINE) )
+        statemachines.extend(getElementsByTagName(ownedElement,
+                                                  XMI.STATEMACHINE))
         return statemachines
 
     def buildDiagrams(self):
@@ -1470,33 +1404,31 @@ class XMIModel(XMIPackage):
             diagram = XMIDiagram(el)
             self.diagrams[diagram.getId()] = diagram
             self.diagramsByModel[diagram.getModelElementId()] = diagram
-            
+
     def getAllStateMachines(self):
-        res=[]
+        res = []
         res.extend(self.getStateMachines())
         for p in self.getPackages():
             res.extend(p.getStateMachines())
-            
         return res
-    
+
     def associateClassesToStateMachines(self):
-        sms=self.getAllStateMachines()
-        smdict={}
+        sms = self.getAllStateMachines()
+        smdict = {}
         for sm in sms:
-            smdict[sm.getName()]=sm
-            
+            smdict[sm.getName()] = sm
+
         for cl in self.getClasses(recursive=1):
-            uf=cl.getTaggedValue('use_workflow')
+            uf = cl.getTaggedValue('use_workflow')
             if uf:
-                wf=smdict.get(uf)
+                wf = smdict.get(uf)
                 if not wf:
                     log.debug('associated workflow does not exist: %s' % uf)
                     continue
-                    
                 smdict[uf].addClass(cl)
-                
 
-class XMIClass (XMIElement, StateMachineContainer):
+
+class XMIClass(XMIElement, StateMachineContainer):
     package = None
     isinterface = 0
     # [Reinout] Doesn't this mean that there's just one class-wide
@@ -1507,8 +1439,7 @@ class XMIClass (XMIElement, StateMachineContainer):
     def __init__(self, *args, **kw):
         log.debug("Initialising class.")
         self.setPackage(kw.get('package', None))
-        log.debug("Package set to '%s'.",
-                  self.package.name)
+        log.debug("Package set to '%s'.", self.package.name)
         log.debug("Running StateMachineContainer's init...")
         StateMachineContainer.__init__(self)
         log.debug("Running XMIElement's init...")
@@ -1521,7 +1452,6 @@ class XMIClass (XMIElement, StateMachineContainer):
         self.realizationParents = []
         self.internalOnly = 0
         self.type = self.name
-        #self.isabstract = 0
 
     def setPackage(self, p):
         self.package = p
@@ -1534,7 +1464,6 @@ class XMIClass (XMIElement, StateMachineContainer):
         self.buildStateMachines(recursive=0)
 
     def isInternal(self):
-        ''' internal class '''
         return self.internalOnly
 
     def isEmpty(self):
@@ -1563,9 +1492,7 @@ class XMIClass (XMIElement, StateMachineContainer):
         return a in self.getAttributeNames()
 
     def getGenChildren(self, recursive=0):
-        """Return the generalization children.
-        """
-
+        """Return the generalization children."""
         log.debug("Finding this class's children...")
         res = [c for c in self.genChildren]
         if recursive:
@@ -1573,28 +1500,22 @@ class XMIClass (XMIElement, StateMachineContainer):
                       "the family tree.")
             for r in res:
                 res.extend(r.getGenChildren(1))
-        log.debug("Found: '%r'.",
-                  res)
+        log.debug("Found: '%r'.", res)
         return res
 
     def getGenChildrenNames(self, recursive=0):
-        """Return the names of the generalization children
-        """
-
-        return [o.getName() for o in self.getGenChildren(recursive=recursive) ]
+        """Returns the names of the generalization children."""
+        return [o.getName() for o in self.getGenChildren(recursive=recursive)]
 
     def getGenParents(self, recursive = 0):
-        """Return generalization parents
-        """
-
+        """Returns generalization parents."""
         log.debug("Looking for this class's parents...")
         res = [c for c in self.genParents]
         if recursive:
             log.debug("Also looking recursively up the family tree.")
             for r in res:
                 res.extend(r.getGenParents(1))
-        log.debug("Found the following parents: '%r'.",
-                  res)
+        log.debug("Found the following parents: '%r'.", res)
         return res
 
     def buildChildren(self, domElement):
@@ -1618,7 +1539,7 @@ class XMIClass (XMIElement, StateMachineContainer):
                 title.setTaggedValue('widget:label_msgid', "label_title")
                 title.setTaggedValue('widget:i18n_domain', "plone")
                 title.setTaggedValue('widget:description_msgid', "help_title")
-                title.setTaggedValue('searchable', 'python:1')
+                title.setTaggedValue('searchable', 'python:True')
                 title.setTaggedValue('accessor', 'Title')
                 title.setParent(self)
                 self.addAttributeDef(title, 0)
@@ -1631,61 +1552,45 @@ class XMIClass (XMIElement, StateMachineContainer):
                 id.setTaggedValue('widget:label_msgid', "label_short_name")
                 id.setTaggedValue('widget:i18n_domain', "plone")
                 id.setTaggedValue('widget:description_msgid', "help_short_name")
-
                 self.addAttributeDef(id, 0)
 
     def isComplex(self):
-        return 1
+        return True
 
     def addAssocFrom(self, a):
-        """Add association originating FROM this class.
-        """
-
+        """Adds association originating FROM this class."""
         self.assocsFrom.append(a)
 
     def addAssocTo(self, a):
-        """Add association pointing AT this class.
-        """
-
+        """Adds association pointing AT this class."""
         self.assocsTo.append(a)
 
-    def getFromAssociations(self, aggtypes=['none'],
-                            aggtypesTo=['none']):
-        """Return associations that point from this class.
-        """
-
-        # This code doesn't seem to work with below isDependent
-        # method.
+    def getFromAssociations(self, aggtypes=['none'], aggtypesTo=['none']):
+        """Returns associations that point from this class."""
+        # This code doesn't seem to work with below isDependent method.
         log.debug("Finding associations originating at this class...")
         log.debug("Params: aggtypes='%r', aggtypesTo='%r'.",
                   aggtypes, aggtypesTo)
         result = [a for a in self.assocsFrom
                   if a.fromEnd.aggregation in aggtypes
                   and a.toEnd.aggregation in aggtypesTo]
-        log.debug("Associations found: %r.",
-                  result)
+        log.debug("Associations found: %r.", result)
         return result
 
-    def getToAssociations(self, aggtypes=['none'],
-                          aggtypesTo=['none']):
-        """Return associations that point at this class.
-        """
-
-        # This code doesn't seem to work with below isDependent
-        # method.
+    def getToAssociations(self, aggtypes=['none'], aggtypesTo=['none']):
+        """Returns associations that point at this class."""
+        # This code doesn't seem to work with below isDependent method.
         log.debug("Finding associations pointing at this class...")
         log.debug("Params: aggtypes='%r', aggtypesTo='%r'.",
                   aggtypes, aggtypesTo)
         result = [a for a in self.assocsTo
                   if a.fromEnd.aggregation in aggtypes
                   and a.toEnd.aggregation in aggtypesTo]
-        log.debug("Associations found: %r.",
-                  result)
+        log.debug("Associations found: %r.", result)
         return result
 
-
     def isDependent(self):
-        """ Return True if class is only accessible through composition
+        """Return True if class is only accessible through composition.
 
         Every object to which only composite associations point
         shouldn't be created independently.
@@ -1696,60 +1601,56 @@ class XMIClass (XMIElement, StateMachineContainer):
 
         log.debug("Trying to figure out if the class is dependent.")
         aggs = self.getToAssociations(aggtypes=['aggregate'])
-        log.debug("Found aggregations that contain us: %r.",
-                  aggs)
+        log.debug("Found aggregations that contain us: %r.", aggs)
         comps = self.getToAssociations(aggtypes=['composite'])
-        log.debug("Found compositions that contain us: %r.",
-                  comps)
+        log.debug("Found compositions that contain us: %r.", comps)
 
         if comps and not aggs:
             log.debug("We *are* part of a composition plus we are "
                       "not part of an aggregation, so we're stuck "
                       "inside whatever it is that 'compositions' us.")
-            res = 1
+            res = True
         else:
             log.debug("Our placing is not fixed, we're not dependent.")
-            res = 0
+            res = False
         log.debug("Check, though, if one of the parents is dependent."
                   "If True, count the class as dependent.")
         for p in self.getGenParents():
             if p.isDependent():
                 log.debug("Yes, found a parent that is dependent. "
                           "So we are too.")
-                res = 1
-        log.debug("End verdict: dependent = '%s'.",
-                  res)
+                res = True
+        log.debug("End verdict: dependent = '%s'.", res)
         return res
 
     def isAbstract(self):
         return self.isabstract
 
     def getSubtypeNames(self, recursive=0, **kw):
-        ''' returns the non-intrinsic subtypes '''
-
-        res = [o.getName() for o in self.getAggregatedClasses(recursive=recursive, **kw)]
-
+        """Returns the non-intrinsic subtypes names."""
+        res = [o.getName() for o in
+               self.getAggregatedClasses(recursive=recursive, **kw)]
         return res
 
-    def getAggregatedClasses(self, recursive=0, filter=['class', 'interface'], **kw):
-        ''' returns the non-intrinsic subtypes '''
-
+    def getAggregatedClasses(self, recursive=0,
+                             filter=['class', 'interface'], **kw):
+        """Returns the non-intrinsic subtypes classes."""
         res = [o for o in self.subTypes if not o.isAbstract() ]
-
         if recursive:
             for sc in self.subTypes:
                 res.extend([o for o in sc.getGenChildren(recursive=1)])
-
-        res = [o for o in res if o.__class__.__name__ in ['XMI'+f.capitalize() for f in filter]]
+        res = [o for o in res if o.__class__.__name__ in
+               ['XMI'+f.capitalize() for f in filter]]
         return res
 
     def isI18N(self):
-        ''' if at least one method is I18N the class has to be treated as i18N '''
+        """If at least one method is I18N the class has to be
+        treated as I18N.
+        """
         for a in self.getAttributeDefs():
             if a.isI18N():
-                return 1
-
-        return 0
+                return True
+        return False
 
     def getPackage(self):
         return self.package
@@ -1760,10 +1661,8 @@ class XMIClass (XMIElement, StateMachineContainer):
         return self.getPackage().getRootPackage()
 
     def isInterface(self):
-        #print 'interface:', self.getName(), self.getStereoType()
-        return self.isinterface  or self.getStereoType() == 'interface'
+        return self.isinterface or self.getStereoType() == 'interface'
 
-    # for relization stuff
     def addRealizationChild(self, c):
         self.realizationChildren.append(c)
 
@@ -1771,36 +1670,34 @@ class XMIClass (XMIElement, StateMachineContainer):
         self.realizationParents.append(c)
 
     def getRealizationChildren(self, recursive=0):
-        ''' realization children '''
-
         res = [c for c in self.realizationChildren]
-
         if recursive:
             for r in res:
                 res.extend(r.getRealizationChildren(1))
-
         return res
 
     def getRealizationChildrenNames(self, recursive=0):
-        ''' returns the names of the realization children '''
-        return [o.getName() for o in self.getRealizationChildren(recursive=recursive) ]
+        """Returns the names of the realization children."""
+        return [o.getName() for o in
+                self.getRealizationChildren(recursive=recursive)]
 
     def getRealizationParents(self):
-        ''' generalization parents '''
         return self.realizationParents
 
-    def getQualifiedModulePath(self, ref, pluginRoot='Products', forcePluginRoot=0, includeRoot=1):
-        ''' returns the qualified name of the class, depending of the
-            reference package 'ref' it generates an absolute path or
-            a relative path if the pack(self) is a subpack of 'ref'
-            if it belongs to a different root package it even needs a 'Products.'
-            '''
+    def getQualifiedModulePath(self, ref, pluginRoot='Products',
+                               forcePluginRoot=0, includeRoot=1):
+        """Returns the qualified name of the class.
 
+        Depending of the reference package 'ref' it generates an absolute
+        path or a relative path if the pack(self) is a subpack of 'ref'
+        if it belongs to a different root package it even needs a 'Products.'
+        """
         package = self.getPackage()
         if package == ref:
             path = package.getPath(includeRoot=includeRoot, parent=ref)
         else:
-            if ref and self.package.getProduct() != ref.getProduct() or forcePluginRoot:
+            if ref and self.package.getProduct() != ref.getProduct() or \
+               forcePluginRoot:
                 path = package.getPath(includeRoot=1, parent=ref)
                 path.insert(0, PseudoElement(name=pluginRoot))
             else:
@@ -1811,22 +1708,20 @@ class XMIClass (XMIElement, StateMachineContainer):
 
         return path
 
-    def getQualifiedModuleName(self, ref=None, pluginRoot='Products', forcePluginRoot=0, includeRoot=1):
-
+    def getQualifiedModuleName(self, ref=None, pluginRoot='Products',
+                               forcePluginRoot=0, includeRoot=1):
         path = self.getQualifiedModulePath(ref, pluginRoot=pluginRoot,
-                                         forcePluginRoot=forcePluginRoot,
-                                         includeRoot=includeRoot)
-
+                                           forcePluginRoot=forcePluginRoot,
+                                           includeRoot=includeRoot)
         res =  '.'.join([p.getModuleName() for p in path if p])
         return res
 
-
-    def getQualifiedName(self, ref=None, pluginRoot='Products', forcePluginRoot=0,
-                         includeRoot=1):
+    def getQualifiedName(self, ref=None, pluginRoot='Products',
+                         forcePluginRoot=0, includeRoot=1):
         name = self.getQualifiedModuleName(ref, pluginRoot=pluginRoot,
-                                         forcePluginRoot=forcePluginRoot,
-                                         includeRoot=includeRoot)
-        res = name+'.'+self.getCleanName()
+                                           forcePluginRoot=forcePluginRoot,
+                                           includeRoot=includeRoot)
+        res = name + '.' + self.getCleanName()
         return res
 
     def setStateMachine(self, sm):
@@ -1852,13 +1747,11 @@ class XMIMethodParameter(XMIElement):
 
     def findDefault(self):
         defparam = getElementByTagName(self.domElement, XMI.PARAM_DEFAULT, None)
-        #print defparam
         if defparam:
             default = XMI.getExpressionBody(defparam)
             if default :
                 self.default = default
                 self.has_default = 1
-                #print 'default:', repr(self.default)
 
     def initFromDOM(self, domElement):
         XMIElement.initFromDOM(self, domElement)
@@ -1866,7 +1759,9 @@ class XMIMethodParameter(XMIElement):
             self.findDefault()
 
     def getExpression(self):
-        ''' returns the param name and param=default expr if a default is defined '''
+        """Returns the param name and param=default expr if a
+        default is defined.
+        """
         if self.getDefault():
             return "%s=%s" % (self.getName(), self.getDefault())
         else:
@@ -1874,6 +1769,7 @@ class XMIMethodParameter(XMIElement):
 
 class XMIMethod (XMIElement):
     params = []
+
     def findParameters(self):
         self.params = []
         parElements = self.domElement.getElementsByTagName(XMI.METHODPARAMETER)
@@ -1902,7 +1798,9 @@ class XMIMethod (XMIElement):
         return [p.getName() for p in self.params]
 
     def getParamExpressions(self):
-        ''' returns the param names or paramname=default for each param in a list '''
+        """Rturns the param names or paramname=default for each
+        param in a list.
+        """
         return [p.getExpression() for p in self.params]
 
     def addParameter(self, p):
@@ -1910,11 +1808,10 @@ class XMIMethod (XMIElement):
             self.params.append(p)
 
     def testmethodName(self):
-        """ Return generated name of test method
+        """Returns the generated name of test method.
 
         userCannotAdd => test_userCannotAdd
         user_cannot_add => test_user_cannot_add
-        etcetera
         """
         # The olde way was a bit longish. Something like
         # testTestmyclassnameTestfoldercontainssomething().
@@ -1939,13 +1836,13 @@ class XMIAttribute (XMIElement):
         return XMI.calcDatatype(self)
 
     def findDefault(self):
-        initval = getElementByTagName(self.domElement, XMI.ATTRIBUTE_INIT_VALUE, None)
+        initval = getElementByTagName(self.domElement,
+                                      XMI.ATTRIBUTE_INIT_VALUE, None)
         if initval:
             default = XMI.getExpressionBody(initval)
             if default :
                 self.default = default
                 self.has_default = 1
-                #print 'default:', repr(self.default)
 
     def initFromDOM(self, domElement):
         XMIElement.initFromDOM(self, domElement)
@@ -1953,13 +1850,17 @@ class XMIAttribute (XMIElement):
         if domElement:
             self.calcType()
             self.findDefault()
-            self.mult = XMI.getMultiplicity(domElement,1,1)
+            self.mult = XMI.getMultiplicity(domElement, 1, 1)
         else:
-            log.debug("There is no domElement, so for instance 'self.mult' hasn't been set.")
+            log.debug("There is no domElement, so for instance "
+                      "'self.mult' hasn't been set.")
 
     def isI18N(self):
-        ''' with a stereotype 'i18N' or the taggedValue i18n == '1' an attribute is treated as i18n'''
-        return self.getStereoType() == 'i18n' or self.getTaggedValue('i18n')  == '1'
+        """With a stereotype 'i18N' or the taggedValue 'i18n' with a
+        true value, an attribute is treated as i18n.
+        """
+        return self.getStereoType() == 'i18n' or \
+               toBoolean(self.getTaggedValue('i18n'))
 
     def getVisibility(self):
         return self.visibility
@@ -1990,14 +1891,14 @@ class XMIAssocEnd (XMIElement):
                 res=self.getTarget().getName().lower()
                 if self.getUpperBound != 1:
                     res+='s'
-
                 return res
             else:
                 return self.getId()
 
     def initFromDOM(self, el):
         XMIElement.initFromDOM(self, el)
-        self.isNavigable = toBoolean(getAttributeOrElement(el, 'isNavigable', default=0))
+        self.isNavigable = toBoolean(getAttributeOrElement(el, 'isNavigable',
+                                                           default=0))
         pid = XMI.getAssocEndParticipantId(el)
         if pid:
             self.obj = allObjects[pid]
@@ -2007,8 +1908,6 @@ class XMIAssocEnd (XMIElement):
             log.debug("Association end missing for association end: '%s'.",
                       self.getId())
 
-        #print 'rel:%s navigable:%s' %(self.getName(), self.isNavigable)
-
     def getTarget(self):
         return self.obj
 
@@ -2017,7 +1916,7 @@ class XMIAssocEnd (XMIElement):
             return self.mult
         except:
             log.debug("Ouch, self.mult hasn't been set for '%s' (%s).",
-                         self.name, self)
+                      self.name, self)
             return 1
 
     def getLowerBound(self):
@@ -2034,34 +1933,29 @@ class XMIAssociation (XMIElement):
         log.debug("Getting name for association...")
         name = str(self.name)
         if self.name:
-            log.debug("self.name is set to '%s', returning it.",
-                      name)
+            log.debug("self.name is set to '%s', returning it.", name)
             res = name
         else:
             log.debug("self.name isn't set.")
             if self.fromEnd:
-                fromname=self.fromEnd.getName()
+                fromname = self.fromEnd.getName()
                 log.debug("Getting fromname from the startpoint: '%s'.",
                           fromname)
             else:
-                fromname=self.getId()
-                log.debug("Getting fromname from our id: '%s'.",
-                          fromname)
+                fromname = self.getId()
+                log.debug("Getting fromname from our id: '%s'.", fromname)
             if self.toEnd:
-                toname=self.toEnd.getName()
-                log.debug("Getting toname from the endpoint: '%s'.",
-                          toname)
+                toname = self.toEnd.getName()
+                log.debug("Getting toname from the endpoint: '%s'.", toname)
             else:
-                toname=self.getId()
-                log.debug("Getting toname from our id: '%s'.",
-                          toname)
-            res = '%s_%s' %(fromname,toname)
-            log.debug("Combining that fromname and toname to form our relation name: '%s'.",
-                      res)
-            if isinstance(res, (str, unicode)):
+                toname = self.getId()
+                log.debug("Getting toname from our id: '%s'.", toname)
+            res = '%s_%s' % (fromname, toname)
+            log.debug("Combining that fromname and toname to form our "
+                      "relation name: '%s'.", res)
+            if isinstance(res, basestring):
                 res = res.strip().lower()
-                log.debug("Making it lowercase for good measure: '%s'.",
-                          res)
+                log.debug("Making it lowercase for good measure: '%s'.", res)
         return res
 
     def initFromDOM(self, domElement=None):
@@ -2069,19 +1963,13 @@ class XMIAssociation (XMIElement):
         self.calcEnds()
 
     def calcEnds(self):
-        #print 'Association:', domElement, self.id
         ends = self.domElement.getElementsByTagName(XMI.ASSOCEND)
-        assert len(ends) == 2
-
-        #print 'trying assoc'
         self.fromEnd = XMIAssocEnd(ends[0])
         self.toEnd = XMIAssocEnd(ends[1])
-
         self.fromEnd.setParent(self)
         self.toEnd.setParent(self)
 
     def getParent(self):
-        ''' '''
         if self.fromEnd:
             return self.fromEnd.getTarget()
 
@@ -2111,15 +1999,12 @@ class XMIDependency(XMIElement):
         self.calcEnds()
 
     def calcEnds(self):
-        #print 'Association:', domElement, self.id
         client_el = getElementByTagName(self.domElement, XMI.DEP_CLIENT)
         clid = XMI.getIdRef(getSubElement(client_el))
         self.client = self.allObjects[clid]
-
         supplier_el = getElementByTagName(self.domElement, XMI.DEP_SUPPLIER)
         suppid = XMI.getIdRef(getSubElement(supplier_el))
         self.supplier = self.allObjects[suppid]
-
         self.client.addClientDependency(self)
 
     def getParent(self):
@@ -2128,7 +2013,7 @@ class XMIDependency(XMIElement):
             return self.client
 
 #-----------------------------------
-# here comes the Workflow support
+# Workflow support
 #-----------------------------------
 
 class XMIStateContainer(XMIElement):
@@ -2136,7 +2021,6 @@ class XMIStateContainer(XMIElement):
     def __init__(self, *args, **kwargs):
         self.states = []
         XMIElement.__init__(self, *args, **kwargs)
-
 
     def addState(self, state):
         self.states.append(state)
@@ -2157,10 +2041,12 @@ class XMIStateContainer(XMIElement):
         return ret
 
     def getStateNames(self, no_duplicates=None):
-        return [s.getName() for s in self.getStates(no_duplicates=no_duplicates) if s.getName()]
+        return [s.getName() for s in
+                self.getStates(no_duplicates=no_duplicates) if s.getName()]
 
     def getCleanStateNames(self, no_duplicates=None):
-        return [s.getCleanName() for s in self.getStates(no_duplicates=no_duplicates) if s.getName()]
+        return [s.getCleanName() for s in
+                self.getStates(no_duplicates=no_duplicates) if s.getName()]
 
 
 class XMIStateMachine(XMIStateContainer):
@@ -2173,8 +2059,7 @@ class XMIStateMachine(XMIStateContainer):
         self.init()
         self.setParent(kwargs.get('parent',None))
         XMIStateContainer.__init__(self, *args, **kwargs)
-        log.debug("Created statemachine '%s'.",
-                  self.getId())
+        log.debug("Created statemachine '%s'.", self.getId())
 
     def initFromDOM(self, domElement=None):
         XMIStateContainer.initFromDOM(self, domElement)
@@ -2183,26 +2068,24 @@ class XMIStateMachine(XMIStateContainer):
         self.associateClasses()
 
     def associateClasses(self):
-        context = getElementByTagName(self.domElement, XMI.STATEMACHINE_CONTEXT,None)
+        context = getElementByTagName(self.domElement,
+                                      XMI.STATEMACHINE_CONTEXT, None)
         if context:
             clels = getSubElements(context)
             for clel in clels:
                 clid = XMI.getIdRef(clel)
-                #print 'CLID:', clel, clid
                 cl = allObjects[clid]
                 self.addClass(cl)
         else:
             self.addClass(self.getParent())
-            
 
     def addTransition(self, transition):
         self.transitions.append(transition)
         transition.setParent(self)
 
-    def getTransitions(self, no_duplicates = None):
+    def getTransitions(self, no_duplicates=None):
         if not no_duplicates:
             return self.transitions
-
         tran = {}
         for t in self.transitions:
             if not t.getCleanName():
@@ -2214,41 +2097,44 @@ class XMIStateMachine(XMIStateContainer):
                 continue
             for tname in tran:
                 if t.getCleanName() == tname and t.hasStereoType('primary'):
-                    #print "overrules transition", tname, t.getProps()
                     tran.update({tname:t})
 
         return [tran[tname] for tname in tran]
 
     def getTransitionNames(self, no_duplicates=None):
-        return [t.getName() for t in self.getTransitions(no_duplicates=no_duplicates) if t.getName()]
+        return [t.getName() for t in
+                self.getTransitions(no_duplicates=no_duplicates)
+                if t.getName()]
 
     def buildStates(self):
         log.debug("Building states...")
-        sels = getElementsByTagName(self.domElement, XMI.SIMPLESTATE, recursive=1)
-        log.debug("Found %s simple states.",
-                  len(sels))
+        sels = getElementsByTagName(self.domElement, XMI.SIMPLESTATE,
+                                    recursive=1)
+        log.debug("Found %s simple states.", len(sels))
         for sel in sels:
             state = XMIState(sel)
             self.addState(state)
 
-        sels = getElementsByTagName(self.domElement, XMI.PSEUDOSTATE, recursive=1) #xxx
-        log.debug("Found %s pseudo states (like initial states).",
-                  len(sels))
+        sels = getElementsByTagName(self.domElement, XMI.PSEUDOSTATE,
+                                    recursive=1)
+        log.debug("Found %s pseudo states (like initial states).", len(sels))
         for sel in sels:
             state = XMIState(sel)
-            if getAttributeValue(sel, XMI.PSEUDOSTATE_KIND, None) == 'initial' or sel.getAttribute('kind') == 'initial':
-                log.debug("Initial state: '%s'.",
-                          state.getCleanName())
+            if getAttributeValue(sel, XMI.PSEUDOSTATE_KIND, None) == 'initial' \
+               or sel.getAttribute('kind') == 'initial':
+                log.debug("Initial state: '%s'.", state.getCleanName())
                 state.isinitial = 1
             self.addState(state)
 
-        sels = getElementsByTagName(self.domElement, XMI.FINALSTATE, recursive=1)
+        sels = getElementsByTagName(self.domElement, XMI.FINALSTATE,
+                                    recursive=1)
         for sel in sels:
             state = XMIState(sel)
             self.addState(state)
 
     def buildTransitions(self):
-        tels = getElementsByTagName(self.domElement, XMI.TRANSITION, recursive=1)
+        tels = getElementsByTagName(self.domElement, XMI.TRANSITION,
+                                    recursive=1)
         for tel in tels:
             tran = XMIStateTransition(tel)
             self.addTransition(tran)
@@ -2278,7 +2164,6 @@ class XMIStateMachine(XMIStateContainer):
         for s in states:
             if s.isInitial():
                 return s
-
         for s in states:
             for k, v in s.getTaggedValues().items():
                 if k == 'initial_state':
@@ -2312,7 +2197,8 @@ class XMIStateMachine(XMIStateContainer):
 
     def getAllRoles(self, ignore=[]):
         roles = []
-        ignore.append('label') # reserved name to set the title
+        # Reserved name to set the title
+        ignore.append('label')
         for tran in self.getTransitions(no_duplicates=1):
             dummy = [roles.append(r.strip()) \
                      for r in tran.getGuardRoles().split(';') \
@@ -2333,40 +2219,30 @@ class XMIStateMachine(XMIStateContainer):
     def getAllWorklistNames(self):
         """Return all worklists mentioned in this statemachine.
 
-        A worklist is mentioned by adding a tagged value 'worklist' to a state
+        A worklist is mentioned by adding a tagged value 'worklist' to a state.
         """
-
         log.debug("Finding all worklists mentioned in this statemachine.")
-        # Possible bug: the encode('ascii') is needed because the workflow doesn't
-        # like to eat unicode or so...
-        names = [s.getTaggedValue('worklist').encode('ascii')
+        worklists = {}
+        names = [s.getTaggedValue('worklist')
                  for s in self.getStates(no_duplicates = 1)
                  if s.getTaggedValue('worklist')]
-        worklists = {}
         for name in names:
             worklists[name] = 'just filtering out doubles'
         result = worklists.keys()
-        log.debug("Found the following worklists: %r.",
-                  result)
+        log.debug("Found the following worklists: %r.", result)
         return result
 
     def getWorklistStateNames(self, worklistname):
-        """Return the states associated with the worklistname.
-        """
-
+        """Returns the states associated with the worklistname."""
         results = [s.getName()
                    for s in self.getStates(no_duplicates = 1)
                    if s.getTaggedValue('worklist') == worklistname]
         log.debug("Associated with worklist '%s' are the "
-                  "following states: %r.",
-                  worklistname,
-                  results)
+                  "following states: %r.", worklistname, results)
         return results
 
     def getWorklistGuardRole(self, worklistname):
-        """Return the guard role associated with the worklistname.
-        """
-
+        """Returns the guard role associated with the worklistname."""
         log.debug("Getting the guard role for the worklist...")
         default = ''
         results = [s.getTaggedValue('worklist:guard_roles')
@@ -2377,15 +2253,12 @@ class XMIStateMachine(XMIStateContainer):
             log.debug("No tagged value found, returning the default: '%s'.",
                       default)
             return default
-        log.debug("Tagged value(s) found, taking the first (or only) one: '%s'.",
-                  results[0])
+        log.debug("Tagged value(s) found, taking the first (or only) "
+                  "one: '%s'.", results[0])
         return results[0]
 
-
     def getWorklistGuardPermission(self, worklistname):
-        """Return the guard permission associated with the worklistname.
-        """
-
+        """Returns the guard permission associated with the worklistname."""
         log.debug("Getting the guard permission for the worklist...")
         default = 'Review portal content'
         results = [s.getTaggedValue('worklist:guard_permissions')
@@ -2416,15 +2289,15 @@ class XMIStateTransition(XMIElement):
         el = getElementByTagName(self.domElement, XMI.TRANSITION_EFFECT, None)
         if not el:
             return
-
         actel = getSubElement(el)
         self.action = XMIAction(actel)
         self.action.setParent(self)
 
     def buildGuard(self):
-        el = getElementByTagName(self.domElement, XMI.TRANSITION_GUARD, default=None)
-        if not el:return
-
+        el = getElementByTagName(self.domElement, XMI.TRANSITION_GUARD,
+                                 default=None)
+        if not el:
+            return
         guardel = getSubElement(el)
         self.guard = XMIGuard(guardel)
 
@@ -2461,15 +2334,14 @@ class XMIStateTransition(XMIElement):
 
     def getProps(self):
         result = {}
-        d_expr = {'guard_permissions' : self.getGuardPermissions(),
-                  'guard_roles' : self.getGuardRoles(),
-                  'guard_expr' : self.getGuardExpr()}
+        d_expr = {
+            'guard_permissions': self.getGuardPermissions(),
+            'guard_roles': self.getGuardRoles(),
+            'guard_expr': self.getGuardExpr(),
+        }
         for key, value in d_expr.items():
-            guard = value
+            guard = value.strip()
             if guard:
-                # Only include if it has a value
-                # And don't forget to strip whitespace
-                guard = guard.strip() 
                 result.update({key:guard})
         return repr(result)
 
@@ -2504,12 +2376,16 @@ class XMIStateTransition(XMIElement):
         return ''
 
     def getTriggerType(self):
-        """ Return the Trigger Type, following what is defined by DCWorkflow
-            0 : Automatic
-            1 : User Action (default)
-            2 : Workflow Method
+        """Returns the Trigger Type, following what is defined by DCWorkflow:
+        0: Automatic
+        1: User Action (default)
+        2: Workflow Method
         """
-        trigger_types={'automatic':0,'user action':1,'workflow method':2}
+        trigger_types = {
+            'automatic': 0,
+            'user action': 1,
+            'workflow method':2,
+        }
         trigger_type=self.getTaggedValue('trigger_type').lower()
         trigger_type=trigger_types.get(trigger_type,trigger_type)
         try:
@@ -2522,17 +2398,16 @@ class XMIAction(XMIElement):
     expression = None
     def initFromDOM(self, domElement=None):
         XMIElement.initFromDOM(self, domElement)
-        self.expression = XMI.getExpressionBody(self.domElement, tagname=XMI.ACTION_EXPRESSION)
-        #print '!!!ACTIONEX:', self.getExpressionBody()
+        self.expression = XMI.getExpressionBody(self.domElement,
+                                                tagname=XMI.ACTION_EXPRESSION)
 
     def getExpressionBody(self):
         return self.expression
 
     def getSplittedName(self, padding=1):
-        ''' when the name contains a semicolon the name specifies two
-            actions: the one before the transition and the one after the transition
-        '''
-
+        """When the name contains a semicolon the name specifies two actions:
+        the one before the transition and the one after the transition.
+        """
         res = self.getName().split(';')
         if len(res) == 1 and padding:
             return ['', res[0]]
@@ -2548,11 +2423,8 @@ class XMIAction(XMIElement):
     def getUsedActionNames(self):
         """Return just the used action names.
 
-        Used by templates/create_workflow.py, filters out the empty
-        ones.
-
+        Used by templates/create_workflow.py, filters out the empty ones.
         """
-
         result = []
         before = self.getBeforeActionName()
         after = self.getAfterActionName()
@@ -2567,8 +2439,8 @@ class XMIGuard(XMIElement):
     expression = None
     def initFromDOM(self, domElement=None):
         XMIElement.initFromDOM(self, domElement)
-        self.expression = XMI.getExpressionBody(self.domElement, tagname=XMI.BOOLEAN_EXPRESSION)
-        #print '!!!GUARDEX:', self.getExpressionBody()
+        self.expression = XMI.getExpressionBody(self.domElement,
+                                                tagname=XMI.BOOLEAN_EXPRESSION)
 
     def getExpressionBody(self):
         return self.expression
@@ -2576,11 +2448,12 @@ class XMIGuard(XMIElement):
 
 class XMIState(XMIElement):
     isinitial = 0
-    non_permissions = ['initial_state', 'documentation',
-                       'label', 'worklist',
-                       'worklist:guard_permissions',
-                       'worklist:guard_roles'
-                       ]
+    non_permissions = [
+        'initial_state', 'documentation',
+        'label', 'worklist',
+        'worklist:guard_permissions',
+        'worklist:guard_roles',
+    ]
 
     def __init__(self, *args, **kwargs):
         self.incomingTransitions = []
@@ -2593,21 +2466,23 @@ class XMIState(XMIElement):
 
     def associateTransitions(self):
 
-        vertices = getElementByTagName(self.domElement, XMI.STATEVERTEX_OUTGOING, default=None)
+        vertices = getElementByTagName(self.domElement,
+                                       XMI.STATEVERTEX_OUTGOING,
+                                       default=None)
         if vertices:
             for vertex in getSubElements(vertices):
                 trid = XMI.getIdRef(vertex)
                 tran = allObjects[trid]
                 self.addOutgoingTransition(tran)
 
-        vertices = getElementByTagName(self.domElement, XMI.STATEVERTEX_INCOMING, default=None)
+        vertices = getElementByTagName(self.domElement,
+                                       XMI.STATEVERTEX_INCOMING,
+                                       default=None)
         if vertices:
             for vertex in getSubElements(vertices):
                 trid = XMI.getIdRef(vertex)
                 tran = allObjects[trid]
                 self.addIncomingTransition(tran)
-
-        #print 'transitions:', self.getIncomingTransitions(), self.getOutgoingTransitions()
 
     def addIncomingTransition(self, tran):
         self.incomingTransitions.append(tran)
@@ -2704,8 +2579,6 @@ class XMIState(XMIElement):
                                            'acquisition': v['acquisition']})
         return permission_definitions
 
-        # end of getPermissionsDefinitions()
-
     def isInitial(self):
         return self.isinitial
 
@@ -2728,8 +2601,9 @@ class XMICompositeState(XMIState):
         XMIStateMachine.init(self)
 
 
-#necessary for Poseidon because in Poseidon i cannot assign a name to a statemachine,
-#so i have to pull the name of the statemachine from the diagram :(((((
+# Necessary for Poseidon because in Poseidon we cannot assign a name
+# to a statemachine, so we have to pull the name of the statemachine
+# from the diagram :(
 diagrams = {}
 diagramsByModel = {}
 
@@ -2741,12 +2615,15 @@ class XMIDiagram(XMIElement):
         self.buildSemanticBridge()
 
     def buildSemanticBridge(self):
-        ownerel = getElementByTagName(self.domElement, XMI.DIAGRAM_OWNER, default=None)
+        ownerel = getElementByTagName(self.domElement, XMI.DIAGRAM_OWNER,
+                                      default=None)
         if not ownerel:
             print 'no ownerel'
             return
 
-        model_el = getElementByTagName(ownerel, XMI.DIAGRAM_SEMANTICMODEL_BRIDGE_ELEMENT, default=None, recursive=1)
+        model_el = getElementByTagName(ownerel,
+                                       XMI.DIAGRAM_SEMANTICMODEL_BRIDGE_ELEMENT,
+                                       default=None, recursive=1)
         if not model_el:
             print 'no modelel'
             return
@@ -2755,11 +2632,9 @@ class XMIDiagram(XMIElement):
         idref = XMI.getIdRef(el)
         self.modelElement = allObjects.get(idref, None)
 
-
-        #workaround for the Poseidon problem
+        # Workaround for the Poseidon problem
         if issubclass(self.modelElement.__class__, XMIStateMachine):
             self.modelElement.setName(self.getName())
-
 
     def getModelElementId(self):
         if self.modelElement:
@@ -2767,8 +2642,8 @@ class XMIDiagram(XMIElement):
 
     def getModelElement(self):
         return self.modelElement
-#----------------------------------------------------------
 
+#----------------------------------------------------------
 
 def buildDataTypes(doc):
     global datatypes
@@ -2778,17 +2653,17 @@ def buildDataTypes(doc):
     for dt in dts:
         datatypes[str(dt.getAttribute('xmi.id'))] = dt
 
-    classes = [c for c in doc.getElementsByTagName(XMI.CLASS) ]
+    classes = [c for c in doc.getElementsByTagName(XMI.CLASS)]
 
     for dt in classes:
         datatypes[str(dt.getAttribute('xmi.id'))] = dt
 
-    interfaces = [c for c in doc.getElementsByTagName(XMI.INTERFACE) ]
+    interfaces = [c for c in doc.getElementsByTagName(XMI.INTERFACE)]
 
     for dt in interfaces:
         datatypes[str(dt.getAttribute('xmi.id'))] = dt
 
-    interfaces = [c for c in doc.getElementsByTagName(XMI.ACTOR) ]
+    interfaces = [c for c in doc.getElementsByTagName(XMI.ACTOR)]
 
     for dt in interfaces:
         datatypes[str(dt.getAttribute('xmi.id'))] = dt
@@ -2806,24 +2681,20 @@ def buildStereoTypes(doc):
         #print 'stereotype:', id, XMI.getName(st)
 
 def buildHierarchy(doc, packagenames):
-    """ builds Hierarchy out of the doc """
+    """Builds Hierarchy out of the doc."""
     global datatypes
     global stereotypes
     global datatypenames
     global packages
 
-
     datatypes = {}
     stereotypes = {}
-    datatypenames = ['int', 'void', 'string', ]
-
-    #doc = res.model
+    datatypenames = ['int', 'void', 'string']
 
     buildDataTypes(doc)
     buildStereoTypes(doc)
     res = XMIModel(doc)
 
-    #print 'packagenames:', packagenames
     packageElements = doc.getElementsByTagName(XMI.PACKAGE)
     if packagenames: #XXX: TODO support for more than one package
         packageElements = doc.getElementsByTagName(XMI.PACKAGE)
@@ -2843,17 +2714,12 @@ def buildHierarchy(doc, packagenames):
 
     res.buildDiagrams()
     res.associateClassesToStateMachines()
-    
-    #print 'res:', res.getName()
 
-    #pure datatype classes should not be generated!
-    #print 'datatypenames:', datatypenames
     for c in res.getClasses(recursive=1):
-        if c.getName() in datatypenames and not c.hasStereoType(XMI.generate_datatypes) \
-            and c.isEmpty():
+        if c.getName() in datatypenames and not \
+           c.hasStereoType(XMI.generate_datatypes) and c.isEmpty():
             c.internalOnly = 1
-            log.debug("Internal class (not generated): '%s'.",
-                      c.getName())
+            log.debug("Internal class (not generated): '%s'.", c.getName())
 
     XMI.buildRelations(doc, allObjects)
     XMI.buildGeneralizations(doc, allObjects)
@@ -2862,10 +2728,10 @@ def buildHierarchy(doc, packagenames):
 
     return res
 
-
 def parse(xschemaFileName=None, xschema=None, packages=[], generator=None,**kw):
     """ """
     global XMI
+
     if xschemaFileName:
         doc = minidom.parse(xschemaFileName)
     else:
@@ -2874,8 +2740,7 @@ def parse(xschemaFileName=None, xschema=None, packages=[], generator=None,**kw):
     try:
         xmi = doc.getElementsByTagName('XMI')[0]
         xmiver = str(xmi.getAttribute('xmi.version'))
-        log.debug("XMI version: %s",
-                  xmiver)
+        log.debug("XMI version: %s", xmiver)
         if xmiver >= "1.2":
             log.debug("Using xmi 1.2+ parser.")
             XMI = XMI1_2(**kw)
@@ -2885,10 +2750,8 @@ def parse(xschemaFileName=None, xschema=None, packages=[], generator=None,**kw):
         else:
             log.debug("Using xmi 1.1+ parser.")
             XMI = XMI1_0(**kw)
-
     except:
         log.debug("No version info found, taking XMI1_0.")
-        pass
 
     XMI.generator = generator
 

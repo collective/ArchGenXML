@@ -507,8 +507,6 @@ class ArchetypesGenerator(BaseGenerator):
             package = element.getPackage()
             module_id = os.path.join(element.getPackage().getFilePath(includeRoot=0),
                                      element.getName()+'.py')
-            if isinstance(msgstr, unicode):
-                msgstr = msgstr.encode('utf8')
             try:
                 #i18ndude 2.0
                 msgcat.add(msgid, msgstr=msgstr, references=[module_id])
@@ -713,7 +711,7 @@ class ArchetypesGenerator(BaseGenerator):
         has_content_icon=''
         content_icon=element.getTaggedValue('content_icon')
         if not content_icon:
-            # If an icon file with the default name exists in the skin, do not 
+            # If an icon file with the default name exists in the skin, do not
             # comment out the icon definition
             content_icon = element.getCleanName()+'.gif'
             icon_filename = os.path.join(self.getSkinPath(element), content_icon)
@@ -931,7 +929,7 @@ class ArchetypesGenerator(BaseGenerator):
         index = self.getOption('index', element, default=_marker)
         if index is not _marker:
              tgv.update({'index': index})
-             
+
         # set attributes from tgv
         for k in tgv.keys():
             if k not in noparams and not k.startswith('widget:'):
@@ -1089,7 +1087,7 @@ class ArchetypesGenerator(BaseGenerator):
                 if key.find(':')>=0:
                     continue
                 lines = map[key]
-                if isinstance(lines, (str, unicode)):
+                if isinstance(lines, basestring):
                     linebreak = lines.find('\n')
 
                     if linebreak < 0:
@@ -1099,7 +1097,7 @@ class ArchetypesGenerator(BaseGenerator):
                     firstline = lines
 
                 res += '%s%s=%s' % (prepend, key, firstline)
-                if isinstance(lines, (str, unicode)) and linebreak < len(lines):
+                if isinstance(lines, basestring) and linebreak < len(lines):
                     for line in lines[linebreak+1:].split('\n'):
                         res += "\n%s" % utils.indent(line, indent_level+1)
 
@@ -1110,17 +1108,13 @@ class ArchetypesGenerator(BaseGenerator):
         return res
 
     def getFieldString(self, element, classelement, indent_level=0):
-        ''' gets the schema field code '''
-        typename=str(element.type)
-
-        ctype=self.coerceType(typename)
-
+        """Gets the schema field code."""
+        typename = element.type
+        ctype = self.coerceType(typename)
         map = typeMap[ctype]['map'].copy()
-
-        res=self.getFieldFormatted(element.getCleanName(),
-            self.typeMap[ctype]['field'].copy(),
-            map, indent_level )
-
+        res = self.getFieldFormatted(element.getCleanName(),
+                                     self.typeMap[ctype]['field'].copy(),
+                                     map, indent_level)
         return res
 
     def addVocabulary(self, element, attr, map):
@@ -1128,7 +1122,7 @@ class ArchetypesGenerator(BaseGenerator):
         vocaboptions = {}
         for t in attr.getTaggedValues().items():
             if t[0].startswith('vocabulary:'):
-                vocaboptions[t[0][11:]]=t[1]
+                vocaboptions[t[0][11:]] = t[1]
         if vocaboptions:
             if not 'name' in vocaboptions.keys():
                 vocaboptions['name'] = '%s_%s' % (element.getCleanName(), \
@@ -1139,9 +1133,9 @@ class ArchetypesGenerator(BaseGenerator):
             if not 'vocabulary_type' in vocaboptions.keys():
                 vocaboptions['vocabulary_type'] = 'SimpleVocabulary'
 
-            map.update( {
+            map.update({
                 'vocabulary':'NamedVocabulary("""%s""")' % vocaboptions['name']
-            } )
+            })
 
             # remember this vocab-name and if set its portal_type
             package = element.getPackage()
@@ -1152,8 +1146,7 @@ class ArchetypesGenerator(BaseGenerator):
             if not vocaboptions['name'] in self.vocabularymap[currentproduct].keys():
                 self.vocabularymap[currentproduct][vocaboptions['name']] = (
                                                 vocaboptions['vocabulary_type'],
-                                                vocaboptions['term_type']
-                )
+                                                vocaboptions['term_type'])
             else:
                 log.warn("Vocabulary with name '%s' defined more than once.",
                          vocaboptions['name'])
@@ -1161,66 +1154,65 @@ class ArchetypesGenerator(BaseGenerator):
         # end ATVM
 
     def getFieldStringFromAttribute(self, attr, classelement, indent_level=0):
-        ''' gets the schema field code '''
-        #print 'typename:%s:'%attr.getName(),attr.type,
+        """Gets the schema field code."""
 
-        if not hasattr(attr,'type') or attr.type=='NoneType':
-            ctype='string'
+        if not hasattr(attr, 'type') or attr.type == 'NoneType':
+            ctype = 'string'
         else:
-            ctype=self.coerceType(str(attr.type))
+            ctype = self.coerceType(attr.type)
 
         if ctype=='copy':
-            name = getattr(attr,'rename_to',attr.getName())
+            name = getattr(attr, 'rename_to', attr.getName())
             field = utils.indent("copied_fields['%s'],\n" % name, indent_level)
             return field
 
-
-        map=self.typeMap[ctype]['map'].copy()
+        map = self.typeMap[ctype]['map'].copy()
         if attr.hasDefault():
-            map.update( {'default':utils.getExpression(attr.getDefault())} )
+            map.update({'default': utils.getExpression(attr.getDefault())})
         map.update(self.getFieldAttributes(attr))
-        widget=self.getWidget( \
-                ctype,
-                attr,
-                attr.getName(),
-                classelement )
+        widget = self.getWidget(ctype, attr, attr.getName(), classelement)
 
-        if not widget.startswith ('GenericWidget'):
-            map.update( {
-                'widget': widget })
+        if not widget.startswith('GenericWidget'):
+            map.update({'widget': widget})
 
         self.addVocabulary(classelement, attr, map)
 
-        atype=self.typeMap[ctype]['field']
+        atype = self.typeMap[ctype]['field']
 
-        if ctype != 'generic' and self.i18n_content_support in self.i18n_at and attr.isI18N():
-            atype='I18N'+atype
+        if ctype != 'generic' and self.i18n_content_support in self.i18n_at \
+           and attr.isI18N():
+            atype = 'I18N' + atype
 
         doc=attr.getDocumentation(striphtml=self.striphtml)
 
         if attr.hasTaggedValue('validators'):
             #make validators to a list in order to append the ExpressionValidator
-            val=str(attr.getTaggedValue('validators'))
+            val = attr.getTaggedValue('validators')
             try:
-                map['validators']=tuple(eval(val))
+                map['validators'] = tuple(eval(val))
             except:
-                map['validators']=tuple(val.split(','))
-
+                map['validators'] = tuple(val.split(','))
 
         if map.has_key('validation_expression'):
             #append the validation_expression to the validators
             expressions = attr.getTaggedValue('validation_expression').split('\n')
             errormsgs = attr.getTaggedValue('validation_expression_errormsg').split('\n')
-            if errormsgs and errormsgs != [''] and len(errormsgs) != len(expressions):
-                log.critical('validation_expression and validation_expression_errormsg tagged value must have the same size (%s, %s)' %(expressions,errormsgs))
+            if errormsgs and errormsgs != [''] \
+               and len(errormsgs) != len(expressions):
+                log.critical('validation_expression and validation_expression_'
+                             'errormsg tagged value must have the same size '
+                             '(%s, %s)' %(expressions,errormsgs))
             def corresponding_error(errormsgs, ind):
                 if errormsgs and errormsgs != ['']:
                     return ", '"+errormsgs[ind]+"'"
                 return ""
-            expval = ["""ExpressionValidator('''python:%s'''%s)""" %(expression,corresponding_error(errormsgs,exp_index)) for exp_index,expression in enumerate(expressions)]
+            expval = ["""ExpressionValidator('''python:%s'''%s)""" %
+                      (expression,corresponding_error(errormsgs,exp_index))
+                      for exp_index,expression in enumerate(expressions)]
 
             if map.has_key('validators'):
-                map['validators']=repr(map.get('validators',()))+'+('+','.join(expval)+',)'
+                map['validators'] = repr(map.get('validators',())) + \
+                                    '+('+','.join(expval)+',)'
             else:
                 map['validators'] = '(' + ','.join(expval) + ',)'
 
@@ -1228,152 +1220,148 @@ class ArchetypesGenerator(BaseGenerator):
             if map.has_key('validation_expression_errormsg'):
                 del map['validation_expression_errormsg']
 
-
-        res=self.getFieldFormatted(attr.getName(),
-            atype,
-            map,
-            doc,
-            rawType=attr.getType(),
-            indent_level=indent_level
-            )
+        res = self.getFieldFormatted(attr.getName(), atype, map, doc,
+                                     rawType=attr.getType(),
+                                     indent_level=indent_level)
 
         if attr.getUpperBound() != 1:
             utils.indent(res, 1)
-            res="""ArrayField(%s),""" % utils.indent(res,1)
+            res = """ArrayField(%s),""" % utils.indent(res, 1)
 
         return res
 
-
     def getFieldStringFromAssociation(self, rel, classelement, indent_level=0):
-        """Return the schema field code.
-        """
+        """Return the schema field code."""
 
         log.debug("Getting the field string from an association.")
         multiValued = 0
         obj = rel.toEnd.obj
         name = rel.toEnd.getName()
         relname = rel.getName()
-        log.debug("Endpoint name: '%s'.",
-                  name)
-        log.debug("Relationship name: '%s'.",
-                  relname)
-        #field=rel.getTaggedValue('reference_field') or self.typeMap['reference']['field'] #the relation can override the field
+        log.debug("Endpoint name: '%s'.", name)
+        log.debug("Relationship name: '%s'.", relname)
 
         if obj.isAbstract():
             allowed_types= tuple(obj.getGenChildrenNames())
         else:
-            allowed_types=(obj.getName(), ) + tuple(obj.getGenChildrenNames())
+            allowed_types=(obj.getName(),) + tuple(obj.getGenChildrenNames())
 
         if int(rel.toEnd.mult[1]) == -1:
-            multiValued=1
+            multiValued = 1
         if name == None:
-            name=obj.getName()+'_ref'
+            name = obj.getName()+'_ref'
 
-        if self.getOption('relation_implementation',rel,'basic') == 'relations':
+        if self.getOption('relation_implementation', rel, 'basic') == 'relations':
             log.debug("Using the 'relations' relation implementation.")
-            field=rel.getTaggedValue('reference_field') or \
-                  rel.toEnd.getTaggedValue('reference_field') or \
-                  self.typeMap['relation']['field'] #the relation can override the field
+            # The relation can override the field
+            field = rel.getTaggedValue('reference_field') or \
+                    rel.toEnd.getTaggedValue('reference_field') or \
+                    self.typeMap['relation']['field']
             # TBD: poseidon reference-as-field handling or so...
             if not field:
-                message = "Somehow we couldn't get at the fieldname. Use normal drawn associations instead of a named reference."
+                message = "Somehow we couldn't get at the fieldname. " \
+                          "Use normal drawn associations instead of " \
+                          "a named reference."
                 log.critical(message)
                 raise message
 
-            map=self.typeMap['relation']['map'].copy()
-            map.update({
-                'multiValued':   multiValued,
-                'relationship':  "'%s'" % relname,
-                }
-            )
+            map = self.typeMap['relation']['map'].copy()
+            map.update({'multiValued': multiValued,
+                        'relationship': "'%s'" % relname})
             map.update(self.getFieldAttributes(rel.toEnd))
-            map.update( {'widget':self.getWidget('Reference', rel.toEnd, name, classelement)} )
+            map.update({'widget': self.getWidget('Reference', rel.toEnd,
+                                                 name, classelement)})
         else:
             log.debug("Using the standard relation implementation.")
-            field=rel.getTaggedValue('reference_field') or \
-                  rel.toEnd.getTaggedValue('reference_field') or \
-                  self.typeMap['reference']['field'] #the relation can override the field
+            # The relation can override the field
+            field = rel.getTaggedValue('reference_field') or \
+                    rel.toEnd.getTaggedValue('reference_field') or \
+                    self.typeMap['reference']['field']
             # TBD: poseidon reference-as-field handling or so...
             if not field:
-                message = "Somehow we couldn't get at the fieldname. Use normal drawn associations instead of a named reference."
+                message = "Somehow we couldn't get at the fieldname. " \
+                          "Use normal drawn associations instead of " \
+                          "a named reference."
                 log.critical(message)
                 raise message
-            map=self.typeMap['reference']['map'].copy()
-            map.update({
-                'allowed_types': repr(allowed_types),
-                'multiValued':   multiValued,
-                'relationship':  "'%s'" % relname,
-                }
-            )
+            map = self.typeMap['reference']['map'].copy()
+            map.update({'allowed_types': repr(allowed_types),
+                        'multiValued': multiValued,
+                        'relationship': "'%s'" % relname})
             map.update(self.getFieldAttributes(rel.toEnd))
-
-            map.update( {'widget':self.getWidget('Reference', rel.toEnd, name, classelement)} )
+            map.update({'widget':self.getWidget('Reference', rel.toEnd,
+                                                name, classelement)})
 
             if getattr(rel,'isAssociationClass',0):
-                #associationclasses with stereotype "stub" and tagged value "import_from" will not use ContentReferenceCreator
-
-                if rel.hasStereoType(self.stub_stereotypes, umlprofile=self.uml_profile) :
+                # Association classes with stereotype "stub" and tagged
+                # value "import_from" will not use ContentReferenceCreator
+                if rel.hasStereoType(self.stub_stereotypes,
+                                     umlprofile=self.uml_profile) :
                     map.update({'referenceClass':"%s" % rel.getName()})
                     # do not forget the import!!!
-
                 else:
-                    map.update({'referenceClass':"ContentReferenceCreator('%s')" % rel.getName()})
-
+                    map.update({'referenceClass':"ContentReferenceCreator('%s')"
+                                % rel.getName()})
 
         doc=rel.getDocumentation(striphtml=self.striphtml)
         res=self.getFieldFormatted(name, field, map, doc, indent_level)
         return res
 
     def getFieldStringFromBackAssociation(self, rel, classelement, indent_level=0):
-        ''' gets the schema field code '''
-        multiValued=0
-        obj=rel.fromEnd.obj
-        name=rel.fromEnd.getName()
-        relname=rel.getName()
+        """Gets the schema field code"""
+        multiValued = 0
+        obj = rel.fromEnd.obj
+        name = rel.fromEnd.getName()
+        relname = rel.getName()
 
         if obj.isAbstract():
             allowed_types= tuple(obj.getGenChildrenNames())
         else:
-            allowed_types=(obj.getName(), ) + tuple(obj.getGenChildrenNames())
+            allowed_types=(obj.getName(),) + tuple(obj.getGenChildrenNames())
 
         if int(rel.fromEnd.mult[1]) == -1:
-            multiValued=1
+            multiValued = 1
         if name == None:
-            name=obj.getName()+'_ref'
+            name = obj.getName() + '_ref'
 
-        if self.getOption('relation_implementation',rel,'basic') == 'relations'\
-              and (rel.fromEnd.isNavigable or rel.getTaggedValue('inverse_reference_name')):
-            field=rel.getTaggedValue('relation_field') or self.typeMap['relation']['field'] #the relation can override the field
-            map=self.typeMap['relation']['map'].copy()
-            backrelname=rel.getTaggedValue('inverse_relation_name') or relname+'_inverse'
+        if self.getOption('relation_implementation', rel, 'basic') == \
+           'relations'  and (rel.fromEnd.isNavigable or \
+           rel.getTaggedValue('inverse_reference_name')):
+            # The relation can override the field
+            field = rel.getTaggedValue('relation_field') or \
+                    self.typeMap['relation']['field']
+            map = self.typeMap['relation']['map'].copy()
+            backrelname = rel.getTaggedValue('inverse_relation_name') or \
+                          relname+'_inverse'
 
-            map.update({
-                'multiValued':   multiValued,
-                'relationship':  "'%s'" % backrelname,
-                }
-            )
+            map.update({'multiValued': multiValued,
+                        'relationship': "'%s'" % backrelname})
             map.update(self.getFieldAttributes(rel.fromEnd))
-            map.update( {'widget':self.getWidget('Reference', rel.fromEnd, name, classelement)} )
+            map.update({'widget':self.getWidget('Reference', rel.fromEnd,
+                                                name, classelement)} )
         else:
-            field=rel.getTaggedValue('reference_field') or rel.toEnd.getTaggedValue('back_reference_field') or self.typeMap['backreference']['field'] #the relation can override the field
-            map=self.typeMap['backreference']['map'].copy()
-            if rel.fromEnd.isNavigable and (self.backreferences_support or self.getOption('backreferences_support',rel,'0')=='1'):
-                map.update({
-                    'allowed_types': repr(allowed_types),
-                    'multiValued':   multiValued,
-                    'relationship':  "'%s'" % relname,
-                    }
-                )
+            # The relation can override the field
+            field = rel.getTaggedValue('reference_field') or \
+                    rel.toEnd.getTaggedValue('back_reference_field') or \
+                    self.typeMap['backreference']['field']
+            map = self.typeMap['backreference']['map'].copy()
+            if rel.fromEnd.isNavigable and (self.backreferences_support or \
+               self.getOption('backreferences_support', rel, '0') == '1'):
+                map.update({'allowed_types': repr(allowed_types),
+                            'multiValued': multiValued,
+                            'relationship': "'%s'" % relname})
                 map.update(self.getFieldAttributes(rel.fromEnd))
-                map.update( {'widget':self.getWidget('BackReference', rel.fromEnd, name, classelement)} )
+                map.update({'widget':self.getWidget('BackReference', rel.fromEnd,
+                                                    name, classelement)})
 
                 if getattr(rel,'isAssociationClass',0):
-                    map.update({'referenceClass':"ContentReferenceCreator('%s')" % rel.getName()})
+                    map.update({'referenceClass': "ContentReferenceCreator('%s')"
+                                % rel.getName()})
             else:
                 return None
 
-        doc=rel.getDocumentation(striphtml=self.striphtml)
-        res=self.getFieldFormatted(name, field, map, doc, indent_level)
+        doc = rel.getDocumentation(striphtml=self.striphtml)
+        res = self.getFieldFormatted(name, field, map, doc, indent_level)
         return res
 
     # Generate get/set/add member functions.
@@ -1383,18 +1371,20 @@ class ArchetypesGenerator(BaseGenerator):
         outfile = StringIO()
         startmarker = True
         for attr in element.getAttributeDefs():
-            if str(attr.type.lower())=='copy':
+            if attr.type.lower() == 'copy':
                 if startmarker:
                     startmarker=False
-                    print >>outfile, 'copied_fields = {}'
-                if element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
+                    print >> outfile, 'copied_fields = {}'
+                if element.hasStereoType(self.cmfmember_stereotype,
+                                         umlprofile=self.uml_profile):
                     copybase_schema = "BaseMember.content_schema"
                 else:
                     copybase_schema = base_schema
                 copyfrom = attr.getTaggedValue('copy_from', copybase_schema)
                 name = attr.getTaggedValue('source_name',attr.getName())
-                print >>outfile, "copied_fields['%s'] = %s['%s'].copy(%s)" % \
-                        (attr.getName(), copyfrom, name, name!=attr.getName() and ("name='%s'" % attr.getName()) or '')
+                print >> outfile, "copied_fields['%s'] = %s['%s'].copy(%s)" % \
+                         (attr.getName(), copyfrom, name, name!=attr.getName() \
+                         and ("name='%s'" % attr.getName()) or '')
                 map = self.getFieldAttributes(attr)
                 for key in map:
                     print >>outfile, "copied_fields['%s'].%s = %s" % \
@@ -1413,16 +1403,14 @@ class ArchetypesGenerator(BaseGenerator):
                     fieldname = attr.getName()
                     if widgetkey=='label_msgid':
                         self.addMsgid(widgetvalue.strip("'").strip('"'),
-                        tgv.has_key('widget:label') and tgv['widget:label'].strip("'").strip('"') or fieldname,
-                        element,
-                        fieldname
-                        )
+                                      tgv.has_key('widget:label') and
+                                      tgv['widget:label'].strip("'").strip('"')
+                                      or fieldname, element, fieldname)
                     if widgetkey=='description_msgid':
                         self.addMsgid(widgetvalue.strip("'").strip('"'),
-                        tgv.has_key('widget:description') and tgv['widget:description'].strip("'").strip('"') or fieldname,
-                        element,
-                        fieldname
-                        )
+                                      tgv.has_key('widget:description') and
+                                      tgv['widget:description'].strip("'").strip('"')
+                                      or fieldname, element, fieldname)
 
         print >> outfile, SCHEMA_START
         aggregatedClasses = []
@@ -1498,7 +1486,7 @@ class ArchetypesGenerator(BaseGenerator):
             self.generateMethod(outfile, m, element, mode=mode)
             allmethnames.append(m.getName())
             generatedMethods.append(m)
-    
+
         for interface in element.getRealizationParents():
             meths = [m for m in interface.getMethodDefs(recursive=1) if m.getName() not in allmethnames]
             # We don't want to extra generate methods that are already defined in the class
@@ -1682,67 +1670,73 @@ class ArchetypesGenerator(BaseGenerator):
         return BaseGenerator.generatePythonClass(self, element, template, parent=parent, **kw)
 
     def generateWidgetClass(self, element, template, zptname='widget.pt'):
-        log.info("Generating widget '%s'.",
+        log.info("%sGenerating widget '%s'.",
+                 "    "*self.infoind,
                   element.getName())
 
-        #generate the template
-        macroname = '%s.pt' % element.getTaggedValue('macro', element.getCleanName())
-        templpath=os.path.join(self.getSkinPath(element), macroname)
-        fieldpt=self.readFile(templpath)
+        # Generate the template
+        macroname = '%s.pt' % element.getTaggedValue('macro',
+                                                     element.getCleanName())
+        templpath = os.path.join(self.getSkinPath(element), macroname)
+        fieldpt = self.readFile(templpath)
         if not fieldpt:
-            templ=utils.readTemplate(zptname)
-            d={ 'klass':        element,
-                'generator':    self,
+            templ = utils.readTemplate(zptname)
+            d = {
+                'klass': element,
+                'generator': self,
                 'parsed_class': element.parsed_class,
-                'builtins':     __builtins__,
-                'utils':        utils,
-
-                }
+                'builtins': __builtins__,
+                'utils': utils,
+            }
             d.update(__builtins__)
-            zptcode=HTML(templ,d)()
+            zptcode = HTML(templ,d)()
 
-            fp=self.makeFile(templpath)
-            print >>fp,zptcode
+            fp = self.makeFile(templpath)
+            print >> fp, zptcode
             fp.close()
 
-        # and now the python code
+        # And now the python code
         if element.getGenParents():
-            parent=element.getGenParents()[0]
-            parentname=parent.getCleanName()
+            parent = element.getGenParents()[0]
+            parentname = parent.getCleanName()
         else:
-            parent=None
-            parentname='TypesWidget'
+            parent = None
+            parentname = 'TypesWidget'
 
-        return BaseGenerator.generatePythonClass(self, element, template,parent=parent,parentname=parentname)
+        return BaseGenerator.generatePythonClass(self, element, template,
+                                                 parent=parent,
+                                                 parentname=parentname)
 
-    def generateFieldClass(self,element,template):
+    def generateFieldClass(self, element, template):
         log.info("%sGenerating field: '%s'.",
                  '    '*self.infoind,
                  element.getName())
 
-        # and now the python code
+        # Generate the python code
         if element.getGenParents():
-            parent=element.getGenParents()[0]
-            parentname=parent.getCleanName()
+            parent = element.getGenParents()[0]
+            parentname = parent.getCleanName()
         else:
             if element.getAttributeDefs():
-                parent=None
-                parentname='CompoundField'
+                parent = None
+                parentname = 'CompoundField'
             else:
-                parent=None
-                parentname='ObjectField'
+                parent = None
+                parentname = 'ObjectField'
 
-        widgets=element.getClientDependencyClasses(targetStereotypes=['widget'])
+        widgets = element.getClientDependencyClasses(targetStereotypes=['widget'])
         if widgets:
-            widget=widgets[0]
-            widgetname=widget.getCleanName()
+            widget = widgets[0]
+            widgetname = widget.getCleanName()
         else:
-            widget=None
-            widgetname=None
+            widget = None
+            widgetname = None
 
         return BaseGenerator.generatePythonClass(self, element, template,
-            parent=parent,parentname=parentname,
-            widget=widget,widgetname=widgetname)
+                                                 parent=parent,
+                                                 parentname=parentname,
+                                                 widget=widget,
+                                                 widgetname=widgetname)
 
     def elementIsFolderish(self, element):
         log.debug("Determining whether the element '%s' is folderish...",
@@ -1856,9 +1850,9 @@ class ArchetypesGenerator(BaseGenerator):
         wrt = outfile.write
 
         # dealing with creation-permissions and -roles for this type
+        klass = element.getCleanName()
         if self.detailed_created_permissions:
-            creation_permission = ("'Add %s Content'" %
-                                   element.getCleanName())
+            creation_permission = "'Add %s Content'" % klass
             # TODO: looks a bit shitty, ^^^^^. 'Add Event Content'...
             # 'Add MyProduct Content' is ok, but the prefixed way
             # 'Myproduct: Add Event' is preferrable to the above
@@ -1868,9 +1862,8 @@ class ArchetypesGenerator(BaseGenerator):
             # --detailed-creation-permissions up with the new
             # generated syntax.
         elif self.detailed_creation_permissions:
-            creation_permission =("'%s: Add %s'" %
-                                  (element.getPackage().getProduct().getCleanName(),
-                                   element.getCleanName()))
+            product = element.getPackage().getProduct().getCleanName()
+            creation_permission = "'%s: Add %s'" % (product, klass)
         else:
             creation_permission = None
         creation_roles = "('Manager', 'Owner')"
@@ -1897,7 +1890,8 @@ class ArchetypesGenerator(BaseGenerator):
             wrt(additionalImports)
 
         # imports needed for CMFMember subclassing
-        if element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
+        if element.hasStereoType(self.cmfmember_stereotype,
+                                 umlprofile=self.uml_profile):
             wrt(CMFMEMBER_IMPORTS)
             # and set the add content permission to what CMFMember needs
             creation_permission = 'ADD_MEMBER_PERMISSION'
@@ -1908,7 +1902,8 @@ class ArchetypesGenerator(BaseGenerator):
             wrt('from Products.Archetypes.SQLStorage import *\n')
 
         # import Product config.py
-        wrt(TEMPLATE_CONFIG_IMPORT % {'module': element.getRootPackage().getProductModuleName()})
+        wrt(TEMPLATE_CONFIG_IMPORT % {
+            'module': element.getRootPackage().getProductModuleName()})
 
         # imports by tagged values
         additionalImports = self.getImportsByTaggedValues(element)
@@ -1918,10 +1913,12 @@ class ArchetypesGenerator(BaseGenerator):
             wrt('\n')
 
         # CMFMember needs a special factory method
-        if element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
-            wrt(CMFMEMBER_ADD % {'module': element.getRootPackage().getProductModuleName(),
-                                 'prefix': self.prefix,
-                                 'name': name})
+        if element.hasStereoType(self.cmfmember_stereotype,
+                                 umlprofile=self.uml_profile):
+            wrt(CMFMEMBER_ADD % {
+                'module': element.getRootPackage().getProductModuleName(),
+                'prefix': self.prefix,
+                'name': name})
 
         # Normally, archgenxml also looks at the parents of the
         # current class for allowed subitems. Likewise, subclasses of
@@ -1933,17 +1930,17 @@ class ArchetypesGenerator(BaseGenerator):
             recursive = 0
         else:
             recursive = 1
-        aggregatedClasses = element.getRefs() + element.getSubtypeNames(recursive=recursive,
-                                                                        filter=['class'])
+        aggregatedClasses = element.getRefs() + \
+                            element.getSubtypeNames(recursive=recursive,
+                                                    filter=['class'])
         # We *do* want the resursive=0 below, though!
-        aggregatedInterfaces = element.getRefs() + element.getSubtypeNames(recursive=0,
-                                                                           filter=['interface'])
-        # [xiru] We need to remove duplicated values and avoid mixture
-        # between unicode and string content types identifiers
+        aggregatedInterfaces = element.getRefs() + \
+                               element.getSubtypeNames(recursive=0,
+                                                       filter=['interface'])
         if element.getTaggedValue('allowed_content_types'):
-            aggregatedClasses = [str(e) for e in aggregatedClasses]
+            aggregatedClasses = [e for e in aggregatedClasses]
             for e in element.getTaggedValue('allowed_content_types').split(','):
-                e = str(e).strip()
+                e = e.strip()
                 if e not in aggregatedClasses:
                     aggregatedClasses.append(e)
 
@@ -1951,7 +1948,8 @@ class ArchetypesGenerator(BaseGenerator):
         parent_is_archetype = False
         for p in element.getGenParents():
             parent_is_archetype = parent_is_archetype or \
-                                  p.hasStereoType(self.archetype_stereotype, umlprofile=self.uml_profile)
+                                  p.hasStereoType(self.archetype_stereotype,
+                                                  umlprofile=self.uml_profile)
 
         # also check if the parent classes can have subobjects
         baseaggregatedClasses = []
@@ -2632,8 +2630,6 @@ class ArchetypesGenerator(BaseGenerator):
                     package.annotate('generatedInterfaces', generated_interfaces)
 
                 buf = outfile.getvalue()
-                if isinstance(buf, unicode):
-                    buf = buf.encode('utf8')
 
                 log.debug("The outfile is ready to be written to disk now. "
                           "Loading it with the pyparser just to be sure we're "
@@ -2726,39 +2722,40 @@ class ArchetypesGenerator(BaseGenerator):
 
         #association constraint
         if assocclassname:
-            contref=doc.createElement('ContentReference')
+            contref = doc.createElement('ContentReference')
             ruleset.appendChild(contref)
-            contref.setAttribute('id','content_reference')
-            pt=doc.createElement('portalType')
+            contref.setAttribute('id', 'content_reference')
+            pt = doc.createElement('portalType')
             contref.appendChild(pt)
             pt.appendChild(doc.createTextNode(assocclassname))
 
-            pt=doc.createElement('shareWithInverse')
+            pt = doc.createElement('shareWithInverse')
             contref.appendChild(pt)
             pt.appendChild(doc.createTextNode('1'))
 
-            el=doc.createElement('primary')
+            el = doc.createElement('primary')
             el.appendChild(doc.createTextNode(str(primary)))
             contref.appendChild(el)
 
         #cardinality
         targetcardinality=list(targetcardinality)
-        if targetcardinality[0]==-1:targetcardinality[0]=None
-        if targetcardinality[1]==-1:targetcardinality[1]=None
+        if targetcardinality[0] == -1:
+            targetcardinality[0] = None
+        if targetcardinality[1] == -1:
+            targetcardinality[1] = None
 
-        if targetcardinality != (None,None):
-            const=doc.createElement('CardinalityConstraint')
+        if targetcardinality != (None, None):
+            const = doc.createElement('CardinalityConstraint')
             ruleset.appendChild(const)
-            const.setAttribute('id','cardinality')
+            const.setAttribute('id', 'cardinality')
             if targetcardinality[0]:
-                el=doc.createElement('minTargetCardinality')
+                el = doc.createElement('minTargetCardinality')
                 const.appendChild(el)
                 el.appendChild(doc.createTextNode(str(targetcardinality[0])))
             if targetcardinality[1]:
-                el=doc.createElement('maxTargetCardinality')
+                el = doc.createElement('maxTargetCardinality')
                 const.appendChild(el)
                 el.appendChild(doc.createTextNode(str(targetcardinality[1])))
-
 
         #create the inverse relation
         if inverse_relation_id:
@@ -2768,7 +2765,6 @@ class ArchetypesGenerator(BaseGenerator):
             el=doc.createElement('inverseRuleset')
             const.appendChild(el)
             el.setAttribute('uidref',inverse_relation_id)
-
 
         return ruleset
 

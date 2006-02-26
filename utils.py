@@ -177,3 +177,11 @@ def addConsoleLogging():
     hdlr.setLevel(logging.INFO)
     hdlr.setFormatter(formatter)
     log.addHandler(hdlr)
+
+def normalize(data):
+    """Converts a unicode to string, stripping blank spaces."""
+    if isinstance(data, unicode):
+        data = data.encode('utf-8')
+    if isinstance(data, str):
+        data = data.strip()
+    return data
