@@ -1058,10 +1058,9 @@ class ArchetypesGenerator(BaseGenerator):
 
         return widgetcode
 
-    def getFieldFormatted(self,name,fieldtype,map={},doc=None, indent_level=0, rawType='String'):
-        """Return the formatted field definitions for the schema.
-        """
-
+    def getFieldFormatted(self, name, fieldtype, map={}, doc=None,
+                          indent_level=0, rawType='String'):
+        """Return the formatted field definitions for the schema."""
         log.debug("Trying to get formatted field. name='%s', fieldtype='%s', "
                   "doc='%s', rawType='%s'.", name, fieldtype, doc, rawType)
         res = ''
@@ -1488,14 +1487,17 @@ class ArchetypesGenerator(BaseGenerator):
             generatedMethods.append(m)
 
         for interface in element.getRealizationParents():
-            meths = [m for m in interface.getMethodDefs(recursive=1) if m.getName() not in allmethnames]
-            # We don't want to extra generate methods that are already defined in the class
+            meths = [m for m in interface.getMethodDefs(recursive=1)
+                     if m.getName() not in allmethnames]
+            # We don't want to extra generate methods
+            # that are already defined in the class
             if meths:
-                print >> outfile, '\n    # Methods from Interface %s' % interface.getName()
+                print >> outfile, '\n    # Methods from Interface %s' % \
+                      interface.getName()
                 for m in meths:
                     self.generateMethod(outfile, m, element, mode=mode)
-                    generatedMethods.append(m)
                     allmethnames.append(m.getName())
+                    generatedMethods.append(m)
 
         # Contains _all_ generated method names
         method_names = [m.getName() for m in generatedMethods]
@@ -1525,7 +1527,8 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateMethod(self, outfile, m, klass, mode='class'):
         #ignore actions and views here because they are generated separately
-        if m.hasStereoType(['action','view','form','portlet_view', 'portlet'], umlprofile=self.uml_profile):
+        if m.hasStereoType(['action', 'view', 'form', 'portlet_view',
+                            'portlet'], umlprofile=self.uml_profile):
             return
 
         wrt = outfile.write
@@ -1537,9 +1540,10 @@ class ArchetypesGenerator(BaseGenerator):
         print >> outfile
 
         if mode == 'class':
-            # [optilude] Added check for permission:mode - public (default), private or protected
-            # [jensens]  You can also use the visibility value from UML (implemented for 1.2 only!)
-            # tgv overrides UML-mode!
+            # [optilude] Added check for permission:mode - public (default),
+            # private or protected
+            # [jensens] You can also use the visibility value from UML
+            # (implemented for 1.2 only!) TGV overrides UML-mode!
             permissionMode = m.getVisibility() or 'public'
 
             # A public method means it's part of the class' public interface,
@@ -1552,12 +1556,16 @@ class ArchetypesGenerator(BaseGenerator):
                 rawPerm = m.getTaggedValue('permission',None)
                 permission = utils.getExpression(rawPerm)
                 if rawPerm:
-                    print >> outfile, utils.indent("security.declareProtected(%s, '%s')" % (permission, m.getName()), 1)
+                    print >> outfile, utils.indent("security.declareProtected"
+                                                   "(%s, '%s')" % (permission,
+                                                   m.getName()), 1)
                 else:
-                    print >> outfile, utils.indent("security.declarePublic('%s')" % m.getName(), 1)
+                    print >> outfile, utils.indent("security.declarePublic"
+                                                   "('%s')" % m.getName(), 1)
             # A private method is always declarePrivate()'d
             elif permissionMode == 'private':
-                print >> outfile, utils.indent("security.declarePrivate('%s')" % m.getName(), 1)
+                print >> outfile, utils.indent("security.declarePrivate('%s')"
+                                               % m.getName(), 1)
 
             # A protected method is also declarePrivate()'d. The semantic
             # meaning of 'protected' is that is hidden from the outside world,
@@ -1566,31 +1574,33 @@ class ArchetypesGenerator(BaseGenerator):
             # such protection). In this case, it's still a privately declared
             # method as far as TTW code is concerned.
             elif permissionMode == 'protected':
-                print >> outfile, utils.indent("security.declarePrivate('%s')" % m.getName(), 1)
+                print >> outfile, utils.indent("security.declarePrivate('%s')"
+                                               % m.getName(), 1)
 
             # A package-level method should be without security declarartion -
             # it is accessible to other methods in the same module, and will
             # use the class/module defaults as far as TTW code is concerned.
             elif permissionMode == 'package':
                 # No declaration
-                print >> outfile,utils.indent("# Use class/module security defaults",1)
+                print >> outfile,utils.indent("# Use class/module security "
+                                              "defaults", 1)
             else:
-                log.warn("Method visibility should be 'public', 'private', 'protected' or 'package', got '%s'.",
-                         permissionMode)
-        else:
-            print >> outfile
+                log.warn("Method visibility should be 'public', 'private', "
+                         "'protected' or 'package', got '%s'.", permissionMode)
 
-        cls = self.parsed_class_sources.get(klass.getPackage().getFilePath()+'/'+klass.getName(), None)
-
+        cls = self.parsed_class_sources.get(klass.getPackage().getFilePath() +
+                                            '/' + klass.getName(), None)
         if cls:
             method_code = cls.methods.get(m.getName())
         else:
-            #print 'method not found:',m.getName()
             method_code = None
 
         if self.method_preservation and method_code:
-            #print 'preserve method:',method_code.name
             wrt(method_code.src)
+            # Holly hack: methods ending with a 'pass' command don't
+            # have an extra black line after the code, so we add it
+            if method_code.src.split('\n')[-1].strip() == 'pass':
+                print >> outfile
         else:
             if mode=='class':
                 print >> outfile, '    def %s(self%s):' % (m.getName(), paramstr)
@@ -1600,7 +1610,7 @@ class ArchetypesGenerator(BaseGenerator):
             code = m.taggedValues.get('code', '')
             doc = m.getDocumentation(striphtml=self.striphtml)
             if doc is not None:
-                print >> outfile, utils.indent('"""\n%s\n"""' % doc, 2)
+                print >> outfile, utils.indent('"""%s\n"""' % doc, 2)
             if code and mode == 'class':
                 print >> outfile, utils.indent('\n'+code, 2)
             else:
@@ -2004,8 +2014,10 @@ class ArchetypesGenerator(BaseGenerator):
 
         # generate complete Schmema
         # prepare schema as class attribute
-        parent_schema=["getattr(%s, 'schema', Schema(()))" % p.getCleanName() \
-                       for p in element.getGenParents()]
+        parent_schema = ["getattr(%s, 'schema', Schema(()))" % p.getCleanName()
+                         for p in element.getGenParents()
+                         if not p.hasStereoType(self.python_stereotype,
+                                                umlprofile=self.uml_profile)]
 
         if parent_is_archetype and \
            not element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
@@ -2091,80 +2103,98 @@ class ArchetypesGenerator(BaseGenerator):
         #allowed_content_classes
         parentAggregates = ''
 
-        if utils.isTGVTrue(element.getTaggedValue('inherit_allowed_types', True)) and element.getGenParents():
+        if utils.isTGVTrue(element.getTaggedValue('inherit_allowed_types', \
+           True)) and element.getGenParents():
             act = []
             for gp in element.getGenParents():
+                if gp.hasStereoType(self.python_stereotype,
+                                    umlprofile=self.uml_profile):
+                    continue
                 pt = gp.getTaggedValue('portal_type', None)
                 if pt is not None:
                     act.append(pt)
                 else:
                     act.append(gp.getCleanName())
-            act = ["list(getattr(%s, 'allowed_content_types', []))" % i for i in act]
+            act = ["list(getattr(%s, 'allowed_content_types', []))" % i
+                   for i in act]
             if act:
                 parentAggregates = ' + ' + ' + '.join(act)
-        print >> outfile, CLASS_ALLOWED_CONTENT_TYPES % (repr(aggregatedClasses),parentAggregates)
+        print >> outfile, CLASS_ALLOWED_CONTENT_TYPES % \
+              (repr(aggregatedClasses),parentAggregates)
 
-        #allowed_interfaces
-        parentAggregatedInterfaces=''
-        if utils.isTGVTrue(element.getTaggedValue('inherit_allowed_types', True)) and element.getGenParents():
-            parentAggregatedInterfaces = '+ ' + ' + '.join(tuple(['getattr('+p.getCleanName()+",'allowed_interfaces',[])" for p in element.getGenParents()]))
+        # allowed_interfaces
+        parentAggregatedInterfaces = ''
+        if utils.isTGVTrue(element.getTaggedValue('inherit_allowed_types', \
+           True)) and element.getGenParents():
+            pattern = "getattr(%s, 'allowed_interfaces', [])"
+            extras = ' + '.join([pattern % p.getCleanName()
+                                 for p in element.getGenParents()])
+            parentAggregatedInterfaces = '+ ' + extras
 
         if aggregatedInterfaces or baseaggregatedInterfaces:
             print >> outfile, CLASS_ALLOWED_CONTENT_INTERFACES % \
-                  (','.join(aggregatedInterfaces),parentAggregatedInterfaces)
+                  (','.join(aggregatedInterfaces), parentAggregatedInterfaces)
 
         # FTI as attributes on class
         # [optilude] Don't generate FTI for abstract mixins
-        if not element.isAbstract ():
+        if not element.isAbstract():
             fti=self.generateFti(element,aggregatedClasses)
             print >> outfile,fti
 
         # _at_rename_after_creation
-        rename_after_creation = self.getOption('rename_after_creation', element, default=False)
+        rename_after_creation = self.getOption('rename_after_creation',
+                                               element, default=False)
         if rename_after_creation:
-            print >>outfile, CLASS_RENAME_AFTER_CREATION % (utils.isTGVTrue(rename_after_creation) and 'True' or 'False')
+            print >> outfile, CLASS_RENAME_AFTER_CREATION % \
+                  (utils.isTGVTrue(rename_after_creation) and 'True' or 'False')
 
         # schema attribute
         wrt(utils.indent('schema = %s' % schemaName, 1) + '\n\n')
 
-        self.generateProtectedSection(outfile,element,'class-header', 1)
+        self.generateProtectedSection(outfile, element, 'class-header', 1)
 
         # tool __init__
         if element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile):
-            tool_instance_name=element.getTaggedValue('tool_instance_name') or 'portal_%s' % element.getName().lower()
-            print >> outfile,TEMPL_CONSTR_TOOL % (baseclass,tool_instance_name)
-            self.generateProtectedSection(outfile,element,'constructor-footer',2)
+            tool_instance_name = element.getTaggedValue('tool_instance_name') \
+                                 or 'portal_%s' % element.getName().lower()
+            print >> outfile, TEMPL_CONSTR_TOOL % (baseclass,tool_instance_name)
+            self.generateProtectedSection(outfile, element,
+                                          'constructor-footer', 2)
             print >> outfile
 
         self.generateMethods(outfile, element)
 
         # [optilude] Don't do modify FTI for abstract mixins
-        if not element.isAbstract ():
+        if not element.isAbstract():
             print >> outfile, self.generateModifyFti(element)
 
         # [optilude] Don't register type for abstract classes or tools
-        if not (element.isAbstract() or element.hasStereoType('mixin', umlprofile=self.uml_profile)):
-            wrt( REGISTER_ARCHTYPE % name)
+        if not (element.isAbstract() or element.hasStereoType('mixin',
+           umlprofile=self.uml_profile)):
+            wrt(REGISTER_ARCHTYPE % name)
 
         # ATVocabularyManager: registration of class
-        if element.hasStereoType(self.vocabulary_item_stereotype, umlprofile=self.uml_profile) and \
-           not element.isAbstract ():
+        if element.hasStereoType(self.vocabulary_item_stereotype,
+           umlprofile=self.uml_profile) and not element.isAbstract():
             # XXX TODO: fetch container_class - needs to be refined:
             # check if parent has vocabulary_container_stereotype and use its
             # name as container
             # else check for TGV vocabulary_container
             # fallback: use SimpleVocabulary
-            container = element.getTaggedValue('vocabulary:portal_type','SimpleVocabulary')
-            wrt( REGISTER_VOCABULARY_ITEM % (name, container) )
-        if element.hasStereoType(self.vocabulary_container_stereotype, umlprofile=self.uml_profile):
-            wrt( REGISTER_VOCABULARY_CONTAINER % name )
+            container = element.getTaggedValue('vocabulary:portal_type',
+                                               'SimpleVocabulary')
+            wrt(REGISTER_VOCABULARY_ITEM % (name, container))
+        if element.hasStereoType(self.vocabulary_container_stereotype,
+                                 umlprofile=self.uml_profile):
+            wrt(REGISTER_VOCABULARY_CONTAINER % name)
 
         wrt('# end of class %s\n\n' % name)
 
         self.generateProtectedSection(outfile, element, 'module-footer')
 
         ## handle add content permissions
-        if not element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile):
+        if not element.hasStereoType(self.portal_tools,
+                                     umlprofile=self.uml_profile):
             # tgv overrules
             cpfromtgv = element.getTaggedValue('creation_permission', None)
             if cpfromtgv:
@@ -2174,8 +2204,9 @@ class ArchetypesGenerator(BaseGenerator):
                 creation_roles= self.processExpression(crfromtgv)
             ## abstract classes does not need an Add permission
             if creation_permission and not element.isAbstract():
-                self.creation_permissions.append( [element.getCleanName(), creation_permission, creation_roles] )
-
+                self.creation_permissions.append([element.getCleanName(),
+                                                  creation_permission,
+                                                  creation_roles])
         return outfile.getvalue()
 
     def generateZope2Interface(self, element, **kw):
@@ -2220,7 +2251,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         wrt(s1)
         doc = element.getDocumentation(striphtml=self.striphtml)
-        print >> outfile, utils.indent('"""\n%s\n"""' % doc, 1)
+        print >> outfile, utils.indent('"""%s\n"""' % doc, 1)
 
         header = element.getTaggedValue('class_header')
         if header:
@@ -2228,7 +2259,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         wrt('\n')
         self.generateMethods(outfile, element, mode='interface')
-        wrt('\n\n# end of class %s' % name)
+        wrt('\n# end of class %s' % name)
 
         return outfile.getvalue()
 
