@@ -33,8 +33,8 @@ from Products.CompoundField.CompoundField import CompoundField
 
 
 class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-var "','.join([p.getCleanName() for p in klass.getGenParents()])"><dtml-else><dtml-var parentname></dtml-if>):
-    ''' <dtml-var "klass.getDocumentation()">'''
-
+    """<dtml-var "utils.indent(klass.getDocumentation(), 1, skipFirstRow=True, stripBlank=True)">
+    """
 <dtml-var "generator.getProtectedSection(parsed_class,'class-header',1)">
 <dtml-var "generator.generateImplements(klass,[parentname]+[p.getCleanName() for p in klass.getGenParents()])" >
 

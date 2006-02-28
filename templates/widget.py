@@ -15,8 +15,8 @@ from Products.<dtml-var "klass.getPackage().getProduct().getName()"> import conf
 <dtml-var "generator.getProtectedSection(parsed_class,'module-header')">
 <dtml-var "generator.generateDependentImports(klass)">
 class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-var "','.join([p.getCleanName() for p in klass.getGenParents()])"><dtml-else>TypesWidget</dtml-if>):
-    ''' <dtml-var "klass.getDocumentation()">'''
-
+    """<dtml-var "utils.indent(klass.getDocumentation(), 1, skipFirstRow=True, stripBlank=True)">
+    """
 <dtml-var "generator.getProtectedSection(parsed_class,'class-header',1)">
 <dtml-var "generator.generateImplements(klass,['TypesWidget']+[p.getCleanName() for p in klass.getGenParents()])">
     _properties = <dtml-var parentname>._properties.copy()

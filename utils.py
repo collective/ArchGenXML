@@ -60,7 +60,7 @@ def readTemplate(filename):
     log.debug("Succesfully opened the template, returning it.")
     return template
 
-def indent(s, indent, prepend='', skipFirstRow=0):
+def indent(s, indent, prepend='', skipFirstRow=False, stripBlank=False):
     """Indent string 's'.
 
     's' is a string with optional '\n's for multiple lines. 's' can be
@@ -75,6 +75,8 @@ def indent(s, indent, prepend='', skipFirstRow=0):
         lines = [rows[0]]+['    '*indent + prepend + l for l in rows[1:]]
     else:
         lines = ['    '*indent + prepend + l for l in rows]
+    if stripBlank:
+        lines = [line.rstrip() for line in lines]
     return '\n'.join(lines)
 
 def getExpression(s):
