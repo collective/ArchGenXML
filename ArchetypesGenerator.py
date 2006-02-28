@@ -2285,7 +2285,7 @@ class ArchetypesGenerator(BaseGenerator):
                 hasz3parent = True
                 break
         if hasz3parent or element.hasStereoType('z3'):
-            outfile.write('import zope')
+            outfile.write('import zope\n')
 
         return outfile.getvalue()
 
