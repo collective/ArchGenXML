@@ -1597,8 +1597,8 @@ class ArchetypesGenerator(BaseGenerator):
 
         if self.method_preservation and method_code:
             wrt(method_code.src)
-            # Holly hack: methods ending with a 'pass' command don't
-            # have an extra black line after the code, so we add it
+            # Holly hack: methods ending with a 'pass' command doesn't have
+            # an extra blank line after reparsing the code, so we add it
             if method_code.src.split('\n')[-1].strip() == 'pass':
                 print >> outfile
         else:
