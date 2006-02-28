@@ -66,6 +66,8 @@ def initialize(context):
                 tools = tools,
 <dtml-if "generator.getOption('cmf_target_version', package, '1.5') == '1.4'">
                 product_name = PROJECTNAME,
+</dtml-if>
+<dtml-if "generator.getOption('cmf_target_version', package, '1.5') >= '1.4'">
                 icon='tool.gif'
 </dtml-if>
                 ).initialize( context )
