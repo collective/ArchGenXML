@@ -8,7 +8,6 @@ from Products.Archetypes.utils import DisplayList
 from Products.Archetypes import config as atconfig
 from Products.Archetypes.Widget import *
 from Products.Archetypes.Widget import TypesWidget
-from Products.generator import i18n
 
 from Products.<dtml-var "klass.getPackage().getProduct().getName()"> import config
 
