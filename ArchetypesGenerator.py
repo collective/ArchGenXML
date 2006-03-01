@@ -2847,7 +2847,7 @@ class ArchetypesGenerator(BaseGenerator):
                     if fromEndName == toEndName:
                         inverse_relation_name =  '%s_inv' % assoc.getCleanName()
                     else:
-                        inverse_relation_name =  '%s_%s_ref' % (toEndName, fromEndName)
+                        inverse_relation_name =  '%s_%s' % (toEndName.lower(), fromEndName.lower())
                         
             assocclassname=getattr(assoc,'isAssociationClass',0) and assoc.getCleanName() or assoc.getTaggedValue('association_class') or self.getOption('association_class',assoc,None)
             self.generateRelation(doc, coll,
