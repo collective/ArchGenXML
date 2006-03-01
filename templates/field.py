@@ -12,7 +12,10 @@ from Products.Archetypes import config as atconfig
 from Products.Archetypes.Widget import *
 from Products.Archetypes.Field  import *
 from Products.Archetypes.Schema import Schema
-from Products.generator import i18n
+try:
+    from Products.generator import i18n
+except ImportError:
+    from Products.Archetypes.generator import i18n
 <dtml-if "klass.hasAttributeWithTaggedValue('vocabulary:type','ATVocabularyManager')">
 from Products.ATVocabularyManager.namedvocabulary import NamedVocabulary
 </dtml-if>
