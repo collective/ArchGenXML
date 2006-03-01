@@ -2842,8 +2842,8 @@ class ArchetypesGenerator(BaseGenerator):
                     # BBB
                     inverse_relation_name = '%s_inverse' % assoc.getCleanName()
                 else:
-                    fromEndName = assoc.fromEnd.getName()
-                    toEndName = assoc.toEnd.getName()
+                    fromEndName = assoc.fromEnd.getName(ignore_cardinality=1)
+                    toEndName = assoc.toEnd.getName(ignore_cardinality=1)
                     if fromEndName == toEndName:
                         inverse_relation_name =  '%s_inv' % assoc.getCleanName()
                     else:

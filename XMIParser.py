@@ -1882,14 +1882,14 @@ class XMIAttribute (XMIElement):
 
 class XMIAssocEnd (XMIElement):
 
-    def getName(self):
+    def getName(self,ignore_cardinality=0):
         name = str(self.name)
         if name:
             return name
         else:
             if self.getTarget():
                 res=self.getTarget().getName().lower()
-                if self.getUpperBound != 1:
+                if self.getUpperBound != 1 and not ignore_cardinality:
                     res+='s'
                 return res
             else:
@@ -1938,14 +1938,14 @@ class XMIAssociation (XMIElement):
         else:
             log.debug("self.name isn't set.")
             if self.fromEnd:
-                fromname = self.fromEnd.getName()
+                fromname = self.fromEnd.getName(ignore_cardinality=1)
                 log.debug("Getting fromname from the startpoint: '%s'.",
                           fromname)
             else:
                 fromname = self.getId()
                 log.debug("Getting fromname from our id: '%s'.", fromname)
             if self.toEnd:
-                toname = self.toEnd.getName()
+                toname = self.toEnd.getName(ignore_cardinality=1)
                 log.debug("Getting toname from the endpoint: '%s'.", toname)
             else:
                 toname = self.getId()
