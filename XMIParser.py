@@ -2527,6 +2527,9 @@ class XMIState(XMIElement):
             'view'   : 'View',
             'modify' : 'Modify portal content',
             'list'   : 'List folder contents',
+            'add' : 'Add portal content',
+            'phcadd': 'PloneHelpCenter: Add Documentation',
+            'phcarea': 'PloneHelpCenter: Add Help Center Area',
         }
         tagged_values = self.getTaggedValues()
         permission_definitions = []
