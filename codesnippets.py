@@ -143,6 +143,8 @@ REGISTER_ARCHTYPE = """registerType(%s, PROJECTNAME)\n"""
 IMPORT_INTERFACE = """from Interface import Base"""
 
 MODULE_INFO_HEADER = '''\
+# -*- coding: %(encoding)s -*-
+#
 # %(filename_or_id)s
 #
 # %(copyright)s

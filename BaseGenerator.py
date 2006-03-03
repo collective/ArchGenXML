@@ -431,7 +431,10 @@ class BaseGenerator:
         else:
             log.debug("We don't want version info in this file.")
             versiontext = ''
-
+            
+        encoding = self.getOption('encoding', element, 'utf-8')
+        log.debug("Encoding for python files is set to %s" % encoding)
+        
         moduleinfo = {
             'authors': ', '.join(authors),
             'emails': ', '.join(emails),
@@ -441,6 +444,7 @@ class BaseGenerator:
             'copyright': '\n# '.join(utils.wrap(copyright, 77).split('\n')),
             'license': license,
             'filename_or_id': filename_or_id,
+            'encoding': encoding,
         }
         return moduleinfo
 
