@@ -209,8 +209,9 @@ class ArchetypesGenerator(BaseGenerator):
     uml_profile.addStereoType(
         'CMFMember', ['XMIClass'],
         description='The class will be treated as a CMFMember member '
-                    'type. It will derive from CMFMember\'s Member '
-                    'class and be installed as a member data type. '
+        'type. It will derive from CMFMember\'s Member '
+        'class and be installed as a member data type. '
+        'Note that you need to install the separate CMFMember product. '
         "Identical to '<<member>>'.")
 
     uml_profile.addStereoType(
@@ -218,6 +219,7 @@ class ArchetypesGenerator(BaseGenerator):
         description='The class will be treated as a CMFMember member '
                     'type. It will derive from CMFMember\'s Member '
                     'class and be installed as a member data type. '
+        'Note that you need to install the separate CMFMember product. '
         "Identical to '<<CMFMember>>'.")
 
     uml_profile.addStereoType(
