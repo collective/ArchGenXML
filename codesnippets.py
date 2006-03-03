@@ -270,6 +270,7 @@ TEMPL_CONSTR_TOOL = """
     # tool-constructors have no id argument, the id is fixed
     def __init__(self, id=None):
         %s.__init__(self,'%s')
+        self.setTitle('%s')
         """
 
 TEMPLATE_HEADER = """\

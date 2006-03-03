@@ -2157,7 +2157,7 @@ class ArchetypesGenerator(BaseGenerator):
         if element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile):
             tool_instance_name = element.getTaggedValue('tool_instance_name') \
                                  or 'portal_%s' % element.getName().lower()
-            print >> outfile, TEMPL_CONSTR_TOOL % (baseclass,tool_instance_name)
+            print >> outfile, TEMPL_CONSTR_TOOL % (baseclass,tool_instance_name,archetype_name)
             self.generateProtectedSection(outfile, element,
                                           'constructor-footer', 2)
             print >> outfile
