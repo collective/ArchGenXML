@@ -248,7 +248,7 @@ def install(self):
     # enable portal_factory for given types
     factory_tool = getToolByName(self,'portal_factory')
     factory_types=[
-        <dtml-in "generator.getGeneratedClasses(package)"><dtml-let klass="_['sequence-item']"><dtml-if "generator.getOption('use_portal_factory', klass, False)">"<dtml-var "klass.getTaggedValue('portal_type') or klass.getCleanName()">",
+        <dtml-in "generator.getGeneratedClasses(package)"><dtml-let klass="_['sequence-item']"><dtml-if "generator.getOption('use_portal_factory', klass, True)">"<dtml-var "klass.getTaggedValue('portal_type') or klass.getCleanName()">",
         </dtml-if></dtml-let>
 </dtml-in>] + factory_tool.getFactoryTypes().keys()
     factory_tool.manage_setPortalFactoryTypes(listOfTypeIds=factory_types)
