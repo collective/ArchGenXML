@@ -2145,7 +2145,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         # _at_rename_after_creation
         rename_after_creation = self.getOption('rename_after_creation',
-                                               element, default=False)
+                                               element, default=True)
         if rename_after_creation:
             print >> outfile, CLASS_RENAME_AFTER_CREATION % \
                   (utils.isTGVTrue(rename_after_creation) and 'True' or 'False')
