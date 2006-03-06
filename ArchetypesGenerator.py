@@ -2077,6 +2077,8 @@ class ArchetypesGenerator(BaseGenerator):
         elif parsedDoc:
             # Bit tricky, parsedDoc is already indented...
             print >> outfile, '    """%s"""' % parsedDoc
+        else:
+            print >> outfile, '    """\n    """'
 
         print >> outfile,utils.indent('security = ClassSecurityInfo()',1)
 
