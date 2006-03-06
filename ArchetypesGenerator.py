@@ -2031,9 +2031,6 @@ class ArchetypesGenerator(BaseGenerator):
             else:
                 schema = [baseschema] + parent_schema
 
-        # own schema overrules base and parents
-        schema += ['schema']
-
         if element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
             for addschema in ['contact_schema', 'plone_schema', 'plone_2_1_schema',
                               'security_schema', 'login_info_schema',]:
@@ -2041,6 +2038,10 @@ class ArchetypesGenerator(BaseGenerator):
                     schema.append('BaseMember.%s' % addschema)
             if utils.isTGVTrue(element.getTaggedValue(addschema, '1')):
                 schema.append('ExtensibleMetadata.schema')
+
+        # own schema overrules base and parents
+        schema += ['schema']
+
         schemaName = '%s_schema' % name
         print >> outfile, utils.indent(schemaName + ' = ' + ' + \\\n    '.join(['%s.copy()' % s for s in schema]), 0)
         print >> outfile
