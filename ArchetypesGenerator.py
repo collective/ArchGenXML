@@ -396,7 +396,7 @@ class ArchetypesGenerator(BaseGenerator):
                       'storage', 'enforceVocabulary', 'multiValued',
                       'visible', 'validators', 'validation_expression',
                       'sizes', 'original_size', 'max_size', 'searchable',
-                      'show_hm']
+                      'show_hm', 'move:pos', 'move:top', 'move:bottom']
 
     msgcatstack = []
 
@@ -1061,8 +1061,10 @@ class ArchetypesGenerator(BaseGenerator):
         return widgetcode
 
     def getFieldFormatted(self, name, fieldtype, map={}, doc=None,
-                          indent_level=0, rawType='String'):
-        """Return the formatted field definitions for the schema."""
+                          indent_level=0, rawType='String', array_field=False):
+        """Return the a formatted field definition for the schema.
+        """
+        
         log.debug("Trying to get formatted field. name='%s', fieldtype='%s', "
                   "doc='%s', rawType='%s'.", name, fieldtype, doc, rawType)
         res = ''
@@ -1106,16 +1108,28 @@ class ArchetypesGenerator(BaseGenerator):
 
         res += '\n%s' % utils.indent('),', indent_level) + '\n'
 
-        return res
+        if array_field:
+            res = "ArrayField(%s)," % utils.indent(res, 2)
 
-    def getFieldString(self, element, classelement, indent_level=0):
+        return res
+    
+    def getFieldsFormatted(self, field_specs):
+        """Return the formatted field definitions for the schema from field_specs.
+        """
+        res = ''
+        for field_spec in field_specs:
+            res += self.getFieldFormatted(**field_spec)
+        return res
+    
+    def getFieldSpec(self, element, classelement, indent_level=0):
         """Gets the schema field code."""
         typename = element.type
         ctype = self.coerceType(typename)
         map = typeMap[ctype]['map'].copy()
-        res = self.getFieldFormatted(element.getCleanName(),
-                                     self.typeMap[ctype]['field'].copy(),
-                                     map, indent_level)
+        res= {'name':element.getCleanName(),
+            'fieldtype':self.typeMap[ctype]['field'].copy(),
+            'map':map,
+            'indent_level':indent_level}
         return res
 
     def addVocabulary(self, element, attr, map):
@@ -1154,7 +1168,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         # end ATVM
 
-    def getFieldStringFromAttribute(self, attr, classelement, indent_level=0):
+    def getFieldSpecFromAttribute(self, attr, classelement, indent_level=0):
         """Gets the schema field code."""
 
         if not hasattr(attr, 'type') or attr.type == 'NoneType':
@@ -1221,17 +1235,17 @@ class ArchetypesGenerator(BaseGenerator):
             if map.has_key('validation_expression_errormsg'):
                 del map['validation_expression_errormsg']
 
-        res = self.getFieldFormatted(attr.getName(), atype, map, doc,
-                                     rawType=attr.getType(),
-                                     indent_level=indent_level)
-
-        if attr.getUpperBound() != 1:
-            utils.indent(res, 1)
-            res = """ArrayField(%s),""" % utils.indent(res, 1)
+        res={'name':attr.getName(),
+            'fieldtype':atype,
+            'map':map,
+            'doc':doc,
+            'indent_level':indent_level,
+            'rawType':attr.getType(),
+            'array_field':attr.getUpperBound() != 1}
 
         return res
 
-    def getFieldStringFromAssociation(self, rel, classelement, indent_level=0):
+    def getFieldSpecFromAssociation(self, rel, classelement, indent_level=0):
         """Return the schema field code."""
 
         log.debug("Getting the field string from an association.")
@@ -1305,10 +1319,14 @@ class ArchetypesGenerator(BaseGenerator):
                                 % rel.getName()})
 
         doc=rel.getDocumentation(striphtml=self.striphtml)
-        res=self.getFieldFormatted(name, field, map, doc, indent_level)
+        res={'name':name,
+            'fieldtype':field,
+            'map':map,
+            'doc':doc,
+            'indent_level':indent_level}
         return res
 
-    def getFieldStringFromBackAssociation(self, rel, classelement, indent_level=0):
+    def getFieldSpecFromBackAssociation(self, rel, classelement, indent_level=0):
         """Gets the schema field code"""
         multiValued = 0
         obj = rel.fromEnd.obj
@@ -1362,14 +1380,74 @@ class ArchetypesGenerator(BaseGenerator):
                 return None
 
         doc = rel.getDocumentation(striphtml=self.striphtml)
-        res = self.getFieldFormatted(name, field, map, doc, indent_level)
+        res={'name':name,
+            'fieldtype':field,
+            'map':map,
+            'doc':doc,
+            'indent_level':indent_level}
         return res
 
+    def getLocalFieldSpecs(self, element, indent_level=0):
+        field_specs = []
+        aggregatedClasses = []
+
+        for attrDef in element.getAttributeDefs():
+            name = attrDef.getName()
+            #if name in self.reservedAtts:
+            #    continue
+            mappedName = utils.mapName(name)
+
+            field_specs.append(self.getFieldSpecFromAttribute(attrDef, element,
+                                                    indent_level=indent_level+1))
+
+        for child in element.getChildren():
+            name = child.getCleanName()
+            if name in self.reservedAtts:
+                continue
+            unmappedName = child.getUnmappedCleanName()
+            if child.getRef():
+                aggregatedClasses.append(str(child.getRef()))
+
+            if child.isIntrinsicType():
+                field_specs.append(self.getFieldSpec(child, element,
+                                                    indent_level=indent_level+1))
+
+        # only add reference fields if tgv generate_reference_fields
+        if utils.toBoolean(
+                self.getOption('generate_reference_fields', element, True) ):
+            #print 'rels:',element.getName(),element.getFromAssociations()
+            # and now the associations
+            for rel in element.getFromAssociations():
+                name = rel.fromEnd.getName()
+                end=rel.fromEnd
+
+                #print 'generating from assoc'
+                if name in self.reservedAtts:
+                    continue
+                field_specs.append(self.getFieldSpecFromAssociation(rel,
+                                                    element,
+                                                    indent_level=indent_level+1))
+
+            #Back References
+            for rel in element.getToAssociations():
+                name = rel.fromEnd.getName()
+
+                #print "backreference"
+                if name in self.reservedAtts:
+                    continue
+                fc=self.getFieldSpecFromBackAssociation(rel,
+                                                    element,
+                                                    indent_level=indent_level+1)
+                if fc:
+                    field_specs.append(fc)
+                    
+        return field_specs
+
     # Generate get/set/add member functions.
-    def generateArcheSchema(self, element, base_schema, indent_level=0):
+    def generateArcheSchema(self, outfile, element, base_schema, field_specs):
         """ generates the Schema """
+
         # first copy fields from other schemas if neccessary.
-        outfile = StringIO()
         startmarker = True
         for attr in element.getAttributeDefs():
             if attr.type.lower() == 'copy':
@@ -1414,60 +1492,9 @@ class ArchetypesGenerator(BaseGenerator):
                                       or fieldname, element, fieldname)
 
         print >> outfile, SCHEMA_START
-        aggregatedClasses = []
 
-        for attrDef in element.getAttributeDefs():
-            name = attrDef.getName()
-            #if name in self.reservedAtts:
-            #    continue
-            mappedName = utils.mapName(name)
-
-            print >> outfile, self.getFieldStringFromAttribute(attrDef, element,
-                                                    indent_level=indent_level+1)
-
-        for child in element.getChildren():
-            name = child.getCleanName()
-            if name in self.reservedAtts:
-                continue
-            unmappedName = child.getUnmappedCleanName()
-            if child.getRef():
-                aggregatedClasses.append(str(child.getRef()))
-
-            if child.isIntrinsicType():
-                print >> outfile, self.getFieldString(child, element,
-                                                    indent_level=indent_level+1)
-
-        # only add reference fields if tgv generate_reference_fields
-        if utils.toBoolean(
-                self.getOption('generate_reference_fields', element, True) ):
-            #print 'rels:',element.getName(),element.getFromAssociations()
-            # and now the associations
-            for rel in element.getFromAssociations():
-                name = rel.fromEnd.getName()
-                end=rel.fromEnd
-
-                #print 'generating from assoc'
-                if name in self.reservedAtts:
-                    continue
-                print >> outfile
-                print >> outfile, self.getFieldStringFromAssociation(rel,
-                                                    element,
-                                                    indent_level=indent_level+1)
-
-            #Back References
-            for rel in element.getToAssociations():
-                name = rel.fromEnd.getName()
-
-                #print "backreference"
-                if name in self.reservedAtts:
-                    continue
-                fc=self.getFieldStringFromBackAssociation(rel,
-                                                    element,
-                                                    indent_level=indent_level+1)
-                if fc:
-                    print >> outfile
-                    print >> outfile, fc
-
+        print >> outfile, self.getFieldsFormatted(field_specs)
+        
         print >> outfile,'),'
         marshaller=element.getTaggedValue('marshaller') or element.getTaggedValue('marshall')
         if marshaller:
@@ -1475,7 +1502,29 @@ class ArchetypesGenerator(BaseGenerator):
 
         print >> outfile,')'
 
-        return outfile.getvalue()
+    def generateFieldMoves(self, outfile, schemaName, field_specs):
+        """Generate moveField statements for the schema from field_specs.
+        """
+        
+        for field_spec in field_specs:
+            if not field_spec.has_key('map'): continue
+            for key in field_spec['map'].keys():
+                if key.startswith('move:'):
+                    move_key = key[5:]
+                    move_from = field_spec['name']
+                    move_to = field_spec['map'][key]
+                    if move_key == 'before':
+                        print >> outfile, "%s.moveField('%s', before=%s)" % (schemaName, move_from, move_to)
+                    elif move_key == 'after':
+                        print >> outfile, "%s.moveField('%s', after=%s)" % (schemaName, move_from, move_to)
+                    elif move_key == 'top' and move_to: # must be true
+                        print >> outfile, "%s.moveField('%s', pos='top')" % (schemaName, move_from)
+                    elif move_key == 'bottom' and move_to: # must be true
+                        print >> outfile, "%s.moveField('%s', pos='bottom')" % (schemaName, move_from)
+                    elif move_key == 'pos':
+                        print >> outfile, "%s.moveField('%s', pos=%s)" % (schemaName, move_from, move_to)
+                        
+        print >> outfile
 
     def generateMethods(self, outfile, element, mode='class'):
         print >> outfile,'    # Methods'
@@ -2008,9 +2057,10 @@ class ArchetypesGenerator(BaseGenerator):
         # protected section
         self.generateProtectedSection(outfile, element, 'module-header')
 
-        # generate local Schema
-        print >> outfile, self.generateArcheSchema(element, baseschema)
-
+        # generate local Schema from local field specifications
+        field_specs = self.getLocalFieldSpecs(element)
+        self.generateArcheSchema(outfile, element, baseschema, field_specs)
+        
         # protected section
         self.generateProtectedSection(outfile, element, 'after-local-schema')
 
@@ -2045,6 +2095,9 @@ class ArchetypesGenerator(BaseGenerator):
         schemaName = '%s_schema' % name
         print >> outfile, utils.indent(schemaName + ' = ' + ' + \\\n    '.join(['%s.copy()' % s for s in schema]), 0)
         print >> outfile
+
+        # move fields based on move: tagged values
+        self.generateFieldMoves(outfile, schemaName, field_specs)
 
         # protected section
         self.generateProtectedSection(outfile, element, 'after-schema')
