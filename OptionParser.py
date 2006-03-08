@@ -492,6 +492,16 @@ group.add_option("--default-description-generation",
                  section="CLASSES",
                  )
 
+group.add_option("--default-class-type",
+                 dest="default_class_type",
+                 help="Changes the default class type from content_class to "
+                      "your value. Useful when most of your classes are not "
+                      "archetype content.",
+                 type="string",
+                 default="content_class",
+                 section="CLASSES",
+                 )
+
 parser.add_option_group(group)
 
 #----------------------------------------------------------------------------
