@@ -1064,7 +1064,7 @@ class ArchetypesGenerator(BaseGenerator):
                           indent_level=0, rawType='String', array_field=False):
         """Return the a formatted field definition for the schema.
         """
-        
+
         log.debug("Trying to get formatted field. name='%s', fieldtype='%s', "
                   "doc='%s', rawType='%s'.", name, fieldtype, doc, rawType)
         res = ''
@@ -1087,7 +1087,7 @@ class ArchetypesGenerator(BaseGenerator):
         if map:
             prepend = utils.indent('', indent_level)
             for key in map:
-                if key.find(':')>=0:
+                if key.find(':') >= 0:
                     continue
                 lines = map[key]
                 if isinstance(lines, basestring):
@@ -1102,17 +1102,17 @@ class ArchetypesGenerator(BaseGenerator):
                 res += '%s%s=%s' % (prepend, key, firstline)
                 if isinstance(lines, basestring) and linebreak < len(lines):
                     for line in lines[linebreak+1:].split('\n'):
-                        res += "\n%s" % utils.indent(line, indent_level+1)
+                        res += "\n%s" % utils.indent(line, indent_level + 1)
 
-                prepend = ',\n%s' % utils.indent('', indent_level+1)
+                prepend = ',\n%s' % utils.indent('', indent_level +1)
 
-        res += '\n%s' % utils.indent('),', indent_level) + '\n'
+        res += '\n%s' % utils.indent('),', indent_level) + '\n\n'
 
         if array_field:
             res = "ArrayField(%s)," % utils.indent(res, 2)
 
         return res
-    
+
     def getFieldsFormatted(self, field_specs):
         """Return the formatted field definitions for the schema from field_specs.
         """
@@ -1120,7 +1120,7 @@ class ArchetypesGenerator(BaseGenerator):
         for field_spec in field_specs:
             res += self.getFieldFormatted(**field_spec)
         return res
-    
+
     def getFieldSpec(self, element, classelement, indent_level=0):
         """Gets the schema field code."""
         typename = element.type
@@ -1440,7 +1440,7 @@ class ArchetypesGenerator(BaseGenerator):
                                                     indent_level=indent_level+1)
                 if fc:
                     field_specs.append(fc)
-                    
+
         return field_specs
 
     # Generate get/set/add member functions.
@@ -1492,20 +1492,18 @@ class ArchetypesGenerator(BaseGenerator):
                                       or fieldname, element, fieldname)
 
         print >> outfile, SCHEMA_START
+        print >> outfile, self.getFieldsFormatted(field_specs) + '),'
 
-        print >> outfile, self.getFieldsFormatted(field_specs)
-        
-        print >> outfile,'),'
         marshaller=element.getTaggedValue('marshaller') or element.getTaggedValue('marshall')
         if marshaller:
             print >> outfile, 'marshall='+marshaller
 
-        print >> outfile,')'
+        print >> outfile, ')\n'
 
     def generateFieldMoves(self, outfile, schemaName, field_specs):
         """Generate moveField statements for the schema from field_specs.
         """
-        
+
         for field_spec in field_specs:
             if not field_spec.has_key('map'): continue
             for key in field_spec['map'].keys():
@@ -1523,7 +1521,7 @@ class ArchetypesGenerator(BaseGenerator):
                         print >> outfile, "%s.moveField('%s', pos='bottom')" % (schemaName, move_from)
                     elif move_key == 'pos':
                         print >> outfile, "%s.moveField('%s', pos=%s)" % (schemaName, move_from, move_to)
-                        
+
         print >> outfile
 
     def generateMethods(self, outfile, element, mode='class'):
@@ -1661,7 +1659,8 @@ class ArchetypesGenerator(BaseGenerator):
             code = m.taggedValues.get('code', '')
             doc = m.getDocumentation(striphtml=self.striphtml)
             if doc is not None:
-                print >> outfile, utils.indent('"""%s\n"""' % doc, 2)
+                print >> outfile, utils.indent('"""%s\n"""' % doc, 2,
+                                               stripBlank=True)
             if code and mode == 'class':
                 print >> outfile, utils.indent('\n'+code, 2)
             else:
@@ -1710,11 +1709,8 @@ class ArchetypesGenerator(BaseGenerator):
         return self.generateTestcaseClass(element,template,testname=testname)
 
     def generateTestcaseClass(self,element,template,**kw):
-        from XMIParser import XMIClass
-
         log.info("%sGenerating testcase '%s'.",
-                 '    '*self.infoind,
-                 element.getName())
+                 '    '*self.infoind, element.getName())
 
         assert element.hasStereoType('plone_testcase', umlprofile=self.uml_profile) or element.getCleanName().startswith('test'), \
             "names of test classes _must_ start with 'test', but this class is named '%s'" % element.getCleanName()
@@ -1724,16 +1720,15 @@ class ArchetypesGenerator(BaseGenerator):
                  but this class is named '%s' and located in package '%s'" % (element.getCleanName(),element.getPackage().getCleanName())
 
         if element.getGenParents():
-            parent=element.getGenParents()[0]
+            parent = element.getGenParents()[0]
         else:
-            parent=None
+            parent = None
 
         return BaseGenerator.generatePythonClass(self, element, template, parent=parent, **kw)
 
     def generateWidgetClass(self, element, template, zptname='widget.pt'):
         log.info("%sGenerating widget '%s'.",
-                 "    "*self.infoind,
-                  element.getName())
+                 "    "*self.infoind, element.getName())
 
         # Generate the template
         macroname = '%s.pt' % element.getTaggedValue('macro',
@@ -1770,8 +1765,7 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateFieldClass(self, element, template):
         log.info("%sGenerating field: '%s'.",
-                 '    '*self.infoind,
-                 element.getName())
+                 '    '*self.infoind, element.getName())
 
         # Generate the python code
         if element.getGenParents():
@@ -1889,7 +1883,7 @@ class ArchetypesGenerator(BaseGenerator):
             baseschema = element.getTaggedValue('base_schema')
 
         # [optilude] Ignore the standard class if this is an mixin
-        # [jensens] An abstract class might have an base_class!
+        # [jensens] An abstract class might have a base_class!
         if baseclass and not utils.isTGVFalse(element.getTaggedValue('base_class',1)) \
            and not element.hasStereoType('mixin', umlprofile=self.uml_profile):
               baseclasses = baseclass.split(',')
@@ -2060,7 +2054,7 @@ class ArchetypesGenerator(BaseGenerator):
         # generate local Schema from local field specifications
         field_specs = self.getLocalFieldSpecs(element)
         self.generateArcheSchema(outfile, element, baseschema, field_specs)
-        
+
         # protected section
         self.generateProtectedSection(outfile, element, 'after-local-schema')
 
@@ -2094,7 +2088,6 @@ class ArchetypesGenerator(BaseGenerator):
 
         schemaName = '%s_schema' % name
         print >> outfile, utils.indent(schemaName + ' = ' + ' + \\\n    '.join(['%s.copy()' % s for s in schema]), 0)
-        print >> outfile
 
         # move fields based on move: tagged values
         self.generateFieldMoves(outfile, schemaName, field_specs)
@@ -2111,7 +2104,7 @@ class ArchetypesGenerator(BaseGenerator):
         AlreadyGenerated.append(element.getType())
 
         if self.ape_support:
-            print >>outfile,TEMPL_APE_HEADER % {'class_name': name}
+            print >> outfile, TEMPL_APE_HEADER % {'class_name': name}
 
         # [optilude] It's possible parents may become empty now...
         if parents:
@@ -2127,22 +2120,24 @@ class ArchetypesGenerator(BaseGenerator):
         if element.parsed_class:
             parsedDoc = element.parsed_class.getDocumentation()
         if doc:
-            print >> outfile,utils.indent('"""\n%s\n"""' % doc, 1)
+            print >> outfile, utils.indent('"""%s\n"""' % doc, 1,
+                                           stripBlank=True)
         elif parsedDoc:
             # Bit tricky, parsedDoc is already indented...
             print >> outfile, '    """%s"""' % parsedDoc
         else:
             print >> outfile, '    """\n    """'
 
-        print >> outfile,utils.indent('security = ClassSecurityInfo()',1)
+        print >> outfile, utils.indent('security = ClassSecurityInfo()',1)
 
-        print >> outfile,self.generateImplements(element,parentnames)
+        print >> outfile, self.generateImplements(element, parentnames)
 
         header = element.getTaggedValue('class_header')
         if header:
             print >> outfile,utils.indent(header, 1)
 
-        archetype_name=element.getTaggedValue('archetype_name') or element.getTaggedValue('label')
+        archetype_name = element.getTaggedValue('archetype_name') or \
+                         element.getTaggedValue('label')
         if not archetype_name:
             archetype_name = name
         portaltype_name = element.getTaggedValue('portal_type') or name
@@ -2299,7 +2294,7 @@ class ArchetypesGenerator(BaseGenerator):
         parentnames = [p.getCleanName() for p in element.getGenParents()]
         additionalParents = element.getTaggedValue('additional_parents')
         if additionalParents:
-            parentnames = list(parentnames) + additionalParents.split(',')
+            parentnames = additionalParents.split(',') + list(parentnames)
 
         if not [c for c in element.getGenParents() if c.isInterface()]:
             parentnames.insert(0, 'Base')
@@ -2309,7 +2304,8 @@ class ArchetypesGenerator(BaseGenerator):
 
         wrt(s1)
         doc = element.getDocumentation(striphtml=self.striphtml)
-        print >> outfile, utils.indent('"""%s\n"""' % doc, 1)
+        print >> outfile, utils.indent('"""%s\n"""' % doc, 1,
+                                       stripBlank=True)
 
         header = element.getTaggedValue('class_header')
         if header:
@@ -2893,7 +2889,6 @@ class ArchetypesGenerator(BaseGenerator):
             else:
                 targettype=target.getCleanName()
 
-
             inverse_relation_name = assoc.getTaggedValue('inverse_relation_name', None)
             if not inverse_relation_name and assoc.fromEnd.isNavigable:
                 if self.getOption('old_inverse_relation_name', assoc, None):
@@ -2906,7 +2901,7 @@ class ArchetypesGenerator(BaseGenerator):
                         inverse_relation_name =  '%s_inv' % assoc.getCleanName()
                     else:
                         inverse_relation_name =  '%s_%s' % (toEndName.lower(), fromEndName.lower())
-                        
+
             assocclassname=getattr(assoc,'isAssociationClass',0) and assoc.getCleanName() or assoc.getTaggedValue('association_class') or self.getOption('association_class',assoc,None)
             self.generateRelation(doc, coll,
                 assoc.getCleanName(),

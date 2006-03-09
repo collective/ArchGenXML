@@ -284,8 +284,8 @@ class BaseGenerator:
         allmethnames = [m.getName() for m in element.getMethodDefs(recursive=1)]
 
         for m in element.getMethodDefs():
-            allmethnames.append(m.getName())
             generatedMethods.append(m)
+            allmethnames.append(m.getName())
 
         for interface in element.getRealizationParents():
             meths = [m for m in interface.getMethodDefs(recursive=1) if m.getName() not in allmethnames]
