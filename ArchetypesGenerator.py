@@ -2201,7 +2201,8 @@ class ArchetypesGenerator(BaseGenerator):
         # But *do* add the actions, views, etc.
         actions_views = self.generateActionsAndViews(element,
                                                      aggregatedClasses)
-        print >> outfile, actions_views
+        if actions_views:
+            print >> outfile, actions_views
 
         # _at_rename_after_creation
         rename_after_creation = self.getOption('rename_after_creation',
