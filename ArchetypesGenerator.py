@@ -534,7 +534,8 @@ class ArchetypesGenerator(BaseGenerator):
         for m in element.getMethodDefs():
             method_name = m.getName()
             code = utils.indent(m.getTaggedValue('code', ''), 1)
-            if m.hasStereoType(['action', 'view', 'form'], umlprofile=self.uml_profile):
+            if m.hasStereoType(['action', 'view', 'form'],
+                               umlprofile=self.uml_profile):
                 log.debug("Method has stereotype action/view/form.")
                 action_name = m.getTaggedValue('action','').strip()
                 if not action_name:
@@ -551,13 +552,13 @@ class ArchetypesGenerator(BaseGenerator):
                 else:
                     action_target=action_name
 
-                dict['action']=utils.getExpression(action_target)
-                dict['action_category']=utils.getExpression(m.getTaggedValue('category','object'))
-                dict['action_id']=m.getTaggedValue('id',method_name)
+                dict['action'] = utils.getExpression(action_target)
+                dict['action_category'] = utils.getExpression(m.getTaggedValue('category','object'))
+                dict['action_id'] = m.getTaggedValue('id',method_name)
                 dict['action_label'] = m.getTaggedValue('action_label') or \
                                        m.getTaggedValue('label',method_name)
                 # action_label is deprecated and for backward compability only!
-                dict['permission']=utils.getExpression(m.getTaggedValue('permission','View'))
+                dict['permission'] = utils.getExpression(m.getTaggedValue('permission','View'))
 
                 condition=m.getTaggedValue('condition') or '1'
                 dict['condition']='python:'+condition
@@ -653,9 +654,10 @@ class ArchetypesGenerator(BaseGenerator):
         return MODIFY_FTI % {'hideactions':hide_actions, }
 
 
-    def generateFti(self, element, subtypes):
-        ''' generates Factory Type Information related attributes on the class'''
-
+    def generateActionsAndViews(self, element, subtypes):
+        """Generate the views and actions (used to be in generateFti())
+        """
+        
         hasActions=False
         actTempl=ACTIONS_START
         base_actions=element.getTaggedValue('base_actions', '').strip()
@@ -672,16 +674,20 @@ class ArchetypesGenerator(BaseGenerator):
             if subtypes:
                 actTempl=actTempl+DEFAULT_ACTIONS_FOLDERISH
 
-        method_actions=self.generateMethodActions(element)
+        method_actions = self.generateMethodActions(element)
         if method_actions.strip():
             hasActions=True
             actTempl +=method_actions
         actTempl+=ACTIONS_END
+        if hasActions:
+            return actTempl
+        else:
+            return
+        
+    def generateFti(self, element, subtypes):
+        ''' generates Factory Type Information related attributes on the class'''
 
         ftiTempl=FTI_TEMPL
-        if self.generateActions and hasActions:
-            ftiTempl += actTempl
-
         immediate_view = element.getTaggedValue('immediate_view') or 'base_view'
         default_view = element.getTaggedValue('default_view') or immediate_view
         suppl_views = element.getTaggedValue('suppl_views') or '()'
@@ -708,7 +714,6 @@ class ArchetypesGenerator(BaseGenerator):
             global_allow = False
         if utils.isTGVTrue(element.getTaggedValue('global_allow')):
             global_allow = True
-
 
         has_content_icon=''
         content_icon=element.getTaggedValue('content_icon')
@@ -2193,6 +2198,10 @@ class ArchetypesGenerator(BaseGenerator):
         if not element.isAbstract():
             fti=self.generateFti(element,aggregatedClasses)
             print >> outfile,fti
+        # But *do* add the actions, views, etc.
+        actions_views = self.generateActionsAndViews(element,
+                                                     aggregatedClasses)
+        print >> outfile, actions_views
 
         # _at_rename_after_creation
         rename_after_creation = self.getOption('rename_after_creation',
