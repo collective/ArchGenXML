@@ -2733,10 +2733,12 @@ class ArchetypesGenerator(BaseGenerator):
                     log.debug("Nothing wrong with the outfile '%s'.",
                               outfilepath)
                 except:
+                    log.info(buf)
                     log.critical("There's something wrong with the python code we're about "
                                  "to write to disk. Perhaps a faulty tagged value or a "
                                  "genuine bug in parsing the previous version of the file. "
-                                 "The filename is '%s'.",
+                                 "The filename is '%s'. For easy debugging, the file is "
+                                 "printed above.",
                                  outfilepath)
                     raise
                 classfile = self.makeFile(outfilepath)
