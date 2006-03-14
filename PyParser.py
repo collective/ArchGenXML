@@ -80,14 +80,15 @@ class PyModule:
     def findClassesAndFunctions(self):
         """ Collect code elements in the source file
 
-        Code elements are seperate things like functions and classes,
-        the import-statements, local variables etcetera are not code
-        elements filtered out by this method.
+        Code elements are seperate things like functions and classes.
+        The import-statements, local variables etcetera are not code
+        elements and are not extracted by this method.
 
         The results are placed in self.classes and
         self.functions. Functions are the top-level methods, methods
         reside inside the classes.
         """
+        
         # First get all the code elements as seen by the python parser
         codes = [c for c in self.code.co_consts if type(c) ==
                  types.CodeType]
@@ -109,6 +110,7 @@ class PyModule:
         dictionary. The keys are the names of the protected sections
         (like 'module-header').
         """
+        
         for i in xrange(0, len(self.splittedSource)):
             line = self.splittedSource[i]
             sline = line.strip()
