@@ -22,8 +22,6 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 <dtml-if "not parsed_class or 'afterSetUp' not in parsed_class.methods.keys()">
     def afterSetUp(self):
         ids = self.portal.objectIds()
-        # Place your custom setup code here, if needed
-        
 <dtml-else><dtml-var "parsed_class.methods['afterSetUp'].getSrc()"></dtml-if>
 
 <dtml-if "not parsed_class or 'test_tools' not in parsed_class.methods.keys()">
