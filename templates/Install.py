@@ -147,19 +147,19 @@ def install(self):
 <dtml-in "configlet_tools">
 <dtml-let c="_['sequence-item']">
 <dtml-let tool_instance_name="c.getTaggedValue('tool_instance_name', 'portal_'+ c.getName().lower() )"
-    configlet_view="'/'+c.getTaggedValue('configlet:view')">
+    configlet_view="'/'+c.getTaggedValue('configlet:view', 'view')">
     portal_controlpanel.unregisterConfiglet('<dtml-var "c.getName()">')
     portal_controlpanel.registerConfiglet(
         '<dtml-var "c.getName()">', #id of your Tool
-        '<dtml-var "c.getTaggedValue('configlet:title',c.getName())">', # Title of your Troduct
+        '<dtml-var "c.getTaggedValue('configlet:title',c.getName())">', # Title of your Product
         'string:${portal_url}/<dtml-var "tool_instance_name"><dtml-var "configlet_view">/',
-        '''<dtml-var "c.getTaggedValue('configlet:condition','python:True')">''', # a condition
-        '<dtml-var "c.getTaggedValue('configlet:permission','Manage Portal')">', # access permission
-        '<dtml-var "c.getTaggedValue('configlet:section','Products')">', # section to which the configlet should be added: (Plone, Products (default) or Member)
+        '<dtml-var "c.getTaggedValue('configlet:condition', 'python:True')">', # a condition
+        '<dtml-var "c.getTaggedValue('configlet:permission', 'Manage portal')">', # access permission
+        '<dtml-var "c.getTaggedValue('configlet:section', 'Products')">', # section to which the configlet should be added: (Plone, Products (default) or Member)
         1, # visibility
         '<dtml-var "c.getName()">ID',
-        '<dtml-var "c.getTaggedValue('configlet:icon','site_icon.gif')">', # icon in control_panel
-        '<dtml-var "c.getTaggedValue('configlet:description','Configuration for tool %s.' % c.getName())">',
+        '<dtml-var "c.getTaggedValue('configlet:icon', 'site_icon.gif')">', # icon in control_panel
+        '<dtml-var "c.getTaggedValue('configlet:description', 'Configuration for tool %s.' % c.getName())">',
         None,
     )
 
