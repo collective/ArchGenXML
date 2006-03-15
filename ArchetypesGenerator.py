@@ -1123,6 +1123,8 @@ class ArchetypesGenerator(BaseGenerator):
         """
         res = ''
         for field_spec in field_specs:
+            log.debug("field_spec is %r.",
+                      field_spec)
             res += self.getFieldFormatted(**field_spec)
         return res
 
