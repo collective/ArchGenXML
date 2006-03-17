@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- Stereotypes, data types and tag definitions for ArchGenXML
+<!-- ArchGenXML stereotypes, data types and tag definitions
      version 0.1 2006/02/24 Pander inintial version
      version 0.2 2006/03/03 Pander completed stereotypes and data types
      version 0.3 2006/03/03 Pander completed tag definitions
      version 0.4 2006/03/06 Pander improved data types
+     version 0.5 2006/03/17 Pander added tag definition i18ncontent
 -->
 <XMI xmlns:UML="org.omg.xmi.namespace.UML" xmi.version="1.2" timestamp="Fri Sep 02 22:10:50 CEST 2005">
   <XMI.header>
@@ -1698,6 +1699,18 @@
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
         <UML:TagDefinition xmi.id = 'xmi.522' name = 'write_permission' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.522.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.522.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.522' name = 'i18ncontent' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
