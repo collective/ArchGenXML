@@ -70,7 +70,6 @@ DEFAULT_ACTIONS_FOLDERISH = """
 FTI_TEMPL = """\
     filter_content_types = %(filter_content_types)d
     global_allow = %(global_allow)d
-    allow_discussion = %(allow_discussion)s
     %(has_content_icon)scontent_icon = '%(content_icon)s'
     immediate_view = '%(immediate_view)s'
     default_view = '%(default_view)s'
