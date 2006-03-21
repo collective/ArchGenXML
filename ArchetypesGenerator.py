@@ -736,8 +736,6 @@ class ArchetypesGenerator(BaseGenerator):
             has_toolicon='#'
             toolicon = element.getCleanName()+'.gif'
 
-        # Allow discussion?
-        allow_discussion = element.getTaggedValue('allow_discussion', False)
 
         # Filter content types?
         # Filter by default if it's a folder-like thingy
@@ -759,7 +757,6 @@ class ArchetypesGenerator(BaseGenerator):
             'content_icon'         : content_icon,
             'has_toolicon'         : has_toolicon,
             'toolicon'             : toolicon,
-            'allow_discussion'     : allow_discussion,
             'global_allow'         : global_allow,
             'immediate_view'       : immediate_view,
             'default_view'         : default_view,
@@ -768,6 +765,13 @@ class ArchetypesGenerator(BaseGenerator):
             'typeDescription'      : typeDescription,
             'type_name_lc'         : element.getName().lower()}
 
+        # Only set allow_discussion if it is explicitly set with a
+	# tagged value. Leave empty if not, otherwise it cannot be
+	# (un)set in Plone afterwards
+        allow_discussion = element.getTaggedValue('allow_discussion', 'NOTSET')
+	template = "    allow_discussion = %(allow_discussion)s\n"
+	if allow_discussion != 'NOTSET':
+	    res += template % allow_discussion
         return res
 
     # TypeMap for Fields, format is
@@ -966,6 +970,7 @@ class ArchetypesGenerator(BaseGenerator):
             * widget:PARAMETER which will be rendered as a PARAMETER=value
 
         """
+
         tgv=element.getTaggedValues()
         widgetcode = type.capitalize()+'Widget'
         widgetmap=odict()
