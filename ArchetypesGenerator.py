@@ -769,7 +769,7 @@ class ArchetypesGenerator(BaseGenerator):
 	# tagged value. Leave empty if not, otherwise it cannot be
 	# (un)set in Plone afterwards
         allow_discussion = element.getTaggedValue('allow_discussion', 'NOTSET')
-	template = "    allow_discussion = %(allow_discussion)s\n"
+	template = "    allow_discussion = %s\n"
 	if allow_discussion != 'NOTSET':
 	    res += template % allow_discussion
         return res
