@@ -31,7 +31,7 @@ from Products.validation.validators import ExpressionValidator
 <dtml-if "parentname=='CompoundField'">
 from Products.CompoundField.CompoundField import CompoundField
 ######<dtml-var parentname>
-<dtml-var "generator.generateArcheSchema(klass,None)" >
+<dtml-var "generator.generateArcheSchema(klass, generator.getLocalFieldSpecs(klass))" >
 </dtml-if>
 
 

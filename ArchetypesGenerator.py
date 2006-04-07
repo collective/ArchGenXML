@@ -1130,7 +1130,16 @@ class ArchetypesGenerator(BaseGenerator):
         for field_spec in field_specs:
             log.debug("field_spec is %r.",
                       field_spec)
-            res += self.getFieldFormatted(**field_spec)
+            try:
+                res += self.getFieldFormatted(field_spec['name'], 
+                                              field_spec['fieldtype'],
+                                              field_spec['map'],
+                                              field_spec['doc'],
+                                              field_spec['indent_level'],
+                                              )
+            except:
+                print "field_specs = '%s'" % field_specs
+                raise
         return res
 
     def getFieldSpec(self, element, classelement, indent_level=0):
@@ -1456,9 +1465,13 @@ class ArchetypesGenerator(BaseGenerator):
         return field_specs
 
     # Generate get/set/add member functions.
-    def generateArcheSchema(self, outfile, element, base_schema, field_specs):
+    def generateArcheSchema(self, element, field_specs, base_schema=None, 
+                            outfile=None):
         """ generates the Schema """
-
+        asString = False
+        if outfile is None:
+            outfile = StringIO()
+            asString = True
         # first copy fields from other schemas if neccessary.
         startmarker = True
         for attr in element.getAttributeDefs():
@@ -1468,7 +1481,7 @@ class ArchetypesGenerator(BaseGenerator):
                     print >> outfile, 'copied_fields = {}'
                 if element.hasStereoType(self.cmfmember_stereotype,
                                          umlprofile=self.uml_profile):
-                    copybase_schema = "BaseMember.content_schema"
+                    copy = "BaseMember.content_schema"
                 else:
                     copybase_schema = base_schema
                 copyfrom = attr.getTaggedValue('copy_from', copybase_schema)
@@ -1511,6 +1524,8 @@ class ArchetypesGenerator(BaseGenerator):
             print >> outfile, 'marshall='+marshaller
 
         print >> outfile, ')\n'
+        if asString:
+            return outfile.getvalue()
 
     def generateFieldMoves(self, outfile, schemaName, field_specs):
         """Generate moveField statements for the schema from field_specs.
@@ -2065,7 +2080,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         # generate local Schema from local field specifications
         field_specs = self.getLocalFieldSpecs(element)
-        self.generateArcheSchema(outfile, element, baseschema, field_specs)
+        self.generateArcheSchema(element, field_specs, baseschema, outfile)
 
         # protected section
         self.generateProtectedSection(outfile, element, 'after-local-schema')
