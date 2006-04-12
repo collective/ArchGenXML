@@ -13,8 +13,6 @@
 
 # originally inspired Dave Kuhlman's generateDS Copyright (c) 2003 Dave Kuhlman
 
-#from __future__ import generators   # only needed for Python 2.2
-
 import sys
 import logging
 import utils
