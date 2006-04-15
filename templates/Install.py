@@ -113,7 +113,7 @@ def install(self):
 </dtml-if>
 <dtml-let autoinstall_tools="[c.getName() for c in generator.getGeneratedTools(package) if not utils.isTGVFalse(c.getTaggedValue('autoinstall')) ]">
 <dtml-if "autoinstall_tools">
-    #autoinstall tools
+    # autoinstall tools
     portal = getToolByName(self,'portal_url').getPortalObject()
     for t in <dtml-var "repr(autoinstall_tools)">:
         try:
@@ -126,11 +126,19 @@ def install(self):
             e = sys.exc_info()
             if e[0] != 'Bad Request':
                 raise
+
 </dtml-if>
 </dtml-let>
 <dtml-let all_tools="[c for c in generator.getGeneratedTools(package)]">
 <dtml-if "all_tools">
-    #hide tools in the navigation
+    # uncatalog tools
+    for toolname in <dtml-var "[t.getTaggedValue('tool_instance_name') or 'portal_%s' % t.getName().lower() for t in all_tools]">:
+        try:
+            portal[toolname].unindexObject()
+        except:
+            pass
+
+    # hide tools in the navigation
     portalProperties = getToolByName(self, 'portal_properties', None)
     if portalProperties is not None:
         navtreeProperties = getattr(portalProperties, 'navtree_properties', None)

@@ -39,6 +39,10 @@ Authors
     Dorneles cleaned up the license/licence mess and killed the
     undesired whitespaces generation.
 
+  Jean Rodrigo Ferri (ferri)
+
+    Bug killer and some tricks with workflow, portal tools, etc.
+
 Sponsors:
 
   Bibliotheca Hertziana, Max Planck Institute for Art History

@@ -1583,6 +1583,13 @@ class ArchetypesGenerator(BaseGenerator):
         if element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile) and '__init__' not in method_names:
             method_names.append('__init__')
 
+        #as __init__ above if at_post_edit_script has to be generated for tools
+        #I want _not_ at_post_edit_script to be preserved (hacky but works)
+        #if it is added to method_names it wont be recognized as a manual method
+        if element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile) \
+           and 'at_post_edit_script' not in method_names:
+            method_names.append('at_post_edit_script')
+
         if self.method_preservation:
             log.debug("We are to preserve methods, so we're looking for manual methods.")
             cl = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name, None)
@@ -2238,13 +2245,16 @@ class ArchetypesGenerator(BaseGenerator):
 
         self.generateProtectedSection(outfile, element, 'class-header', 1)
 
-        # tool __init__
+        # tool __init__ and at_post_edit_script
         if element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile):
             tool_instance_name = element.getTaggedValue('tool_instance_name') \
                                  or 'portal_%s' % element.getName().lower()
             print >> outfile, TEMPL_CONSTR_TOOL % (baseclass,tool_instance_name,archetype_name)
             self.generateProtectedSection(outfile, element,
                                           'constructor-footer', 2)
+            print >> outfile, TEMPL_POST_EDIT_METHOD_TOOL
+            self.generateProtectedSection(outfile, element,
+                                          'post-edit-method-footer', 2)
             print >> outfile
 
         self.generateMethods(outfile, element)

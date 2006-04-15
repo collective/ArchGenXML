@@ -272,6 +272,12 @@ TEMPL_CONSTR_TOOL = """
         self.setTitle('%s')
         """
 
+TEMPL_POST_EDIT_METHOD_TOOL = """
+    # tool should not appear in portal_catalog
+    def at_post_edit_script(self):
+        self.unindexObject()
+        """
+
 TEMPLATE_HEADER = """\
 from AccessControl import ClassSecurityInfo
 from Products.Archetypes.atapi import *
