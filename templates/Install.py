@@ -153,10 +153,12 @@ def install(self):
     portalProperties = getToolByName(self, 'portal_properties', None)
     if portalProperties is not None:
         navtreeProperties = getattr(portalProperties, 'navtree_properties', None)
-        if navtreeProperties is not None:
-            navtreeProperties.idsNotToList = list(navtreeProperties.idsNotToList) + \
-                                  [toolname for toolname in <dtml-var "[t.getTaggedValue('tool_instance_name') or 'portal_%s' % t.getName().lower() for t in all_tools]"> \
-                                            if toolname not in navtreeProperties.idsNotToList]
+        if navtreeProperties is not None and navtreeProperties.hasProperty('idsNotToList'):
+            for toolname in <dtml-var "[t.getTaggedValue('tool_instance_name') or 'portal_%s' % t.getName().lower() for t in all_tools]">:
+                current = list(navtreeProperties.getProperty('idsNotToList'))
+                if toolname not in current:
+                    current.append(toolname)
+                    navtreeProperties.manage_changeProperties(**{'idsNotToList' : current})
 
 </dtml-if>
 </dtml-let>
@@ -352,12 +354,12 @@ def uninstall(self):
     portalProperties = getToolByName(self, 'portal_properties', None)
     if portalProperties is not None:
         navtreeProperties = getattr(portalProperties, 'navtree_properties', None)
-        if navtreeProperties is not None:
-            navtreeProperties.idsNotToList = list(navtreeProperties.idsNotToList)
-            for toolname in [toolname for toolname in <dtml-var "[t.getTaggedValue('tool_instance_name') or 'portal_%s' % t.getName().lower() for t in all_tools]"> \
-                                      if toolname not in navtreeProperties.idsNotToList]:
-                if toolname in navtreeProperties.idsNotToList:
-                    navtreeProperties.idsNotToList.remove(toolname)
+        if navtreeProperties is not None and navtreeProperties.hasProperty('idsNotToList'):
+            for toolname in <dtml-var "[t.getTaggedValue('tool_instance_name') or 'portal_%s' % t.getName().lower() for t in all_tools]">:
+                current = list(navtreeProperties.getProperty('idsNotToList'))
+                if toolname in current:
+                    current.remove(toolname)
+                    navtreeProperties.manage_changeProperties(**{'idsNotToList' : current})
 
 </dtml-if>
 </dtml-let>
