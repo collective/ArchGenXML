@@ -138,6 +138,11 @@ def install(self):
                     current.append(tool)
                     siteProperties.manage_changeProperties(**{'types_not_searched' : current})
 
+    # remove workflow for tools
+    portal_workflow = getToolByName(self, 'portal_workflow')
+    for tool in <dtml-var "repr(autoinstall_tools)">:
+        portal_workflow.setChainForPortalTypes([tool], '')
+
 </dtml-if>
 </dtml-let>
 <dtml-let all_tools="[c for c in generator.getGeneratedTools(package)]">
