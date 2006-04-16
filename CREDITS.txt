@@ -41,7 +41,7 @@ Authors
 
   Jean Rodrigo Ferri (ferri)
 
-    Bug killer and some tricks with workflow, portal tools, etc.
+    Bug killer and some tricks with workflow, portal tools, install, etc.
 
 Sponsors:
 

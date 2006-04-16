@@ -127,6 +127,17 @@ def install(self):
             if e[0] != 'Bad Request':
                 raise
 
+    # hide tools in the search form
+    portalProperties = getToolByName(self, 'portal_properties', None)
+    if portalProperties is not None:
+        siteProperties = getattr(portalProperties, 'site_properties', None)
+        if siteProperties is not None and siteProperties.hasProperty('types_not_searched'):
+            for tool in <dtml-var "repr(autoinstall_tools)">:
+                current = list(siteProperties.getProperty('types_not_searched'))
+                if tool not in current:
+                    current.append(tool)
+                    siteProperties.manage_changeProperties(**{'types_not_searched' : current})
+
 </dtml-if>
 </dtml-let>
 <dtml-let all_tools="[c for c in generator.getGeneratedTools(package)]">
@@ -142,10 +153,11 @@ def install(self):
     portalProperties = getToolByName(self, 'portal_properties', None)
     if portalProperties is not None:
         navtreeProperties = getattr(portalProperties, 'navtree_properties', None)
-        if navtreeProperties:
+        if navtreeProperties is not None:
             navtreeProperties.idsNotToList = list(navtreeProperties.idsNotToList) + \
                                   [toolname for toolname in <dtml-var "[t.getTaggedValue('tool_instance_name') or 'portal_%s' % t.getName().lower() for t in all_tools]"> \
                                             if toolname not in navtreeProperties.idsNotToList]
+
 </dtml-if>
 </dtml-let>
 <dtml-let configlet_tools="[cn for cn in generator.getGeneratedTools(package) if not utils.isTGVFalse(cn.getTaggedValue('autoinstall')) and cn.getTaggedValue('configlet', None)]">
@@ -319,13 +331,28 @@ def install(self):
 def uninstall(self):
     out = StringIO()
 
+<dtml-let autoinstalled_tools="[c.getName() for c in generator.getGeneratedTools(package) if not utils.isTGVFalse(c.getTaggedValue('autoinstall')) ]">
+<dtml-if "autoinstalled_tools">
+    # unhide tools in the search form
+    portalProperties = getToolByName(self, 'portal_properties', None)
+    if portalProperties is not None:
+        siteProperties = getattr(portalProperties, 'site_properties', None)
+        if siteProperties is not None and siteProperties.hasProperty('types_not_searched'):
+            for tool in <dtml-var "repr(autoinstalled_tools)">:
+                current = list(siteProperties.getProperty('types_not_searched'))
+                if tool in current:
+                    current.remove(tool)
+                    siteProperties.manage_changeProperties(**{'types_not_searched' : current})
+
+</dtml-if>
+</dtml-let>
 <dtml-let all_tools="[c for c in generator.getGeneratedTools(package)]">
 <dtml-if "all_tools">
     # unhide tools
     portalProperties = getToolByName(self, 'portal_properties', None)
     if portalProperties is not None:
         navtreeProperties = getattr(portalProperties, 'navtree_properties', None)
-        if navtreeProperties:
+        if navtreeProperties is not None:
             navtreeProperties.idsNotToList = list(navtreeProperties.idsNotToList)
             for toolname in [toolname for toolname in <dtml-var "[t.getTaggedValue('tool_instance_name') or 'portal_%s' % t.getName().lower() for t in all_tools]"> \
                                       if toolname not in navtreeProperties.idsNotToList]:
