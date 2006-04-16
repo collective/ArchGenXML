@@ -145,7 +145,6 @@ MODULE_INFO_HEADER = '''\
 # -*- coding: %(encoding)s -*-
 #
 # %(filename_or_id)s
-# RCS-ID: $Id$
 #
 # %(copyright)s
 %(date)s# Generator: ArchGenXML %(version)s
