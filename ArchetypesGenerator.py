@@ -1131,16 +1131,29 @@ class ArchetypesGenerator(BaseGenerator):
             log.debug("field_spec is %r.",
                       field_spec)
             try:
-                res += self.getFieldFormatted(field_spec['name'], 
-                                              field_spec['fieldtype'],
-                                              field_spec['map'],
-                                              field_spec['doc'],
-                                              field_spec['indent_level'],
-                                              field_spec['rawType'],
-                                              field_spec['array_field'],
-                                              )
-            except:
-                print "field_specs = '%s'" % field_specs
+                # The following is needed to work around a bug in Sunew's
+                # array_field fix. Apparently associations don't have the
+                # rawType key. Should be fixed elsewhere, though.
+                if (field_spec.has_key('rawType') and
+                    field_spec.has_key('array_field')):
+                    res += self.getFieldFormatted(field_spec['name'], 
+                                                  field_spec['fieldtype'],
+                                                  field_spec['map'],
+                                                  field_spec['doc'],
+                                                  field_spec['indent_level'],
+                                                  field_spec['rawType'],
+                                                  field_spec['array_field'],
+                                                  )
+                else:
+                    res += self.getFieldFormatted(field_spec['name'], 
+                                                  field_spec['fieldtype'],
+                                                  field_spec['map'],
+                                                  field_spec['doc'],
+                                                  field_spec['indent_level']
+                                                  )
+            except Exception, e:
+                log.critical("Couldn't set field specs: '%s'.",
+                             field_specs)
                 raise
         return res
 
