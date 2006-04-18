@@ -1136,8 +1136,8 @@ class ArchetypesGenerator(BaseGenerator):
                                               field_spec['map'],
                                               field_spec['doc'],
                                               field_spec['indent_level'],
-                                              field_spec.get('rawType', None),
-                                              field_spec.get('array_field', None),
+                                              field_spec['rawType'],
+                                              field_spec['array_field'],
                                               )
             except:
                 print "field_specs = '%s'" % field_specs
