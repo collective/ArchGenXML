@@ -9,9 +9,9 @@
 #   - To register a customisation policy, create a file CustomizationPolicy.py
 #       with a method register(context) to register the policy.
 
-from zLOG import LOG, INFO
+from zLOG import LOG, INFO, DEBUG
 
-LOG('<dtml-var "product_name">',INFO, 'Installing Product')
+LOG('<dtml-var "product_name">', DEBUG, 'Installing Product')
 
 try:
     import CustomizationPolicy
