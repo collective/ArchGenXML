@@ -298,7 +298,7 @@ except ImportError:
 else:
     HAS_LINGUAPLONE = True
 
-    """
+"""
 
 TEMPLATE_CONFIG_IMPORT = """\
 from Products.%(module)s.config import *
