@@ -678,6 +678,22 @@ group.add_option("--relation-implementation",
 parser.add_option_group(group)
 
 #----------------------------------------------------------------------------
+# General Options
+
+group = OptionGroup(parser, "General Options")
+
+group.add_option("--pdb-on-exception",
+                 dest="pdb_on_exception",
+                 type="yesno",
+                 help="Start the pdb in post mortem mode in case of an "
+                 "uncaught exception",
+                 section="GENERAL",
+                 default=0,
+                 )
+
+parser.add_option_group(group)
+
+#----------------------------------------------------------------------------
 # Deprecated options
 
 group = OptionGroup(parser, "Deprecated")

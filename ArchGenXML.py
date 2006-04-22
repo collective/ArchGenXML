@@ -70,9 +70,30 @@ def main():
         else:
             log.debug("No second argument found: keeping outfilename empty.")
             # the output dir will be named after the model
+
+    # hook into sys.excepthook if the user requested it
+    if d['pdb_on_exception']:
+        sys.excepthook = info
+    
     # start generation
     gen=ArchetypesGenerator(model, **d)
     gen.parseAndGenerate()
+
+def info(type, value, tb):
+    # from http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/65287
+    if hasattr(sys, 'ps1') or not (
+        sys.stderr.isatty() and sys.stdin.isatty()
+        ) or issubclass(type, SyntaxError):
+        # Interactive mode, no tty-like device, or syntax error: nothing
+        # to do but call the default hook
+        sys.__excepthook__(type, value, tb)
+    else:
+        import traceback, pdb
+        # You are NOT in interactive mode; so, print the exception...
+        traceback.print_exception(type, value, tb)
+        print
+        # ... then start the debugger in post-mortem mode
+        pdb.pm()
 
 if __name__ == '__main__':
     main()
