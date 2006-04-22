@@ -54,36 +54,35 @@ def main():
             and not key in ['ensure_value', 'read_file', 'read_module']]
     log.debug("Keys available through the option parser: %r.",
               keys)
-    d = {}
+    options = {}
     for key in keys:
-        d[key] = getattr(settings, key)
+        options[key] = getattr(settings, key)
         log.debug("Option '%s' has value '%s'.",
-                  key, d[key])
+                  key, options[key])
 
     # if outfilename is not given by the -o option try getting the second
     # regular argument
-    if not d['outfilename']:
+    if not options['outfilename']:
         log.debug("Outfilename not specified in the options. "
                   "Trying second loose commandline argument.")
         if len(args) > 1:
-            d['outfilename']=args[1]
+            options['outfilename']=args[1]
         else:
             log.debug("No second argument found: keeping outfilename empty.")
             # the output dir will be named after the model
 
     # hook into sys.excepthook if the user requested it
-    if d['pdb_on_exception']:
+    if options['pdb_on_exception']:
         sys.excepthook = info
-    
+
     # start generation
-    gen=ArchetypesGenerator(model, **d)
+    gen=ArchetypesGenerator(model, **options)
     gen.parseAndGenerate()
 
 def info(type, value, tb):
     # from http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/65287
     if hasattr(sys, 'ps1') or not (
-        sys.stderr.isatty() and sys.stdin.isatty()
-        ) or issubclass(type, SyntaxError):
+        sys.stderr.isatty() and sys.stdin.isatty()):
         # Interactive mode, no tty-like device, or syntax error: nothing
         # to do but call the default hook
         sys.__excepthook__(type, value, tb)
