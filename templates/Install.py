@@ -198,7 +198,8 @@ def install(self):
 <dtml-if "package.getProductName() in generator.vocabularymap.keys()">
 
     # Create vocabularies in vocabulary lib
-    atvm = getToolByName(self, 'portal_vocabularies')
+    from Products.ATVocabularyManager.config import TOOL_NAME as ATVOCABULARYTOOL
+    atvm = getToolByName(self, ATVOCABULARYTOOL)
     vocabmap = {<dtml-var "'),\n        '.join( [s[1:] for s in repr(generator.vocabularymap[package.getProductName()]).split(')')] )">}
     for vocabname in vocabmap.keys():
         if not vocabname in atvm.contentIds():
