@@ -416,30 +416,35 @@ def uninstall(self):
 
     return out.getvalue()
 
-def beforeUninstall(self):
-    """ try to call a custom beforeUninstall method in 'AppInstall.py' 
+def beforeUninstall(self, reinstall, product, cascade):
+    """ try to call a custom beforeUninstall method in 'AppInstall.py'
         method 'beforeUninstall'
     """
+    out = StringIO()
     try:
         beforeuninstall = ExternalMethod('temp', 'temp',
                                    PROJECTNAME+'.AppInstall', 'beforeUninstall')
     except:
-        beforeuninstall = None
+        beforeuninstall = []
 
     if beforeuninstall:
         print >>out, 'Custom beforeUninstall:'
-        res = beforeuninstall(self)
+        res = beforeuninstall(self, reinstall=reinstall
+                                  , product=product
+                                  , cascade=cascade)
         if res:
             print >>out, res
         else:
             print >>out, 'no output'
     else:
         print >>out, 'no custom beforeUninstall'
+    return (out,cascade)
 
-def afterInstall(self):
-    """ try to call a custom afterInstall method in 'AppInstall.py' method 
+def afterInstall(self, reinstall, product):
+    """ try to call a custom afterInstall method in 'AppInstall.py' method
         'afterInstall'
     """
+    out = StringIO()
     try:
         afterinstall = ExternalMethod('temp', 'temp',
                                    PROJECTNAME+'.AppInstall', 'afterInstall')
@@ -448,10 +453,12 @@ def afterInstall(self):
 
     if afterinstall:
         print >>out, 'Custom afterInstall:'
-        res = afterinstall(self)
+        res = afterinstall(self, product=None
+                               , reinstall=None)
         if res:
             print >>out, res
         else:
             print >>out, 'no output'
     else:
         print >>out, 'no custom afterInstall'
+    return out
