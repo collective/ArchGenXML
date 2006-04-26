@@ -414,3 +414,43 @@ def uninstall(self):
         print >>out,'no custom uninstall'
 
     return out.getvalue()
+
+def beforeUninstall(self):
+    """ try to call a custom beforeUninstall method in 'AppInstall.py' 
+        method 'beforeUninstall'
+    """
+    try:
+        beforeuninstall = ExternalMethod('temp', 'temp',
+                                   PROJECTNAME+'.AppInstall', 'beforeUninstall')
+    except:
+        beforeuninstall = None
+
+    if beforeuninstall:
+        print >>out, 'Custom beforeUninstall:'
+        res = beforeuninstall(self)
+        if res:
+            print >>out, res
+        else:
+            print >>out, 'no output'
+    else:
+        print >>out, 'no custom beforeUninstall'
+
+def afterInstall(self):
+    """ try to call a custom afterInstall method in 'AppInstall.py' method 
+        'afterInstall'
+    """
+    try:
+        afterinstall = ExternalMethod('temp', 'temp',
+                                   PROJECTNAME+'.AppInstall', 'afterInstall')
+    except:
+        afterinstall = None
+
+    if afterinstall:
+        print >>out, 'Custom afterInstall:'
+        res = afterinstall(self)
+        if res:
+            print >>out, res
+        else:
+            print >>out, 'no output'
+    else:
+        print >>out, 'no custom afterInstall'
