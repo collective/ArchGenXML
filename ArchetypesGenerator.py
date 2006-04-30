@@ -13,6 +13,7 @@ import sys
 import time
 import os.path
 import logging
+from types import StringTypes
 
 import utils
 from odict import odict
@@ -1134,7 +1135,10 @@ class ArchetypesGenerator(BaseGenerator):
                 # The following is needed to work around a bug in Sunew's
                 # array_field fix. Apparently associations don't have the
                 # rawType key. Should be fixed elsewhere, though.
-                if (field_spec.has_key('rawType') and
+                if type(field_spec) in StringTypes:
+                    # need this for copied fields
+                    res += field_spec
+                elif (field_spec.has_key('rawType') and
                     field_spec.has_key('array_field')):
                     res += self.getFieldFormatted(field_spec['name'], 
                                                   field_spec['fieldtype'],
@@ -1152,7 +1156,8 @@ class ArchetypesGenerator(BaseGenerator):
                                                   field_spec['indent_level']
                                                   )
             except Exception, e:
-                log.critical("Couldn't set field specs: '%s'.",
+                import pdb; pdb.set_trace()
+                log.critical("Couldn't render fields from field_specs: '%s'.",
                              field_specs)
                 raise
         return res
@@ -1547,7 +1552,9 @@ class ArchetypesGenerator(BaseGenerator):
         """
 
         for field_spec in field_specs:
-            if not field_spec.has_key('map'): continue
+            if type(field_spec) in StringTypes or \
+               not field_spec.has_key('map'): 
+                continue
             for key in field_spec['map'].keys():
                 if key.startswith('move:'):
                     move_key = key[5:]
