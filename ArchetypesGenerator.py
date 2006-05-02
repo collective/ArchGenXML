@@ -1511,6 +1511,8 @@ class ArchetypesGenerator(BaseGenerator):
                          and ("name='%s'" % attr.getName()) or '')
                 map = self.getFieldAttributes(attr)
                 for key in map:
+                    if key.startswith('move:'):
+                        continue
                     print >>outfile, "copied_fields['%s'].%s = %s" % \
                                      (attr.getName(), key, map[key])
                 tgv = attr.getTaggedValues()

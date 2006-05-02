@@ -700,12 +700,6 @@ explanation = """Whether or not the field should be searchable when performing
 a search in the portal."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-tagname = 'index'
-explanation = """Add an index to the attribute. The value of the tagged value
-should be the same that archetypes expects, so something like 'FieldIndex' or
-'FieldIndex:brains'."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 tagname = 'vocabulary:type'
 explanation = """Enables support for Products 'ATVocabularyManager' by setting
 value to 'ATVocabularyManager'."""
@@ -899,6 +893,13 @@ for category in ['model', 'package', 'class']:
     catalogs. Example-value: 'portal_catalog, another_catalog'. Explaination: 
     Instances of the class wont be catalogged in portal_catalog anymore."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+    tagname = 'index'
+    explanation = """Add an index to the attribute. The value of the tagged value
+    should be the same that archetypes expects, so something like 'FieldIndex' or
+    'FieldIndex:brains'."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 
 for category in ['model', 'package', 'class', 'attribute']:
     tagname = 'read_permission'
