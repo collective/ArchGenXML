@@ -3013,8 +3013,9 @@ class ArchetypesGenerator(BaseGenerator):
                 if not currentproduct in self.vocabularymap.keys():
                     self.vocabularymap[currentproduct] = {}
                 if not assoc.getId() in self.vocabularymap[currentproduct].keys():
+                    type = self.getOption('association_vocabularytype', assoc, 'SimpleVocabulary')
                     self.vocabularymap[currentproduct][assoc.getCleanName()] = (
-                                                    'SimpleVocabulary',
+                                                    type,
                                                     'SimpleVocabularyTerm'
                     )
                 else:
