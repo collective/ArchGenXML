@@ -2897,7 +2897,7 @@ class ArchetypesGenerator(BaseGenerator):
         if targetcardinality[1] == -1:
             targetcardinality[1] = None
 
-        if targetcardinality != (None, None):
+        if targetcardinality != [None, None]:
             const = doc.createElement('CardinalityConstraint')
             ruleset.appendChild(const)
             const.setAttribute('id', 'cardinality')
