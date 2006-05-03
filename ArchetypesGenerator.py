@@ -2921,7 +2921,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         return ruleset
 
-    def generateRelations(self,package):
+    def generateRelations(self, package):
         doc=minidom.Document()
         lib=doc.createElement('RelationsLibrary')
         doc.appendChild(lib)
@@ -2929,8 +2929,14 @@ class ArchetypesGenerator(BaseGenerator):
         coll.setAttribute('id',package.getCleanName())
         lib.appendChild(coll)
         package.num_generated_relations=0
-
-        for assoc in package.getAssociations(recursive=1):
+        assocs = package.getAssociations(recursive=1)
+        processed = [] # xxx hack and workaround, not solution, avoids double
+                       # generation of relations
+        #import pdb; pdb.set_trace()
+        for assoc in assocs:
+            if assoc in processed:
+                continue
+            processed.append(assoc)
             if self.getOption('relation_implementation',assoc,'basic') != 'relations':
                 continue
 
@@ -3012,14 +3018,19 @@ class ArchetypesGenerator(BaseGenerator):
                 currentproduct = package.getProductName()
                 if not currentproduct in self.vocabularymap.keys():
                     self.vocabularymap[currentproduct] = {}
-                if not assoc.getId() in self.vocabularymap[currentproduct].keys():
-                    type = self.getOption('association_vocabularytype', assoc, 'SimpleVocabulary')
+                type = self.getOption('association_vocabularytype', assoc, 'SimpleVocabulary')
+                if not assoc.getCleanName() in self.vocabularymap[currentproduct].keys():
                     self.vocabularymap[currentproduct][assoc.getCleanName()] = (
                                                     type,
                                                     'SimpleVocabularyTerm'
                     )
                 else:
-                    print "warning: vocabulary with name %s defined more than once." % vocaboptions['name']
+                    print "warning: vocabulary with name %s defined more than once." % assoc.getCleanName()
+                if inverse_relation_name and not inverse_relation_name in self.vocabularymap[currentproduct].keys():
+                    self.vocabularymap[currentproduct][inverse_relation_name] = (
+                                                    type,
+                                                    'SimpleVocabularyTerm'
+                    )                    
 
             #/ATVM
 
