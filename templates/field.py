@@ -35,7 +35,7 @@ from Products.CompoundField.CompoundField import CompoundField
 </dtml-if>
 
 
-class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-var "','.join([p.getCleanName() for p in klass.getGenParents()])"><dtml-else><dtml-var parentname></dtml-if>):
+class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-var "', '.join([p.getCleanName() for p in klass.getGenParents()])"><dtml-else><dtml-var parentname></dtml-if>):
     """<dtml-var "utils.indent(klass.getDocumentation(), 1, skipFirstRow=True, stripBlank=True)">
     """
 <dtml-var "generator.getProtectedSection(parsed_class,'class-header',1)">
@@ -70,14 +70,14 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
 
 <dtml-if "not parsed_class">
     def get(self, instance, **kwargs):
-        return <dtml-var parentname>.get(self,instance,**kwargs)
+        return <dtml-var parentname>.get(self, instance, **kwargs)
 
     def getRaw(self, instance, **kwargs):
-        return <dtml-var parentname>.getRaw(self,instance,**kwargs)
+        return <dtml-var parentname>.getRaw(self, instance, **kwargs)
 
     security.declarePrivate('set')
     def set(self, instance, value, **kwargs):
-        return <dtml-var parentname>.set(self,instance,value,**kwargs)
+        return <dtml-var parentname>.set(self, instance, value, **kwargs)
 
 </dtml-if>
 <dtml-in "generator.getMethodsToGenerate(klass)[0]">
@@ -89,7 +89,7 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
 <dtml-var "parsed_class.methods[m.getCleanName()].getSrc()">
 <dtml-else>
 
-    def <dtml-var "m.getName()">(self,<dtml-var "','.join(m.getParamNames())">):
+    def <dtml-var "m.getName()">(self,<dtml-var "', '.join(m.getParamNames())">):
         pass
 </dtml-if>
 </dtml-let>
