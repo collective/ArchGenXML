@@ -3073,14 +3073,7 @@ class ArchetypesGenerator(BaseGenerator):
         self.makeDir(os.path.join(root.getFilePath(),'skins'))
         self.makeDir(os.path.join(root.getFilePath(),'skins',
             root.getProductModuleName()))
-        self.makeDir(os.path.join(root.getFilePath(),'skins',
-            root.getProductModuleName()+'_public'))
-
-        of = self.makeFile(os.path.join(root.getFilePath(), 'skins',
-                           root.getProductModuleName()+'_public', 'readme.txt'))
-        print >> of, READMEHIGHEST % root.getProductName()
-        of.close()
-
+        # [reinout:] I removed the creation of /skins/..._public/
         of = self.makeFile(os.path.join(root.getFilePath(), 'skins',
                            root.getProductModuleName(), 'readme.txt'))
         print >> of, READMELOWEST % root.getProductName()
