@@ -360,7 +360,7 @@ class ArchetypesGenerator(BaseGenerator):
     # i18n_content_support = 0
 
     build_msgcatalog = 1
-    striphtml = 0
+    #striphtml = 0
 
     reservedAtts = ['id']
     portal_tools = ['portal_tool', 'tool']
@@ -419,6 +419,8 @@ class ArchetypesGenerator(BaseGenerator):
     creation_permission_stack = []
 
     def __init__(self, xschemaFileName, **kwargs):
+#        import pdb;pdb.set_trace()
+        
         log.debug("Initializing ArchetypesGenerator. "
                   "We're being passed a file '%s' and keyword "
                   "arguments %r.", xschemaFileName, kwargs)
@@ -1239,7 +1241,7 @@ class ArchetypesGenerator(BaseGenerator):
            and attr.isI18N():
             atype = 'I18N' + atype
 
-        doc=attr.getDocumentation(striphtml=self.striphtml)
+        doc=attr.getDocumentation(striphtml=self.strip_html)
 
         if attr.hasTaggedValue('validators'):
             #make validators to a list in order to append the ExpressionValidator
@@ -1359,7 +1361,7 @@ class ArchetypesGenerator(BaseGenerator):
                     map.update({'referenceClass':"ContentReferenceCreator('%s')"
                                 % rel.getName()})
 
-        doc=rel.getDocumentation(striphtml=self.striphtml)
+        doc=rel.getDocumentation(striphtml=self.strip_html)
         res={'name':name,
             'fieldtype':field,
             'map':map,
@@ -1420,7 +1422,7 @@ class ArchetypesGenerator(BaseGenerator):
             else:
                 return None
 
-        doc = rel.getDocumentation(striphtml=self.striphtml)
+        doc = rel.getDocumentation(striphtml=self.strip_html)
         res={'name':name,
             'fieldtype':field,
             'map':map,
@@ -1715,7 +1717,7 @@ class ArchetypesGenerator(BaseGenerator):
                 print >> outfile, '    def %s(%s):' % (m.getName(), paramstr[1:])
 
             code = m.taggedValues.get('code', '')
-            doc = m.getDocumentation(striphtml=self.striphtml)
+            doc = m.getDocumentation(striphtml=self.strip_html)
             if doc is not None:
                 print >> outfile, utils.indent('"""%s\n"""' % doc, 2,
                                                stripBlank=True)
@@ -2173,7 +2175,8 @@ class ArchetypesGenerator(BaseGenerator):
         classDeclaration = 'class %s%s%s:\n' % (self.prefix, name, parents)
 
         wrt(classDeclaration)
-        doc = element.getDocumentation(striphtml=self.striphtml)
+
+        doc = element.getDocumentation(striphtml=self.strip_html)
         parsedDoc = ''
         if element.parsed_class:
             parsedDoc = element.parsed_class.getDocumentation()
@@ -2369,7 +2372,7 @@ class ArchetypesGenerator(BaseGenerator):
         s1 = 'class %s%s(%s):\n' % (self.prefix, name, parents)
 
         wrt(s1)
-        doc = element.getDocumentation(striphtml=self.striphtml)
+        doc = element.getDocumentation(striphtml=self.strip_html)
         print >> outfile, utils.indent('"""%s\n"""' % doc, 1,
                                        stripBlank=True)
 
