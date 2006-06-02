@@ -360,7 +360,7 @@ class ArchetypesGenerator(BaseGenerator):
     # i18n_content_support = 0
 
     build_msgcatalog = 1
-    #striphtml = 0
+    striphtml = 0
 
     reservedAtts = ['id']
     portal_tools = ['portal_tool', 'tool']
@@ -1314,6 +1314,8 @@ class ArchetypesGenerator(BaseGenerator):
             # The relation can override the field
             field = rel.getTaggedValue('reference_field') or \
                     rel.toEnd.getTaggedValue('reference_field') or \
+                    rel.getTaggedValue('field') or \
+                    rel.toEnd.getTaggedValue('field') or \
                     self.typeMap['relation']['field']
             # TBD: poseidon reference-as-field handling or so...
             if not field:
@@ -1391,11 +1393,11 @@ class ArchetypesGenerator(BaseGenerator):
            rel.getTaggedValue('inverse_reference_name')):
             # The relation can override the field
             field = rel.getTaggedValue('relation_field') or \
+                    rel.getTaggedValue('field') or \
+                    rel.fromEnd.getTaggedValue('field') or \
                     self.typeMap['relation']['field']
             map = self.typeMap['relation']['map'].copy()
-            backrelname = rel.getTaggedValue('inverse_relation_name') or \
-                          relname+'_inverse'
-
+            backrelname = rel.getInverseName()
             map.update({'multiValued': multiValued,
                         'relationship': "'%s'" % backrelname})
             map.update(self.getFieldAttributes(rel.fromEnd))
