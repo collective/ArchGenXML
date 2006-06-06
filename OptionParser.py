@@ -612,7 +612,7 @@ group.add_option("--default-creation-permission",
 
 group.add_option("--default-creation-roles",
                  dest="creation_roles",
-                 help="Specifies de default roles that creates content",
+                 help="Specifies the default roles that creates content",
                  default="python:('Manager','Owner')",
                  type="string",
                  section="CLASSES",
