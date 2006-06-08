@@ -18,13 +18,13 @@ setup(name='archgenxml',
       keywords="zope plone UML",
       author='Reinout van Rees',
       author_email='reinout@vanrees.org',
-      url='http://plone.org/products/instance-manager',
+      url='http://plone.org/products/archgenxml',
       packages=find_packages('src'),
       package_dir={'': 'src'},
       include_package_data=True,
       entry_points={
         'console_scripts':[
-            'archgenxml = archgenxml.mainprogram:main'
+            'archgenxml = archgenxml.ArchGenXML:main'
             ]
         }
       )
