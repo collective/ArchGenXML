@@ -424,7 +424,6 @@ class ArchetypesGenerator(BaseGenerator):
         log.debug("Initializing ArchetypesGenerator. "
                   "We're being passed a file '%s' and keyword "
                   "arguments %r.", xschemaFileName, kwargs)
-        self.infoind = 0
         self.xschemaFileName = xschemaFileName
         self.__dict__.update(kwargs)
         log.debug("After copying over the keyword arguments (read: "
@@ -1786,7 +1785,7 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             parent = None
 
-        return BaseGenerator.generatePythonClass(self, element, template, parent=parent, **kw)
+        return BaseGenerator.generatePythonClass(self, element, template, parent=parent, nolog=True, **kw)
 
     def generateWidgetClass(self, element, template, zptname='widget.pt'):
         log.info("%sGenerating widget '%s'.",

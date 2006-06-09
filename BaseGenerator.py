@@ -50,6 +50,9 @@ class BaseGenerator:
 
     default_class_type = 'python_class'
     default_interface_type = 'z3'
+    
+    # indent helper for log output:
+    infoind = 0
 
     def isTGVTrue(self,v):
         return utils.isTGVTrue(v)
@@ -347,13 +350,12 @@ class BaseGenerator:
                                        template=getattr(dispatching_stereotype,
                                                         'template', None))
 
-    def generatePythonClass(self, element, template, **kw):
-        log.debug("Generating python class '%s'.",
-                 element.getName())
-        # ^^^^ This was changed into log.info during the snow sprint.
-        # With incorrect indentation.
-        # And resulting in double messages for test class files.
-        # => reverted to log.debug [reinout]
+    def generatePythonClass(self, element, template, nolog=False, **kw):
+        if not nolog:
+            log.info("%sGenerating python class '%s'.",
+                     ' '*4*self.infoind,
+                     element.getName())
+
         templ = utils.readTemplate(template)
         d = {
             'klass': element,
