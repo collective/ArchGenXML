@@ -419,8 +419,7 @@ class ArchetypesGenerator(BaseGenerator):
     creation_permission_stack = []
 
     def __init__(self, xschemaFileName, **kwargs):
-#        import pdb;pdb.set_trace()
-        
+        BaseGenerator.__init__(self)
         log.debug("Initializing ArchetypesGenerator. "
                   "We're being passed a file '%s' and keyword "
                   "arguments %r.", xschemaFileName, kwargs)
@@ -572,15 +571,15 @@ class ArchetypesGenerator(BaseGenerator):
             if m.hasStereoType('view', umlprofile=self.uml_profile):
                 f=self.makeFile(os.path.join(self.getSkinPath(element),action_name+'.pt'),0)
                 if f:
-                    templdir=os.path.join(sys.path[0],'templates')
-                    viewTemplate=open(os.path.join(templdir,'action_view.pt')).read()
+                    
+                    viewTemplate=open(os.path.join(self.templateDir,'action_view.pt')).read()
                     f.write(viewTemplate % code)
 
             elif m.hasStereoType('form', umlprofile=self.uml_profile):
                 f=self.makeFile(os.path.join(self.getSkinPath(element),action_name+'.cpt'),0)
                 if f:
-                    templdir=os.path.join(sys.path[0],'templates')
-                    viewTemplate=open(os.path.join(templdir,'action_view.pt')).read()
+                    
+                    viewTemplate=open(os.path.join(self.templateDir,'action_view.pt')).read()
                     f.write(viewTemplate % code)
 
             elif m.hasStereoType(['portlet_view','portlet'], umlprofile=self.uml_profile):
@@ -594,8 +593,8 @@ class ArchetypesGenerator(BaseGenerator):
 
                 f=self.makeFile(os.path.join(self.getSkinPath(element),view_name+'.pt'),0)
                 if f:
-                    templdir=os.path.join(sys.path[0],'templates')
-                    viewTemplate=open(os.path.join(templdir,'portlet_template.pt')).read()
+                    
+                    viewTemplate=open(os.path.join(self.templateDir,'portlet_template.pt')).read()
                     f.write(viewTemplate % {'method_name':method_name})
 
         res=outfile.getvalue()
@@ -1733,8 +1732,8 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateBaseTestcaseClass(self,element,template):
         log.debug('write runalltests.py and framework.py')
-        runalltests=utils.readTemplate('tests/runalltests.py')
-        framework=utils.readTemplate('tests/framework.py')
+        runalltests=self.readTemplate('tests/runalltests.py')
+        framework=self.readTemplate('tests/framework.py')
 
         log.debug('generate base testcase class')
         of=self.makeFile(os.path.join(element.getPackage().getFilePath(),'runalltests.py'))
@@ -1749,7 +1748,7 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateDocTestcaseClass(self,element,template ):
         #write runalltests.py and framework.py
-        testdoc_t=utils.readTemplate('tests/testdoc.txt')
+        testdoc_t=self.readTemplate('tests/testdoc.txt')
         testdoc=HTML(testdoc_t,{'klass':element })()
 
 
@@ -1798,7 +1797,7 @@ class ArchetypesGenerator(BaseGenerator):
         templpath = os.path.join(self.getSkinPath(element), macroname)
         fieldpt = self.readFile(templpath)
         if not fieldpt:
-            templ = utils.readTemplate(zptname)
+            templ = self.readTemplate(zptname)
             d = {
                 'klass': element,
                 'generator': self,
@@ -2469,7 +2468,8 @@ class ArchetypesGenerator(BaseGenerator):
         """Generate Extensions/Install.py from the DTML template"""
 
         # create Extension directory
-        installTemplate=open(os.path.join(sys.path[0],'templates','Install.py')).read()
+        installTemplate = open(os.path.join(self.templateDir, 
+                                            'Install.py')).read()
         extDir=os.path.join(package.getFilePath(),'Extensions')
         self.makeDir(extDir)
 
@@ -2486,7 +2486,7 @@ class ArchetypesGenerator(BaseGenerator):
         }
         d.update(__builtins__)
 
-        templ=utils.readTemplate('Install.py')
+        templ=self.readTemplate('Install.py')
         dtml=HTML(templ,d)
         res=dtml()
 
@@ -2527,7 +2527,7 @@ class ArchetypesGenerator(BaseGenerator):
         }
         d.update(__builtins__)
 
-        templ=utils.readTemplate('config.py')
+        templ=self.readTemplate('config.py')
         dtml=HTML(templ,d)
         res=dtml()
 
@@ -2588,7 +2588,7 @@ class ArchetypesGenerator(BaseGenerator):
            'protected_init_section_bottom' : protectedInitCodeB,
         }
 
-        templ=utils.readTemplate('__init__.py')
+        templ=self.readTemplate('__init__.py')
         dtml=HTML(templ,d)
         res=dtml()
 
@@ -2620,7 +2620,7 @@ class ArchetypesGenerator(BaseGenerator):
            'protected_module_footer'       : footerCode,
            }
 
-        templ=utils.readTemplate('__init_package__.py')
+        templ=self.readTemplate('__init_package__.py')
         dtml=HTML(templ,d)
         res=dtml()
 
@@ -2642,11 +2642,11 @@ class ArchetypesGenerator(BaseGenerator):
         if target[-1] in ('/','\\'):
             target=target[:-1]
 
-        templdir=os.path.join(sys.path[0],'templates')
+        
 
         # Create a tool.gif if necessary
         if self.getGeneratedTools(package):
-            toolgif = open(os.path.join(templdir,'tool.gif'),'rb').read()
+            toolgif = open(os.path.join(self.templateDir,'tool.gif'),'rb').read()
             of=self.makeFile(os.path.join(package.getFilePath(),'tool.gif'), self.force, 1)
             if of:
                 of.write(toolgif)
@@ -2666,7 +2666,7 @@ class ArchetypesGenerator(BaseGenerator):
         if self.customization_policy:
             of=self.makeFile(os.path.join(package.getFilePath(),'CustomizationPolicy.py'),0)
             if of:
-                cpTemplate=utils.readTemplate('CustomizationPolicy.py')
+                cpTemplate=self.readTemplate('CustomizationPolicy.py')
                 d={'package':package,'generator':self}
                 cp=HTML(cpTemplate,d)()
                 of.write(cp)
@@ -2687,9 +2687,9 @@ class ArchetypesGenerator(BaseGenerator):
         if target[-1] in ('/','\\'):
             target=target[:-1]
 
-        templdir=os.path.join(sys.path[0],'templates')
-        apeconfig_object=open(os.path.join(templdir,'apeconf_object.xml')).read()
-        apeconfig_folder=open(os.path.join(templdir,'apeconf_folder.xml')).read()
+        
+        apeconfig_object=open(os.path.join(self.templateDir,'apeconf_object.xml')).read()
+        apeconfig_folder=open(os.path.join(self.templateDir,'apeconf_folder.xml')).read()
 
         of=self.makeFile(os.path.join(target,'apeconf.xml'))
         print >> of, TEMPL_APECONFIG_BEGIN
@@ -3089,8 +3089,8 @@ class ArchetypesGenerator(BaseGenerator):
             self.makeDir(os.path.join(root.getFilePath(), 'i18n'))
             filepath = os.path.join(root.getFilePath(), 'i18n', 'generated.pot')
             if not os.path.exists(filepath):
-                templdir = os.path.join(sys.path[0], 'templates')
-                PotTemplate = open(os.path.join(sys.path[0], 'templates', 'generated.pot')).read()
+                PotTemplate = open(os.path.join(self.templateDir,
+                                                'generated.pot')).read()
                 authors, emails, authorline = self.getAuthors(root)
                 PotTemplate = PotTemplate % {
                     'author':', '.join(authors) or 'unknown author',

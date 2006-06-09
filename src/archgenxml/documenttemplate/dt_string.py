@@ -103,8 +103,8 @@ class String:
             try:
                 exec 'from %s import %s' % (module, name) in d
             except ImportError:
-                exec 'from documenttemplate.%s import %s' % (module,
-                                                                  name) in d
+                exec 'from archgenxml.documenttemplate.%s import %s' % (module,
+                                                                        name) in d
             command = d[name]
             self.commands[cname] = command
         return tag, args, command, coname

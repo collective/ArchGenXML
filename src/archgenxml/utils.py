@@ -1,6 +1,7 @@
-import sys
+from pkg_resources import resource_string
 import logging
 import os.path
+import sys
 
 log = logging.getLogger('utils')
 
@@ -51,14 +52,6 @@ def mapName(oldName):
         if oldName in NameTable.keys():
             newName = NameTable[oldName]
     return newName.replace('-', '_')
-
-def readTemplate(filename):
-    log.debug("Trying to read template '%s'.", filename)
-    templatedir = os.path.join(sys.path[0], 'templates')
-    log.debug("Trying to find it in template directory '%s'.", templatedir)
-    template = open(os.path.join(templatedir,filename)).read()
-    log.debug("Succesfully opened the template, returning it.")
-    return template
 
 def indent(s, indent, prepend='', skipFirstRow=False, stripBlank=False):
     """Indent string 's'.
@@ -153,7 +146,7 @@ ArchGenXML %s
 """
 
 def version():
-    ver = open(os.path.join(sys.path[0],'version.txt')).read().strip()
+    ver = resource_string(__name__, 'version.txt').strip()
     return "Version " + str(ver)
 
 def initLog(filename):

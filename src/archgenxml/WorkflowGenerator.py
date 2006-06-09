@@ -60,7 +60,7 @@ class WorkflowGenerator(BaseGenerator):
 
             # Generate workflow script
             log.info("Generating workflow '%s'.", sm_name)
-            templ = utils.readTemplate('create_workflow.py')
+            templ = self.readTemplate('create_workflow.py')
             scriptpath = os.path.join(extDir, sm_name + '.py')
             filesrc = self.atgenerator.readFile(scriptpath) or ''
             parsedModule = PyModule(filesrc, mode='string')
@@ -74,7 +74,7 @@ class WorkflowGenerator(BaseGenerator):
             # Generate workflow transition script, if any
             if sm.getAllTransitionActionNames():
                 log.info("Generating workflow script(s).")
-                templ = utils.readTemplate('create_workflow_script.py')
+                templ = self.readTemplate('create_workflow_script.py')
                 scriptpath = os.path.join(extDir, sm_name + '_scripts.py')
                 filesrc = self.atgenerator.readFile(scriptpath) or ''
                 parsedModule = PyModule(filesrc, mode='string')
@@ -89,7 +89,7 @@ class WorkflowGenerator(BaseGenerator):
 
         del d['statemachine']
         log.debug("Creating InstallWorkflows.py file.")
-        templ = utils.readTemplate('InstallWorkflows.py')
+        templ = self.readTemplate('InstallWorkflows.py')
         scriptpath = os.path.join(extDir, 'InstallWorkflows.py')
         filesrc = self.atgenerator.readFile(scriptpath) or ''
         parsedModule = PyModule(filesrc, mode='string')

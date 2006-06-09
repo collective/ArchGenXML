@@ -18,6 +18,8 @@ import os
 import time
 import logging
 from StringIO import StringIO
+from pkg_resources import resource_filename
+from pkg_resources import Requirement
 
 from documenttemplate.documenttemplate import HTML
 
@@ -50,6 +52,17 @@ class BaseGenerator:
 
     default_class_type = 'python_class'
     default_interface_type = 'z3'
+
+    def __init__(self):
+        # Set egg-friendly template dir
+        self.templateDir = resource_filename(__name__, "templates")
+
+    def readTemplate(self, filename):
+        log.debug("Trying to read template '%s'.", filename)
+        template = open(os.path.join(self.templateDir,
+                                     filename)).read()
+        log.debug("Succesfully opened the template, returning it.")
+        return template
 
     def isTGVTrue(self,v):
         return utils.isTGVTrue(v)
@@ -354,7 +367,7 @@ class BaseGenerator:
         # With incorrect indentation.
         # And resulting in double messages for test class files.
         # => reverted to log.debug [reinout]
-        templ = utils.readTemplate(template)
+        templ = self.readTemplate(template)
         d = {
             'klass': element,
             'generator': self,
@@ -372,7 +385,7 @@ class BaseGenerator:
                  '    ',
                  element.getName())
 
-        templ = utils.readTemplate(template)
+        templ = self.readTemplate(template)
         d = {
             'klass': element,
             'generator': self,

@@ -26,5 +26,6 @@ setup(name='archgenxml',
         'console_scripts':[
             'archgenxml = archgenxml.ArchGenXML:main'
             ]
-        }
+        },
+      test_suite='archgenxml.tests.runalltests.suite',
       )
