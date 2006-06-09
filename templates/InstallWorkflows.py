@@ -13,10 +13,13 @@ def installWorkflows(self, package, out):
 <dtml-let sm="_['sequence-item']">
 
     ourProductWorkflow = ExternalMethod('temp', 'temp',
-                         productname+'.'+'<dtml-var "generator.cleanName(sm.getName())">',
-                         'create<dtml-var "generator.cleanName(sm.getName())">')
+                                        productname+'.'+'<dtml-var "generator.cleanName(sm.getName())">',
+                                        'create<dtml-var "generator.cleanName(sm.getName())">')
     workflow = ourProductWorkflow(self, '<dtml-var "generator.cleanName(sm.getName())">')
-    workflowTool._setObject('<dtml-var "generator.cleanName(sm.getName())">', workflow)
+    if '<dtml-var "generator.cleanName(sm.getName())">' in workflowTool.listWorkflows():
+        print >> out, '<dtml-var "generator.cleanName(sm.getName())"> already in workflows.'
+    else:
+        workflowTool._setObject('<dtml-var "generator.cleanName(sm.getName())">', workflow)
     workflowTool.setChainForPortalTypes(<dtml-var "repr(sm.getClassNames())">, workflow.getId())
 </dtml-let>
 </dtml-in>
