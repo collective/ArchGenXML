@@ -618,16 +618,6 @@ group.add_option("--default-creation-roles",
                  section="CLASSES",
                  )
 
-group.add_option("--detailed-created-permissions",
-                 type="yesno",
-                 help="""DEPRECATED: use
-                 --detailed-creation-permissions, which generates a
-                 slightly different syntax, though.""",
-                 default=0,
-                 section="CLASSES",
-                 dest="detailed_created_permissions",
-                 )
-
 group.add_option("--detailed-creation-permissions",
                  type="yesno",
                  help="Separate creation permissions per class (defaults to no)",
@@ -759,9 +749,19 @@ group.add_option("--creation-permission",
                  )
 
 group.add_option("--detailled-creation-permission",
-                 help="Use --detailed-creation-permission",
+                 help="Use --detailed-creation-permissions",
                  action="deprecationwarning",
                  section="DEPRECATED"
+                 )
+
+group.add_option("--detailed-created-permissions",
+                 type="yesno",
+                 help="Use"
+                 " --detailed-creation-permissions, which generates a"
+                 " slightly different syntax, though.",
+                 default=0,
+                 section="CLASSES",
+                 dest="detailed_created_permissions",
                  )
 
 group.add_option("--noclass",
