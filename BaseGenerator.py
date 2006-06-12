@@ -395,7 +395,10 @@ class BaseGenerator:
                 'name': license_name,
                 'text': self.getOption('license_text', element, ''),
             }
-        license_text = '%(name)s\n#\n%(text)s' % license
+        if license['name'] or license['text']:
+            license_text = '%(name)s\n#\n%(text)s' % license
+        else:
+            license_text = ""
         log.debug("License: %r.", license_text)
         return license_text
 

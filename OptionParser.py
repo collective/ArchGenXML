@@ -79,7 +79,7 @@ class AGXOption(Option):
                   value, opt)
         try:
             value = value.split(",")
-            log.debug("We've splitted the value, it is now '%s'.",
+            log.debug("We've split the value, it is now '%s'.",
                       value)
             return value
         except:
@@ -471,7 +471,8 @@ group.add_option("--backreferences-support",
                  dest="backreferences_support",
                  type="yesno",
                  help="For references, create a back reference field on the "
-                 "referred-to class. Requires ATBackRef product to work. "
+                 "referred-to class. Requires ATBackRef product "
+                 "(http://www.plone.org/products/atbackref) to work. "
                  "(Default is 0).",
                  section="CLASSES",
                  )
