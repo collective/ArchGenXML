@@ -1121,7 +1121,7 @@ class ArchetypesGenerator(BaseGenerator):
         res += '\n%s' % utils.indent('),', indent_level) + '\n\n'
 
         if array_field:
-            res = "ArrayField(%s)," % utils.indent(res, 2)
+            res = "ArrayField(%s),\n\n" % utils.indent(res, 2)
 
         return res
 
