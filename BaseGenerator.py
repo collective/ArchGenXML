@@ -48,6 +48,13 @@ class BaseGenerator:
         description='Generate this class as a plain python class '
                     'instead of as an Archetypes class.')
 
+    uml_profile.addStereoType('zope_class', ['XMIClass'],
+        dispatching=1,
+        generator='generateZopeClass',
+        template='zope_class.py',
+        description='Generate this class as a plain Zope class '
+                    'instead of as an Archetypes class.')
+
     default_class_type = 'python_class'
     default_interface_type = 'z3'
     
@@ -368,6 +375,76 @@ class BaseGenerator:
         d.update(kw)
         res = HTML(templ, d)()
         return res
+
+    def generateZopeClass(self, element, template, nolog=False, **kw):
+        if not nolog:
+            log.info("%sGenerating Zope class '%s'.",
+                     ' '*4*self.infoind,
+                     element.getName())
+
+        templ = utils.readTemplate(template)
+        d = {
+            'klass': element,
+            'generator': self,
+            'parsed_class': element.parsed_class,
+            'builtins': __builtins__,
+            'utils': utils,
+        }
+        d.update(__builtins__)
+        d.update(kw)
+        res = HTML(templ, d)()
+        return res
+
+    def generateMethodSecurityDeclaration(self, m):
+            # [optilude] Added check for permission:mode - public (default),
+            # private or protected
+            # [jensens] You can also use the visibility value from UML
+            # (implemented for 1.2 only!) TGV overrides UML-mode!
+            permissionMode = m.getVisibility() or 'public'
+
+            # A public method means it's part of the class' public interface,
+            # not to be confused with the fact that Zope has a method called
+            # declareProtected() to protect a method which is *part of the
+            # class' public interface* with a permission. If a method is public
+            # and has no permission set, declarePublic(). If it has a permission
+            # declareProtected() by that permission.
+            if permissionMode == 'public':
+                rawPerm = m.getTaggedValue('permission',None)
+                permission = utils.getExpression(rawPerm)
+                if rawPerm:
+                    return utils.indent("security.declareProtected"
+                                                   "(%s, '%s')" % (permission,
+                                                   m.getName()), 1)
+                else:
+                    return utils.indent("security.declarePublic"
+                                                   "('%s')" % m.getName(), 1)
+            # A private method is always declarePrivate()'d
+            elif permissionMode == 'private':
+                return utils.indent("security.declarePrivate('%s')"
+                                               % m.getName(), 1)
+
+            # A protected method is also declarePrivate()'d. The semantic
+            # meaning of 'protected' is that is hidden from the outside world,
+            # but accessible to subclasses. The model may wish to be explicit
+            # about this intention (even though python has no concept of
+            # such protection). In this case, it's still a privately declared
+            # method as far as TTW code is concerned.
+            elif permissionMode == 'protected':
+                return utils.indent("security.declarePrivate('%s')"
+                                               % m.getName(), 1)
+
+            # A package-level method should be without security declarartion -
+            # it is accessible to other methods in the same module, and will
+            # use the class/module defaults as far as TTW code is concerned.
+            elif permissionMode == 'package':
+                # No declaration
+                return utils.indent("# Use class/module security "
+                                              "defaults", 1)
+            else:
+                log.warn("Method visibility should be 'public', 'private', "
+                         "'protected' or 'package', got '%s'.", permissionMode)
+                return ''
+
 
     def generateZope3Interface(self, element, template, **kw):
         log.info("%sGenerating zope3 interface '%s'.",

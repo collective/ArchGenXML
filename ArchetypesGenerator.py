@@ -1650,53 +1650,9 @@ class ArchetypesGenerator(BaseGenerator):
         print >> outfile
 
         if mode == 'class':
-            # [optilude] Added check for permission:mode - public (default),
-            # private or protected
-            # [jensens] You can also use the visibility value from UML
-            # (implemented for 1.2 only!) TGV overrides UML-mode!
-            permissionMode = m.getVisibility() or 'public'
-
-            # A public method means it's part of the class' public interface,
-            # not to be confused with the fact that Zope has a method called
-            # declareProtected() to protect a method which is *part of the
-            # class' public interface* with a permission. If a method is public
-            # and has no permission set, declarePublic(). If it has a permission
-            # declareProtected() by that permission.
-            if permissionMode == 'public':
-                rawPerm = m.getTaggedValue('permission',None)
-                permission = utils.getExpression(rawPerm)
-                if rawPerm:
-                    print >> outfile, utils.indent("security.declareProtected"
-                                                   "(%s, '%s')" % (permission,
-                                                   m.getName()), 1)
-                else:
-                    print >> outfile, utils.indent("security.declarePublic"
-                                                   "('%s')" % m.getName(), 1)
-            # A private method is always declarePrivate()'d
-            elif permissionMode == 'private':
-                print >> outfile, utils.indent("security.declarePrivate('%s')"
-                                               % m.getName(), 1)
-
-            # A protected method is also declarePrivate()'d. The semantic
-            # meaning of 'protected' is that is hidden from the outside world,
-            # but accessible to subclasses. The model may wish to be explicit
-            # about this intention (even though python has no concept of
-            # such protection). In this case, it's still a privately declared
-            # method as far as TTW code is concerned.
-            elif permissionMode == 'protected':
-                print >> outfile, utils.indent("security.declarePrivate('%s')"
-                                               % m.getName(), 1)
-
-            # A package-level method should be without security declarartion -
-            # it is accessible to other methods in the same module, and will
-            # use the class/module defaults as far as TTW code is concerned.
-            elif permissionMode == 'package':
-                # No declaration
-                print >> outfile,utils.indent("# Use class/module security "
-                                              "defaults", 1)
-            else:
-                log.warn("Method visibility should be 'public', 'private', "
-                         "'protected' or 'package', got '%s'.", permissionMode)
+            declaration = self.generateMethodSecurityDeclaration(m)
+            if declaration:
+                print >> outfile, declaration
 
         cls = self.parsed_class_sources.get(klass.getPackage().getFilePath() +
                                             '/' + klass.getName(), None)

@@ -2622,7 +2622,7 @@ class XMIState(XMIElement):
 
         This method mimics that, but also looks at the TGV 'label'
         """
-        fromDocumentation = self.getDocumentation(striphtml=generator.atgenerator.striphtml)
+        fromDocumentation = self.getDocumentation(striphtml=generator.atgenerator.strip_html)
         fromTaggedValue = self.getTaggedValue('label', None)
         default = self.getName()
         return fromTaggedValue or fromDocumentation or default

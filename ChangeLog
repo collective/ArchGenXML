@@ -1,3 +1,9 @@
+2006-06-29  Godefroid Chapelle <gotcha@bubblenet.be> - Gauthier Bastien <gbastien@commune.sambreville.be>
+
+	* new zope_class stereotype for classes; will generate a Python class plus security imports,
+        security declarations on methods and security initialization. Refactored security computation from
+        ArchetypesGenerator to BaseGenerator
+
 2006-06-29  Reinout van Rees  <reinout@vanrees.org>
 
 	* ChangeLog: Started the changelog.
