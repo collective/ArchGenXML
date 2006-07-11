@@ -222,8 +222,7 @@ def install(self):
                     continue
                 atvm[vocabname].importXMLBinding(data)
             else:
-                atvm[vocabname].invokeFactory(vocabmap[vocabname][1],'default')
-                atvm[vocabname]['default'].setTitle('Default term, replace it by your own stuff')
+                pass
 </dtml-if>
 <dtml-let cmfmembers="[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.cmfmember_stereotype)]">
 <dtml-if "cmfmembers">
