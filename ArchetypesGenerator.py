@@ -499,6 +499,9 @@ class ArchetypesGenerator(BaseGenerator):
                 start_marker = False
             print >>out, 'from %s import %s' % (iface.getQualifiedModuleName(forcePluginRoot=True),iface.getCleanName())
 
+        if self.backreferences_support:
+            print >>out, 'from Products.ATBackRef.BackReferenceField import BackReferenceField, BackReferenceWidget'
+            
         return out.getvalue()
 
     def addMsgid(self, msgid, msgstr, element, fieldname):
@@ -855,6 +858,7 @@ class ArchetypesGenerator(BaseGenerator):
         'date' : 'CalendarWidget',
         'selection' : 'SelectionWidget',
         'multiselection' : 'MultiSelectionWidget',
+        'BackReference':'BackReferenceWidget'
     }
 
     coerceMap={
@@ -972,7 +976,6 @@ class ArchetypesGenerator(BaseGenerator):
             * widget:PARAMETER which will be rendered as a PARAMETER=value
 
         """
-
         tgv=element.getTaggedValues()
         widgetcode = type.capitalize()+'Widget'
         widgetmap=odict()
@@ -1013,7 +1016,7 @@ class ArchetypesGenerator(BaseGenerator):
         elif [wt.update({t[0]:t[1]}) for t in widgetoptions if t[0] == u'widget:type']:
             custom = True
             widgetcode = wt['widget:type']
-
+        
         elif self.widgetMap.has_key(type) and not default_widget:
             # default widget for this type found in widgetMap
             custom = True
