@@ -585,6 +585,9 @@ class XMI1_2 (XMI1_1):
                   "Looking recursively for that taggedvalue.")
         tdef = getElementByTagName(el, self.TAG_DEFINITION, default=None,
                                    recursive=1)
+        if tdef is None:
+            # Fix for http://plone.org/products/archgenxml/issues/62
+            return None, None 
         # Fetch the name from the global tagDefinitions (weird)
         idref = tdef.getAttribute('xmi.idref')
         tagname = normalize(self.tagDefinitions[idref].getAttribute('name'))
