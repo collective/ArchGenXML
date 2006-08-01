@@ -1215,9 +1215,9 @@ class XMIPackage(XMIElement, StateMachineContainer):
 
     def getAssociations(self, recursive=0):
         classes = self.getClassesAndInterfaces(recursive=recursive)
-        res = []
+        res = Set()
         for c in classes:
-            res.extend(c.getFromAssociations())
+            res.union(c.getFromAssociations())
         return res
 
     def addClass(self, cl):
