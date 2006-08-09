@@ -1314,7 +1314,8 @@ class ArchetypesGenerator(BaseGenerator):
         if self.getOption('relation_implementation', rel, 'basic') == 'relations':
             log.debug("Using the 'relations' relation implementation.")
             # The relation can override the field
-            field = rel.getTaggedValue('reference_field') or \
+            field = self.getOption('reference_field',rel,None) or \
+                    rel.getTaggedValue('reference_field') or \
                     rel.toEnd.getTaggedValue('reference_field') or \
                     rel.getTaggedValue('field') or \
                     rel.toEnd.getTaggedValue('field') or \
