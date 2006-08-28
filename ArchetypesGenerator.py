@@ -1627,6 +1627,7 @@ class ArchetypesGenerator(BaseGenerator):
             if cl:
                 log.debug("The class has the following methods: %r.", cl.methods.keys())
                 manual_methods = [mt for mt in cl.methods.values() if mt.name not in method_names]
+                manual_methods.sort(lambda a,b: cmp(a.start, b.start))  # sort methods according to original order
                 log.debug("Found the following manual methods: %r.", manual_methods)
                 if manual_methods:
                     print >> outfile, '\n    # Manually created methods\n'
