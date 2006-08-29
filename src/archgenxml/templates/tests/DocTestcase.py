@@ -1,4 +1,9 @@
 import os, sys
+try:
+    from Products.PloneTestCase.layer import ZCMLLayer
+    USELAYER = True
+else:
+    USELAYER = False
 if __name__ == '__main__':
     execfile(os.path.join(sys.path[0], 'framework.py'))
 
@@ -52,11 +57,13 @@ def test_suite():
 
     <dtml-var "generator.getProtectedSection(parsed_class, 'test-suite-in-between')">
 
-    return TestSuite((
-        ZopeDocFileSuite('<dtml-var "testname">.txt',
+    s = ZopeDocFileSuite('<dtml-var "testname">.txt',
                          package='Products.<dtml-var "klass.getPackage().getProduct().getCleanName()">.doc',
-                         test_class=<dtml-var "klass.getCleanName()">),
-    ))
+                         test_class=<dtml-var "klass.getCleanName()">)
+    if USELAYER:
+        s.layer=ZCMLLayer
+    return TestSuite((s,
+                      ))
 
 <dtml-var "generator.getProtectedSection(parsed_class, 'module-footer')">
 if __name__ == '__main__':
