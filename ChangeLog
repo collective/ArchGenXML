@@ -1,0 +1,11 @@
+2006-08-30  Reinout van Rees  <reinout@vanrees.org>
+
+	* Moved reinout-cleanup branch to archgenxml16 branch.
+
+	* Included fixes made in the meantime on trunk.
+
+	* Started a changelog, please be dilligent in keeping it up to
+	date! (oh, and please use real tabs to indent the messages, emacs'
+	changelog mode will do that just fine for you, if you have it).
+	
+
