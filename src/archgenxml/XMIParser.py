@@ -585,6 +585,9 @@ class XMI1_2 (XMI1_1):
                   "Looking recursively for that taggedvalue.")
         tdef = getElementByTagName(el, self.TAG_DEFINITION, default=None,
                                    recursive=1)
+        if tdef is None:
+            # Fix for http://plone.org/products/archgenxml/issues/62
+            return None, None 
         # Fetch the name from the global tagDefinitions (weird)
         idref = tdef.getAttribute('xmi.idref')
         tagname = normalize(self.tagDefinitions[idref].getAttribute('name'))
@@ -1212,9 +1215,9 @@ class XMIPackage(XMIElement, StateMachineContainer):
 
     def getAssociations(self, recursive=0):
         classes = self.getClassesAndInterfaces(recursive=recursive)
-        res = []
+        res = Set()
         for c in classes:
-            res.extend(c.getFromAssociations())
+            res.union_update(c.getFromAssociations())
         return res
 
     def addClass(self, cl):
@@ -2622,7 +2625,7 @@ class XMIState(XMIElement):
 
         This method mimics that, but also looks at the TGV 'label'
         """
-        fromDocumentation = self.getDocumentation(striphtml=generator.atgenerator.striphtml)
+        fromDocumentation = self.getDocumentation(striphtml=generator.atgenerator.strip_html)
         fromTaggedValue = self.getTaggedValue('label', None)
         default = self.getName()
         return fromTaggedValue or fromDocumentation or default

@@ -258,7 +258,8 @@ LICENSES = {
     'DFSL': {
         'name': 'German Free Software License (D-FSL)',
         'text': DFSLTEXT,
-    }
+    },
+    'NONE': { 'name':'', 'text':'' },
 
 }
 

@@ -423,7 +423,6 @@ class ArchetypesGenerator(BaseGenerator):
         log.debug("Initializing ArchetypesGenerator. "
                   "We're being passed a file '%s' and keyword "
                   "arguments %r.", xschemaFileName, kwargs)
-        self.infoind = 0
         self.xschemaFileName = xschemaFileName
         self.__dict__.update(kwargs)
         log.debug("After copying over the keyword arguments (read: "
@@ -499,6 +498,9 @@ class ArchetypesGenerator(BaseGenerator):
                 start_marker = False
             print >>out, 'from %s import %s' % (iface.getQualifiedModuleName(forcePluginRoot=True),iface.getCleanName())
 
+        if self.backreferences_support:
+            print >>out, 'from Products.ATBackRef.BackReferenceField import BackReferenceField, BackReferenceWidget'
+            
         return out.getvalue()
 
     def addMsgid(self, msgid, msgstr, element, fieldname):
@@ -855,6 +857,7 @@ class ArchetypesGenerator(BaseGenerator):
         'date' : 'CalendarWidget',
         'selection' : 'SelectionWidget',
         'multiselection' : 'MultiSelectionWidget',
+        'BackReference':'BackReferenceWidget'
     }
 
     coerceMap={
@@ -972,7 +975,6 @@ class ArchetypesGenerator(BaseGenerator):
             * widget:PARAMETER which will be rendered as a PARAMETER=value
 
         """
-
         tgv=element.getTaggedValues()
         widgetcode = type.capitalize()+'Widget'
         widgetmap=odict()
@@ -1013,7 +1015,7 @@ class ArchetypesGenerator(BaseGenerator):
         elif [wt.update({t[0]:t[1]}) for t in widgetoptions if t[0] == u'widget:type']:
             custom = True
             widgetcode = wt['widget:type']
-
+        
         elif self.widgetMap.has_key(type) and not default_widget:
             # default widget for this type found in widgetMap
             custom = True
@@ -1121,7 +1123,7 @@ class ArchetypesGenerator(BaseGenerator):
         res += '\n%s' % utils.indent('),', indent_level) + '\n\n'
 
         if array_field:
-            res = "ArrayField(%s)," % utils.indent(res, 2)
+            res = "ArrayField(%s),\n\n" % utils.indent(res, 2)
 
         return res
 
@@ -1311,7 +1313,8 @@ class ArchetypesGenerator(BaseGenerator):
         if self.getOption('relation_implementation', rel, 'basic') == 'relations':
             log.debug("Using the 'relations' relation implementation.")
             # The relation can override the field
-            field = rel.getTaggedValue('reference_field') or \
+            field = self.getOption('reference_field',rel,None) or \
+                    rel.getTaggedValue('reference_field') or \
                     rel.toEnd.getTaggedValue('reference_field') or \
                     rel.getTaggedValue('field') or \
                     rel.toEnd.getTaggedValue('field') or \
@@ -1623,6 +1626,7 @@ class ArchetypesGenerator(BaseGenerator):
             if cl:
                 log.debug("The class has the following methods: %r.", cl.methods.keys())
                 manual_methods = [mt for mt in cl.methods.values() if mt.name not in method_names]
+                manual_methods.sort(lambda a,b: cmp(a.start, b.start))  # sort methods according to original order
                 log.debug("Found the following manual methods: %r.", manual_methods)
                 if manual_methods:
                     print >> outfile, '\n    # Manually created methods\n'
@@ -1650,53 +1654,9 @@ class ArchetypesGenerator(BaseGenerator):
         print >> outfile
 
         if mode == 'class':
-            # [optilude] Added check for permission:mode - public (default),
-            # private or protected
-            # [jensens] You can also use the visibility value from UML
-            # (implemented for 1.2 only!) TGV overrides UML-mode!
-            permissionMode = m.getVisibility() or 'public'
-
-            # A public method means it's part of the class' public interface,
-            # not to be confused with the fact that Zope has a method called
-            # declareProtected() to protect a method which is *part of the
-            # class' public interface* with a permission. If a method is public
-            # and has no permission set, declarePublic(). If it has a permission
-            # declareProtected() by that permission.
-            if permissionMode == 'public':
-                rawPerm = m.getTaggedValue('permission',None)
-                permission = utils.getExpression(rawPerm)
-                if rawPerm:
-                    print >> outfile, utils.indent("security.declareProtected"
-                                                   "(%s, '%s')" % (permission,
-                                                   m.getName()), 1)
-                else:
-                    print >> outfile, utils.indent("security.declarePublic"
-                                                   "('%s')" % m.getName(), 1)
-            # A private method is always declarePrivate()'d
-            elif permissionMode == 'private':
-                print >> outfile, utils.indent("security.declarePrivate('%s')"
-                                               % m.getName(), 1)
-
-            # A protected method is also declarePrivate()'d. The semantic
-            # meaning of 'protected' is that is hidden from the outside world,
-            # but accessible to subclasses. The model may wish to be explicit
-            # about this intention (even though python has no concept of
-            # such protection). In this case, it's still a privately declared
-            # method as far as TTW code is concerned.
-            elif permissionMode == 'protected':
-                print >> outfile, utils.indent("security.declarePrivate('%s')"
-                                               % m.getName(), 1)
-
-            # A package-level method should be without security declarartion -
-            # it is accessible to other methods in the same module, and will
-            # use the class/module defaults as far as TTW code is concerned.
-            elif permissionMode == 'package':
-                # No declaration
-                print >> outfile,utils.indent("# Use class/module security "
-                                              "defaults", 1)
-            else:
-                log.warn("Method visibility should be 'public', 'private', "
-                         "'protected' or 'package', got '%s'.", permissionMode)
+            declaration = self.generateMethodSecurityDeclaration(m)
+            if declaration:
+                print >> outfile, declaration
 
         cls = self.parsed_class_sources.get(klass.getPackage().getFilePath() +
                                             '/' + klass.getName(), None)
@@ -1785,7 +1745,7 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             parent = None
 
-        return BaseGenerator.generatePythonClass(self, element, template, parent=parent, **kw)
+        return BaseGenerator.generatePythonClass(self, element, template, parent=parent, nolog=True, **kw)
 
     def generateWidgetClass(self, element, template, zptname='widget.pt'):
         log.info("%sGenerating widget '%s'.",

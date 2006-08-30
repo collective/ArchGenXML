@@ -222,8 +222,7 @@ def install(self):
                     continue
                 atvm[vocabname].importXMLBinding(data)
             else:
-                atvm[vocabname].invokeFactory(vocabmap[vocabname][1],'default')
-                atvm[vocabname]['default'].setTitle('Default term, replace it by your own stuff')
+                pass
 </dtml-if>
 <dtml-let cmfmembers="[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.cmfmember_stereotype)]">
 <dtml-if "cmfmembers">
@@ -278,9 +277,7 @@ def install(self):
     factory_types=[
         <dtml-in "generator.getGeneratedClasses(package)"><dtml-let
                  klass="_['sequence-item']" package="klass.getPackage()"><dtml-if
-                       "generator.getOption('use_portal_factory', klass, True) and not (
-                        package.hasStereoType('tests') or klass.isAbstract() or
-                        klass.hasStereoType(['widget', 'field', 'stub']))">"<dtml-var
+                       "generator.getOption('use_portal_factory', klass, True) and not (package.hasStereoType('tests') or klass.isAbstract() or klass.hasStereoType(['widget', 'field', 'stub']))">"<dtml-var
                        "klass.getTaggedValue('portal_type') or klass.getCleanName()">",
         </dtml-if></dtml-let>
 </dtml-in>] + factory_tool.getFactoryTypes().keys()

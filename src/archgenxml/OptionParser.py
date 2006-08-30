@@ -79,7 +79,7 @@ class AGXOption(Option):
                   value, opt)
         try:
             value = value.split(",")
-            log.debug("We've splitted the value, it is now '%s'.",
+            log.debug("We've split the value, it is now '%s'.",
                       value)
             return value
         except:
@@ -471,7 +471,8 @@ group.add_option("--backreferences-support",
                  dest="backreferences_support",
                  type="yesno",
                  help="For references, create a back reference field on the "
-                 "referred-to class. Requires ATBackRef product to work. "
+                 "referred-to class. Requires ATBackRef product "
+                 "(http://www.plone.org/products/atbackref) to work. "
                  "(Default is 0).",
                  section="CLASSES",
                  )
@@ -618,16 +619,6 @@ group.add_option("--default-creation-roles",
                  section="CLASSES",
                  )
 
-group.add_option("--detailed-created-permissions",
-                 type="yesno",
-                 help="""DEPRECATED: use
-                 --detailed-creation-permissions, which generates a
-                 slightly different syntax, though.""",
-                 default=0,
-                 section="CLASSES",
-                 dest="detailed_created_permissions",
-                 )
-
 group.add_option("--detailed-creation-permissions",
                  type="yesno",
                  help="Separate creation permissions per class (defaults to no)",
@@ -759,9 +750,19 @@ group.add_option("--creation-permission",
                  )
 
 group.add_option("--detailled-creation-permission",
-                 help="Use --detailed-creation-permission",
+                 help="Use --detailed-creation-permissions",
                  action="deprecationwarning",
                  section="DEPRECATED"
+                 )
+
+group.add_option("--detailed-created-permissions",
+                 type="yesno",
+                 help="Use"
+                 " --detailed-creation-permissions, which generates a"
+                 " slightly different syntax, though.",
+                 default=0,
+                 section="CLASSES",
+                 dest="detailed_created_permissions",
                  )
 
 group.add_option("--noclass",

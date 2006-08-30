@@ -5,7 +5,8 @@
 <dtml-in "package_imports">
 import <dtml-var sequence-item>
 </dtml-in>
-
+# Additional
+<dtml-var "package.getTaggedValue('imports')">
 # Classes
 <dtml-if "not package.hasStereoType(['tests'])">
 <dtml-in "class_imports">

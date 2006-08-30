@@ -613,6 +613,12 @@ tagname = 'required'
 explanation = """Set to true (1) to make the field required"""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'index'
+explanation = """Add an index to the attribute. The value of the tagged value
+should be the same that archetypes expects, so something like 'FieldIndex' or
+'FieldIndex:brains'."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'validators'
 explanation = """TODO."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
@@ -892,12 +898,6 @@ for category in ['model', 'package', 'class']:
     from one or more catalogs to be cataloged in. Comma-separated list of 
     catalogs. Example-value: 'portal_catalog, another_catalog'. Explaination: 
     Instances of the class wont be catalogged in portal_catalog anymore."""
-    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
-    tagname = 'index'
-    explanation = """Add an index to the attribute. The value of the tagged value
-    should be the same that archetypes expects, so something like 'FieldIndex' or
-    'FieldIndex:brains'."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 
