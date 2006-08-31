@@ -1,0 +1,14 @@
+<configure
+    xmlns="http://namespaces.zope.org/browser"
+    >
+<!--
+    Just an example
+  <page
+      name="update_feed_items"
+      class=".feed.UpdateFeedItems"
+      for="Products.feedfeeder.interfaces.container.IFeedsContainer"
+      allowed_interface=".feed.IUpdateFeedItems"
+      permission="cmf.ModifyPortalContent"
+      />
+-->
+</configure>
