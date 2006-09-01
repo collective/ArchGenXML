@@ -972,7 +972,12 @@ for category in ['model', 'package', 'association']:
     'ATVocabularyManager'. Generates an empty vocabulary with
     the name of the relation."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
+# Workflow
+    category = 'state transition'
+    tagname = 'url'
+    explanation = """Action URL, need 'PloneWorkflowTransitions'
+    to see it in Plone."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 # Tagged values occurring everywhere
 for category in tgvRegistry._registry:
 

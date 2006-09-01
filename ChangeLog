@@ -1,3 +1,7 @@
+2006-09-01  Godefroid Chapelle <gotcha@bubblenet.be>
+
+	* url TGV on transition, setup action url, use PloneWorkflowTransitions to see it in Plone
+
 2006-06-29  Godefroid Chapelle <gotcha@bubblenet.be> - Gauthier Bastien <gbastien@commune.sambreville.be>
 
 	* fix imports tagged value for packages

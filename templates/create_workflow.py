@@ -83,7 +83,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, workflow):
                                 script_name="""<dtml-var "transition.getBeforeActionName() or ''">""",
                                 after_script_name="""<dtml-var "transition.getAfterActionName() or ''">""",
                                 actbox_name="""<dtml-var "transition.getTaggedValue('label') or transition.getName()">""",<dtml-call name="atgenerator.addMsgid(transition.getTaggedValue('label') or transition.getName())">
-                                actbox_url="""""",
+                                actbox_url="""<dtml-var "transition.getTaggedValue('url')">""",
                                 actbox_category="""workflow""",
                                 props=<dtml-var "transition.getProps()">,
                                 )
