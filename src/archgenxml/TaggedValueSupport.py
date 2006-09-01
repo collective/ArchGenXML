@@ -179,12 +179,6 @@ category = 'class'
 
 # The following tagged values can be set on classes to alter their behaviour:
 
-tagname = 'policy'
-explanation = """On a class with stereotype '<<plone_testcase>>', this
-sets the customization policy used by the test case to setup the site
-(e.g. 'CMFMember Site')."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 tagname = 'doctest_name'
 explanation = """In a tests package, setting the stereotype '<<doc_testcase>>'
 on a class turns it into a doctest. The doctest itself is placed in the doc/
@@ -193,18 +187,18 @@ the file (which is the name of the doctestcase class + '.txt'). ArchGenXML
 appends the '.txt' extension automatically, so you don't need to specify it."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-tagname = 'quickinstall_dependencies'
-explanation = """In a tests package, setting the stereotype '<<plone_testcase>>'
-on a class turns it into a base testcase. The base testcase will install all
-listed products to the test portal using CMFQuickInstallerTool. The list has
-the form: '"ProductsA", "ProductB"."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+# tagname = 'quickinstall_dependencies'
+# explanation = """In a tests package, setting the stereotype '<<plone_testcase>>'
+# on a class turns it into a base testcase. The base testcase will install all
+# listed products to the test portal using CMFQuickInstallerTool. The list has
+# the form: '"ProductsA", "ProductB"."""
+# tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-tagname = 'quickinstall_self'
-explanation = """In a tests package, setting the stereotype '<<plone_testcase>>'
-on a class turns it into a base testcase. The base testcase will install
-the current Product (where the testcase resides in) using CMFQuickInstallerTool."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+# tagname = 'quickinstall_self'
+# explanation = """In a tests package, setting the stereotype '<<plone_testcase>>'
+# on a class turns it into a base testcase. The base testcase will install
+# the current Product (where the testcase resides in) using CMFQuickInstallerTool."""
+# tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'portal_type'
 explanation = """Sets the CMF portal-type this class will be registered with,
@@ -309,11 +303,6 @@ explanation = """By default, a child type will inherit the allowable content
 types from its parents. Set this property to false (0) to turn this off."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-tagname = 'class_header'
-explanation = """An arbitrary string which is injected into the header section
-of the class, before any methods are defined."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 tagname = 'default_actions'
 explanation = """If set to true (1), generate explicitly the default 'view'
 and 'edit' actions. Usually, these are inherited from the Archetypes base
@@ -348,15 +337,6 @@ value sets the available views. Example: '("my_view", "myother_view")'.
 Defaults to '()'. Only relevant if you use TemplateMixin."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-tagname = 'folderish'
-explanation = """Explicitly specify that a class is folderish. It is usually
-better to the the '<<folder>>' stereotype instead."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
-tagname = 'marshall'
-explanation ="""Specify a marshaller to use for the class' schema."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 tagname = 'marshaller'
 explanation ="""Specify a marshaller to use for the class' schema."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
@@ -377,27 +357,6 @@ Classic polymorphing. In case this isn't desired, set the tagged value
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 # TBD: change this into 'polymorphic_allowed_types' with a default of True.
 # Optilude is right on this one. It *does* need support for default values.
-
-#The following are needed for CMFMember classes
-tagname = 'contact_schema'
-explanation = """TODO. CMFMember related."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
-tagname = 'plone_schema'
-explanation = """TODO. CMFMember related."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
-tagname = 'plone_2_1_schema'
-explanation = """TODO. CMFMember related."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
-tagname = 'security_schema'
-explanation = """TODO. CMFMember related."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
-tagname = 'login_info_schema'
-explanation = """TODO. CMFMember related."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 # Tool
 category = 'tool'
@@ -468,20 +427,6 @@ category = 'method'
 
 # The following tagged values can be set on methods to alter their
 # behaviour:
-
-tagname = 'code'
-explanation = """The actual python code of the method. Only use this
-for simple one-liners. Code filled into the generated file will be
-preserved when the model is re-generated."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname,
-explanation=explanation)
-
-tagname = 'autoinstall'
-explanation = """Set this to 'right' or 'left' on a method with a
-stereotype'<<portlet>>', this adds the portlet to 'left_slots' or
-'right_slots'. See the documentation for the stereotype."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname,
-explanation=explanation)
 
 tagname = 'permission'
 explanation = """For method with public visibility only, if a
@@ -687,7 +632,7 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 
 tagname = 'multiValued'
 explanation = """Certain fields, such as reference fields, can optionally
-accept morethan one value if multiValued is set to true (1)"""
+accept more than one value if multiValued is set to true (1)"""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'accessor'
@@ -838,11 +783,12 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 # Tagged values for more than one category
 
 for category in ['model', 'package', 'class']:
-    tagname = 'rename_after_creation'
-    explanation = """Setting this boolean value enables or disables explicit
-    the after creation rename feature using '_at_rename_after_creation'
-    class-attribute."""
-    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+    # Default "on" is ok. You *can* modify it in the code.
+    #tagname = 'rename_after_creation'
+    #explanation = """Setting this boolean value enables or disables explicit
+    #the after creation rename feature using '_at_rename_after_creation'
+    #class-attribute."""
+    #tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
     tagname = 'use_portal_factory'
     explanation = """Setting this boolean value enables the registration
@@ -948,11 +894,6 @@ for category in ['model', 'package', 'class', 'tool', 'portlet']:
     directory it'd be normally placed in."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-    tagname = 'module_name'
-    explanation = """Like 'module', it overwrites the name of the
-    directory it'd be normally placed in."""
-    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 for category in ['model', 'package', 'association']:
 
     tagname = 'relation_implementation'
@@ -978,13 +919,6 @@ for category in tgvRegistry._registry:
 
     tagname = 'label'
     explanation = """Sets the readable name."""
-    if not tgvRegistry._registry[category].has_key(tagname):
-        # Making sure we don't overwrite specialised stuff :-)
-        tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
-    tagname = 'documentation'
-    explanation = """You can add documention via this tag; it's better to
-    use  your UML tool's documentation field."""
     if not tgvRegistry._registry[category].has_key(tagname):
         # Making sure we don't overwrite specialised stuff :-)
         tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
