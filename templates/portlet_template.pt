@@ -4,12 +4,18 @@
   <body>
 
     <div metal:define-macro="portlet" tal:omit-tag="">
-      <tal:block>
-        <dl class="portlet" id="portlet-%(method_name)s">
-          <dt class="portletHeader" i18n:translate="">%(label)s</dt>
-          <dd class="portletItemSingle odd" >place your portlet code here</dd>
-        </dl>
-      </tal:block>
+      <dl class="portlet" id="portlet-%(method_name)s">
+        <dt class="portletHeader">
+          <span class="portletTopLeft"></span>
+          <span i18n:translate="box_%(method_name)s">%(label)s</span>
+          <span class="portletTopRight"></span>
+        </dt>
+        <dd class="portletItem odd lastItem">
+          place your portlet code here
+          <span class="portletBottomLeft"></span>
+          <span class="portletBottomRight"></span>
+        </dd>
+      </dl>
     </div>
   </body>
 
