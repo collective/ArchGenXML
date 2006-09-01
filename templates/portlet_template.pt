@@ -1,17 +1,17 @@
 <html xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       i18n:domain="plone">
-<body>
+  <body>
 
-   <div metal:define-macro="portlet" tal:omit-tag="">
-        <tal:block>
-            <dl class="portlet" id="portlet-%(method_name)s">
-                <dt class="portletHeader" i18n:translate="">%(method_name)s</dt>
-                <dd class="portletItemSingle odd" >place your portlet code here</dd>
-            </dl>
-        </tal:block>
+    <div metal:define-macro="portlet" tal:omit-tag="">
+      <tal:block>
+        <dl class="portlet" id="portlet-%(method_name)s">
+          <dt class="portletHeader" i18n:translate="">%(label)s</dt>
+          <dd class="portletItemSingle odd" >place your portlet code here</dd>
+        </dl>
+      </tal:block>
     </div>
-</body>
+  </body>
 
 </html>
 

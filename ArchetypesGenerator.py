@@ -598,7 +598,9 @@ class ArchetypesGenerator(BaseGenerator):
                 if f:
                     templdir=os.path.join(sys.path[0],'templates')
                     viewTemplate=open(os.path.join(templdir,'portlet_template.pt')).read()
-                    f.write(viewTemplate % {'method_name':method_name})
+                    label = m.getTaggedValue('label', method_name)
+                    f.write(viewTemplate % {'method_name': method_name,
+                                            'label': label})
 
         res=outfile.getvalue()
         return res
