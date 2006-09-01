@@ -727,7 +727,8 @@ class ArchetypesGenerator(BaseGenerator):
             # comment out the icon definition
             content_icon = element.getCleanName()+'.gif'
             icon_filename = os.path.join(self.getSkinPath(element), content_icon)
-            if not os.path.isfile(icon_filename):
+            icon_full_filename = os.path.join(self.targetRoot, icon_filename)
+            if not os.path.isfile(icon_full_filename):
                 has_content_icon='#'
 
         # If we are generating a tool, include the template which sets
