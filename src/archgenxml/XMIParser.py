@@ -1074,8 +1074,10 @@ class XMIElement:
 
     def getModuleName(self):
         """Gets the name of the module the class is in."""
-        return self.getTaggedValue('module') or \
-               self.getTaggedValue('module_name') or self.getCleanName()
+
+        # Zapped tgv 'module_name' in favour of only 'module'
+        # [Reinout, 2006-09-04]
+        return self.getTaggedValue('module') or self.getCleanName()
 
     def annotate(self, key, value):
         #print "annotate", key, value
