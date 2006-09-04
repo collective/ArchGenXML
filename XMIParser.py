@@ -2384,7 +2384,7 @@ class XMIStateTransition(XMIElement):
         for ge in geb.split('|'):
             ge = ge.strip()
             if ge.startswith('guard_roles:'):
-                return str(ge[12:])
+                return str(ge[12:]).replace(',',';')
         return ''
 
     def getGuardPermissions(self):
@@ -2581,7 +2581,8 @@ class XMIState(XMIElement):
                                                'acquisition' : 0})
                 continue
             # split roles-string into list
-            roles = [str(r.strip()) for r in tag_value.split(',') if r.strip()]
+            raw_roles=tag_value.replace(';',',')
+            roles = [str(r.strip()) for r in raw_roles.split(',') if r.strip()]
             # verify if this permission is acquired
             nv = 'acquire'
             acquisition = 0
