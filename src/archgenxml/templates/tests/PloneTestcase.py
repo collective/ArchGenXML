@@ -34,18 +34,12 @@ for dependency in PRODUCT_DEPENDENCIES + DEPENDENCIES:
 ZopeTestCase.installProduct('<dtml-var "klass.getPackage().getProductName()">')
 
 PRODUCTS = list()
-<dtml-if "klass.getTaggedValue('quickinstall_dependencies', '1') == '1'">
-PRODUCTS += DEPENDENCIES
-</dtml-if>
-<dtml-if "klass.getTaggedValue('quickinstall_self', '1') == '1'">
-PRODUCTS.append('<dtml-var "klass.getPackage().getProductName()">')
-</dtml-if>
 
 testcase = <dtml-if "parent is not None"><dtml-var "parent.getCleanName()"><dtml-else>PloneTestCase.PloneTestCase</dtml-if>
 
 
 <dtml-var "generator.getProtectedSection(parsed_class,'module-before-plone-site-setup')">
-PloneTestCase.setupPloneSite(products=PRODUCTS<dtml-if "klass.getTaggedValue('policy', None)">, policy=<dtml-var "generator.processExpression(klass.getTaggedValue('policy'))"></dtml-if>)
+PloneTestCase.setupPloneSite(products=PRODUCTS)
 
 class <dtml-var "klass.getCleanName()">(testcase):
     """Base TestCase for <dtml-var "klass.getPackage().getProductName()">."""

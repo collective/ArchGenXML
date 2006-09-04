@@ -924,6 +924,15 @@ class XMIElement:
         log.debug("Trying to find documentation for this element.")
         #TODO: create an option on command line to control the page width
         log.debug("First trying a tagged value.")
+
+        # tagged value documentation? Probably this gets the UML
+        # documentation or so. I mean, having a tagged value for
+        # this?!?
+        # returning an empty string to get rid of the "unregistered
+        # TGV" warnings.
+        if True:
+            return ''
+        # The rest isn't executed.
         doc = self.getTaggedValue('documentation')
         if not doc:
             log.debug("Didn't find a tagged value 'documentation'. "

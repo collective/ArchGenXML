@@ -1547,7 +1547,8 @@ class ArchetypesGenerator(BaseGenerator):
         print >> outfile, SCHEMA_START
         print >> outfile, self.getFieldsFormatted(field_specs) + '),'
 
-        marshaller=element.getTaggedValue('marshaller') or element.getTaggedValue('marshall')
+        marshaller=element.getTaggedValue('marshaller')
+        # deprecated tgv 'marschall' here, that's a duplicate
         if marshaller:
             print >> outfile, 'marshall='+marshaller
 
@@ -1835,7 +1836,6 @@ class ArchetypesGenerator(BaseGenerator):
         log.debug("Based on this info and the tagged value 'folderish' or the "
                   "stereotypes 'folder' and 'ordered', we look if it's a folder.")
         isFolderish = aggregatedInterfaces or aggregatedClasses or baseaggregatedClasses or \
-                      utils.isTGVTrue(element.getTaggedValue('folderish')) or \
                       element.hasStereoType(self.folder_stereotype, umlprofile=self.uml_profile)
         log.debug("End verdict on folderish character: %s.",
                   bool(isFolderish))
@@ -2154,9 +2154,10 @@ class ArchetypesGenerator(BaseGenerator):
 
         print >> outfile, self.generateImplements(element, parentnames)
 
-        header = element.getTaggedValue('class_header')
-        if header:
-            print >> outfile,utils.indent(header, 1)
+        # Zapped in the tgv cleanup
+        #header = element.getTaggedValue('class_header')
+        #if header:
+        #    print >> outfile,utils.indent(header, 1)
 
         archetype_name = element.getTaggedValue('archetype_name') or \
                          element.getTaggedValue('label')
