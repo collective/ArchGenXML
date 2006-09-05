@@ -12,7 +12,7 @@ from Products.CMFPlone import utils
 <dtml-if dependentImports><dtml-var dependentImports></dtml-if>
 <dtml-if additionalImports><dtml-var additionalImports></dtml-if>
 <dtml-if "klass.hasStereoType('z3') or 'z3' in ['z3' for p in klass.getRealizationParents() if p.hasStereoType('z3')]">
-#import zope
+import zope 
 </dtml-if>
 
 <dtml-let base_class="klass.getTaggedValue('base_class') or ','.join([p.getCleanName() for p in klass.getGenParents()]) or 'utils.BrowserView'">
