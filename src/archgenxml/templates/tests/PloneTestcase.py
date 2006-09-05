@@ -34,9 +34,10 @@ for dependency in PRODUCT_DEPENDENCIES + DEPENDENCIES:
 ZopeTestCase.installProduct('<dtml-var "klass.getPackage().getProductName()">')
 
 PRODUCTS = list()
+PRODUCTS += DEPENDENCIES
+PRODUCTS.append('<dtml-var "klass.getPackage().getProductName()">')
 
 testcase = <dtml-if "parent is not None"><dtml-var "parent.getCleanName()"><dtml-else>PloneTestCase.PloneTestCase</dtml-if>
-
 
 <dtml-var "generator.getProtectedSection(parsed_class,'module-before-plone-site-setup')">
 PloneTestCase.setupPloneSite(products=PRODUCTS)

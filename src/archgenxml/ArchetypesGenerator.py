@@ -371,7 +371,7 @@ class ArchetypesGenerator(BaseGenerator):
     vocabulary_item_stereotype = ['vocabulary_term']
     vocabulary_container_stereotype = ['vocabulary']
     cmfmember_stereotype = ['CMFMember', 'member']
-    python_stereotype = ['python', 'python_class']
+    python_stereotype = ['python', 'python_class', 'view']
     folder_stereotype = ['folder', 'ordered', 'large', 'btree']
 
     i18n_at = ['i18n-archetypes', 'i18n', 'i18n-at']

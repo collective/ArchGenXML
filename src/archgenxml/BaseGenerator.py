@@ -50,6 +50,13 @@ class BaseGenerator:
         description='Generate this class as a plain python class '
                     'instead of as an Archetypes class.')
 
+    uml_profile.addStereoType('view_class', ['XMIClass'],
+        dispatching=1,
+        generator='generateViewClass',
+        template='view_class.py',
+        description='Generate this class as a zope3 view class '
+                    'instead of as an Archetypes class.')
+
     uml_profile.addStereoType('zope_class', ['XMIClass'],
         dispatching=1,
         generator='generateZopeClass',
@@ -267,7 +274,9 @@ class BaseGenerator:
         # Zope 2 Interfaces
         # "__implements__" line -> handle realization parents
         reparents = element.getRealizationParents()
-        z2reparentnames = [p.getName() for p in reparents if not p.hasStereoType('z3')]
+        z2reparentnames = [p.getName() for p in reparents 
+                           if not (p.hasStereoType('z3') 
+                                   or p.hasStereoType('view_class'))]
         if z2reparentnames:
             z2iface_implements = \
                 ' + '.join(["(%s,)" % i for i in z2reparentnames])
@@ -293,7 +302,9 @@ class BaseGenerator:
             print >> outfile, utils.indent(z2implements_line, 1)
 
         # Zope 3 interfaces
-        z3reparentnames = [p.getName() for p in reparents if p.hasStereoType('z3')]
+        z3reparentnames = [p.getName() for p in reparents 
+                           if (p.hasStereoType('z3') 
+                               or p.hasStereoType('view_class'))]
         if z3reparentnames:
             print >> outfile, utils.indent('# zope3 interfaces', 1)
             concatstring = ', '.join(z3reparentnames)
@@ -373,6 +384,25 @@ class BaseGenerator:
     def generatePythonClass(self, element, template, nolog=False, **kw):
         if not nolog:
             log.info("%sGenerating python class '%s'.",
+                     ' '*4*self.infoind,
+                     element.getName())
+
+        templ = self.readTemplate(template)
+        d = {
+            'klass': element,
+            'generator': self,
+            'parsed_class': element.parsed_class,
+            'builtins': __builtins__,
+            'utils': utils,
+        }
+        d.update(__builtins__)
+        d.update(kw)
+        res = HTML(templ, d)()
+        return res
+
+    def generateViewClass(self, element, template, nolog=False, **kw):
+        if not nolog:
+            log.info("%sGenerating view class '%s'.",
                      ' '*4*self.infoind,
                      element.getName())
 

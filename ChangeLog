@@ -1,3 +1,8 @@
+2006-09-05  Reinout van Rees  <reinout@zestsoftware.nl>
+
+	* src/archgenxml/templates/view_class.py: Added zope3 viewclass
+	template and stereotype <<view_class>>.
+
 2006-09-04  Reinout van Rees  <reinout@zestsoftware.nl>
 
 	* src/archgenxml/: Zapped

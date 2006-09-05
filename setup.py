@@ -13,7 +13,8 @@ setup(name='archgenxml',
       license='GPL',
       description='Generates plone products from UML',
       long_description="""
-      TODO
+      Archgenxml generates plone products out of UML models, saving
+      you a lot of time and boilerplate code. Be lazy, use archgenxm!
       """,
       keywords="zope plone UML",
       author='Reinout van Rees',
@@ -28,4 +29,8 @@ setup(name='archgenxml',
             ]
         },
       test_suite='archgenxml.tests.runalltests.suite',
+      #install_requires="""
+      #zope_interface
+      #zope_component
+      #"""
       )

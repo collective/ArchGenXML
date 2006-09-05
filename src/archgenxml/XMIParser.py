@@ -1062,10 +1062,11 @@ class XMIElement:
             for stereotype in stereotypes:
                 found = umlprofile.findStereoTypes(entities=[category])
                 if found:
-                    log.debug("Stereotype '%s' is registered.")
+                    log.debug("Stereotype '%s' is registered.",
+                              stereotype)
                 else:
-                    log.debug("DEVELOPERS: Stereotype '%s' isn't registered "
-                              "for element '%s'.", stereotype, self.__class__)
+                    log.warn("DEVELOPERS: Stereotype '%s' isn't registered "
+                             "for element '%s'.", stereotype, self.__class__)
         for stereotype in stereotypes:
             if stereotype in self.getStereoTypes():
                 return True

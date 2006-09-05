@@ -110,6 +110,9 @@ class UMLProfile:
         log.debug("We're passing the extra parameters %r.",
                   kw)
         stereotype = StereoType(name, entities, **kw)
+        if name in self.stereoTypes:
+            log.warn("AGX developers: stereotype %s already exists.",
+                     name)
         self.stereoTypes[name] = stereotype
 
     def filterObjects(self,list,entities,**kw):
@@ -145,7 +148,7 @@ class UMLProfile:
     def findStereoTypes(self, entities=[], **kw):
         log.debug("Finding stereotypes for entities %r.",
                   entities)
-        entities = [entity.replace('XMIParser.', '') for entity in entities]
+        entities = [entity.replace('archgenxml.XMIParser.', '') for entity in entities]
         log.debug("Stripped off 'XMIParser.': %r.",
                   entities)
         list = self.getAllStereoTypes()
