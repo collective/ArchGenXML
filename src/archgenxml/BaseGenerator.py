@@ -308,7 +308,7 @@ class BaseGenerator:
         if z3reparentnames:
             print >> outfile, utils.indent('# zope3 interfaces', 1)
             concatstring = ', '.join(z3reparentnames)
-            print >> outfile, utils.indent("zope.interface.implements(%s)" % concatstring, 1)
+            print >> outfile, utils.indent("interface.implements(%s)" % concatstring, 1)
 
         return outfile.getvalue()
 
