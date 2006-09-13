@@ -54,7 +54,6 @@ def main():
                       "Alternatively, you can place the path location "
                       "in ~/%s.", ZOPEPATHFILE)
             sys.exit(1)
-            
         
     zcmlConfigFile = resource_filename(__name__, 'configure.zcml')
     xmlconfig.file(zcmlConfigFile, package=archgenxml)
