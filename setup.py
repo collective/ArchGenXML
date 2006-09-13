@@ -29,8 +29,13 @@ setup(name='archgenxml',
             ]
         },
       test_suite='archgenxml.tests.runalltests.suite',
-      #install_requires="""
-      #zope_interface
-      #zope_component
-      #"""
+      install_requires="""
+      zope.interface
+      zope.component
+      zope.testing
+      zope.configuration
+      """,
+      dependency_links = [
+        'http://download.zope.org/distribution/'
+        ],
       )

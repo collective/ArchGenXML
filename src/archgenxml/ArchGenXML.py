@@ -13,10 +13,14 @@
 
 # originally inspired Dave Kuhlman's generateDS Copyright (c) 2003 Dave Kuhlman
 
-import sys
-import logging
-import utils
 from OptionParser import parser
+from pkg_resources import resource_filename
+from zope import component
+from zope.configuration import xmlconfig
+import archgenxml
+import logging
+import sys
+import utils
 
 try:
     # for standalone use
@@ -29,6 +33,10 @@ def main():
     utils.initLog('archgenxml.log')
     utils.addConsoleLogging()
     log = logging.getLogger('main')
+
+    log.debug("Initializing zope3 machinery.")
+    zcmlConfigFile = resource_filename(__name__, 'configure.zcml')
+    xmlconfig.file(zcmlConfigFile, package=archgenxml)
 
     log.debug("Reading command line options first.")
     (settings, args) = parser.parse_args()

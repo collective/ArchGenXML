@@ -2460,7 +2460,14 @@ class ArchetypesGenerator(BaseGenerator):
     def generateConfigPy(self, package):
         """ generates: config.py """
 
+
         configpath=os.path.join(package.getFilePath(),'config.py')
+        # new fangled stuff
+        # Grab an adapter for the package (so from IPackage) to
+        # IConfigPyView.
+        
+
+        # end of new fangled stuff
         parsed_config=self.parsePythonModule(package.getFilePath(), 'config.py')
         creation_permission = self.getOption('creation_permission', package, None)
 
