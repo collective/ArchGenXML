@@ -38,7 +38,8 @@ class <dtml-var "package.getProductName()">CustomizationPolicy(DefaultCustomizat
         to add them here.
         """
         portal.portal_quickinstaller.installProduct(PROJECTNAME)
-        get_transaction().commit(1)
+        import transaction
+        transaction.savepoint(optimistic=True)
 
     # Define your own customize_#_name methods after this
     # line.
