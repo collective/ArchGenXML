@@ -66,7 +66,6 @@ class ParserTest(BaseContent):
     Doctest line 2
     """
     security = ClassSecurityInfo()
-    __implements__ = (getattr(BaseContent,'__implements__',()),)
 
 
     # This name appears in the 'add' box
