@@ -392,7 +392,8 @@ class
     you use TemplateMixin.
 
  typeDescription -- A description of the type, a sentence or two in
-    length. Used to describe the type to the user.
+    length. Used to describe the type to the user in the base_edit
+    form.
 
  use_portal_factory -- Setting this boolean value enables the
     registration of the type for use with portal_factory.
