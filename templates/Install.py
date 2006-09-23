@@ -27,7 +27,7 @@ else:
 from Products.<dtml-var "package.getProductModuleName()">.config import PROJECTNAME
 from Products.<dtml-var "package.getProductModuleName()">.config import product_globals as GLOBALS
 
-def install(self):
+def install(self, reinstall=False):
     """ External Method to install <dtml-var "package.getProductModuleName()"> """
     out = StringIO()
     print >> out, "Installation log of %s:" % PROJECTNAME
@@ -324,7 +324,10 @@ def install(self):
 
     if install:
         print >>out,'Custom Install:'
-        res = install(self)
+        try:
+            res = install(self, reinstall)
+        except TypeError:
+            res = install(self)
         if res:
             print >>out,res
         else:
@@ -333,7 +336,7 @@ def install(self):
         print >>out,'no custom install'
     return out.getvalue()
 
-def uninstall(self):
+def uninstall(self, reinstall=False):
     out = StringIO()
 
 <dtml-let autoinstalled_tools="[c.getName() for c in generator.getGeneratedTools(package) if not utils.isTGVFalse(c.getTaggedValue('autoinstall')) ]">
@@ -403,7 +406,10 @@ def uninstall(self):
 
     if uninstall:
         print >>out,'Custom Uninstall:'
-        res = uninstall(self)
+        try:
+            res = uninstall(self, reinstall)
+        except TypeError:
+            res = uninstall(self)
         if res:
             print >>out,res
         else:
