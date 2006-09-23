@@ -1601,10 +1601,11 @@ class ArchetypesGenerator(BaseGenerator):
                      if m.getName() not in allmethnames]
             # Filter out doubles.
             # That can happen if two interfaces both have the same method.
-            uniqueNames = {}
-            for name in meths:
-                uniqueNames[name] = True
-            meths = uniqueNames.keys()
+            uniqueMethods = {}
+            for method in meths:
+                name = method.getName()
+                uniqueMethods[name] = method
+            meths = uniqueMethods.values()
             # We don't want to extra generate methods
             # that are already defined in the class
             if meths:
