@@ -531,10 +531,18 @@ class BaseGenerator:
         return moduleinfo
 
     def generateModuleInfoHeader(self, element, name=None):
-        if not self.module_info_header:
-            return
+        """Generate the module header.
+        
+        Watch out: generate at least the encoding header, the rest is
+        optional.
+        """
+
+        result = ''
         fileheaderinfo = self.getHeaderInfo(element, name=name)
-        return MODULE_INFO_HEADER % fileheaderinfo
+        result = ENCODING_HEADER % fileheaderinfo
+        if self.module_info_header:
+            result += MODULE_INFO_HEADER % fileheaderinfo
+        return result
 
     def getAuthors(self, element):
         log.debug("Getting the authors...")
