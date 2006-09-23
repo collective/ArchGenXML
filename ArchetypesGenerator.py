@@ -1590,6 +1590,11 @@ class ArchetypesGenerator(BaseGenerator):
 
         generatedMethods = []
         allmethnames = [m.getName() for m in element.getMethodDefs(recursive=1)]
+        # Filter out doubles.
+        uniqueNames = {}
+        for name in allmethnames:
+            uniqueNames[name] = True
+        allmethnames = uniqueNames.keys()
 
         for m in element.getMethodDefs():
             self.generateMethod(outfile, m, element, mode=mode)
@@ -1616,6 +1621,8 @@ class ArchetypesGenerator(BaseGenerator):
         #if it is added to method_names it wont be recognized as a manual method (hacky but works)
         if element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile) and '__init__' not in method_names:
             method_names.append('__init__')
+
+        
 
         #as __init__ above if at_post_edit_script has to be generated for tools
         #I want _not_ at_post_edit_script to be preserved (hacky but works)
