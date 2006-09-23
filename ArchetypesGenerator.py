@@ -1590,11 +1590,6 @@ class ArchetypesGenerator(BaseGenerator):
 
         generatedMethods = []
         allmethnames = [m.getName() for m in element.getMethodDefs(recursive=1)]
-        # Filter out doubles.
-        uniqueNames = {}
-        for name in allmethnames:
-            uniqueNames[name] = True
-        allmethnames = uniqueNames.keys()
 
         for m in element.getMethodDefs():
             self.generateMethod(outfile, m, element, mode=mode)
