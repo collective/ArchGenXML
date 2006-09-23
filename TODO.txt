@@ -41,7 +41,7 @@ http://plone.org/development/teams/developer/ArchGenXML
     and loops would make it much clearer and easier to manipulate.
 
 * Tool support:
-  automagically disable uneccessary tabs (like base_view, metadata
+  automagically disable unnecessary tabs (like base_view, metadata
   and maybe references) on classes with stereotype 'portal_tool'. Must be
   possible to explicitly enable them again.
 
