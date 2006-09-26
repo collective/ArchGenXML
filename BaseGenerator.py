@@ -448,7 +448,7 @@ class BaseGenerator:
 
     def generateZope3Interface(self, element, template, **kw):
         log.info("%sGenerating zope3 interface '%s'.",
-                 '    ',
+                 '        ',
                  element.getName())
 
         templ = utils.readTemplate(template)
