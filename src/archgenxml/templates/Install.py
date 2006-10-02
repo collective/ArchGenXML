@@ -27,7 +27,7 @@ else:
 from Products.<dtml-var "package.getProductModuleName()">.config import PROJECTNAME
 from Products.<dtml-var "package.getProductModuleName()">.config import product_globals as GLOBALS
 
-def install(self):
+def install(self, reinstall=False):
     """ External Method to install <dtml-var "package.getProductModuleName()"> """
     out = StringIO()
     print >> out, "Installation log of %s:" % PROJECTNAME
@@ -278,7 +278,7 @@ def install(self):
     factory_types=[
         <dtml-in "generator.getGeneratedClasses(package)"><dtml-let
                  klass="_['sequence-item']" package="klass.getPackage()"><dtml-if
-                       "generator.getOption('use_portal_factory', klass, True) and not (package.hasStereoType('tests') or klass.isAbstract() or klass.hasStereoType(['widget', 'field', 'stub']))">"<dtml-var
+                       "utils.isTGVTrue(klass.getTaggedValue('use_portal_factory', True)) and not (package.hasStereoType('tests') or klass.isAbstract() or klass.hasStereoType(['widget', 'field', 'stub']))">"<dtml-var
                        "klass.getTaggedValue('portal_type') or klass.getCleanName()">",
         </dtml-if></dtml-let>
 </dtml-in>] + factory_tool.getFactoryTypes().keys()
@@ -325,7 +325,10 @@ def install(self):
 
     if install:
         print >>out,'Custom Install:'
-        res = install(self)
+        try:
+            res = install(self, reinstall)
+        except TypeError:
+            res = install(self)
         if res:
             print >>out,res
         else:
@@ -334,7 +337,7 @@ def install(self):
         print >>out,'no custom install'
     return out.getvalue()
 
-def uninstall(self):
+def uninstall(self, reinstall=False):
     out = StringIO()
 
 <dtml-let autoinstalled_tools="[c.getName() for c in generator.getGeneratedTools(package) if not utils.isTGVFalse(c.getTaggedValue('autoinstall')) ]">
@@ -404,7 +407,10 @@ def uninstall(self):
 
     if uninstall:
         print >>out,'Custom Uninstall:'
-        res = uninstall(self)
+        try:
+            res = uninstall(self, reinstall)
+        except TypeError:
+            res = uninstall(self)
         if res:
             print >>out,res
         else:

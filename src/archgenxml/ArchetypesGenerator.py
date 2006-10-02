@@ -597,7 +597,9 @@ class ArchetypesGenerator(BaseGenerator):
                 if f:
                     
                     viewTemplate=open(os.path.join(self.templateDir,'portlet_template.pt')).read()
-                    f.write(viewTemplate % {'method_name':method_name})
+                    label = m.getTaggedValue('label', method_name)
+                    f.write(viewTemplate % {'method_name': method_name,
+                                            'label': label})
 
         res=outfile.getvalue()
         return res
@@ -1596,6 +1598,13 @@ class ArchetypesGenerator(BaseGenerator):
         for interface in element.getRealizationParents():
             meths = [m for m in interface.getMethodDefs(recursive=1)
                      if m.getName() not in allmethnames]
+            # Filter out doubles.
+            # That can happen if two interfaces both have the same method.
+            uniqueMethods = {}
+            for method in meths:
+                name = method.getName()
+                uniqueMethods[name] = method
+            meths = uniqueMethods.values()
             # We don't want to extra generate methods
             # that are already defined in the class
             if meths:
@@ -1613,6 +1622,8 @@ class ArchetypesGenerator(BaseGenerator):
         #if it is added to method_names it wont be recognized as a manual method (hacky but works)
         if element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile) and '__init__' not in method_names:
             method_names.append('__init__')
+
+        
 
         #as __init__ above if at_post_edit_script has to be generated for tools
         #I want _not_ at_post_edit_script to be preserved (hacky but works)
@@ -1908,8 +1919,16 @@ class ArchetypesGenerator(BaseGenerator):
         if baseclass and not utils.isTGVFalse(element.getTaggedValue('base_class',1)) \
            and not element.hasStereoType('mixin', umlprofile=self.uml_profile):
               baseclasses = baseclass.split(',')
-              parentnames += baseclasses
+              parentnames = baseclasses + parentnames #this way base_class is used before anything else
         parentnames = [klass.strip() for klass in parentnames]
+
+        #remove double entries in parentnames
+        #this could be needed if base_class is one of the parents in parentnames...
+        parentnames_ordered_set = []
+        for klass in parentnames:
+            if not klass in parentnames_ordered_set:
+                parentnames_ordered_set.append(klass)
+        parentnames = parentnames_ordered_set
         return baseclass, baseschema, parentnames
 
     def generateArchetypesClass(self, element, **kw):

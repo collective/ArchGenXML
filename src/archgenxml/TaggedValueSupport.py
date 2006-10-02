@@ -224,9 +224,12 @@ Used to describe the type to the user."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'base_class'
-explanation = """Explicitly set the base class of a content type, overriding
-the automatic selection of BaseContent, BaseFolder or OrderedBaseFolder as well
-as any parent classes in the model. See also additional_parents."""
+explanation = """Explicitly set the base class of a content type, overriding the
+automatic selection of BaseContent, BaseFolder or OrderedBaseFolder as
+well as any parent classes in the model. What you specify here ends up
+as the first item (or items: comma-separate them) in the classes it
+inherits from. So this is also a handy way to place one class
+explicitly in front of the other. See also additional_parents."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'base_schema'
@@ -913,7 +916,12 @@ for category in ['model', 'package', 'association']:
     'ATVocabularyManager'. Generates an empty vocabulary with
     the name of the relation."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
+# Workflow
+    category = 'state transition'
+    tagname = 'url'
+    explanation = """Action URL, need 'PloneWorkflowTransitions'
+    to see it in Plone."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 # Tagged values occurring everywhere
 for category in tgvRegistry._registry:
 

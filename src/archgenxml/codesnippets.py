@@ -141,8 +141,11 @@ REGISTER_ARCHTYPE = """registerType(%s, PROJECTNAME)\n"""
 
 IMPORT_INTERFACE = """from Interface import Base"""
 
-MODULE_INFO_HEADER = '''\
+ENCODING_HEADER = """\
 # -*- coding: %(encoding)s -*-
+"""
+
+MODULE_INFO_HEADER = '''\
 #
 # %(filename_or_id)s
 #
@@ -318,10 +321,12 @@ TEMPL_APECONFIG_END = """</configuration>"""
 READMELOWEST = """\
 Directory 'skins/%s':
 
-This skin layer has low priority, put unique templates and scripts here.
-
-I.e. if you to want to create own unique views or forms for your product, this
-is the right place."""
+Put your templates, css and javascript files in here. When first
+installed, this skin layer is added to the plone skin. It is added
+right below the 'custom' layer. Later, other products can move it a
+little bit down, but it'll always be above the plone skin layers. So:
+you can use it to overwrite plone stuff.
+"""
 
 CMFMEMBER_IMPORTS = """\
 # imports needed by CMFMember
