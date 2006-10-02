@@ -277,7 +277,7 @@ def install(self, reinstall=False):
     factory_types=[
         <dtml-in "generator.getGeneratedClasses(package)"><dtml-let
                  klass="_['sequence-item']" package="klass.getPackage()"><dtml-if
-                       "generator.getOption('use_portal_factory', klass, True) and not (package.hasStereoType('tests') or klass.isAbstract() or klass.hasStereoType(['widget', 'field', 'stub']))">"<dtml-var
+                       "utils.isTGVTrue(klass.getTaggedValue('use_portal_factory', True)) and not (package.hasStereoType('tests') or klass.isAbstract() or klass.hasStereoType(['widget', 'field', 'stub']))">"<dtml-var
                        "klass.getTaggedValue('portal_type') or klass.getCleanName()">",
         </dtml-if></dtml-let>
 </dtml-in>] + factory_tool.getFactoryTypes().keys()
