@@ -1163,7 +1163,7 @@ class ArchetypesGenerator(BaseGenerator):
                                                   field_spec['indent_level']
                                                   )
             except Exception, e:
-                import pdb; pdb.set_trace()
+                #import pdb; pdb.set_trace()
                 log.critical("Couldn't render fields from field_specs: '%s'.",
                              field_specs)
                 raise
