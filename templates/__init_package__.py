@@ -2,9 +2,11 @@
 <dtml-var "protected_module_header">
 
 # Subpackages
-<dtml-in "package_imports">
-import <dtml-var sequence-item>
-</dtml-in>
+<dtml-if "len(subpackages)">
+__all__ = [<dtml-in "subpackages"> <dtml-var sequence-item>,</dtml-in> ]
+# NARF: not sure if __all__ is correct with other imports..
+# NARF: pretty sure it improves package reload behaviour in zmi, though
+</dtml-if>
 # Additional
 <dtml-var "package.getTaggedValue('imports')">
 # Classes

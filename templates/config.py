@@ -1,4 +1,4 @@
-<dtml-var "generator.generateModuleInfoHeader(package)">
+ <dtml-var "generator.generateModuleInfoHeader(package)">
 # Product configuration.
 #
 # The contents of this module will be imported into __init__.py, the

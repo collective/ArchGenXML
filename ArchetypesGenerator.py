@@ -1504,60 +1504,64 @@ class ArchetypesGenerator(BaseGenerator):
             asString = True
         # first copy fields from other schemas if neccessary.
         startmarker = True
-        for attr in element.getAttributeDefs():
-            if attr.type.lower() == 'copy':
-                if startmarker:
-                    startmarker=False
-                    print >> outfile, 'copied_fields = {}'
-                if element.hasStereoType(self.cmfmember_stereotype,
-                                         umlprofile=self.uml_profile):
-                    copy = "BaseMember.content_schema"
-                else:
-                    copybase_schema = base_schema
-                copyfrom = attr.getTaggedValue('copy_from', copybase_schema)
-                name = attr.getTaggedValue('source_name',attr.getName())
-                print >> outfile, "copied_fields['%s'] = %s['%s'].copy(%s)" % \
-                         (attr.getName(), copyfrom, name, name!=attr.getName() \
-                         and ("name='%s'" % attr.getName()) or '')
-                map = self.getFieldAttributes(attr)
-                for key in map:
-                    if key.startswith('move:'):
-                        continue
-                    print >>outfile, "copied_fields['%s'].%s = %s" % \
-                                     (attr.getName(), key, map[key])
-                tgv = attr.getTaggedValues()
-                for key in tgv.keys():
-                    if not key.startswith('widget:'):
-                        continue
-                    if key not in self.nonstring_tgvs:
-                        tgv[key]=utils.getExpression(tgv[key])
-                    print >>outfile, "copied_fields['%s'].widget.%s = %s" % \
-                                     (attr.getName(), key[7:], tgv[key])
-                    # add pot msgid if necessary
-                    widgetkey = key[7:]
-                    widgetvalue = tgv[key]
-                    fieldname = attr.getName()
-                    if widgetkey=='label_msgid':
-                        self.addMsgid(widgetvalue.strip("'").strip('"'),
-                                      tgv.has_key('widget:label') and
-                                      tgv['widget:label'].strip("'").strip('"')
-                                      or fieldname, element, fieldname)
-                    if widgetkey=='description_msgid':
-                        self.addMsgid(widgetvalue.strip("'").strip('"'),
-                                      tgv.has_key('widget:description') and
-                                      tgv['widget:description'].strip("'").strip('"')
-                                      or fieldname, element, fieldname)
+        attributes = element.getAttributeDefs()
+        if attributes:
+            for attr in attributes:
+                if attr.type.lower() == 'copy':
+                    if startmarker:
+                        startmarker=False
+                        print >> outfile, 'copied_fields = {}'
+                    if element.hasStereoType(self.cmfmember_stereotype,
+                                             umlprofile=self.uml_profile):
+                        copy = "BaseMember.content_schema"
+                    else:
+                        copybase_schema = base_schema
+                    copyfrom = attr.getTaggedValue('copy_from', copybase_schema)
+                    name = attr.getTaggedValue('source_name',attr.getName())
+                    print >> outfile, "copied_fields['%s'] = %s['%s'].copy(%s)" % \
+                             (attr.getName(), copyfrom, name, name!=attr.getName() \
+                             and ("name='%s'" % attr.getName()) or '')
+                    map = self.getFieldAttributes(attr)
+                    for key in map:
+                        if key.startswith('move:'):
+                            continue
+                        print >>outfile, "copied_fields['%s'].%s = %s" % \
+                                         (attr.getName(), key, map[key])
+                    tgv = attr.getTaggedValues()
+                    for key in tgv.keys():
+                        if not key.startswith('widget:'):
+                            continue
+                        if key not in self.nonstring_tgvs:
+                            tgv[key]=utils.getExpression(tgv[key])
+                        print >>outfile, "copied_fields['%s'].widget.%s = %s" % \
+                                         (attr.getName(), key[7:], tgv[key])
+                        # add pot msgid if necessary
+                        widgetkey = key[7:]
+                        widgetvalue = tgv[key]
+                        fieldname = attr.getName()
+                        if widgetkey=='label_msgid':
+                            self.addMsgid(widgetvalue.strip("'").strip('"'),
+                                          tgv.has_key('widget:label') and
+                                          tgv['widget:label'].strip("'").strip('"')
+                                          or fieldname, element, fieldname)
+                        if widgetkey=='description_msgid':
+                            self.addMsgid(widgetvalue.strip("'").strip('"'),
+                                          tgv.has_key('widget:description') and
+                                          tgv['widget:description'].strip("'").strip('"')
+                                          or fieldname, element, fieldname)
 
-        print >> outfile, SCHEMA_START
-        print >> outfile, self.getFieldsFormatted(field_specs) + '),'
+            print >> outfile, SCHEMA_START
+            print >> outfile, self.getFieldsFormatted(field_specs) + '),'
 
-        marshaller=element.getTaggedValue('marshaller') or element.getTaggedValue('marshall')
-        if marshaller:
-            print >> outfile, 'marshall='+marshaller
+            marshaller = element.getTaggedValue('marshaller') or \
+                         element.getTaggedValue('marshall')
+            if marshaller:
+                print >> outfile, 'marshall='+marshaller
 
-        print >> outfile, ')\n'
+            print >> outfile, ')\n'
+
         if asString:
-            return outfile.getvalue()
+          return outfile.getvalue()
 
     def generateFieldMoves(self, outfile, schemaName, field_specs):
         """Generate moveField statements for the schema from field_specs.
@@ -2521,7 +2525,7 @@ class ArchetypesGenerator(BaseGenerator):
         """ Generate __init__.py at product root from the DTML template"""
 
         # Get the names of packages and classes to import
-        packageImports = [m.getModuleName() for m in package.getAnnotation('generatedPackages') or []
+        subpackages = [m.getModuleName() for m in package.getAnnotation('generatedPackages') or []
                           if not (m.hasStereoType('tests', umlprofile=self.uml_profile) or
                                   m.hasStereoType('stub', umlprofile=self.uml_profile))]
         classImports   = [m.getModuleName() for m in package.generatedModules if not m.hasStereoType('tests', umlprofile=self.uml_profile)]
@@ -2557,7 +2561,7 @@ class ArchetypesGenerator(BaseGenerator):
            'utils'                         : utils,
            'package'                       : package,
            'product_name'                  : package.getProductName (),
-           'package_imports'               : packageImports,
+           'subpackages'                   : subPackages,
            'class_imports'                 : classImports,
            'additional_permissions'        : additional_permissions,
            'has_tools'                     : hasTools,
@@ -2582,7 +2586,7 @@ class ArchetypesGenerator(BaseGenerator):
         """ Generate __init__.py for packages from the DTML template"""
 
         # Get the names of packages and classes to import
-        packageImports = [m.getModuleName () for m in package.getAnnotation('generatedPackages') or []]
+        subPackages = [m.getModuleName () for m in package.getAnnotation('generatedPackages') or []]
         classImports   = [m.getModuleName () for m in package.generatedModules]
 
         # Get the preserved code sections
@@ -2594,7 +2598,7 @@ class ArchetypesGenerator(BaseGenerator):
         d={'generator'                     : self,
            'package'                       : package,
            'utils'                         : utils,
-           'package_imports'               : packageImports,
+           'subpackages'                   : subPackages,
            'class_imports'                 : classImports,
            'protected_module_header'       : headerCode,
            'protected_module_footer'       : footerCode,
