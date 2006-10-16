@@ -7,6 +7,7 @@
 <dtml-var "generator.getProtectedSection(parsed_class, 'module-header')">
 from zope import interface
 from zope import component
+from Products.CMFPlone import utils
 try:
     from Products.CMFPlone.utils import BrowserView
 except:
