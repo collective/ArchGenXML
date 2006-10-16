@@ -7,14 +7,17 @@
 <dtml-var "generator.getProtectedSection(parsed_class, 'module-header')">
 from zope import interface
 from zope import component
-from Products.CMFPlone import utils
+try:
+    from Products.CMFPlone.utils import BrowserView
+except:
+    from Products.Five import BrowserView
 <dtml-if taggedImports><dtml-var taggedImports></dtml-if>
 <dtml-if dependentImports><dtml-var dependentImports></dtml-if>
 <dtml-if additionalImports><dtml-var additionalImports></dtml-if>
 <dtml-if "klass.hasStereoType('z3') or 'z3' in ['z3' for p in klass.getRealizationParents() if p.hasStereoType('z3')]">
 </dtml-if>
 
-<dtml-let base_class="klass.getTaggedValue('base_class') or ','.join([p.getCleanName() for p in klass.getGenParents()]) or 'utils.BrowserView'">
+<dtml-let base_class="klass.getTaggedValue('base_class') or ','.join([p.getCleanName() for p in klass.getGenParents()]) or 'BrowserView'">
 class <dtml-var "klass.getCleanName()"><dtml-if base_class>(<dtml-var base_class>)</dtml-if>:
 </dtml-let>
     """<dtml-var "utils.indent(klass.getDocumentation(), 1, skipFirstRow=True, stripBlank=True)">
