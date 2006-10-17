@@ -744,6 +744,11 @@ validation_expression to define the validation expression to which this error
 message applies)."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'array:widget'
+explanation = """specify which custom ArrayWidget should be used for a field
+(only applies if the field has cardinality >1."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 # widgets (not a separate category!)
 
 # Similarly, tagged values with the prefix 'widget:' will be passed
@@ -837,6 +842,7 @@ explanation = """Use a custom field instead of RelationField. Works
 only together with 'Relations' Product and relation_implementation
 set to 'relations'."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 
 # Tagged values for more than one category
 

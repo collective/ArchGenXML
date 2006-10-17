@@ -397,7 +397,7 @@ class ArchetypesGenerator(BaseGenerator):
                       'storage', 'enforceVocabulary', 'multiValued',
                       'visible', 'validators', 'validation_expression',
                       'sizes', 'original_size', 'max_size', 'searchable',
-                      'show_hm', 'move:pos', 'move:top', 'move:bottom']
+                      'show_hm', 'move:pos', 'move:top', 'move:bottom','array:widget','array:size']
 
     msgcatstack = []
 
@@ -1086,7 +1086,15 @@ class ArchetypesGenerator(BaseGenerator):
         log.debug("Trying to get formatted field. name='%s', fieldtype='%s', "
                   "doc='%s', rawType='%s'.", name, fieldtype, doc, rawType)
         res = ''
-
+        if array_field:
+            array_options={}
+            import pdb;pdb.set_trace()
+            for key in map.keys():
+                if key.startswith('array:'):
+                    nkey=key[len('array:'):]
+                    array_options[nkey]=map[key]
+                    del map[key]
+            
         # Capitalize only first letter of fields class name, keep camelcase
         a = rawType[0].upper()
         rawType = a + rawType[1:]
@@ -1127,8 +1135,14 @@ class ArchetypesGenerator(BaseGenerator):
         res += '\n%s' % utils.indent('),', indent_level) + '\n\n'
 
         if array_field:
-            res = "ArrayField(%s),\n\n" % utils.indent(res, 2)
+            if array_options['widget']:
+                array_options['widget']+='()'
 
+            import pdb;pdb.set_trace()
+            array_defs=',\n'.join(["%s=%s" % item for item in array_options.items()])
+            res = "ArrayField(%s\n%s" % (utils.indent(res, 2),utils.indent(array_defs,2))
+
+            res += utils.indent('\n),\n\n',1)
         return res
 
     def getFieldsFormatted(self, field_specs):
