@@ -1088,7 +1088,6 @@ class ArchetypesGenerator(BaseGenerator):
         res = ''
         if array_field:
             array_options={}
-            import pdb;pdb.set_trace()
             for key in map.keys():
                 if key.startswith('array:'):
                     nkey=key[len('array:'):]
@@ -1138,7 +1137,6 @@ class ArchetypesGenerator(BaseGenerator):
             if array_options['widget']:
                 array_options['widget']+='()'
 
-            import pdb;pdb.set_trace()
             array_defs=',\n'.join(["%s=%s" % item for item in array_options.items()])
             res = "ArrayField(%s\n%s" % (utils.indent(res, 2),utils.indent(array_defs,2))
 
