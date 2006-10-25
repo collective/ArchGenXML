@@ -1134,7 +1134,7 @@ class ArchetypesGenerator(BaseGenerator):
         res += '\n%s' % utils.indent('),', indent_level) + '\n\n'
 
         if array_field:
-            if array_options['widget']:
+            if array_options.get('widget',None):
                 array_options['widget']+='()'
 
             array_defs=',\n'.join(["%s=%s" % item for item in array_options.items()])
