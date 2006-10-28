@@ -858,6 +858,16 @@ for category in ['model', 'package', 'class']:
     of the type for use with portal_factory."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+    tagname = 'display_in_navigation'
+    explanation = """Setting this boolean value adds the type to
+    'Displayed content types' in the portals navigation settings. Default is True"""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+    tagname = 'searchable_type'
+    explanation = """Setting this boolean value adds the type to 'types to be
+    searched' in the portals search settings. Default is True"""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
     tagname = 'version_info'
     explanation = """Add ArchGenXML version information to the generated
     file (default is 1)."""

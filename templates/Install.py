@@ -272,16 +272,47 @@ def install(self, reinstall=False):
     relations_tool.importXML(xml)
 
 </dtml-if>
+<dtml-let klasses="[klass for klass in generator.getGeneratedClasses(package) if utils.isTGVTrue(generator.getOption('use_portal_factory', klass, True)) and not (klass.getPackage().hasStereoType('tests') or klass.isAbstract() or klass.hasStereoType(['widget', 'field', 'stub']))]">
+<dtml-if "klasses">
     # enable portal_factory for given types
     factory_tool = getToolByName(self,'portal_factory')
     factory_types=[
-        <dtml-in "generator.getGeneratedClasses(package)"><dtml-let
-                 klass="_['sequence-item']" package="klass.getPackage()"><dtml-if
-                       "utils.isTGVTrue(klass.getTaggedValue('use_portal_factory', True)) and not (package.hasStereoType('tests') or klass.isAbstract() or klass.hasStereoType(['widget', 'field', 'stub']))">"<dtml-var
+        <dtml-in "klasses"><dtml-let
+                 klass="_['sequence-item']">"<dtml-var
                        "klass.getTaggedValue('portal_type') or klass.getCleanName()">",
-        </dtml-if></dtml-let>
+        </dtml-let>
 </dtml-in>] + factory_tool.getFactoryTypes().keys()
     factory_tool.manage_setPortalFactoryTypes(listOfTypeIds=factory_types)
+</dtml-if>
+</dtml-let>
+<dtml-let klasses="[(klass.getTaggedValue('portal_type') or klass.getCleanName()) for klass in generator.getGeneratedClasses(package) if utils.isTGVFalse(generator.getOption('searchable_type', klass, True))]">
+<dtml-if "klasses">
+    # hide selected classes in the search form
+    portalProperties = getToolByName(self, 'portal_properties', None)
+    if portalProperties is not None:
+        siteProperties = getattr(portalProperties, 'site_properties', None)
+        if siteProperties is not None and siteProperties.hasProperty('types_not_searched'):
+            for klass in <dtml-var "repr(klasses)">:
+                current = list(siteProperties.getProperty('types_not_searched'))
+                if klass not in current:
+                    current.append(klass)
+                    siteProperties.manage_changeProperties(**{'types_not_searched' : current})
+</dtml-if>
+</dtml-let>
+<dtml-let klasses="[(klass.getTaggedValue('portal_type') or klass.getCleanName()) for klass in generator.getGeneratedClasses(package) if utils.isTGVFalse(generator.getOption('display_in_navigation', klass, True))]">
+<dtml-if "klasses">
+    # hide selected classes in the navigation
+    portalProperties = getToolByName(self, 'portal_properties', None)
+    if portalProperties is not None:
+        siteProperties = getattr(portalProperties, 'navtree_properties', None)
+        if siteProperties is not None and siteProperties.hasProperty('metaTypesNotToList'):
+            for klass in <dtml-var "repr(klasses)">:
+                current = list(siteProperties.getProperty('metaTypesNotToList'))
+                if klass not in current:
+                    current.append(klass)
+                    siteProperties.manage_changeProperties(**{'metaTypesNotToList' : current})
+</dtml-if>
+</dtml-let>
 
     from Products.<dtml-var "package.getProductModuleName()">.config import STYLESHEETS
     try:
