@@ -304,13 +304,13 @@ def install(self, reinstall=False):
     # hide selected classes in the navigation
     portalProperties = getToolByName(self, 'portal_properties', None)
     if portalProperties is not None:
-        siteProperties = getattr(portalProperties, 'navtree_properties', None)
-        if siteProperties is not None and siteProperties.hasProperty('metaTypesNotToList'):
+        navtree_properties = getattr(portalProperties, 'navtree_properties', None)
+        if navtree_properties is not None and navtree_properties.hasProperty('metaTypesNotToList'):
             for klass in <dtml-var "repr(klasses)">:
-                current = list(siteProperties.getProperty('metaTypesNotToList'))
+                current = list(navtree_properties.getProperty('metaTypesNotToList'))
                 if klass not in current:
                     current.append(klass)
-                    siteProperties.manage_changeProperties(**{'metaTypesNotToList' : current})
+                    navtree_properties.manage_changeProperties(**{'metaTypesNotToList' : current})
 </dtml-if>
 </dtml-let>
 
@@ -385,6 +385,37 @@ def uninstall(self, reinstall=False):
 
 </dtml-if>
 </dtml-let>
+<dtml-let klasses="[(klass.getTaggedValue('portal_type') or klass.getCleanName()) for klass in generator.getGeneratedClasses(package) if utils.isTGVFalse(generator.getOption('searchable_type', klass, True))]">
+<dtml-if "klasses">
+    # unhide types in the search form
+    portalProperties = getToolByName(self, 'portal_properties', None)
+    if portalProperties is not None:
+        siteProperties = getattr(portalProperties, 'site_properties', None)
+        if siteProperties is not None and siteProperties.hasProperty('types_not_searched'):
+            for klass in <dtml-var "repr(klasses)">:
+                current = list(siteProperties.getProperty('types_not_searched'))
+                if klass in current:
+                    current.remove(klass)
+                    siteProperties.manage_changeProperties(**{'types_not_searched' : current})
+
+</dtml-if>
+</dtml-let>
+<dtml-let klasses="[(klass.getTaggedValue('portal_type') or klass.getCleanName()) for klass in generator.getGeneratedClasses(package) if utils.isTGVFalse(generator.getOption('display_in_navigation', klass, True))]">
+<dtml-if "klasses">
+    # unhide selected classes in the navigation
+    portalProperties = getToolByName(self, 'portal_properties', None)
+    if portalProperties is not None:
+        navtree_properties = getattr(portalProperties, 'navtree_properties', None)
+        if navtree_properties is not None and navtree_properties.hasProperty('metaTypesNotToList'):
+            for klass in <dtml-var "repr(klasses)">:
+                current = list(navtree_properties.getProperty('metaTypesNotToList'))
+                if klass in current:
+                    current.remove(klass)
+                    navtree_properties.manage_changeProperties(**{'metaTypesNotToList' : current})
+
+</dtml-if>
+</dtml-let>
+
 <dtml-let all_tools="[c for c in generator.getGeneratedTools(package)]">
 <dtml-if "all_tools">
     # unhide tools
