@@ -250,7 +250,7 @@ def install(self, reinstall=False):
     else:
         print >>out,'no workflow install'
 
-<dtml-if "[klass for klass in generator.getGeneratedClasses(package) if generator.getOption('use_workflow', klass, None) is not None] and not klass.getStateMachines()">
+<dtml-if "[klass for klass in generator.getGeneratedClasses(package) if generator.getOption('use_workflow', klass, None) is not None and not klass.getStateMachines()]">
     #bind classes to workflows
     wft = getToolByName(self,'portal_workflow')
 <dtml-in "generator.getGeneratedClasses(package)">
@@ -261,6 +261,17 @@ def install(self, reinstall=False):
 </dtml-let>
 </dtml-in>
 </dtml-if>
+
+<dtml-let all_tools="[c for c in generator.getGeneratedTools(package) if generator.getOption('use_workflow', c, None) is not None or c.getStateMachine()]">
+<dtml-if "all_tools">
+    # update workflow for created tools if they have been designated a workflow
+    for toolname in <dtml-var "[t.getTaggedValue('tool_instance_name') or 'portal_%s' % t.getName().lower() for t in all_tools]">:
+        try:
+            portal[toolname].notifyWorkflowCreated()
+        except:
+            pass
+</dtml-if>
+</dtml-let>
 
 <dtml-if "package.num_generated_relations">
     # configuration for Relations
