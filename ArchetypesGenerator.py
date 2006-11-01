@@ -3132,7 +3132,7 @@ class ArchetypesGenerator(BaseGenerator):
         suff = os.path.splitext(self.xschemaFileName)[1].lower()
         log.info("Parsing...")
         if not self.noclass:
-            if suff.lower() in ('.xmi','.xml'):
+            if suff.lower() in ('.xmi','.xml', '.uml'):
                 log.debug("Opening xmi...")
                 self.root = root= XMIParser.parse(self.xschemaFileName,
                                                   packages=self.parse_packages,
