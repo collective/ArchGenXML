@@ -2568,7 +2568,7 @@ class ArchetypesGenerator(BaseGenerator):
         d={'generator'                     : self,
            'utils'                         : utils,
            'package'                       : package,
-           'product_name'                  : package.getProductName (),
+           'product_name'                  : package.getProductName(),
            'package_imports'               : packageImports,
            'class_imports'                 : classImports,
            'additional_permissions'        : additional_permissions,
@@ -3157,9 +3157,22 @@ class ArchetypesGenerator(BaseGenerator):
                 lastPart = os.path.split(self.outfilename)[1]
                 log.debug("We've split off the last directory name: %s.",
                           lastPart)
-                root.setName(lastPart)
-                log.debug("Set the name of the root generator to that"
-                          " directory name.")
+                # [Reinout 2006-11-05]: We're not setting the root's
+                # name from the outfilename anymore. That prevents
+                # (amongst others) Optilude from generating some
+                # product into a directory named "trunk", for
+                # instance.
+                #root.setName(lastPart)
+                #log.debug("Set the name of the root generator to that"
+                #          " directory name.")
+                existingName = root.getName()
+                if not existingName == lastPart:
+                    log.warn("Not setting the product's name to '%s', "
+                             "this was the old behaviour. Just name your "
+                             "class diagram according to your product "
+                             "name. ",
+                             lastPart)
+                root.setOutputDirectoryName(self.outfilename)
             else:
                 log.debug("No outfilename present, not changing the "
                           "name of the root generator.")

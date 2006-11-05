@@ -1193,6 +1193,10 @@ class XMIPackage(XMIElement, StateMachineContainer):
         self.classes = []
         self.interfaces = []
         self.packages = []
+        # outputDirectoryName is used when setting the output
+        # directory on the command line. Effectively only used for
+        # single products. Ignored when not set.
+        self.outputDirectoryName = None
 
     def initFromDOM(self, domElement=None):
         self.parentPackage = None
@@ -1337,7 +1341,7 @@ class XMIPackage(XMIElement, StateMachineContainer):
         return res
 
     def getFilePath(self, includeRoot=1, absolute=0):
-        names = [p.getModuleName() for p in
+        names = [p.getModuleNameForDirectoryName() for p in
                  self.getPath(includeRoot=includeRoot, absolute=absolute)]
         if not names:
             return ''
@@ -1358,6 +1362,19 @@ class XMIPackage(XMIElement, StateMachineContainer):
 
     def getProductName(self):
         return self.getProduct().getCleanName()
+
+    def getModuleNameForDirectoryName(self):
+        outdir = self.getOutputDirectoryName()
+        if outdir:
+            return outdir
+        else:
+            return self.getModuleName()
+
+    def getOutputDirectoryName(self):
+        return self.outputDirectoryName
+
+    def setOutputDirectoryName(self, name):
+        self.outputDirectoryName = name
 
     def getProductModuleName(self):
         return self.getProduct().getModuleName()
