@@ -419,7 +419,6 @@ class ArchetypesGenerator(BaseGenerator):
     creation_permission_stack = []
 
     def __init__(self, xschemaFileName, **kwargs):
-#        import pdb;pdb.set_trace()
         
         log.debug("Initializing ArchetypesGenerator. "
                   "We're being passed a file '%s' and keyword "
@@ -970,7 +969,7 @@ class ArchetypesGenerator(BaseGenerator):
                 map.update({k: v})
         return map
 
-    def getWidget(self, type, element, fieldname, elementclass):
+    def getWidget(self, type, element, fieldname, elementclass, fieldclassname=None):
         """ returns either default widget, widget according to
         attributes or no widget.
 
@@ -990,11 +989,14 @@ class ArchetypesGenerator(BaseGenerator):
         # to set an default just put:
         # default:widget:type = widgetname
         # as a tagged value on the package or model
+
         if hasattr(element,'type') and element.type!='NoneType':
             atype = element.type
         else:
             atype=type
+        
         default_widget = self.getOption('default:widget:%s' % atype, element, None)
+        
         if default_widget:
             widgetcode = default_widget+'(\n'
 
@@ -1006,6 +1008,7 @@ class ArchetypesGenerator(BaseGenerator):
         check_map['i18n_domain']        = "'%s'" % modulename
 
         wt={} # helper
+
         if tgv.has_key('widget'):
             # Custom widget defined in attributes
             custom = True
@@ -1024,6 +1027,9 @@ class ArchetypesGenerator(BaseGenerator):
             # default widget for this type found in widgetMap
             custom = True
             widgetcode = self.widgetMap[type]
+
+        elif fieldclassname:
+            widgetcode="%s._properties['widget'](\n" % fieldclassname
 
         if ')' not in widgetcode: # XXX bad check *sigh*
 
@@ -1068,7 +1074,6 @@ class ArchetypesGenerator(BaseGenerator):
                     elementclass,
                     fieldname
                 )
-
             widgetcode += utils.indent( \
                 ',\n'.join(['%s=%s' % (key,widgetmap[key]) for key in widgetmap]),
                 1,
@@ -1175,7 +1180,6 @@ class ArchetypesGenerator(BaseGenerator):
                                                   field_spec['indent_level']
                                                   )
             except Exception, e:
-                #import pdb; pdb.set_trace()
                 log.critical("Couldn't render fields from field_specs: '%s'.",
                              field_specs)
                 raise
@@ -1245,18 +1249,24 @@ class ArchetypesGenerator(BaseGenerator):
         if attr.hasDefault():
             map.update({'default': utils.getExpression(attr.getDefault())})
         map.update(self.getFieldAttributes(attr))
-        widget = self.getWidget(ctype, attr, attr.getName(), classelement)
-
-        if not widget.startswith('GenericWidget'):
-            map.update({'widget': widget})
-
-        self.addVocabulary(classelement, attr, map)
 
         atype = self.typeMap[ctype]['field']
 
         if ctype != 'generic' and self.i18n_content_support in self.i18n_at \
            and attr.isI18N():
             atype = 'I18N' + atype
+
+        if ctype=='generic':
+            fieldclassname=attr.type
+        else:
+            fieldclassname=atype
+
+        widget = self.getWidget(ctype, attr, attr.getName(), classelement, fieldclassname=fieldclassname)
+
+        if not widget.startswith('GenericWidget'):
+            map.update({'widget': widget})
+
+        self.addVocabulary(classelement, attr, map)
 
         doc=attr.getDocumentation(striphtml=self.strip_html)
 
