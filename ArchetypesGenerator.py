@@ -397,7 +397,8 @@ class ArchetypesGenerator(BaseGenerator):
                       'storage', 'enforceVocabulary', 'multiValued',
                       'visible', 'validators', 'validation_expression',
                       'sizes', 'original_size', 'max_size', 'searchable',
-                      'show_hm', 'move:pos', 'move:top', 'move:bottom','array:widget','array:size']
+                      'show_hm', 'move:pos', 'move:top', 'move:bottom',
+                      'primary', 'array:widget','array:size']
 
     msgcatstack = []
 

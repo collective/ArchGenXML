@@ -529,9 +529,9 @@ class XMI1_1 (XMI1_0):
     TRANSITION_GUARD = "UML:Transition.guard", "UML2:Transition.guard"
     OWNED_BEHAVIOR = "UML2:BehavioredClassifier.ownedBehavior"
 
-    ACTION_SCRIPT = "UML:Action.script"
+    ACTION_SCRIPT = "UML:Action.script", "UML2:OpaqueBehavior"
     ACTION_EXPRESSION = "UML:ActionExpression"
-    ACTION_EXPRESSION_BODY = "UML:ActionExpression.body"
+    ACTION_EXPRESSION_BODY = "UML:ActionExpression.body", "UML2:OpaqueBehavior.body"
 
     DIAGRAM = "UML:Diagram"
     DIAGRAM_OWNER = "UML:Diagram.owner"
@@ -2499,7 +2499,7 @@ class XMIState(XMIElement):
     isinitial = 0
     non_permissions = [
         'initial_state', 'documentation',
-        'label', 'worklist',
+        'label', 'description', 'worklist',
         'worklist:guard_permissions',
         'worklist:guard_roles',
     ]
@@ -2634,6 +2634,13 @@ class XMIState(XMIElement):
 
     def isInitial(self):
         return self.isinitial
+
+    def getDescription(self):
+        """Return the description for a state.
+
+        It looks the description at the TGV 'description'.
+        """
+        return self.getTaggedValue('description', '')
 
     def getTitle(self, generator):
         """ Return the title for a state

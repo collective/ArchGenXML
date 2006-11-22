@@ -792,6 +792,10 @@ you to use a normal state in your UML diagram instead of the special
 round starting-state symbol."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'description'
+explanation = """Sets the state description."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'worklist'
 explanation = """Attach objects in this state to the named
 worklist. An example of a worklist is the to-review list."""

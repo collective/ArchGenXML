@@ -54,6 +54,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, workflow):
 <dtml-in "[s for s in statemachine.getStates(no_duplicates = 1) if s.getName()]">
     stateDef = workflow.states['<dtml-var "_['sequence-item'].getName()">']
     stateDef.setProperties(title="""<dtml-var "_['sequence-item'].getTitle(generator)">""",
+                           description="""<dtml-var "_['sequence-item'].getDescription()">""",
                            transitions=<dtml-var "repr([t.getName() for t in _['sequence-item'].getOutgoingTransitions()])">)
 <dtml-in "generator.getPermissionsDefinitions(_['sequence-item'])">
     stateDef.setPermission(<dtml-var "_['sequence-item'].get('permission')">,
