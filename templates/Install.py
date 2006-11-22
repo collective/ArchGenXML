@@ -337,7 +337,7 @@ def install(self, reinstall=False):
             'media': 'all',
             'enabled': True}
             defaults.update(stylesheet)
-            portal_css.manage_addStylesheet(**defaults)
+            portal_css.registerStylesheet(**defaults)
     except:
         # No portal_css registry
         pass
