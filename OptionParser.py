@@ -682,6 +682,14 @@ group.add_option("--pdb-on-exception",
                  default=0,
                  )
 
+group.add_option("--manual-code-sections",
+                 dest="manual_code_sections",
+                 type="yesno",
+                 help="Create manual code sections, so regeneration will play nice "
+                 "(default is yes)",
+                 section="GENERAL",
+                 default=1,
+                 )
 parser.add_option_group(group)
 
 #----------------------------------------------------------------------------

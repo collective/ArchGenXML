@@ -192,8 +192,10 @@ class BaseGenerator:
         return outstring
 
     def generateProtectedSection(self, outfile, element, section, indent=0):
-        parsed = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.getName(), None)
-        print >> outfile, self.getProtectedSection(parsed, section, indent)
+        if self.getOption('manual_code_sections', element, None):
+            parsed = self.parsed_class_sources.get(element.getPackage().getFilePath() + \
+                '/'+element.getName(), None)
+            print >> outfile, self.getProtectedSection(parsed, section, indent)
 
     def generateDependentImports(self, element):
         outfile = StringIO()

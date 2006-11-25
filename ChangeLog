@@ -1,3 +1,9 @@
+2006-11-25  Jean-Paul Ladage  <j.ladage@zestsoftware.nl>
+
+	* BaseGenerator.py: Allow option --manual-code-sections to generate manual code
+	sections. In case you want to generate your model only once and find that
+    those sections clutter your code.
+
 2006-11-01  Reinout van Rees  <reinout@zestsoftware.nl>
 
 	* ArchetypesGenerator.py: Added support for argouml's plain xmi
