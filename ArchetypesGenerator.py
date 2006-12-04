@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #----------------------------------------------------------------------------
 # Name:        ArchetypesGenerator.py
 # Purpose:     main class generating archetypes code out of an UML-model
@@ -11,6 +12,7 @@
 
 import sys
 import time
+import types
 import os.path
 import logging
 from types import StringTypes
@@ -21,7 +23,7 @@ from codesnippets import *
 
 from xml.dom import minidom
 from zipfile import ZipFile
-from StringIO import StringIO
+from cStringIO import StringIO
 
 # AGX-specific imports
 import PyParser
@@ -756,10 +758,11 @@ class ArchetypesGenerator(BaseGenerator):
         typeName = element.getTaggedValue('archetype_name') or \
                     element.getTaggedValue('label') or \
                     element.getName ()
+                        
 
         typeDescription = utils.getExpression(element.getTaggedValue('typeDescription', typeName))
 
-        res=ftiTempl % {
+        res = ftiTempl % {
             'subtypes'             : repr(tuple(subtypes)),
             'has_content_icon'     : has_content_icon,
             'content_icon'         : content_icon,
@@ -788,103 +791,103 @@ class ArchetypesGenerator(BaseGenerator):
     #   ...
     #   }
     typeMap= {
-        'string': {'field': 'StringField',
+        'string': {'field': u'StringField',
                    'map': {},
                    },
-        'text':  {'field': 'TextField',
+        'text':  {'field': u'TextField',
                   'map': {},
                   },
-        'richtext': {'field': 'TextField',
-                     'map': {'default_output_type':"'text/html'",
-                             'allowable_content_types': "('text/plain', 'text/structured', 'text/html', 'application/msword',)",
+        'richtext': {'field': u'TextField',
+                     'map': {u'default_output_type': u"'text/html'",
+                             u'allowable_content_types': u"('text/plain', 'text/structured', 'text/html', 'application/msword',)",
                              },
                      },
-        'selection': {'field': 'StringField',
+        'selection': {'field': u'StringField',
                       'map': {},
                       },
-        'multiselection': {'field': 'LinesField',
-                           'map': {'multiValued': '1',
+        'multiselection': {'field': u'LinesField',
+                           'map': {u'multiValued': u'1',
                                    },
                            },
-        'integer': {'field': 'IntegerField',
+        'integer': {'field': u'IntegerField',
                     'map': {},
                     },
-        'float': {'field': 'FloatField',
+        'float': {'field': u'FloatField',
                   'map': {},
                   },
-        'fixedpoint': {'field': 'FixedPointField',
+        'fixedpoint': {'field': u'FixedPointField',
                        'map': {},
                        },
-        'lines': {'field': 'LinesField',
+        'lines': {'field': u'LinesField',
                   'map': {},
                   },
-        'date': {'field': 'DateTimeField',
+        'date': {'field': u'DateTimeField',
                  'map': {},
                  },
-        'image': {'field': 'ImageField',
-                  'map': {'storage': 'AttributeStorage()',
+        'image': {'field': u'ImageField',
+                  'map': {u'storage': u'AttributeStorage()',
                           },
                   },
-        'file': {'field': 'FileField',
-                 'map': {'storage': 'AttributeStorage()',
+        'file': {'field': u'FileField',
+                 'map': {u'storage': u'AttributeStorage()',
                          },
                  },
-        'reference': {'field': 'ReferenceField',
+        'reference': {'field': u'ReferenceField',
                       'map': {},
                       },
-        'relation': {'field': 'RelationField',
+        'relation': {'field': u'RelationField',
                      'map': {},
                      },
-        'backreference': {'field': 'BackReferenceField',
+        'backreference': {'field': u'BackReferenceField',
                           'map': {},
                           },
-        'boolean': {'field': 'BooleanField',
+        'boolean': {'field': u'BooleanField',
                     'map': {},
                     },
-        'computed': {'field': 'ComputedField',
+        'computed': {'field': u'ComputedField',
                      'map': {},
                      },
-        'photo': {'field': 'PhotoField',
+        'photo': {'field': u'PhotoField',
                   'map': {},
                   },
-        'generic': {'field': '%(type)sField',
+        'generic': {'field': u'%(type)sField',
                     'map': {},
                     },
         }
 
     widgetMap={
-        'fixedpoint': 'DecimalWidget' ,
-        'float': 'DecimalWidget',
-        'text': 'TextAreaWidget',
-        'richtext': 'RichWidget',
-        'file': 'FileWidget',
-        'date' : 'CalendarWidget',
-        'selection' : 'SelectionWidget',
-        'multiselection' : 'MultiSelectionWidget',
-        'BackReference':'BackReferenceWidget'
+        'fixedpoint': u'DecimalWidget' ,
+        'float': u'DecimalWidget',
+        'text': u'TextAreaWidget',
+        'richtext': u'RichWidget',
+        'file': u'FileWidget',
+        'date': u'CalendarWidget',
+        'selection': u'SelectionWidget',
+        'multiselection': u'MultiSelectionWidget',
+        'BackReference': u'BackReferenceWidget'
     }
 
     coerceMap={
-        'xs:string': 'string',
-        'xs:int': 'integer',
-        'xs:integer': 'integer',
-        'xs:byte': 'integer',
-        'xs:double': 'float',
-        'xs:float': 'float',
-        'xs:boolean': 'boolean',
-        'ofs.image': 'image',
-        'ofs.file': 'file',
-        'xs:date': 'date',
-        'datetime': 'date',
-        'list': 'lines',
-        'liste': 'lines',
-        'image': 'image',
-        'int': 'integer',
-        'bool': 'boolean',
-        'dict': 'string',
-        'String': 'string',
-        '': 'string',     #
-        None:'string',
+        'xs:string': u'string',
+        'xs:int': u'integer',
+        'xs:integer': u'integer',
+        'xs:byte': u'integer',
+        'xs:double': u'float',
+        'xs:float': u'float',
+        'xs:boolean': u'boolean',
+        'ofs.image': u'image',
+        'ofs.file': u'file',
+        'xs:date': u'date',
+        'datetime': u'date',
+        'list': u'lines',
+        'liste': u'lines',
+        'image': u'image',
+        'int': u'integer',
+        'bool': u'boolean',
+        'dict': u'string',
+        'String': u'string',
+        '': u'string',     #
+        None: u'string',
     }
 
     hide_classes=['EARootClass','int','float','boolean','long','bool',
@@ -955,9 +958,10 @@ class ArchetypesGenerator(BaseGenerator):
             if k not in noparams and not k.startswith('widget:'):
                 v = tgv[k]
                 if v is None:
-                    log.warn("Empty tagged value for tag '%s' in field '%s'.",
+                    log.warn(u"Empty tagged value for tag '%s' in field '%s'.",
                              k, element.getName())
                     continue
+                v = v.decode('utf8')
 
                 if k not in self.nonstring_tgvs:
                     v=utils.getExpression(v)
@@ -970,7 +974,7 @@ class ArchetypesGenerator(BaseGenerator):
                 map.update({k: v})
         return map
 
-    def getWidget(self, type, element, fieldname, elementclass, fieldclassname=None):
+    def getWidget(self, widgettype, element, fieldname, elementclass, fieldclassname=None):
         """ returns either default widget, widget according to
         attributes or no widget.
 
@@ -979,55 +983,53 @@ class ArchetypesGenerator(BaseGenerator):
             * widget:PARAMETER which will be rendered as a PARAMETER=value
 
         """
-        tgv=element.getTaggedValues()
-        widgetcode = type.capitalize()+'Widget'
-        widgetmap=odict()
+        tgv = element.getTaggedValues()
+        widgetcode = widgettype.capitalize()+'Widget'
+        widgetmap = odict()
         custom = False # is there a custom setting for widget?
-        widgetoptions=[t for t in tgv.items() if t[0].startswith('widget:')]
+        widgetoptions = [t for t in tgv.items() if t[0].startswith('widget:')]
 
         # check if a global default overrides a widget. setting defaults is
         # provided through getOption.
         # to set an default just put:
-        # default:widget:type = widgetname
+        # default:widget:widgettype = widgetname
         # as a tagged value on the package or model
-
-        if hasattr(element,'type') and element.type!='NoneType':
+        if hasattr(element,'widgettype') and element.type != 'NoneType':
             atype = element.type
         else:
-            atype=type
-        
+            atype = widgettype
         default_widget = self.getOption('default:widget:%s' % atype, element, None)
         
         if default_widget:
-            widgetcode = default_widget+'(\n'
+            widgetcode = default_widget + u'(\n'
 
-        modulename= elementclass.getPackage().getProductName()
-        check_map=odict()
-        check_map['label']              = "'%s'" % fieldname.capitalize()
-        check_map['label_msgid']        = "'%s_label_%s'" % (modulename,fieldname)
-        check_map['description_msgid']  = "'%s_help_%s'" % (modulename,fieldname)
-        check_map['i18n_domain']        = "'%s'" % modulename
+        modulename = elementclass.getPackage().getProductName()
+        check_map = odict()
+        check_map['label']              = u"'%s'" % fieldname.capitalize()
+        check_map['label_msgid']        = u"'%s_label_%s'" % (modulename, fieldname)
+        check_map['description_msgid']  = u"'%s_help_%s'" % (modulename, fieldname)
+        check_map['i18n_domain']        = u"'%s'" % modulename
 
-        wt={} # helper
+        wt = {} # helper
 
         if tgv.has_key('widget'):
             # Custom widget defined in attributes
             custom = True
-            formatted=''
-            for line in tgv['widget'].split('\n'):
+            formatted = u''
+            for line in tgv['widget'].split(u'\n'):
                 if formatted:
                     line = utils.indent(line.strip(), 1)
-                formatted+=line+'\n'
+                formatted += u"%s\n" % line
             widgetcode =  formatted
 
         elif [wt.update({t[0]:t[1]}) for t in widgetoptions if t[0] == u'widget:type']:
             custom = True
-            widgetcode = wt['widget:type']
+            widgetcode = wt[u'widget:type']
         
-        elif self.widgetMap.has_key(type) and not default_widget:
-            # default widget for this type found in widgetMap
+        elif self.widgetMap.has_key(widgettype) and not default_widget:
+            # default widget for this widgettype found in widgetMap
             custom = True
-            widgetcode = self.widgetMap[type]
+            widgetcode = self.widgetMap[widgettype]
 
         elif fieldclassname:
             widgetcode="%s._properties['widget'](\n" % fieldclassname
@@ -1075,12 +1077,20 @@ class ArchetypesGenerator(BaseGenerator):
                     elementclass,
                     fieldname
                 )
+            keqvs = list()
+            for key in widgetmap:
+                value = widgetmap[key]
+                if type(value) != types.UnicodeType:
+                    value = value.decode('utf-8')
+                keqv = u'%s=%s' % (key, value)
+                keqvs.append(keqv)
+
             widgetcode += utils.indent( \
-                ',\n'.join(['%s=%s' % (key,widgetmap[key]) for key in widgetmap]),
+                u',\n'.join(keqvs),
                 1,
                 skipFirstRow=0) \
-                + ',\n'
-            widgetcode +=')'
+                + u',\n'
+            widgetcode += u')'
 
         return widgetcode
 
@@ -1091,12 +1101,12 @@ class ArchetypesGenerator(BaseGenerator):
 
         log.debug("Trying to get formatted field. name='%s', fieldtype='%s', "
                   "doc='%s', rawType='%s'.", name, fieldtype, doc, rawType)
-        res = ''
+        res = u''
         if array_field:
             array_options={}
             for key in map.keys():
-                if key.startswith('array:'):
-                    nkey=key[len('array:'):]
+                if key.startswith(u'array:'):
+                    nkey=key[len(u'array:'):]
                     array_options[nkey]=map[key]
                     del map[key]
             
@@ -1106,23 +1116,23 @@ class ArchetypesGenerator(BaseGenerator):
 
         # Add comment
         if doc:
-            res += utils.indent(doc, indent_level, '#') + '\n' + res
+            res += utils.indent(doc, indent_level, u'#') + u'\n' + res
 
         # If this is a generic field and the user entered MySpecialField,
         # then don't suffix it with 'field''
-        if rawType.endswith('Field'):
+        if rawType.endswith(u'Field'):
             rawType = rawType[:-5]
 
-        res += utils.indent("%s(\n    name='%s',\n" % (
+        res += utils.indent(u"%s(\n    name='%s',\n" % (
                    fieldtype % {'type': rawType}, name), indent_level)
         if map:
-            prepend = utils.indent('', indent_level)
+            prepend = utils.indent(u'', indent_level)
             for key in map:
-                if key.find(':') >= 0:
+                if key.find(u':') >= 0:
                     continue
                 lines = map[key]
                 if isinstance(lines, basestring):
-                    linebreak = lines.find('\n')
+                    linebreak = lines.find(u'\n')
 
                     if linebreak < 0:
                         linebreak = len(lines)
@@ -1130,29 +1140,30 @@ class ArchetypesGenerator(BaseGenerator):
                 else:
                     firstline = lines
 
-                res += '%s%s=%s' % (prepend, key, firstline)
+                res += u'%s%s=%s' % (prepend, key, firstline)
                 if isinstance(lines, basestring) and linebreak < len(lines):
-                    for line in lines[linebreak+1:].split('\n'):
-                        res += "\n%s" % utils.indent(line, indent_level + 1)
+                    for line in lines[linebreak+1:].split(u'\n'):
+                        line = utils.indent(line, indent_level + 1)
+                        res += u"\n%s" % line
 
-                prepend = ',\n%s' % utils.indent('', indent_level +1)
+                prepend = u',\n%s' % utils.indent('', indent_level +1)
 
-        res += '\n%s' % utils.indent('),', indent_level) + '\n\n'
+        res += u'\n%s' % utils.indent(u'),', indent_level) + u'\n\n'
 
         if array_field:
-            if array_options.get('widget',None):
-                array_options['widget']+='()'
+            if array_options.get('widget', None):
+                array_options['widget'] += u'()'
 
-            array_defs=',\n'.join(["%s=%s" % item for item in array_options.items()])
-            res = "ArrayField(%s\n%s" % (utils.indent(res, 2),utils.indent(array_defs,2))
+            array_defs = u',\n'.join([u"%s=%s" % item for item in array_options.items()])
+            res = u"ArrayField(%s\n%s" % (utils.indent(res, 2),utils.indent(array_defs,2))
 
-            res += utils.indent('\n),\n\n',1)
+            res += utils.indent(u'\n),\n\n',1)
         return res
 
     def getFieldsFormatted(self, field_specs):
         """Return the formatted field definitions for the schema from field_specs.
         """
-        res = ''
+        res = u''
         for field_spec in field_specs:
             log.debug("field_spec is %r.",
                       field_spec)
@@ -1191,10 +1202,10 @@ class ArchetypesGenerator(BaseGenerator):
         typename = element.type
         ctype = self.coerceType(typename)
         map = typeMap[ctype]['map'].copy()
-        res= {'name':element.getCleanName(),
-            'fieldtype':self.typeMap[ctype]['field'].copy(),
-            'map':map,
-            'indent_level':indent_level}
+        res= {'name': element.getCleanName(),
+              'fieldtype': self.typeMap[ctype]['field'].copy(),
+              'map': map,
+              'indent_level': indent_level}
         return res
 
     def addVocabulary(self, element, attr, map):
@@ -1571,8 +1582,9 @@ class ArchetypesGenerator(BaseGenerator):
                                       tgv['widget:description'].strip("'").strip('"')
                                       or fieldname, element, fieldname)
 
+        fieldsformatted = self.getFieldsFormatted(field_specs) + u'),'        
         print >> outfile, SCHEMA_START
-        print >> outfile, self.getFieldsFormatted(field_specs) + '),'
+        print >> outfile, fieldsformatted.encode('utf8')
 
         marshaller=element.getTaggedValue('marshaller') or element.getTaggedValue('marshall')
         if marshaller:
@@ -1843,12 +1855,12 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             widget = None
             widgetname = None
-
-        return BaseGenerator.generatePythonClass(self, element, template,
-                                                 parent=parent,
-                                                 parentname=parentname,
-                                                 widget=widget,
-                                                 widgetname=widgetname)
+        klass = BaseGenerator.generatePythonClass(self, element, template,
+                                                  parent=parent,
+                                                  parentname=parentname,
+                                                  widget=widget,
+                                                  widgetname=widgetname)
+        return klass
 
     def elementIsFolderish(self, element):
         log.debug("Determining whether the element '%s' is folderish...",
@@ -2014,7 +2026,7 @@ class ArchetypesGenerator(BaseGenerator):
                                  umlprofile=self.uml_profile):
             wrt(CMFMEMBER_IMPORTS)
             # and set the add content permission to what CMFMember needs
-            creation_permission = 'ADD_MEMBER_PERMISSION'
+            creation_permission = u'ADD_MEMBER_PERMISSION'
             creation_roles = None
 
         # imports needed for optional support of SQLStorage
@@ -2028,9 +2040,9 @@ class ArchetypesGenerator(BaseGenerator):
         # imports by tagged values
         additionalImports = self.getImportsByTaggedValues(element)
         if additionalImports:
-            wrt("# additional imports from tagged value 'import'\n")
+            wrt(u"# additional imports from tagged value 'import'\n")
             wrt(additionalImports)
-            wrt('\n')
+            wrt(u'\n')
 
         # CMFMember needs a special factory method
         if element.hasStereoType(self.cmfmember_stereotype,
@@ -2206,12 +2218,14 @@ class ArchetypesGenerator(BaseGenerator):
                          element.getTaggedValue('label')
         if not archetype_name:
             archetype_name = name
+        if type(archetype_name) != types.UnicodeType:
+            archetype_name = archetype_name.decode('utf8')
         portaltype_name = element.getTaggedValue('portal_type') or name
 
         # [optilude] Only output portal type and AT name if it's not an abstract
         # mixin
         if not element.isAbstract():
-            print >> outfile, CLASS_ARCHETYPE_NAME % archetype_name
+            print >> outfile, (CLASS_ARCHETYPE_NAME % archetype_name).encode('utf8')
             print >> outfile, CLASS_META_TYPE % name
             print >> outfile, CLASS_PORTAL_TYPE % portaltype_name
 
@@ -2808,6 +2822,8 @@ class ArchetypesGenerator(BaseGenerator):
                     raise
                 classfile = self.makeFile(outfilepath)
                 # TBD perhaps check if the file is parseable
+                if type(buf) == types.UnicodeType:
+                    buf = buf.encode('utf-8')
                 print >> classfile, buf
                 classfile.close()
             except:

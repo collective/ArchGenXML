@@ -12,7 +12,7 @@
 # Licence:     GPL
 #-----------------------------------------------------------------------------
 
-ACT_TEMPL = """
+ACT_TEMPL = u"""
        {'action': %(action)s,
         'category': %(action_category)s,
         'id': '%(action_id)s',
@@ -22,7 +22,7 @@ ACT_TEMPL = """
        },
 """
 
-MODIFY_FTI = """\
+MODIFY_FTI = u"""\
 def modify_fti(fti):
     # Hide unnecessary tabs (usability enhancement)
     for a in fti['actions']:
@@ -31,15 +31,15 @@ def modify_fti(fti):
     return fti
 """
 
-ACTIONS_START = """
+ACTIONS_START = u"""
     actions = %s (
 """
 
-ACTIONS_END = """
+ACTIONS_END = u"""
     )
 """
 
-DEFAULT_ACTIONS = """
+DEFAULT_ACTIONS = u"""
        {'action': 'string:${object_url}/base_edit',
         'category': 'object',
         'id': 'edit',
@@ -56,7 +56,7 @@ DEFAULT_ACTIONS = """
 
 """
 
-DEFAULT_ACTIONS_FOLDERISH = """
+DEFAULT_ACTIONS_FOLDERISH = u"""
        {'action': 'string:${folder_url}/folder_listing',
         'category': 'folder',
         'condition': 'object/isPrincipiaFolderish',
@@ -67,6 +67,7 @@ DEFAULT_ACTIONS_FOLDERISH = """
 
 """
 
+# FTI_TEMPL must not be unicode!
 FTI_TEMPL = """\
     filter_content_types = %(filter_content_types)d
     global_allow = %(global_allow)d
@@ -78,18 +79,18 @@ FTI_TEMPL = """\
     typeDescMsgId = 'description_edit_%(type_name_lc)s'
 """
 
-TOOL_FTI_TEMPL = """\
+TOOL_FTI_TEMPL = u"""\
     %(has_toolicon)stoolicon = '%(toolicon)s'
 """
 
-CLASS_SCHEMA = """\
+CLASS_SCHEMA = u"""\
     schema = %(prefix)s + schema %(postfix)s
 """
 
-SCHEMA_START = """schema = Schema((
+SCHEMA_START = u"""schema = Schema((
 """
 
-SCHEMA_TOOL = """\
+SCHEMA_TOOL = u"""\
         # a tool does not need be editable in id and title
         StringField(
             name='id',
@@ -110,7 +111,7 @@ SCHEMA_TOOL = """\
         ),
 """
 
-TEMPL_APE_HEADER = """
+TEMPL_APE_HEADER = u"""
 from Products.Archetypes.ApeSupport import constructGateway,constructSerializer
 
 def ApeGateway():
@@ -121,31 +122,31 @@ def ApeSerializer():
 
 """
 
-TEMPL_TOOL_HEADER="""
+TEMPL_TOOL_HEADER=u"""
 from Products.CMFCore.utils import UniqueObject
 
     """
 
-CLASS_META_TYPE = """    meta_type = '%s'"""
-CLASS_PORTAL_TYPE = """    portal_type = '%s'"""
-CLASS_ARCHETYPE_NAME = """    # This name appears in the 'add' box
+CLASS_META_TYPE = u"""    meta_type = '%s'"""
+CLASS_PORTAL_TYPE = u"""    portal_type = '%s'"""
+CLASS_ARCHETYPE_NAME = u"""    # This name appears in the 'add' box
     archetype_name = '%s'\n"""
-CLASS_FOLDER_TABS = """    use_folder_tabs = %s\n"""
-CLASS_IMPLEMENTS = """    __implements__ = %(baseclass_interfaces)s + (%(realizations)s,)"""
-CLASS_IMPLEMENTS_BASE = """    __implements__ = %(baseclass_interfaces)s"""
-CLASS_ALLOWED_CONTENT_TYPES = '''    allowed_content_types = %s%s'''
-CLASS_ALLOWED_CONTENT_INTERFACES = '''    allowed_interfaces = [%s] %s'''
-CLASS_RENAME_AFTER_CREATION = '''    _at_rename_after_creation = %s\n'''
+CLASS_FOLDER_TABS = u"""    use_folder_tabs = %s\n"""
+CLASS_IMPLEMENTS = u"""    __implements__ = %(baseclass_interfaces)s + (%(realizations)s,)"""
+CLASS_IMPLEMENTS_BASE = u"""    __implements__ = %(baseclass_interfaces)s"""
+CLASS_ALLOWED_CONTENT_TYPES = u'''    allowed_content_types = %s%s'''
+CLASS_ALLOWED_CONTENT_INTERFACES = u'''    allowed_interfaces = [%s] %s'''
+CLASS_RENAME_AFTER_CREATION = u'''    _at_rename_after_creation = %s\n'''
 
-REGISTER_ARCHTYPE = """registerType(%s, PROJECTNAME)\n"""
+REGISTER_ARCHTYPE = u"""registerType(%s, PROJECTNAME)\n"""
 
-IMPORT_INTERFACE = """from Interface import Base"""
+IMPORT_INTERFACE = u"""from Interface import Base"""
 
-ENCODING_HEADER = """\
+ENCODING_HEADER = u"""\
 # -*- coding: %(encoding)s -*-
 """
 
-MODULE_INFO_HEADER = '''\
+MODULE_INFO_HEADER = u'''\
 #
 # %(filename_or_id)s
 #
@@ -161,9 +162,9 @@ __docformat__ = 'plaintext'
 
 '''
 
-COPYRIGHT = """Copyright (c) %s by %s"""
+COPYRIGHT = u"""Copyright (c) %s by %s"""
 
-GPLTEXT = """\
+GPLTEXT = u"""\
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
 # as published by the Free Software Foundation; either version 2
@@ -179,7 +180,7 @@ GPLTEXT = """\
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 # 02110-1301, USA."""
 
-LGPLTEXT = """\
+LGPLTEXT = u"""\
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
@@ -195,7 +196,7 @@ LGPLTEXT = """\
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 # 02110-1301, USA."""
 
-BSDTEXT = """\
+BSDTEXT = u"""\
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
 # are met:
@@ -224,7 +225,7 @@ BSDTEXT = """\
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."""
 
-ZPLTEXT = """\
+ZPLTEXT = u"""\
 # This software is subject to the provisions of the Zope Public License,
 # Version 2.1 (ZPL). A copy of the ZPL should accompany this distribution.
 # THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
@@ -232,7 +233,7 @@ ZPLTEXT = """\
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 # FOR A PARTICULAR PURPOSE."""
 
-DFSLTEXT = """\
+DFSLTEXT = u"""\
 # This Program may be used by anyone in accordance with the terms of the 
 # German Free Software License
 # The License may be obtained under <http://www.d-fsl.org>."""
@@ -240,60 +241,60 @@ DFSLTEXT = """\
 LICENSES = {
 
     'GPL': {
-        'name': 'GNU General Public License (GPL)',
+        'name': u'GNU General Public License (GPL)',
         'text': GPLTEXT,
     },
 
     'LGPL': {
-        'name': 'GNU Lesser General Public License (LGPL)',
+        'name': u'GNU Lesser General Public License (LGPL)',
         'text': LGPLTEXT,
     },
 
     'BSD': {
-        'name': 'Berkeley Software Distribution License (BSD)',
+        'name': u'Berkeley Software Distribution License (BSD)',
         'text': BSDTEXT,
     },
 
     'ZPL': {
-        'name': 'Zope Public License (ZPL)',
+        'name': u'Zope Public License (ZPL)',
         'text': ZPLTEXT,
     },
     'DFSL': {
-        'name': 'German Free Software License (D-FSL)',
+        'name': u'German Free Software License (D-FSL)',
         'text': DFSLTEXT,
     },
     'NONE': { 'name':'', 'text':'' },
 
 }
 
-REGISTER_VOCABULARY_ITEM = """registerVocabularyTerm(%s, '%s')"""
-REGISTER_VOCABULARY_CONTAINER = """registerVocabulary(%s)"""
+REGISTER_VOCABULARY_ITEM = u"""registerVocabularyTerm(%s, '%s')"""
+REGISTER_VOCABULARY_CONTAINER = u"""registerVocabulary(%s)"""
 
-TEMPL_CONSTR_TOOL = """
+TEMPL_CONSTR_TOOL = u"""
     # tool-constructors have no id argument, the id is fixed
     def __init__(self, id=None):
         %s.__init__(self,'%s')
         self.setTitle('%s')
         """
 
-TEMPL_POST_EDIT_METHOD_TOOL = """
+TEMPL_POST_EDIT_METHOD_TOOL = u"""
     # tool should not appear in portal_catalog
     def at_post_edit_script(self):
         self.unindexObject()
         """
 
-TEMPLATE_HEADER = """\
+TEMPLATE_HEADER = u"""\
 from AccessControl import ClassSecurityInfo
 from Products.Archetypes.atapi import *
 """
 
-TEMPLATE_HEADER_I18N_I18N_AT = TEMPLATE_HEADER + """\
+TEMPLATE_HEADER_I18N_I18N_AT = TEMPLATE_HEADER + u"""\
 
 from Products.I18NArchetypes.public import *
 
     """
 
-TEMPLATE_HEADER_I18N_LINGUAPLONE = TEMPLATE_HEADER + """\
+TEMPLATE_HEADER_I18N_LINGUAPLONE = TEMPLATE_HEADER + u"""\
 
 try:
     from Products.LinguaPlone.public import *
@@ -304,21 +305,21 @@ else:
 
 """
 
-TEMPLATE_CONFIG_IMPORT = """\
+TEMPLATE_CONFIG_IMPORT = u"""\
 from Products.%(module)s.config import *
 
 """
 
 
-TEMPL_APECONFIG_BEGIN = """<?xml version="1.0"?>
+TEMPL_APECONFIG_BEGIN = u"""<?xml version="1.0"?>
 
 <!-- Basic Zope 2 configuration for Ape. -->
 
 <configuration>"""
 
-TEMPL_APECONFIG_END = """</configuration>"""
+TEMPL_APECONFIG_END = u"""</configuration>"""
 
-READMELOWEST = """\
+READMELOWEST = u"""\
 Directory 'skins/%s':
 
 Put your templates, css and javascript files in here. When first
@@ -328,7 +329,7 @@ little bit down, but it'll always be above the plone skin layers. So:
 you can use it to overwrite plone stuff.
 """
 
-CMFMEMBER_IMPORTS = """\
+CMFMEMBER_IMPORTS = u"""\
 # imports needed by CMFMember
 from Products.CMFMember import Member as BaseMember
 from Products.CMFMember.MemberPermissions import \\
@@ -340,7 +341,7 @@ from Products.CMFMember.MemberPermissions import \\
 from AccessControl import ModuleSecurityInfo
 """
 
-CMFMEMBER_ADD = """\
+CMFMEMBER_ADD = u"""\
 
 # Generate the add%(prefix)s%(name)s method ourselves so we can do some extra
 # initialization, i.e. so we can set an initial password
@@ -356,8 +357,8 @@ def add%(prefix)s%(name)s(self, id, **kwargs):
     o._setPassword(o._generatePassword())
 
 """
-CMFMEMBER_SETUP_IMPORT = """\
+CMFMEMBER_SETUP_IMPORT = u"""\
 from Products.CMFMember.Extensions.toolbox import SetupMember
 """
-CMFMEMBER_SETUP_INSTALL = """\
+CMFMEMBER_SETUP_INSTALL = u"""\
 """

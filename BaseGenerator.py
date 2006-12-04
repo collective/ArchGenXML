@@ -336,7 +336,7 @@ class BaseGenerator:
             dispatching_stereotype = self.getDefaultClassType()
 
         generator = dispatching_stereotype.generator
-        return getattr(self,generator)(element,
+        return getattr(self, generator)(element,
                                        template=getattr(dispatching_stereotype,
                                                         'template', None))
 

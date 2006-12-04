@@ -1,3 +1,9 @@
+2006-12-04 Jens W Klein <jens@bluedyanmics.com>
+
+	* make it special-charater aware and get rid of UnicodeDecodeErrors.
+
+	* supports for now archetypes_name, widget:label and widget:description
+
 2006-11-25  Jean-Paul Ladage  <j.ladage@zestsoftware.nl>
 
 	* BaseGenerator.py: Allow option --manual-code-sections to generate manual code

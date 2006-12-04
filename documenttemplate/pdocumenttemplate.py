@@ -279,7 +279,10 @@ def render_blocks(blocks, md):
                     section = md[section]
                 else:
                     section = section(md)
-                section = str(section)
+                try:
+                    section = str(section)
+                except UnicodeEncodeError:
+                    section = section.encode('utf8')
             else:
                 # if
                 cache = {}
