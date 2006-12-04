@@ -856,6 +856,7 @@ class ArchetypesGenerator(BaseGenerator):
         }
 
     widgetMap={
+        'string': u'StringWidget' ,
         'fixedpoint': u'DecimalWidget' ,
         'float': u'DecimalWidget',
         'text': u'TextAreaWidget',
@@ -1024,7 +1025,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         elif [wt.update({t[0]:t[1]}) for t in widgetoptions if t[0] == u'widget:type']:
             custom = True
-            widgetcode = wt[u'widget:type']
+            widgetcode = wt['widget:type']
         
         elif self.widgetMap.has_key(widgettype) and not default_widget:
             # default widget for this widgettype found in widgetMap
