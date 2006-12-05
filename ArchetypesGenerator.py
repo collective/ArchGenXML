@@ -1152,13 +1152,14 @@ class ArchetypesGenerator(BaseGenerator):
         res += u'\n%s' % utils.indent(u'),', indent_level) + u'\n\n'
 
         if array_field:
+            res = res.strip()
             if array_options.get('widget', None):
                 array_options['widget'] += u'()'
 
             array_defs = u',\n'.join([u"%s=%s" % item for item in array_options.items()])
-            res = u"ArrayField(%s\n%s" % (utils.indent(res, 2),utils.indent(array_defs,2))
-
-            res += utils.indent(u'\n),\n\n',1)
+            res =  ARRAYFIELD % ( utils.indent(res, 2), utils.indent(array_defs, 2) ) 
+            #res = utils.indent(res, 1)
+            
         return res
 
     def getFieldsFormatted(self, field_specs):

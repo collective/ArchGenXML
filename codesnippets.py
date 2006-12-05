@@ -362,3 +362,10 @@ from Products.CMFMember.Extensions.toolbox import SetupMember
 """
 CMFMEMBER_SETUP_INSTALL = u"""\
 """
+
+ARRAYFIELD = u"""    ArrayField(
+%s
+%s
+    ),
+
+"""
