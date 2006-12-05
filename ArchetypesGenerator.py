@@ -1154,11 +1154,11 @@ class ArchetypesGenerator(BaseGenerator):
         if array_field:
             res = res.strip()
             if array_options.get('widget', None):
-                array_options['widget'] += u'()'
+                if array_options['widget'].find('(') == -1:
+                    array_options['widget'] += u'()'
 
             array_defs = u',\n'.join([u"%s=%s" % item for item in array_options.items()])
             res =  ARRAYFIELD % ( utils.indent(res, 2), utils.indent(array_defs, 2) ) 
-            #res = utils.indent(res, 1)
             
         return res
 
