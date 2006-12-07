@@ -6,7 +6,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# Copyright:   (c) 2003-2005 BlueDynamics
+# Copyright:   (c) 2003-2006 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
 
@@ -511,27 +511,15 @@ class ArchetypesGenerator(BaseGenerator):
 
         If it exists and not listed in occurrences, then add its occurence.
         """
+        print msgid,
+        msgid = utils.normalize(msgid)
+        print msgid
         if has_i18ndude and self.build_msgcatalog and len(self.msgcatstack):
             msgcat = self.msgcatstack[len(self.msgcatstack)-1]
             package = element.getPackage()
             module_id = os.path.join(element.getPackage().getFilePath(includeRoot=0),
                                      element.getName()+'.py')
-            try:
-                #i18ndude 2.0
-                msgcat.add(msgid, msgstr=msgstr, references=[module_id])
-            except:
-                # old i18ndude
-                if not msgcat.has_key(msgid):
-                    # add new msgid
-                    msgcat[msgid] = (msgstr, [(module_id, [msgstr])], [])
-                else:
-                    # check if occurrence is listed
-                    entry=msgcat[msgid]
-                    for entry_id, entry_ex in entry[1]:
-                        if entry_id == module_id:
-                            return
-                    # isnt listed, so add it
-                    entry[1].append((module_id, [msgstr]))
+            msgcat.add(msgid, msgstr=msgstr, references=[module_id])
 
     def generateMethodActions(self, element):
         log.debug("Generating method actions...")
@@ -719,9 +707,10 @@ class ArchetypesGenerator(BaseGenerator):
             element.isAbstract()):
             global_allow = False
         # But the tagged value overwrites all
-        if utils.isTGVFalse(element.getTaggedValue('global_allow')):
+        tgvglobalallow = self.getOption('global_allow', element, default=None)
+        if utils.isTGVFalse(tgvglobalallow):
             global_allow = False
-        if utils.isTGVTrue(element.getTaggedValue('global_allow')):
+        if utils.isTGVTrue(tgvglobalallow):
             global_allow = True
 
         has_content_icon=''

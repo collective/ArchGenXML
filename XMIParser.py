@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #-----------------------------------------------------------------------------
 # Name:        XMIParser.py
 # Purpose:     Parse XMI (UML-model) and provide a logical model of it
