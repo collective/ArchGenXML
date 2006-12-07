@@ -208,5 +208,5 @@ def normalize(data):
     if type(data) is types.UnicodeType:
         data = data.strip()
         for key in specialrpl:
-            data = data.replace(key, specialrpl[key])
-    return data
+            data = data.replace(key, specialrpl[key])    
+    return data.encode('utf-8')

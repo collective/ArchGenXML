@@ -511,9 +511,8 @@ class ArchetypesGenerator(BaseGenerator):
 
         If it exists and not listed in occurrences, then add its occurence.
         """
-        print msgid,
+        log.debug("Add msgid %s" % msgid)
         msgid = utils.normalize(msgid)
-        print msgid
         if has_i18ndude and self.build_msgcatalog and len(self.msgcatstack):
             msgcat = self.msgcatstack[len(self.msgcatstack)-1]
             package = element.getPackage()
