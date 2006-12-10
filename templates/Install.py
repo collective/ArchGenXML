@@ -255,7 +255,7 @@ def install(self, reinstall=False):
     wft = getToolByName(self,'portal_workflow')
 <dtml-in "generator.getGeneratedClasses(package)">
 <dtml-let klass="_['sequence-item']">
-<dtml-if "generator.getOption('use_workflow', klass, None) is not None and not klass.getStateMachine()">
+<dtml-if "generator.getOption('use_workflow', klass, None)">
     wft.setChainForPortalTypes( ['<dtml-var "klass.getCleanName()">'], <dtml-var "utils.getExpression(generator.getOption('use_workflow', klass))">)
 </dtml-if>
 </dtml-let>

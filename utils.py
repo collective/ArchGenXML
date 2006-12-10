@@ -209,4 +209,7 @@ def normalize(data):
         data = data.strip()
         for key in specialrpl:
             data = data.replace(key, specialrpl[key])    
-    return data.encode('utf-8')
+    if not data is None:
+        return data.encode('utf-8')
+    else:
+        return None
