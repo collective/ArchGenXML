@@ -200,15 +200,18 @@ def addConsoleLogging():
     hdlr.setFormatter(formatter)
     log.addHandler(hdlr)
 
-def normalize(data):
+def normalize(data, doReplace=False):
     """Converts a unicode to string, stripping blank spaces."""
+    if type(data) not in types.StringTypes:
+        return data
     if type(data) is types.StringType:
         # make unicode
         data = data.decode('utf-8')
     if type(data) is types.UnicodeType:
         data = data.strip()
-        for key in specialrpl:
-            data = data.replace(key, specialrpl[key])    
+        if doReplace:
+            for key in specialrpl:
+                data = data.replace(key, specialrpl[key])    
     if not data is None:
         return data.encode('utf-8')
     else:

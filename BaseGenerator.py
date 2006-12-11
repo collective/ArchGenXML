@@ -182,20 +182,20 @@ class BaseGenerator:
         """
 
         outstring = utils.indent(PyParser.PROTECTED_BEGIN, ind) + ' ' + \
-                            section +' #fill in your manual code here\n'
+                            section +u' #fill in your manual code here\n'
         if parsed:
             sectioncode = parsed.getProtectedSection(section)
             if sectioncode:
                 outstring += sectioncode + '\n'
 
-        outstring += utils.indent(PyParser.PROTECTED_END, ind) + ' ' + section + '\n'
+        outstring += utils.indent(PyParser.PROTECTED_END, ind) + u' ' + section + u'\n'
         return outstring
 
     def generateProtectedSection(self, outfile, element, section, indent=0):
         if self.getOption('manual_code_sections', element, None):
             parsed = self.parsed_class_sources.get(element.getPackage().getFilePath() + \
-                '/'+element.getName(), None)
-            print >> outfile, self.getProtectedSection(parsed, section, indent)
+                u'/'+element.getName(), None)
+            print >> outfile, self.getProtectedSection(parsed, section, indent).encode('utf-8')
 
     def generateDependentImports(self, element):
         outfile = StringIO()

@@ -149,9 +149,9 @@ class XMI1_0:
     def __init__(self,**kw):
         self.__dict__.update(kw)
 
-    def getName(self, domElement):
+    def getName(self, domElement, doReplace=False):
         name = getAttributeValue(domElement, self.NAME)
-        return normalize(name)
+        return normalize(name, doReplace)
 
     def getId(self, domElement):
         return domElement.getAttribute('xmi.id').strip()
@@ -353,15 +353,17 @@ class XMI1_0:
         else:
             return None
 
-    def getTaggedValue(self, el):
+    def getTaggedValue(self, el, doReplace=False):
         log.debug("Getting tagged value for element '%s'. Not recursive.",
                   self.getId(el))
         tagname = normalize(getAttributeValue(el, XMI.TAGGED_VALUE_TAG,
-                                              recursive=0, default=None))
+                                              recursive=0, default=None),
+                           )
         if not tagname:
             raise TypeError, 'element %s has empty taggedValue' % self.getId(el)
         tagvalue = normalize(getAttributeValue(el, XMI.TAGGED_VALUE_VALUE,
-                                               recursive=0, default=None))
+                                               recursive=0, default=None),
+                            doReplace)
         return tagname, tagvalue
 
     def collectTagDefinitions(self, el):
@@ -542,10 +544,10 @@ class XMI1_1 (XMI1_0):
 
     UML2TYPE = 'UML2:TypedElement.type'
 
-    def getName(self, domElement):
+    def getName(self, domElement, doReplace=False):
         name = ''
         if domElement:
-            name = normalize(domElement.getAttribute('name'))
+            name = normalize(domElement.getAttribute('name'), doReplace)
         return name
 
     def getExpressionBody(self, element, tagname=None):
@@ -677,9 +679,9 @@ def getSubElement(domElement, default=_marker, ignoremult=0):
         else:
             return default
 
-def getAttributeValue(domElement, tagName=None, default=_marker, recursive=0):
+def getAttributeValue(domElement, tagName=None, default=_marker, recursive=0, doReplace=False):
     el = domElement
-    el.normalize()
+    #el.normalize()
     if tagName:
         try:
             el = getElementByTagName(domElement, tagName, recursive=recursive)
@@ -855,12 +857,12 @@ class XMIElement:
     def getChildren(self):
         return self.children
 
-    def getName(self):
+    def getName(self, doReplace=False):
         if self.name:
             res = self.name
         else:
             res = self.id
-        return normalize(res)
+        return normalize(res, doReplace)
 
     def getTaggedValue(self, name, default=''):
         log.debug("Getting value for tag '%s' (default=%s). "

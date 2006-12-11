@@ -850,6 +850,7 @@ class ArchetypesGenerator(BaseGenerator):
         'text': u'TextAreaWidget',
         'richtext': u'RichWidget',
         'file': u'FileWidget',
+        'image': u'ImageWidget',
         'date': u'CalendarWidget',
         'selection': u'SelectionWidget',
         'multiselection': u'MultiSelectionWidget',
