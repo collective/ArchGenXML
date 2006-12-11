@@ -249,13 +249,6 @@ explanation = """Useful when using the '<<folder>>' stereotype in order to set
 the folderish base class."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-tagname = 'global_allow'
-explanation = """Overwrite the AGX-calculated 'global_allow'
-setting. Setting it to '1' makes your content type addable everywhere (in
-principle), setting it to '0' limits it to places where it's explicitly
-allowed as content."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 tagname = 'hide_folder_tabs'
 explanation = """When you want to hide the folder tabs (mostly the
 "contents" tab, just set this tagged value to 1."""
@@ -921,8 +914,14 @@ for category in ['model', 'package', 'class']:
     from one or more catalogs to be cataloged in. Comma-separated list of 
     catalogs. Example-value: 'portal_catalog, another_catalog'. Explaination: 
     Instances of the class wont be catalogged in portal_catalog anymore."""
-    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)    
 
+    tagname = 'global_allow'
+    explanation = """Overwrite the AGX-calculated 'global_allow'
+    setting of class. Setting it to '1' makes your content type addable everywhere (in
+    principle), setting it to '0' limits it to places where it's explicitly
+    allowed as content."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)    
 
 for category in ['model', 'package', 'class', 'attribute']:
     tagname = 'read_permission'
@@ -936,12 +935,12 @@ for category in ['model', 'package', 'class', 'attribute']:
     together with workflow to control ability to write data to a field
     based on roles/permissions."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
+        
 for category in ['model', 'package', 'class', 'tool', 'portlet']:
     for tagname in ['author', 'email', 'copyright', 'license']:
         explanation = """You can set the %s project-wide with the '--%s'
         commandline parameter (or in the config file). This TGV allows
-        you to overwrite it on a %s level.""" % (tagname, tagname, category)
+        you to use/ overwrite it on a %s level.""" % (tagname, tagname, category)
         tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
     tagname = 'imports'
