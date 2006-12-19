@@ -995,9 +995,9 @@ class ArchetypesGenerator(BaseGenerator):
 
         modulename = elementclass.getPackage().getProductName()
         check_map = odict()
-        check_map['label']              = u"'%s'" % fieldname.capitalize()
-        check_map['label_msgid']        = u"'%s_label_%s'" % (modulename, fieldname)
-        check_map['description_msgid']  = u"'%s_help_%s'" % (modulename, fieldname)
+        check_map['label']              = u"'%s'" % fieldname.capitalize().decode('utf8')
+        check_map['label_msgid']        = u"'%s_label_%s'" % (modulename, utils.normalize(fieldname, 1))
+        check_map['description_msgid']  = u"'%s_help_%s'" % (modulename, utils.normalize(fieldname, 1))
         check_map['i18n_domain']        = u"'%s'" % modulename
 
         wt = {} # helper
@@ -1091,6 +1091,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         log.debug("Trying to get formatted field. name='%s', fieldtype='%s', "
                   "doc='%s', rawType='%s'.", name, fieldtype, doc, rawType)
+	name = utils.normalize(name, 1)
         res = u''
         if array_field:
             array_options={}
