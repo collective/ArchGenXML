@@ -20,6 +20,16 @@ def setup<dtml-var "statemachine.getCleanName()">(self, workflow):
     for role in <dtml-var "additional_roles">:
         if not role in data:
             data.append(role)
+            # add to portal_role_manager
+            # first try to fetch it. if its not there, we probaly have no PAS 
+            # or another way to deal with roles was configured.            
+            prm = portal.acl_users.get('portal_role_manager', None)
+            if prm is not None:
+                try:
+                    prm.addRole(role, role, 
+                                "Added by product '<dtml-var "package.getCleanName()">'/workflow '<dtml-var "statemachine.getCleanName()">'")
+                except KeyError: # role already exists
+                    pass
     portal.__ac_roles__ = tuple(data)
 </dtml-if>
 </dtml-let>
