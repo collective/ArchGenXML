@@ -249,6 +249,13 @@ explanation = """Useful when using the '<<folder>>' stereotype in order to set
 the folderish base class."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'parentclasses_first'
+explanation = """if this tgv is set to true generalization parents are used before the standard
+base classes (e.g. BaseContent) this option is sometimes necessary when inheriting from some special
+parents (e.g. CMFMember or ReMember style classes)."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+tgvRegistry.addTaggedValue(category=category, tagname='parentclass_first', explanation=explanation)
+
 tagname = 'hide_folder_tabs'
 explanation = """When you want to hide the folder tabs (mostly the
 "contents" tab, just set this tagged value to 1."""

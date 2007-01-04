@@ -1948,7 +1948,10 @@ class ArchetypesGenerator(BaseGenerator):
         if baseclass and not utils.isTGVFalse(element.getTaggedValue('base_class',1)) \
            and not element.hasStereoType('mixin', umlprofile=self.uml_profile):
               baseclasses = baseclass.split(',')
-              parentnames = baseclasses + parentnames #this way base_class is used before anything else
+              if utils.isTGVTrue(element.getTaggedValue('parentclass_first')) or utils.isTGVTrue(element.getTaggedValue('parentclasses_first')):
+                  parentnames = parentnames + baseclasses #this way base_class is used after generalization parents
+              else:
+                  parentnames = baseclasses + parentnames #this way base_class is used before anything else
         parentnames = [klass.strip() for klass in parentnames]
 
         #remove double entries in parentnames
