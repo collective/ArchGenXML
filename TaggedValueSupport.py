@@ -928,6 +928,11 @@ for category in ['model', 'package', 'class']:
     setting of class. Setting it to '1' makes your content type addable everywhere (in
     principle), setting it to '0' limits it to places where it's explicitly
     allowed as content."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)        
+    
+    tagname = 'detailed_creation_permissions'
+    explanation = """Give the content-type (types in the package, model) own 
+    creation permissions, named automagically 'ProductName: Add ClassName'."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)    
 
 for category in ['model', 'package', 'class', 'attribute']:

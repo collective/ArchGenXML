@@ -1988,7 +1988,7 @@ class ArchetypesGenerator(BaseGenerator):
             # --detailed-created-permissions, so I fixed the non-typo
             # --detailed-creation-permissions up with the new
             # generated syntax.
-        elif self.detailed_creation_permissions:
+        elif self.getOption('detailed_creation_permissions', element, None):
             product = element.getPackage().getProduct().getCleanName()
             creation_permission = "'%s: Add %s'" % (product, klass)
         else:
