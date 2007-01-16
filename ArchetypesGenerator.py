@@ -1211,10 +1211,10 @@ class ArchetypesGenerator(BaseGenerator):
                 vocaboptions['name'] = '%s_%s' % (element.getCleanName(), \
                                                   attr.getName())
             if not 'term_type' in vocaboptions.keys():
-                vocaboptions['term_type'] = 'SimpleVocabularyTerm'
+                vocaboptions['term_type'] = self.getOption('vocabulary:term_type', attr, 'SimpleVocabularyTerm')
 
             if not 'vocabulary_type' in vocaboptions.keys():
-                vocaboptions['vocabulary_type'] = 'SimpleVocabulary'
+                vocaboptions['vocabulary_type'] = self.getOption('vocabulary:vocabulary_type', attr, 'SimpleVocabulary')
 
             map.update({
                 'vocabulary':'NamedVocabulary("""%s""")' % vocaboptions['name']
