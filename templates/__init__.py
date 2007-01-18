@@ -11,7 +11,7 @@
 
 import logging
 logger = logging.getLogger('<dtml-var "product_name">')
-logger.debug('Installing Product')
+logger.info('Installing Product')
 
 try:
     import CustomizationPolicy
