@@ -341,6 +341,26 @@ from Products.CMFMember.MemberPermissions import \\
 from AccessControl import ModuleSecurityInfo
 """
 
+REMEMBER_IMPORTS = u"""\
+# imports needed by remember
+from Products.remember.content.member import BaseMember
+from Products.remember.permissions import \\
+        VIEW_PUBLIC_PERMISSION, EDIT_ID_PERMISSION, \\
+        EDIT_PROPERTIES_PERMISSION, VIEW_OTHER_PERMISSION,  \\
+        VIEW_SECURITY_PERMISSION, EDIT_PASSWORD_PERMISSION, \\
+        EDIT_SECURITY_PERMISSION, MAIL_PASSWORD_PERMISSION, \\
+        ADD_MEMBER_PERMISSION
+from AccessControl import ModuleSecurityInfo
+"""
+
+REMEMBER_CALL = u"""
+    # A member's __call__ should not render itself, this causes recursion
+    def __call__(self, *args, **kwargs):
+        return self.getId()
+        """
+
+# This corresponds to remember.tools.membership.addMember, which we
+# don't need to generate ..
 CMFMEMBER_ADD = u"""\
 
 # Generate the add%(prefix)s%(name)s method ourselves so we can do some extra

@@ -182,7 +182,7 @@ category = 'class'
 tagname = 'policy'
 explanation = """On a class with stereotype '<<plone_testcase>>', this
 sets the customization policy used by the test case to setup the site
-(e.g. 'CMFMember Site')."""
+(e.g. 'CMFMember Site'). XXX: CMFMember is obsolete as of Plone 2.5"""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'doctest_name'
@@ -383,23 +383,23 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 
 #The following are needed for CMFMember classes
 tagname = 'contact_schema'
-explanation = """TODO. CMFMember related."""
+explanation = """TODO. CMFMember related. (Use 'remember' instead.)"""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'plone_schema'
-explanation = """TODO. CMFMember related."""
+explanation = """TODO. CMFMember related. (Use 'remember' instead.)"""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'plone_2_1_schema'
-explanation = """TODO. CMFMember related."""
+explanation = """TODO. CMFMember related. (Use 'remember' instead.)"""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'security_schema'
-explanation = """TODO. CMFMember related."""
+explanation = """TODO. CMFMember related. (Use 'remember' instead.)"""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'login_info_schema'
-explanation = """TODO. CMFMember related."""
+explanation = """TODO. CMFMember related. (Use 'remember' instead.)"""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 # Tool
@@ -709,23 +709,10 @@ explanation = """Whether or not the field should be searchable when performing
 a search in the portal."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-tagname = 'vocabulary:type'
-explanation = """Enables support for Products 'ATVocabularyManager' by setting
-value to 'ATVocabularyManager'."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 tagname = 'vocabulary:term_type'
 explanation = """For use with 'ATVocabularyManager'. Defaults to
 'SimplevocabularyTerm'. Let you define the portal_type of the vocabularyterm
 used for the default term that is created in Install.py."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
-tagname = 'vocabulary:vocabulary_type'
-explanation = """For use with 'ATVocabularyManager'. Defaults to
-'Simplevocabulary'. Let you define the portal_type of the vocabulary used
-as initial vocabulary at Product install time. If VdexVocabulary is used,
-the install-script tries to install a vocabulary from a vdex file names
-'Products/PRODUCTNAME/data/VOCABULARYNAME.vdex'."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'vocabulary:name'
@@ -935,6 +922,14 @@ for category in ['model', 'package', 'class']:
     creation permissions, named automagically 'ProductName: Add ClassName'."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)    
 
+    tagname = 'vocabulary:vocabulary_type'
+    explanation = """For use with 'ATVocabularyManager'. Defaults to
+    'Simplevocabulary'. Let you define the portal_type of the vocabulary used
+    as initial vocabulary at Product install time. If VdexVocabulary is used,
+    the install-script tries to install a vocabulary from a vdex file names
+    'Products/PRODUCTNAME/data/VOCABULARYNAME.vdex'."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 for category in ['model', 'package', 'class', 'attribute']:
     tagname = 'read_permission'
     explanation = """Defines archetypes fields read-permission. Use it
@@ -947,7 +942,12 @@ for category in ['model', 'package', 'class', 'attribute']:
     together with workflow to control ability to write data to a field
     based on roles/permissions."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-        
+
+    tagname = 'vocabulary:type'
+    explanation = """Enables support for Products 'ATVocabularyManager' by setting
+    value to 'ATVocabularyManager'."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 for category in ['model', 'package', 'class', 'tool', 'portlet']:
     for tagname in ['author', 'email', 'copyright', 'license']:
         explanation = """You can set the %s project-wide with the '--%s'
