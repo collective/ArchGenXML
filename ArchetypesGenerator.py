@@ -632,8 +632,8 @@ class ArchetypesGenerator(BaseGenerator):
             print >> outfile, 'from Products.ATVocabularyManager.tools import registerVocabularyTerm'
         if element.hasStereoType(self.vocabulary_container_stereotype, umlprofile=self.uml_profile):
             print >> outfile, 'from Products.ATVocabularyManager.tools import registerVocabulary'
-        vtype = self.getOption('vocabulary:type', element, None)
-        if vtype == 'ATVocabularyManager':
+        if self.getOption('vocabulary:type', element, None) == 'ATVocabularyManager' or \
+           element.hasAttributeWithTaggedValue('vocabulary:type','ATVocabularyManager'):
             print >> outfile, 'from Products.ATVocabularyManager.namedvocabulary import NamedVocabulary'
 
         return outfile.getvalue()
