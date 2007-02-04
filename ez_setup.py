@@ -15,7 +15,7 @@ This file can also be run as a script to install or upgrade setuptools.
 """
 import sys
 # 0.6a9 is installed in Debian Sarge and Ubuntu/Dapper.
-DEFAULT_VERSION = "0.6a9"
+DEFAULT_VERSION = "0.6c3"
 DEFAULT_URL     = "http://cheeseshop.python.org/packages/%s/s/setuptools/" % sys.version[:3]
 
 md5_data = {

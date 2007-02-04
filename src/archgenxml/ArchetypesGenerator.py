@@ -159,6 +159,24 @@ class ArchetypesGenerator(BaseGenerator):
                     'methods to the testfile for testing.')
 
     uml_profile.addStereoType(
+        'plonefunctional_testcase', ['XMIClass'],
+        dispatching=1,
+        template='tests/PloneFunctionalTestcase.py',
+        generator='generateBaseFunctionalTestcaseClass',
+        description='Turns a class into the base class for all '
+        "other '<<functionaltestcase>>' classes inside a '<<test>>' package.")
+
+    uml_profile.addStereoType(
+        'functionaltestcase', ['XMIClass'],
+        dispatching=1,
+        template='tests/GenericFunctionalTestcase.py',
+        generator='generateFunctionalTestcaseClass',
+        description='Turns a class into a functional testcase. It must subclass a '
+        "'<<plonefunctional_testcase>>'. Adding an interface arrow to "
+                    'another class automatically adds that class\'s '
+                    'methods to the testfile for testing.')
+
+    uml_profile.addStereoType(
         'doc_testcase', ['XMIClass'],
         dispatching=1,
         template='tests/DocTestcase.py',
@@ -772,12 +790,12 @@ class ArchetypesGenerator(BaseGenerator):
             'type_name_lc'         : element.getName().lower()}
 
         # Only set allow_discussion if it is explicitly set with a
-	# tagged value. Leave empty if not, otherwise it cannot be
-	# (un)set in Plone afterwards
+        # tagged value. Leave empty if not, otherwise it cannot be
+        # (un)set in Plone afterwards
         allow_discussion = element.getTaggedValue('allow_discussion', 'NOTSET')
-	template = "    allow_discussion = %s\n"
-	if allow_discussion != 'NOTSET':
-	    res += template % allow_discussion
+        template = "    allow_discussion = %s\n"
+        if allow_discussion != 'NOTSET':
+            res += template % allow_discussion
         return res
 
     # TypeMap for Fields, format is
@@ -1699,9 +1717,30 @@ class ArchetypesGenerator(BaseGenerator):
             else:
                 print >> outfile, utils.indent('pass', 2)
 
-	if m.isStatic():
+        if m.isStatic():
             print >> outfile, '    %s = staticmethod(%s)\n' % (m.getName(),m.getName())
 
+    ## Generate Functional base testcase class.
+    #
+    # This method generates the python class that is the base class for function - 
+    # broswer based - testcases.  This entails insuring that the 
+    # runallfunctionaltests.py files exist, then generating the base class itself.
+    #
+    # @param self The object pointer.
+    # @param element The XMI element that is being generated.
+    # @param template The template file to use in generating the output.
+    def generateBaseFunctionalTestcaseClass(self,element,template):
+        log.debug('write testFunctional.py, only if needed.')
+
+        if not os.path.exists(os.path.join(self.targetRoot, element.getPackage().getFilePath(),'testFunctional.py')):
+            file=self.readTemplate('tests/testFunctional.py')
+            of=self.makeFile(os.path.join(element.getPackage().getFilePath(),'testFunctional.py'))
+            of.write(file)
+            of.close()
+
+        log.debug('generate base functional testcase class')
+        return self.generateFunctionalTestcaseClass(element,template)
+    
     def generateBaseTestcaseClass(self,element,template):
         log.debug('write runalltests.py and framework.py')
         runalltests=self.readTemplate('tests/runalltests.py')
@@ -1741,12 +1780,30 @@ class ArchetypesGenerator(BaseGenerator):
 
         return self.generateTestcaseClass(element,template,testname=testname)
 
-    def generateTestcaseClass(self,element,template,**kw):
-        log.info("%sGenerating testcase '%s'.",
-                 '    '*self.infoind, element.getName())
+    ##
+    #
+    def generateFunctionalTestcaseClass(self, element, template, **kw):
+        log.info("%sGenerating testcase '%s'.", '    '*self.infoind, element.getName())
+
+        assert element.hasStereoType('plonefunctional_testcase', umlprofile=self.uml_profile) or element.getCleanName().startswith('browser'), \
+               "names of test classes _must_ start with 'browser', but this class is named '%s'" % element.getCleanName()
+
+        assert element.getPackage().getCleanName() == 'tests', \
+            "testcase classes only make sense inside a package called 'tests' \
+                 but this class is named '%s' and located in package '%s'" % (element.getCleanName(),element.getPackage().getCleanName())
+
+        if element.getGenParents():
+            parent = element.getGenParents()[0]
+        else:
+            parent = None
+
+        return BaseGenerator.generatePythonClass(self, element, template, parent=parent, nolog=True, **kw)
+        
+    def generateTestcaseClass(self, element, template, **kw):
+        log.info("%sGenerating testcase '%s'.", '    '*self.infoind, element.getName())
 
         assert element.hasStereoType('plone_testcase', umlprofile=self.uml_profile) or element.getCleanName().startswith('test'), \
-            "names of test classes _must_ start with 'test', but this class is named '%s'" % element.getCleanName()
+               "names of test classes _must_ start with 'test', but this class is named '%s'" % element.getCleanName()
 
         assert element.getPackage().getCleanName() == 'tests', \
             "testcase classes only make sense inside a package called 'tests' \
