@@ -693,9 +693,9 @@ class ArchetypesGenerator(BaseGenerator):
         ''' generates Factory Type Information related attributes on the class'''
 
         ftiTempl=FTI_TEMPL
-        immediate_view = element.getTaggedValue('immediate_view') or 'base_view'
-        default_view = element.getTaggedValue('default_view') or immediate_view
-        suppl_views = element.getTaggedValue('suppl_views') or '()'
+        immediate_view = self.getOption('immediate_view', element, default='base_view')        
+        default_view = self.getOption('default_view', element, default=immediate_view)
+        suppl_views = self.getOption('suppl_views', element, default='()')
 
         # In principle, allow globally
         global_allow = True
@@ -1276,7 +1276,7 @@ class ArchetypesGenerator(BaseGenerator):
             atype = 'I18N' + atype
 
         if ctype=='generic':
-            fieldclassname=attr.type
+            fieldclassname=attr.type            
         else:
             fieldclassname=atype
 
