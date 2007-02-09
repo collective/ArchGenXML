@@ -20,6 +20,19 @@ def setup<dtml-var "statemachine.getCleanName()">(self, workflow):
     for role in <dtml-var "additional_roles">:
         if not role in data:
             data.append(role)
+            # add to portal_role_manager
+            # first try to fetch it. if its not there, we probaly have no PAS 
+            # or another way to deal with roles was configured.            
+            try:
+                prm = portal.acl_users.get('portal_role_manager', None)
+                if prm is not None:
+                    try:
+                        prm.addRole(role, role, 
+                                    "Added by product '<dtml-var "package.getCleanName()">'/workflow '<dtml-var "statemachine.getCleanName()">'")
+                    except KeyError: # role already exists
+                        pass
+            except AttributeError:
+                pass
     portal.__ac_roles__ = tuple(data)
 </dtml-if>
 </dtml-let>
@@ -54,6 +67,7 @@ def setup<dtml-var "statemachine.getCleanName()">(self, workflow):
 <dtml-in "[s for s in statemachine.getStates(no_duplicates = 1) if s.getName()]">
     stateDef = workflow.states['<dtml-var "_['sequence-item'].getName()">']
     stateDef.setProperties(title="""<dtml-var "_['sequence-item'].getTitle(generator)">""",
+                           description="""<dtml-var "_['sequence-item'].getDescription()">""",
                            transitions=<dtml-var "repr([t.getName() for t in _['sequence-item'].getOutgoingTransitions()])">)
 <dtml-in "generator.getPermissionsDefinitions(_['sequence-item'])">
     stateDef.setPermission(<dtml-var "_['sequence-item'].get('permission')">,

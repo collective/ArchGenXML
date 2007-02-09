@@ -243,12 +243,12 @@ explanation = """Useful when using the '<<folder>>' stereotype in order to set
 the folderish base class."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-tagname = 'global_allow'
-explanation = """Overwrite the AGX-calculated 'global_allow'
-setting. Setting it to '1' makes your content type addable everywhere (in
-principle), setting it to '0' limits it to places where it's explicitly
-allowed as content."""
+tagname = 'parentclasses_first'
+explanation = """if this tgv is set to true generalization parents are used before the standard
+base classes (e.g. BaseContent) this option is sometimes necessary when inheriting from some special
+parents (e.g. CMFMember or ReMember style classes)."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+tgvRegistry.addTaggedValue(category=category, tagname='parentclass_first', explanation=explanation)
 
 tagname = 'hide_folder_tabs'
 explanation = """When you want to hide the folder tabs (mostly the
@@ -654,23 +654,10 @@ explanation = """Whether or not the field should be searchable when performing
 a search in the portal."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-tagname = 'vocabulary:type'
-explanation = """Enables support for Products 'ATVocabularyManager' by setting
-value to 'ATVocabularyManager'."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 tagname = 'vocabulary:term_type'
 explanation = """For use with 'ATVocabularyManager'. Defaults to
 'SimplevocabularyTerm'. Let you define the portal_type of the vocabularyterm
 used for the default term that is created in Install.py."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
-tagname = 'vocabulary:vocabulary_type'
-explanation = """For use with 'ATVocabularyManager'. Defaults to
-'Simplevocabulary'. Let you define the portal_type of the vocabulary used
-as initial vocabulary at Product install time. If VdexVocabulary is used,
-the install-script tries to install a vocabulary from a vdex file names
-'Products/PRODUCTNAME/data/VOCABULARYNAME.vdex'."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'vocabulary:name'
@@ -687,6 +674,11 @@ tagname = 'validation_expression_errormsg'
 explanation = """Sets the error message to the ExpressionValidator (use with
 validation_expression to define the validation expression to which this error
 message applies)."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'array:widget'
+explanation = """specify which custom ArrayWidget should be used for a field
+(only applies if the field has cardinality >1."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 # widgets (not a separate category!)
@@ -730,6 +722,10 @@ tagname = 'initial_state'
 explanation = """Sets this state to be the initial state. This allows
 you to use a normal state in your UML diagram instead of the special
 round starting-state symbol."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'description'
+explanation = """Sets the state description."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'worklist'
@@ -783,6 +779,7 @@ only together with 'Relations' Product and relation_implementation
 set to 'relations'."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+
 # Tagged values for more than one category
 
 for category in ['model', 'package', 'class']:
@@ -796,6 +793,16 @@ for category in ['model', 'package', 'class']:
     tagname = 'use_portal_factory'
     explanation = """Setting this boolean value enables the registration
     of the type for use with portal_factory."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+    tagname = 'display_in_navigation'
+    explanation = """Setting this boolean value adds the type to
+    'Displayed content types' in the portals navigation settings. Default is True"""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+    tagname = 'searchable_type'
+    explanation = """Setting this boolean value adds the type to 'types to be
+    searched' in the portals search settings. Default is True"""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
     tagname = 'version_info'
@@ -847,8 +854,27 @@ for category in ['model', 'package', 'class']:
     from one or more catalogs to be cataloged in. Comma-separated list of 
     catalogs. Example-value: 'portal_catalog, another_catalog'. Explaination: 
     Instances of the class wont be catalogged in portal_catalog anymore."""
-    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)    
 
+    tagname = 'global_allow'
+    explanation = """Overwrite the AGX-calculated 'global_allow'
+    setting of class. Setting it to '1' makes your content type addable everywhere (in
+    principle), setting it to '0' limits it to places where it's explicitly
+    allowed as content."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)        
+    
+    tagname = 'detailed_creation_permissions'
+    explanation = """Give the content-type (types in the package, model) own 
+    creation permissions, named automagically 'ProductName: Add ClassName'."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)    
+
+    tagname = 'vocabulary:vocabulary_type'
+    explanation = """For use with 'ATVocabularyManager'. Defaults to
+    'Simplevocabulary'. Let you define the portal_type of the vocabulary used
+    as initial vocabulary at Product install time. If VdexVocabulary is used,
+    the install-script tries to install a vocabulary from a vdex file names
+    'Products/PRODUCTNAME/data/VOCABULARYNAME.vdex'."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 for category in ['model', 'package', 'class', 'attribute']:
     tagname = 'read_permission'
@@ -863,11 +889,16 @@ for category in ['model', 'package', 'class', 'attribute']:
     based on roles/permissions."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+    tagname = 'vocabulary:type'
+    explanation = """Enables support for Products 'ATVocabularyManager' by setting
+    value to 'ATVocabularyManager'."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 for category in ['model', 'package', 'class', 'tool', 'portlet']:
     for tagname in ['author', 'email', 'copyright', 'license']:
         explanation = """You can set the %s project-wide with the '--%s'
         commandline parameter (or in the config file). This TGV allows
-        you to overwrite it on a %s level.""" % (tagname, tagname, category)
+        you to use/ overwrite it on a %s level.""" % (tagname, tagname, category)
         tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
     tagname = 'imports'

@@ -1,7 +1,16 @@
+# -*- coding: utf-8 -*-
+#---------------------------------------------------------------
+# Author:      Philipp Auersperg
+#
+# Copyright:   (c) 2003-2006 BlueDynamics
+# Licence:     GPL
+#---------------------------------------------------------------
+ 
 from pkg_resources import resource_string
 import logging
 import os.path
 import sys
+import types
 
 log = logging.getLogger('utils')
 
@@ -9,6 +18,17 @@ NameTable = {
     'class': 'klass',
     'import': 'emport'
     }
+    
+specialrpl = {
+    u'ö': u'oe',
+    u'ü': u'ue',
+    u'ä': u'ae',
+    u'Ö': u'Oe',
+    u'Ü': u'Ue',
+    u'Ä': u'Ae',
+    u'ß': u'ss',
+    # add more for other language here
+}
 
 def makeFile(outfilename, force=1, binary=0):
     log.debug("Making file '%s' (force=%s).", outfilename, force)
@@ -173,10 +193,19 @@ def addConsoleLogging():
     hdlr.setFormatter(formatter)
     log.addHandler(hdlr)
 
-def normalize(data):
+def normalize(data, doReplace=False):
     """Converts a unicode to string, stripping blank spaces."""
-    if isinstance(data, unicode):
-        data = data.encode('utf-8')
-    if isinstance(data, str):
+    if type(data) not in types.StringTypes:
+        return data
+    if type(data) is types.StringType:
+        # make unicode
+        data = data.decode('utf-8')
+    if type(data) is types.UnicodeType:
         data = data.strip()
-    return data
+        if doReplace:
+            for key in specialrpl:
+                data = data.replace(key, specialrpl[key])    
+    if not data is None:
+        return data.encode('utf-8')
+    else:
+        return None

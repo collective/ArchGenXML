@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #----------------------------------------------------------------------------
 # Name:        ArchetypesGenerator.py
 # Purpose:     main class generating archetypes code out of an UML-model
@@ -5,12 +6,13 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# Copyright:   (c) 2003-2005 BlueDynamics
+# Copyright:   (c) 2003-2006 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
 
 import sys
 import time
+import types
 import os.path
 import logging
 from types import StringTypes
@@ -21,7 +23,7 @@ from codesnippets import *
 
 from xml.dom import minidom
 from zipfile import ZipFile
-from StringIO import StringIO
+from cStringIO import StringIO
 
 # AGX-specific imports
 import PyParser
@@ -234,6 +236,13 @@ class ArchetypesGenerator(BaseGenerator):
         "Identical to '<<member>>'.")
 
     uml_profile.addStereoType(
+        'remember', ['XMIClass'],
+        description='The class will be treated as a remember member '
+        'type. It will derive from remember\'s Member '
+        'class and be installed as a member data type. '
+        'Note that you need to install the separate remember product. ')
+
+    uml_profile.addStereoType(
         'member', ['XMIClass'],
         description='The class will be treated as a CMFMember member '
                     'type. It will derive from CMFMember\'s Member '
@@ -389,6 +398,7 @@ class ArchetypesGenerator(BaseGenerator):
     vocabulary_item_stereotype = ['vocabulary_term']
     vocabulary_container_stereotype = ['vocabulary']
     cmfmember_stereotype = ['CMFMember', 'member']
+    remember_stereotype = ['remember']
     python_stereotype = ['python', 'python_class', 'view']
     folder_stereotype = ['folder', 'ordered', 'large', 'btree']
 
@@ -415,7 +425,8 @@ class ArchetypesGenerator(BaseGenerator):
                       'storage', 'enforceVocabulary', 'multiValued',
                       'visible', 'validators', 'validation_expression',
                       'sizes', 'original_size', 'max_size', 'searchable',
-                      'show_hm', 'move:pos', 'move:top', 'move:bottom']
+                      'show_hm', 'move:pos', 'move:top', 'move:bottom',
+                      'primary', 'array:widget','array:size']
 
     msgcatstack = []
 
@@ -526,27 +537,14 @@ class ArchetypesGenerator(BaseGenerator):
 
         If it exists and not listed in occurrences, then add its occurence.
         """
+        log.debug("Add msgid %s" % msgid)
+        msgid = utils.normalize(msgid)
         if has_i18ndude and self.build_msgcatalog and len(self.msgcatstack):
             msgcat = self.msgcatstack[len(self.msgcatstack)-1]
             package = element.getPackage()
             module_id = os.path.join(element.getPackage().getFilePath(includeRoot=0),
                                      element.getName()+'.py')
-            try:
-                #i18ndude 2.0
-                msgcat.add(msgid, msgstr=msgstr, references=[module_id])
-            except:
-                # old i18ndude
-                if not msgcat.has_key(msgid):
-                    # add new msgid
-                    msgcat[msgid] = (msgstr, [(module_id, [msgstr])], [])
-                else:
-                    # check if occurrence is listed
-                    entry=msgcat[msgid]
-                    for entry_id, entry_ex in entry[1]:
-                        if entry_id == module_id:
-                            return
-                    # isnt listed, so add it
-                    entry[1].append((module_id, [msgstr]))
+            msgcat.add(msgid, msgstr=msgstr, references=[module_id])
 
     def generateMethodActions(self, element):
         log.debug("Generating method actions...")
@@ -652,7 +650,8 @@ class ArchetypesGenerator(BaseGenerator):
             print >> outfile, 'from Products.ATVocabularyManager.tools import registerVocabularyTerm'
         if element.hasStereoType(self.vocabulary_container_stereotype, umlprofile=self.uml_profile):
             print >> outfile, 'from Products.ATVocabularyManager.tools import registerVocabulary'
-        if element.hasAttributeWithTaggedValue('vocabulary:type','ATVocabularyManager'):
+        if self.getOption('vocabulary:type', element, None) == 'ATVocabularyManager' or \
+           element.hasAttributeWithTaggedValue('vocabulary:type','ATVocabularyManager'):
             print >> outfile, 'from Products.ATVocabularyManager.namedvocabulary import NamedVocabulary'
 
         return outfile.getvalue()
@@ -712,9 +711,9 @@ class ArchetypesGenerator(BaseGenerator):
         ''' generates Factory Type Information related attributes on the class'''
 
         ftiTempl=FTI_TEMPL
-        immediate_view = element.getTaggedValue('immediate_view') or 'base_view'
-        default_view = element.getTaggedValue('default_view') or immediate_view
-        suppl_views = element.getTaggedValue('suppl_views') or '()'
+        immediate_view = self.getOption('immediate_view', element, default='base_view')        
+        default_view = self.getOption('default_view', element, default=immediate_view)
+        suppl_views = self.getOption('suppl_views', element, default='()')
 
         # In principle, allow globally
         global_allow = True
@@ -731,12 +730,14 @@ class ArchetypesGenerator(BaseGenerator):
         if (element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile) or
             element.hasStereoType(self.vocabulary_item_stereotype, umlprofile=self.uml_profile) or
             element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile) or
+            element.hasStereoType(self.remember_stereotype, umlprofile=self.uml_profile) or
             element.isAbstract()):
             global_allow = False
         # But the tagged value overwrites all
-        if utils.isTGVFalse(element.getTaggedValue('global_allow')):
+        tgvglobalallow = self.getOption('global_allow', element, default=None)
+        if utils.isTGVFalse(tgvglobalallow):
             global_allow = False
-        if utils.isTGVTrue(element.getTaggedValue('global_allow')):
+        if utils.isTGVTrue(tgvglobalallow):
             global_allow = True
 
         has_content_icon=''
@@ -772,10 +773,11 @@ class ArchetypesGenerator(BaseGenerator):
         typeName = element.getTaggedValue('archetype_name') or \
                     element.getTaggedValue('label') or \
                     element.getName ()
+                        
 
         typeDescription = utils.getExpression(element.getTaggedValue('typeDescription', typeName))
 
-        res=ftiTempl % {
+        res = ftiTempl % {
             'subtypes'             : repr(tuple(subtypes)),
             'has_content_icon'     : has_content_icon,
             'content_icon'         : content_icon,
@@ -804,103 +806,105 @@ class ArchetypesGenerator(BaseGenerator):
     #   ...
     #   }
     typeMap= {
-        'string': {'field': 'StringField',
+        'string': {'field': u'StringField',
                    'map': {},
                    },
-        'text':  {'field': 'TextField',
+        'text':  {'field': u'TextField',
                   'map': {},
                   },
-        'richtext': {'field': 'TextField',
-                     'map': {'default_output_type':"'text/html'",
-                             'allowable_content_types': "('text/plain', 'text/structured', 'text/html', 'application/msword',)",
+        'richtext': {'field': u'TextField',
+                     'map': {u'default_output_type': u"'text/html'",
+                             u'allowable_content_types': u"('text/plain', 'text/structured', 'text/html', 'application/msword',)",
                              },
                      },
-        'selection': {'field': 'StringField',
+        'selection': {'field': u'StringField',
                       'map': {},
                       },
-        'multiselection': {'field': 'LinesField',
-                           'map': {'multiValued': '1',
+        'multiselection': {'field': u'LinesField',
+                           'map': {u'multiValued': u'1',
                                    },
                            },
-        'integer': {'field': 'IntegerField',
+        'integer': {'field': u'IntegerField',
                     'map': {},
                     },
-        'float': {'field': 'FloatField',
+        'float': {'field': u'FloatField',
                   'map': {},
                   },
-        'fixedpoint': {'field': 'FixedPointField',
+        'fixedpoint': {'field': u'FixedPointField',
                        'map': {},
                        },
-        'lines': {'field': 'LinesField',
+        'lines': {'field': u'LinesField',
                   'map': {},
                   },
-        'date': {'field': 'DateTimeField',
+        'date': {'field': u'DateTimeField',
                  'map': {},
                  },
-        'image': {'field': 'ImageField',
-                  'map': {'storage': 'AttributeStorage()',
+        'image': {'field': u'ImageField',
+                  'map': {u'storage': u'AttributeStorage()',
                           },
                   },
-        'file': {'field': 'FileField',
-                 'map': {'storage': 'AttributeStorage()',
+        'file': {'field': u'FileField',
+                 'map': {u'storage': u'AttributeStorage()',
                          },
                  },
-        'reference': {'field': 'ReferenceField',
+        'reference': {'field': u'ReferenceField',
                       'map': {},
                       },
-        'relation': {'field': 'RelationField',
+        'relation': {'field': u'RelationField',
                      'map': {},
                      },
-        'backreference': {'field': 'BackReferenceField',
+        'backreference': {'field': u'BackReferenceField',
                           'map': {},
                           },
-        'boolean': {'field': 'BooleanField',
+        'boolean': {'field': u'BooleanField',
                     'map': {},
                     },
-        'computed': {'field': 'ComputedField',
+        'computed': {'field': u'ComputedField',
                      'map': {},
                      },
-        'photo': {'field': 'PhotoField',
+        'photo': {'field': u'PhotoField',
                   'map': {},
                   },
-        'generic': {'field': '%(type)sField',
+        'generic': {'field': u'%(type)sField',
                     'map': {},
                     },
         }
 
     widgetMap={
-        'fixedpoint': 'DecimalWidget' ,
-        'float': 'DecimalWidget',
-        'text': 'TextAreaWidget',
-        'richtext': 'RichWidget',
-        'file': 'FileWidget',
-        'date' : 'CalendarWidget',
-        'selection' : 'SelectionWidget',
-        'multiselection' : 'MultiSelectionWidget',
-        'BackReference':'BackReferenceWidget'
+        'string': u'StringWidget' ,
+        'fixedpoint': u'DecimalWidget' ,
+        'float': u'DecimalWidget',
+        'text': u'TextAreaWidget',
+        'richtext': u'RichWidget',
+        'file': u'FileWidget',
+        'image': u'ImageWidget',
+        'date': u'CalendarWidget',
+        'selection': u'SelectionWidget',
+        'multiselection': u'MultiSelectionWidget',
+        'BackReference': u'BackReferenceWidget'
     }
 
     coerceMap={
-        'xs:string': 'string',
-        'xs:int': 'integer',
-        'xs:integer': 'integer',
-        'xs:byte': 'integer',
-        'xs:double': 'float',
-        'xs:float': 'float',
-        'xs:boolean': 'boolean',
-        'ofs.image': 'image',
-        'ofs.file': 'file',
-        'xs:date': 'date',
-        'datetime': 'date',
-        'list': 'lines',
-        'liste': 'lines',
-        'image': 'image',
-        'int': 'integer',
-        'bool': 'boolean',
-        'dict': 'string',
-        'String': 'string',
-        '': 'string',     #
-        None:'string',
+        'xs:string': u'string',
+        'xs:int': u'integer',
+        'xs:integer': u'integer',
+        'xs:byte': u'integer',
+        'xs:double': u'float',
+        'xs:float': u'float',
+        'xs:boolean': u'boolean',
+        'ofs.image': u'image',
+        'ofs.file': u'file',
+        'xs:date': u'date',
+        'datetime': u'date',
+        'list': u'lines',
+        'liste': u'lines',
+        'image': u'image',
+        'int': u'integer',
+        'bool': u'boolean',
+        'dict': u'string',
+        'String': u'string',
+        '': u'string',     #
+        None: u'string',
     }
 
     hide_classes=['EARootClass','int','float','boolean','long','bool',
@@ -971,9 +975,10 @@ class ArchetypesGenerator(BaseGenerator):
             if k not in noparams and not k.startswith('widget:'):
                 v = tgv[k]
                 if v is None:
-                    log.warn("Empty tagged value for tag '%s' in field '%s'.",
+                    log.warn(u"Empty tagged value for tag '%s' in field '%s'.",
                              k, element.getName())
                     continue
+                v = v.decode('utf8')
 
                 if k not in self.nonstring_tgvs:
                     v=utils.getExpression(v)
@@ -986,7 +991,7 @@ class ArchetypesGenerator(BaseGenerator):
                 map.update({k: v})
         return map
 
-    def getWidget(self, type, element, fieldname, elementclass):
+    def getWidget(self, widgettype, element, fieldname, elementclass, fieldclassname=None):
         """ returns either default widget, widget according to
         attributes or no widget.
 
@@ -995,51 +1000,56 @@ class ArchetypesGenerator(BaseGenerator):
             * widget:PARAMETER which will be rendered as a PARAMETER=value
 
         """
-        tgv=element.getTaggedValues()
-        widgetcode = type.capitalize()+'Widget'
-        widgetmap=odict()
+        tgv = element.getTaggedValues()
+        widgetcode = widgettype.capitalize()+'Widget'
+        widgetmap = odict()
         custom = False # is there a custom setting for widget?
-        widgetoptions=[t for t in tgv.items() if t[0].startswith('widget:')]
+        widgetoptions = [t for t in tgv.items() if t[0].startswith('widget:')]
 
         # check if a global default overrides a widget. setting defaults is
         # provided through getOption.
         # to set an default just put:
-        # default:widget:type = widgetname
+        # default:widget:widgettype = widgetname
         # as a tagged value on the package or model
-        if hasattr(element,'type') and element.type!='NoneType':
+        if hasattr(element,'widgettype') and element.type != 'NoneType':
             atype = element.type
         else:
-            atype=type
+            atype = widgettype
         default_widget = self.getOption('default:widget:%s' % atype, element, None)
+        
         if default_widget:
-            widgetcode = default_widget+'(\n'
+            widgetcode = default_widget + u'(\n'
 
-        modulename= elementclass.getPackage().getProductName()
-        check_map=odict()
-        check_map['label']              = "'%s'" % fieldname.capitalize()
-        check_map['label_msgid']        = "'%s_label_%s'" % (modulename,fieldname)
-        check_map['description_msgid']  = "'%s_help_%s'" % (modulename,fieldname)
-        check_map['i18n_domain']        = "'%s'" % modulename
+        modulename = elementclass.getPackage().getProductName()
+        check_map = odict()
+        check_map['label']              = u"'%s'" % fieldname.capitalize().decode('utf8')
+        check_map['label_msgid']        = u"'%s_label_%s'" % (modulename, utils.normalize(fieldname, 1))
+        check_map['description_msgid']  = u"'%s_help_%s'" % (modulename, utils.normalize(fieldname, 1))
+        check_map['i18n_domain']        = u"'%s'" % modulename
 
-        wt={} # helper
+        wt = {} # helper
+
         if tgv.has_key('widget'):
             # Custom widget defined in attributes
             custom = True
-            formatted=''
-            for line in tgv['widget'].split('\n'):
+            formatted = u''
+            for line in tgv['widget'].split(u'\n'):
                 if formatted:
                     line = utils.indent(line.strip(), 1)
-                formatted+=line+'\n'
+                formatted += u"%s\n" % line
             widgetcode =  formatted
 
         elif [wt.update({t[0]:t[1]}) for t in widgetoptions if t[0] == u'widget:type']:
             custom = True
             widgetcode = wt['widget:type']
         
-        elif self.widgetMap.has_key(type) and not default_widget:
-            # default widget for this type found in widgetMap
+        elif self.widgetMap.has_key(widgettype) and not default_widget:
+            # default widget for this widgettype found in widgetMap
             custom = True
-            widgetcode = self.widgetMap[type]
+            widgetcode = self.widgetMap[widgettype]
+
+        elif fieldclassname:
+            widgetcode="%s._properties['widget'](\n" % fieldclassname
 
         if ')' not in widgetcode: # XXX bad check *sigh*
 
@@ -1084,13 +1094,20 @@ class ArchetypesGenerator(BaseGenerator):
                     elementclass,
                     fieldname
                 )
+            keqvs = list()
+            for key in widgetmap:
+                value = widgetmap[key]
+                if type(value) != types.UnicodeType:
+                    value = value.decode('utf-8')
+                keqv = u'%s=%s' % (key, value)
+                keqvs.append(keqv)
 
             widgetcode += utils.indent( \
-                ',\n'.join(['%s=%s' % (key,widgetmap[key]) for key in widgetmap]),
+                u',\n'.join(keqvs),
                 1,
                 skipFirstRow=0) \
-                + ',\n'
-            widgetcode +=')'
+                + u',\n'
+            widgetcode += u')'
 
         return widgetcode
 
@@ -1101,31 +1118,39 @@ class ArchetypesGenerator(BaseGenerator):
 
         log.debug("Trying to get formatted field. name='%s', fieldtype='%s', "
                   "doc='%s', rawType='%s'.", name, fieldtype, doc, rawType)
-        res = ''
-
+	name = utils.normalize(name, 1)
+        res = u''
+        if array_field:
+            array_options={}
+            for key in map.keys():
+                if key.startswith(u'array:'):
+                    nkey=key[len(u'array:'):]
+                    array_options[nkey]=map[key]
+                    del map[key]
+            
         # Capitalize only first letter of fields class name, keep camelcase
         a = rawType[0].upper()
         rawType = a + rawType[1:]
 
         # Add comment
         if doc:
-            res += utils.indent(doc, indent_level, '#') + '\n' + res
+            res += utils.indent(doc, indent_level, u'#') + u'\n' + res
 
         # If this is a generic field and the user entered MySpecialField,
         # then don't suffix it with 'field''
-        if rawType.endswith('Field'):
+        if rawType.endswith(u'Field'):
             rawType = rawType[:-5]
 
-        res += utils.indent("%s(\n    name='%s',\n" % (
+        res += utils.indent(u"%s(\n    name='%s',\n" % (
                    fieldtype % {'type': rawType}, name), indent_level)
         if map:
-            prepend = utils.indent('', indent_level)
+            prepend = utils.indent(u'', indent_level)
             for key in map:
-                if key.find(':') >= 0:
+                if key.find(u':') >= 0:
                     continue
                 lines = map[key]
                 if isinstance(lines, basestring):
-                    linebreak = lines.find('\n')
+                    linebreak = lines.find(u'\n')
 
                     if linebreak < 0:
                         linebreak = len(lines)
@@ -1133,24 +1158,31 @@ class ArchetypesGenerator(BaseGenerator):
                 else:
                     firstline = lines
 
-                res += '%s%s=%s' % (prepend, key, firstline)
+                res += u'%s%s=%s' % (prepend, key, firstline)
                 if isinstance(lines, basestring) and linebreak < len(lines):
-                    for line in lines[linebreak+1:].split('\n'):
-                        res += "\n%s" % utils.indent(line, indent_level + 1)
+                    for line in lines[linebreak+1:].split(u'\n'):
+                        line = utils.indent(line, indent_level + 1)
+                        res += u"\n%s" % line
 
-                prepend = ',\n%s' % utils.indent('', indent_level +1)
+                prepend = u',\n%s' % utils.indent('', indent_level +1)
 
-        res += '\n%s' % utils.indent('),', indent_level) + '\n\n'
+        res += u'\n%s' % utils.indent(u'),', indent_level) + u'\n\n'
 
         if array_field:
-            res = "ArrayField(%s),\n\n" % utils.indent(res, 2)
+            res = res.strip()
+            if array_options.get('widget', None):
+                if array_options['widget'].find('(') == -1:
+                    array_options['widget'] += u'()'
 
+            array_defs = u',\n'.join([u"%s=%s" % item for item in array_options.items()])
+            res =  ARRAYFIELD % ( utils.indent(res, 2), utils.indent(array_defs, 2) ) 
+            
         return res
 
     def getFieldsFormatted(self, field_specs):
         """Return the formatted field definitions for the schema from field_specs.
         """
-        res = ''
+        res = u''
         for field_spec in field_specs:
             log.debug("field_spec is %r.",
                       field_spec)
@@ -1179,7 +1211,6 @@ class ArchetypesGenerator(BaseGenerator):
                                                   field_spec['indent_level']
                                                   )
             except Exception, e:
-                import pdb; pdb.set_trace()
                 log.critical("Couldn't render fields from field_specs: '%s'.",
                              field_specs)
                 raise
@@ -1190,10 +1221,10 @@ class ArchetypesGenerator(BaseGenerator):
         typename = element.type
         ctype = self.coerceType(typename)
         map = typeMap[ctype]['map'].copy()
-        res= {'name':element.getCleanName(),
-            'fieldtype':self.typeMap[ctype]['field'].copy(),
-            'map':map,
-            'indent_level':indent_level}
+        res= {'name': element.getCleanName(),
+              'fieldtype': self.typeMap[ctype]['field'].copy(),
+              'map': map,
+              'indent_level': indent_level}
         return res
 
     def addVocabulary(self, element, attr, map):
@@ -1207,10 +1238,15 @@ class ArchetypesGenerator(BaseGenerator):
                 vocaboptions['name'] = '%s_%s' % (element.getCleanName(), \
                                                   attr.getName())
             if not 'term_type' in vocaboptions.keys():
-                vocaboptions['term_type'] = 'SimpleVocabularyTerm'
+                vocaboptions['term_type'] = self.getOption('vocabulary:term_type', attr, 'SimpleVocabularyTerm')
 
             if not 'vocabulary_type' in vocaboptions.keys():
-                vocaboptions['vocabulary_type'] = 'SimpleVocabulary'
+                vocaboptions['vocabulary_type'] = self.getOption('vocabulary:vocabulary_type', attr, 'SimpleVocabulary')
+
+            if not 'type' in vocaboptions.keys():
+                vtype = self.getOption('vocabulary:type', attr, None)
+                if vtype:
+                    vocaboptions['type'] = vtype
 
             map.update({
                 'vocabulary':'NamedVocabulary("""%s""")' % vocaboptions['name']
@@ -1249,18 +1285,24 @@ class ArchetypesGenerator(BaseGenerator):
         if attr.hasDefault():
             map.update({'default': utils.getExpression(attr.getDefault())})
         map.update(self.getFieldAttributes(attr))
-        widget = self.getWidget(ctype, attr, attr.getName(), classelement)
-
-        if not widget.startswith('GenericWidget'):
-            map.update({'widget': widget})
-
-        self.addVocabulary(classelement, attr, map)
 
         atype = self.typeMap[ctype]['field']
 
         if ctype != 'generic' and self.i18n_content_support in self.i18n_at \
            and attr.isI18N():
             atype = 'I18N' + atype
+
+        if ctype=='generic':
+            fieldclassname=attr.type            
+        else:
+            fieldclassname=atype
+
+        widget = self.getWidget(ctype, attr, attr.getName(), classelement, fieldclassname=fieldclassname)
+
+        if not widget.startswith('GenericWidget'):
+            map.update({'widget': widget})
+
+        self.addVocabulary(classelement, attr, map)
 
         doc=attr.getDocumentation(striphtml=self.strip_html)
 
@@ -1525,8 +1567,10 @@ class ArchetypesGenerator(BaseGenerator):
                 if startmarker:
                     startmarker=False
                     print >> outfile, 'copied_fields = {}'
-                if element.hasStereoType(self.cmfmember_stereotype,
-                                         umlprofile=self.uml_profile):
+                if (element.hasStereoType(self.cmfmember_stereotype,
+                                         umlprofile=self.uml_profile) or
+                    element.hasStereoType(self.remember_stereotype,
+                                         umlprofile=self.uml_profile) ):
                     copy = "BaseMember.content_schema"
                 else:
                     copybase_schema = base_schema
@@ -1564,8 +1608,9 @@ class ArchetypesGenerator(BaseGenerator):
                                       tgv['widget:description'].strip("'").strip('"')
                                       or fieldname, element, fieldname)
 
+        fieldsformatted = self.getFieldsFormatted(field_specs) + u'),'        
         print >> outfile, SCHEMA_START
-        print >> outfile, self.getFieldsFormatted(field_specs) + '),'
+        print >> outfile, fieldsformatted.encode('utf8')
 
         marshaller=element.getTaggedValue('marshaller')
         # deprecated tgv 'marschall' here, that's a duplicate
@@ -1641,7 +1686,11 @@ class ArchetypesGenerator(BaseGenerator):
         if element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile) and '__init__' not in method_names:
             method_names.append('__init__')
 
-        
+        # As above .. 
+        if element.hasStereoType(
+                self.remember_stereotype,
+                umlprofile=self.uml_profile) and '__call__' not in method_names:
+            method_names.append('__call__') 
 
         #as __init__ above if at_post_edit_script has to be generated for tools
         #I want _not_ at_post_edit_script to be preserved (hacky but works)
@@ -1695,8 +1744,8 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             method_code = None
 
-        if self.method_preservation and method_code:
-            wrt(method_code.src)
+        if self.method_preservation and method_code:            
+            wrt(method_code.src.encode('utf8'))
             # Holly hack: methods ending with a 'pass' command doesn't have
             # an extra blank line after reparsing the code, so we add it
             if method_code.src.split('\n')[-1].strip() == 'pass':
@@ -1876,12 +1925,12 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             widget = None
             widgetname = None
-
-        return BaseGenerator.generatePythonClass(self, element, template,
-                                                 parent=parent,
-                                                 parentname=parentname,
-                                                 widget=widget,
-                                                 widgetname=widgetname)
+        klass = BaseGenerator.generatePythonClass(self, element, template,
+                                                  parent=parent,
+                                                  parentname=parentname,
+                                                  widget=widget,
+                                                  widgetname=widgetname)
+        return klass
 
     def elementIsFolderish(self, element):
         log.debug("Determining whether the element '%s' is folderish...",
@@ -1962,6 +2011,11 @@ class ArchetypesGenerator(BaseGenerator):
             baseclass = 'BaseMember.Member'
             baseschema = 'BaseMember.id_schema'
 
+        #njj # remember support
+        #njj if element.hasStereoType(self.remember_stereotype, umlprofile=self.uml_profile):
+        #njj     baseclass = 'BaseMember'
+        #njj     baseschema = 'BaseMember.schema'
+
         ## however: tagged values have priority
         # tagged values for base-class overrule
         if element.getTaggedValue('base_class'):
@@ -1976,7 +2030,10 @@ class ArchetypesGenerator(BaseGenerator):
         if baseclass and not utils.isTGVFalse(element.getTaggedValue('base_class',1)) \
            and not element.hasStereoType('mixin', umlprofile=self.uml_profile):
               baseclasses = baseclass.split(',')
-              parentnames = baseclasses + parentnames #this way base_class is used before anything else
+              if utils.isTGVTrue(element.getTaggedValue('parentclass_first')) or utils.isTGVTrue(element.getTaggedValue('parentclasses_first')):
+                  parentnames = parentnames + baseclasses #this way base_class is used after generalization parents
+              else:
+                  parentnames = baseclasses + parentnames #this way base_class is used before anything else
         parentnames = [klass.strip() for klass in parentnames]
 
         #remove double entries in parentnames
@@ -2013,7 +2070,7 @@ class ArchetypesGenerator(BaseGenerator):
             # --detailed-created-permissions, so I fixed the non-typo
             # --detailed-creation-permissions up with the new
             # generated syntax.
-        elif self.detailed_creation_permissions:
+        elif self.getOption('detailed_creation_permissions', element, None):
             product = element.getPackage().getProduct().getCleanName()
             creation_permission = "'%s: Add %s'" % (product, klass)
         else:
@@ -2041,12 +2098,20 @@ class ArchetypesGenerator(BaseGenerator):
             log.debug("Generating additional imports...")
             wrt(additionalImports)
 
+        # imports needed for remember subclassing
+        if element.hasStereoType(self.remember_stereotype,
+                                 umlprofile=self.uml_profile):
+            wrt(REMEMBER_IMPORTS)
+            # and set the add content permission to what remember needs
+            creation_permission = u'ADD_MEMBER_PERMISSION'
+            creation_roles = None
+
         # imports needed for CMFMember subclassing
         if element.hasStereoType(self.cmfmember_stereotype,
                                  umlprofile=self.uml_profile):
             wrt(CMFMEMBER_IMPORTS)
             # and set the add content permission to what CMFMember needs
-            creation_permission = 'ADD_MEMBER_PERMISSION'
+            creation_permission = u'ADD_MEMBER_PERMISSION'
             creation_roles = None
 
         # imports needed for optional support of SQLStorage
@@ -2060,9 +2125,9 @@ class ArchetypesGenerator(BaseGenerator):
         # imports by tagged values
         additionalImports = self.getImportsByTaggedValues(element)
         if additionalImports:
-            wrt("# additional imports from tagged value 'import'\n")
+            wrt(u"# additional imports from tagged value 'import'\n")
             wrt(additionalImports)
-            wrt('\n')
+            wrt(u'\n')
 
         # CMFMember needs a special factory method
         if element.hasStereoType(self.cmfmember_stereotype,
@@ -2071,6 +2136,8 @@ class ArchetypesGenerator(BaseGenerator):
                 'module': element.getRootPackage().getProductModuleName(),
                 'prefix': self.prefix,
                 'name': name})
+        # I don't think this is needed for remember, since instances of
+        # member will be added by the membership tool 
 
         # Normally, archgenxml also looks at the parents of the
         # current class for allowed subitems. Likewise, subclasses of
@@ -2125,6 +2192,7 @@ class ArchetypesGenerator(BaseGenerator):
         # Remark: CMFMember support includes VariableSchema support
         # Remark Reinout: since cmfmember 1.1, there's no more
         # variableschema support.
+        # njj: Punt on this for now as far as remember is concerned.
         if element.hasStereoType(self.variable_schema,
                                  umlprofile=self.uml_profile):
             if element.hasStereoType(self.cmfmember_stereotype,
@@ -2133,6 +2201,9 @@ class ArchetypesGenerator(BaseGenerator):
                          "as cmfmember 1.0 already includes it.")
             # Including it by default anyway, since 1.4.0/dev.
             parentnames.insert(0, 'VariableSchemaSupport')
+
+        if element.hasStereoType(self.remember_stereotype, umlprofile=self.uml_profile):
+            parentnames.insert(0, 'BaseMember')
 
         # Interface aggregation
         if self.getAggregatedInterfaces(element):
@@ -2155,15 +2226,18 @@ class ArchetypesGenerator(BaseGenerator):
         # protected section
         self.generateProtectedSection(outfile, element, 'after-local-schema')
 
-        # generate complete Schmema
+        # generate complete Schema
         # prepare schema as class attribute
         parent_schema = ["getattr(%s, 'schema', Schema(()))" % p.getCleanName()
                          for p in element.getGenParents()
                          if not p.hasStereoType(self.python_stereotype,
                                                 umlprofile=self.uml_profile)]
 
-        if parent_is_archetype and \
-           not element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
+        if (parent_is_archetype 
+                and not element.hasStereoType(
+                    self.cmfmember_stereotype, umlprofile=self.uml_profile)
+                and not element.hasStereoType(
+                    self.remember_stereotype, umlprofile=self.uml_profile)):
             schema = parent_schema
         else:
             # [optilude] Ignore baseschema in abstract mixin classes
@@ -2179,6 +2253,10 @@ class ArchetypesGenerator(BaseGenerator):
                     schema.append('BaseMember.%s' % addschema)
             if utils.isTGVTrue(element.getTaggedValue(addschema, '1')):
                 schema.append('ExtensibleMetadata.schema')
+
+        if element.hasStereoType(self.remember_stereotype, umlprofile=self.uml_profile):
+            schema.append('BaseMember.schema')
+            schema.append('ExtensibleMetadata.schema')
 
         # own schema overrules base and parents
         schema += ['schema']
@@ -2239,12 +2317,14 @@ class ArchetypesGenerator(BaseGenerator):
                          element.getTaggedValue('label')
         if not archetype_name:
             archetype_name = name
+        if type(archetype_name) != types.UnicodeType:
+            archetype_name = archetype_name.decode('utf8')
         portaltype_name = element.getTaggedValue('portal_type') or name
 
         # [optilude] Only output portal type and AT name if it's not an abstract
         # mixin
         if not element.isAbstract():
-            print >> outfile, CLASS_ARCHETYPE_NAME % archetype_name
+            print >> outfile, (CLASS_ARCHETYPE_NAME % archetype_name).encode('utf8')
             print >> outfile, CLASS_META_TYPE % name
             print >> outfile, CLASS_PORTAL_TYPE % portaltype_name
 
@@ -2308,6 +2388,10 @@ class ArchetypesGenerator(BaseGenerator):
         # schema attribute
         wrt(utils.indent('schema = %s' % schemaName, 1) + '\n\n')
 
+        # Set base_archetype for remember
+        if element.hasStereoType(self.remember_stereotype, umlprofile=self.uml_profile):
+            wrt(utils.indent("base_archetype = %s" % baseclass, 1) + '\n\n')
+
         self.generateProtectedSection(outfile, element, 'class-header', 1)
 
         # tool __init__ and at_post_edit_script
@@ -2320,6 +2404,11 @@ class ArchetypesGenerator(BaseGenerator):
             print >> outfile, TEMPL_POST_EDIT_METHOD_TOOL
             self.generateProtectedSection(outfile, element,
                                           'post-edit-method-footer', 2)
+            print >> outfile
+
+        # Remember __call__
+        if element.hasStereoType(self.remember_stereotype, umlprofile=self.uml_profile):
+            print >> outfile, REMEMBER_CALL
             print >> outfile
 
         self.generateMethods(outfile, element)
@@ -2620,7 +2709,7 @@ class ArchetypesGenerator(BaseGenerator):
         d={'generator'                     : self,
            'utils'                         : utils,
            'package'                       : package,
-           'product_name'                  : package.getProductName (),
+           'product_name'                  : package.getProductName(),
            'package_imports'               : packageImports,
            'class_imports'                 : classImports,
            'additional_permissions'        : additional_permissions,
@@ -2849,6 +2938,8 @@ class ArchetypesGenerator(BaseGenerator):
                     raise
                 classfile = self.makeFile(outfilepath)
                 # TBD perhaps check if the file is parseable
+                if type(buf) == types.UnicodeType:
+                    buf = buf.encode('utf-8')
                 print >> classfile, buf
                 classfile.close()
             except:
@@ -2981,7 +3072,6 @@ class ArchetypesGenerator(BaseGenerator):
         assocs = package.getAssociations(recursive=1)
         processed = [] # xxx hack and workaround, not solution, avoids double
                        # generation of relations
-        #import pdb; pdb.set_trace()
         for assoc in assocs:
             if assoc in processed:
                 continue
@@ -3184,7 +3274,7 @@ class ArchetypesGenerator(BaseGenerator):
         suff = os.path.splitext(self.xschemaFileName)[1].lower()
         log.info("Parsing...")
         if not self.noclass:
-            if suff.lower() in ('.xmi','.xml'):
+            if suff.lower() in ('.xmi','.xml', '.uml'):
                 log.debug("Opening xmi...")
                 self.root = root= XMIParser.parse(self.xschemaFileName,
                                                   packages=self.parse_packages,
@@ -3209,9 +3299,22 @@ class ArchetypesGenerator(BaseGenerator):
                 lastPart = os.path.split(self.outfilename)[1]
                 log.debug("We've split off the last directory name: %s.",
                           lastPart)
-                root.setName(lastPart)
-                log.debug("Set the name of the root generator to that"
-                          " directory name.")
+                # [Reinout 2006-11-05]: We're not setting the root's
+                # name from the outfilename anymore. That prevents
+                # (amongst others) Optilude from generating some
+                # product into a directory named "trunk", for
+                # instance.
+                #root.setName(lastPart)
+                #log.debug("Set the name of the root generator to that"
+                #          " directory name.")
+                existingName = root.getName()
+                if not existingName == lastPart:
+                    log.warn("Not setting the product's name to '%s', "
+                             "this was the old behaviour. Just name your "
+                             "class diagram according to your product "
+                             "name. ",
+                             lastPart)
+                root.setOutputDirectoryName(self.outfilename)
             else:
                 log.debug("No outfilename present, not changing the "
                           "name of the root generator.")

@@ -9,27 +9,30 @@
 #   - To register a customisation policy, create a file CustomizationPolicy.py
 #       with a method register(context) to register the policy.
 
-from zLOG import LOG, INFO, DEBUG
-
-LOG('<dtml-var "product_name">', DEBUG, 'Installing Product')
+import logging
+logger = logging.getLogger('<dtml-var "product_name">')
+logger.info('Installing Product')
 
 try:
     import CustomizationPolicy
 except ImportError:
     CustomizationPolicy = None
 
+import os, os.path
 from Globals import package_home
 from Products.CMFCore import utils as cmfutils
-from Products.CMFCore import CMFCorePermissions
+
+try: # New CMF
+    from Products.CMFCore import permissions as CMFCorePermissions 
+except: # Old CMF
+    from Products.CMFCore import CMFCorePermissions
+
 from Products.CMFCore import DirectoryView
 from Products.CMFPlone.utils import ToolInit
 from Products.Archetypes.atapi import *
 from Products.Archetypes import listTypes
 from Products.Archetypes.utils import capitalize
-
-import os, os.path
-
-from Products.<dtml-var "product_name">.config import *
+from config import *
 
 DirectoryView.registerDirectory('skins', product_globals)
 DirectoryView.registerDirectory('skins/<dtml-var "product_name">',

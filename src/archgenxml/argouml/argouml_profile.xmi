@@ -6,6 +6,11 @@
      version 0.3 2006/03/03 Pander completed tag definitions
      version 0.4 2006/03/06 Pander improved data types
      version 0.5 2006/03/17 Pander added tag definition i18ncontent
+     version 0.6 2006/03/25 Pander fixed duplicate id for tag definition i18ncontent
+     version 0.7 2006/03/25 Pander added default:widget:Reference, widget:size
+     version 0.8 2006/08/02 Pander added widget:maxlength
+     version 0.9 2006/08/28 Pander added for widget: rows, cols, divider, append_only, format, future_years, starting_year, ending_year, show_ymd, show_hm, thousands_commas, whole_dollars, dollars_and_cents, addable, allow_file_upload
+     version 1.0 2006/08/28 Pander added languageIndependent
 -->
 <XMI xmlns:UML="org.omg.xmi.namespace.UML" xmi.version="1.2" timestamp="Fri Sep 02 22:10:50 CEST 2005">
   <XMI.header>
@@ -1718,6 +1723,234 @@
             <UML:Multiplicity xmi.id = 'xmi.523.1'>
               <UML:Multiplicity.range>
                 <UML:MultiplicityRange xmi.id = 'xmi.523.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.524' name = 'default:widget:Reference' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.524.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.524.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.525' name = 'widget:size' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.525.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.525.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.526' name = 'widget:maxlength' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.526.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.526.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.527' name = 'widget:rows' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.527.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.527.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.528' name = 'widget:cols' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.528.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.528.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.529' name = 'widget:divider' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.529.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.529.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.530' name = 'widget:append_only' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.530.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.530.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.531' name = 'widget:format' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.531.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.531.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.532' name = 'widget:future_years' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.532.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.532.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.533' name = 'widget:starting_year' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.533.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.533.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.534' name = 'widget:ending_year' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.534.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.534.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.535' name = 'widget:show_ymd' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.535.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.535.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.536' name = 'widget:show_hm' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.536.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.536.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.537' name = 'widget:thousands_commas' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.537.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.537.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.538' name = 'widget:whole_dollars' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.538.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.538.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.539' name = 'widget:dollars_and_cents' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.539.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.539.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.540' name = 'widget:addable' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.540.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.540.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.541' name = 'widget:allow_file_upload' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.541.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.541.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.542' name = 'languageIndependent' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.542.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.542.2' lower = '0' upper = '1'/>
               </UML:Multiplicity.range>
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>

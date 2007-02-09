@@ -234,6 +234,20 @@ def install(self, reinstall=False):
 </dtml-in>
 </dtml-if>
 </dtml-let>
+<dtml-let remembers="[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.remember_stereotype)]">
+<dtml-if "remembers"> 
+    # Adds our types to MemberDataContainer.allowed_content_types
+    types_tool = getToolByName(self, 'portal_types')
+    act = types_tool.MemberDataContainer.allowed_content_types
+    types_tool.MemberDataContainer.manage_changeProperties(allowed_content_types=act+(<dtml-in remembers>'<dtml-var "_['sequence-item'].getCleanName()">', </dtml-in>))
+    # registers with membrane tool ...
+    membrane_tool = getToolByName(self, 'membrane_tool')
+<dtml-in "remembers">
+    membrane_tool.registerMembraneType('<dtml-var "_['sequence-item'].getCleanName()">')
+    # print >> out, SetupMember(self, member_type='<dtml-var "_['sequence-item'].getCleanName()">', register=<dtml-var "str(_['sequence-item'].getTaggedValue('register', False))">).finish()
+</dtml-in>
+</dtml-if>
+</dtml-let>
 
     # try to call a workflow install method
     # in 'InstallWorkflows.py' method 'installWorkflows'
@@ -251,17 +265,28 @@ def install(self, reinstall=False):
     else:
         print >>out,'no workflow install'
 
-<dtml-if "[klass for klass in generator.getGeneratedClasses(package) if generator.getOption('use_workflow', klass, None) is not None] and not klass.getStateMachines()">
+<dtml-if "[klass for klass in generator.getGeneratedClasses(package) if generator.getOption('use_workflow', klass, None) is not None and not klass.getStateMachines()]">
     #bind classes to workflows
     wft = getToolByName(self,'portal_workflow')
 <dtml-in "generator.getGeneratedClasses(package)">
 <dtml-let klass="_['sequence-item']">
-<dtml-if "generator.getOption('use_workflow', klass, None) is not None and not klass.getStateMachine()">
+<dtml-if "generator.getOption('use_workflow', klass, None)">
     wft.setChainForPortalTypes( ['<dtml-var "klass.getCleanName()">'], <dtml-var "utils.getExpression(generator.getOption('use_workflow', klass))">)
 </dtml-if>
 </dtml-let>
 </dtml-in>
 </dtml-if>
+
+<dtml-let all_tools="[c for c in generator.getGeneratedTools(package) if generator.getOption('use_workflow', c, None) is not None or c.getStateMachine()]">
+<dtml-if "all_tools">
+    # update workflow for created tools if they have been designated a workflow
+    for toolname in <dtml-var "[t.getTaggedValue('tool_instance_name') or 'portal_%s' % t.getName().lower() for t in all_tools]">:
+        try:
+            portal[toolname].notifyWorkflowCreated()
+        except:
+            pass
+</dtml-if>
+</dtml-let>
 
 <dtml-if "package.num_generated_relations">
     # configuration for Relations
@@ -273,16 +298,47 @@ def install(self, reinstall=False):
     relations_tool.importXML(xml)
 
 </dtml-if>
+<dtml-let klasses="[klass for klass in generator.getGeneratedClasses(package) if utils.isTGVTrue(generator.getOption('use_portal_factory', klass, True)) and not (klass.getPackage().hasStereoType('tests') or klass.isAbstract() or klass.hasStereoType(['widget', 'field', 'stub']))]">
+<dtml-if "klasses">
     # enable portal_factory for given types
     factory_tool = getToolByName(self,'portal_factory')
     factory_types=[
-        <dtml-in "generator.getGeneratedClasses(package)"><dtml-let
-                 klass="_['sequence-item']" package="klass.getPackage()"><dtml-if
-                       "utils.isTGVTrue(klass.getTaggedValue('use_portal_factory', True)) and not (package.hasStereoType('tests') or klass.isAbstract() or klass.hasStereoType(['widget', 'field', 'stub']))">"<dtml-var
+        <dtml-in "klasses"><dtml-let
+                 klass="_['sequence-item']">"<dtml-var
                        "klass.getTaggedValue('portal_type') or klass.getCleanName()">",
-        </dtml-if></dtml-let>
+        </dtml-let>
 </dtml-in>] + factory_tool.getFactoryTypes().keys()
     factory_tool.manage_setPortalFactoryTypes(listOfTypeIds=factory_types)
+</dtml-if>
+</dtml-let>
+<dtml-let klasses="[(klass.getTaggedValue('portal_type') or klass.getCleanName()) for klass in generator.getGeneratedClasses(package) if utils.isTGVFalse(generator.getOption('searchable_type', klass, True))]">
+<dtml-if "klasses">
+    # hide selected classes in the search form
+    portalProperties = getToolByName(self, 'portal_properties', None)
+    if portalProperties is not None:
+        siteProperties = getattr(portalProperties, 'site_properties', None)
+        if siteProperties is not None and siteProperties.hasProperty('types_not_searched'):
+            for klass in <dtml-var "repr(klasses)">:
+                current = list(siteProperties.getProperty('types_not_searched'))
+                if klass not in current:
+                    current.append(klass)
+                    siteProperties.manage_changeProperties(**{'types_not_searched' : current})
+</dtml-if>
+</dtml-let>
+<dtml-let klasses="[(klass.getTaggedValue('portal_type') or klass.getCleanName()) for klass in generator.getGeneratedClasses(package) if utils.isTGVFalse(generator.getOption('display_in_navigation', klass, True))]">
+<dtml-if "klasses">
+    # hide selected classes in the navigation
+    portalProperties = getToolByName(self, 'portal_properties', None)
+    if portalProperties is not None:
+        navtree_properties = getattr(portalProperties, 'navtree_properties', None)
+        if navtree_properties is not None and navtree_properties.hasProperty('metaTypesNotToList'):
+            for klass in <dtml-var "repr(klasses)">:
+                current = list(navtree_properties.getProperty('metaTypesNotToList'))
+                if klass not in current:
+                    current.append(klass)
+                    navtree_properties.manage_changeProperties(**{'metaTypesNotToList' : current})
+</dtml-if>
+</dtml-let>
 
     from Products.<dtml-var "package.getProductModuleName()">.config import STYLESHEETS
     try:
@@ -296,7 +352,7 @@ def install(self, reinstall=False):
             'media': 'all',
             'enabled': True}
             defaults.update(stylesheet)
-            portal_css.manage_addStylesheet(**defaults)
+            portal_css.registerStylesheet(**defaults)
     except:
         # No portal_css registry
         pass
@@ -340,6 +396,21 @@ def install(self, reinstall=False):
 def uninstall(self, reinstall=False):
     out = StringIO()
 
+<dtml-let remembers="[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.remember_stereotype)]">
+<dtml-if "remembers">
+    # Removes our types from MemberDataContainer.allowed_content_types
+    types_tool = getToolByName(self, 'portal_types')
+    act = types_tool.MemberDataContainer.allowed_content_types
+    types_tool.MemberDataContainer.manage_changeProperties(allowed_content_types=[ct for ct in act if ct not in (<dtml-in remembers>'<dtml-var "_['sequence-item'].getCleanName()">', </dtml-in>) ])
+    # unregister with membrane tool ...
+    membrane_tool = getToolByName(self, 'membrane_tool')
+<dtml-in "remembers">
+    membrane_tool.unregisterMembraneType('<dtml-var "_['sequence-item'].getCleanName()">')
+    # print >> out, SetupMember(self, member_type='<dtml-var "_['sequence-item'].getCleanName()">', register=<dtml-var "str(_['sequence-item'].getTaggedValue('register', False))">).finish()
+</dtml-in>
+</dtml-if>
+</dtml-let>
+
 <dtml-let autoinstalled_tools="[c.getName() for c in generator.getGeneratedTools(package) if not utils.isTGVFalse(c.getTaggedValue('autoinstall')) ]">
 <dtml-if "autoinstalled_tools">
     # unhide tools in the search form
@@ -355,6 +426,37 @@ def uninstall(self, reinstall=False):
 
 </dtml-if>
 </dtml-let>
+<dtml-let klasses="[(klass.getTaggedValue('portal_type') or klass.getCleanName()) for klass in generator.getGeneratedClasses(package) if utils.isTGVFalse(generator.getOption('searchable_type', klass, True))]">
+<dtml-if "klasses">
+    # unhide types in the search form
+    portalProperties = getToolByName(self, 'portal_properties', None)
+    if portalProperties is not None:
+        siteProperties = getattr(portalProperties, 'site_properties', None)
+        if siteProperties is not None and siteProperties.hasProperty('types_not_searched'):
+            for klass in <dtml-var "repr(klasses)">:
+                current = list(siteProperties.getProperty('types_not_searched'))
+                if klass in current:
+                    current.remove(klass)
+                    siteProperties.manage_changeProperties(**{'types_not_searched' : current})
+
+</dtml-if>
+</dtml-let>
+<dtml-let klasses="[(klass.getTaggedValue('portal_type') or klass.getCleanName()) for klass in generator.getGeneratedClasses(package) if utils.isTGVFalse(generator.getOption('display_in_navigation', klass, True))]">
+<dtml-if "klasses">
+    # unhide selected classes in the navigation
+    portalProperties = getToolByName(self, 'portal_properties', None)
+    if portalProperties is not None:
+        navtree_properties = getattr(portalProperties, 'navtree_properties', None)
+        if navtree_properties is not None and navtree_properties.hasProperty('metaTypesNotToList'):
+            for klass in <dtml-var "repr(klasses)">:
+                current = list(navtree_properties.getProperty('metaTypesNotToList'))
+                if klass in current:
+                    current.remove(klass)
+                    navtree_properties.manage_changeProperties(**{'metaTypesNotToList' : current})
+
+</dtml-if>
+</dtml-let>
+
 <dtml-let all_tools="[c for c in generator.getGeneratedTools(package)]">
 <dtml-if "all_tools">
     # unhide tools

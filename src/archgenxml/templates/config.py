@@ -8,9 +8,17 @@
 # AppConfig.py in your product's root directory. This will be included
 # in this file if found.
 
-from Products.CMFCore.CMFCorePermissions import setDefaultRoles
+try: # New CMF
+    from Products.CMFCore.permissions import setDefaultRoles 
+except ImportError: # Old CMF
+    from Products.CMFCore.CMFCorePermissions import setDefaultRoles
+
+
 <dtml-if "[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.cmfmember_stereotype)]">
 from Products.CMFMember.MemberPermissions import ADD_MEMBER_PERMISSION
+</dtml-if>
+<dtml-if "[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.remember_stereotype)]">
+from Products.remember.permissions import ADD_MEMBER_PERMISSION
 </dtml-if>
 <dtml-var "generator.getProtectedSection(parsed_config,'config-head')">
 

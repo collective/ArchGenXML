@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #-----------------------------------------------------------------------------
 # Name:        XMIParser.py
 # Purpose:     Parse XMI (UML-model) and provide a logical model of it
@@ -148,9 +149,9 @@ class XMI1_0:
     def __init__(self,**kw):
         self.__dict__.update(kw)
 
-    def getName(self, domElement):
+    def getName(self, domElement, doReplace=False):
         name = getAttributeValue(domElement, self.NAME)
-        return normalize(name)
+        return normalize(name, doReplace)
 
     def getId(self, domElement):
         return domElement.getAttribute('xmi.id').strip()
@@ -352,15 +353,17 @@ class XMI1_0:
         else:
             return None
 
-    def getTaggedValue(self, el):
+    def getTaggedValue(self, el, doReplace=False):
         log.debug("Getting tagged value for element '%s'. Not recursive.",
                   self.getId(el))
         tagname = normalize(getAttributeValue(el, XMI.TAGGED_VALUE_TAG,
-                                              recursive=0, default=None))
+                                              recursive=0, default=None),
+                           )
         if not tagname:
             raise TypeError, 'element %s has empty taggedValue' % self.getId(el)
         tagvalue = normalize(getAttributeValue(el, XMI.TAGGED_VALUE_VALUE,
-                                               recursive=0, default=None))
+                                               recursive=0, default=None),
+                            doReplace)
         return tagname, tagvalue
 
     def collectTagDefinitions(self, el):
@@ -529,9 +532,9 @@ class XMI1_1 (XMI1_0):
     TRANSITION_GUARD = "UML:Transition.guard", "UML2:Transition.guard"
     OWNED_BEHAVIOR = "UML2:BehavioredClassifier.ownedBehavior"
 
-    ACTION_SCRIPT = "UML:Action.script"
+    ACTION_SCRIPT = "UML:Action.script", "UML2:OpaqueBehavior"
     ACTION_EXPRESSION = "UML:ActionExpression"
-    ACTION_EXPRESSION_BODY = "UML:ActionExpression.body"
+    ACTION_EXPRESSION_BODY = "UML:ActionExpression.body", "UML2:OpaqueBehavior.body"
 
     DIAGRAM = "UML:Diagram"
     DIAGRAM_OWNER = "UML:Diagram.owner"
@@ -541,10 +544,10 @@ class XMI1_1 (XMI1_0):
 
     UML2TYPE = 'UML2:TypedElement.type'
 
-    def getName(self, domElement):
+    def getName(self, domElement, doReplace=False):
         name = ''
         if domElement:
-            name = normalize(domElement.getAttribute('name'))
+            name = normalize(domElement.getAttribute('name'), doReplace)
         return name
 
     def getExpressionBody(self, element, tagname=None):
@@ -676,9 +679,9 @@ def getSubElement(domElement, default=_marker, ignoremult=0):
         else:
             return default
 
-def getAttributeValue(domElement, tagName=None, default=_marker, recursive=0):
+def getAttributeValue(domElement, tagName=None, default=_marker, recursive=0, doReplace=False):
     el = domElement
-    el.normalize()
+    #el.normalize()
     if tagName:
         try:
             el = getElementByTagName(domElement, tagName, recursive=recursive)
@@ -854,12 +857,12 @@ class XMIElement:
     def getChildren(self):
         return self.children
 
-    def getName(self):
+    def getName(self, doReplace=False):
         if self.name:
             res = self.name
         else:
             res = self.id
-        return normalize(res)
+        return normalize(res, doReplace)
 
     def getTaggedValue(self, name, default=''):
         log.debug("Getting value for tag '%s' (default=%s). "
@@ -1205,6 +1208,10 @@ class XMIPackage(XMIElement, StateMachineContainer):
         self.classes = []
         self.interfaces = []
         self.packages = []
+        # outputDirectoryName is used when setting the output
+        # directory on the command line. Effectively only used for
+        # single products. Ignored when not set.
+        self.outputDirectoryName = None
 
     def initFromDOM(self, domElement=None):
         self.parentPackage = None
@@ -1349,7 +1356,7 @@ class XMIPackage(XMIElement, StateMachineContainer):
         return res
 
     def getFilePath(self, includeRoot=1, absolute=0):
-        names = [p.getModuleName() for p in
+        names = [p.getModuleNameForDirectoryName() for p in
                  self.getPath(includeRoot=includeRoot, absolute=absolute)]
         if not names:
             return ''
@@ -1370,6 +1377,19 @@ class XMIPackage(XMIElement, StateMachineContainer):
 
     def getProductName(self):
         return self.getProduct().getCleanName()
+
+    def getModuleNameForDirectoryName(self):
+        outdir = self.getOutputDirectoryName()
+        if outdir:
+            return outdir
+        else:
+            return self.getModuleName()
+
+    def getOutputDirectoryName(self):
+        return self.outputDirectoryName
+
+    def setOutputDirectoryName(self, name):
+        self.outputDirectoryName = name
 
     def getProductModuleName(self):
         return self.getProduct().getModuleName()
@@ -2494,7 +2514,7 @@ class XMIState(XMIElement):
     isinitial = 0
     non_permissions = [
         'initial_state', 'documentation',
-        'label', 'worklist',
+        'label', 'description', 'worklist',
         'worklist:guard_permissions',
         'worklist:guard_roles',
     ]
@@ -2629,6 +2649,13 @@ class XMIState(XMIElement):
 
     def isInitial(self):
         return self.isinitial
+
+    def getDescription(self):
+        """Return the description for a state.
+
+        It looks the description at the TGV 'description'.
+        """
+        return self.getTaggedValue('description', '')
 
     def getTitle(self, generator):
         """ Return the title for a state
