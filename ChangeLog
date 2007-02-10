@@ -1,5 +1,11 @@
 2006-10-02  Reinout van Rees  <reinout@vanrees.org>
 
+	* All files: Jens Klein moved the 1.6 branch to trunk, what was
+	trunk is now the 1.5 branch. The 1.6 branch has been removed. This
+	is now finally the new full-speed archgenxml dev target again!
+
+2006-10-02  Reinout van Rees  <reinout@vanrees.org>
+
 	* numerous files: Backported changes from svn trunk (1.5
 	maintenance branch)
 
