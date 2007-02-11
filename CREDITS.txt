@@ -43,7 +43,8 @@ Authors
 
   Jean Rodrigo Ferri (ferri)
 
-    Bug killer and some tricks with workflow, portal tools, install, etc.
+    Bug killer and some tricks with workflow, portal tools, install,
+    etc.
 
 Sponsors:
 
@@ -57,7 +58,9 @@ Sponsors:
 
   BlueDynamics Alliance, Austria
 
-  ZestSoftware, Netherlands
+  Zest Software, Netherlands
+
+    Work by Reinout and Maurits van Rees
 
   Xiru.org, Brazil (Fabiano Weimar dos Santos)
       sponsors a valuable amount of money into workflow support.
