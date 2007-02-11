@@ -1,0 +1,51 @@
+Installing archgenxml 1.6 (development version)
+===============================================
+
+
+SVN directories - what is stable, what is not?
+----------------------------------------------
+
+ArchGenXML's svn trunk has been changed to be the 1.6 development
+version. The stable version is in the 1.5 branch.
+
+As usual, the goal is to keep trunk workable. Some of the developers
+work and develop on the edge: trunk. There might be some reordering
+and deprecation. There will especially be quite a lot of reordering to
+move towards genericsetup. If you need stability, use the released
+1.5.2 version or the 1.5 branch.
+
+
+Installing trunk
+----------------
+
+With 1.6, we switched to using setuptools. So you can use the familiar
+"python setup.py install" to install from subversion.
+
+It is probably handier to do "python setup.py develop", though, as
+that wires up your svn checkout as the currently installed
+version. This is the almost-no-hassle way recommended for those that
+run from svn trunk.
+
+"python setup.py install" (or develop) generates and installs an
+"archgenxml" script in /usr/local/bin or wherever your python uses to
+place its executable scripts. The big advantage is that this works
+well on windows, too.
+
+OSX note: This can be a funny location on OSX. I know that I've had to
+look around quite a bit. If it is a funny location, just symlink it
+from somewhere in your path.
+
+
+Trunk dependency
+----------------
+
+Trunk has a dependency on some zope3 machinery. It requires you to
+have a zope 3.3 or zope 2.10 lying around somewhere. We'd love to do
+this with eggs, but that messes up other zopes that use the same
+python version. And zope is only half-half eggified.
+
+So just start "archgenxml" and it'll complain about not finding some
+zope libraries and it'll give you instructions on how to handle
+that. If somebody's got a better idea that doesn't mess up all sorts
+of things: please open a bug in the issue tracker.
+
