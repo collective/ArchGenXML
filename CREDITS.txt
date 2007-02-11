@@ -14,6 +14,12 @@ Authors
     module-info-header support and config-file support, CMFMember support
     and several other little fixes and features.
 
+  Reinout van Rees
+
+    Reinout did lots of cleanup and added documentation features. He
+    started the 1.6 development branch (now trunk) and moved
+    archgenxml to setuptools.
+
   Martin Aspeli (optilude)
 
     Improvements and important cleanups, documentation.
@@ -29,10 +35,6 @@ Authors
 
     Joel rewrote the option handling system to use optparse, and
     worked on the product documentation.
-
-  Reinout van Rees
-
-    Reinout did lots of cleanup and added documentation features.
 
   Dorneles Tremea (deo)
 
