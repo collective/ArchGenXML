@@ -13,6 +13,10 @@ ArchGenXML - Python/Zope/Plone code generator
 
   For information on the authors and supporters, see the file CREDITS.
 
+SVN notice
+
+  **Warning**: svn trunk is now for the development of the 1.6
+    version. The stable 1.5 is now in the 1.5 branch.
 
 Supported Features
 
@@ -46,9 +50,7 @@ Requirements & Optional
 
   Required to run generated code
 
-    - Plone 2.0.5 or better Plone 2.1.0+
-
-    - Archetypes 1.3.4+
+    - Plone 2.5.something.
 
   Optional:
 
@@ -63,6 +65,8 @@ Requirements & Optional
       Then install it into your python: enter the directory and::
 
         python setup.py install
+
+        Or, better, use "easy_install i18ndude" and be done with it.
 
 
     - stripogram
@@ -108,22 +112,21 @@ Requirements & Optional
 
 Quick Start
 
-  1) Unpack the ArchGenXML product. It is not actually a product for
-     Zope, but is run directly from the command line. Therefore, it
-     does not have to be installed in your $INSTANCE_HOME/Products.
+  1) See INSTALL.txt for installation instructions. This should result
+     in an 'archgenxml' script somewhere in your path.
 
-  2) Use the ArchGenXML.py script to convert an input file to a
-     product. For example::
+  2) Run 'archgenxml' to convert an input file to a product. For
+     example::
 
-       $ ./ArchGenXML.py samples/SimpleSample.xmi
+       $ archgenxml samples/SimpleSample.xmi
 
      This converts the Poseidon-created UML diagrams in
      "samples/SimpleSample.xmi to a new product, ArchGenXMLSimpleSample,
      stored in the current directory.
 
-  3) Copy the ArchGenXMLSimpleSample product directory into your Plone Products
-     directory and restart Plone. ArchGenXMLSimpleSample should now be an installable
-     product.
+  3) Copy the ArchGenXMLSimpleSample product directory into your Plone
+     Products directory and restart Plone. ArchGenXMLSimpleSample
+     should now be an installable product.
 
   ArchGenXML ships with some demo files in samples/test-examples.
 
@@ -143,8 +146,8 @@ Known Limitations
 
 License
 
-  This software is licensed under the General Public License. i
-  See LICENSE.txt for full information.
+  This software is licensed under the General Public License.  See
+  LICENSE.txt for full information.
 
   (c) Philipp Auersperg, phil at bluedynamics.com
 
