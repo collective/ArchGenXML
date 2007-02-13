@@ -34,26 +34,27 @@ def main():
     log = logging.getLogger('main')
 
     log.debug("Initializing zope3 machinery.")
+    ZOPEPATHFILE = '.agx_zope_path'
+    userDir = os.path.expanduser('~')
+    pathFile = os.path.join(userDir, ZOPEPATHFILE)
+    if os.path.exists(pathFile):
+        f = open (pathFile)
+        additionalPath = f.readline().strip()
+        f.close()
+        sys.path.insert(0, additionalPath)
     try:
         from zope import component
         from zope.configuration import xmlconfig
     except ImportError:
-        ZOPEPATHFILE = '.agx_zope_path'
-        userDir = os.path.expanduser('~')
-        pathFile = os.path.join(userDir, ZOPEPATHFILE)
+        log.error("Could not import zope3 components.\n"
+                  "They are not available on the PYTHONPATH.\n"
+                  "Alternatively, you can place the path location "
+                  "in ~/%s.", ZOPEPATHFILE)
         if os.path.exists(pathFile):
-            f = open (pathFile)
-            additionalPath = f.readline().strip()
-            f.close()
-            sys.path.append(additionalPath)
-            from zope import component
-            from zope.configuration import xmlconfig
-        else:
-            log.error("Could not import zope3 components.\n"
-                      "They are not available on the PYTHONPATH.\n"
-                      "Alternatively, you can place the path location "
-                      "in ~/%s.", ZOPEPATHFILE)
-            sys.exit(1)
+            log.error("Hm. Apparently the file already exists. "
+                      "Sure it points at a good zope's /lib/python "
+                      "directory? A good zope is 2.9 or 3.3+.")
+        sys.exit(1)
         
     zcmlConfigFile = resource_filename(__name__, 'configure.zcml')
     xmlconfig.file(zcmlConfigFile, package=archgenxml)
