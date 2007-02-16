@@ -33,7 +33,7 @@ def main():
     utils.addConsoleLogging()
     log = logging.getLogger('main')
 
-    log.debug("Initializing zope3 machinery.")
+    log.debug("Initializing zope3 machinery...")
     ZOPEPATHFILE = '.agx_zope_path'
     userDir = os.path.expanduser('~')
     pathFile = os.path.join(userDir, ZOPEPATHFILE)
@@ -42,6 +42,8 @@ def main():
         additionalPath = f.readline().strip()
         f.close()
         sys.path.insert(0, additionalPath)
+        log.debug("Read %s, added %s in front of the PYTHONPATH."
+                  pathFile, additionalPath)
     try:
         from zope import component
         from zope.configuration import xmlconfig
@@ -55,26 +57,26 @@ def main():
                       "Sure it points at a good zope's /lib/python "
                       "directory? A good zope is 2.9 or 3.3+.")
         sys.exit(1)
-        
     zcmlConfigFile = resource_filename(__name__, 'configure.zcml')
     xmlconfig.file(zcmlConfigFile, package=archgenxml)
+    log.debug("Finished initializing zope3 machinery.")
 
     log.debug("Reading command line options first.")
     (settings, args) = parser.parse_args()
+    # Note: settings is all that the parser can recognize and parse
+    # from the command line arguments. 'args' is everything else
+    # that's left. The first (and probably only) left-over argument
+    # should be the model file
     try:
         model = args[0]
-        log.debug("Model file is '%s'.",
-                  model)
+        log.debug("Model file is '%s'.", model)
     except:
         log.critical("Hey, we need to be passed a UML file as an argument!")
         parser.print_help()
         sys.exit(2)
-
-    print utils.ARCHGENXML_VERSION_LINE % str(utils.version())
-
+    log.info(utils.ARCHGENXML_VERSION_LINE, str(utils.version()))
     # This is a little bit hacky. Probably should read optparse's doc
     # better. [Reinout]
-
     log.debug("Figuring out the settings we're passing to the "
               "main program...")
     keys = dir(settings)
