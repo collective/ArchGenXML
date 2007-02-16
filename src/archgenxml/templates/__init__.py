@@ -13,20 +13,10 @@ import logging
 logger = logging.getLogger('<dtml-var "product_name">')
 logger.info('Installing Product')
 
-try:
-    import CustomizationPolicy
-except ImportError:
-    CustomizationPolicy = None
-
 import os, os.path
 from Globals import package_home
 from Products.CMFCore import utils as cmfutils
-
-try: # New CMF
-    from Products.CMFCore import permissions as CMFCorePermissions 
-except: # Old CMF
-    from Products.CMFCore import CMFCorePermissions
-
+from Products.CMFCore import permissions as cmfpermissions
 from Products.CMFCore import DirectoryView
 from Products.CMFPlone.utils import ToolInit
 from Products.Archetypes.atapi import *
@@ -42,7 +32,7 @@ DirectoryView.registerDirectory('skins/<dtml-var "product_name">',
 # Register additional (custom) permissions used by this product
 <dtml-in "additional_permissions">
 <dtml-let permdef="_['sequence-item']">
-CMFCorePermissions.setDefaultRoles('<dtml-var "product_name">: <dtml-var "permdef[0]">',[<dtml-var "','.join(permdef[1])">])
+cmdpermissions.setDefaultRoles('<dtml-var "product_name">: <dtml-var "permdef[0]">',[<dtml-var "','.join(permdef[1])">])
 </dtml-let>
 </dtml-in>
 </dtml-if>
@@ -112,10 +102,5 @@ def initialize(context):
         fti                = ftis,
         ).initialize(context)
 </dtml-if>
-
-    # Apply customization-policy, if theres any
-    if CustomizationPolicy and hasattr(CustomizationPolicy, 'register'):
-        CustomizationPolicy.register(context)
-        print 'Customization policy for <dtml-var "product_name"> installed'
 
 <dtml-var "protected_init_section_bottom">
