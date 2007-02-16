@@ -42,7 +42,7 @@ def main():
         additionalPath = f.readline().strip()
         f.close()
         sys.path.insert(0, additionalPath)
-        log.debug("Read %s, added %s in front of the PYTHONPATH."
+        log.debug("Read %s, added %s in front of the PYTHONPATH.",
                   pathFile, additionalPath)
     try:
         from zope import component
