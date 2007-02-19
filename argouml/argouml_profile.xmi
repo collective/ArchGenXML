@@ -11,6 +11,7 @@
      version 0.8 2006/08/02 Pander added widget:maxlength
      version 0.9 2006/08/28 Pander added for widget: rows, cols, divider, append_only, format, future_years, starting_year, ending_year, show_ymd, show_hm, thousands_commas, whole_dollars, dollars_and_cents, addable, allow_file_upload
      version 1.0 2006/08/28 Pander added languageIndependent
+     version 1.1 2007/02/19 Xiru added widget:visible, access, Modify
 -->
 <XMI xmlns:UML="org.omg.xmi.namespace.UML" xmi.version="1.2" timestamp="Fri Sep 02 22:10:50 CEST 2005">
   <XMI.header>
@@ -1955,6 +1956,42 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.543' name = 'widget:visible' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.543.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.543.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.544' name = 'Modify' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.544.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.544.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+       </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.545' name = 'access' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.545.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.545.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+       </UML:TagDefinition>
       </UML:Namespace.ownedElement>
     </UML:Model>
   </XMI.content>
