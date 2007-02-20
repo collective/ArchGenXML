@@ -76,14 +76,17 @@ class PyModule:
         else:
             # File object!
             result = file.read()
+
+        # normalize line-endings to be just 'LF' for all platforms
+        result = result.replace("\r\n", "\n")
+
         # XXX: ugly hack: work only if file is utf-8
         # TODO: read first 2 lines and find real encoding as in PEP 263 defined
         self.encoding = 'utf-8'
         if type(result) != types.UnicodeType:
             
            result = result.decode(self.encoding)
-        # also normalize line-endings to be just 'LF' for all platforms
-        result = result.replace("\r\n", "\n")
+           
         return result
 
     def findClassesAndFunctions(self):
