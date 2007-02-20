@@ -82,6 +82,8 @@ class PyModule:
         if type(result) != types.UnicodeType:
             
            result = result.decode(self.encoding)
+        # also normalize line-endings to be just 'LF' for all platforms
+        result = result.replace("\r\n", "\n")
         return result
 
     def findClassesAndFunctions(self):
