@@ -32,7 +32,7 @@ DirectoryView.registerDirectory('skins/<dtml-var "product_name">',
 # Register additional (custom) permissions used by this product
 <dtml-in "additional_permissions">
 <dtml-let permdef="_['sequence-item']">
-cmdpermissions.setDefaultRoles('<dtml-var "product_name">: <dtml-var "permdef[0]">',[<dtml-var "','.join(permdef[1])">])
+cmfpermissions.setDefaultRoles('<dtml-var "product_name">: <dtml-var "permdef[0]">',[<dtml-var "','.join(permdef[1])">])
 </dtml-let>
 </dtml-in>
 </dtml-if>
