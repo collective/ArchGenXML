@@ -276,6 +276,32 @@ class BaseGenerator:
         # Zope 2 Interfaces
         reparents = element.getRealizationParents()
 
+        z2reparentnames = [p.getName() for p in reparents if not p.hasStereoType('z3')]
+        if z2reparentnames:
+            z2iface_implements = \
+                ' + '.join(["(%s,)" % i for i in z2reparentnames])
+        else:
+            z2iface_implements = None
+
+        if parentnames:
+            z2parentclasses_implements = \
+                    ' + '.join(["(getattr(%s,'__implements__',()),)" % i for i in parentnames])
+        else:
+            z2parentclasses_implements = None
+
+        z2implements_line = None
+        if z2iface_implements is not None or z2parentclasses_implements is not None:
+            z2implements_line = '__implements__ = '
+        if z2parentclasses_implements is not None:
+            z2implements_line += z2parentclasses_implements
+        if z2iface_implements and z2parentclasses_implements:
+            z2implements_line += ' + '
+        if z2iface_implements is not None:
+            z2implements_line += z2iface_implements
+        if z2implements_line is not None:
+            print >> outfile, utils.indent(z2implements_line, 1)
+
+
         # Zope 3 interfaces
         z3reparentnames = [p.getName() for p in reparents 
                            if (p.hasStereoType('z3') 
@@ -284,6 +310,8 @@ class BaseGenerator:
             print >> outfile, utils.indent('# zope3 interfaces', 1)
             concatstring = ', '.join(z3reparentnames)
             print >> outfile, utils.indent("interface.implements(%s)" % concatstring, 1)
+            
+
 
         return outfile.getvalue()
 
