@@ -117,7 +117,6 @@ class UMLProfile:
 
     def filterObjects(self,list,entities,**kw):
         res = []
-        #import pdb;pdb.set_trace()
         for item in list:
 
             #if one of the entities aplies, its ok
@@ -148,7 +147,7 @@ class UMLProfile:
     def findStereoTypes(self, entities=[], **kw):
         log.debug("Finding stereotypes for entities %r.",
                   entities)
-        entities = [entity.replace('archgenxml.XMIParser.', '') for entity in entities]
+        entities = [entity.replace('archgenxml.XMIParser.', '').replace('XMIParser.', '') for entity in entities]
         log.debug("Stripped off 'XMIParser.': %r.",
                   entities)
         list = self.getAllStereoTypes()

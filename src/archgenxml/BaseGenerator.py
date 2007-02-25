@@ -270,13 +270,22 @@ class BaseGenerator:
                 print >> outfile, line
 
         return outfile.getvalue().strip()
+    
+    def getInterfaceType(self,element):
+        if element.hasStereoType('z3'):
+            return 'z3'
+        elif element.hasStereoType('z2'):
+            return 'z2'
+        else:
+            return self.getOption('default_interface_type',element)
 
     def generateImplements(self, element, parentnames):
         outfile = StringIO()
         # Zope 2 Interfaces
         reparents = element.getRealizationParents()
-
-        z2reparentnames = [p.getName() for p in reparents if not p.hasStereoType('z3')]
+        
+        z2reparentnames = [p.getName() for p in reparents if self.getInterfaceType(p) == 'z2']
+                
         if z2reparentnames:
             z2iface_implements = \
                 ' + '.join(["(%s,)" % i for i in z2reparentnames])
@@ -304,7 +313,7 @@ class BaseGenerator:
 
         # Zope 3 interfaces
         z3reparentnames = [p.getName() for p in reparents 
-                           if (p.hasStereoType('z3') 
+                           if (self.getInterfaceType(p) == 'z3'\
                                or p.hasStereoType('view_class'))]
         if z3reparentnames:
             print >> outfile, utils.indent('# zope3 interfaces', 1)

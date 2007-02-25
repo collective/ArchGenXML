@@ -175,7 +175,6 @@ class TestPyMethod(TestPyFunction):
 
     def testStrangeIndentation(self):
         parser = PyModule(self.indentationFile)
-        #import pdb;pdb.set_trace()
         klass = parser.classes['testAtpConnector']
         method = klass.methods['testmethodcorrect']
         self.assertEquals(method.codeLength(), 13)

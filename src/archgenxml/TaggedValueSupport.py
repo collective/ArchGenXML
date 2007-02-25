@@ -171,6 +171,10 @@ tgvRegistry = TaggedValueRegistry()
 # Model level tagged values
 category = 'model'
 
+tagname = 'default_interface_type'
+explanation = """default type of interfaces (z2 or z3)."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 # Package level tagged values
 category = 'package'
 
@@ -203,6 +207,10 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 tagname = 'portal_type'
 explanation = """Sets the CMF portal-type this class will be registered with,
 defaults to the class-name."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'default_interface_type'
+explanation = """default type of interfaces (z2 or z3)."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'archetype_name'

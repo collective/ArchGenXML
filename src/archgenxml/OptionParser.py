@@ -503,6 +503,14 @@ group.add_option("--default-class-type",
                  section="CLASSES",
                  )
 
+group.add_option("--default-interface-type",
+                 dest="default_interface_type",
+                 help="default type of interfaces (z2 or z3).",
+                 type="string",
+                 default="z2",
+                 section="CLASSES",
+                 )
+
 parser.add_option_group(group)
 
 #----------------------------------------------------------------------------
