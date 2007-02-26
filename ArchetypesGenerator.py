@@ -723,7 +723,7 @@ class ArchetypesGenerator(BaseGenerator):
             global_allow = True
 
         has_content_icon=''
-        content_icon=element.getTaggedValue('content_icon')
+        content_icon = self.getOption('content_icon', element, None)
         if not content_icon:
             # If an icon file with the default name exists in the skin, do not
             # comment out the icon definition
@@ -1696,7 +1696,8 @@ class ArchetypesGenerator(BaseGenerator):
                     declaration = cl.getProtectionDeclaration(mt.getName())
                     if declaration:
                         print >> outfile, declaration
-                    print >> outfile, mt.src
+                    
+                    print >> outfile, mt.src.encode('utf-8')
                 print >> outfile
 
 
