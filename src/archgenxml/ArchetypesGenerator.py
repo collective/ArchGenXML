@@ -836,6 +836,9 @@ class ArchetypesGenerator(BaseGenerator):
         'lines': {'field': u'LinesField',
                   'map': {},
                   },
+        'datagrid': {'field': u'DataGridField',
+                  'map': {},
+                  },
         'date': {'field': u'DateTimeField',
                  'map': {},
                  },
@@ -872,6 +875,7 @@ class ArchetypesGenerator(BaseGenerator):
 
     widgetMap={
         'string': u'StringWidget' ,
+        'datagrid': u'DataGridWidget',
         'fixedpoint': u'DecimalWidget' ,
         'float': u'DecimalWidget',
         'text': u'TextAreaWidget',
@@ -895,6 +899,7 @@ class ArchetypesGenerator(BaseGenerator):
         'ofs.image': u'image',
         'ofs.file': u'file',
         'xs:date': u'date',
+        'DataGrid': u'string',
         'datetime': u'date',
         'list': u'lines',
         'liste': u'lines',
