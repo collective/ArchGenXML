@@ -570,9 +570,12 @@ explanation = """Set to true (1) to make the field required"""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'index'
-explanation = """Add an index to the attribute. The value of the tagged value
-should be the same that archetypes expects, so something like 'FieldIndex' or
-'FieldIndex:brains'."""
+explanation = """Add an index to the attribute. The value of the tagged value should
+be the same that archetypes expects, so something like 'FieldIndex' or
+'FieldIndex:brains'. Not needed in 99.9% of the cases, but a tuple can
+be used to create it in multiple catalogs:
+'python:("portal_catalog/FieldIndex:schema",
+"another_catalog/FieldIndex:schema, )'"""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'validators'
