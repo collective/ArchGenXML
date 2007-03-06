@@ -1,3 +1,10 @@
+2007-03-06  Reinout van Rees  <reinout@vanrees.org>
+
+	* src/archgenxml/ArchetypesGenerator.py: Pander added support for
+	datagridwidget, atcolorpicker widget and atcountry widget. If you
+	use them, you'll need to have those widgets available as they're
+	not stock archetypes widgets.
+
 2007-02-11  Reinout van Rees  <reinout@vanrees.org>
 
 	* README.txt, INSTALL.txt and others: Updated readme for new 1.6
