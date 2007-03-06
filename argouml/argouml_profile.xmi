@@ -16,6 +16,7 @@
      version 1.3 2007/02/19 Xiru added access, Modify
      version 1.4 2007/02/19 Pander renamed allowed_content_types into allowable_content_types, added default_content_type and default_output_type
      version 1.5 2007/03/01 Pander added columns, allow_empty_rows, widget:auto_insert, widget:columns
+     version 1.6 2007/03/05 Pander added data type datagrid, country and color and tagged values widget:provideNullValue, widget:nullValueTitle, widget:omitCountries and allow_brightness
 -->
 <XMI xmlns:UML="org.omg.xmi.namespace.UML" xmi.version="1.2" timestamp="Fri Sep 02 22:10:50 CEST 2005">
   <XMI.header>
@@ -358,6 +359,21 @@
         </UML:DataType>
         <UML:DataType isSpecification="false" isRoot="false" isLeaf="false" isAbstract="false" name="void" xmi.id="xmi.379">
 	  <!-- The void is used because ArgoUML expects it for default method return type, it will be ignored by ArchGenXML -->
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+        </UML:DataType>
+        <UML:DataType isSpecification="false" isRoot="false" isLeaf="false" isAbstract="false" name="datagrid" xmi.id="xmi.380">
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+        </UML:DataType>
+        <UML:DataType isSpecification="false" isRoot="false" isLeaf="false" isAbstract="false" name="country" xmi.id="xmi.381">
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+        </UML:DataType>
+        <UML:DataType isSpecification="false" isRoot="false" isLeaf="false" isAbstract="false" name="color" xmi.id="xmi.382">
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2076,6 +2092,54 @@
             <UML:Multiplicity xmi.id = 'xmi.552.1'>
               <UML:Multiplicity.range>
                 <UML:MultiplicityRange xmi.id = 'xmi.552.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.553' name = 'widget:provideNullValue' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.553.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.553.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.554' name = 'widget:nullValueTitle' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.554.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.554.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.555' name = 'widget:omitCountries' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.555.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.555.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.556' name = 'widget:allow_brightness' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.556.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.556.2' lower = '0' upper = '1'/>
               </UML:Multiplicity.range>
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>

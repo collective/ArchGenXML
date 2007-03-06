@@ -403,7 +403,8 @@ class ArchetypesGenerator(BaseGenerator):
     parsed_sources = []
 
     # TaggedValues that are not strings, e.g. widget or vocabulary
-    nonstring_tgvs = ['widget', 'vocabulary', 'required', 'precision',
+    nonstring_tgvs = ['columns', 'widget', 'provideNullValue', 'allow_brightness',
+                      'languageIndependent', 'vocabulary', 'required', 'precision',
                       'storage', 'enforceVocabulary', 'multiValued',
                       'visible', 'validators', 'validation_expression',
                       'sizes', 'original_size', 'max_size', 'searchable',
@@ -491,6 +492,36 @@ class ArchetypesGenerator(BaseGenerator):
 
         if generate_expression_validator:
             print >> out, 'from Products.validation.validators import ExpressionValidator'
+
+        # Check for necessity to import DataGridField and DataGridWidget
+        import_datagrid = False
+        for att in element.getAttributeDefs():
+            if att.getType() == 'datagrid':
+                import_datagrid = True
+                break
+
+        if import_datagrid:
+            print >>out, 'from Products.DataGridField import DataGridField, DataGridWidget'
+
+        # Check for necessity to import ATColorPickerWidget
+        import_color = False
+        for att in element.getAttributeDefs():
+            if att.getType() == 'color':
+                import_color = True
+                break
+
+        if import_color:
+            print >>out, 'from Products.ATColorPickerWidget.ColorPickerWidget import ColorPickerWidget'
+
+        # Check for necessity to import CountryWidget
+        import_country = False
+        for att in element.getAttributeDefs():
+            if att.getType() == 'country':
+                import_country = True
+                break
+        
+        if import_country:
+            print >>out, 'from Products.ATCountryWidget.Widget import CountryWidget'
 
         # Check for necessity to import ArrayField
         import_array_field = False
@@ -817,8 +848,17 @@ class ArchetypesGenerator(BaseGenerator):
                        'map': {},
                        },
         'lines': {'field': u'LinesField',
-                  'map': {},
-                  },
+                 'map': {},
+                 },
+        'color': {'field': u'StringField',
+                 'map': {},
+                 },
+        'country': {'field': u'StringField',
+                 'map': {},
+                 },
+        'datagrid': {'field': u'DataGridField',
+                 'map': {},
+                 },
         'date': {'field': u'DateTimeField',
                  'map': {},
                  },
@@ -861,6 +901,9 @@ class ArchetypesGenerator(BaseGenerator):
         'richtext': u'RichWidget',
         'file': u'FileWidget',
         'image': u'ImageWidget',
+        'color': u'ColorPickerWidget',
+        'country': u'CountryWidget',
+        'datagrid': u'DataGridWidget',
         'date': u'CalendarWidget',
         'selection': u'SelectionWidget',
         'multiselection': u'MultiSelectionWidget',
@@ -878,6 +921,9 @@ class ArchetypesGenerator(BaseGenerator):
         'ofs.image': u'image',
         'ofs.file': u'file',
         'xs:date': u'date',
+        'Color': u'color',
+        'Country': u'country',
+        'DataGrid': u'datagrid',
         'datetime': u'date',
         'list': u'lines',
         'liste': u'lines',
