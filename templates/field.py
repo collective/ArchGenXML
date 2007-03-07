@@ -1,11 +1,7 @@
-#<dtml-var "klass.getName()">
-
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base
-
 from Products.CMFCore.utils import getToolByName
-
-from Products.Archetypes.Field import ObjectField,encode,decode
+from Products.Archetypes.Field import ObjectField, encode, decode
 from Products.Archetypes.Registry import registerField
 from Products.Archetypes.utils import DisplayList
 from Products.Archetypes import config as atconfig
@@ -19,21 +15,17 @@ except ImportError:
 <dtml-if "klass.hasAttributeWithTaggedValue('vocabulary:type','ATVocabularyManager')">
 from Products.ATVocabularyManager.namedvocabulary import NamedVocabulary
 </dtml-if>
-
-from Products.<dtml-var "klass.getPackage().getProduct().getCleanName()"> import config
-
-<dtml-var "generator.getProtectedSection(parsed_class,'module-header')">
-<dtml-var "generator.generateDependentImports(klass)">
-<dtml-var "generator.getImportsByTaggedValues(klass) or ''">
 <dtml-if "klass.getTaggedValue('validation_expression')">
 from Products.validation.validators import ExpressionValidator
 </dtml-if>
+from Products.<dtml-var "klass.getPackage().getProduct().getCleanName()"> import config
+<dtml-var "generator.generateDependentImports(klass)">
+<dtml-var "generator.getImportsByTaggedValues(klass) or ''">
 <dtml-if "parentname=='CompoundField'">
 from Products.CompoundField.CompoundField import CompoundField
-######<dtml-var parentname>
 <dtml-var "generator.generateArcheSchema(klass, generator.getLocalFieldSpecs(klass))" >
 </dtml-if>
-
+<dtml-var "generator.getProtectedSection(parsed_class,'module-header')">
 
 class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-var "', '.join([p.getCleanName() for p in klass.getGenParents()])"><dtml-else><dtml-var parentname></dtml-if>):
     """<dtml-var "utils.indent(klass.getDocumentation(), 1, skipFirstRow=True, stripBlank=True)">
@@ -45,28 +37,27 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
     _properties.update({
         'type': '<dtml-var "klass.getCleanName().lower()">',
 <dtml-if widgetname>
-        'widget':<dtml-var widgetname>,
+        'widget': <dtml-var widgetname>,
 </dtml-if>
 <dtml-let value_classes="klass.getClientDependencyClasses(dependencyStereotypes=['value_class'])">
 <dtml-if value_classes>
-        'value_class':<dtml-var "value_classes[0].getCleanName()">,
+        'value_class': <dtml-var "value_classes[0].getCleanName()">,
 </dtml-if>
 </dtml-let>
 <dtml-if "klass.getTaggedValue('validation_expression')">
-        'validators':(ExpressionValidator('''python:<dtml-var "klass.getTaggedValue('validation_expression')">'''),),
+        'validators': (ExpressionValidator('''python:<dtml-var "klass.getTaggedValue('validation_expression')">'''),),
 </dtml-if>
 <dtml-var "generator.getProtectedSection(parsed_class,'field-properties',2)">
         })
-
-    security  = ClassSecurityInfo()
-
+        
 <dtml-if "parentname=='CompoundField'">
-    schema=schema
-</dtml-if>
-
-    security.declarePrivate('set')
+    schema = schema
+</dtml-if> 
+    security  = ClassSecurityInfo()
+<dtml-var "generator.getProtectedSection(parsed_class,'security-declarations',1)">
     security.declarePrivate('get')
-
+    security.declarePrivate('getRaw')
+    security.declarePrivate('set')
 
 <dtml-if "not parsed_class">
     def get(self, instance, **kwargs):
@@ -75,7 +66,6 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
     def getRaw(self, instance, **kwargs):
         return <dtml-var parentname>.getRaw(self, instance, **kwargs)
 
-    security.declarePrivate('set')
     def set(self, instance, value, **kwargs):
         return <dtml-var parentname>.set(self, instance, value, **kwargs)
 
@@ -89,7 +79,7 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
 <dtml-var "parsed_class.methods[m.getCleanName()].getSrc()">
 <dtml-else>
 
-    def <dtml-var "m.getName()">(self,<dtml-var "', '.join(m.getParamNames())">):
+    def <dtml-var "m.getName()">(self, <dtml-var "', '.join(m.getParamNames())">):
         pass
 </dtml-if>
 </dtml-let>

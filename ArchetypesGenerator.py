@@ -1147,7 +1147,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         log.debug("Trying to get formatted field. name='%s', fieldtype='%s', "
                   "doc='%s', rawType='%s'.", name, fieldtype, doc, rawType)
-	name = utils.normalize(name, 1)
+        name = utils.normalize(name, 1)
         res = u''
         if array_field:
             array_options={}
@@ -1201,9 +1201,16 @@ class ArchetypesGenerator(BaseGenerator):
             res = res.strip()
             if array_options.get('widget', None):
                 if array_options['widget'].find('(') == -1:
-                    array_options['widget'] += u'()'
+                    awparams = ''
+                    # allow widget parameters like array:widget:label
+                    awoptions = [key for key in array_options if key.startswith('widget:')]
+                    for awo in awoptions:
+                        wo = awo[7:]
+                        wvalue = array_options.get(awo)
+                        awparams += "\n" + utils.indent("%s=%s" % (wo, wvalue), 1)
+                    array_options['widget'] += u'(%s)' % awparams
 
-            array_defs = u',\n'.join([u"%s=%s" % item for item in array_options.items()])
+            array_defs = u',\n'.join([u"%s=%s" % item for item in array_options.items() if not item[0].startswith('widget:')])
             res =  ARRAYFIELD % ( utils.indent(res, 2), utils.indent(array_defs, 2) ) 
             
         return res
