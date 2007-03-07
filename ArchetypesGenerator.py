@@ -1207,7 +1207,7 @@ class ArchetypesGenerator(BaseGenerator):
                     for awo in awoptions:
                         wo = awo[7:]
                         wvalue = array_options.get(awo)
-                        awparams += "\n" + utils.indent("%s=%s" % (wo, wvalue), 1)
+                        awparams += "\n" + utils.indent("%s=%s," % (wo, wvalue), 1)
                     array_options['widget'] += u'(%s)' % awparams
 
             array_defs = u',\n'.join([u"%s=%s" % item for item in array_options.items() if not item[0].startswith('widget:')])
