@@ -1177,10 +1177,9 @@ class ArchetypesGenerator(BaseGenerator):
             for key in map:
                 if key.find(u':') >= 0:
                     continue
-                lines = map[key]
+                lines = map[key]                
                 if isinstance(lines, basestring):
                     linebreak = lines.find(u'\n')
-
                     if linebreak < 0:
                         linebreak = len(lines)
                     firstline = lines[:linebreak]
@@ -1352,8 +1351,8 @@ class ArchetypesGenerator(BaseGenerator):
 
         if map.has_key('validation_expression'):
             #append the validation_expression to the validators
-            expressions = attr.getTaggedValue('validation_expression').split('\n')
-            errormsgs = attr.getTaggedValue('validation_expression_errormsg').split('\n')
+            expressions = attr.getTaggedValue('validation_expression').decode('utf-8').split(u'\n')
+            errormsgs = attr.getTaggedValue('validation_expression_errormsg').decode('utf-8').split(u'\n')
             if errormsgs and errormsgs != [''] \
                and len(errormsgs) != len(expressions):
                 log.critical('validation_expression and validation_expression_'
