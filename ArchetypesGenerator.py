@@ -409,7 +409,9 @@ class ArchetypesGenerator(BaseGenerator):
                       'visible', 'validators', 'validation_expression',
                       'sizes', 'original_size', 'max_size', 'searchable',
                       'show_hm', 'move:pos', 'move:top', 'move:bottom',
-                      'primary', 'array:widget','array:size']
+                      'primary', 'array:widget','array:size',
+                      'allowed_types',
+                  ]
 
     msgcatstack = []
 
@@ -806,12 +808,12 @@ class ArchetypesGenerator(BaseGenerator):
             'type_name_lc'         : element.getName().lower()}
 
         # Only set allow_discussion if it is explicitly set with a
-	# tagged value. Leave empty if not, otherwise it cannot be
-	# (un)set in Plone afterwards
+        # tagged value. Leave empty if not, otherwise it cannot be
+        # (un)set in Plone afterwards
         allow_discussion = element.getTaggedValue('allow_discussion', 'NOTSET')
-	template = "    allow_discussion = %s\n"
-	if allow_discussion != 'NOTSET':
-	    res += template % allow_discussion
+        template = "    allow_discussion = %s\n"
+        if allow_discussion != 'NOTSET':
+            res += template % allow_discussion
         return res
 
     # TypeMap for Fields, format is
@@ -819,7 +821,7 @@ class ArchetypesGenerator(BaseGenerator):
     #          lines: [key1=value1,key2=value2, ...]
     #   ...
     #   }
-    typeMap= {
+    typeMap = {
         'string': {'field': u'StringField',
                    'map': {},
                    },
@@ -994,10 +996,13 @@ class ArchetypesGenerator(BaseGenerator):
         # check for global settings
         searchable = self.getOption('searchable', element, default = _marker)
         if searchable is not _marker:
-             tgv.update({'searchable': searchable})
+            tgv.update({'searchable': searchable})
         index = self.getOption('index', element, default=_marker)
         if index is not _marker:
-             tgv.update({'index': index})
+            tgv.update({'index': index})
+        index = self.getOption('allowed_types', element, default=_marker)
+        if index is not _marker:
+            tgv.update({'allowed_types': index})
 
         # set attributes from tgv
         for k in tgv.keys():
@@ -1425,7 +1430,8 @@ class ArchetypesGenerator(BaseGenerator):
                 raise message
 
             map = self.typeMap['relation']['map'].copy()
-            map.update({'multiValued': multiValued,
+            map.update({'allowed_types': repr(allowed_types),
+                        'multiValued': multiValued,
                         'relationship': "'%s'" % relname})
             map.update(self.getFieldAttributes(rel.toEnd))
             map.update({'widget': self.getWidget('Reference', rel.toEnd,

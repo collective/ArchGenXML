@@ -717,6 +717,10 @@ explanation = """specify which custom ArrayWidget should be used for a field
 (only applies if the field has cardinality >1."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'allowed_types'
+explanation = """Sets the types allowed for a ReferenceField. Default is []"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 # widgets (not a separate category!)
 
 # Similarly, tagged values with the prefix 'widget:' will be passed

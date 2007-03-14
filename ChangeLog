@@ -1,3 +1,7 @@
+2007-03-14 Encolpe Degoute <encolpe.degoute@ingeniweb.com>
+
+	* Added allowed_types property for ReferenceField generation
+
 2006-12-04 Jens W Klein <jens@bluedyanmics.com>
 
 	* make it special-charater aware and get rid of UnicodeDecodeErrors.
