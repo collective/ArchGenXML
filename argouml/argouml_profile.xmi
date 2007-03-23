@@ -18,6 +18,7 @@
      version 1.5 2007/03/01 Pander added columns, allow_empty_rows, widget:auto_insert, widget:columns
      version 1.6 2007/03/05 Pander added data type datagrid, country and color and tagged values widget:provideNullValue, widget:nullValueTitle, widget:omitCountries and allow_brightness
      version 1.7 2007/03/14 Encolpe added allowed_types for ReferenceField
+     version 1.8 2007/03/23 Encolpe added relationship for ReferenceField
 -->
 <XMI xmlns:UML="org.omg.xmi.namespace.UML" xmi.version="1.2" timestamp="Fri Sep 02 22:10:50 CEST 2005">
   <XMI.header>
@@ -2153,6 +2154,18 @@
             <UML:Multiplicity xmi.id = 'xmi.557.1'>
               <UML:Multiplicity.range>
                 <UML:MultiplicityRange xmi.id = 'xmi.557.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.558' name = 'relationship' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.558.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.558.2' lower = '0' upper = '1'/>
               </UML:Multiplicity.range>
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
