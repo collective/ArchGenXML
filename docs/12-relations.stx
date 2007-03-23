@@ -13,20 +13,20 @@ Content-Type: text/structured
 
 Prerequisites
 
- To enable Relations install the Product ("code-location":http://svn.plone.org/archetypes/Relations/).
+ To enable Relations install the Product ("code-location":http://svn.plone.org/svn/archetypes/Relations/).
 
 Basics
 
- As an option on command line,  up to a tagged-value on model-level or on a single UML-Assoziation you just define the 
-'relation_implementation' and set it to 'relations'. A directed Assoziation results in one Relation. 
+ As an option on command line,  up to a tagged-value on model-level or on a single UML-Association you just define the 
+'relation_implementation' and set it to 'relations'. A directed Association results in one Relation. 
 
- Give the assoziation and its assoziation ends names. They'll be used as the names for the RelationField. 
+ Give the association and its association ends names. They'll be used as the names for the RelationField. 
 
 Inverse Relation
 
- If the assoziation is not directed (navigable on both assoziation ends) an inverse relation will be created. 
+ If the association is not directed (navigable on both association ends) an inverse relation will be created. 
 
- The tagged-value 'inverse_relation_name' will be used for the back-relation on undirected assoziations. It defaults to the assoziation name postfixed by '_inverse'.
+ The tagged-value 'inverse_relation_name' will be used for the back-relation on undirected associations. It defaults to the association name postfixed by '_inverse'.
 
 Cardinality
 
@@ -34,15 +34,14 @@ Cardinality
 You can use the minimum and maximun value here using the syntax '1..5' which means at least one relationrelated objects but not more than five.
 
 Constraints
- 
- type-constraint -- as described above an assoziation between two portal-types will be created.
 
- interface-constraint -- an assoziation between an archetypes class and an interface will create an interface-constraint. the relation is allowed to all classes implementing this interface.
+ type-constraint -- as described above an association between two portal-types will be created.
 
-Assoziation classes
+ interface-constraint -- an association between an archetypes class and an interface will create an interface-constraint. the relation is allowed to all classes implementing this interface.
 
- Assoziation classes can be used to store data on the relation as an object. You can model it using the UML assoziation class or using a tagged value 'association_class' on the assoziation.
+Association classes
 
+ Association classes can be used to store data on the relation as an object. You can model it using the UML association class or using a tagged value 'association_class' on the association.
 
 
 
