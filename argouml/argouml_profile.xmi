@@ -232,18 +232,6 @@
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
         </UML:Stereotype>
-        <UML:Stereotype isSpecification="false" isRoot="false" isLeaf="false" isAbstract="false" name="article" xmi.id="xmi.346">
-          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
-          <UML:ModelElement.namespace>
-            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
-          </UML:ModelElement.namespace>
-        </UML:Stereotype>
-        <UML:Stereotype isSpecification="false" isRoot="false" isLeaf="false" isAbstract="false" name="exfile" xmi.id="xmi.347">
-          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
-          <UML:ModelElement.namespace>
-            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
-          </UML:ModelElement.namespace>
-        </UML:Stereotype>
         <UML:Stereotype isSpecification="false" isRoot="false" isLeaf="false" isAbstract="false" name="action" xmi.id="xmi.350">
           <UML:Stereotype.baseClass>Operation</UML:Stereotype.baseClass>
           <UML:ModelElement.namespace>
