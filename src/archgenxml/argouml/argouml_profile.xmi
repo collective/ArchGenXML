@@ -2157,18 +2157,6 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.543' name = 'storage' isSpecification = 'false' tagType = 'String'>
-          <UML:ModelElement.namespace>
-            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
-          </UML:ModelElement.namespace>
-          <UML:TagDefinition.multiplicity>
-            <UML:Multiplicity xmi.id = 'xmi.543.1'>
-              <UML:Multiplicity.range>
-                <UML:MultiplicityRange xmi.id = 'xmi.543.2' lower = '0' upper = '1'/>
-              </UML:Multiplicity.range>
-            </UML:Multiplicity>
-          </UML:TagDefinition.multiplicity>
-        </UML:TagDefinition>
       </UML:Namespace.ownedElement>
     </UML:Model>
   </XMI.content>
