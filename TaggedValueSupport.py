@@ -307,6 +307,11 @@ content type. Note that allowed content types are automatically set when using
 aggregation and composition between classes to specify containment."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'allowable_content_types'
+explanation = """A comma-separated list of allowed test format for a textarea
+widget."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'inherit_allowed_types'
 explanation = """By default, a child type will inherit the allowable content
 types from its parents. Set this property to false (0) to turn this off."""
