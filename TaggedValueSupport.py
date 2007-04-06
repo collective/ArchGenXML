@@ -334,6 +334,29 @@ the class. For example, set to 'metadata, sharing' to turn off the metadata
 (properties) and sharing tabs."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'immediate_view'
+explanation = """Set the immediate_view factory type information value. This
+should be the name of a page template, and defaults to 'base_view'. Note that
+Plone at this time does not make use of immediate_view, which in CMF core
+allows you to specify a different template to be used when an object is first
+created from when it is subsequently accessed."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'default_view'
+explanation = """The TemplateMixin class in Archetypes allows your class to
+present several alternative view templates for a content type. The default_view
+value sets the default one. Defaults to 'base_view'. Only relevant if you use
+TemplateMixin."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'suppl_views'
+explanation = """The TemplateMixin class in Archetypes allows your class to
+present several alternative view templates for a content type. The suppl_views
+value sets the available views. Example: '("my_view", "myother_view")'.
+Defaults to '()'. Only relevant if you use TemplateMixin."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+
 tagname = 'folderish'
 explanation = """Explicitly specify that a class is folderish. It is usually
 better to the the '<<folder>>' stereotype instead."""
@@ -828,11 +851,12 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 # Tagged values for more than one category
 
 for category in ['model', 'package', 'class']:
-    tagname = 'rename_after_creation'
-    explanation = """Setting this boolean value enables or disables explicit
-    the after creation rename feature using '_at_rename_after_creation'
-    class-attribute."""
-    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+    # Default "on" is ok. You *can* modify it in the code.
+    #tagname = 'rename_after_creation'
+    #explanation = """Setting this boolean value enables or disables explicit
+    #the after creation rename feature using '_at_rename_after_creation'
+    #class-attribute."""
+    #tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
     tagname = 'use_portal_factory'
     explanation = """Setting this boolean value enables the registration
