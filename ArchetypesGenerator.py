@@ -433,7 +433,7 @@ class ArchetypesGenerator(BaseGenerator):
     creation_permission_stack = []
 
     def __init__(self, xschemaFileName, **kwargs):
-        
+
         log.debug("Initializing ArchetypesGenerator. "
                   "We're being passed a file '%s' and keyword "
                   "arguments %r.", xschemaFileName, kwargs)
@@ -521,7 +521,7 @@ class ArchetypesGenerator(BaseGenerator):
             if att.getType() == 'country':
                 import_country = True
                 break
-        
+
         if import_country:
             print >>out, 'from Products.ATCountryWidget.Widget import CountryWidget'
 
@@ -544,7 +544,8 @@ class ArchetypesGenerator(BaseGenerator):
 
         if self.backreferences_support:
             print >>out, 'from Products.ATBackRef.BackReferenceField import BackReferenceField, BackReferenceWidget'
-            
+            print >>out, 'from Products.ATReferenceBrowserWidget.ATReferenceBrowserWidget import ReferenceBrowserWidget'
+
         return out.getvalue()
 
     def addMsgid(self, msgid, msgstr, element, fieldname):
@@ -695,7 +696,7 @@ class ArchetypesGenerator(BaseGenerator):
     def generateActionsAndViews(self, element, subtypes):
         """Generate the views and actions (used to be in generateFti())
         """
-        
+
         hasActions=False
         actTempl=ACTIONS_START
         base_actions=element.getTaggedValue('base_actions', '').strip()
@@ -721,12 +722,12 @@ class ArchetypesGenerator(BaseGenerator):
             return actTempl
         else:
             return
-        
+
     def generateFti(self, element, subtypes):
         ''' generates Factory Type Information related attributes on the class'''
 
         ftiTempl=FTI_TEMPL
-        immediate_view = self.getOption('immediate_view', element, default='base_view')        
+        immediate_view = self.getOption('immediate_view', element, default='base_view')
         default_view = self.getOption('default_view', element, default=immediate_view)
         suppl_views = self.getOption('suppl_views', element, default='()')
 
@@ -789,7 +790,7 @@ class ArchetypesGenerator(BaseGenerator):
         typeName = element.getTaggedValue('archetype_name') or \
                     element.getTaggedValue('label') or \
                     element.getName ()
-                        
+
 
         typeDescription = utils.getExpression(element.getTaggedValue('typeDescription', typeName))
 
@@ -909,6 +910,7 @@ class ArchetypesGenerator(BaseGenerator):
         'date': u'CalendarWidget',
         'selection': u'SelectionWidget',
         'multiselection': u'MultiSelectionWidget',
+        'reference': u'ReferenceBrowserWidget',
         'BackReference': u'BackReferenceWidget'
     }
 
@@ -1050,7 +1052,7 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             atype = widgettype
         default_widget = self.getOption('default:widget:%s' % atype, element, None)
-        
+
         if default_widget:
             widgetcode = default_widget + u'(\n'
 
@@ -1076,7 +1078,7 @@ class ArchetypesGenerator(BaseGenerator):
         elif [wt.update({t[0]:t[1]}) for t in widgetoptions if t[0] == u'widget:type']:
             custom = True
             widgetcode = wt['widget:type']
-        
+
         elif self.widgetMap.has_key(widgettype) and not default_widget:
             # default widget for this widgettype found in widgetMap
             custom = True
@@ -1161,7 +1163,7 @@ class ArchetypesGenerator(BaseGenerator):
                     nkey=key[len(u'array:'):]
                     array_options[nkey]=map[key]
                     del map[key]
-            
+
         # Capitalize only first letter of fields class name, keep camelcase
         a = rawType[0].upper()
         rawType = a + rawType[1:]
@@ -1182,7 +1184,7 @@ class ArchetypesGenerator(BaseGenerator):
             for key in map:
                 if key.find(u':') >= 0:
                     continue
-                lines = map[key]                
+                lines = map[key]
                 if isinstance(lines, basestring):
                     linebreak = lines.find(u'\n')
                     if linebreak < 0:
@@ -1215,8 +1217,8 @@ class ArchetypesGenerator(BaseGenerator):
                     array_options['widget'] += u'(%s)' % awparams
 
             array_defs = u',\n'.join([u"%s=%s" % item for item in array_options.items() if not item[0].startswith('widget:')])
-            res =  ARRAYFIELD % ( utils.indent(res, 2), utils.indent(array_defs, 2) ) 
-            
+            res =  ARRAYFIELD % ( utils.indent(res, 2), utils.indent(array_defs, 2) )
+
         return res
 
     def getFieldsFormatted(self, field_specs):
@@ -1235,7 +1237,7 @@ class ArchetypesGenerator(BaseGenerator):
                     res += field_spec
                 elif (field_spec.has_key('rawType') and
                     field_spec.has_key('array_field')):
-                    res += self.getFieldFormatted(field_spec['name'], 
+                    res += self.getFieldFormatted(field_spec['name'],
                                                   field_spec['fieldtype'],
                                                   field_spec['map'],
                                                   field_spec['doc'],
@@ -1244,7 +1246,7 @@ class ArchetypesGenerator(BaseGenerator):
                                                   field_spec['array_field'],
                                                   )
                 else:
-                    res += self.getFieldFormatted(field_spec['name'], 
+                    res += self.getFieldFormatted(field_spec['name'],
                                                   field_spec['fieldtype'],
                                                   field_spec['map'],
                                                   field_spec['doc'],
@@ -1333,7 +1335,7 @@ class ArchetypesGenerator(BaseGenerator):
             atype = 'I18N' + atype
 
         if ctype=='generic':
-            fieldclassname=attr.type            
+            fieldclassname=attr.type
         else:
             fieldclassname=atype
 
@@ -1594,7 +1596,7 @@ class ArchetypesGenerator(BaseGenerator):
         return field_specs
 
     # Generate get/set/add member functions.
-    def generateArcheSchema(self, element, field_specs, base_schema=None, 
+    def generateArcheSchema(self, element, field_specs, base_schema=None,
                             outfile=None):
         """ generates the Schema """
         asString = False
@@ -1649,7 +1651,7 @@ class ArchetypesGenerator(BaseGenerator):
                                       tgv['widget:description'].strip("'").strip('"')
                                       or fieldname, element, fieldname)
 
-        fieldsformatted = self.getFieldsFormatted(field_specs) + u'),'        
+        fieldsformatted = self.getFieldsFormatted(field_specs) + u'),'
         print >> outfile, SCHEMA_START
         print >> outfile, fieldsformatted.encode('utf8')
 
@@ -1667,7 +1669,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         for field_spec in field_specs:
             if type(field_spec) in StringTypes or \
-               not field_spec.has_key('map'): 
+               not field_spec.has_key('map'):
                 continue
             for key in field_spec['map'].keys():
                 if key.startswith('move:'):
@@ -1726,11 +1728,11 @@ class ArchetypesGenerator(BaseGenerator):
         if element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile) and '__init__' not in method_names:
             method_names.append('__init__')
 
-        # As above .. 
+        # As above ..
         if element.hasStereoType(
                 self.remember_stereotype,
                 umlprofile=self.uml_profile) and '__call__' not in method_names:
-            method_names.append('__call__') 
+            method_names.append('__call__')
 
         #as __init__ above if at_post_edit_script has to be generated for tools
         #I want _not_ at_post_edit_script to be preserved (hacky but works)
@@ -1754,7 +1756,7 @@ class ArchetypesGenerator(BaseGenerator):
                     declaration = cl.getProtectionDeclaration(mt.getName())
                     if declaration:
                         print >> outfile, declaration
-                    
+
                     print >> outfile, mt.src.encode('utf-8')
                 print >> outfile
 
@@ -1785,7 +1787,7 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             method_code = None
 
-        if self.method_preservation and method_code:            
+        if self.method_preservation and method_code:
             wrt(method_code.src.encode('utf8'))
             # Holly hack: methods ending with a 'pass' command doesn't have
             # an extra blank line after reparsing the code, so we add it
@@ -2140,7 +2142,7 @@ class ArchetypesGenerator(BaseGenerator):
                 'prefix': self.prefix,
                 'name': name})
         # I don't think this is needed for remember, since instances of
-        # member will be added by the membership tool 
+        # member will be added by the membership tool
 
         # Normally, archgenxml also looks at the parents of the
         # current class for allowed subitems. Likewise, subclasses of
@@ -2236,7 +2238,7 @@ class ArchetypesGenerator(BaseGenerator):
                          if not p.hasStereoType(self.python_stereotype,
                                                 umlprofile=self.uml_profile)]
 
-        if (parent_is_archetype 
+        if (parent_is_archetype
                 and not element.hasStereoType(
                     self.cmfmember_stereotype, umlprofile=self.uml_profile)
                 and not element.hasStereoType(
@@ -3164,7 +3166,7 @@ class ArchetypesGenerator(BaseGenerator):
                     self.vocabularymap[currentproduct][inverse_relation_name] = (
                                                     type,
                                                     'SimpleVocabularyTerm'
-                    )                    
+                    )
 
             #/ATVM
 
