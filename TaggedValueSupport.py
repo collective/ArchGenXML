@@ -165,19 +165,265 @@ class TaggedValueRegistry:
         indentedLines = [(spaces + line) for line in lines]
         return '\n'.join(indentedLines)
 
+    def getCategories(self):
+        """ return name for 
+        """
+        return self._registry.keys()
+
+    def getCategoryElements(self, category):
+        tagnames = self._registry[category].keys()
+        tagnames.sort()
+        return tagnames
 
 tgvRegistry = TaggedValueRegistry()
 
-# Model level tagged values
-category = 'model'
+# XMI Stereotypes (class for inheritance)
+# One stereotype can be registered in several categories
 
-# Package level tagged values
-category = 'package'
+tagname = 'odStub'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereomodel', tagname=tagname, explanation=explanation)
+tgvRegistry.addTaggedValue(category='stereopackage', tagname=tagname, explanation=explanation)
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
 
-# Class level tagged values
-category = 'class'
 
+tagname = 'stub'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereomodel', tagname=tagname, explanation=explanation)
+tgvRegistry.addTaggedValue(category='stereopackage', tagname=tagname, explanation=explanation)
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+
+tagname = 'tests'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereopackage', tagname=tagname, explanation=explanation)
+
+tagname = 'z2'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='interface', tagname=tagname, explanation=explanation)
+
+tagname = 'z3'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='interface', tagname=tagname, explanation=explanation)
+
+tagname = 'CMFMember'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'archetype'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'btree'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'content_class'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'doc_testcase'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'field'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'folder'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'hidden'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'interface_testcase'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'large'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'member'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'mixin'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'ordered'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'plone_testcase'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'portal_tool'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'python_class'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'setup_testcase'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'testcase'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'tool'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'value_class'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'variable_schema'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'vocabulary'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'vocabulary_term'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'widget'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
+
+tagname = 'action'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='operation', tagname=tagname, explanation=explanation)
+
+tagname = 'form'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='operation', tagname=tagname, explanation=explanation)
+
+tagname = 'portlet'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='operation', tagname=tagname, explanation=explanation)
+
+tagname = 'portlet_view'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='operation', tagname=tagname, explanation=explanation)
+
+tagname = 'view'
+explanation = """"""
+tgvRegistry.addTaggedValue(category='operation', tagname=tagname, explanation=explanation)
+
+
+
+# XMI Datatypes (widgets)
+category = 'datatype'
+
+tagname = 'backreference'
+explanation = """"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'boolean'
+explanation = """"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'computed'
+explanation = """"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'date'
+explanation = """"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'file'
+explanation = """"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'fixedpoint'
+explanation = """"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'float'
+explanation = """"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'generic'
+explanation = """"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'int'
+explanation = """"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'image'
+explanation = """"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'lines'
+explanation = """"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'multiselection'
+explanation = """"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'photo'
+explanation = """"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'reference'
+explanation = """"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'relation'
+explanation = """"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'richtext'
+explanation = """"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'selection'
+explanation = """"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'string'
+explanation = """"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'text'
+explanation = """"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'void'
+explanation = """"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'datagrid'
+explanation = """"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'country'
+explanation = """"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'color'
+explanation = """"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+
+
+# XMI tags definition
 # The following tagged values can be set on classes to alter their behaviour:
+category = 'class'
 
 tagname = 'policy'
 explanation = """On a class with stereotype '<<plone_testcase>>', this
@@ -847,6 +1093,9 @@ only together with 'Relations' Product and relation_implementation
 set to 'relations'."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'relationship'
+explanation = """Standard relationship for ReferenceField"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 # Tagged values for more than one category
 
@@ -1064,6 +1313,29 @@ for category in tgvRegistry._registry:
     if not tgvRegistry._registry[category].has_key(tagname):
         # Making sure we don't overwrite specialised stuff :-)
         tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+undocumented_tags = [
+    # unknown tags
+    'Modify', 'access', 'i18ncontent', 'default_page_type',
+    # class tags
+    'rename_after_creation', 'storage',
+    # field tags
+    'languageIndependent', 'default_content_type', 'default_output_type',
+    # widget tags
+    'default:widget:Reference',
+    'widget:size', 'widget:maxlength', 'widget:rows', 'widget:cols',
+    'widget:divider', 'widget:append_only', 'widget:format',
+    'widget:future_years', 'widget:starting_year', 'widget:ending_year',
+    'widget:show_ymd', 'widget:show_hm', 'widget:thousands_commas',
+    'widget:whole_dollars', 'widget:dollars_and_cents', 'widget:addable',
+    'widget:allow_file_upload', 'widget:visible', 'columns', 'allow_empty_rows',
+    'widget:auto_insert', 'widget:columns', 'widget:provideNullValue',
+    'widget:nullValueTitle', 'widget:omitCountries', 'widget:allow_brightness',
+]
+category = 'unknown'
+explanation = ''
+for tagname in undocumented_tags:
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 if __name__ == '__main__':
     print tgvRegistry.documentation()
