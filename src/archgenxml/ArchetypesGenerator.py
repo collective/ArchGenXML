@@ -2641,7 +2641,7 @@ class ArchetypesGenerator(BaseGenerator):
         # create Extension directory
         installTemplate = open(os.path.join(self.templateDir, 
                                             'Install.py')).read()
-        extDir=os.path.join(package.getFilePath(),'Extensions')
+        extDir = os.path.join(package.getFilePath(), 'Extensions')
         self.makeDir(extDir)
 
         # make __init__.py
@@ -2675,11 +2675,12 @@ class ArchetypesGenerator(BaseGenerator):
         # new fangled stuff
         # Grab an adapter for the package (so from IPackage) to
         # IConfigPyView.
-        
 
         # end of new fangled stuff
-        parsed_config=self.parsePythonModule(package.getFilePath(), 'config.py')
-        creation_permission = self.getOption('creation_permission', package, None)
+        parsed_config = self.parsePythonModule(package.getFilePath(),
+                                               'config.py')
+        creation_permission = self.getOption('creation_permission',
+                                             package, None)
 
         if creation_permission:
             default_creation_permission = creation_permission
@@ -2694,15 +2695,15 @@ class ArchetypesGenerator(BaseGenerator):
                 creation_roles.append( (perm[1], perm[2]) )
 
         # prepare (d)TML varibles
-        d={'package'                    : package,
-           'generator'                  : self,
-           'builtins'                   : __builtins__,
-           'utils'                      : utils,
+        d={'package' : package,
+           'generator' : self,
+           'builtins' : __builtins__,
+           'utils' : utils,
            'default_creation_permission': default_creation_permission,
-           'creation_permissions'       : self.creation_permissions,
-           'creation_roles'             : creation_roles,
-           'parsed_config'              : parsed_config,
-        }
+           'creation_permissions' : self.creation_permissions,
+           'creation_roles' : creation_roles,
+           'parsed_config' : parsed_config,
+           }
         d.update(__builtins__)
 
         templ=self.readTemplate('config.py')
@@ -2712,27 +2713,35 @@ class ArchetypesGenerator(BaseGenerator):
         of=self.makeFile(configpath)
         of.write(res)
         of.close()
-
         return
 
     def generateProductInitPy(self, package):
         """ Generate __init__.py at product root from the DTML template"""
 
         # Get the names of packages and classes to import
-        packageImports = [m.getModuleName() for m in package.getAnnotation('generatedPackages') or []
-                          if not (m.hasStereoType('tests', umlprofile=self.uml_profile) or
-                                  m.hasStereoType('stub', umlprofile=self.uml_profile))]
-        classImports   = [m.getModuleName() for m in package.generatedModules if not m.hasStereoType('tests', umlprofile=self.uml_profile)]
+        packageImports = [m.getModuleName() for m in 
+                          package.getAnnotation('generatedPackages') or []
+                          if not (m.hasStereoType('tests',
+                                                  umlprofile=self.uml_profile)
+                                  or m.hasStereoType('stub',
+                                                     umlprofile=self.uml_profile))
+                          ]
+        classImports   = [m.getModuleName() for m in
+                          package.generatedModules 
+                          if not m.hasStereoType('tests',
+                                                 umlprofile=self.uml_profile)]
 
         # Find additional (custom) permissions
-        additional_permissions=[]
-        addperms= self.getOption('additional_permission',package,default=[]),
+        additional_permissions = []
+        addperms = self.getOption('additional_permission',
+                                  package,default=[])
         for line in addperms:
-            if len(line)>0:
-                line=line.split('|')
-                line[0]=line[0].strip()
-                if len(line)>1:
-                    line[1]=["'%s'" % r.strip() for r in line[1].split(',')]
+            if len(line) > 0:
+                line = line.split('|')
+                line[0] = line[0].strip()
+                if len(line) > 1:
+                    line[1] = ["'%s'" % r.strip() 
+                               for r in line[1].split(',')]
                 additional_permissions.append(line)
 
         # Find out if we need to initialise any tools
@@ -2751,20 +2760,20 @@ class ArchetypesGenerator(BaseGenerator):
         protectedInitCodeB = self.getProtectedSection(parsed, 'custom-init-bottom', 1)
 
         # prepare DTML varibles
-        d={'generator'                     : self,
-           'utils'                         : utils,
-           'package'                       : package,
-           'product_name'                  : package.getProductName(),
-           'package_imports'               : packageImports,
-           'class_imports'                 : classImports,
-           'additional_permissions'        : additional_permissions,
-           'has_tools'                     : hasTools,
-           'tool_names'                    : toolNames,
-           'creation_permissions'          : self.creation_permissions,
-           'protected_init_section_head'   : protectedInitCodeH,
-           'protected_init_section_top'    : protectedInitCodeT,
-           'protected_init_section_bottom' : protectedInitCodeB,
-        }
+        d={'generator': self,
+           'utils': utils,
+           'package': package,
+           'product_name': package.getProductName(),
+           'package_imports': packageImports,
+           'class_imports': classImports,
+           'additional_permissions': additional_permissions,
+           'has_tools': hasTools,
+           'tool_names': toolNames,
+           'creation_permissions': self.creation_permissions,
+           'protected_init_section_head': protectedInitCodeH,
+           'protected_init_section_top': protectedInitCodeT,
+           'protected_init_section_bottom': protectedInitCodeB,
+           }
 
         templ=self.readTemplate('__init__.py')
         dtml=HTML(templ,d)
@@ -2789,14 +2798,14 @@ class ArchetypesGenerator(BaseGenerator):
         footerCode = self.getProtectedSection(parsed, 'init-module-footer')
 
         # Prepare DTML varibles
-        d={'generator'                     : self,
-           'package'                       : package,
-           'utils'                         : utils,
-           'package_imports'               : packageImports,
-           'class_imports'                 : classImports,
-           'protected_module_header'       : headerCode,
-           'protected_module_footer'       : footerCode,
-           }
+        d = {'generator': self,
+             'package': package,
+             'utils': utils,
+             'package_imports': packageImports,
+             'class_imports': classImports,
+             'protected_module_header': headerCode,
+             'protected_module_footer': footerCode,
+             }
 
         templ=self.readTemplate('__init_package__.py')
         dtml=HTML(templ,d)
@@ -2805,7 +2814,6 @@ class ArchetypesGenerator(BaseGenerator):
         of=self.makeFile(os.path.join(package.getFilePath(),'__init__.py'))
         of.write(res)
         of.close()
-
         return
 
 
