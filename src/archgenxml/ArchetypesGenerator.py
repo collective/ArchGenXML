@@ -2821,7 +2821,7 @@ class ArchetypesGenerator(BaseGenerator):
         # Create a tool.gif if necessary
         if self.getGeneratedTools(package):
             gifSourcePath = os.path.join(self.templateDir, 'tool.gif')
-            toolgif = open(,gifSourcePath, 'rb').read()
+            toolgif = open(gifSourcePath, 'rb').read()
             gifTargetPath = os.path.join(package.getFilePath(),
                                          'tool.gif')
             of=self.makeFile(gifTargetPath, self.force, 1)
@@ -2865,7 +2865,7 @@ class ArchetypesGenerator(BaseGenerator):
                 print >>of, apeconfig_folder % {
                     'project_name': package.getProductName(),
                     'class_name': el.getCleanName()}
-                else:
+            else:
                 print >>of, apeconfig_object % {
                     'project_name': package.getProductName(),
                     'class_name': el.getCleanName()}
