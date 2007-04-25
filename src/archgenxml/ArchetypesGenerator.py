@@ -2815,48 +2815,30 @@ class ArchetypesGenerator(BaseGenerator):
         """
 
         target = package.getFilePath ()
-
         # remove trailing slash
         if target[-1] in ('/','\\'):
             target=target[:-1]
-
-        
-
         # Create a tool.gif if necessary
         if self.getGeneratedTools(package):
-            toolgif = open(os.path.join(self.templateDir,'tool.gif'),'rb').read()
-            of=self.makeFile(os.path.join(package.getFilePath(),'tool.gif'), self.force, 1)
+            gifSourcePath = os.path.join(self.templateDir, 'tool.gif')
+            toolgif = open(,gifSourcePath, 'rb').read()
+            gifTargetPath = os.path.join(package.getFilePath(),
+                                         'tool.gif')
+            of=self.makeFile(gifTargetPath, self.force, 1)
             if of:
                 of.write(toolgif)
                 of.close()
-
         # Generate a refresh.txt for the product
         of=self.makeFile(os.path.join(package.getFilePath(),'refresh.txt'))
         of.close()
-
         # Increment version.txt build number
         self.updateVersionForProduct(package)
-
         # Generate product root __init__.py
         self.generateProductInitPy(package)
-
-        # Create a customisation policy if required
-        if self.customization_policy:
-            of=self.makeFile(os.path.join(package.getFilePath(),'CustomizationPolicy.py'),0)
-            if of:
-                cpTemplate=self.readTemplate('CustomizationPolicy.py')
-                d={'package':package,'generator':self}
-                cp=HTML(cpTemplate,d)()
-                of.write(cp)
-                of.close()
-
         # Generate config.py from template
         self.generateConfigPy(package)
-
         # Generate Extensions/Install.py
         self.generateInstallPy(package)
-
-
 
     def generateApeConf(self, target,package):
         #generates apeconf.xml
