@@ -2848,9 +2848,12 @@ class ArchetypesGenerator(BaseGenerator):
             target=target[:-1]
 
         
-        apeconfig_object=open(os.path.join(self.templateDir,'apeconf_object.xml')).read()
-        apeconfig_folder=open(os.path.join(self.templateDir,'apeconf_folder.xml')).read()
-
+        apeconfig_object=open(
+            os.path.join(self.templateDir,
+                         'apeconf_object.xml')).read()
+        apeconfig_folder=open(
+            os.path.join(self.templateDir,
+                         'apeconf_folder.xml')).read()
         of=self.makeFile(os.path.join(target,'apeconf.xml'))
         print >> of, TEMPL_APECONFIG_BEGIN
         for el in self.root.getClasses():
@@ -2859,15 +2862,19 @@ class ArchetypesGenerator(BaseGenerator):
 
             print >>of
             if el.getRefs() + el.getSubtypeNames(recursive=1):
-                print >>of,apeconfig_folder % {'project_name':package.getProductName(),'class_name':el.getCleanName()}
-            else:
-                print >>of,apeconfig_object % {'project_name':package.getProductName(),'class_name':el.getCleanName()}
+                print >>of, apeconfig_folder % {
+                    'project_name': package.getProductName(),
+                    'class_name': el.getCleanName()}
+                else:
+                print >>of, apeconfig_object % {
+                    'project_name': package.getProductName(),
+                    'class_name': el.getCleanName()}
 
         print >>of, TEMPL_APECONFIG_END
         of.close()
 
     def getGeneratedClasses(self,package):
-        classes=package.getAnnotation('generatedClasses') or []
+        classes = package.getAnnotation('generatedClasses') or []
         for p in package.getPackages():
             if not p.isProduct():
                 classes.extend(self.getGeneratedClasses(p))
