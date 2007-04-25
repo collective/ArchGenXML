@@ -5,8 +5,8 @@
 # workflow configuration and every content type module.
 #
 # If you wish to perform custom configuration, you may put a file
-# AppConfig.py in your product's root directory. This will be included
-# in this file if found.
+# AppConfig.py in your product's root directory. The items in there
+# will be included (by importing) in this file if found.
 
 from Products.CMFCore.permissions import setDefaultRoles
 
@@ -18,15 +18,7 @@ from Products.remember.permissions import ADD_MEMBER_PERMISSION
 </dtml-if>
 <dtml-var "generator.getProtectedSection(parsed_config,'config-head')">
 
-PROJECTNAME = "<dtml-var "package.getProductName ()">"
-
-# Check for Plone 2.1
-try:
-    from Products.CMFPlone.migrations import v2_1
-except ImportError:
-    HAS_PLONE21 = False
-else:
-    HAS_PLONE21 = True
+PROJECTNAME = "<dtml-var "package.getProductName()">"
 
 # Permissions
 DEFAULT_ADD_CONTENT_PERMISSION = "<dtml-var "default_creation_permission">"
@@ -60,16 +52,17 @@ DEPENDENCIES = []
 PRODUCT_DEPENDENCIES = []
 
 # You can overwrite these two in an AppConfig.py:
-# STYLESHEETS = [{'id': 'my_global_stylesheet.css'},
-#                {'id': 'my_contenttype.css',
-#                 'expression': 'python:object.getTypeInfo().getId() == "MyType"'}]
+# STYLESHEETS = [
+#     {'id': 'my_global_stylesheet.css'},
+#     {'id': 'my_contenttype.css',
+#      'expression': 'python:object.getTypeInfo().getId() == "MyType"'}]
 # You can do the same with JAVASCRIPTS.
 STYLESHEETS = []
 JAVASCRIPTS = []
 
 <dtml-var "generator.getProtectedSection(parsed_config,'config-bottom')">
 
-# Load custom configuration not managed by ArchGenXML
+# Load custom configuration not managed by archgenxml
 try:
     from Products.<dtml-var "package.getProductName ()">.AppConfig import *
 except ImportError:

@@ -27,6 +27,7 @@ else:
 from Products.<dtml-var "package.getProductModuleName()">.config import PROJECTNAME
 from Products.<dtml-var "package.getProductModuleName()">.config import product_globals as GLOBALS
 
+
 def install(self, reinstall=False):
     """ External Method to install <dtml-var "package.getProductModuleName()"> """
     out = StringIO()
@@ -276,7 +277,6 @@ def install(self, reinstall=False):
 </dtml-let>
 </dtml-in>
 </dtml-if>
-
 <dtml-let all_tools="[c for c in generator.getGeneratedTools(package) if generator.getOption('use_workflow', c, None) is not None or c.getStateMachine()]">
 <dtml-if "all_tools">
     # update workflow for created tools if they have been designated a workflow
@@ -287,7 +287,6 @@ def install(self, reinstall=False):
             pass
 </dtml-if>
 </dtml-let>
-
 <dtml-if "package.num_generated_relations">
     # configuration for Relations
     relations_tool = getToolByName(self,'relations_library')
@@ -393,9 +392,9 @@ def install(self, reinstall=False):
         print >>out,'no custom install'
     return out.getvalue()
 
+
 def uninstall(self, reinstall=False):
     out = StringIO()
-
 <dtml-let remembers="[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.remember_stereotype)]">
 <dtml-if "remembers">
     # Removes our types from MemberDataContainer.allowed_content_types
@@ -410,7 +409,6 @@ def uninstall(self, reinstall=False):
 </dtml-in>
 </dtml-if>
 </dtml-let>
-
 <dtml-let autoinstalled_tools="[c.getName() for c in generator.getGeneratedTools(package) if not utils.isTGVFalse(c.getTaggedValue('autoinstall')) ]">
 <dtml-if "autoinstalled_tools">
     # unhide tools in the search form
@@ -456,7 +454,6 @@ def uninstall(self, reinstall=False):
 
 </dtml-if>
 </dtml-let>
-
 <dtml-let all_tools="[c for c in generator.getGeneratedTools(package)]">
 <dtml-if "all_tools">
     # unhide tools
@@ -506,7 +503,6 @@ def uninstall(self, reinstall=False):
                                    PROJECTNAME+'.AppInstall', 'uninstall')
     except:
         uninstall = None
-
     if uninstall:
         print >>out,'Custom Uninstall:'
         try:
@@ -519,8 +515,8 @@ def uninstall(self, reinstall=False):
             print >>out,'no output'
     else:
         print >>out,'no custom uninstall'
-
     return out.getvalue()
+
 
 def beforeUninstall(self, reinstall, product, cascade):
     """ try to call a custom beforeUninstall method in 'AppInstall.py'
@@ -528,16 +524,18 @@ def beforeUninstall(self, reinstall, product, cascade):
     """
     out = StringIO()
     try:
-        beforeuninstall = ExternalMethod('temp', 'temp',
-                                   PROJECTNAME+'.AppInstall', 'beforeUninstall')
+        beforeuninstall = ExternalMethod(
+            'temp', 'temp',
+            PROJECTNAME+'.AppInstall', 'beforeUninstall')
     except:
         beforeuninstall = []
 
     if beforeuninstall:
         print >>out, 'Custom beforeUninstall:'
-        res = beforeuninstall(self, reinstall=reinstall
-                                  , product=product
-                                  , cascade=cascade)
+        res = beforeuninstall(self,
+                              reinstall=reinstall,
+                              product=product,
+                              cascade=cascade)
         if res:
             print >>out, res
         else:
@@ -545,6 +543,7 @@ def beforeUninstall(self, reinstall, product, cascade):
     else:
         print >>out, 'no custom beforeUninstall'
     return (out,cascade)
+
 
 def afterInstall(self, reinstall, product):
     """ try to call a custom afterInstall method in 'AppInstall.py' method
@@ -559,8 +558,9 @@ def afterInstall(self, reinstall, product):
 
     if afterinstall:
         print >>out, 'Custom afterInstall:'
-        res = afterinstall(self, product=None
-                               , reinstall=None)
+        res = afterinstall(self,
+                           product=None,
+                           reinstall=None)
         if res:
             print >>out, res
         else:

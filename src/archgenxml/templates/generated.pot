@@ -1,4 +1,4 @@
-# ArchGenXML generated POT File
+# archgenxml generated POT File
 # %(author)s <%(email)s>, %(year)s.
 msgid ""
 msgstr ""

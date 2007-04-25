@@ -16,15 +16,13 @@ from <dtml-var "parent.getTaggedValue('import_from')"> import <dtml-var "parent.
 from <dtml-var "parent.getQualifiedModuleName(None,forcePluginRoot=1)"> import <dtml-var "parent.getCleanName()">
 </dtml-if>
 </dtml-if>
-from Products.<dtml-var "klass.getPackage().getProductName()">.config import HAS_PLONE21
 from Products.<dtml-var "klass.getPackage().getProductName()">.config import PRODUCT_DEPENDENCIES
 from Products.<dtml-var "klass.getPackage().getProductName()">.config import DEPENDENCIES
 
 # Add common dependencies
-if not HAS_PLONE21:
-    DEPENDENCIES.append('Archetypes')
-    PRODUCT_DEPENDENCIES.append('MimetypesRegistry')
-    PRODUCT_DEPENDENCIES.append('PortalTransforms')
+DEPENDENCIES.append('Archetypes')
+PRODUCT_DEPENDENCIES.append('MimetypesRegistry')
+PRODUCT_DEPENDENCIES.append('PortalTransforms')
 PRODUCT_DEPENDENCIES.append('<dtml-var "klass.getPackage().getProductName()">')
 
 # Install all (product-) dependencies, install them too

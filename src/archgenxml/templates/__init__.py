@@ -6,14 +6,13 @@
 #       each generated class and in this file.
 #   - To perform custom initialisation after types have been registered,
 #       use the protected code section at the bottom of initialize().
-#   - To register a customisation policy, create a file CustomizationPolicy.py
-#       with a method register(context) to register the policy.
 
 import logging
 logger = logging.getLogger('<dtml-var "product_name">')
 logger.info('Installing Product')
 
-import os, os.path
+import os
+import os.path
 from Globals import package_home
 from Products.CMFCore import utils as cmfutils
 from Products.CMFCore import permissions as cmfpermissions

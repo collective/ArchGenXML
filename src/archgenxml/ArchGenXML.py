@@ -51,7 +51,9 @@ def main():
         log.error("Could not import zope3 components.\n"
                   "They are not available on the PYTHONPATH.\n"
                   "Alternatively, you can place the path location "
-                  "in ~/%s.", ZOPEPATHFILE)
+                  "in ~/%s.\n"
+                  "Put something like /opt/zope2.10.3/lib/python "
+                  "in there.", ZOPEPATHFILE)
         if os.path.exists(pathFile):
             log.error("Hm. Apparently the file already exists. "
                       "Sure it points at a good zope's /lib/python "
