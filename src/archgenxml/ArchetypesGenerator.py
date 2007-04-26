@@ -35,6 +35,12 @@ from WorkflowGenerator import WorkflowGenerator
 
 from documenttemplate.documenttemplate import HTML
 
+from zope import interface
+from zope import component
+from archgenxml.browser.interfaces import IConfigPyView
+from archgenxml.interfaces import IPackage
+
+
 _marker = []
 log = logging.getLogger('generator')
 
@@ -2606,13 +2612,13 @@ class ArchetypesGenerator(BaseGenerator):
             self.generateStdFilesForPackage(package)
 
     def generateStdFilesForPackage(self, package):
-        """Generate the standard files for a non-root package"""
+        """Generate the standard files for a non-root package."""
 
         # Generate an __init__.py
         self.generatePackageInitPy(package)
 
     def updateVersionForProduct(self, package):
-        """Increment the build number in verion.txt"""
+        """Increment the build number in verion.txt,"""
 
         build=1
         versionbase='0.1'
@@ -2668,14 +2674,13 @@ class ArchetypesGenerator(BaseGenerator):
         return
 
     def generateConfigPy(self, package):
-        """ generates: config.py """
-
-
-        configpath=os.path.join(package.getFilePath(),'config.py')
+        """Generate config.py."""
+        configpath=os.path.join(package.getFilePath(), 'config.py')
         # new fangled stuff
         # Grab an adapter for the package (so from IPackage) to
         # IConfigPyView.
-
+        assert IPackage.providedBy(package)
+        view = IConfigPyView(package)
         # end of new fangled stuff
         parsed_config = self.parsePythonModule(package.getFilePath(),
                                                'config.py')
@@ -2815,7 +2820,6 @@ class ArchetypesGenerator(BaseGenerator):
         of.write(res)
         of.close()
         return
-
 
     def generateStdFilesForProduct(self, package):
         """Generate __init__.py,  various support files and and the skins

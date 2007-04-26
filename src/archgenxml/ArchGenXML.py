@@ -21,12 +21,6 @@ import sys
 import utils
 import os
 
-try:
-    # for standalone use
-    from ArchetypesGenerator import ArchetypesGenerator
-except ImportError:
-    # if installed in site-packages:
-    from ArchGenXML.ArchetypesGenerator import ArchetypesGenerator
 
 def main():
     utils.initLog('archgenxml.log')
@@ -109,6 +103,12 @@ def main():
         sys.excepthook = info
 
     # start generation
+    try:
+        # for standalone use
+        from ArchetypesGenerator import ArchetypesGenerator
+    except ImportError:
+        # if installed in site-packages:
+        from archgenxml.ArchetypesGenerator import ArchetypesGenerator
     gen=ArchetypesGenerator(model, **options)
     gen.parseAndGenerate()
 

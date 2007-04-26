@@ -21,6 +21,8 @@ from utils import normalize
 from utils import wrap as doWrap
 from xml.dom import minidom
 from TaggedValueSupport import tgvRegistry
+from zope import interface
+from archgenxml.interfaces import IPackage
 
 log = logging.getLogger('XMIparser')
 
@@ -1199,6 +1201,7 @@ class StateMachineContainer:
 
 
 class XMIPackage(XMIElement, StateMachineContainer):
+    interface.implements(IPackage)
     project = None
     isroot = 0
 
@@ -1413,6 +1416,7 @@ class XMIPackage(XMIElement, StateMachineContainer):
 
 
 class XMIModel(XMIPackage):
+    interface.implements(IPackage)
     isroot = 1
     parent = None
     diagrams = {}

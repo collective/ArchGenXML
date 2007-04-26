@@ -10,4 +10,8 @@ class ConfigPyView(object):
     component.adapts(IPackage)
     interface.implements(IConfigPyView)
 
-    pass
+    def __init__(self, package):
+        pass
+
+
+component.provideAdapter(ConfigPyView)
