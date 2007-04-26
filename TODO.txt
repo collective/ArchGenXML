@@ -1,10 +1,6 @@
 TODO's for ArchGenXML
 ---------------------
 
-To-do list for current trunk code, not a feature wish list.
-A list of wished-for/planned features planned is at:
-http://plone.org/development/teams/developer/ArchGenXML
-
 * BUG: Method that end with a comma-newline-value lose that value. For example:
 
             return (value1,
@@ -25,37 +21,44 @@ http://plone.org/development/teams/developer/ArchGenXML
     - generated.pot
     - portlet_template.pt
 
-* stereotype <<portlet>> does not work, but <<portlet_view>> does. Documentation
-  points to portlet. Tagged value autoinstall is registered for <<portlet>> only.
-  Here a clean up is needed.
+* stereotype <<portlet>> does not work, but <<portlet_view>>
+  does. Documentation points to portlet. Tagged value autoinstall is
+  registered for <<portlet>> only.  Here a clean up is needed.
 
-* portlet sample code is Plone 2.0.x style and doenst work with Plone 2.1.
+* portlet sample code is Plone 2.0.x style and doenst work with Plone
+  2.1.
 
-* Move class, interface generation to DTML. There are too many conditionals and
-    strings being generated in the current code. :-) Having DTML conditionals
-    and loops would make it much clearer and easier to manipulate.
+* Move class, interface generation to DTML. There are too many
+  conditionals and strings being generated in the current code. :-)
+  Having DTML conditionals and loops would make it much clearer and
+  easier to manipulate.
 
-* Tool support:
-  automagically disable uneccessary tabs (like base_view, metadata
-  and maybe references) on classes with stereotype 'portal_tool'. Must be
-  possible to explicitly enable them again.
+* Tool support: automagically disable uneccessary tabs (like
+  base_view, metadata and maybe references) on classes with stereotype
+  'portal_tool'. Must be possible to explicitly enable them again.
 
-* ATVocabularyManager integration, part registration of class:
-  fetch container_class - needs to be refined:
-  check if parent has vocabulary_container_stereotype and use its
-  name as container
-  else check for TGV vocabulary_container
-  fallback: use SimpleVocabulary
+* Also group together the generateable documentation in one script so
+  that it is easy to update the documentation area on plone.org to
+  keep it current.
 
-[ ] Also group together the generateable documentation in that aap
-makefile and send it off to the documentation area on plone.org to
-keep it current.
+* Longer term: add defaults to the tagged values.
 
-[ ] Longer term: add defaults to the tagged values.
+* Perhaps integrate
+  http://dev.plone.org/collective/browser/DIYPloneStyle/utils/DIYPloneStyleCompatibility/exportimport/skins.py
+  if we're going to do skins.xml stuff.
 
-[ ] Add BrowserDefault/ new style FTI support (Plone 2.1 et al style)
+* Move workflows to genericsetup
+  (http://plone.org/documentation/manual/upgrade-guide/version-specific/2.5-3.0/updating-add-on-products/update-your-workflows-to-use-genericsetup-profiles).
 
-[ ] Perhaps integrate
-http://dev.plone.org/collective/browser/DIYPloneStyle/utils/DIYPloneStyleCompatibility/exportimport/skins.py
-if we're going to do skins.xml stuff.
+* Allow python package products instead of zope products.
 
+* Empty out install.py in favour of genericsetup.
+
+* Support plone 3.0 portlets.
+
+* Support plone 3.0 viewlets (replacement of many included macros).
+
+* Perhaps look at new 3.0 editor role.
+
+* Move index and brain generation from archetypes fields to
+  catalog.xml.
