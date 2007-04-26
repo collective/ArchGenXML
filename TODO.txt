@@ -55,3 +55,7 @@ keep it current.
 
 [ ] Add BrowserDefault/ new style FTI support (Plone 2.1 et al style)
 
+[ ] Perhaps integrate
+http://dev.plone.org/collective/browser/DIYPloneStyle/utils/DIYPloneStyleCompatibility/exportimport/skins.py
+if we're going to do skins.xml stuff.
+
