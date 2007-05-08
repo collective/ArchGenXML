@@ -1818,8 +1818,8 @@ class ArchetypesGenerator(BaseGenerator):
 
     ## Generate Functional base testcase class.
     #
-    # This method generates the python class that is the base class for function - 
-    # broswer based - testcases.  This entails insuring that the 
+    # This method generates the python class that is the base class for function -
+    # broswer based - testcases.  This entails insuring that the
     # runallfunctionaltests.py files exist, then generating the base class itself.
     #
     # @param self The object pointer.
@@ -1836,7 +1836,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         log.debug('generate base functional testcase class')
         return self.generateFunctionalTestcaseClass(element,template)
-    
+
     def generateBaseTestcaseClass(self,element,template):
         log.debug('write runalltests.py and framework.py')
         runalltests=utils.readTemplate('tests/runalltests.py')
@@ -1894,7 +1894,7 @@ class ArchetypesGenerator(BaseGenerator):
             parent = None
 
         return BaseGenerator.generatePythonClass(self, element, template, parent=parent, nolog=True, **kw)
-        
+
     def generateTestcaseClass(self,element,template,**kw):
         log.info("%sGenerating testcase '%s'.",
                  '    '*self.infoind, element.getName())
