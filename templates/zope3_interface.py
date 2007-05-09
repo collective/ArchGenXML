@@ -51,9 +51,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
 <dtml-else>
 
     def <dtml-var "m.getName()">(<dtml-var "', '.join(m.getParamNames())">):
-       """
-
-       """
+       """ <dtml-var "utils.indent(m.getDocumentation(), 1, skipFirstRow=True, stripBlank=True)"> """
        <dtml-if "not klass.isinterface">pass</dtml-if> 
 
        <dtml-if "m.isStatic()"><dtml-var "m.getName()"> = staticmethod(<dtml-var "m.getName()">)</dtml-if>
