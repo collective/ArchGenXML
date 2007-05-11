@@ -161,24 +161,6 @@ class ArchetypesGenerator(BaseGenerator):
                     'methods to the testfile for testing.')
 
     uml_profile.addStereoType(
-        'plonefunctional_testcase', ['XMIClass'],
-        dispatching=1,
-        template='tests/PloneFunctionalTestcase.py',
-        generator='generateBaseFunctionalTestcaseClass',
-        description='Turns a class into the base class for all '
-        "other '<<functionaltestcase>>' classes inside a '<<test>>' package.")
-
-    uml_profile.addStereoType(
-        'functionaltestcase', ['XMIClass'],
-        dispatching=1,
-        template='tests/GenericFunctionalTestcase.py',
-        generator='generateFunctionalTestcaseClass',
-        description='Turns a class into a functional testcase. It must subclass a '
-        "'<<plonefunctional_testcase>>'. Adding an interface arrow to "
-                    'another class automatically adds that class\'s '
-                    'methods to the testfile for testing.')
-
-    uml_profile.addStereoType(
         'doc_testcase', ['XMIClass'],
         dispatching=1,
         template='tests/DocTestcase.py',
@@ -399,7 +381,7 @@ class ArchetypesGenerator(BaseGenerator):
     vocabulary_container_stereotype = ['vocabulary']
     cmfmember_stereotype = ['CMFMember', 'member']
     remember_stereotype = ['remember']
-    python_stereotype = ['python', 'python_class', 'view']
+    python_stereotype = ['python', 'python_class']
     folder_stereotype = ['folder', 'ordered', 'large', 'btree']
 
     i18n_at = ['i18n-archetypes', 'i18n', 'i18n-at']
@@ -427,7 +409,9 @@ class ArchetypesGenerator(BaseGenerator):
                       'visible', 'validators', 'validation_expression',
                       'sizes', 'original_size', 'max_size', 'searchable',
                       'show_hm', 'move:pos', 'move:top', 'move:bottom',
-                      'primary', 'array:widget','array:size']
+                      'primary', 'array:widget','array:size',
+                      'allowed_types',
+                  ]
 
     msgcatstack = []
 
@@ -772,13 +756,14 @@ class ArchetypesGenerator(BaseGenerator):
             global_allow = True
 
         has_content_icon=''
-        content_icon=element.getTaggedValue('content_icon')
+        content_icon = self.getOption('content_icon', element, None)
         if not content_icon:
             # If an icon file with the default name exists in the skin, do not
             # comment out the icon definition
             content_icon = element.getCleanName()+'.gif'
             icon_filename = os.path.join(self.getSkinPath(element), content_icon)
-            if not os.path.isfile(icon_filename):
+            icon_full_filename = os.path.join(self.targetRoot, icon_filename)
+            if not os.path.isfile(icon_full_filename):
                 has_content_icon='#'
 
         # If we are generating a tool, include the template which sets
@@ -1016,6 +1001,9 @@ class ArchetypesGenerator(BaseGenerator):
         index = self.getOption('index', element, default=_marker)
         if index is not _marker:
             tgv.update({'index': index})
+        index = self.getOption('allowed_types', element, default=_marker) 
+        if index is not _marker: 
+            tgv.update({'allowed_types': index}) 
 
         # set attributes from tgv
         for k in tgv.keys():
@@ -1218,10 +1206,16 @@ class ArchetypesGenerator(BaseGenerator):
         if array_field:
             res = res.strip()
             if array_options.get('widget', None):
-                if array_options['widget'].find('(') == -1:
-                    array_options['widget'] += u'()'
+                if array_options['widget'].find('(') == -1:-                    awparams = ''
+                    # allow widget parameters like array:widget:label
+                    awoptions = [key for key in array_options if key.startswith('widget:')]
+                    for awo in awoptions:
+                        wo = awo[7:]
+                        wvalue = array_options.get(awo)
+                        awparams += "\n" + utils.indent("%s=%s," % (wo, wvalue), 1)
+                    array_options['widget'] += u'(%s)' % awparams
 
-            array_defs = u',\n'.join([u"%s=%s" % item for item in array_options.items()])
+            array_defs = u',\n'.join([u"%s=%s" % item for item in array_options.items() if not item[0].startswith('widget:')])
             res =  ARRAYFIELD % ( utils.indent(res, 2), utils.indent(array_defs, 2) )
 
         return res
@@ -1363,8 +1357,8 @@ class ArchetypesGenerator(BaseGenerator):
 
         if map.has_key('validation_expression'):
             #append the validation_expression to the validators
-            expressions = attr.getTaggedValue('validation_expression').split('\n')
-            errormsgs = attr.getTaggedValue('validation_expression_errormsg').split('\n')
+            expressions = attr.getTaggedValue('validation_expression').decode('utf-8').split(u'\n')
+            errormsgs = attr.getTaggedValue('validation_expression_errormsg').decode('utf-8').split(u'\n')
             if errormsgs and errormsgs != [''] \
                and len(errormsgs) != len(expressions):
                 log.critical('validation_expression and validation_expression_'
@@ -1437,7 +1431,8 @@ class ArchetypesGenerator(BaseGenerator):
                 raise message
 
             map = self.typeMap['relation']['map'].copy()
-            map.update({'multiValued': multiValued,
+            map.update({'allowed_types': repr(allowed_types), 
+                        'multiValued': multiValued,
                         'relationship': "'%s'" % relname})
             map.update(self.getFieldAttributes(rel.toEnd))
             map.update({'widget': self.getWidget('Reference', rel.toEnd,
@@ -1659,8 +1654,7 @@ class ArchetypesGenerator(BaseGenerator):
         print >> outfile, SCHEMA_START
         print >> outfile, fieldsformatted.encode('utf8')
 
-        marshaller=element.getTaggedValue('marshaller')
-        # deprecated tgv 'marschall' here, that's a duplicate
+        marshaller=element.getTaggedValue('marshaller') or element.getTaggedValue('marshall')
         if marshaller:
             print >> outfile, 'marshall='+marshaller
 
@@ -1761,7 +1755,7 @@ class ArchetypesGenerator(BaseGenerator):
                     declaration = cl.getProtectionDeclaration(mt.getName())
                     if declaration:
                         print >> outfile, declaration
-                    print >> outfile, mt.src
+                    print >> outfile, mt.src.encode('utf-8')
                 print >> outfile
 
 
@@ -1816,27 +1810,6 @@ class ArchetypesGenerator(BaseGenerator):
         if m.isStatic():
             print >> outfile, '    %s = staticmethod(%s)\n' % (m.getName(),m.getName())
 
-    ## Generate Functional base testcase class.
-    #
-    # This method generates the python class that is the base class for function -
-    # broswer based - testcases.  This entails insuring that the
-    # runallfunctionaltests.py files exist, then generating the base class itself.
-    #
-    # @param self The object pointer.
-    # @param element The XMI element that is being generated.
-    # @param template The template file to use in generating the output.
-    def generateBaseFunctionalTestcaseClass(self,element,template):
-        log.debug('write testFunctional.py, only if needed.')
-
-        if not os.path.exists(os.path.join(self.targetRoot, element.getPackage().getFilePath(),'testFunctional.py')):
-            file=self.readTemplate('tests/testFunctional.py')
-            of=self.makeFile(os.path.join(element.getPackage().getFilePath(),'testFunctional.py'))
-            of.write(file)
-            of.close()
-
-        log.debug('generate base functional testcase class')
-        return self.generateFunctionalTestcaseClass(element,template)
-
     def generateBaseTestcaseClass(self,element,template):
         log.debug('write runalltests.py and framework.py')
         runalltests=utils.readTemplate('tests/runalltests.py')
@@ -1875,25 +1848,6 @@ class ArchetypesGenerator(BaseGenerator):
 
 
         return self.generateTestcaseClass(element,template,testname=testname)
-
-    ##
-    #
-    def generateFunctionalTestcaseClass(self, element, template, **kw):
-        log.info("%sGenerating testcase '%s'.", '    '*self.infoind, element.getName())
-
-        assert element.hasStereoType('plonefunctional_testcase', umlprofile=self.uml_profile) or element.getCleanName().startswith('browser'), \
-               "names of test classes _must_ start with 'browser', but this class is named '%s'" % element.getCleanName()
-
-        assert element.getPackage().getCleanName() == 'tests', \
-            "testcase classes only make sense inside a package called 'tests' \
-                 but this class is named '%s' and located in package '%s'" % (element.getCleanName(),element.getPackage().getCleanName())
-
-        if element.getGenParents():
-            parent = element.getGenParents()[0]
-        else:
-            parent = None
-
-        return BaseGenerator.generatePythonClass(self, element, template, parent=parent, nolog=True, **kw)
 
     def generateTestcaseClass(self,element,template,**kw):
         log.info("%sGenerating testcase '%s'.",
@@ -2357,10 +2311,9 @@ class ArchetypesGenerator(BaseGenerator):
 
         print >> outfile, self.generateImplements(element, parentnames)
 
-        # Zapped in the tgv cleanup
-        #header = element.getTaggedValue('class_header')
-        #if header:
-        #    print >> outfile,utils.indent(header, 1)
+        header = element.getTaggedValue('class_header')
+        if header:
+            print >> outfile,utils.indent(header, 1)
 
         archetype_name = element.getTaggedValue('archetype_name') or \
                          element.getTaggedValue('label')
@@ -2675,12 +2628,6 @@ class ArchetypesGenerator(BaseGenerator):
         """ generates: config.py """
 
         configpath=os.path.join(package.getFilePath(),'config.py')
-        # new fangled stuff
-        # Grab an adapter for the package (so from IPackage) to
-        # IConfigPyView.
-
-
-        # end of new fangled stuff
         parsed_config=self.parsePythonModule(package.getFilePath(), 'config.py')
         creation_permission = self.getOption('creation_permission', package, None)
 
