@@ -1320,8 +1320,8 @@ class ArchetypesGenerator(BaseGenerator):
 
         if ctype=='copy':
             name = getattr(attr, 'rename_to', attr.getName())
-            field = utils.indent("copied_fields['%s'],\n" % name, indent_level)
-            return field
+            field = utils.indent("copied_fields['%s']," % name, indent_level)
+            return "%s\n" % field
 
         map = self.typeMap[ctype]['map'].copy()
         if attr.hasDefault():
