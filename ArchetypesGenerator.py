@@ -1206,7 +1206,8 @@ class ArchetypesGenerator(BaseGenerator):
         if array_field:
             res = res.strip()
             if array_options.get('widget', None):
-                if array_options['widget'].find('(') == -1:-                    awparams = ''
+                if array_options['widget'].find('(') == -1:
+                    awparams = ''
                     # allow widget parameters like array:widget:label
                     awoptions = [key for key in array_options if key.startswith('widget:')]
                     for awo in awoptions:
