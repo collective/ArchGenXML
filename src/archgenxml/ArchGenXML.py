@@ -49,9 +49,10 @@ def main():
                   "Put something like /opt/zope2.10.3/lib/python "
                   "in there.", ZOPEPATHFILE)
         if os.path.exists(pathFile):
-            log.error("Hm. Apparently the file already exists. "
+            log.error("Hm. Apparently '%s' already exists. "
                       "Sure it points at a good zope's /lib/python "
-                      "directory? A good zope is 2.9 or 3.3+.")
+                      "directory? A good zope is 2.10 or 3.3+.",
+                      pathFile)
         sys.exit(1)
     zcmlConfigFile = resource_filename(__name__, 'configure.zcml')
     xmlconfig.file(zcmlConfigFile, package=archgenxml)
