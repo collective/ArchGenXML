@@ -41,7 +41,8 @@ def main():
     try:
         from zope import component
         from zope.configuration import xmlconfig
-    except ImportError:
+    except ImportError, e:
+        log.debug(e)
         log.error("Could not import zope3 components.\n"
                   "They are not available on the PYTHONPATH.\n"
                   "Alternatively, you can place the path location "
