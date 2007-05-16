@@ -39,6 +39,7 @@ def main():
         log.debug("Read %s, added %s in front of the PYTHONPATH.",
                   pathFile, additionalPath)
     try:
+        log.debug("sys.path: %r", sys.path)
         from zope import component
         from zope.configuration import xmlconfig
     except ImportError, e:
@@ -54,6 +55,8 @@ def main():
                       "Sure it points at a good zope's /lib/python "
                       "directory? A good zope is 2.10 or 3.3+.",
                       pathFile)
+            log.debug("Here are all loaded modules: %r",
+                      sys.modules)
         sys.exit(1)
     zcmlConfigFile = resource_filename(__name__, 'configure.zcml')
     xmlconfig.file(zcmlConfigFile, package=archgenxml)
