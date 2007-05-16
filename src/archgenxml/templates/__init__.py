@@ -9,7 +9,7 @@
 
 import logging
 logger = logging.getLogger('<dtml-var "product_name">')
-logger.info('Installing Product')
+logger.debug('Installing Product')
 
 import os
 import os.path
