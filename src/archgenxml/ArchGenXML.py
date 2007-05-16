@@ -42,7 +42,7 @@ def main():
         log.debug("sys.path: %r", sys.path)
         log.debug("Before import zope stuff, here "
                   "are all loaded modules: %r",
-                  sys.modules)
+                  sys.modules.keys())
         from zope import component
         from zope.configuration import xmlconfig
     except ImportError, e:
