@@ -174,27 +174,13 @@ class BaseGenerator:
     def parsePythonModule(self, packagePath, fileName):
         """Parse a python module and return the module object.
 
-        This can then be passed to getProtectedSection() to
-        generate protected sections.
+        Moved to utils.py (for the large part, that is).
+
         """
-
-        targetPath = os.path.join(self.targetRoot, packagePath, fileName)
-        parsed = None
-
-        if self.method_preservation:
-            try:
-                parsed = PyParser.PyModule(targetPath)
-            except IOError:
-                pass
-            except :
-                print
-                print '***'
-                print '***Error while reparsing the file', targetPath
-                print '***'
-                print
-                raise
-
-        return parsed
+        log.debug("Old BaseGenerator.parsePythonModule(), ought to go "
+                  "away at some time.")
+        return utils.parsePythonModule(self.targetRoot, packagePath,
+                                       fileName)
 
     def getProtectedSection(self, parsed, section, ind=0):
         """Given a parsed python module and a section name, return a string
@@ -348,10 +334,9 @@ class BaseGenerator:
         if element.hasStereoType(self.portal_tools) and '__init__' not in method_names:
             method_names.append('__init__')
 
-        if self.method_preservation:
-            cl = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name, None)
-            if cl:
-                manual_methods=[mt for mt in cl.methods.values() if mt.name not in method_names]
+        cl = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name, None)
+        if cl:
+            manual_methods=[mt for mt in cl.methods.values() if mt.name not in method_names]
 
         return generatedMethods, manual_methods
 

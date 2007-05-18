@@ -386,10 +386,7 @@ class ArchetypesGenerator(BaseGenerator):
     # prefix = ''
     # parse_packages = [] # Packages to scan for classes
     # generate_packages = [] # Packages to be generated
-    # noclass = 0 # If set no module is reverse engineered,
-    #             # just an empty project + skin is created
     # ape_support = 0 # Generate APE config and serializers/gateways?
-    # method_preservation = 1 # Should the method bodies be preserved?
     # i18n_content_support = 0
 
     build_msgcatalog = 1
@@ -1750,24 +1747,22 @@ class ArchetypesGenerator(BaseGenerator):
            and 'at_post_edit_script' not in method_names:
             method_names.append('at_post_edit_script')
 
-        if self.method_preservation:
-            log.debug("We are to preserve methods, so we're looking for manual methods.")
-            cl = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name, None)
-            if cl:
-                log.debug("The class has the following methods: %r.", cl.methods.keys())
-                manual_methods = [mt for mt in cl.methods.values() if mt.name not in method_names]
-                manual_methods.sort(lambda a,b: cmp(a.start, b.start))  # sort methods according to original order
-                log.debug("Found the following manual methods: %r.", manual_methods)
-                if manual_methods:
-                    print >> outfile, '\n    # Manually created methods\n'
+        log.debug("We are to preserve methods, so we're looking for manual methods.")
+        cl = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name, None)
+        if cl:
+            log.debug("The class has the following methods: %r.", cl.methods.keys())
+            manual_methods = [mt for mt in cl.methods.values() if mt.name not in method_names]
+            manual_methods.sort(lambda a,b: cmp(a.start, b.start))  # sort methods according to original order
+            log.debug("Found the following manual methods: %r.", manual_methods)
+            if manual_methods:
+                print >> outfile, '\n    # Manually created methods\n'
 
-                for mt in manual_methods:
-                    declaration = cl.getProtectionDeclaration(mt.getName())
-                    if declaration:
-                        print >> outfile, declaration
-                    print >> outfile, mt.src
-                print >> outfile
-
+            for mt in manual_methods:
+                declaration = cl.getProtectionDeclaration(mt.getName())
+                if declaration:
+                    print >> outfile, declaration
+                print >> outfile, mt.src
+            print >> outfile
 
     def generateMethod(self, outfile, m, klass, mode='class'):
         #ignore actions and views here because they are generated separately
@@ -1795,7 +1790,7 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             method_code = None
 
-        if self.method_preservation and method_code:            
+        if method_code:            
             wrt(method_code.src.encode('utf8'))
             # Holly hack: methods ending with a 'pass' command doesn't have
             # an extra blank line after reparsing the code, so we add it
@@ -2111,17 +2106,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         # dealing with creation-permissions and -roles for this type
         klass = element.getCleanName()
-        if self.detailed_created_permissions:
-            creation_permission = "'Add %s Content'" % klass
-            # TODO: looks a bit shitty, ^^^^^. 'Add Event Content'...
-            # 'Add MyProduct Content' is ok, but the prefixed way
-            # 'Myproduct: Add Event' is preferrable to the above
-            # version.
-            # As luck would have it, there was a typo
-            # --detailed-created-permissions, so I fixed the non-typo
-            # --detailed-creation-permissions up with the new
-            # generated syntax.
-        elif self.getOption('detailed_creation_permissions', element, None):
+        if self.getOption('detailed_creation_permissions', element, None):
             product = element.getPackage().getProduct().getCleanName()
             creation_permission = "'%s: Add %s'" % (product, klass)
         else:
@@ -2675,50 +2660,14 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateConfigPy(self, package):
         """Generate config.py."""
-        configpath=os.path.join(package.getFilePath(), 'config.py')
         # new fangled stuff
         # Grab an adapter for the package (so from IPackage) to
         # IConfigPyView.
         assert IPackage.providedBy(package)
         view = IConfigPyView(package)
-        # end of new fangled stuff
-        parsed_config = self.parsePythonModule(package.getFilePath(),
-                                               'config.py')
-        creation_permission = self.getOption('creation_permission',
-                                             package, None)
-
-        if creation_permission:
-            default_creation_permission = creation_permission
-        else:
-            default_creation_permission = self.default_creation_permission
-
-        roles = []
-        creation_roles = []
-        for perm in self.creation_permissions:
-            if not perm[1] in roles and perm[2] is not None:
-                roles.append(perm[1])
-                creation_roles.append( (perm[1], perm[2]) )
-
-        # prepare (d)TML varibles
-        d={'package' : package,
-           'generator' : self,
-           'builtins' : __builtins__,
-           'utils' : utils,
-           'default_creation_permission': default_creation_permission,
-           'creation_permissions' : self.creation_permissions,
-           'creation_roles' : creation_roles,
-           'parsed_config' : parsed_config,
-           }
-        d.update(__builtins__)
-
-        templ=self.readTemplate('config.py')
-        dtml=HTML(templ,d)
-        res=dtml()
-
-        of=self.makeFile(configpath)
-        of.write(res)
-        of.close()
-        return
+        view.run(generator=self)
+        # ^^^ Above run is still full of junk.
+        # But, hurray, we do have a view which cleans up this file.
 
     def generateProductInitPy(self, package):
         """ Generate __init__.py at product root from the DTML template"""
@@ -2927,25 +2876,26 @@ class ArchetypesGenerator(BaseGenerator):
             package.generatedModules.append(element)
             outfilepath=os.path.join(package.getFilePath(), module+'.py')
 
-            if self.method_preservation:
-                filename = os.path.join(self.targetRoot, outfilepath)
-                log.debug("Filename (joined with targetroot) is "
-                          "'%s'.", filename)
-                try:
-                    mod=PyParser.PyModule(filename)
-                    log.debug("Existing sources found for element %s: %s.",
-                              element.getName(), outfilepath)
-                    self.parsed_sources.append(mod)
-                    for c in mod.classes.values():
-                        self.parsed_class_sources[package.getFilePath()+'/'+c.name]=c
-                except IOError:
-                    log.debug("No source found at %s.",
-                              filename)
-                    pass
-                except:
-                    log.critical("Error while reparsing file '%s'.",
-                                 outfilepath)
-                    raise
+            # below: utils.parsePythonModule?
+            filename = os.path.join(self.targetRoot, outfilepath)
+            log.debug("Filename (joined with targetroot) is "
+                      "'%s'.", filename)
+            try:
+                mod=PyParser.PyModule(filename)
+                log.debug("Existing sources found for element %s: %s.",
+                          element.getName(), outfilepath)
+                self.parsed_sources.append(mod)
+                for c in mod.classes.values():
+                    self.parsed_class_sources[package.getFilePath()+'/'+c.name]=c
+            except IOError:
+                log.debug("No source found at %s.",
+                          filename)
+                pass
+            except:
+                log.critical("Error while reparsing file '%s'.",
+                             outfilepath)
+                raise
+            # ^^^ utils.parsePythonModule?
 
             try:
                 outfile = StringIO()
@@ -3287,9 +3237,6 @@ class ArchetypesGenerator(BaseGenerator):
                     filename=os.path.join(self.targetRoot, filepath)))
 
         package = root
-        if self.noclass:
-            # skip the other generation steps
-            return
         self.generateRelations(root)
         self.generatePackage(root)
 
@@ -3319,60 +3266,53 @@ class ArchetypesGenerator(BaseGenerator):
 
         suff = os.path.splitext(self.xschemaFileName)[1].lower()
         log.info("Parsing...")
-        if not self.noclass:
-            if suff.lower() in ('.xmi','.xml', '.uml'):
-                log.debug("Opening xmi...")
-                self.root = root= XMIParser.parse(self.xschemaFileName,
-                                                  packages=self.parse_packages,
-                                                  generator=self,
-                                                  generate_datatypes=self.generate_datatypes)
-                log.debug("Created a root XMI parser.")
-            elif suff.lower() in ('.zargo','.zuml','.zip'):
-                log.debug("Opening %s ..." % suff.lower())
-                zf=ZipFile(self.xschemaFileName)
-                xmis=[n for n in zf.namelist() if os.path.splitext(n)[1].lower()in ['.xmi','.xml']]
-                assert(len(xmis)==1)
-                buf=zf.read(xmis[0])
-                self.root=root=XMIParser.parse(xschema=buf,
-                    packages=self.parse_packages, generator=self,
-                    generate_datatypes=self.generate_datatypes)
-            else:
-                raise TypeError,'input file not of type .xmi, .xml, .zargo, .zuml'
+        if suff.lower() in ('.xmi','.xml', '.uml'):
+            log.debug("Opening xmi...")
+            self.root = root= XMIParser.parse(self.xschemaFileName,
+                                              packages=self.parse_packages,
+                                              generator=self,
+                                              generate_datatypes=self.generate_datatypes)
+            log.debug("Created a root XMI parser.")
+        elif suff.lower() in ('.zargo','.zuml','.zip'):
+            log.debug("Opening %s ..." % suff.lower())
+            zf=ZipFile(self.xschemaFileName)
+            xmis=[n for n in zf.namelist() if os.path.splitext(n)[1].lower()in ['.xmi','.xml']]
+            assert(len(xmis)==1)
+            buf=zf.read(xmis[0])
+            self.root=root=XMIParser.parse(xschema=buf,
+                packages=self.parse_packages, generator=self,
+                generate_datatypes=self.generate_datatypes)
+        else:
+            raise TypeError,'input file not of type .xmi, .xml, .zargo, .zuml'
 
-            if self.outfilename:
-                log.debug("We've got an self.outfilename: %s.",
-                          self.outfilename)
-                lastPart = os.path.split(self.outfilename)[1]
-                log.debug("We've split off the last directory name: %s.",
-                          lastPart)
-                # [Reinout 2006-11-05]: We're not setting the root's
-                # name from the outfilename anymore. That prevents
-                # (amongst others) Optilude from generating some
-                # product into a directory named "trunk", for
-                # instance.
-                #root.setName(lastPart)
-                #log.debug("Set the name of the root generator to that"
-                #          " directory name.")
-                existingName = root.getName()
-                if not existingName == lastPart:
-                    log.warn("Not setting the product's name to '%s', "
-                             "this was the old behaviour. Just name your "
-                             "class diagram according to your product "
-                             "name. ",
-                             lastPart)
-                root.setOutputDirectoryName(self.outfilename)
-            else:
-                log.debug("No outfilename present, not changing the "
-                          "name of the root generator.")
-            log.info("Directory in which we're generating the files: '%s'.",
-                     self.outfilename)
+        if self.outfilename:
+            log.debug("We've got an self.outfilename: %s.",
+                      self.outfilename)
+            lastPart = os.path.split(self.outfilename)[1]
+            log.debug("We've split off the last directory name: %s.",
+                      lastPart)
+            # [Reinout 2006-11-05]: We're not setting the root's
+            # name from the outfilename anymore. That prevents
+            # (amongst others) Optilude from generating some
+            # product into a directory named "trunk", for
+            # instance.
+            #root.setName(lastPart)
+            #log.debug("Set the name of the root generator to that"
+            #          " directory name.")
+            existingName = root.getName()
+            if not existingName == lastPart:
+                log.warn("Not setting the product's name to '%s', "
+                         "this was the old behaviour. Just name your "
+                         "class diagram according to your product "
+                         "name. ",
+                         lastPart)
+            root.setOutputDirectoryName(self.outfilename)
         else:
-            self.root=root=DummyModel(self.outfilename)
+            log.debug("No outfilename present, not changing the "
+                      "name of the root generator.")
+        log.info("Directory in which we're generating the files: '%s'.",
+                 self.outfilename)
         log.info('Generating...')
-        if self.method_preservation:
-            log.debug('Method bodies will be preserved')
-        else:
-            log.debug('Method bodies will be overwritten')
         if not has_enhanced_strip_support:
             log.warn("Can't build i18n message catalog. Needs 'python 2.3' or later.")
         if self.build_msgcatalog and not has_i18ndude:

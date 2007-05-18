@@ -12,6 +12,8 @@ import os.path
 import sys
 import types
 
+import PyParser
+
 log = logging.getLogger('utils')
 
 NameTable = {
@@ -209,3 +211,25 @@ def normalize(data, doReplace=False):
         return data.encode('utf-8')
     else:
         return None
+
+def parsePythonModule(targetRoot, packagePath, fileName):
+    """Parse a python module and return the module object.
+
+    This can then be passed to getProtectedSection() to
+    generate protected sections.
+    """
+
+    targetPath = os.path.join(targetRoot, packagePath, fileName)
+    parsed = None
+    try:
+        parsed = PyParser.PyModule(targetPath)
+    except IOError:
+        pass
+    except:
+        print
+        print '***'
+        print '***Error while reparsing the file', targetPath
+        print '***'
+        print
+        raise
+    return parsed

@@ -459,14 +459,6 @@ group.add_option("--strip-html",
                  section="DOCUMENTATION",
                  )
 
-group.add_option("--method-preservation",
-                 help="Preserve methods in existing source files (default is 1).",
-                 dest="method_preservation",
-                 type="yesno",
-                 default=1,
-                 section="CLASSES",
-                 )
-
 group.add_option("--backreferences-support",
                  dest="backreferences_support",
                  type="yesno",
@@ -703,120 +695,9 @@ parser.add_option_group(group)
 #----------------------------------------------------------------------------
 # Deprecated options
 
-group = OptionGroup(parser, "Deprecated")
-
-group.add_option("--ape",
-                 help="Use --ape-support=1",
-                 action="deprecationwarning",
-                 section="DEPRECATED"
-                 )
-
-group.add_option("--actions",
-                 help="Use --generate-actions=1",
-                 action="deprecationwarning",
-                 section="DEPRECATED"
-                 )
-
-group.add_option("--no-actions",
-                 help="Use --generate-actions=0",
-                 action="deprecationwarning",
-                 section="DEPRECATED"
-                 )
-
-group.add_option("--no-widget-enhancement",
-                 help="Use --widget-enhancement=0",
-                 action="deprecationwarning",
-                 section="DEPRECATED"
-                 )
-
-group.add_option("--no-method-preservation",
-                 help="Use --method-preservation=0",
-                 action="deprecationwarning",
-                 section="DEPRECATED"
-                 )
-
-group.add_option("--no-message-catalog",
-                 help="Use --message-catalog=0",
-                 action="deprecationwarning",
-                 section="DEPRECATED"
-                 )
-
-group.add_option("--no-module-info-header",
-                 help="Use --module-info-header=0",
-                 action="deprecationwarning",
-                 section="DEPRECATED"
-                 )
-
-group.add_option("--no-rcs-id",
-                 help="Use --rcs-id=0",
-                 action="deprecationwarning",
-                 section="DEPRECATED"
-                 )
-
-group.add_option("--no-generated-date",
-                 help="Use --generated-date=0",
-                 action="deprecationwarning",
-                 section="DEPRECATED"
-                 )
-
-group.add_option("--creation-permission",
-                 help="Use --default-creation-permission",
-                 action="deprecationwarning",
-                 section="DEPRECATED"
-                 )
-
-group.add_option("--detailled-creation-permission",
-                 help="Use --detailed-creation-permissions",
-                 action="deprecationwarning",
-                 section="DEPRECATED"
-                 )
-
-group.add_option("--detailed-created-permissions",
-                 type="yesno",
-                 help="Use"
-                 " --detailed-creation-permissions, which generates a"
-                 " slightly different syntax, though.",
-                 default=0,
-                 section="CLASSES",
-                 dest="detailed_created_permissions",
-                 )
-
-group.add_option("--noclass",
-                 help="Never really implemented.",
-                 action="deprecationwarning",
-                 section="DEPRECATED"
-                 )
-
-group.add_option("--no-classes",
-                 dest="noclass",
-                 help="Never really implemented, intention "
-                 "was to generate a plain skeleton. Use an empty "
-                 "UML model instead (with one stub class, archgenxml "
-                 "doesn't like a completely empty model).",
-                 type="yesno",
-                 default=0,
-                 section="CLASSES",
-                 )
-
-group.add_option("--i18n",
-                 help="Use --i18n-content-support",
-                 action="deprecationwarning",
-                 section="DEPRECATED"
-                 )
-
-group.add_option("--project-configuration",
-                 help="Use --cfg",
-                 action="deprecationwarning",
-                 section="DEPRECATED"
-                 )
-
-group.add_option("--storage",
-                 help="Really don't know. Perhaps --ape-support?",
-                 action="deprecationwarning",
-                 section="DEPRECATED"
-                 )
-
-parser.add_option_group(group)
+# group = OptionGroup(parser, "Deprecated")
+# Deprecated options go here
+# parser.add_option_group(group)
 
 #----------------------------------------------------------------------------
 # FIXME: Broken/undocumented options
