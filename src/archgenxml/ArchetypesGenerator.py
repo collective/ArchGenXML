@@ -38,7 +38,7 @@ from documenttemplate.documenttemplate import HTML
 from zope import interface
 from zope import component
 from archgenxml.browser.interfaces import IConfigPyView
-from archgenxml.interfaces import IPackage
+from archgenxml.interfaces import uml
 
 
 _marker = []
@@ -2643,6 +2643,7 @@ class ArchetypesGenerator(BaseGenerator):
         # prepare (d)TML varibles
         d={'package'    : package,
            'generator'  : self,
+           'product_name': package.getProductName(),
            'builtins'   : __builtins__,
            'utils'       :utils,
         }
@@ -2663,7 +2664,7 @@ class ArchetypesGenerator(BaseGenerator):
         # new fangled stuff
         # Grab an adapter for the package (so from IPackage) to
         # IConfigPyView.
-        assert IPackage.providedBy(package)
+        assert uml.IPackage.providedBy(package)
         view = IConfigPyView(package)
         view.run(generator=self)
         # ^^^ Above run is still full of junk.
@@ -2800,6 +2801,17 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateConfigPy(package)
         # Generate Extensions/Install.py
         self.generateInstallPy(package)
+        # Generate generic setup profile
+        self.generateGSDirectory(package)
+
+    def generateGSDirectory(self, package):
+        """Create genericsetup directory profiles/default.
+
+        """
+        profileDir = os.path.join(package.getFilePath(), 'profiles')
+        self.makeDir(profileDir)
+        profileDefaultDir = os.path.join(profileDir, 'default')
+        self.makeDir(profileDefaultDir)
 
     def generateApeConf(self, target,package):
         #generates apeconf.xml

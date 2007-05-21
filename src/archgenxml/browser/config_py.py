@@ -1,9 +1,10 @@
 import os
+
 from zope import interface
 from zope import component
 
 from archgenxml.browser.interfaces import IConfigPyView
-from archgenxml.interfaces import IPackage
+from archgenxml.interfaces import uml
 from archgenxml import utils
 from archgenxml.documenttemplate.documenttemplate import HTML
 
@@ -12,7 +13,7 @@ class ConfigPyView(object):
     """A view for the toplevel config.py file
     """
     
-    component.adapts(IPackage)
+    component.adapts(uml.IPackage)
     interface.implements(IConfigPyView)
 
     def __init__(self, package):
@@ -59,7 +60,6 @@ class ConfigPyView(object):
         of=generator.makeFile(configpath)
         of.write(res)
         of.close()
-        
 
 
 component.provideAdapter(ConfigPyView)

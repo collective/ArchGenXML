@@ -1,2 +1,1 @@
-# Import the individual modules here
-from package import *
+# Make the directory importable.

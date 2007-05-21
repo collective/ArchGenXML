@@ -17,6 +17,7 @@ parentDir = testDir[:-6] # Strips off '/tests'
 # Appends the parent dir to the module search path
 sys.path.append(parentDir)
 import utils
+utils.prepareZopeImport()
 
 testDir = os.path.dirname(os.path.abspath(__file__))
 TestRunner = unittest.TextTestRunner

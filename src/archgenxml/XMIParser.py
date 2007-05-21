@@ -22,7 +22,7 @@ from utils import wrap as doWrap
 from xml.dom import minidom
 from TaggedValueSupport import tgvRegistry
 from zope import interface
-from archgenxml.interfaces import IPackage
+from archgenxml.interfaces import uml
 
 log = logging.getLogger('XMIparser')
 
@@ -1201,7 +1201,7 @@ class StateMachineContainer:
 
 
 class XMIPackage(XMIElement, StateMachineContainer):
-    interface.implements(IPackage)
+    interface.implements(uml.IPackage)
     project = None
     isroot = 0
 
@@ -1416,7 +1416,7 @@ class XMIPackage(XMIElement, StateMachineContainer):
 
 
 class XMIModel(XMIPackage):
-    interface.implements(IPackage)
+    interface.implements(uml.IPackage)
     isroot = 1
     parent = None
     diagrams = {}

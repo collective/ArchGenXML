@@ -11,16 +11,19 @@ import logging
 logger = logging.getLogger('<dtml-var "product_name">')
 logger.debug('Installing Product')
 
+import Products.CMFPlone.interfaces
 import os
 import os.path
 from Globals import package_home
-from Products.CMFCore import utils as cmfutils
-from Products.CMFCore import permissions as cmfpermissions
-from Products.CMFCore import DirectoryView
-from Products.CMFPlone.utils import ToolInit
-from Products.Archetypes.atapi import *
 from Products.Archetypes import listTypes
+from Products.Archetypes.atapi import *
 from Products.Archetypes.utils import capitalize
+from Products.CMFCore import DirectoryView
+from Products.CMFCore import permissions as cmfpermissions
+from Products.CMFCore import utils as cmfutils
+from Products.CMFPlone.utils import ToolInit
+from Products.GenericSetup import EXTENSION
+from Products.GenericSetup import profile_registry
 from config import *
 
 DirectoryView.registerDirectory('skins', product_globals)
@@ -101,5 +104,14 @@ def initialize(context):
         fti                = ftis,
         ).initialize(context)
 </dtml-if>
+
+    profile_registry.registerProfile(
+        name='default',
+        title=PROJECTNAME,
+        description='Profile for <dtml-var "package.getProductName()">',
+        path='profiles/default',
+        product='<dtml-var "package.getProductName()">',
+        profile_type=EXTENSION,
+        for_=Products.CMFPlone.interfaces.IPloneSiteRoot)
 
 <dtml-var "protected_init_section_bottom">
