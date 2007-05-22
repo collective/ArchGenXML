@@ -1,3 +1,11 @@
+2007-05-22  Reinout van Rees  <reinout@zestsoftware.nl>
+
+	* src/archgenxml/ArchGenXML.py: Added first view (for generating a
+	config.py). Still primitive, but I've at least moved off some code
+	to a view. Also added a still-empty profiles/default genericsetup
+	directory including registering it in the __init__.py and applying
+	it in the install.py. Onwards to the next thing!
+
 2007-03-06  Reinout van Rees  <reinout@vanrees.org>
 
 	* src/archgenxml/ArchetypesGenerator.py: Pander added support for
