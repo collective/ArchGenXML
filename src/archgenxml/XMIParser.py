@@ -1477,6 +1477,8 @@ class XMIClass(XMIElement, StateMachineContainer):
 
     def __init__(self, *args, **kw):
         log.debug("Initialising class.")
+        # ugh, setPackage(). Handle this with some more generic zope3
+        # parent() relation. [reinout]
         self.setPackage(kw.get('package', None))
         log.debug("Package set to '%s'.", self.package.name)
         log.debug("Running StateMachineContainer's init...")
