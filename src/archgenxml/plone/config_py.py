@@ -3,6 +3,7 @@ import os
 from zope import interface
 from zope import component
 
+from archgenxml.interfaces import IOptions
 from archgenxml.plone.interfaces import IConfigPyView
 from archgenxml.uml.interfaces import *
 from archgenxml import utils
@@ -20,6 +21,7 @@ class ConfigPyView(object):
         self.package = package
 
     def run(self, generator=None): 
+        options = component.getUtility(IOptions, name='options')
         configpath = os.path.join(self.package.getFilePath(),
                                   'config.py')
         parsed_config = utils.parsePythonModule(
@@ -32,7 +34,7 @@ class ConfigPyView(object):
         if creation_permission:
             default_creation_permission = creation_permission
         else:
-            default_creation_permission = generator.default_creation_permission
+            default_creation_permission = options.option('default_creation_permission')
 
         roles = []
         creation_roles = []
@@ -47,7 +49,7 @@ class ConfigPyView(object):
            'builtins': __builtins__,
            'utils': utils,
            'default_creation_permission': default_creation_permission,
-           'creation_permissions': generator.creation_permissions,
+           'creation_permissions': options.option('creation_permissions'),
            'creation_roles': creation_roles,
            'parsed_config': parsed_config,
            }

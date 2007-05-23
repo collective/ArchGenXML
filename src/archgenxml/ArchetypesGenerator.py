@@ -451,6 +451,12 @@ class ArchetypesGenerator(BaseGenerator):
     creation_permission_stack = []
 
     def __init__(self, xschemaFileName, **kwargs):
+        # The **kwargs are the options that were extracted by the
+        # optionparser. A few rows down, they're used to update
+        # self.__dict__, which *does* work, but providing a utility
+        # that you can call from anywhere ought to be a bit
+        # cleaner. And it prevents us from passing along this
+        # generator all the time. [reinout]
         BaseGenerator.__init__(self)
         log.debug("Initializing ArchetypesGenerator. "
                   "We're being passed a file '%s' and keyword "
@@ -2708,7 +2714,9 @@ class ArchetypesGenerator(BaseGenerator):
             hasTools = 1
 
         # Get the preserved code section
-        parsed = self.parsePythonModule(package.getFilePath (), '__init__.py')
+        parsed = utils.parsePythonModule(self.targetRoot,
+                                         package.getFilePath(),
+                                         '__init__.py')
 
         protectedInitCodeH = self.getProtectedSection(parsed, 'custom-init-head', 0)
         protectedInitCodeT = self.getProtectedSection(parsed, 'custom-init-top', 1)
@@ -2748,7 +2756,9 @@ class ArchetypesGenerator(BaseGenerator):
         classImports   = [m.getModuleName () for m in package.generatedModules]
 
         # Get the preserved code sections
-        parsed = self.parsePythonModule(package.getFilePath (), '__init__.py')
+        parsed = utils.parsePythonModule(self.targetRoot,
+                                         package.getFilePath(),
+                                         '__init__.py')
         headerCode = self.getProtectedSection(parsed, 'init-module-header')
         footerCode = self.getProtectedSection(parsed, 'init-module-footer')
 

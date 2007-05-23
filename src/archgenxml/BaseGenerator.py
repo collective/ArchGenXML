@@ -171,17 +171,6 @@ class BaseGenerator:
     def cleanName(self, name):
         return name.replace(' ','_').replace('.','_').replace('/','_')
 
-    def parsePythonModule(self, packagePath, fileName):
-        """Parse a python module and return the module object.
-
-        Moved to utils.py (for the large part, that is).
-
-        """
-        log.debug("Old BaseGenerator.parsePythonModule(), ought to go "
-                  "away at some time.")
-        return utils.parsePythonModule(self.targetRoot, packagePath,
-                                       fileName)
-
     def getProtectedSection(self, parsed, section, ind=0):
         """Given a parsed python module and a section name, return a string
         with the protected code-section to be included in the generated module.

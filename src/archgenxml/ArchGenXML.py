@@ -43,10 +43,10 @@ def main():
     # from the command line arguments. 'args' is everything else
     # that's left. The first (and probably only) left-over argument
     # should be the model file
-    try:
+    if len(args) > 0:
         model = args[0]
         log.debug("Model file is '%s'.", model)
-    except:
+    else:
         log.critical("Hey, we need to be passed a UML file as an argument!")
         parser.print_help()
         sys.exit(2)
@@ -73,7 +73,7 @@ def main():
         log.debug("Outfilename not specified in the options. "
                   "Trying second loose commandline argument.")
         if len(args) > 1:
-            options['outfilename']=args[1]
+            options['outfilename'] = args[1]
         else:
             log.debug("No second argument found: keeping outfilename empty.")
             # the output dir will be named after the model
@@ -89,7 +89,14 @@ def main():
     except ImportError:
         # if installed in site-packages:
         from archgenxml.ArchetypesGenerator import ArchetypesGenerator
-    gen=ArchetypesGenerator(model, **options)
+    # Instead of passing these options to the generator (which uses it
+    # to update it's self.__dict__, we ought to pass this along to a
+    # utility that you can grab from anywhere.
+    import utility
+    from archgenxml.interfaces import IOptions
+    optionsHolder = component.getUtility(IOptions, name='options')
+    optionsHolder.storeOptions(options)
+    gen = ArchetypesGenerator(model, **options)
     gen.parseAndGenerate()
 
 def info(type, value, tb):
