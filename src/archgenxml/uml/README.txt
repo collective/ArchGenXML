@@ -4,6 +4,6 @@ Using interfaces
 test:
 
     >>> 1 == 2
-    True
+    False
 
 sdfsdf

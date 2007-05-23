@@ -34,7 +34,8 @@ class ConfigPyView(object):
         if creation_permission:
             default_creation_permission = creation_permission
         else:
-            default_creation_permission = options.option('default_creation_permission')
+            default_creation_permission = options.option(
+                'default_creation_permission')
 
         roles = []
         creation_roles = []
