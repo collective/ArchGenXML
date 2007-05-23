@@ -15,14 +15,14 @@ import os.path
 import logging
 from sets import Set
 from odict import odict
-from utils import mapName
-from utils import toBoolean
-from utils import normalize
-from utils import wrap as doWrap
+from archgenxml.utils import mapName
+from archgenxml.utils import toBoolean
+from archgenxml.utils import normalize
+from archgenxml.utils import wrap as doWrap
 from xml.dom import minidom
-from TaggedValueSupport import tgvRegistry
+from archgenxml.TaggedValueSupport import tgvRegistry
 from zope import interface
-from archgenxml.interfaces import uml
+from archgenxml.uml.interfaces import *
 
 log = logging.getLogger('XMIparser')
 
@@ -1201,7 +1201,7 @@ class StateMachineContainer:
 
 
 class XMIPackage(XMIElement, StateMachineContainer):
-    interface.implements(uml.IPackage)
+    interface.implements(IPackage)
     project = None
     isroot = 0
 
@@ -1416,7 +1416,7 @@ class XMIPackage(XMIElement, StateMachineContainer):
 
 
 class XMIModel(XMIPackage):
-    interface.implements(uml.IPackage)
+    interface.implements(IPackage)
     isroot = 1
     parent = None
     diagrams = {}

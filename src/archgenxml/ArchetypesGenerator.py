@@ -37,8 +37,8 @@ from documenttemplate.documenttemplate import HTML
 
 from zope import interface
 from zope import component
-from archgenxml.browser.interfaces import IConfigPyView
-from archgenxml.interfaces import uml
+from archgenxml.plone.interfaces import IConfigPyView
+from archgenxml.uml.interfaces import *
 
 
 _marker = []
@@ -2664,7 +2664,7 @@ class ArchetypesGenerator(BaseGenerator):
         # new fangled stuff
         # Grab an adapter for the package (so from IPackage) to
         # IConfigPyView.
-        assert uml.IPackage.providedBy(package)
+        assert IPackage.providedBy(package)
         view = IConfigPyView(package)
         view.run(generator=self)
         # ^^^ Above run is still full of junk.
