@@ -2,10 +2,12 @@ import doctest
 import unittest
 
 import archgenxml
-#import archgenxml.interfaces
+import archgenxml.utility
+import archgenxml.plone.config_py
 
 modules = [
-    #archgenxml.interfaces,
+    archgenxml.utility,
+    archgenxml.plone.config_py,
     ]
 
 textfiles = [

@@ -12,6 +12,14 @@ from archgenxml.documenttemplate.documenttemplate import HTML
 
 class ConfigPyView(object):
     """A view for the toplevel config.py file
+
+      >>> from archgenxml.XMIParser import XMIPackage
+      >>> package = XMIPackage(None)
+      >>> adapter = IConfigPyView(package)
+      >>> from archgenxml.plone.config_py import ConfigPyView
+      >>> isinstance(adapter, ConfigPyView)
+      True
+
     """
     
     component.adapts(IPackage)

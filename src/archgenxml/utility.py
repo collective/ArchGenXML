@@ -7,11 +7,49 @@ parsed options in its self.__dict__. Putting the parsed options into a
 named utility can greatly cut down the number of times the generator
 has to be passed along.
 
+Once the utility module gets imported, the utility is set up.
+
+  >>> import archgenxml.utility
+
+Grab the utility like this:
+  
+  >>> from zope import component
+  >>> options = component.getUtility(IOptions, name='options')
+  >>> options
+  <archgenxml.utility.OptionsHolder object at ...>
+
+Fill the utility with a dictionary of options like this:
+
+  >>> someOptions = {'color': 'disgustingly pink',
+  ...                'adored_by': 'daughter'}
+  >>> options.storeOptions(someOptions)
+
+Getting the values back is a simple `options()` call. As the
+optionparser ought to set defaults for all options, a missing key
+should generate a nice, quick, explicit error right away. **Fail
+early** is python's motto.
+
+  >>> options.option('color')
+  'disgustingly pink'
+  >>> options.option('taste')
+  Traceback (most recent call last):
+  ...
+  NonExistingOptionError: Non-existing global option: taste.
+
 """
 
 from archgenxml.interfaces import IOptions
 from zope import component
 from zope import interface
+
+class NonExistingOptionError(Exception):
+    def __init__(self, optionName):
+        self.option = optionName
+        
+    def __str__(self):
+        msg = u'Non-existing global option: %s.'
+        return msg % self.option
+    
 
 class OptionsHolder(object):
     interface.implements(IOptions)
@@ -21,16 +59,18 @@ class OptionsHolder(object):
 
     def storeOptions(self, options):
         """Store the options.
+
+        Options should be a dictionary.
         """
         self.options = options
         
 
-    def option(self, optionName, default=None):
+    def option(self, optionName):
         """Retrieve the option.
         """
 
         if not optionName in self.options:
-            return default
+            raise NonExistingOptionError(optionName)
         return self.options[optionName]
 
 
