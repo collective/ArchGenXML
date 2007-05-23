@@ -411,7 +411,7 @@ class BaseGenerator:
                      ' '*4*self.infoind,
                      element.getName())
 
-        templ = utils.readTemplate(template)
+        templ = self.readTemplate(template)
         d = {
             'klass': element,
             'generator': self,
