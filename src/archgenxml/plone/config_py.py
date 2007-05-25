@@ -58,7 +58,7 @@ class ConfigPyView(object):
            'builtins': __builtins__,
            'utils': utils,
            'default_creation_permission': default_creation_permission,
-           'creation_permissions': options.option('creation_permissions'),
+           'creation_permissions': generator.creation_permissions,
            'creation_roles': creation_roles,
            'parsed_config': parsed_config,
            }

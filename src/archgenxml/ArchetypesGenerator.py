@@ -29,6 +29,7 @@ from cStringIO import StringIO
 import PyParser
 import XMIParser
 from UMLProfile import UMLProfile
+from archgenxml.interfaces import IOptions
 
 from BaseGenerator import BaseGenerator
 from WorkflowGenerator import WorkflowGenerator
@@ -37,9 +38,9 @@ from documenttemplate.documenttemplate import HTML
 
 from zope import interface
 from zope import component
+
 from archgenxml.plone.interfaces import IConfigPyView
 from archgenxml.uml.interfaces import *
-
 
 _marker = []
 log = logging.getLogger('generator')
@@ -458,32 +459,43 @@ class ArchetypesGenerator(BaseGenerator):
         # cleaner. And it prevents us from passing along this
         # generator all the time. [reinout]
         BaseGenerator.__init__(self)
+        self.options = component.getUtility(IOptions, name='options')
+
         log.debug("Initializing ArchetypesGenerator. "
                   "We're being passed a file '%s' and keyword "
                   "arguments %r.", xschemaFileName, kwargs)
         self.xschemaFileName = xschemaFileName
         self.__dict__.update(kwargs)
-        log.debug("After copying over the keyword arguments (read: "
-                  "OptionParser's options), outfilename is '%s'.",
-                  self.outfilename)
-        if self.outfilename:
-            # Remove trailing delimiters on purpose
-            if self.outfilename[-1] in ('/','\\'):
-                self.outfilename = self.outfilename[:-1]
-            log.debug("Stripped off the eventual trailing slashes: '%s'.",
-                      self.outfilename)
+        self._calcGlobalOptions()
+        log.debug("Initialization finished.")
 
+    def _calcGlobalOptions(self):
+        outfilename = self.options.option('outfilename')
+        log.debug("Outfilename is '%s'.",
+                  outfilename)
+        if outfilename:
+            # Remove trailing delimiters on purpose
+            if outfilename[-1] in ('/','\\'):
+                outfilename = outfilename[:-1]
+                log.debug("Stripped off the eventual trailing slashes: '%s'.",
+                          outfilename)
             # Split off the parent directory part so that
             # we can call ArchgenXML.py -o /tmp/prod prod.xmi
-            path = os.path.split(self.outfilename)
-            self.targetRoot = path[0]
+            path = os.path.split(outfilename)
+            targetRoot = path[0]
             log.debug("Targetroot is set to everything except the last "
-                      "directory in the outfilename: %s.", self.targetRoot)
+                      "directory in the outfilename: %s.", targetRoot)
         else:
             log.debug("Outfilename hasn't been set. Setting "
                       "targetroot to the current directory.")
-            self.targetRoot = '.'
-        log.debug("Initialization finished.")
+            targetRoot = '.'
+        extraOptions = {}
+        extraOptions['targetRoot'] = targetRoot
+        extraOptions['outfilename'] = outfilename
+        self.options.storeOptions(extraOptions)
+        # Temporary old behaviour:
+        self.targetRoot = targetRoot
+        self.outfilename = outfilename
 
     def makeFile(self, fn, force=1, binary=0):
         log.debug("Calling makeFile to create '%s'.", fn)

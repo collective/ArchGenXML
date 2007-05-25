@@ -36,6 +36,19 @@ early** is python's motto.
   ...
   NonExistingOptionError: Non-existing global option: taste.
 
+Calling storeOptions() again should update the already stored options,
+it should not override them.
+
+  >>> extraOptions = {'color': 'blue',
+  ...                'taste': 'tasty'}
+  >>> options.storeOptions(extraOptions)
+  >>> options.option('color')
+  'blue'
+  >>> options.option('adored_by')
+  'daughter'
+  >>> options.option('taste')
+  'tasty'
+
 """
 
 from archgenxml.interfaces import IOptions
@@ -62,7 +75,7 @@ class OptionsHolder(object):
 
         Options should be a dictionary.
         """
-        self.options = options
+        self.options.update(options)
         
 
     def option(self, optionName):
