@@ -498,10 +498,7 @@ class ArchetypesGenerator(BaseGenerator):
         self.outfilename = outfilename
 
     def makeFile(self, fn, force=1, binary=0):
-        log.debug("Calling makeFile to create '%s'.", fn)
-        ffn = os.path.join(self.targetRoot, fn)
-        log.debug("Together with the targetroot that means '%s'.", ffn)
-        return utils.makeFile(ffn, force=force, binary=binary)
+        return utils.makeFile(fn, force=force, binary=binary)
 
     def readFile(self,fn):
         ffn = os.path.join(self.targetRoot, fn)

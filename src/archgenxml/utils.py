@@ -12,7 +12,12 @@ import os.path
 import sys
 import types
 
-import PyParser
+from zope import component
+
+from archgenxml.interfaces import IOptions
+from archgenxml import PyParser
+
+
 
 log = logging.getLogger('utils')
 
@@ -32,18 +37,22 @@ specialrpl = {
     # add more for other language here
 }
 
-def makeFile(outfilename, force=1, binary=0):
-    log.debug("Making file '%s' (force=%s).", outfilename, force)
+def makeFile(filename, force=1, binary=0):
+    log.debug("Calling makeFile to create '%s'.", filename)
+    options = component.getUtility(IOptions, name='options')
+    fullfilename = os.path.join(options.option('targetRoot'),
+                                filename)
+    log.debug("Making file '%s' (force=%s).", fullfilename, force)
     outfile = None
-    if (not force) and os.path.exists(outfilename):
+    if (not force) and os.path.exists(fullfilename):
         log.debug("File already exists and we're not to force it. Returning nothing.")
         return None
     else:
         log.debug("Opening the file for writing and returning it.")
         if binary:
-            outfile = open(outfilename, 'wb')
+            outfile = open(fullfilename, 'wb')
         else:
-            outfile = open(outfilename, 'w')
+            outfile = open(fullfilename, 'w')
     return outfile
 
 def readFile(filename):
@@ -171,30 +180,6 @@ def version():
     ver = resource_string(__name__, 'version.txt').strip()
     return "Version " + str(ver)
 
-def initLog(filename):
-    """Initialise the logger.
-
-    This needs only to be called from ArchGenXML.py and tests/runalltests.py.
-    """
-    log = logging.getLogger()
-    hdlr = logging.FileHandler(filename, 'w')
-    formatter = logging.Formatter('%(name)-10s %(levelname)-5s %(message)s')
-    hdlr.setFormatter(formatter)
-    log.addHandler(hdlr)
-    log.setLevel(logging.DEBUG)
-
-def addConsoleLogging():
-    """Add logging to the console.
-
-    This needs only to be called from ArchGenXML.py.
-    """
-    log = logging.getLogger()
-    hdlr = logging.StreamHandler(sys.stdout)
-    formatter = logging.Formatter('%(levelname)-5s %(message)s')
-    hdlr.setLevel(logging.INFO)
-    hdlr.setFormatter(formatter)
-    log.addHandler(hdlr)
-
 def normalize(data, doReplace=False):
     """Converts a unicode to string, stripping blank spaces."""
     if type(data) not in types.StringTypes:
@@ -234,38 +219,3 @@ def parsePythonModule(targetRoot, packagePath, fileName):
         raise
     return parsed
 
-def prepareZopeImport():
-    log.debug("Initializing zope3 machinery...")
-    ZOPEPATHFILE = '.agx_zope_path'
-    userDir = os.path.expanduser('~')
-    pathFile = os.path.join(userDir, ZOPEPATHFILE)
-    if os.path.exists(pathFile):
-        f = open (pathFile)
-        additionalPath = f.readline().strip()
-        f.close()
-        sys.path.insert(0, additionalPath)
-        log.debug("Read %s, added %s in front of the PYTHONPATH.",
-                  pathFile, additionalPath)
-    try:
-        log.debug("sys.path: %r", sys.path)
-        log.debug("Before import zope stuff, here "
-                  "are all loaded modules: %r",
-                  sys.modules.keys())
-        from zope import component
-        from zope.configuration import xmlconfig
-    except ImportError, e:
-        log.debug(e)
-        log.error("Could not import zope3 components.\n"
-                  "They are not available on the PYTHONPATH.\n"
-                  "Alternatively, you can place the path location "
-                  "in ~/%s.\n"
-                  "Put something like /opt/zope2.10.3/lib/python "
-                  "in there.", ZOPEPATHFILE)
-        if os.path.exists(pathFile):
-            log.error("Hm. Apparently '%s' already exists. "
-                      "Sure it points at a good zope's /lib/python "
-                      "directory? A good zope is 2.10 or 3.3+.",
-                      pathFile)
-            log.debug("Here are all loaded modules: %r",
-                      sys.modules)
-        sys.exit(1)

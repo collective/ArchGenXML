@@ -8,6 +8,12 @@
 #   python /path/to/Zope/utilities/testrunner.py -qa
 #
 
+# First things first.
+from archgenxml import loginitializer
+loginitializer.initLog('runalltests.log')
+import archgenxml.zopeimportfixer
+# End of stuff that needs to be done Right Now.
+
 import logging
 import os
 import sys
@@ -16,8 +22,6 @@ testDir = os.path.dirname(os.path.abspath(__file__))
 parentDir = testDir[:-6] # Strips off '/tests'
 # Appends the parent dir to the module search path
 sys.path.append(parentDir)
-import utils
-utils.prepareZopeImport()
 
 testDir = os.path.dirname(os.path.abspath(__file__))
 TestRunner = unittest.TextTestRunner
@@ -32,6 +36,5 @@ for test in tests:
         suite.addTest(m.test_suite())
 
 if __name__ == '__main__':
-    utils.initLog('runalltests.log')
     TestRunner().run(suite)
 

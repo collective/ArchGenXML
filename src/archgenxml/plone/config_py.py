@@ -33,7 +33,7 @@ class ConfigPyView(object):
         configpath = os.path.join(self.package.getFilePath(),
                                   'config.py')
         parsed_config = utils.parsePythonModule(
-            generator.targetRoot,
+            options.option('targetRoot'),
             self.package.getFilePath(),
             'config.py')
         creation_permission = generator.getOption('creation_permission',

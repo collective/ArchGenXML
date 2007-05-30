@@ -13,25 +13,31 @@
 
 # originally inspired Dave Kuhlman's generateDS Copyright (c) 2003 Dave Kuhlman
 
-from OptionParser import parser
-from pkg_resources import resource_filename
+# First things first, sadly.
+import loginitializer
+loginitializer.initLog('archgenxml.log')
+loginitializer.addConsoleLogging()
+import zopeimportfixer
+# End of the stuff that needs to be handled first.
+
 import archgenxml
 import logging
 import sys
 import utils
 import os
 
+from zope import component
+from zope.configuration import xmlconfig
+
+from OptionParser import parser
+from pkg_resources import resource_filename
+
 
 def main():
-    utils.initLog('archgenxml.log')
-    utils.addConsoleLogging()
     log = logging.getLogger('main')
-    utils.prepareZopeImport()
     # Import zope here as we want to possibly inject an extra
     # directory into the import path. Just depending on a zope in the
     # normal import path can easily mess up existing zope sites.
-    from zope import component
-    from zope.configuration import xmlconfig
 
     zcmlConfigFile = resource_filename(__name__, 'configure.zcml')
     xmlconfig.file(zcmlConfigFile, package=archgenxml)
