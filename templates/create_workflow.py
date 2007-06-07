@@ -183,9 +183,11 @@ def create<dtml-var "statemachine.getCleanName()">(self, id):
 
     ob = DCWorkflowDefinition(id)
     setup<dtml-var "statemachine.getCleanName()">(self, ob)
-    wft = getToolByName(self, 'portal_workflow')
-    wft._setOb('<dtml-var "statemachine.getCleanName()">', ob)
-    return
+##    wft = getToolByName(self, 'portal_workflow')
+##    if '<dtml-var "statemachine.getCleanName()">' in wft.objectIds():
+##        wft.manage_delObjects(['<dtml-var "statemachine.getCleanName()">'])
+##    wft._setOb('<dtml-var "statemachine.getCleanName()">', ob)
+    return ob
 
 #addWorkflowFactory(create<dtml-var "statemachine.getCleanName()">,
 #                   id='<dtml-var "statemachine.getCleanName()">',

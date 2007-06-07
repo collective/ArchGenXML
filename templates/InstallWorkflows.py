@@ -19,7 +19,7 @@ def installWorkflows(self, package, out):
     if '<dtml-var "generator.cleanName(sm.getName())">' in workflowTool.listWorkflows():
         print >> out, '<dtml-var "generator.cleanName(sm.getName())"> already in workflows.'
     else:
-        workflowTool._setObject('<dtml-var "generator.cleanName(sm.getName())">', workflow)
+        workflowTool._setOb('<dtml-var "generator.cleanName(sm.getName())">', workflow)
     workflowTool.setChainForPortalTypes(<dtml-var "repr(sm.getClassNames())">, workflow.getId())
 </dtml-let>
 </dtml-in>
