@@ -1,6 +1,5 @@
 <dtml-var "generator.generateModuleInfoHeader(package)">
 from Products.CMFCore.utils import getToolByName
-from Products.CMFCore.WorkflowTool import addWorkflowFactory
 from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
 from Products.ExternalMethod.ExternalMethod import ExternalMethod
 from Products.<dtml-var "package.getCleanName()">.config import *
@@ -184,10 +183,12 @@ def create<dtml-var "statemachine.getCleanName()">(self, id):
 
     ob = DCWorkflowDefinition(id)
     setup<dtml-var "statemachine.getCleanName()">(self, ob)
-    return ob
+    wft = getToolByName(self, 'portal_workflow')
+    wft._setOb('<dtml-var "statemachine.getCleanName()">', ob)
+    return
 
-addWorkflowFactory(create<dtml-var "statemachine.getCleanName()">,
-                   id='<dtml-var "statemachine.getCleanName()">',
-                   title='<dtml-var "statemachine.getTaggedValue('label') or statemachine.getCleanName()">')
+#addWorkflowFactory(create<dtml-var "statemachine.getCleanName()">,
+#                   id='<dtml-var "statemachine.getCleanName()">',
+#                   title='<dtml-var "statemachine.getTaggedValue('label') or statemachine.getCleanName()">')
 
 <dtml-var "generator.getProtectedSection(parsedModule,'create-workflow-module-footer')">
