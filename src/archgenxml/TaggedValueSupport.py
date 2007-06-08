@@ -213,6 +213,11 @@ tagname = 'default_interface_type'
 explanation = """default type of interfaces (z2 or z3)."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'strict'
+explanation = """On a class with the <<interface_doctest>> stereotype:
+check for inherited interfaces as well."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'archetype_name'
 explanation = """The name which will be shown in the "add new item" drop-down
 and other user-interface elements. Defaults to the class name, but whilst the
@@ -374,6 +379,10 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 # TBD: change this into 'polymorphic_allowed_types' with a default of True.
 # Optilude is right on this one. It *does* need support for default values.
 
+tagname = 'register'
+explanation = """CMFMember related. Set as default member type."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 # Tool
 category = 'tool'
 
@@ -444,6 +453,27 @@ category = 'method'
 # The following tagged values can be set on methods to alter their
 # behaviour:
 
+tagname = 'autoinstall'
+explanation = """Set this to right or left on a method with a
+stereotype '<<portlet>>', this adds the portlet to left_slots or
+right_slots. See the documentation for the stereotype. """
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'code'
+explanation = """The actual python code of the method. Only use this for
+simple one-liners. Code filled into the generated file will be preserved
+when the model is re-generated."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'documentation'
+explanation = """You can add documention via this tag; it's better to
+use your UML tool's documentation field."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'label'
+explanation = """Sets the readable name."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'permission'
 explanation = """For method with public visibility only, if a
 permission is set, declare the method to be protected by this
@@ -451,8 +481,7 @@ permission. Methods with private or protected visiblity are always
 declared private since they are not intended for through-the-web
 unsafe code to access. Methods with package visibility use the class
 default security and do not get security declarations at all."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname,
-explanation=explanation)
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 # Actions/forms/views
 
@@ -793,6 +822,13 @@ tagname = 'relation_field'
 explanation = """Use a custom field instead of RelationField. Works
 only together with 'Relations' Product and relation_implementation
 set to 'relations'."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'field'
+explanation = """Synonymous with either reference_field or
+relation_field, depending on whether you use it on the *from* end or the
+*to* end of a relation. Works only together with 'Relations' Product and
+relation_implementation set to 'relations'."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 
