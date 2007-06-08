@@ -1517,7 +1517,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         if self.getOption('relation_implementation', rel, 'basic') == \
            'relations'  and (rel.fromEnd.isNavigable or \
-           rel.getTaggedValue('inverse_reference_name')):
+           rel.getTaggedValue('inverse_relation_name')):
             # The relation can override the field
             field = rel.getTaggedValue('relation_field') or \
                     rel.getTaggedValue('field') or \
@@ -1630,14 +1630,7 @@ class ArchetypesGenerator(BaseGenerator):
                 if startmarker:
                     startmarker=False
                     print >> outfile, 'copied_fields = {}'
-                if (element.hasStereoType(self.cmfmember_stereotype,
-                                         umlprofile=self.uml_profile) or
-                    element.hasStereoType(self.remember_stereotype,
-                                         umlprofile=self.uml_profile) ):
-                    copy = "BaseMember.content_schema"
-                else:
-                    copybase_schema = base_schema
-                copyfrom = attr.getTaggedValue('copy_from', copybase_schema)
+                copyfrom = attr.getTaggedValue('copy_from', base_schema)
                 name = attr.getTaggedValue('source_name',attr.getName())
                 print >> outfile, "copied_fields['%s'] = %s['%s'].copy(%s)" % \
                          (attr.getName(), copyfrom, name, name!=attr.getName() \
@@ -2072,10 +2065,11 @@ class ArchetypesGenerator(BaseGenerator):
             baseclass = 'BaseMember.Member'
             baseschema = 'BaseMember.id_schema'
 
-        #njj # remember support
-        #njj if element.hasStereoType(self.remember_stereotype, umlprofile=self.uml_profile):
-        #njj     baseclass = 'BaseMember'
-        #njj     baseschema = 'BaseMember.schema'
+        # remember support
+        if element.hasStereoType(self.remember_stereotype, umlprofile=self.uml_profile):
+            if 'BaseMember' not in parentnames:
+                parentnames.insert(0, 'BaseMember')
+            # baseschema = 'BaseMember.schema'
 
         ## however: tagged values have priority
         # tagged values for base-class overrule
@@ -2088,13 +2082,17 @@ class ArchetypesGenerator(BaseGenerator):
 
         # [optilude] Ignore the standard class if this is an mixin
         # [jensens] An abstract class might have a base_class!
-        if baseclass and not utils.isTGVFalse(element.getTaggedValue('base_class',1)) \
-           and not element.hasStereoType('mixin', umlprofile=self.uml_profile):
-              baseclasses = baseclass.split(',')
-              if utils.isTGVTrue(element.getTaggedValue('parentclass_first')) or utils.isTGVTrue(element.getTaggedValue('parentclasses_first')):
-                  parentnames = parentnames + baseclasses #this way base_class is used after generalization parents
-              else:
-                  parentnames = baseclasses + parentnames #this way base_class is used before anything else
+        if (baseclass and not 
+            utils.isTGVFalse(element.getTaggedValue('base_class',1)) and not 
+            element.hasStereoType('mixin', umlprofile=self.uml_profile)):
+            baseclasses = baseclass.split(',')
+            if (utils.isTGVTrue(element.getTaggedValue('parentclass_first')) or 
+                utils.isTGVTrue(element.getTaggedValue('parentclasses_first')) or 
+                element.hasStereoType(self.remember_stereotype, umlprofile=self.uml_profile)):
+                # In case of remember, BaseMember needs to come first, to ensure that BaseMember.validate_roles overrides RoleManager.validate_roles
+                parentnames = parentnames + baseclasses #this way base_class is used after generalization parents
+            else:
+                parentnames = baseclasses + parentnames #this way base_class is used before anything else
         parentnames = [klass.strip() for klass in parentnames]
 
         #remove double entries in parentnames
@@ -2252,9 +2250,6 @@ class ArchetypesGenerator(BaseGenerator):
                          "as cmfmember 1.0 already includes it.")
             # Including it by default anyway, since 1.4.0/dev.
             parentnames.insert(0, 'VariableSchemaSupport')
-
-        if element.hasStereoType(self.remember_stereotype, umlprofile=self.uml_profile):
-            parentnames.insert(0, 'BaseMember')
 
         # Interface aggregation
         if self.getAggregatedInterfaces(element):
@@ -2994,7 +2989,7 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateStdFiles(package)
 
     def generateRelation(self, doc, collection, relname, relid,
-            sourcetype=None, targettype=None,
+            allowed_source_types=[], allowed_target_types=[],
             sourceinterface=None,targetinterface=None,
             sourcecardinality=(None,None),
             targetcardinality=(None,None),
@@ -3009,30 +3004,32 @@ class ArchetypesGenerator(BaseGenerator):
         collection.appendChild(ruleset)
 
         #type and interface constraints
-        if sourcetype or targettype:
+        if allowed_source_types or allowed_target_types:
             typeconst=doc.createElement('TypeConstraint')
             typeconst.setAttribute('id','type_constraint')
             ruleset.appendChild(typeconst)
 
+        for sourcetype in allowed_source_types:
+            el=doc.createElement('allowedSourceType')
+            typeconst.appendChild(el)
+            el.appendChild(doc.createTextNode(sourcetype))
+
+        for targettype in allowed_target_types:
+            el=doc.createElement('allowedTargetType')
+            typeconst.appendChild(el)
+            el.appendChild(doc.createTextNode(targettype))
+
+        # I don't know if the same as the above goes for interfaces
         if sourceinterface or targetinterface:
             ifconst=doc.createElement('InterfaceConstraint')
             ifconst.setAttribute('id','interface_constraint')
             ruleset.appendChild(ifconst)
 
-
-        if sourcetype:
-            el=doc.createElement('allowedSourceType')
-            typeconst.appendChild(el)
-            el.appendChild(doc.createTextNode(sourcetype))
         if sourceinterface:
             el=doc.createElement('allowedSourceInterface')
             ifconst.appendChild(el)
             el.appendChild(doc.createTextNode(sourceinterface))
 
-        if targettype:
-            el=doc.createElement('allowedTargetType')
-            typeconst.appendChild(el)
-            el.appendChild(doc.createTextNode(targettype))
         if targetinterface:
             ifconst.setAttribute('id','interface_constraint')
             el=doc.createElement('allowedTargetInterface')
@@ -3114,20 +3111,29 @@ class ArchetypesGenerator(BaseGenerator):
             sourcecard[0]=None #temporary pragmatic fix
             targetcard[0]=None #temporary pragmatic fix
             #print 'relation:',assoc.getName(),'target cardinality:',targetcard,'sourcecard:',sourcecard
-            sourcetype=None
-            targettype=None
+            allowed_source_types=None
+            allowed_target_types=None
             sourceinterface=None
             targetinterface=None
+
+            def getAllowedTypes(obj):
+                if obj.isAbstract():
+                    allowed_types=tuple(obj.getGenChildrenNames())
+                else:
+                    allowed_types=(obj.getName(),) + tuple(obj.getGenChildrenNames())
+                return allowed_types
 
             if source.isInterface():
                 sourceinterface=source.getCleanName()
             else:
-                sourcetype=source.getCleanName()
+                allowed_source_types = getAllowedTypes(source)
+                # sourcetype=source.getCleanName()
 
             if target.isInterface():
                 targetinterface=target.getCleanName()
             else:
-                targettype=target.getCleanName()
+                allowed_target_types = getAllowedTypes(target)
+                # targettype=target.getCleanName()
 
             inverse_relation_name = assoc.getTaggedValue('inverse_relation_name', None)
             if not inverse_relation_name and assoc.fromEnd.isNavigable:
@@ -3146,8 +3152,8 @@ class ArchetypesGenerator(BaseGenerator):
             self.generateRelation(doc, coll,
                 assoc.getCleanName(),
                 assoc.getId(),
-                sourcetype=sourcetype,
-                targettype=targettype,
+                allowed_source_types=allowed_source_types,
+                allowed_target_types=allowed_target_types,
                 sourceinterface=sourceinterface,
                 targetinterface=targetinterface,
                 sourcecardinality=sourcecard,
