@@ -24,7 +24,7 @@ Fill the utility with a dictionary of options like this:
   ...                'adored_by': 'daughter'}
   >>> options.storeOptions(someOptions)
 
-Getting the values back is a simple `options()` call. As the
+Getting the values back is a simple `option()` call. As the
 optionparser ought to set defaults for all options, a missing key
 should generate a nice, quick, explicit error right away. **Fail
 early** is python's motto.
