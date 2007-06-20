@@ -1,6 +1,32 @@
 import logging
+import zopeimportfixer
 import textwrap
 log = logging.getLogger('umlprofile')
+
+
+categoryFromClassMap = {
+    #'XMIElement': [],
+    'XMIPackage': 'package',
+    'XMIModel': 'model',
+    'XMIClass': 'class',
+    'XMIInterface': 'interface',
+    #'XMIMethodParameter': ,
+    'XMIMethod': 'method',
+    'XMIAttribute': 'attribute',
+    #'XMIAssocEnd': ,
+    'XMIAssociation': 'association',
+    #'XMIAbstraction': ,
+    'XMIDependency': 'dependency',
+    #'XMIStateContainer': ,
+    #'XMIStateMachine': ,
+    'XMIStateTransition': 'state transition',
+    #'XMIAction': ,
+    #'XMIGuard': ,
+    'XMIState': 'state',
+    #'XMICompositeState': ,
+    #'XMIDiagram': ,
+    }
+
 
 class ChainedDict(dict):
     ''' chained dict class allows to conatenate dictionaries '''
@@ -153,6 +179,52 @@ class UMLProfile:
         list = self.getAllStereoTypes()
         return self.filterObjects(list, entities, **kw)
 
+    def getCategories(self):
+        """Used by argoumlprofilegenerator (copy of code further below).
+        """
+        
+        all = self.getAllStereoTypes()
+        stereotypes = []
+        for item in all:
+            stereotype = {}
+            stereotype['name'] = item.name
+            stereotype['categories'] = []
+            for entity in item.entities:
+                mapped_entity = categoryFromClassMap[entity]
+                stereotype['categories'].append(mapped_entity)
+            stereotype['description'] = item.get('description', 'TODO')
+            stereotypes.append(stereotype)
+        names = [item['name'] for item in stereotypes]
+        names.sort()
+        categories = {}
+        for item in stereotypes:
+            for category in item['categories']:
+                categories[category] = "dictionary just for making keys unique"
+        categories = categories.keys()
+        categories.sort()
+        return categories
+ 
+    def getCategoryElements(self, category):
+        """Used by argoumlprofilegenerator (copy of code further below).
+
+        Return a list of type/name dictionary items.
+        """
+
+        all = self.getAllStereoTypes()
+        elements = []
+        for item in all:
+            element = {}
+            element['name'] = item.name
+            element['categories'] = []
+            for entity in item.entities:
+                mapped_entity = categoryFromClassMap[entity]
+                element['categories'].append(mapped_entity)
+            element['description'] = item.get('description', 'TODO')
+            if category in element['categories']:
+                elements.append(element)
+        elements.sort(key=lambda i: i['name'])
+        return elements
+
     def getStereoType(self,name):
         return self.stereoTypes.get(name, None)
 
@@ -165,28 +237,6 @@ class UMLProfile:
 
         """
 
-        categoryFromClassMap = {
-            #'XMIElement': [],
-            'XMIPackage': 'package',
-            'XMIModel': 'model',
-            'XMIClass': 'class',
-            'XMIInterface': 'interface',
-            #'XMIMethodParameter': ,
-            'XMIMethod': 'method',
-            'XMIAttribute': 'attribute',
-            #'XMIAssocEnd': ,
-            'XMIAssociation': 'association',
-            #'XMIAbstraction': ,
-            'XMIDependency': 'dependency',
-            #'XMIStateContainer': ,
-            #'XMIStateMachine': ,
-            'XMIStateTransition': 'state transition',
-            #'XMIAction': ,
-            #'XMIGuard': ,
-            'XMIState': 'state',
-            #'XMICompositeState': ,
-            #'XMIDiagram': ,
-            }
         import StringIO
         out = StringIO.StringIO()
         all = self.getAllStereoTypes()
@@ -208,6 +258,7 @@ class UMLProfile:
                 categories[category] = "dictionary just for making keys unique"
         categories = categories.keys()
         categories.sort()
+        categories = self.getCategories()
         wrapper = textwrap.TextWrapper(replace_whitespace=True,
                                        initial_indent = ' ',
                                        subsequent_indent = '    ',

@@ -32,38 +32,41 @@ from UMLProfile import UMLProfile
 log = logging.getLogger("basegenerator")
 
 
+base_uml_profile = UMLProfile()
+base_uml_profile.addStereoType('z3', ['XMIInterface'],
+    dispatching=1,
+    generator='generateZope3Interface',
+    template='zope3_interface.py',
+    description='Generate this interface class as zope 3 interface. This '
+                'will inherit from zope.interface.Interface.')
+
+base_uml_profile.addStereoType('python_class', ['XMIClass'],
+    dispatching=1,
+    generator='generatePythonClass',
+    template='python_class.py',
+    description='Generate this class as a plain python class '
+                'instead of as an Archetypes class.')
+
+base_uml_profile.addStereoType('view_class', ['XMIClass'],
+    dispatching=1,
+    generator='generateViewClass',
+    template='view_class.py',
+    description='Generate this class as a zope3 view class '
+                'instead of as an Archetypes class.')
+
+base_uml_profile.addStereoType('zope_class', ['XMIClass'],
+    dispatching=1,
+    generator='generateZopeClass',
+    template='zope_class.py',
+    description='Generate this class as a plain Zope class '
+                'instead of as an Archetypes class.')
+
+
+
 class BaseGenerator:
     """Abstract base class for the different concrete generators."""
 
-    uml_profile = UMLProfile()
-    uml_profile.addStereoType('z3', ['XMIInterface'],
-        dispatching=1,
-        generator='generateZope3Interface',
-        template='zope3_interface.py',
-        description='Generate this interface class as zope 3 interface. This '
-                    'will inherit from zope.interface.Interface.')
-
-    uml_profile.addStereoType('python_class', ['XMIClass'],
-        dispatching=1,
-        generator='generatePythonClass',
-        template='python_class.py',
-        description='Generate this class as a plain python class '
-                    'instead of as an Archetypes class.')
-
-    uml_profile.addStereoType('view_class', ['XMIClass'],
-        dispatching=1,
-        generator='generateViewClass',
-        template='view_class.py',
-        description='Generate this class as a zope3 view class '
-                    'instead of as an Archetypes class.')
-
-    uml_profile.addStereoType('zope_class', ['XMIClass'],
-        dispatching=1,
-        generator='generateZopeClass',
-        template='zope_class.py',
-        description='Generate this class as a plain Zope class '
-                    'instead of as an Archetypes class.')
-
+    uml_profile = base_uml_profile
     default_class_type = 'python_class'
     default_interface_type = 'z3'
     

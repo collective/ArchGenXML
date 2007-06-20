@@ -165,6 +165,16 @@ class TaggedValueRegistry:
         indentedLines = [(spaces + line) for line in lines]
         return '\n'.join(indentedLines)
 
+    def getCategories(self):
+        """ return name for 
+        """
+        return self._registry.keys()
+ 
+    def getCategoryElements(self, category):
+        tagnames = self._registry[category].keys()
+        tagnames.sort()
+        return tagnames
+
 
 tgvRegistry = TaggedValueRegistry()
 
@@ -609,7 +619,7 @@ be the same that archetypes expects, so something like 'FieldIndex' or
 'FieldIndex:brains'. Not needed in 99.9% of the cases, but a tuple can
 be used to create it in multiple catalogs:
 'python:("portal_catalog/FieldIndex:schema",
-"another_catalog/FieldIndex:schema, )'"""
+"another_catalog/FieldIndex:schema", )'"""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'validators'
@@ -831,6 +841,9 @@ relation_field, depending on whether you use it on the *from* end or the
 relation_implementation set to 'relations'."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'relationship'
+explanation = """Standard relationship for ReferenceField"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 # Tagged values for more than one category
 
@@ -1013,6 +1026,29 @@ for category in tgvRegistry._registry:
     if not tgvRegistry._registry[category].has_key(tagname):
         # Making sure we don't overwrite specialised stuff :-)
         tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+undocumented_tags = [
+    # unknown tags
+    'Modify', 'access', 'i18ncontent', 'default_page_type',
+    # class tags
+    'rename_after_creation', 'storage',
+    # field tags
+    'languageIndependent', 'default_content_type', 'default_output_type',
+    # widget tags
+    'default:widget:Reference',
+    'widget:size', 'widget:maxlength', 'widget:rows', 'widget:cols',
+    'widget:divider', 'widget:append_only', 'widget:format',
+    'widget:future_years', 'widget:starting_year', 'widget:ending_year',
+    'widget:show_ymd', 'widget:show_hm', 'widget:thousands_commas',
+    'widget:whole_dollars', 'widget:dollars_and_cents', 'widget:addable',
+    'widget:allow_file_upload', 'widget:visible', 'columns', 'allow_empty_rows',
+    'widget:auto_insert', 'widget:columns', 'widget:provideNullValue',
+    'widget:nullValueTitle', 'widget:omitCountries', 'widget:allow_brightness',
+]
+category = 'unknown'
+explanation = ''
+for tagname in undocumented_tags:
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 if __name__ == '__main__':
     print tgvRegistry.documentation()
