@@ -24,6 +24,8 @@ __version__ = "$Revision:  $"
 # $Id:  $
 __docformat__ = 'restructuredtext'
 
+import os.path
+
 from TaggedValueSupport import tgvRegistry
 from archgenxml import loginitializer
 loginitializer.addConsoleLogging()
@@ -156,6 +158,7 @@ def main():
         'color',
         'computed',
         'country',
+        'copy',
         'datagrid',
         'date',
         'file',
@@ -195,7 +198,7 @@ def main():
                 })
             index = index + 1
     ## One for rules them all
-    f = file('argouml_profile.xmi', 'w')
+    f = file(os.path.join('argouml', 'argouml_profile.xmi'), 'w')
     f.write(BASE_FILE % {
         'logs': '',
         'stereotypes': '\n'.join(stereotypes),
