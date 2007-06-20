@@ -292,6 +292,10 @@ at_uml_profile.addStereoType(
                 'can be used to turn normal classes into folders, too.')
 
 at_uml_profile.addStereoType(
+    'atfolder', ['XMIClass'],
+    description='Turns the class into an ATFolder subclass.')
+
+at_uml_profile.addStereoType(
     'ordered', ['XMIClass'],
     description='For folderish types, include folder ordering support. '
                 'This will allow the user to re-order items in the folder '
@@ -408,7 +412,7 @@ class ArchetypesGenerator(BaseGenerator):
     cmfmember_stereotype = ['CMFMember', 'member']
     remember_stereotype = ['remember']
     python_stereotype = ['python', 'python_class', 'view']
-    folder_stereotype = ['folder', 'ordered', 'large', 'btree']
+    folder_stereotype = ['atfolder', 'folder', 'ordered', 'large', 'btree']
 
     i18n_at = ['i18n-archetypes', 'i18n', 'i18n-at']
     generate_datatypes = ['field', 'compound_field']
@@ -2037,9 +2041,14 @@ class ArchetypesGenerator(BaseGenerator):
             if element.hasStereoType('ordered', umlprofile=self.uml_profile):
                 baseclass ='OrderedBaseFolder'
                 baseschema ='OrderedBaseFolderSchema'
-            elif element.hasStereoType(['large','btree'], umlprofile=self.uml_profile):
+            elif element.hasStereoType(['large','btree'],
+                                       umlprofile=self.uml_profile):
                 baseclass ='BaseBTreeFolder'
                 baseschema ='BaseBTreeFolderSchema'
+            elif element.hasStereoType(['atfolder'],
+                                       umlprofile=self.uml_profile):
+                baseclass ='ATFolder'
+                baseschema ='ATFolderSchema'
             else:
                 baseclass ='BaseFolder'
                 baseschema ='BaseFolderSchema'

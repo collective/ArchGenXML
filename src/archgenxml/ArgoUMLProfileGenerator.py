@@ -139,12 +139,8 @@ def main():
     index = 300
     for category in stereotype_categories:
         type_ = category
-        #type_ = type_.capitalize()  # Needed?
-        try:
-            elements = at_uml_profile.getCategoryElements(category)
-        except KeyError:
-            log.error("Category '%s' not found.", category)
-            elements = []
+        type_ = type_.capitalize() 
+        elements = at_uml_profile.getCategoryElements(category)
         for element in elements:
             name = element['name']
             stereotypes.append(STEREOTYPE_GENERIC % {
