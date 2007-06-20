@@ -293,7 +293,10 @@ at_uml_profile.addStereoType(
 
 at_uml_profile.addStereoType(
     'atfolder', ['XMIClass'],
-    description='Turns the class into an ATFolder subclass.')
+    description='Turns the class into an ATFolder subclass.',
+    imports=['from Products.ATContentTypes.content.file import ATFile',
+             'from Products.ATContentTypes.content.file import ATFileSchema',]
+    )
 
 at_uml_profile.addStereoType(
     'ordered', ['XMIClass'],
@@ -413,6 +416,7 @@ class ArchetypesGenerator(BaseGenerator):
     remember_stereotype = ['remember']
     python_stereotype = ['python', 'python_class', 'view']
     folder_stereotype = ['atfolder', 'folder', 'ordered', 'large', 'btree']
+    atct_stereotype = ['atfolder',]
 
     i18n_at = ['i18n-archetypes', 'i18n', 'i18n-at']
     generate_datatypes = ['field', 'compound_field']
@@ -709,6 +713,17 @@ class ArchetypesGenerator(BaseGenerator):
         if self.getOption('vocabulary:type', element, None) == 'ATVocabularyManager' or \
            element.hasAttributeWithTaggedValue('vocabulary:type','ATVocabularyManager'):
             print >> outfile, 'from Products.ATVocabularyManager.namedvocabulary import NamedVocabulary'
+
+        if element.hasStereoType(self.atct_stereotype,
+                                 umlprofile=self.uml_profile):
+            log.debug("ATCT stereotype found, adding imports.")
+            for stereotypeName in self.atct_stereotype:
+                if element.hasStereoType(stereotypeName,
+                                         umlprofile=self.uml_profile):
+                    st = self.uml_profile.getStereoType(stereotypeName)
+                    imports = st.get('imports', [])
+                    for import_ in imports:
+                        print >> outfile, import_
 
         return outfile.getvalue()
 

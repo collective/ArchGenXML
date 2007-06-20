@@ -225,7 +225,7 @@ class UMLProfile:
         elements.sort(key=lambda i: i['name'])
         return elements
 
-    def getStereoType(self,name):
+    def getStereoType(self, name):
         return self.stereoTypes.get(name, None)
 
     def documentation(self, indentation=0):
