@@ -11,7 +11,9 @@ class <dtml-var "klass.getCleanName()"><dtml-if base_class>(<dtml-var base_class
 </dtml-let>
     <dtml-var "generator.getDocFor(klass,indent=1)">
 
-<dtml-var "generator.getProtectedSection(parsed_class,'class-header_'+klass.getCleanName(),1)">
+<dtml-if "False">
+<dtml-var "generator.getProtectedSection(parsed_class,'class-header_'+klass.persistence.name,1)">
+</dtml-if>
 
 <dtml-if vars>
 <dtml-if atts>
@@ -50,14 +52,17 @@ class <dtml-var "klass.getCleanName()"><dtml-if base_class>(<dtml-var base_class
 <dtml-if "m.getParent().__class__.__name__=='XMIInterface'">
     #from Interface <dtml-var "m.getParent().getName()">:
 </dtml-if>
-<dtml-if "not m.getTaggedValue('force-code', False) and ((hasattr(parsed_class,'methods') and (m.getCleanName() in parsed_class.methods.keys())) or (hasattr(m.inherited_from,'parsed_class') and (hasattr(m.inherited_from.parsed_class,'methods')) and (m.getCleanName() in m.inherited_from.parsed_class.methods.keys())))">
-<dtml-var "generator.getMethodSource(generator.getMethods(klass),m)">
+<dtml-if "not m.getTaggedValue('force-code', False) and parsed_class and hasattr(parsed_class,'methods') and m.persistence.name in parsed_class.methods.keys()">
+<dtml-var "generator.getMethodSource(parsed_class.methods, m)">
+<dtml-else>
 <dtml-let param="generator.getParamList(m)">
     def <dtml-var "m.getName()">(self<dtml-if param>, <dtml-var param></dtml-if>):
 </dtml-let>
         <dtml-var "generator.getDocFor(m)">
-        #Code from UML-Diagramm
-        <dtml-var "m.getTaggedValue('code','pass')">
+        <dtml-if "m.getTaggedValue('code',False)">#from UML-Diagramm:
+        <dtml-var "m.getTaggedValue('code')">
+        <dtml-else>pass</dtml-if>
+
 </dtml-if>
 <dtml-if "m.isStatic()">
     <dtml-var "m.getName()"> = staticmethod(<dtml-var "m.getName()">)

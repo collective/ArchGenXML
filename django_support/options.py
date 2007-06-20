@@ -535,6 +535,15 @@ parser.add_option_group(group)
 
 #Django specific Options
 group = OptionGroup(parser, "DjanGenXML Specific")
+group.add_option("--backup-path",
+                 help="""set the Path to the automated backup""",
+                 default='backup',
+                 type="string",
+                 dest="backup_path",
+                 section="DJANGO I18N",
+                 )
+
+group = OptionGroup(parser, "DjanGenXML Specific")
 group.add_option("--i18n-language",
                  help="""Sets if the Labels and help Texts are automatically
                  converted to a language, gettext means that gettext will handle this live

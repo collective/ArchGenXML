@@ -15,9 +15,12 @@ import os.path
 import logging
 from types import StringTypes
 from re import match, sub, compile, MULTILINE, DOTALL
+from shutil import rmtree, copytree
 
 import utils
 import copy
+import csv
+
 from odict import odict
 from codesnippets import *
 
@@ -40,7 +43,7 @@ from documenttemplate.documenttemplate import HTML
 from pkg_resources import resource_filename
 
 
-import config
+import config, rename_persistence
 
 _marker = []
 log = logging.getLogger('generator')
@@ -164,6 +167,11 @@ class DjangoGenerator(BaseGenerator):
         'Represenation', ['XMIAttribute'],
         description='Generates a self.__str__() (if not allready exist) that returns the attributes Value')
 
+    #stores the names of classes and funtions and their id
+    # to restore source code even after renaming the class and the method
+    id_list={}
+    #stores the old names
+    id_to_old_paths={}
 
     # The defaults here are already handled by OptionParser
     # (And we want only a single authorative source of information :-)
@@ -520,6 +528,10 @@ List of available Stereotypes:
 
 
     def translate(self, text, lazy=False, gettext=True):
+        try:
+            text=unicode(text)
+        except:
+            log.warn("Unicode Error - please use Standard ascii (sorry): %s" % text)
         lang = self.getOption('i18n_language', self.current_package)
 
         if lang in self.i18ntable:
@@ -608,8 +620,6 @@ List of available Stereotypes:
 
             as2.append(assoc)
 
-
-
         return as2+assocs
 
     def getMethods(self,klass):
@@ -619,11 +629,17 @@ List of available Stereotypes:
              list += self.getMethods(p)
 
         for e in self.getMethodsToGenerate(klass)[0]:
+            #we remember the id for being later able to
+            #get the source even if the member was renamed
+            self.id_list[e.id]=e.name
+
             for ee in list:
                 if ee.getCleanName() != e.getCleanName():
                     e.inherited_from=klass
                     list.append(e)
                     self.model_method_names.append(e.getName())
+
+
                     break
 
             if len(list)==0:
@@ -639,11 +655,11 @@ List of available Stereotypes:
     def getDocFor(self,m, indent=2):
         """Creates the Standart-Documentation of an XMIElement"""
 
-        #Documentation (even Code) can be international...
-        s = self.translate(m.getDocumentation(), gettext=False) ;
+        #Documentation can be international...
+        s = self.translate(m.getTaggedValue('documentation'), gettext=False) ;
 
         #Remove UML Only Documetation
-        r=compile('{uml.*?}',MULTILINE|DOTALL)
+        r=compile('{uml .*?}',MULTILINE|DOTALL)
         source= sub(r,'', s)
 
         if m.__class__.__name__ == 'XMIMethod':
@@ -680,12 +696,19 @@ List of available Stereotypes:
 
         """
         if not source:
-            if func.getCleanName() in methods.keys():
-                source=methods[func.getCleanName()].getSrc()
-            else:
-                source=m.inherited_from.parsed_class.methods[func.getCleanName()].getSrc()
 
-        r=compile('def .*?:',MULTILINE|DOTALL)
+            #log.info("Func: %s \n Parsed_Class: %s" % (func.persistence.name, methods))
+
+            if func.persistence.name in methods.keys():
+                source=methods[func.persistence.name].getSrc()
+            else:
+                #if no code in the child, get the from the parent
+                source=func.inherited_from.parsed_class.methods[func.persistence.name].getSrc()
+
+        #log.info(self.id_to_old_paths.get(func.id,'no name'))
+        #log.info(func.getCleanName())
+
+        r=compile('def[^:]+:',MULTILINE|DOTALL)
         source= sub(r,self.getMethodHeader(func), source, count=1)
 
         r=compile('""".*?"""',MULTILINE|DOTALL)
@@ -1117,6 +1140,10 @@ List of available Stereotypes:
         res = HTML(templ, d)()
         return res
 
+#    def generatePythonClass(self, element, template, nolog=False, **kw):
+
+#        BaseGenerator.generatePythonClass(self, element, template, nolog, **kw)
+
     def generateHeader(self, element):
         outfile=StringIO()
 
@@ -1342,6 +1369,9 @@ List of available Stereotypes:
                         element.assocsTo.append(copy.copy(assoc))
                         del(assoc)
 
+        package.path = self.parsed_func_sources.get(package.id, package.getFilePath())
+        self.id_list[package.id]=package.getFilePath()
+
         for element in package.getClasses()+package.getInterfaces():
 
             #skip stub and internal classes
@@ -1355,32 +1385,36 @@ List of available Stereotypes:
                           element.getName())
                 continue
 
-            #testin if have a Django-Model or something like this
-
 
             module=element.getModuleName()
             package.generatedModules.append(element)
             if element.type in self.ownfile_types:
-                outfilepath=os.path.join(package.getFilePath(), element.type+'s.py')
+                outfilepath=os.path.join(package.path, element.type+'s.py')
+                infilepath=os.path.join(*package.persistence.getPath()+[element.type+'s.py'])
             else:
-                outfilepath=os.path.join(package.getFilePath(), module+'.py')
+                outfilepath=os.path.join(package.path, module+'.py')
+                infilepath=os.path.join(*package.persistence.getPath()+[element.persistence.getModuleName()+'.py'])
 
             mod=None
             if self.method_preservation:
-                filename = os.path.join(self.targetRoot, outfilepath)
+                #we read the method sources from the backup!
+                #so we can preserve them even if we renamed class or member
+
+                filename = os.path.join(self.targetRoot, self.backup_path, infilepath)
                 log.debug("Filename (joined with targetroot) is "
                           "'%s'.", filename)
                 try:
+                    #read the Python module and parse it in classes und functions
+                    #store these in an dict by path and name
                     mod=PyParser.PyModule(filename)
                     log.debug("Existing sources found for element %s: %s.",
                               element.getName(), outfilepath)
                     for c in mod.classes.values():
-                        self.parsed_class_sources[package.getFilePath()+'/'+c.name]=c
+                        self.parsed_class_sources[package.persistence.getFilePath()+'/'+c.name]=c
                     for f in mod.functions.values():
-                        self.parsed_func_sources.setdefault(package.getFilePath()+'/'+element.getName(), {})[f.name]=f
+                        self.parsed_func_sources.setdefault(os.path.join(*element.persistence.getPath()),{})[f.name]=f
                 except IOError:
-                    log.debug("No source found at %s.",
-                              filename)
+                    log.debug("No source found at %s.", filename)
                     pass
                 except:
                     log.critical("Error while reparsing file '%s'.",
@@ -1389,8 +1423,9 @@ List of available Stereotypes:
 
             try:
                 outfile = StringIO()
-                element.parsed_class = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name,None)
-                element.parsed_funcs = self.parsed_func_sources.get(element.getPackage().getFilePath()+'/'+element.name,None)
+                #get the class/functions by name<->id relation or by path and name
+                element.parsed_class = self.parsed_class_sources.get(os.path.join(*element.persistence.getPath()),None)
+                element.parsed_funcs = self.parsed_func_sources.get(os.path.join(*element.persistence.getPath()),None)
                 element.parsed_mod = mod
                 if element.type in self.ownfile_types:
                     path = [pp.getModuleName() for pp in element.getQualifiedModulePath(
@@ -1466,28 +1501,32 @@ List of available Stereotypes:
 
 
         #we need to write the imports of the DjangoModels to the models File
-        #for simplyness we rewrite it therefore
+        #for simplyness we rewrite the models file therefore
 
         for filetype in self.ownfile_types:
             if self.file_opened.get(filetype):
                 buf=StringIO()
                 print >> buf,self.generateModuleInfoHeader(package)
                 if filetype=='model':
-                    print >>buf, '\nfrom django.db import models'
-                    print >>buf, 'from django.utils.translation import gettext_lazy'
+                    print >>buf, u'\nfrom django.db import models'
+                    print >>buf, u'from django.utils.translation import gettext_lazy'
                 if filetype=='test':
-                    print >>buf, 'import unittest'
+                    print >>buf, u'import unittest'
 
                 for module, implements in self.implements.get(filetype,{}).items():
-                    print >>buf, self.printImplement(module, implements)
+                    print >>buf, unicode(self.printImplement(module, implements))
 
                 outfilepath=os.path.join(package.getFilePath(), filetype+'s.py')
                 infile=open(outfilepath,'r')
 
-                print >> buf, infile.read()
-                log.info(buf.getvalue()[2730:2750])
+
+                print >> buf, unicode(infile.read())
+
                 classfile = self.makeFile(outfilepath)
-                print >> classfile, buf.getvalue()
+                try:
+                    print >> classfile, buf.getvalue()
+                except UnicodeDecodeError:
+                    log.info(buf.getvalue())
                 classfile.close()
 
         #generate subpackages
@@ -1748,13 +1787,20 @@ List of available Stereotypes:
         #create the directories
         self.makeDir(root.getFilePath())
 
+
+
         #generate a Django Project if wanted (see Options)
 
         if self.startproject=='yes' or \
-           self.startproject=='auto' and not os.path.exists(root.getCleanName()) :
+           self.startproject=='auto' and not os.path.exists(root.getCleanName()):
             log.info("\tCreating Django Project")
             os.system('django-admin.py startproject %s' % root.getCleanName())
             self.startproject='yes';
+
+        log.info("Init Rename Resistance")
+        rename_persistence.Do(root,
+                             os.path.join(self.targetRoot, self.backup_path, root.getFilePath(), 'id_list.csv'),
+                             os.path.join(self.targetRoot, root.getFilePath(), 'id_list.csv'))
 
         package = root
         self.generateRelations(root)
@@ -1768,12 +1814,14 @@ List of available Stereotypes:
         self.infoind -= 1
 
 
+
     def parseAndGenerate(self):
 
         # and now start off with the class files
         self.generatedModules=[]
 
         suff = os.path.splitext(self.xschemaFileName)[1].lower()
+
         log.info("Parsing...")
         if suff.lower() in ('.xmi','.xml'):
             log.debug("Opening xmi...")
@@ -1808,6 +1856,17 @@ List of available Stereotypes:
                       "name of the root generator.")
         log.info("Directory in which we're generating the files: '%s'.",
                  self.outfilename)
+
+
+
+        log.info("Backup old Files...")
+        backup = os.path.join(self.targetRoot, self.backup_path, root.getFilePath())
+        rmtree(backup, True)
+        src=os.path.join(self.targetRoot, root.getFilePath())
+        if os.path.exists(src):
+            copytree(src, backup, True)
+
+
 
         log.info('Generating...')
         if self.method_preservation:

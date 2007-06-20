@@ -36,7 +36,7 @@
 <dtml-if "m.getParent().__class__.__name__=='XMIInterface'">
     #from Interface <dtml-var "m.getParent().getName()">:
 </dtml-if>
-<dtml-if "parsed_funcs and m.getCleanName() in parsed_funcs.keys()">
+<dtml-if "parsed_funcs and m.persistence.name in parsed_funcs.keys()">
 <dtml-var "generator.getMethodSource(parsed_funcs, m, indent=1)">
 
 <dtml-else>

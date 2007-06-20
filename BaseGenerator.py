@@ -66,7 +66,7 @@ class BaseGenerator:
 
     default_class_type = 'python_class'
     default_interface_type = 'z3'
-    
+
     # indent helper for log output:
     infoind = 0
 
@@ -270,7 +270,7 @@ class BaseGenerator:
                 print >> outfile, line
 
         return outfile.getvalue().strip()
-    
+
     def getInterfaceType(self,element):
         if element.hasStereoType('z3'):
             return 'z3'
@@ -283,9 +283,9 @@ class BaseGenerator:
         outfile = StringIO()
         # Zope 2 Interfaces
         reparents = element.getRealizationParents()
-        
+
         z2reparentnames = [p.getName() for p in reparents if self.getInterfaceType(p) == 'z2']
-                
+
         if z2reparentnames:
             z2iface_implements = \
                 ' + '.join(["(%s,)" % i for i in z2reparentnames])
@@ -312,14 +312,14 @@ class BaseGenerator:
 
 
         # Zope 3 interfaces
-        z3reparentnames = [p.getName() for p in reparents 
+        z3reparentnames = [p.getName() for p in reparents
                            if (self.getInterfaceType(p) == 'z3'\
                                or p.hasStereoType('view_class'))]
         if z3reparentnames:
             print >> outfile, utils.indent('# zope3 interfaces', 1)
             concatstring = ', '.join(z3reparentnames)
             print >> outfile, utils.indent("interface.implements(%s)" % concatstring, 1)
-            
+
 
 
         return outfile.getvalue()
@@ -370,9 +370,10 @@ class BaseGenerator:
             dispatching_stereotype = self.getDefaultClassType()
 
         generator = dispatching_stereotype.generator
-        return getattr(self, generator)(element,
+        x= getattr(self, generator)(element,
                                        template=getattr(dispatching_stereotype,
                                                         'template', None))
+        return x
 
     def dispatchXMIInterface(self, element):
         log.debug("Finding suitable dispatching stereotype for element...")
@@ -410,6 +411,8 @@ class BaseGenerator:
         d.update(__builtins__)
         d.update(kw)
         res = HTML(templ, d)()
+
+
         return res
 
     def generateViewClass(self, element, template, nolog=False, **kw):
@@ -568,10 +571,10 @@ class BaseGenerator:
         else:
             log.debug("We don't want version info in this file.")
             versiontext = ''
-            
+
         encoding = self.getOption('encoding', element, 'utf-8')
         log.debug("Encoding for python files is set to %s" % encoding)
-        
+
         moduleinfo = {
             'authors': ', '.join(authors),
             'emails': ', '.join(emails),
@@ -587,7 +590,7 @@ class BaseGenerator:
 
     def generateModuleInfoHeader(self, element, name=None):
         """Generate the module header.
-        
+
         Watch out: generate at least the encoding header, the rest is
         optional.
         """

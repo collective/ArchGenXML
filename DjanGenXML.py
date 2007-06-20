@@ -22,12 +22,12 @@ import utils
 from django_support.options import parser
 
 
-try:
+#try:
     # for standalone use
-    from django_support.DjangoGenerator import DjangoGenerator
-except ImportError:
+from django_support.DjangoGenerator import DjangoGenerator
+#except ImportError:
     # if installed in site-packages:
-    from ArchGenXML.django_support.DjangoGenerator import DjangoGenerator
+#    from ArchGenXML.django_support.DjangoGenerator import DjangoGenerator
 try:
     from ArchetypesGenerator import ArchetypesGenerator
 except ImportError:
