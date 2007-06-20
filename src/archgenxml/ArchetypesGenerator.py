@@ -294,8 +294,8 @@ at_uml_profile.addStereoType(
 at_uml_profile.addStereoType(
     'atfolder', ['XMIClass'],
     description='Turns the class into an ATFolder subclass.',
-    imports=['from Products.ATContentTypes.content.file import ATFile',
-             'from Products.ATContentTypes.content.file import ATFileSchema',]
+    imports=['from Products.ATContentTypes.content.file import ATFolder',
+             'from Products.ATContentTypes.content.file import ATFolderSchema',]
     )
 
 at_uml_profile.addStereoType(
