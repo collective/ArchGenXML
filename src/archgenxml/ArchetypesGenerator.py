@@ -116,7 +116,7 @@ at_uml_profile.addStereoType(
     description='Turns the class into a portal tool.')
 
 at_uml_profile.addStereoType(
-    'stub', ['XMIClass', 'XMIModel', 'XMIPackage'],
+    'stub', ['XMIClass', 'XMIModel', 'XMIPackage', 'XMIInterface'],
     description='Prevents a class/package/model from being generated.')
 
 at_uml_profile.addStereoType(
