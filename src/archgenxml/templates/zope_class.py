@@ -11,7 +11,7 @@ from Globals import InitializeClass
 <dtml-if taggedImports><dtml-var taggedImports></dtml-if>
 <dtml-if dependentImports><dtml-var dependentImports></dtml-if>
 <dtml-if additionalImports><dtml-var additionalImports></dtml-if>
-<dtml-if "klass.hasStereoType('z3') or 'z3' in ['z3' for p in klass.getRealizationParents() if p.hasStereoType('z3')]">
+<dtml-if "klass.hasStereoType('z3') or 'z3' in ['z3' for p in klass.getRealizationParents() if not p.hasStereoType('z2')]">
 from zope import interface
 </dtml-if>
 

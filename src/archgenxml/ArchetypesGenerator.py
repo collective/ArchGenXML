@@ -2602,9 +2602,12 @@ class ArchetypesGenerator(BaseGenerator):
 
         outfile.write(s1)
 
-        genparentsstereotype = element.getRealizationParents()
+        genparentsstereotypes = element.getRealizationParents()
         hasz3parent = False
-        for gpst in genparentsstereotype:
+        if (genparentsstereotypes and
+            self.default_interface_type == 'z3'):
+            hasz3parent = True
+        for gpst in genparentsstereotypes:
             if gpst.hasStereoType('z3'):
                 hasz3parent = True
                 break
