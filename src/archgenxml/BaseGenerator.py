@@ -97,6 +97,7 @@ class BaseGenerator:
         return self.getUMLProfile().getStereoType(self.default_class_type)
 
     def getDefaultInterfaceType(self):
+        log.debug("Default interface type is %r.", self.default_interface_type)
         return self.getUMLProfile().getStereoType(self.default_interface_type)
 
     def processExpression(self, value, asString=True):
@@ -361,9 +362,10 @@ class BaseGenerator:
         for stereotype in dispatching_stereotypes:
             if element.hasStereoType(stereotype.getName()):
                 dispatching_stereotype = stereotype
-
+        log.debug("Dispatching interface stereotype is %r.", dispatching_stereotype)
         if not dispatching_stereotype:
             dispatching_stereotype = self.getDefaultInterfaceType()
+            log.debug("Grabbed default interface stereotype, %r.", dispatching_stereotype)
 
         generator = dispatching_stereotype.generator
         return getattr(self,generator)(element,

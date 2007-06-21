@@ -385,7 +385,7 @@ class ArchetypesGenerator(BaseGenerator):
 
     generator_generator = 'archetypes'
     default_class_type = 'content_class'
-    default_interface_type = 'z2'
+    default_interface_type = 'z3'
     uml_profile = at_uml_profile
 
     # The defaults here are already handled by OptionParser
