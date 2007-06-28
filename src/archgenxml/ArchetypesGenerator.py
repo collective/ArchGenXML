@@ -3164,7 +3164,7 @@ class ArchetypesGenerator(BaseGenerator):
                 targetinterface=target.getCleanName()
             else:
                 allowed_target_types = getAllowedTypes(target)
-                # targettype=target.getCleanName()
+                targettype=target.getCleanName()
 
             inverse_relation_name = assoc.getTaggedValue('inverse_relation_name', None)
             if not inverse_relation_name and assoc.fromEnd.isNavigable:
