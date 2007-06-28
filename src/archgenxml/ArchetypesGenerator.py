@@ -3117,6 +3117,15 @@ class ArchetypesGenerator(BaseGenerator):
         return ruleset
 
     def generateRelations(self, package):
+        # Initializing some stuff as I got an error report.
+        sourcetype = None
+        targettype = None
+        sourceinterface = None
+        targetinterface = None
+        sourcecardinality = None
+        targetcardinality = None
+        assocclassname = None
+        
         doc=minidom.Document()
         lib=doc.createElement('RelationsLibrary')
         doc.appendChild(lib)
