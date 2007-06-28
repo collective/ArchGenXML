@@ -1,7 +1,7 @@
 import os, sys
 try:
-    from Products.PloneTestCase.layer import ZCMLLayer
-    USELAYER = True
+    from Products.PloneTestCase.PloneTestCase import USELAYER
+    from Products.PloneTestCase.layer import PloneSite
 except:
     USELAYER = False
 if __name__ == '__main__':
@@ -61,7 +61,7 @@ def test_suite():
                          package='Products.<dtml-var "klass.getPackage().getProduct().getCleanName()">.doc',
                          test_class=<dtml-var "klass.getCleanName()">)
     if USELAYER:
-        s.layer=ZCMLLayer
+        s.layer = PloneSite
     return TestSuite((s,
                       ))
 
