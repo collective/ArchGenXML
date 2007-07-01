@@ -391,9 +391,10 @@ def install(self, reinstall=False):
     else:
         print >>out,'no custom install'
     setup_tool = getToolByName(portal, 'portal_setup')
+    old_context = setup_tool.getImportContextID()
     setup_tool.setImportContext('profile-<dtml-var "product_name">:default')
     setup_tool.runAllImportSteps()
-    setup_tool.setImportContext('profile-CMFPlone:plone')
+    setup_tool.setImportContext(old_context)
     print >> out, "Ran all GS import steps."
     return out.getvalue()
 
