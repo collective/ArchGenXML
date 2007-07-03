@@ -1331,6 +1331,28 @@ undocumented_tags = [
     'widget:allow_file_upload', 'widget:visible', 'columns', 'allow_empty_rows',
     'widget:auto_insert', 'widget:columns', 'widget:provideNullValue',
     'widget:nullValueTitle', 'widget:omitCountries', 'widget:allow_brightness',
+    ## tags for ReferenceWidget
+    'widget:checkbox_bound',
+    'widget:destination_types',
+    'widget:destination',
+    ## tags for ReferenceBrowserWidget
+    'widget:default_search_index',
+    'widget:show_indexes',
+    'widget:available_indexes',
+    'widget:allow_search',
+    'widget:allow_browse',
+    'widget:startup_directory',
+    'widget:base_query',
+    'widget:force_close_on_insert',
+    'widget:search_catalog',
+    'widget:allow_sorting',
+    'widget:show_review_state',
+    'widget:show_path',
+    'widget:only_for_review_states',
+    'widget:image_portal_types',
+    'widget:image_method',
+    'widget:history_length',
+    'widget:restrict_browsing_to_startup_directory',
 ]
 category = 'unknown'
 explanation = ''
