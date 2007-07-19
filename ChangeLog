@@ -1,3 +1,9 @@
+2007-07-19  Reinout van Rees  <reinout@zestsoftware.nl>
+
+	* src/archgenxml/ArchetypesGenerator.py: Added <<atfile>>,
+	<<atevent>> and <<atdocument>> stereotypes in addition to the
+	already existing <<atfolder>>.
+
 2007-05-30  Reinout van Rees  <reinout@zestsoftware.nl>
 
 	* src/archgenxml/zopeimportfixer.py: Moved the zope import fixer

@@ -299,6 +299,27 @@ at_uml_profile.addStereoType(
     )
 
 at_uml_profile.addStereoType(
+    'atfile', ['XMIClass'],
+    description='Turns the class into an ATFile subclass.',
+    imports=['from Products.ATContentTypes.content.file import ATFile',
+             'from Products.ATContentTypes.content.file import ATFileSchema',]
+    )
+
+at_uml_profile.addStereoType(
+    'atevent', ['XMIClass'],
+    description='Turns the class into an ATEvent subclass.',
+    imports=['from Products.ATContentTypes.content.event import ATEvent',
+             'from Products.ATContentTypes.content.event import ATEventSchema',]
+    )
+
+at_uml_profile.addStereoType(
+    'atdocument', ['XMIClass'],
+    description='Turns the class into an Atdocument subclass.',
+    imports=['from Products.ATContentTypes.content.document import ATDocument',
+             'from Products.ATContentTypes.content.document import ATDocumentSchema',]
+    )
+
+at_uml_profile.addStereoType(
     'ordered', ['XMIClass'],
     description='For folderish types, include folder ordering support. '
                 'This will allow the user to re-order items in the folder '
@@ -416,7 +437,11 @@ class ArchetypesGenerator(BaseGenerator):
     remember_stereotype = ['remember']
     python_stereotype = ['python', 'python_class', 'view']
     folder_stereotype = ['atfolder', 'folder', 'ordered', 'large', 'btree']
-    atct_stereotype = ['atfolder',]
+    atct_stereotype = ['atfolder',
+                       'atfile',
+                       'atdocument',
+                       'atevent',
+                       ]
 
     i18n_at = ['i18n-archetypes', 'i18n', 'i18n-at']
     generate_datatypes = ['field', 'compound_field']
@@ -2078,8 +2103,22 @@ class ArchetypesGenerator(BaseGenerator):
                       "folder_base_class' in class %s" % element.getCleanName
         else:
             # contentish
-            baseclass = 'BaseContent'
-            baseschema = 'BaseSchema'
+            if element.hasStereoType(['atfile'],
+                                       umlprofile=self.uml_profile):
+                baseclass ='ATFile'
+                baseschema ='ATFileSchema'
+            elif element.hasStereoType(['atevent'],
+                                       umlprofile=self.uml_profile):
+                baseclass ='ATEvent'
+                baseschema ='ATEventSchema'
+            elif element.hasStereoType(['atdocument'],
+                                       umlprofile=self.uml_profile):
+                baseclass ='ATDocument'
+                baseschema ='ATDocumentSchema'
+            else:
+                baseclass = 'BaseContent'
+                baseschema = 'BaseSchema'
+
             if self.i18n_content_support in self.i18n_at and element.isI18N():
                 baseclass ='I18NBaseContent'
                 baseschema ='I18NBaseSchema'
