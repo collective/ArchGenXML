@@ -113,7 +113,11 @@ def getExpression(s):
     """
     if s is None:
         s = ''
-    s = s.strip()
+    try:
+        s = s.strip()
+    except AttributeError:
+        # it is a int/float, probably, returning as string
+        return str(s)
     if s and (s[0]=='"' and s[-1]=='"' or s[0]=="'" and s[-1]=="'"):
         return s
     else:
@@ -182,8 +186,24 @@ def version():
 
 def normalize(data, doReplace=False):
     """Converts a unicode to string, stripping blank spaces."""
+    log.debug("Normalizing %r.", data)
     if type(data) not in types.StringTypes:
+        log.debug("Not string, returning as-is.")
         return data
+    try:
+        data = int(data)
+        log.debug("Converted to integer, returning %r.",
+                  data)
+        return data
+    except ValueError:
+        pass
+    try:
+        data = float(data)
+        log.debug("Converted to float, returning %r.",
+                  data)
+        return data
+    except ValueError:
+        pass
     if type(data) is types.StringType:
         # make unicode
         data = data.decode('utf-8')
@@ -193,6 +213,7 @@ def normalize(data, doReplace=False):
             for key in specialrpl:
                 data = data.replace(key, specialrpl[key])    
     if not data is None:
+        log.debug("Normalized, returning %r.", data)
         return data.encode('utf-8')
     else:
         return None

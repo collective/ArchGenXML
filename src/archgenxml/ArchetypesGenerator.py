@@ -462,12 +462,16 @@ class ArchetypesGenerator(BaseGenerator):
     parsed_sources = []
 
     # TaggedValues that are not strings, e.g. widget or vocabulary
-    nonstring_tgvs = ['columns', 'widget', 'provideNullValue', 'allow_brightness', 'languageIndependent', 'vocabulary', 'required', 'precision',
+    nonstring_tgvs = ['columns', 'widget', 'provideNullValue',
+                      'allow_brightness', 'languageIndependent', 'vocabulary',
+                      'required', 'precision', 
                       'storage', 'enforceVocabulary', 'multiValued',
                       'visible', 'validators', 'validation_expression',
-                      'sizes', 'original_size', 'max_size', 'searchable',
+                      'sizes', 'original_size', 'max_size',
+                      'searchable',
                       'show_hm', 'move:pos', 'move:top', 'move:bottom',
-                      'primary', 'array:widget','array:size']
+                      'primary', 'array:widget','array:size',
+                      'widget:starting_year', 'widget:ending_year',]
 
     msgcatstack = []
 
