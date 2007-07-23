@@ -1173,12 +1173,12 @@ class ArchetypesGenerator(BaseGenerator):
                 val=tup[1]
                 if key == 'type':
                     continue
-                if type(key) in StringTypes:
-                    if key not in self.nonstring_tgvs:
-                        val=utils.getExpression(val)
+                if key not in self.nonstring_tgvs:
+                    val=utils.getExpression(val)
                     # [optilude] Permit python: if people forget they don't have to (I often do!)
-                    else:
-                        if val.startswith ('python:'):
+                else:
+                    if type(val) in StringTypes:
+                        if val.startswith('python:'):
                             val = val[7:]
 
                 widgetmap.update({key:val})
@@ -1213,7 +1213,9 @@ class ArchetypesGenerator(BaseGenerator):
             keqvs = list()
             for key in widgetmap:
                 value = widgetmap[key]
-                if type(value) != types.UnicodeType:
+                if (type(value) != types.UnicodeType
+                    and type(value) in StringTypes):
+                    # StringTypes filters out integer values
                     value = value.decode('utf-8')
                 keqv = u'%s=%s' % (key, value)
                 keqvs.append(keqv)
