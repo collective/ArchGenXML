@@ -1093,15 +1093,15 @@ class ArchetypesGenerator(BaseGenerator):
                     log.warn(u"Empty tagged value for tag '%s' in field '%s'.",
                              k, element.getName())
                     continue
-                v = v.decode('utf8')
-
-                if k not in self.nonstring_tgvs:
-                    v=utils.getExpression(v)
-                # [optilude] Permit python: if people forget they
-                # don't have to (I often do!)
-                else:
-                    if v.startswith('python:'):
-                        v = v[7:]
+                if type(v) in StringTypes:
+                    v = v.decode('utf8')
+                    if k not in self.nonstring_tgvs:
+                        v=utils.getExpression(v)
+                    # [optilude] Permit python: if people forget they
+                    # don't have to (I often do!)
+                    else:
+                        if v.startswith('python:'):
+                            v = v[7:]
 
                 map.update({k: v})
         return map
