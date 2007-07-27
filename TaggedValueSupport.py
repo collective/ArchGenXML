@@ -1320,7 +1320,7 @@ undocumented_tags = [
     # class tags
     'rename_after_creation', 'storage',
     # field tags
-    'languageIndependent', 'default_content_type', 'default_output_type',
+    'languageIndependent', 'default_content_type', 'default_output_type', 'mode',
     # widget tags
     'default:widget:Reference',
     'widget:size', 'widget:maxlength', 'widget:rows', 'widget:cols',

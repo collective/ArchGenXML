@@ -410,7 +410,7 @@ class ArchetypesGenerator(BaseGenerator):
                       'sizes', 'original_size', 'max_size', 'searchable',
                       'show_hm', 'move:pos', 'move:top', 'move:bottom',
                       'primary', 'array:widget','array:size',
-                      'allowed_types',
+                      'allowed_types', 'mode',
                   ]
 
     msgcatstack = []
