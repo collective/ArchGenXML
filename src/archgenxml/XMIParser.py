@@ -23,6 +23,7 @@ from xml.dom import minidom
 from archgenxml.TaggedValueSupport import tgvRegistry
 from zope import interface
 from archgenxml.uml.interfaces import *
+from TaggedValueSupport import STATE_PERMISSION_MAPPING
 
 log = logging.getLogger('XMIparser')
 
@@ -2592,15 +2593,11 @@ class XMIState(XMIElement):
 
         # permissions_mapping (abbreviations for lazy guys)
         # keys are case insensitive
-        permission_mapping = {
-            'access' : 'Access contents information',
-            'view'   : 'View',
-            'modify' : 'Modify portal content',
-            'list'   : 'List folder contents',
-            'add' : 'Add portal content',
-            'phcadd': 'PloneHelpCenter: Add Documentation',
-            'phcarea': 'PloneHelpCenter: Add Help Center Area',
-        }
+
+        # STATE_PERMISSION_MAPPING in TaggedValueSupport.py now
+        # contains the handy mappings from 'acces' to 'Access contents
+        # information' and so.
+        
         tagged_values = self.getTaggedValues()
         permission_definitions = []
 
@@ -2610,7 +2607,7 @@ class XMIState(XMIElement):
                 continue
             tag = tag.strip()
             # look up abbreviations if any
-            permission = permission_mapping.get(tag.lower(), tag)
+            permission = STATE_PERMISSION_MAPPING.get(tag.lower(), tag)
             if not tag_value:
                 log.debug("Empty tag value, treating it as a reset "
                           "for acquisition, so acquisition=0.")
@@ -2640,14 +2637,14 @@ class XMIState(XMIElement):
         v = {}
         for permission_definition in permission_definitions:
             if (permission_definition.get('permission', None) ==
-                permission_mapping['access']):
+                STATE_PERMISSION_MAPPING['access']):
                 has_access = 1
             if (permission_definition.get('permission', None) ==
-                permission_mapping['view']):
+                STATE_PERMISSION_MAPPING['view']):
                 v = permission_definition
                 has_view = 1
         if has_view and not has_access:
-            permission = permission_mapping['access']
+            permission = STATE_PERMISSION_MAPPING['access']
             permission_definitions.append({'permission': permission,
                                            'roles': v['roles'],
                                            'acquisition': v['acquisition']})

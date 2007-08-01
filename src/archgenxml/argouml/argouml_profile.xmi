@@ -1864,7 +1864,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.518' name = 'description' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.518' name = 'access' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -1876,7 +1876,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.519' name = 'initial_state' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.519' name = 'add' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -1888,7 +1888,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.520' name = 'label' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.520' name = 'description' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -1900,7 +1900,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.521' name = 'worklist' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.521' name = 'initial_state' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -1912,7 +1912,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.522' name = 'worklist:guard_permissions' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.522' name = 'label' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -1924,7 +1924,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.523' name = 'worklist:guard_roles' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.523' name = 'list' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -1936,7 +1936,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.524' name = 'Modify' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.524' name = 'modify' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -1948,7 +1948,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.525' name = 'access' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.525' name = 'view' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -1960,7 +1960,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.526' name = 'allow_empty_rows' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.526' name = 'worklist' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -1972,7 +1972,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.527' name = 'columns' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.527' name = 'worklist:guard_permissions' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -1984,7 +1984,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.528' name = 'default:widget:Reference' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.528' name = 'worklist:guard_roles' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -1996,7 +1996,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.529' name = 'default_content_type' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.529' name = 'Modify' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2008,7 +2008,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.530' name = 'default_output_type' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.530' name = 'access' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2020,7 +2020,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.531' name = 'default_page_type' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.531' name = 'allow_empty_rows' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2032,7 +2032,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.532' name = 'i18ncontent' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.532' name = 'columns' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2044,7 +2044,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.533' name = 'languageIndependent' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.533' name = 'default:widget:Reference' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2056,7 +2056,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.534' name = 'rename_after_creation' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.534' name = 'default_content_type' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2068,7 +2068,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.535' name = 'storage' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.535' name = 'default_output_type' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2080,7 +2080,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.536' name = 'widget:addable' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.536' name = 'default_page_type' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2092,7 +2092,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.537' name = 'widget:allow_brightness' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.537' name = 'i18ncontent' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2104,7 +2104,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.538' name = 'widget:allow_browse' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.538' name = 'languageIndependent' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2116,7 +2116,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.539' name = 'widget:allow_file_upload' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.539' name = 'rename_after_creation' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2128,7 +2128,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.540' name = 'widget:allow_search' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.540' name = 'storage' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2140,7 +2140,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.541' name = 'widget:allow_sorting' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.541' name = 'widget:addable' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2152,7 +2152,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.542' name = 'widget:append_only' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.542' name = 'widget:allow_brightness' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2164,7 +2164,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.543' name = 'widget:auto_insert' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.543' name = 'widget:allow_browse' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2176,7 +2176,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.544' name = 'widget:available_indexes' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.544' name = 'widget:allow_file_upload' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2188,7 +2188,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.545' name = 'widget:base_query' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.545' name = 'widget:allow_search' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2200,7 +2200,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.546' name = 'widget:checkbox_bound' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.546' name = 'widget:allow_sorting' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2212,7 +2212,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.547' name = 'widget:cols' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.547' name = 'widget:append_only' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2224,7 +2224,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.548' name = 'widget:columns' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.548' name = 'widget:auto_insert' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2236,7 +2236,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.549' name = 'widget:default_search_index' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.549' name = 'widget:available_indexes' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2248,7 +2248,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.550' name = 'widget:destination' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.550' name = 'widget:base_query' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2260,7 +2260,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.551' name = 'widget:destination_types' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.551' name = 'widget:checkbox_bound' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2272,7 +2272,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.552' name = 'widget:divider' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.552' name = 'widget:cols' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2284,7 +2284,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.553' name = 'widget:dollars_and_cents' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.553' name = 'widget:columns' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2296,7 +2296,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.554' name = 'widget:ending_year' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.554' name = 'widget:default_search_index' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2308,7 +2308,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.555' name = 'widget:force_close_on_insert' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.555' name = 'widget:destination' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2320,7 +2320,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.556' name = 'widget:format' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.556' name = 'widget:destination_types' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2332,7 +2332,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.557' name = 'widget:future_years' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.557' name = 'widget:divider' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2344,7 +2344,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.558' name = 'widget:history_length' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.558' name = 'widget:dollars_and_cents' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2356,7 +2356,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.559' name = 'widget:image_method' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.559' name = 'widget:ending_year' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2368,7 +2368,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.560' name = 'widget:image_portal_types' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.560' name = 'widget:force_close_on_insert' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2380,7 +2380,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.561' name = 'widget:maxlength' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.561' name = 'widget:format' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2392,7 +2392,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.562' name = 'widget:nullValueTitle' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.562' name = 'widget:future_years' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2404,7 +2404,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.563' name = 'widget:omitCountries' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.563' name = 'widget:history_length' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2416,7 +2416,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.564' name = 'widget:only_for_review_states' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.564' name = 'widget:image_method' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2428,7 +2428,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.565' name = 'widget:provideNullValue' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.565' name = 'widget:image_portal_types' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2440,7 +2440,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.566' name = 'widget:restrict_browsing_to_startup_directory' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.566' name = 'widget:maxlength' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2452,7 +2452,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.567' name = 'widget:rows' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.567' name = 'widget:nullValueTitle' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2464,7 +2464,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.568' name = 'widget:search_catalog' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.568' name = 'widget:omitCountries' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2476,7 +2476,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.569' name = 'widget:show_hm' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.569' name = 'widget:only_for_review_states' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2488,7 +2488,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.570' name = 'widget:show_indexes' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.570' name = 'widget:provideNullValue' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2500,7 +2500,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.571' name = 'widget:show_path' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.571' name = 'widget:restrict_browsing_to_startup_directory' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2512,7 +2512,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.572' name = 'widget:show_review_state' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.572' name = 'widget:rows' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2524,7 +2524,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.573' name = 'widget:show_ymd' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.573' name = 'widget:search_catalog' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2536,7 +2536,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.574' name = 'widget:size' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.574' name = 'widget:show_hm' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2548,7 +2548,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.575' name = 'widget:starting_year' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.575' name = 'widget:show_indexes' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2560,7 +2560,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.576' name = 'widget:startup_directory' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.576' name = 'widget:show_path' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2572,7 +2572,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.577' name = 'widget:thousands_commas' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.577' name = 'widget:show_review_state' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2584,7 +2584,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.578' name = 'widget:visible' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.578' name = 'widget:show_ymd' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2596,7 +2596,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.579' name = 'widget:whole_dollars' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.579' name = 'widget:size' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2608,7 +2608,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.580' name = 'association_class' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.580' name = 'widget:starting_year' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2620,7 +2620,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.581' name = 'association_vocabulary' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.581' name = 'widget:startup_directory' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2632,7 +2632,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.582' name = 'author' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.582' name = 'widget:thousands_commas' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2644,7 +2644,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.583' name = 'catalogmultiplex:black' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.583' name = 'widget:visible' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2656,7 +2656,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.584' name = 'catalogmultiplex:white' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.584' name = 'widget:whole_dollars' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2668,7 +2668,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.585' name = 'cmf_target_version' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.585' name = 'association_class' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2680,7 +2680,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.586' name = 'copyright' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.586' name = 'association_vocabulary' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2692,7 +2692,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.587' name = 'creation_permission' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.587' name = 'author' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2704,7 +2704,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.588' name = 'creation_roles' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.588' name = 'catalogmultiplex:black' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2716,7 +2716,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.589' name = 'default_interface_type' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.589' name = 'catalogmultiplex:white' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2728,7 +2728,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.590' name = 'detailed_creation_permissions' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.590' name = 'cmf_target_version' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2740,7 +2740,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.591' name = 'display_in_navigation' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.591' name = 'copyright' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2752,7 +2752,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.592' name = 'email' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.592' name = 'creation_permission' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2764,7 +2764,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.593' name = 'generate_reference_fields' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.593' name = 'creation_roles' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2776,7 +2776,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.594' name = 'global_allow' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.594' name = 'default_interface_type' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2788,7 +2788,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.595' name = 'imports' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.595' name = 'detailed_creation_permissions' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2800,7 +2800,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.596' name = 'label' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.596' name = 'display_in_navigation' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2812,7 +2812,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.597' name = 'license' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.597' name = 'email' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2824,7 +2824,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.598' name = 'migrate_dynamic_view_fti' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.598' name = 'generate_reference_fields' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2836,7 +2836,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.599' name = 'module' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.599' name = 'global_allow' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2848,7 +2848,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.600' name = 'read_permission' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.600' name = 'imports' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2860,7 +2860,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.601' name = 'relation_implementation' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.601' name = 'label' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2872,7 +2872,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.602' name = 'searchable' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.602' name = 'license' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2884,7 +2884,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.603' name = 'searchable_type' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.603' name = 'migrate_dynamic_view_fti' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2896,7 +2896,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.604' name = 'use_portal_factory' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.604' name = 'module' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2908,7 +2908,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.605' name = 'use_workflow' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.605' name = 'read_permission' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2920,7 +2920,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.606' name = 'version_info' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.606' name = 'relation_implementation' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2932,7 +2932,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.607' name = 'vocabulary:type' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.607' name = 'searchable' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2944,7 +2944,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.608' name = 'vocabulary:vocabulary_type' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.608' name = 'searchable_type' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2956,7 +2956,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.609' name = 'write_permission' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.609' name = 'use_portal_factory' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2968,7 +2968,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.610' name = 'additional_parents' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.610' name = 'use_workflow' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2980,7 +2980,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.611' name = 'allow_discussion' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.611' name = 'version_info' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -2992,7 +2992,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.612' name = 'allowable_content_types' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.612' name = 'vocabulary:type' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3004,7 +3004,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.613' name = 'allowed_content_types' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.613' name = 'vocabulary:vocabulary_type' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3016,7 +3016,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.614' name = 'archetype_name' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.614' name = 'write_permission' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3028,7 +3028,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.615' name = 'author' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.615' name = 'additional_parents' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3040,7 +3040,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.616' name = 'base_actions' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.616' name = 'allow_discussion' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3052,7 +3052,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.617' name = 'base_class' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.617' name = 'allowable_content_types' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3064,7 +3064,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.618' name = 'base_schema' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.618' name = 'allowed_content_types' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3076,7 +3076,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.619' name = 'catalogmultiplex:black' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.619' name = 'archetype_name' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3088,7 +3088,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.620' name = 'catalogmultiplex:white' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.620' name = 'author' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3100,7 +3100,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.621' name = 'cmf_target_version' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.621' name = 'base_actions' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3112,7 +3112,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.622' name = 'content_icon' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.622' name = 'base_class' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3124,7 +3124,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.623' name = 'copyright' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.623' name = 'base_schema' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3136,7 +3136,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.624' name = 'creation_permission' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.624' name = 'catalogmultiplex:black' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3148,7 +3148,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.625' name = 'creation_roles' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.625' name = 'catalogmultiplex:white' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3160,7 +3160,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.626' name = 'default_actions' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.626' name = 'cmf_target_version' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3172,7 +3172,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.627' name = 'default_interface_type' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.627' name = 'content_icon' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3184,7 +3184,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.628' name = 'default_view' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.628' name = 'copyright' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3196,7 +3196,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.629' name = 'detailed_creation_permissions' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.629' name = 'creation_permission' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3208,7 +3208,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.630' name = 'disable_polymorphing' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.630' name = 'creation_roles' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3220,7 +3220,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.631' name = 'display_in_navigation' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.631' name = 'default_actions' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3232,7 +3232,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.632' name = 'doctest_name' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.632' name = 'default_interface_type' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3244,7 +3244,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.633' name = 'email' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.633' name = 'default_view' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3256,7 +3256,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.634' name = 'filter_content_types' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.634' name = 'detailed_creation_permissions' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3268,7 +3268,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.635' name = 'folder_base_class' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.635' name = 'disable_polymorphing' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3280,7 +3280,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.636' name = 'generate_reference_fields' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.636' name = 'display_in_navigation' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3292,7 +3292,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.637' name = 'global_allow' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.637' name = 'doctest_name' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3304,7 +3304,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.638' name = 'hide_actions' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.638' name = 'email' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3316,7 +3316,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.639' name = 'hide_folder_tabs' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.639' name = 'filter_content_types' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3328,7 +3328,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.640' name = 'immediate_view' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.640' name = 'folder_base_class' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3340,7 +3340,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.641' name = 'import_from' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.641' name = 'generate_reference_fields' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3352,7 +3352,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.642' name = 'imports' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.642' name = 'global_allow' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3364,7 +3364,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.643' name = 'inherit_allowed_types' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.643' name = 'hide_actions' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3376,7 +3376,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.644' name = 'label' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.644' name = 'hide_folder_tabs' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3388,7 +3388,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.645' name = 'license' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.645' name = 'immediate_view' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3400,7 +3400,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.646' name = 'marshaller' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.646' name = 'import_from' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3412,7 +3412,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.647' name = 'migrate_dynamic_view_fti' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.647' name = 'imports' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3424,7 +3424,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.648' name = 'module' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.648' name = 'inherit_allowed_types' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3436,7 +3436,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.649' name = 'parentclass_first' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.649' name = 'label' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3448,7 +3448,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.650' name = 'parentclasses_first' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.650' name = 'license' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3460,7 +3460,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.651' name = 'portal_type' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.651' name = 'marshaller' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3472,7 +3472,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.652' name = 'read_permission' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.652' name = 'migrate_dynamic_view_fti' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3484,7 +3484,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.653' name = 'register' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.653' name = 'module' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3496,7 +3496,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.654' name = 'searchable' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.654' name = 'parentclass_first' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3508,7 +3508,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.655' name = 'searchable_type' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.655' name = 'parentclasses_first' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3520,7 +3520,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.656' name = 'strict' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.656' name = 'portal_type' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3532,7 +3532,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.657' name = 'suppl_views' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.657' name = 'read_permission' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3544,7 +3544,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.658' name = 'typeDescription' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.658' name = 'register' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3556,7 +3556,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.659' name = 'use_portal_factory' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.659' name = 'searchable' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3568,7 +3568,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.660' name = 'use_workflow' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.660' name = 'searchable_type' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3580,7 +3580,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.661' name = 'version_info' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.661' name = 'strict' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3592,7 +3592,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.662' name = 'vocabulary:type' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.662' name = 'suppl_views' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3604,7 +3604,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.663' name = 'vocabulary:vocabulary_type' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.663' name = 'typeDescription' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3616,7 +3616,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.664' name = 'write_permission' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.664' name = 'use_portal_factory' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3628,7 +3628,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.665' name = 'association_class' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.665' name = 'use_workflow' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3640,7 +3640,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.666' name = 'association_vocabulary' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.666' name = 'version_info' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3652,7 +3652,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.667' name = 'back_reference_field' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.667' name = 'vocabulary:type' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3664,7 +3664,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.668' name = 'field' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.668' name = 'vocabulary:vocabulary_type' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3676,7 +3676,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.669' name = 'inverse_relation_name' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.669' name = 'write_permission' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3688,7 +3688,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.670' name = 'label' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.670' name = 'association_class' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3700,7 +3700,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.671' name = 'reference_field' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.671' name = 'association_vocabulary' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3712,7 +3712,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.672' name = 'relation_field' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.672' name = 'back_reference_field' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3724,7 +3724,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.673' name = 'relation_implementation' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.673' name = 'field' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3736,7 +3736,7 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'xmi.674' name = 'relationship' isSpecification = 'false' tagType = 'String'>
+        <UML:TagDefinition xmi.id = 'xmi.674' name = 'inverse_relation_name' isSpecification = 'false' tagType = 'String'>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
           </UML:ModelElement.namespace>
@@ -3744,6 +3744,66 @@
             <UML:Multiplicity xmi.id = 'xmi.674.1'>
               <UML:Multiplicity.range>
                 <UML:MultiplicityRange xmi.id = 'xmi.674.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.675' name = 'label' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.675.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.675.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.676' name = 'reference_field' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.676.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.676.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.677' name = 'relation_field' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.677.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.677.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.678' name = 'relation_implementation' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.678.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.678.2' lower = '0' upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'xmi.679' name = 'relationship' isSpecification = 'false' tagType = 'String'>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+          </UML:ModelElement.namespace>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'xmi.679.1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'xmi.679.2' lower = '0' upper = '1'/>
               </UML:Multiplicity.range>
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>

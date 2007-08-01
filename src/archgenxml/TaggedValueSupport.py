@@ -798,7 +798,18 @@ explanation = """Sets the roles needed to be allowed to view the
 worklist. No default value"""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-
+STATE_PERMISSION_MAPPING = {
+    'access' : 'Access contents information',
+    'view'   : 'View',
+    'modify' : 'Modify portal content',
+    'list'   : 'List folder contents',
+    'add' : 'Add portal content',
+}
+for (tagname, permissionname) in STATE_PERMISSION_MAPPING.items():
+    explanation = "Shortcut for '%s'." % permissionname
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname,
+                               explanation=explanation)
+    
 # State transition tagged values
 category = 'state transition'
 
