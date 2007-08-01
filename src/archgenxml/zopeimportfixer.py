@@ -46,6 +46,13 @@ def prepareZopeImport():
                       pathFile)
             log.debug("Here are all loaded modules: %r",
                       sys.modules)
+            try:
+                import zope
+                log.error("Actually, we *can* import zope.\n"
+                          "So something may be messing up your PYTHONPATH.\n"
+                          "The zope that we found was in %s", zope.__path__)
+            except ImportError:
+                pass
         sys.exit(1)
 
 # Now run the thing

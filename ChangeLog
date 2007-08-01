@@ -1,3 +1,9 @@
+2007-08-01  Maurits van Rees  <m.van.rees@zestsoftware.nl>
+
+	* src/archgenxml/zopeimportfixer.py (prepareZopeImport): Add
+	descriptive error message when we cannot import zope.component but
+	_can_ import zope itself due to a messed up PYTHONPATH.
+
 2007-07-19  Reinout van Rees  <reinout@zestsoftware.nl>
 
 	* src/archgenxml/ArchetypesGenerator.py: Added <<atfile>>,
