@@ -98,12 +98,22 @@ class WorkflowGenerator(BaseGenerator):
                 log.info("Workflow %s has no script(s)." % smName)
 
         del d['statemachine']
-        log.debug("Creating InstallWorkflows.py file.")
-        templ = self.readTemplate('InstallWorkflows.py')
-        scriptpath = os.path.join(extDir, 'InstallWorkflows.py')
-        filesrc = self.atgenerator.readFile(scriptpath) or ''
-        parsedModule = PyModule(filesrc, mode='string')
-        d['parsedModule'] = parsedModule
+        log.debug("Creating workflows.xml file.")
+        d['workflowNames'] = self.workflowNames()
+        d['workflowless'] = self.workflowLessTypes()
+        d['typeMapping'] = self.typeMapping()
+        templ = self.readTemplate('workflows.xml')
+        scriptpath = os.path.join(profileDir, 'workflows.xml')
+        dtml = HTML(templ, d)
+        res = dtml()
+        of = self.atgenerator.makeFile(scriptpath)
+        of.write(res)
+        of.close()
+
+        log.debug("Creating rolemap.xml file.")
+        d['extraRoles'] = self.extraRoles()
+        templ = self.readTemplate('rolemap.xml')
+        scriptpath = os.path.join(profileDir, 'rolemap.xml')
         dtml = HTML(templ, d)
         res = dtml()
         of = self.atgenerator.makeFile(scriptpath)
@@ -113,7 +123,60 @@ class WorkflowGenerator(BaseGenerator):
     def getActionScriptName(self, action):
         trans = action.getParent()
         wf = trans.getParent()
-        return '%s_%s_%s' % (wf.getCleanName(), trans.getCleanName(), action.getCleanName())
+        return '%s_%s_%s' % (wf.getCleanName(), trans.getCleanName(),
+                             action.getCleanName())
+
+    def workflowNames(self):
+        statemachines = self.package.getStateMachines()
+        names = [utils.cleanName(sm.getName()) for sm in
+                 statemachines]
+        names.sort()
+        return names
+
+    def workflowLessTypes(self):
+        """Return workflow-less types (like tools).
+        """
+
+        tools = [c.getName() for c in
+                 self.atgenerator.getGeneratedTools(self.package)
+                 if not
+                 utils.isTGVFalse(c.getTaggedValue('autoinstall'))]
+        tools.sort()
+        return tools
+
+    def typeMapping(self):
+        """Return list of {id, workflowId} dicts.
+        """
+
+        statemachines = self.package.getStateMachines()
+        classes = {}
+        for sm in statemachines:
+            workflowId = utils.cleanName(sm.getName())
+            for name in sm.getClassNames():
+                classes[name] = workflowId
+        classNames = classes.keys()
+        classNames.sort()
+        result = []
+        for id_ in classNames:
+            item = {}
+            item['id'] = id_
+            item['workflowId'] = classes[id_]
+            result.append(item)
+        return result
+
+    def extraRoles(self):
+        statemachines = self.package.getStateMachines()
+        extra = []
+        for sm in statemachines:
+            unknown = sm.getAllRoles(
+                ignore=['Owner', 'Manager', 'Member', 'Reviewer',
+                        'Authenticated', 'Anonymous'])
+            for item in unknown:
+                if item not in extra:
+                    extra.append(item)
+        extra.sort()
+        return extra
+
 
 class WorkflowInfo(object):
     """View-like utility class.
@@ -187,5 +250,19 @@ TODO = """
 </dtml-let>
 </dtml-let>
 </dtml-in>
+
+
+
+in rolemap.xml: extra permissions like this
+
+  <!--
+  <permissions>
+    <permission name="Access inactive portal content"
+                acquire="True">
+      <role name="Owner"/>
+    </permission>
+  </permissions>
+  -->
+
 
 """

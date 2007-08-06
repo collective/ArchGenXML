@@ -31,7 +31,7 @@
   </guard>
  </transition>
 </dtml-let>
-</dtml-in
+</dtml-in>
  <variable variable_id="action" for_catalog="False"
            for_status="True" update_always="True">
   <description>The last transition</description>
