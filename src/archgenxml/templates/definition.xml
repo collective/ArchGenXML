@@ -1,111 +1,41 @@
 <?xml version="1.0"?>
-<dc-workflow workflow_id="EmployeeModuleWorkflow"
-             title="EmployeeModuleWorkflow"
+<dc-workflow workflow_id="<dtml-var "info.id()">"
+             title="<dtml-var "info.id()">"
              state_variable="review_state"
-             initial_state="visible_for_employee">
- <permission>View</permission>
- <permission>Modify portal content</permission>
- <permission>Add portal content</permission>
- <permission>List folder contents</permission>
- <permission>Access contents information</permission>
- <state state_id="visible_for_employee"
-        title="visible for employee">
-  <exit-transition transition_id="hide_for_employee"/>
-  <permission-map name="Access contents information"
-                  acquired="False">
-   <permission-role>WorklocationEmployee</permission-role>
-   <permission-role>WorklocationManager</permission-role>
-   <permission-role>HrmManager</permission-role>
-   <permission-role>Owner</permission-role>
-   <permission-role>Manager</permission-role>
+             initial_state="<dtml-var "info.initialState()">">
+<dtml-in "generator.getAllPermissionNames(statemachine)">
+ <permission><dtml-var "_['sequence-item']"></permission>
+</dtml-in>
+<dtml-in "info.states()">
+ <state state_id="<dtml-var "_['sequence-item']['id']">" title="<dtml-var "_['sequence-item']['title']">">
+<dtml-in "_['sequence-item']['exit-transitions']">
+  <exit-transition transition_id="<dtml-var "_['sequence-item']">"/>
+</dtml-in>
+<dtml-in "_['sequence-item']['permissions']">
+  <permission-map name="<dtml-var "_['sequence-item']['permission']">"
+                  acquired="<dtml-var "_['sequence-item']['acquisition'] and 'True' or 'False'">">
+<dtml-in "_['sequence-item']['roles']">
+   <permission-role><dtml-var "_['sequence-item']"></permission-role>
+</dtml-in>
   </permission-map>
-  <permission-map name="Add portal content" acquired="False">
-   <permission-role>WorklocationManager</permission-role>
-   <permission-role>HrmManager</permission-role>
-   <permission-role>Owner</permission-role>
-   <permission-role>Manager</permission-role>
-  </permission-map>
-  <permission-map name="List folder contents"
-                  acquired="False">
-   <permission-role>WorklocationEmployee</permission-role>
-   <permission-role>WorklocationManager</permission-role>
-   <permission-role>HrmManager</permission-role>
-   <permission-role>Owner</permission-role>
-   <permission-role>Manager</permission-role>
-  </permission-map>
-  <permission-map name="Modify portal content"
-                  acquired="False">
-   <permission-role>WorklocationManager</permission-role>
-   <permission-role>HrmManager</permission-role>
-   <permission-role>Owner</permission-role>
-   <permission-role>Manager</permission-role>
-  </permission-map>
-  <permission-map name="View" acquired="False">
-   <permission-role>WorklocationEmployee</permission-role>
-   <permission-role>WorklocationManager</permission-role>
-   <permission-role>HrmManager</permission-role>
-   <permission-role>Owner</permission-role>
-   <permission-role>Manager</permission-role>
-  </permission-map>
+</dtml-in>
  </state>
- <state state_id="visible_for_worklocation_manager"
-        title="visible for worklocation manager">
-  <exit-transition transition_id="show_to_employee"/>
-  <permission-map name="Access contents information"
-                  acquired="False">
-   <permission-role>WorklocationManager</permission-role>
-   <permission-role>HrmManager</permission-role>
-   <permission-role>Owner</permission-role>
-   <permission-role>Manager</permission-role>
-  </permission-map>
-  <permission-map name="Add portal content" acquired="False">
-   <permission-role>WorklocationManager</permission-role>
-   <permission-role>HrmManager</permission-role>
-   <permission-role>Owner</permission-role>
-   <permission-role>Manager</permission-role>
-  </permission-map>
-  <permission-map name="List folder contents"
-                  acquired="False">
-   <permission-role>WorklocationManager</permission-role>
-   <permission-role>HrmManager</permission-role>
-   <permission-role>Owner</permission-role>
-   <permission-role>Manager</permission-role>
-  </permission-map>
-  <permission-map name="Modify portal content"
-                  acquired="False">
-   <permission-role>WorklocationManager</permission-role>
-   <permission-role>HrmManager</permission-role>
-   <permission-role>Owner</permission-role>
-   <permission-role>Manager</permission-role>
-  </permission-map>
-  <permission-map name="View" acquired="False">
-   <permission-role>WorklocationManager</permission-role>
-   <permission-role>HrmManager</permission-role>
-   <permission-role>Owner</permission-role>
-   <permission-role>Manager</permission-role>
-  </permission-map>
- </state>
- <transition transition_id="hide_for_employee"
-             title="hide for employee"
-             new_state="visible_for_worklocation_manager"
-             trigger="USER" before_script="" after_script="">
-  <action url="" category="workflow">hide for employee</action>
+</dtml-in>
+<dtml-in "info.transitions()">
+<dtml-let transition="_['sequence-item']">
+ <transition transition_id="<dtml-var "transition.getName()">" title="<dtml-var "transition.getTaggedValue('label') or transition.getName()">"
+             new_state="<dtml-var "transition.getTargetStateName()">"
+             trigger="<dtml-var "transition.getTriggerType()">" before_script="<dtml-var "transition.getBeforeActionName() or ''">" after_script="<dtml-var "transition.getAfterActionName() or ''">">
+  <action url="<dtml-var "transition.getTaggedValue('url')">" category="workflow"><dtml-var "transition.getTaggedValue('label') or transition.getName()"></action>
   <guard>
   </guard>
  </transition>
- <transition transition_id="show_to_employee"
-             title="show to employee"
-             new_state="visible_for_employee" trigger="USER"
-             before_script="" after_script="">
-  <action url="" category="workflow">show to employee</action>
-  <guard>
-  </guard>
- </transition>
+</dtml-let>
+</dtml-in
  <variable variable_id="action" for_catalog="False"
            for_status="True" update_always="True">
   <description>The last transition</description>
   <default>
-   
    <expression>transition/getId|nothing</expression>
   </default>
   <guard>
@@ -115,7 +45,6 @@
            for_status="True" update_always="True">
   <description>The ID of the user who performed the last transition</description>
   <default>
-   
    <expression>user/getId</expression>
   </default>
   <guard>
@@ -125,7 +54,6 @@
            for_status="True" update_always="True">
   <description>Comments about the last transition</description>
   <default>
-   
    <expression>python:state_change.kwargs.get('comment', '')</expression>
   </default>
   <guard>
@@ -135,7 +63,6 @@
            for_status="False" update_always="False">
   <description>Provides access to workflow history</description>
   <default>
-   
    <expression>state_change/getHistory</expression>
   </default>
   <guard>
@@ -147,197 +74,9 @@
            for_status="True" update_always="True">
   <description>Time of the last transition</description>
   <default>
-   
    <expression>state_change/getDateTime</expression>
   </default>
   <guard>
   </guard>
  </variable>
 </dc-workflow>
-
-
-<dtml-var "generator.generateModuleInfoHeader(package)">
-from Products.CMFCore.utils import getToolByName
-from Products.CMFCore.WorkflowTool import addWorkflowFactory
-from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
-from Products.ExternalMethod.ExternalMethod import ExternalMethod
-from Products.<dtml-var "package.getCleanName()">.config import *
-
-productname = '<dtml-var "package.getCleanName()">'
-
-def setup<dtml-var "statemachine.getCleanName()">(self, workflow):
-    """Define the <dtml-var "statemachine.getCleanName()"> workflow.
-    """
-<dtml-let additional_roles="statemachine.getAllRoles(ignore=['Owner','Manager','Member','Reviewer','Authenticated','Anonymous'])">
-<dtml-if "additional_roles">
-    # Add additional roles to portal
-    portal = getToolByName(self,'portal_url').getPortalObject()
-    data = list(portal.__ac_roles__)
-    for role in <dtml-var "additional_roles">:
-        if not role in data:
-            data.append(role)
-            # add to portal_role_manager
-            # first try to fetch it. if its not there, we probaly have no PAS
-            # or another way to deal with roles was configured.
-            try:
-                prm = portal.acl_users.get('portal_role_manager', None)
-                if prm is not None:
-                    try:
-                        prm.addRole(role, role,
-                                    "Added by product '<dtml-var "package.getCleanName()">'/workflow '<dtml-var "statemachine.getCleanName()">'")
-                    except KeyError: # role already exists
-                        pass
-            except AttributeError:
-                pass
-    portal.__ac_roles__ = tuple(data)
-</dtml-if>
-</dtml-let>
-
-    workflow.setProperties(title='<dtml-var "statemachine.getCleanName()">')
-
-    for s in <dtml-var "repr(statemachine.getStateNames(no_duplicates = 1))">:
-        workflow.states.addState(s)
-
-    for t in <dtml-var "repr(statemachine.getTransitionNames(no_duplicates = 1))">:
-        workflow.transitions.addTransition(t)
-
-    for v in ['review_history', 'comments', 'time', 'actor', 'action']:
-        workflow.variables.addVariable(v)
-
-<dtml-in "generator.getAllPermissionNames(statemachine)">
-    workflow.addManagedPermission(<dtml-var "_['sequence-item']">)
-</dtml-in>
-
-    for l in <dtml-var "repr(statemachine.getAllWorklistNames())">:
-        if not l in workflow.worklists.objectValues():
-            workflow.worklists.addWorklist(l)
-
-    ## Initial State
-
-    workflow.states.setInitialState('<dtml-var "statemachine.getInitialState().getName()">')
-
-    ## States initialization
-
-<dtml-in "[s for s in statemachine.getStates(no_duplicates = 1) if s.getName()]">
-    stateDef = workflow.states['<dtml-var "_['sequence-item'].getName()">']
-    stateDef.setProperties(title="""<dtml-var "_['sequence-item'].getTitle(generator)">""",
-                           description="""<dtml-var "_['sequence-item'].getDescription()">""",
-                           transitions=<dtml-var "repr([t.getName() for t in _['sequence-item'].getOutgoingTransitions()])">)
-<dtml-in "generator.getPermissionsDefinitions(_['sequence-item'])">
-    stateDef.setPermission(<dtml-var "_['sequence-item'].get('permission')">,
-                           <dtml-var "_['sequence-item'].get('acquisition')">,
-                           <dtml-var "_['sequence-item'].get('roles')">)
-</dtml-in>
-
-</dtml-in>
-    ## Transitions initialization
-<dtml-in "[t for t in statemachine.getTransitions(no_duplicates = 1) if t.getName()]">
-<dtml-let transition="_['sequence-item']">
-<dtml-if "transition.getAction()">
-
-    ## Creation of workflow scripts
-    for wf_scriptname in <dtml-var "repr(transition.getAction().getUsedActionNames())">:
-        if not wf_scriptname in workflow.scripts.objectIds():
-            workflow.scripts._setObject(wf_scriptname,
-                ExternalMethod(wf_scriptname, wf_scriptname,
-                productname + '.<dtml-var "statemachine.getCleanName()">_scripts',
-                wf_scriptname))
-</dtml-if>
-
-    transitionDef = workflow.transitions['<dtml-var "transition.getName()">']
-    transitionDef.setProperties(title="""<dtml-var "transition.getTaggedValue('label') or transition.getName()">""",
-                                new_state_id="""<dtml-var "transition.getTargetStateName()">""",
-                                trigger_type=<dtml-var "transition.getTriggerType()">,
-                                script_name="""<dtml-var "transition.getBeforeActionName() or ''">""",
-                                after_script_name="""<dtml-var "transition.getAfterActionName() or ''">""",
-                                actbox_name="""<dtml-var "transition.getTaggedValue('label') or transition.getName()">""",<dtml-call name="atgenerator.addMsgid(transition.getTaggedValue('label') or transition.getName())">
-                                actbox_url="""<dtml-var "transition.getTaggedValue('url')">""",
-                                actbox_category="""workflow""",
-                                props=<dtml-var "transition.getProps()">,
-                                )
-</dtml-let>
-</dtml-in>
-
-    ## State Variable
-    workflow.variables.setStateVar('review_state')
-
-    ## Variables initialization
-    variableDef = workflow.variables['review_history']
-    variableDef.setProperties(description="""Provides access to workflow history""",
-                              default_value="""""",
-                              default_expr="""state_change/getHistory""",
-                              for_catalog=0,
-                              for_status=0,
-                              update_always=0,
-                              props={'guard_permissions': 'Request review; Review portal content'})
-
-    variableDef = workflow.variables['comments']
-    variableDef.setProperties(description="""Comments about the last transition""",
-                              default_value="""""",
-                              default_expr="""python:state_change.kwargs.get('comment', '')""",
-                              for_catalog=0,
-                              for_status=1,
-                              update_always=1,
-                              props=None)
-
-    variableDef = workflow.variables['time']
-    variableDef.setProperties(description="""Time of the last transition""",
-                              default_value="""""",
-                              default_expr="""state_change/getDateTime""",
-                              for_catalog=0,
-                              for_status=1,
-                              update_always=1,
-                              props=None)
-
-    variableDef = workflow.variables['actor']
-    variableDef.setProperties(description="""The ID of the user who performed the last transition""",
-                              default_value="""""",
-                              default_expr="""user/getId""",
-                              for_catalog=0,
-                              for_status=1,
-                              update_always=1,
-                              props=None)
-
-    variableDef = workflow.variables['action']
-    variableDef.setProperties(description="""The last transition""",
-                              default_value="""""",
-                              default_expr="""transition/getId|nothing""",
-                              for_catalog=0,
-                              for_status=1,
-                              update_always=1,
-                              props=None)
-
-    ## Worklists Initialization
-
-<dtml-in "statemachine.getAllWorklistNames()">
-<dtml-let worklistname="_['sequence-item']">
-<dtml-let worklistStateNames="statemachine.getWorklistStateNames(worklistname)">
-    worklistDef = workflow.worklists['<dtml-var "worklistname">']
-    worklistStates = <dtml-var "repr(worklistStateNames)">
-    actbox_url = "%(portal_url)s/search?review_state=" + "&review_state=".join(worklistStates)
-    worklistDef.setProperties(description="Reviewer tasks",
-                              actbox_name="Pending (%(count)d)",
-                              actbox_url=actbox_url,
-                              actbox_category="global",
-                              props={'guard_permissions': '<dtml-var "statemachine.getWorklistGuardPermission(worklistname)">',
-                                     'guard_roles': '<dtml-var "statemachine.getWorklistGuardRole(worklistname)">',
-                                     'var_match_review_state': ';'.join(worklistStates)})
-</dtml-let>
-</dtml-let>
-</dtml-in>
-
-    # WARNING: below protected section is deprecated.
-    # Add a tagged value 'worklist' with the worklist name to your state(s) instead.
-
-
-def create<dtml-var "statemachine.getCleanName()">(self, id):
-    """Create the workflow for <dtml-var "package.getCleanName()">.
-    """
-
-    ob = DCWorkflowDefinition(id)
-    setup<dtml-var "statemachine.getCleanName()">(self, ob)
-    return ob
-
-addWorkflowFactory(create<dtml-var "statemachine.getCleanName()">,
-                   id='<dtml-var "statemachine.getCleanName()">',
-                   title='<dtml-var "statemachine.getTaggedValue('label') or statemachine.getCleanName()">')

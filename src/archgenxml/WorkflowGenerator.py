@@ -1,4 +1,5 @@
 import os
+from operator import itemgetter
 import utils
 import logging
 from PyParser import PyModule
@@ -27,13 +28,15 @@ class WorkflowGenerator(BaseGenerator):
     def getPermissionsDefinitions(self, state):
         pdefs = state.getPermissionsDefinitions()
         for p_dict in pdefs:
-            p_dict['permission'] = self.processExpression(p_dict['permission'])
+            p_dict['permission'] = self.processExpression(
+                p_dict['permission'], asString=False)
         return pdefs
 
     # XXX: Almost the same again.
     def getAllPermissionNames(self, statemachine):
         source_pdefs = statemachine.getAllPermissionNames()
-        result_pdefs = [self.processExpression(pdef) for pdef in source_pdefs]
+        result_pdefs = [self.processExpression(pdef, asString=False)
+                        for pdef in source_pdefs]
         return result_pdefs
 
     def generateWorkflows(self):
@@ -62,6 +65,7 @@ class WorkflowGenerator(BaseGenerator):
 
         for sm in statemachines:
             d['statemachine'] = sm
+            d['info'] = WorkflowInfo(sm, self)
             smName = utils.cleanName(sm.getName())
             smDir = os.path.join(workflowDir, smName)
             self.atgenerator.makeDir(smDir)
@@ -69,11 +73,8 @@ class WorkflowGenerator(BaseGenerator):
                       smDir)
             # Generate workflow script
             log.info("Generating workflow '%s'.", smName)
-            templ = self.readTemplate('create_workflow.py')
-            scriptpath = os.path.join(extDir, smName + '.py')
-            filesrc = self.atgenerator.readFile(scriptpath) or ''
-            parsedModule = PyModule(filesrc, mode='string')
-            d['parsedModule'] = parsedModule
+            templ = self.readTemplate('definition.xml')
+            scriptpath = os.path.join(smDir, 'definition.xml')
             dtml = HTML(templ, d)
             res = dtml()
             of = self.atgenerator.makeFile(scriptpath)
@@ -113,3 +114,78 @@ class WorkflowGenerator(BaseGenerator):
         trans = action.getParent()
         wf = trans.getParent()
         return '%s_%s_%s' % (wf.getCleanName(), trans.getCleanName(), action.getCleanName())
+
+class WorkflowInfo(object):
+    """View-like utility class.
+    """
+
+    def __init__(self, sm, generator):
+        self.sm = sm # state machine.
+        self.generator = generator
+
+    def id(self):
+        return self.sm.getCleanName()
+
+    def initialState(self):
+        return self.sm.getInitialState().getName()
+
+    def states(self):
+        states = self.sm.getStates(no_duplicates = 1)
+        filtered = [s for s in states if s.getName()]
+        filtered.sort(cmp=lambda x,y: cmp(x.getName(), y.getName()))
+        result = []
+        for item in filtered:
+            state = {}
+            state['id'] = item.getName()
+            state['title'] = item.getTitle(self.generator)
+            state['description'] = item.getDescription()
+            state['exit-transitions'] = [t.getName() for t in
+                                         item.getOutgoingTransitions()]
+            perms = self.generator.getPermissionsDefinitions(item)
+            perms.sort(key=itemgetter('permission'))
+            state['permissions'] = perms
+            result.append(state)
+        return result
+
+    def transitions(self):
+        transitions = self.sm.getTransitions(no_duplicates = 1)
+        filtered = [t for t in transitions if t.getName()]
+        filtered.sort(cmp=lambda x,y: cmp(x.getName(), y.getName()))
+        return filtered
+
+TODO = """
+
+  <!--<dtml-var "_['sequence-item']['description']">-->
+
+
+<dtml-if "transition.getAction()">
+
+    ## Creation of workflow scripts
+    for wf_scriptname in <dtml-var "repr(transition.getAction().getUsedActionNames())">:
+        if not wf_scriptname in workflow.scripts.objectIds():
+            workflow.scripts._setObject(wf_scriptname,
+                ExternalMethod(wf_scriptname, wf_scriptname,
+                productname + '.<dtml-var "statemachine.getCleanName()">_scripts',
+                wf_scriptname))
+</dtml-if>
+
+
+
+<dtml-in "statemachine.getAllWorklistNames()">
+<dtml-let worklistname="_['sequence-item']">
+<dtml-let worklistStateNames="statemachine.getWorklistStateNames(worklistname)">
+    worklistDef = workflow.worklists['<dtml-var "worklistname">']
+    worklistStates = <dtml-var "repr(worklistStateNames)">
+    actbox_url = "%(portal_url)s/search?review_state=" + "&review_state=".join(worklistStates)
+    worklistDef.setProperties(description="Reviewer tasks",
+                              actbox_name="Pending (%(count)d)",
+                              actbox_url=actbox_url,
+                              actbox_category="global",
+                              props={'guard_permissions': '<dtml-var "statemachine.getWorklistGuardPermission(worklistname)">',
+                                     'guard_roles': '<dtml-var "statemachine.getWorklistGuardRole(worklistname)">',
+                                     'var_match_review_state': ';'.join(worklistStates)})
+</dtml-let>
+</dtml-let>
+</dtml-in>
+
+"""
