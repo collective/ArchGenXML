@@ -72,7 +72,7 @@ class WorkflowGenerator(BaseGenerator):
             log.debug("Generated specific workflow's dir '%s'.",
                       smDir)
             # Generate workflow script
-            log.info("Generating workflow '%s'.", smName)
+            log.info("Generating workflow '%s' (using generic setup).", smName)
             templ = self.readTemplate('definition.xml')
             scriptpath = os.path.join(smDir, 'definition.xml')
             dtml = HTML(templ, d)
