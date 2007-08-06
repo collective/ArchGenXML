@@ -37,8 +37,10 @@ class WorkflowGenerator(BaseGenerator):
         return result_pdefs
 
     def generateWorkflows(self):
+        log.debug("Generating workflows.")
         statemachines = self.package.getStateMachines()
         if not statemachines:
+            log.debug("No workflows that agx knows off.")
             return
 
         d = {
@@ -53,15 +55,22 @@ class WorkflowGenerator(BaseGenerator):
 
         extDir = os.path.join(self.package.getFilePath(), 'Extensions')
         self.atgenerator.makeDir(extDir)
+        profileDir = os.path.join(self.package.getFilePath(), 'profiles', 'default')
+        self.atgenerator.makeDir(profileDir)
+        workflowDir = os.path.join(profileDir, 'workflows')
+        self.atgenerator.makeDir(workflowDir)
 
         for sm in statemachines:
             d['statemachine'] = sm
-            sm_name = utils.cleanName(sm.getName())
-
+            smName = utils.cleanName(sm.getName())
+            smDir = os.path.join(workflowDir, smName)
+            self.atgenerator.makeDir(smDir)
+            log.debug("Generated specific workflow's dir '%s'.",
+                      smDir)
             # Generate workflow script
-            log.info("Generating workflow '%s'.", sm_name)
+            log.info("Generating workflow '%s'.", smName)
             templ = self.readTemplate('create_workflow.py')
-            scriptpath = os.path.join(extDir, sm_name + '.py')
+            scriptpath = os.path.join(extDir, smName + '.py')
             filesrc = self.atgenerator.readFile(scriptpath) or ''
             parsedModule = PyModule(filesrc, mode='string')
             d['parsedModule'] = parsedModule
@@ -75,7 +84,7 @@ class WorkflowGenerator(BaseGenerator):
             if sm.getAllTransitionActionNames():
                 log.info("Generating workflow script(s).")
                 templ = self.readTemplate('create_workflow_script.py')
-                scriptpath = os.path.join(extDir, sm_name + '_scripts.py')
+                scriptpath = os.path.join(extDir, smName + '_scripts.py')
                 filesrc = self.atgenerator.readFile(scriptpath) or ''
                 parsedModule = PyModule(filesrc, mode='string')
                 d['parsedModule'] = parsedModule
@@ -85,7 +94,7 @@ class WorkflowGenerator(BaseGenerator):
                 of.write(res)
                 of.close()
             else:
-                log.info("Workflow %s has no script(s)." % sm_name)
+                log.info("Workflow %s has no script(s)." % smName)
 
         del d['statemachine']
         log.debug("Creating InstallWorkflows.py file.")

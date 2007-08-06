@@ -140,11 +140,6 @@ def install(self, reinstall=False):
                     current.append(tool)
                     siteProperties.manage_changeProperties(**{'types_not_searched' : current})
 
-    # remove workflow for tools
-    portal_workflow = getToolByName(self, 'portal_workflow')
-    for tool in <dtml-var "repr(autoinstall_tools)">:
-        portal_workflow.setChainForPortalTypes([tool], '')
-
 </dtml-if>
 </dtml-let>
 <dtml-let all_tools="[c for c in generator.getGeneratedTools(package)]">
@@ -236,21 +231,6 @@ def install(self, reinstall=False):
 </dtml-if>
 </dtml-let>
 
-    # try to call a workflow install method
-    # in 'InstallWorkflows.py' method 'installWorkflows'
-    try:
-        installWorkflows = ExternalMethod('temp', 'temp',
-                                          PROJECTNAME+'.InstallWorkflows',
-                                          'installWorkflows').__of__(self)
-    except NotFound:
-        installWorkflows = None
-
-    if installWorkflows:
-        print >>out,'Workflow Install:'
-        res = installWorkflows(self,out)
-        print >>out,res or 'no output'
-    else:
-        print >>out,'no workflow install'
 <dtml-let remembers="[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.remember_stereotype)]">
 <dtml-if "remembers"> 
     # Adds our types to MemberDataContainer.allowed_content_types
@@ -266,27 +246,6 @@ def install(self, reinstall=False):
 </dtml-if>
 </dtml-let>
 
-<dtml-if "[klass for klass in generator.getGeneratedClasses(package) if generator.getOption('use_workflow', klass, None) is not None and not klass.getStateMachines()]">
-    #bind classes to workflows
-    wft = getToolByName(self,'portal_workflow')
-<dtml-in "generator.getGeneratedClasses(package)">
-<dtml-let klass="_['sequence-item']">
-<dtml-if "generator.getOption('use_workflow', klass, None)">
-    wft.setChainForPortalTypes( ['<dtml-var "klass.getCleanName()">'], <dtml-var "utils.getExpression(generator.getOption('use_workflow', klass))">)
-</dtml-if>
-</dtml-let>
-</dtml-in>
-</dtml-if>
-<dtml-let all_tools="[c for c in generator.getGeneratedTools(package) if generator.getOption('use_workflow', c, None) is not None or c.getStateMachine()]">
-<dtml-if "all_tools">
-    # update workflow for created tools if they have been designated a workflow
-    for toolname in <dtml-var "[t.getTaggedValue('tool_instance_name') or 'portal_%s' % t.getName().lower() for t in all_tools]">:
-        try:
-            portal[toolname].notifyWorkflowCreated()
-        except:
-            pass
-</dtml-if>
-</dtml-let>
 <dtml-if "package.num_generated_relations">
     # configuration for Relations
     relations_tool = getToolByName(self,'relations_library')
@@ -486,22 +445,6 @@ def uninstall(self, reinstall=False):
 </dtml-in>
 </dtml-if>
 </dtml-let>
-    # try to call a workflow uninstall method
-    # in 'InstallWorkflows.py' method 'uninstallWorkflows'
-    try:
-        uninstallWorkflows = ExternalMethod('temp', 'temp',
-                                            PROJECTNAME+'.InstallWorkflows',
-                                            'uninstallWorkflows').__of__(self)
-    except NotFound:
-        uninstallWorkflows = None
-
-    if uninstallWorkflows:
-        print >>out, 'Workflow Uninstall:'
-        res = uninstallWorkflows(self, out)
-        print >>out, res or 'no output'
-    else:
-        print >>out,'no workflow uninstall'
-
     # try to call a custom uninstall method
     # in 'AppInstall.py' method 'uninstall'
     try:
