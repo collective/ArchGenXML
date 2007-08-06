@@ -1,11 +1,167 @@
+<?xml version="1.0"?>
+<dc-workflow workflow_id="EmployeeModuleWorkflow"
+             title="EmployeeModuleWorkflow"
+             state_variable="review_state"
+             initial_state="visible_for_employee">
+ <permission>View</permission>
+ <permission>Modify portal content</permission>
+ <permission>Add portal content</permission>
+ <permission>List folder contents</permission>
+ <permission>Access contents information</permission>
+ <state state_id="visible_for_employee"
+        title="visible for employee">
+  <exit-transition transition_id="hide_for_employee"/>
+  <permission-map name="Access contents information"
+                  acquired="False">
+   <permission-role>WorklocationEmployee</permission-role>
+   <permission-role>WorklocationManager</permission-role>
+   <permission-role>HrmManager</permission-role>
+   <permission-role>Owner</permission-role>
+   <permission-role>Manager</permission-role>
+  </permission-map>
+  <permission-map name="Add portal content" acquired="False">
+   <permission-role>WorklocationManager</permission-role>
+   <permission-role>HrmManager</permission-role>
+   <permission-role>Owner</permission-role>
+   <permission-role>Manager</permission-role>
+  </permission-map>
+  <permission-map name="List folder contents"
+                  acquired="False">
+   <permission-role>WorklocationEmployee</permission-role>
+   <permission-role>WorklocationManager</permission-role>
+   <permission-role>HrmManager</permission-role>
+   <permission-role>Owner</permission-role>
+   <permission-role>Manager</permission-role>
+  </permission-map>
+  <permission-map name="Modify portal content"
+                  acquired="False">
+   <permission-role>WorklocationManager</permission-role>
+   <permission-role>HrmManager</permission-role>
+   <permission-role>Owner</permission-role>
+   <permission-role>Manager</permission-role>
+  </permission-map>
+  <permission-map name="View" acquired="False">
+   <permission-role>WorklocationEmployee</permission-role>
+   <permission-role>WorklocationManager</permission-role>
+   <permission-role>HrmManager</permission-role>
+   <permission-role>Owner</permission-role>
+   <permission-role>Manager</permission-role>
+  </permission-map>
+ </state>
+ <state state_id="visible_for_worklocation_manager"
+        title="visible for worklocation manager">
+  <exit-transition transition_id="show_to_employee"/>
+  <permission-map name="Access contents information"
+                  acquired="False">
+   <permission-role>WorklocationManager</permission-role>
+   <permission-role>HrmManager</permission-role>
+   <permission-role>Owner</permission-role>
+   <permission-role>Manager</permission-role>
+  </permission-map>
+  <permission-map name="Add portal content" acquired="False">
+   <permission-role>WorklocationManager</permission-role>
+   <permission-role>HrmManager</permission-role>
+   <permission-role>Owner</permission-role>
+   <permission-role>Manager</permission-role>
+  </permission-map>
+  <permission-map name="List folder contents"
+                  acquired="False">
+   <permission-role>WorklocationManager</permission-role>
+   <permission-role>HrmManager</permission-role>
+   <permission-role>Owner</permission-role>
+   <permission-role>Manager</permission-role>
+  </permission-map>
+  <permission-map name="Modify portal content"
+                  acquired="False">
+   <permission-role>WorklocationManager</permission-role>
+   <permission-role>HrmManager</permission-role>
+   <permission-role>Owner</permission-role>
+   <permission-role>Manager</permission-role>
+  </permission-map>
+  <permission-map name="View" acquired="False">
+   <permission-role>WorklocationManager</permission-role>
+   <permission-role>HrmManager</permission-role>
+   <permission-role>Owner</permission-role>
+   <permission-role>Manager</permission-role>
+  </permission-map>
+ </state>
+ <transition transition_id="hide_for_employee"
+             title="hide for employee"
+             new_state="visible_for_worklocation_manager"
+             trigger="USER" before_script="" after_script="">
+  <action url="" category="workflow">hide for employee</action>
+  <guard>
+  </guard>
+ </transition>
+ <transition transition_id="show_to_employee"
+             title="show to employee"
+             new_state="visible_for_employee" trigger="USER"
+             before_script="" after_script="">
+  <action url="" category="workflow">show to employee</action>
+  <guard>
+  </guard>
+ </transition>
+ <variable variable_id="action" for_catalog="False"
+           for_status="True" update_always="True">
+  <description>The last transition</description>
+  <default>
+   
+   <expression>transition/getId|nothing</expression>
+  </default>
+  <guard>
+  </guard>
+ </variable>
+ <variable variable_id="actor" for_catalog="False"
+           for_status="True" update_always="True">
+  <description>The ID of the user who performed the last transition</description>
+  <default>
+   
+   <expression>user/getId</expression>
+  </default>
+  <guard>
+  </guard>
+ </variable>
+ <variable variable_id="comments" for_catalog="False"
+           for_status="True" update_always="True">
+  <description>Comments about the last transition</description>
+  <default>
+   
+   <expression>python:state_change.kwargs.get('comment', '')</expression>
+  </default>
+  <guard>
+  </guard>
+ </variable>
+ <variable variable_id="review_history" for_catalog="False"
+           for_status="False" update_always="False">
+  <description>Provides access to workflow history</description>
+  <default>
+   
+   <expression>state_change/getHistory</expression>
+  </default>
+  <guard>
+   <guard-permission>Request review</guard-permission>
+   <guard-permission>Review portal content</guard-permission>
+  </guard>
+ </variable>
+ <variable variable_id="time" for_catalog="False"
+           for_status="True" update_always="True">
+  <description>Time of the last transition</description>
+  <default>
+   
+   <expression>state_change/getDateTime</expression>
+  </default>
+  <guard>
+  </guard>
+ </variable>
+</dc-workflow>
+
+
 <dtml-var "generator.generateModuleInfoHeader(package)">
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.WorkflowTool import addWorkflowFactory
 from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
 from Products.ExternalMethod.ExternalMethod import ExternalMethod
 from Products.<dtml-var "package.getCleanName()">.config import *
-
-<dtml-var "generator.getProtectedSection(parsedModule,'create-workflow-module-header')">
 
 productname = '<dtml-var "package.getCleanName()">'
 
@@ -38,8 +194,6 @@ def setup<dtml-var "statemachine.getCleanName()">(self, workflow):
 </dtml-let>
 
     workflow.setProperties(title='<dtml-var "statemachine.getCleanName()">')
-
-<dtml-var "generator.getProtectedSection(parsedModule,'create-workflow-setup-method-header',1)">
 
     for s in <dtml-var "repr(statemachine.getStateNames(no_duplicates = 1))">:
         workflow.states.addState(s)
@@ -175,8 +329,6 @@ def setup<dtml-var "statemachine.getCleanName()">(self, workflow):
     # WARNING: below protected section is deprecated.
     # Add a tagged value 'worklist' with the worklist name to your state(s) instead.
 
-<dtml-var "generator.getProtectedSection(parsedModule,'create-workflow-setup-method-footer',1)">
-
 
 def create<dtml-var "statemachine.getCleanName()">(self, id):
     """Create the workflow for <dtml-var "package.getCleanName()">.
@@ -189,5 +341,3 @@ def create<dtml-var "statemachine.getCleanName()">(self, id):
 addWorkflowFactory(create<dtml-var "statemachine.getCleanName()">,
                    id='<dtml-var "statemachine.getCleanName()">',
                    title='<dtml-var "statemachine.getTaggedValue('label') or statemachine.getCleanName()">')
-
-<dtml-var "generator.getProtectedSection(parsedModule,'create-workflow-module-footer')">
