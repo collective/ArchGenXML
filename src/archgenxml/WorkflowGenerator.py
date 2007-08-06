@@ -67,6 +67,7 @@ class WorkflowGenerator(BaseGenerator):
         for sm in statemachines:
             d['statemachine'] = sm
             d['info'] = WorkflowInfo(sm, self)
+            d['scripts'] = self.scripts(sm)
             smName = utils.cleanName(sm.getName())
             smDir = os.path.join(workflowDir, smName)
             oldFile = os.path.join(extDir, smName + '.py')
@@ -77,7 +78,7 @@ class WorkflowGenerator(BaseGenerator):
             log.debug("Generated specific workflow's dir '%s'.",
                       smDir)
             # Generate workflow script
-            log.info("Generating workflow '%s' (using generic setup).", smName)
+            log.info("Generating workflow '%s'.", smName)
             templ = self.readTemplate('definition.xml')
             scriptpath = os.path.join(smDir, 'definition.xml')
             dtml = HTML(templ, d)
@@ -100,7 +101,7 @@ class WorkflowGenerator(BaseGenerator):
                 of.write(res)
                 of.close()
             else:
-                log.info("Workflow %s has no script(s)." % smName)
+                log.debug("Workflow %s has no script(s)." % smName)
 
         del d['statemachine']
         oldFile = os.path.join(extDir, 'InstallWorkflows.py')
@@ -134,6 +135,28 @@ class WorkflowGenerator(BaseGenerator):
         wf = trans.getParent()
         return '%s_%s_%s' % (wf.getCleanName(), trans.getCleanName(),
                              action.getCleanName())
+
+    def scripts(self, sm):
+        """Return workflow scripts.
+        """
+
+        transitions = sm.getTransitions(no_duplicates = 1)
+        filtered = [t for t in transitions
+                    if t.getName()
+                    and t.getAction()]
+        filtered.sort(cmp=lambda x,y: cmp(x.getName(), y.getName()))
+        results = []
+        smName = utils.cleanName(sm.getName())
+        for transition in filtered:
+            for scriptname in transition.getAction(
+                ).getUsedActionNames():
+                result = {}
+                result['id'] = scriptname
+                productName = self.package.getName()
+                result['module'] = '%s.%s_scripts' % (productName,
+                                                      smName)
+                results.append(result)
+        return results
 
     def workflowNames(self):
         statemachines = self.package.getStateMachines()
@@ -230,16 +253,6 @@ TODO = """
   <!--<dtml-var "_['sequence-item']['description']">-->
 
 
-<dtml-if "transition.getAction()">
-
-    ## Creation of workflow scripts
-    for wf_scriptname in <dtml-var "repr(transition.getAction().getUsedActionNames())">:
-        if not wf_scriptname in workflow.scripts.objectIds():
-            workflow.scripts._setObject(wf_scriptname,
-                ExternalMethod(wf_scriptname, wf_scriptname,
-                productname + '.<dtml-var "statemachine.getCleanName()">_scripts',
-                wf_scriptname))
-</dtml-if>
 
 
 

@@ -79,4 +79,12 @@
   <guard>
   </guard>
  </variable>
+<dtml-in "scripts">
+<dtml-let script="_['sequence-item']">
+ <script script_id="<dtml-var "script['id']">" type="External Method"
+         filename=""
+         module="<dtml-var "script['module']">"
+         function="<dtml-var "script['id']">"/>
+</dtml-let>
+</dtml-in>
 </dc-workflow>
