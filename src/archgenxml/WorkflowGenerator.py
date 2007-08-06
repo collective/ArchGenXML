@@ -58,7 +58,8 @@ class WorkflowGenerator(BaseGenerator):
 
         extDir = os.path.join(self.package.getFilePath(), 'Extensions')
         self.atgenerator.makeDir(extDir)
-        profileDir = os.path.join(self.package.getFilePath(), 'profiles', 'default')
+        profileDir = os.path.join(self.package.getFilePath(),
+                                  'profiles', 'default')
         self.atgenerator.makeDir(profileDir)
         workflowDir = os.path.join(profileDir, 'workflows')
         self.atgenerator.makeDir(workflowDir)
@@ -68,6 +69,10 @@ class WorkflowGenerator(BaseGenerator):
             d['info'] = WorkflowInfo(sm, self)
             smName = utils.cleanName(sm.getName())
             smDir = os.path.join(workflowDir, smName)
+            oldFile = os.path.join(extDir, smName + '.py')
+            if os.path.exists(oldFile):
+                log.warn('Workflow now uses generic setup, please '
+                         'remove %s.', oldFile)
             self.atgenerator.makeDir(smDir)
             log.debug("Generated specific workflow's dir '%s'.",
                       smDir)
@@ -98,6 +103,10 @@ class WorkflowGenerator(BaseGenerator):
                 log.info("Workflow %s has no script(s)." % smName)
 
         del d['statemachine']
+        oldFile = os.path.join(extDir, 'InstallWorkflows.py')
+        if os.path.exists(oldFile):
+            log.warn('Workflow now uses generic setup, please '
+                     'remove %s.', oldFile)
         log.debug("Creating workflows.xml file.")
         d['workflowNames'] = self.workflowNames()
         d['workflowless'] = self.workflowLessTypes()
