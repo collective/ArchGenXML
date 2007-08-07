@@ -28,6 +28,15 @@
              trigger="<dtml-var "transition.getTriggerType()">" before_script="<dtml-var "transition.getBeforeActionName() or ''">" after_script="<dtml-var "transition.getAfterActionName() or ''">">
   <action url="<dtml-var "transition.getTaggedValue('url')">" category="workflow"><dtml-var "transition.getTaggedValue('label') or transition.getName()"></action>
   <guard>
+<dtml-in "transition.guardPermissions">
+    <guard-permission><dtml-var "_['sequence-item']"></guard-permission>
+</dtml-in>
+<dtml-in "transition.guardRoles">
+    <guard-role><dtml-var "_['sequence-item']"></guard-role>
+</dtml-in>
+<dtml-if "transition.guardExpression">
+    <guard-expression><dtml-var "transition['guardExpression']"></guard-expression>
+</dtml-if>
   </guard>
  </transition>
 </dtml-let>

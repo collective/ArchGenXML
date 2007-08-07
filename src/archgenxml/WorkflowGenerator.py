@@ -246,6 +246,23 @@ class WorkflowInfo(object):
         transitions = self.sm.getTransitions(no_duplicates = 1)
         filtered = [t for t in transitions if t.getName()]
         filtered.sort(cmp=lambda x,y: cmp(x.getName(), y.getName()))
+        for tr in filtered:
+            guardPermissions = tr.getGuardPermissions()
+            guardRoles = tr.getGuardRoles()
+            guardExpr = tr.getGuardExpr()
+            if guardPermissions:
+                perms = guardPermissions.split(';')
+            else:
+                perms = []
+            perms = [p.strip() for p in perms]
+            tr.guardPermissions = perms
+            if guardRoles:
+                roles = guardRoles.split(';')
+            else:
+                roles = []
+            roles = [p.strip() for p in roles]
+            tr.guardRoles = roles
+            tr.guardExpression = guardExpr
         return filtered
 
 TODO = """
