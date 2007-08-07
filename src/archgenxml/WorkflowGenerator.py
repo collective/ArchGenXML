@@ -265,27 +265,29 @@ class WorkflowInfo(object):
             tr.guardExpression = guardExpr
         return filtered
 
+    def worklists(self):
+        names = self.sm.getAllWorklistNames()
+        worklists = []
+        for name in names:
+            wl = {}
+            wl['id'] = name
+            worklistStates = self.sm.getWorklistStateNames(name)
+            url = ("%(portal_url)s/search?review_state=" +
+                   "&review_state=".join(worklistStates))
+            wl['url'] = url
+            wl['guardPermission'] = self.sm.getWorklistGuardPermission(name)
+            wl['guardRole'] = self.sm.getWorklistGuardRole(name)
+            wl['states'] = worklistStates
+            worklists.append(wl)
+        return worklists
+
+
 TODO = """
 
   <!--<dtml-var "_['sequence-item']['description']">-->
 
-
-
-
-
-<dtml-in "statemachine.getAllWorklistNames()">
-<dtml-let worklistname="_['sequence-item']">
-<dtml-let worklistStateNames="statemachine.getWorklistStateNames(worklistname)">
-    worklistDef = workflow.worklists['<dtml-var "worklistname">']
     worklistStates = <dtml-var "repr(worklistStateNames)">
-    actbox_url = "%(portal_url)s/search?review_state=" + "&review_state=".join(worklistStates)
-    worklistDef.setProperties(description="Reviewer tasks",
-                              actbox_name="Pending (%(count)d)",
-                              actbox_url=actbox_url,
-                              actbox_category="global",
-                              props={'guard_permissions': '<dtml-var "statemachine.getWorklistGuardPermission(worklistname)">',
-                                     'guard_roles': '<dtml-var "statemachine.getWorklistGuardRole(worklistname)">',
-                                     'var_match_review_state': ';'.join(worklistStates)})
+                   'var_match_review_state': ';'.join(worklistStates)})
 </dtml-let>
 </dtml-let>
 </dtml-in>
