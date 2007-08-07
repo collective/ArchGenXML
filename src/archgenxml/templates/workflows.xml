@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<object name="portal_workflow" meta_type="Plone Workflow Tool">
+<dtml-in "workflowNames">
+ <object name="<dtml-var "_['sequence-item']">" meta_type="Workflow"/>
+</dtml-in>
+ <bindings>
+<dtml-in "workflowless">
+  <type type_id="<dtml-var "_['sequence-item']">"/>
+</dtml-in>
+<dtml-in "typeMapping">
+  <type type_id="<dtml-var "_['sequence-item']['id']">">
+   <bound-workflow workflow_id="<dtml-var "_['sequence-item']['workflowId']">"/>
+  </type>
+</dtml-in>
+ </bindings>
+</object>
