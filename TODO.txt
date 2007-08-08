@@ -16,8 +16,6 @@ TODO's for ArchGenXML
 * Move remainder of templates in templates/ to DTML
 
     - action_view.pt
-    - apeconf_folder.xml
-    - apeconf_object.xml
     - generated.pot
     - portlet_template.pt
 
@@ -47,12 +45,9 @@ TODO's for ArchGenXML
   http://dev.plone.org/collective/browser/DIYPloneStyle/utils/DIYPloneStyleCompatibility/exportimport/skins.py
   if we're going to do skins.xml stuff.
 
-* Move workflows to genericsetup
-  (http://plone.org/documentation/manual/upgrade-guide/version-specific/2.5-3.0/updating-add-on-products/update-your-workflows-to-use-genericsetup-profiles).
-
 * Allow python package products instead of zope products.
 
-* Empty out install.py in favour of genericsetup.
+* Empty out install.py in favour of genericsetup. (partially done)
 
 * Support plone 3.0 portlets.
 
