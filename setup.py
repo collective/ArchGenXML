@@ -9,7 +9,7 @@ from setuptools import setup
 from setuptools import find_packages
 
 setup(name='archgenxml',
-      version='1.6.a',
+      version='1.6.b1',
       license='GPL',
       description='Generates plone products from UML',
       long_description="""
