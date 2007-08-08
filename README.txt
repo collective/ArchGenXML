@@ -9,7 +9,7 @@ ArchGenXML - Python/Zope/Plone code generator
 
   It works with UML editors that can output the XMI interchange format
   (most do). It can also work with the native formats of some UML
-  editors.
+  editors. (argouml, poseidon, for instance).
 
   For information on the authors and supporters, see the file CREDITS.
 
@@ -50,7 +50,7 @@ Requirements & Optional
 
   Required to run generated code
 
-    - Plone 2.5.something.
+    - Plone 2.5.something or plone 3.0.something
 
   Optional:
 
