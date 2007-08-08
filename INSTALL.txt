@@ -1,6 +1,16 @@
 Installing archgenxml 1.6 (development version)
 ===============================================
 
+From tgz
+--------
+
+python setup.py install, so the usual.
+
+From the cheeseshop
+-------------------
+
+easy_install archgenxml, so the usual.
+
 
 SVN directories - what is stable, what is not?
 ----------------------------------------------
