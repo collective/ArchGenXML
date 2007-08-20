@@ -1,3 +1,11 @@
+2007-08-20  Maurits van Rees  <maurits@vanrees.org>
+
+	* src/archgenxml/WorkflowGenerator.py
+	(WorkflowGenerator.generateWorkflows): Only write out the
+	rolemap.xml when we have extra roles to define there.  Might need
+	to be done in the template itself with a dtml-if or something.
+	This might fix http://plone.org/products/archgenxml/issues/135
+	
 2007-08-08  Reinout van Rees  <reinout@zestsoftware.nl>
 
 	* setup.py: Making it a 1.6 beta 1.

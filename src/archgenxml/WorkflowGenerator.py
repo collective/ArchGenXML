@@ -120,6 +120,9 @@ class WorkflowGenerator(BaseGenerator):
         of.write(res)
         of.close()
 
+        if len(self.extraRoles()) == 0:
+            log.debug("Skipping creation of rolemap.xml file.")
+            return
         log.debug("Creating rolemap.xml file.")
         d['extraRoles'] = self.extraRoles()
         templ = self.readTemplate('rolemap.xml')
