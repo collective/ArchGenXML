@@ -229,27 +229,11 @@ at_uml_profile.addStereoType(
     "certain field class (see '<<field>>' stereotype).")
 
 at_uml_profile.addStereoType(
-    'CMFMember', ['XMIClass'],
-    description='The class will be treated as a CMFMember member '
-    'type. It will derive from CMFMember\'s Member '
-    'class and be installed as a member data type. '
-    'Note that you need to install the separate CMFMember product. '
-    "Identical to '<<member>>'.")
-
-at_uml_profile.addStereoType(
     'remember', ['XMIClass'],
     description='The class will be treated as a remember member '
     'type. It will derive from remember\'s Member '
     'class and be installed as a member data type. '
     'Note that you need to install the separate remember product. ')
-
-at_uml_profile.addStereoType(
-    'member', ['XMIClass'],
-    description='The class will be treated as a CMFMember member '
-                'type. It will derive from CMFMember\'s Member '
-                'class and be installed as a member data type. '
-    'Note that you need to install the separate CMFMember product. '
-    "Identical to '<<CMFMember>>'.")
 
 at_uml_profile.addStereoType(
     'action', ['XMIMethod'],
@@ -433,7 +417,6 @@ class ArchetypesGenerator(BaseGenerator):
     archetype_stereotype = ['archetype']
     vocabulary_item_stereotype = ['vocabulary_term']
     vocabulary_container_stereotype = ['vocabulary']
-    cmfmember_stereotype = ['CMFMember', 'member']
     remember_stereotype = ['remember']
     python_stereotype = ['python', 'python_class', 'view']
     folder_stereotype = ['atfolder', 'folder', 'ordered', 'large', 'btree']
@@ -829,7 +812,6 @@ class ArchetypesGenerator(BaseGenerator):
         # Or if it is a tool-like thingy
         if (element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile) or
             element.hasStereoType(self.vocabulary_item_stereotype, umlprofile=self.uml_profile) or
-            element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile) or
             element.hasStereoType(self.remember_stereotype, umlprofile=self.uml_profile) or
             element.isAbstract()):
             global_allow = False
@@ -2134,11 +2116,6 @@ class ArchetypesGenerator(BaseGenerator):
         if parent_is_archetype:
             baseclass = None
 
-        # CMFMember support
-        if element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
-            baseclass = 'BaseMember.Member'
-            baseschema = 'BaseMember.id_schema'
-
         # remember support
         if element.hasStereoType(self.remember_stereotype, umlprofile=self.uml_profile):
             if 'BaseMember' not in parentnames:
@@ -2229,14 +2206,6 @@ class ArchetypesGenerator(BaseGenerator):
             creation_permission = u'ADD_MEMBER_PERMISSION'
             creation_roles = None
 
-        # imports needed for CMFMember subclassing
-        if element.hasStereoType(self.cmfmember_stereotype,
-                                 umlprofile=self.uml_profile):
-            wrt(CMFMEMBER_IMPORTS)
-            # and set the add content permission to what CMFMember needs
-            creation_permission = u'ADD_MEMBER_PERMISSION'
-            creation_roles = None
-
         # imports needed for optional support of SQLStorage
         if utils.isTGVTrue(self.getOption('sql_storage_support',element,0)):
             wrt('from Products.Archetypes.SQLStorage import *\n')
@@ -2251,16 +2220,6 @@ class ArchetypesGenerator(BaseGenerator):
             wrt(u"# additional imports from tagged value 'import'\n")
             wrt(additionalImports)
             wrt(u'\n')
-
-        # CMFMember needs a special factory method
-        if element.hasStereoType(self.cmfmember_stereotype,
-                                 umlprofile=self.uml_profile):
-            wrt(CMFMEMBER_ADD % {
-                'module': element.getRootPackage().getProductModuleName(),
-                'prefix': self.prefix,
-                'name': name})
-        # I don't think this is needed for remember, since instances of
-        # member will be added by the membership tool 
 
         # Normally, archgenxml also looks at the parents of the
         # current class for allowed subitems. Likewise, subclasses of
@@ -2312,16 +2271,9 @@ class ArchetypesGenerator(BaseGenerator):
         # find base
         baseclass, baseschema, parentnames = self.getArchetypesBase(element, parentnames, parent_is_archetype)
 
-        # Remark: CMFMember support includes VariableSchema support
-        # Remark Reinout: since cmfmember 1.1, there's no more
         # variableschema support.
-        # njj: Punt on this for now as far as remember is concerned.
         if element.hasStereoType(self.variable_schema,
                                  umlprofile=self.uml_profile):
-            if element.hasStereoType(self.cmfmember_stereotype,
-                                     umlprofile=self.uml_profile):
-                log.warn("Adding VariableSchema to cmfmember, be careful "
-                         "as cmfmember 1.0 already includes it.")
             # Including it by default anyway, since 1.4.0/dev.
             parentnames.insert(0, 'VariableSchemaSupport')
 
@@ -2355,8 +2307,6 @@ class ArchetypesGenerator(BaseGenerator):
 
         if (parent_is_archetype 
                 and not element.hasStereoType(
-                    self.cmfmember_stereotype, umlprofile=self.uml_profile)
-                and not element.hasStereoType(
                     self.remember_stereotype, umlprofile=self.uml_profile)):
             schema = parent_schema
         else:
@@ -2365,14 +2315,6 @@ class ArchetypesGenerator(BaseGenerator):
                 schema = parent_schema
             else:
                 schema = [baseschema] + parent_schema
-
-        if element.hasStereoType(self.cmfmember_stereotype, umlprofile=self.uml_profile):
-            for addschema in ['contact_schema', 'plone_schema', 'plone_2_1_schema',
-                              'security_schema', 'login_info_schema',]:
-                if utils.isTGVTrue(element.getTaggedValue(addschema, '1')):
-                    schema.append('BaseMember.%s' % addschema)
-            if utils.isTGVTrue(element.getTaggedValue(addschema, '1')):
-                schema.append('ExtensibleMetadata.schema')
 
         if element.hasStereoType(self.remember_stereotype, umlprofile=self.uml_profile):
             schema.append('BaseMember.schema')
@@ -3638,8 +3580,6 @@ class ArchetypesGenerator(BaseGenerator):
         if (cclass.hasStereoType(self.portal_tools,
                                   umlprofile=self.uml_profile) or \
             cclass.hasStereoType(self.vocabulary_item_stereotype,
-                                  umlprofile=self.uml_profile) or \
-            cclass.hasStereoType(self.cmfmember_stereotype,
                                   umlprofile=self.uml_profile) or \
             cclass.hasStereoType(self.remember_stereotype,
                                   umlprofile=self.uml_profile) or \

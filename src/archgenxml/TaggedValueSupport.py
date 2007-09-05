@@ -487,9 +487,9 @@ category = 'method'
 # behaviour:
 
 tagname = 'autoinstall'
-explanation = """Set this to right or left on a method with a
+explanation = """OUTDATED, need refactoring. Set this to right or left on a method with a
 stereotype '<<portlet>>', this adds the portlet to left_slots or
-right_slots. See the documentation for the stereotype. """
+right_slots. See the documentation for the stereotype."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'code'
@@ -559,7 +559,7 @@ category = 'portlet'
 #  stereotypes, the following tagged values can be used:
 
 tagname = 'autoinstall'
-explanation = """Set to 'left' or 'right' to automatically install the
+explanation = """OUTDATED, needs refactoring. Set to 'left' or 'right' to automatically install the
 portlet (a class with the stereotype '<<portlet>>') with the product
 in the left or right slots, respectively. If it already exists in the
 slot it won't get overwritten."""

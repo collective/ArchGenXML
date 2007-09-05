@@ -1,21 +1,20 @@
 <dtml-var "generator.generateModuleInfoHeader(package, name='Install')">
 import os.path
 import sys
-from StringIO import StringIO
 from sets import Set
+from StringIO import StringIO
 from App.Common import package_home
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import manage_addTool
 from Products.ExternalMethod.ExternalMethod import ExternalMethod
 from zExceptions import NotFound, BadRequest
-
-from Products.Archetypes.Extensions.utils import installTypes
+<dtml-if "not generator._useGSSkinRegistration(package)">    
 from Products.Archetypes.Extensions.utils import install_subskin
-from Products.Archetypes.config import TOOL_NAME as ARCHETYPETOOLNAME
-from Products.Archetypes.atapi import listTypes
-<dtml-if "[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.cmfmember_stereotype)]">
-from Products.CMFMember.Extensions.toolbox import SetupMember
 </dtml-if>
+from Products.Archetypes.config import TOOL_NAME as ARCHETYPETOOLNAME
+<dtml-if "not generator._useGSTypeRegistration(package)">
+from Products.Archetypes.atapi import listTypes
+from Products.Archetypes.Extensions.utils import installTypes
 <dtml-if "[klass for klass in generator.getGeneratedClasses(package) if generator.getOption('migrate_dynamic_view_fti', klass, None)]">
 try:
     from Products.CMFDynamicViewFTI.migrate import migrateFTIs
@@ -24,8 +23,9 @@ except:
 else:
     HAS_DYNAMIC_VIEW_FTI = False
 </dtml-if>
+</dtml-if>
 from Products.<dtml-var "package.getProductModuleName()">.config import PROJECTNAME
-from Products.<dtml-var "package.getProductModuleName()">.config import product_globals as GLOBALS
+from Products.<dtml-var "package.getProductModuleName()">.config import product_globals
 
 
 def install(self, reinstall=False):
@@ -48,13 +48,15 @@ def install(self, reinstall=False):
         import transaction
         transaction.savepoint(optimistic=True)
 
+<dtml-if "not generator._useGSSkinRegistration(package)">    
+    install_subskin(self, out, product_globals)
+    
+</dtml-if>
+<dtml-if "not generator._useGSTypeRegistration(package)">
     classes = listTypes(PROJECTNAME)
-    installTypes(self, out,
-                 classes,
-                 PROJECTNAME)
-    install_subskin(self, out, GLOBALS)
+    installTypes(self, out, classes, PROJECTNAME)
+    
 <dtml-if "[klass for klass in generator.getGeneratedClasses(package) if generator.getOption('migrate_dynamic_view_fti', klass, None)]">
-
     # Migrate FTI, to make sure we get the necessary infrastructure for the
     # "display" menu to work.
     if HAS_DYNAMIC_VIEW_FTI:
@@ -65,7 +67,7 @@ def install(self, reinstall=False):
 </dtml-let>
 </dtml-in>
 </dtml-if>
-
+</dtml-if>
 <dtml-let klasses="[klass for klass in generator.getGeneratedClasses(package) if generator.getOption('catalogmultiplex:white', klass, None) or generator.getOption('catalogmultiplex:black', klass, None)]">
 <dtml-if "klasses">
 
@@ -100,6 +102,8 @@ def install(self, reinstall=False):
         atool.setCatalogsByType(meta_type, list(current_catalogs))
 </dtml-if>
 </dtml-let>
+<dtml-comment>
+#NO LONGER SUPPORTED (Plone 3.0), keep it for reference [jensens]
 <dtml-if "generator.left_slots or generator.right_slots">
     portal = getToolByName(self,'portal_url').getPortalObject()
 </dtml-if>
@@ -113,6 +117,7 @@ def install(self, reinstall=False):
        if slot not in portal.right_slots:
            portal.right_slots = list(portal.right_slots) + [slot]
 </dtml-if>
+</dtml-comment>
 <dtml-let autoinstall_tools="[c.getName() for c in generator.getGeneratedTools(package) if not utils.isTGVFalse(c.getTaggedValue('autoinstall')) ]">
 <dtml-if "autoinstall_tools">
     # autoinstall tools
@@ -205,7 +210,7 @@ def install(self, reinstall=False):
         if len(atvm[vocabname].contentIds()) < 1:
             if vocabmap[vocabname][0] == "VdexVocabulary":
                 vdexpath = os.path.join(
-                    package_home(GLOBALS), 'data', '%s.vdex' % vocabname)
+                    package_home(product_globals), 'data', '%s.vdex' % vocabname)
                 if not (os.path.exists(vdexpath) and os.path.isfile(vdexpath)):
                     print >>out, 'No VDEX import file provided at %s.' % vdexpath
                     continue
@@ -221,15 +226,6 @@ def install(self, reinstall=False):
             else:
                 pass
 </dtml-if>
-<dtml-let cmfmembers="[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.cmfmember_stereotype)]">
-<dtml-if "cmfmembers">
-
-    # registers as CMFMember and update catalogs, workflow, ...
-<dtml-in "cmfmembers">
-    print >> out, SetupMember(self, member_type='<dtml-var "_['sequence-item'].getCleanName()">', register=<dtml-var "str(_['sequence-item'].getTaggedValue('register', False))">).finish()
-</dtml-in>
-</dtml-if>
-</dtml-let>
 
 <dtml-let remembers="[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.remember_stereotype)]">
 <dtml-if "remembers"> 
@@ -249,7 +245,7 @@ def install(self, reinstall=False):
 <dtml-if "package.num_generated_relations">
     # configuration for Relations
     relations_tool = getToolByName(self,'relations_library')
-    xmlpath = os.path.join(package_home(GLOBALS),'relations.xml')
+    xmlpath = os.path.join(package_home(product_globals),'relations.xml')
     f = open(xmlpath)
     xml = f.read()
     f.close()

@@ -34,7 +34,7 @@ class TestUMLProfile(unittest.TestCase):
         self.assertEquals(3, len(baseprofile.getAllStereoTypes()))
         
         archprofile=UMLProfile(baseprofile)
-        archprofile.addStereoType('cmfmember', ['XMIClass'])
+        archprofile.addStereoType('remember', ['XMIClass'])
     
         self.assert_(archprofile.findStereoTypes(entities=['XMIClass']))
         self.assert_(archprofile.findStereoTypes(entities=['XMIMethod']))
