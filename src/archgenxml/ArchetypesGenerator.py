@@ -2894,6 +2894,8 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateInstallPy(package)
         # Generate generic setup profile
         self.generateGSDirectory(package)
+        # Generate GS skins
+        self.generateGSSkinsXMLFile(package)
 
     def generateGSDirectory(self, package):
         """Create genericsetup directory profiles/default.
@@ -2903,7 +2905,47 @@ class ArchetypesGenerator(BaseGenerator):
         self.makeDir(profileDir)
         profileDefaultDir = os.path.join(profileDir, 'default')
         self.makeDir(profileDefaultDir)
+    
+    def generateGSSkinsXMLFile(self, package):
+        """Create the skins.xml file.
+        
+        Reads all directories from productname/skins and generates and uses
+        them for xml file generation.
+        """
+        sr = package.getTaggedValue('skin_registration', 'oldschool')
+        if sr == 'oldschool':
+            return
+        
+        installTemplate = open(os.path.join(self.templateDir, 
+                                            'skins.xml')).read()
+        
+        profiledir = os.path.join(package.getFilePath(), 'profiles', 'default')
+        
+        dirs = os.listdir(os.path.join(package.getFilePath(), 'skins'))
+        
+        pname = package.getProductName()
+        skindirs = []
+        for dir in dirs:
+            if os.path.isdir(os.path.join(package.getFilePath(), 'skins', dir)):
+                skindir = dict()
+                skindir['name'] = dir
+                skindir['directory'] = '%s/skins/%s' % (pname, dir)
+                skindirs.append(skindir)
+        
+        # prepare (d)TML varibles
+        d = {
+            'skinDirs': skindirs,
+        }
+        d.update(__builtins__)
 
+        templ = self.readTemplate('skins.xml')
+        dtml = HTML(templ, d)
+        res = dtml()
+
+        sxml = self.makeFile(os.path.join(profiledir, 'skins.xml'))
+        sxml.write(res)
+        sxml.close()
+        
     def generateApeConf(self, target,package):
         #generates apeconf.xml
 
