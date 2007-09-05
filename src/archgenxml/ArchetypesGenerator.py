@@ -2894,8 +2894,12 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateInstallPy(package)
         # Generate generic setup profile
         self.generateGSDirectory(package)
-        # Generate GS skins
+        # Generate GS skins.xml file
         self.generateGSSkinsXMLFile(package)
+        # Generate GS types.xml file
+        self.generateGSTypesXMLFile(package)
+        # Generate GS types folder and tape.xml files
+        self.generateGSTypesFolderAndXMLFiles(package)
 
     def generateGSDirectory(self, package):
         """Create genericsetup directory profiles/default.
@@ -2907,7 +2911,8 @@ class ArchetypesGenerator(BaseGenerator):
         self.makeDir(profileDefaultDir)
     
     def generateGSSkinsXMLFile(self, package):
-        """Create the skins.xml file.
+        """Create the skins.xml file if skin_registrarion tagged value is set
+        to genericsetup.
         
         Reads all directories from productname/skins and generates and uses
         them for xml file generation.
@@ -2945,6 +2950,63 @@ class ArchetypesGenerator(BaseGenerator):
         sxml = self.makeFile(os.path.join(profiledir, 'skins.xml'))
         sxml.write(res)
         sxml.close()
+        
+    def generateGSTypesXMLFile(self, package):
+        """Create the types.xml file if type_registrarion tagged value is set
+        to genericsetup.
+        """
+        sr = package.getTaggedValue('type_registration', 'oldschool')
+        if sr == 'oldschool':
+            return
+        
+        installTemplate = open(os.path.join(self.templateDir, 
+                                            'types.xml')).read()
+        
+        profiledir = os.path.join(package.getFilePath(), 'profiles', 'default')
+        
+        defs = list()
+        self._getTypeDefinitions(defs, package)
+        
+        # prepare (d)TML varibles
+        d = {
+            'portalTypes': defs,
+        }
+        d.update(__builtins__)
+
+        templ = self.readTemplate('types.xml')
+        dtml = HTML(templ, d)
+        res = dtml()
+
+        txml = self.makeFile(os.path.join(profiledir, 'types.xml'))
+        txml.write(res)
+        txml.close()
+    
+    def _getTypeDefinitions(self, defs, package):
+        """Iterate recursice through package and create class definitions
+        """
+        classes = package.getClasses()
+        if not classes:
+            for package in package.getPackages():
+                self._getTypeDefinitions(defs, package)
+        
+        for pclass in classes:
+            if not self._isContentClass(pclass):
+                continue
+            
+            typedef = dict()
+            typedef['name'] = pclass.getName()
+            if pclass.taggedValues.get('migrate_dynamic_view_fti', '') != '':
+                typedef['meta_type'] = 'Factory-based Type Information ' + \
+                                       'with dynamic views'
+            else:
+                typedef['meta_type'] = 'Factory-based Type Information'
+            
+            defs.append(typedef)
+    
+    def generateGSTypesFolderAndXMLFiles(self, package):
+        """
+        """
+        pass
         
     def generateApeConf(self, target,package):
         #generates apeconf.xml
@@ -2989,6 +3051,20 @@ class ArchetypesGenerator(BaseGenerator):
             if c not in res:
                 res.append(c)
         return res
+    
+    def _isContentClass(self, cclass):
+        """Check if given class is content class
+        """
+        if cclass.isInternal() \
+         or cclass.getName() in self.hide_classes \
+         or cclass.getName().lower().startswith('java::'): # Enterprise Architect fix!
+            log.debug("Ignoring unnecessary class '%s'.", cclass.getName())
+            return False
+        if cclass.hasStereoType(self.stub_stereotypes,
+                                umlprofile=self.uml_profile):
+            log.debug("Ignoring stub class '%s'.", cclass.getName())
+            return False
+        return True
 
     def generatePackage(self, package, recursive=1):
         log.debug("Generating package %s.",
@@ -3006,15 +3082,7 @@ class ArchetypesGenerator(BaseGenerator):
         self.makeDir(package.getFilePath())
 
         for element in package.getClasses()+package.getInterfaces():
-            #skip stub and internal classes
-            if element.isInternal() or element.getName() in self.hide_classes \
-               or element.getName().lower().startswith('java::'): # Enterprise Architect fix!
-                log.debug("Ignoring unnecessary class '%s'.",
-                          element.getName())
-                continue
-            if element.hasStereoType(self.stub_stereotypes, umlprofile=self.uml_profile):
-                log.debug("Ignoring stub class '%s'.",
-                          element.getName())
+            if not self._isContentClass(element):
                 continue
 
             module=element.getModuleName()
