@@ -2903,7 +2903,6 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateGSDirectory(self, package):
         """Create genericsetup directory profiles/default.
-
         """
         profileDir = os.path.join(package.getFilePath(), 'profiles')
         self.makeDir(profileDir)
@@ -2917,8 +2916,7 @@ class ArchetypesGenerator(BaseGenerator):
         Reads all directories from productname/skins and generates and uses
         them for xml file generation.
         """
-        sr = package.getTaggedValue('skin_registration', 'oldschool')
-        if sr == 'oldschool':
+        if not self._useGSSkinRegistration(package):
             return
         
         installTemplate = open(os.path.join(self.templateDir, 
@@ -2937,7 +2935,6 @@ class ArchetypesGenerator(BaseGenerator):
                 skindir['directory'] = '%s/skins/%s' % (pname, dir)
                 skindirs.append(skindir)
         
-        # prepare (d)TML varibles
         d = {
             'skinDirs': skindirs,
         }
@@ -2955,8 +2952,7 @@ class ArchetypesGenerator(BaseGenerator):
         """Create the types.xml file if type_registrarion tagged value is set
         to genericsetup.
         """
-        sr = package.getTaggedValue('type_registration', 'oldschool')
-        if sr == 'oldschool':
+        if not self._useGSTypeRegistration(package):
             return
         
         installTemplate = open(os.path.join(self.templateDir, 
@@ -2967,7 +2963,6 @@ class ArchetypesGenerator(BaseGenerator):
         defs = list()
         self._getTypeDefinitions(defs, package)
         
-        # prepare (d)TML varibles
         d = {
             'portalTypes': defs,
         }
@@ -2981,32 +2976,40 @@ class ArchetypesGenerator(BaseGenerator):
         txml.write(res)
         txml.close()
     
-    def _getTypeDefinitions(self, defs, package):
-        """Iterate recursice through package and create class definitions
-        """
-        classes = package.getClasses()
-        if not classes:
-            for package in package.getPackages():
-                self._getTypeDefinitions(defs, package)
-        
-        for pclass in classes:
-            if not self._isContentClass(pclass):
-                continue
-            
-            typedef = dict()
-            typedef['name'] = pclass.getName()
-            if pclass.taggedValues.get('migrate_dynamic_view_fti', '') != '':
-                typedef['meta_type'] = 'Factory-based Type Information ' + \
-                                       'with dynamic views'
-            else:
-                typedef['meta_type'] = 'Factory-based Type Information'
-            
-            defs.append(typedef)
-    
     def generateGSTypesFolderAndXMLFiles(self, package):
+        """Create the types folder and the corresponding xml files for the
+        portal types inside it if type_registrarion tagged value is set
+        to genericsetup.
         """
-        """
-        pass
+        if not self._useGSTypeRegistration(package):
+            return
+        
+        installTemplate = open(os.path.join(self.templateDir, 
+                                            'type.xml')).read()
+        
+        profiledir = os.path.join(package.getFilePath(), 'profiles', 'default')
+        typesdir = os.path.join(profiledir, 'types')
+        
+        if not 'types' in os.listdir(profiledir):
+            os.mkdir(os.path.join(typesdir))
+        
+        if not os.path.isdir(typesdir):
+            raise Exception('types is not a directory')
+        
+        defs = list()
+        self._getTypeDefinitions(defs, package)
+        
+        for typedef in defs:
+            typedef.update(__builtins__)
+    
+            #templ = self.readTemplate('type.xml')
+            #dtml = HTML(templ, typedef)
+            #res = dtml()
+    
+            #typepath = os.path.join(typesdir, '%s.xml' % typedef['name'])
+            #txml = self.makeFile(typepath)
+            #txml.write(res)
+            #txml.close()
         
     def generateApeConf(self, target,package):
         #generates apeconf.xml
@@ -3052,20 +3055,6 @@ class ArchetypesGenerator(BaseGenerator):
                 res.append(c)
         return res
     
-    def _isContentClass(self, cclass):
-        """Check if given class is content class
-        """
-        if cclass.isInternal() \
-         or cclass.getName() in self.hide_classes \
-         or cclass.getName().lower().startswith('java::'): # Enterprise Architect fix!
-            log.debug("Ignoring unnecessary class '%s'.", cclass.getName())
-            return False
-        if cclass.hasStereoType(self.stub_stereotypes,
-                                umlprofile=self.uml_profile):
-            log.debug("Ignoring stub class '%s'.", cclass.getName())
-            return False
-        return True
-
     def generatePackage(self, package, recursive=1):
         log.debug("Generating package %s.",
                   package)
@@ -3572,3 +3561,156 @@ class ArchetypesGenerator(BaseGenerator):
         if not XMIParser.has_stripogram:
             log.warn("Can't strip html from doc-strings. Module 'stripogram' not found.")
         self.generateProduct(root)
+    
+    def _getTypeDefinitions(self, defs, package):
+        """Iterate recursice through package and create class definitions
+        """
+        classes = package.getClasses()
+        if not classes:
+            for package in package.getPackages():
+                self._getTypeDefinitions(defs, package)
+        
+        for pclass in classes:
+            if not self._isContentClass(pclass):
+                continue
+            
+            fti = self._getFTI(pclass)
+            print fti
+            typedef = dict()
+            typedef['name'] = pclass.getCleanName()
+            if pclass.getTaggedValue('migrate_dynamic_view_fti', '') != '':
+                typedef['meta_type'] = 'Factory-based Type Information ' + \
+                                       'with dynamic views'
+            else:
+                typedef['meta_type'] = 'Factory-based Type Information'
+            
+            typedef['title'] = ''
+            description = ''
+            typedef['description'] = ''
+            typedef['content_icon'] = pclass.getTaggedValue('content_icon', '')
+            typedef['content_meta_type'] = pclass.getCleanName()
+            
+            
+            defs.append(typedef)
+    
+    def _isContentClass(self, cclass):
+        """Check if given class is content class
+        """
+        if cclass.isInternal() \
+         or cclass.getName() in self.hide_classes \
+         or cclass.getName().lower().startswith('java::'): # Enterprise Architect fix!
+            log.debug("Ignoring unnecessary class '%s'.", cclass.getName())
+            return False
+        if cclass.hasStereoType(self.stub_stereotypes,
+                                umlprofile=self.uml_profile):
+            log.debug("Ignoring stub class '%s'.", cclass.getName())
+            return False
+        return True
+    
+    def _getFTI(self, cclass):
+        """Return the FTI information of the content class
+        """
+        fti = dict()
+        fti['immediate_view'] = self.getOption('immediate_view',
+                                               cclass,
+                                               default='base_view')        
+        
+        fti['default_view'] = self.getOption('default_view',
+                                             cclass,
+                                             default=fti['immediate_view'])
+        
+        fti['suppl_views'] = self.getOption('suppl_views',
+                                            cclass,
+                                            default='()')
+
+        fti['global_allow'] = True
+        if cclass.isDependent():
+            # WARNING! isDependent() doesn't seem to work,
+            # aggregates and compositions aren't detected.
+            # 2005-05-11 reinout
+            fti['global_allow'] = False
+        
+        # Or if it is a hidden element
+        if cclass.hasStereoType('hidden', umlprofile=self.uml_profile):
+            fti['global_allow'] = False
+        
+        # Or if it is a tool-like thingy
+        if (cclass.hasStereoType(self.portal_tools,
+                                  umlprofile=self.uml_profile) or \
+            cclass.hasStereoType(self.vocabulary_item_stereotype,
+                                  umlprofile=self.uml_profile) or \
+            cclass.hasStereoType(self.cmfmember_stereotype,
+                                  umlprofile=self.uml_profile) or \
+            cclass.hasStereoType(self.remember_stereotype,
+                                  umlprofile=self.uml_profile) or \
+            cclass.isAbstract()):
+            fti['global_allow'] = False
+        
+        # But the tagged value overwrites all
+        tgvglobalallow = self.getOption('global_allow',
+                                        cclass,
+                                        default=None)
+        if utils.isTGVFalse(tgvglobalallow):
+            fti['global_allow'] = False
+        if utils.isTGVTrue(tgvglobalallow):
+            fti['global_allow'] = True
+
+        has_content_icon=''
+        content_icon = cclass.getTaggedValue('content_icon')
+        if not content_icon:
+            # If an icon file with the default name exists in the skin, do not
+            # comment out the icon definition
+            fti['content_icon'] = cclass.getCleanName()+'.gif'
+            icon_filename = os.path.join(self.getSkinPath(cclass),
+                                         content_icon)
+        else:
+            fti['content_icon'] = content_icon
+
+        # If we are generating a tool, include the template which sets
+        # a tool icon
+        if cclass.hasStereoType(self.portal_tools,
+                                umlprofile=self.uml_profile):
+            fti['is_tool'] = True
+        else:
+            fti['is_tool'] = False
+
+        toolicon = cclass.getTaggedValue('toolicon')
+        if not toolicon:
+            fti['toolicon'] = cclass.getCleanName()+'.gif'
+        else:
+            fti['toolicon'] = toolicon
+
+
+        # Filter content types?
+        # Filter by default if it's a folder-like thingy
+        filter_default = self.elementIsFolderish(cclass)
+        # But a tagged value overrides
+        fti['filter_content_types'] = utils.isTGVTrue(cclass.getTaggedValue( \
+                                                      'filter_content_types',
+                                                      filter_default))
+        # Set a type description.
+        fti['type_name'] = cclass.getTaggedValue('archetype_name') or \
+                           cclass.getTaggedValue('label') or \
+                           cclass.getName ()
+                        
+        fti['type_description'] = utils.getExpression( \
+                                      cclass.getTaggedValue('typeDescription',
+                                                            fti['type_name']))
+        
+        return fti
+    
+    def _useGSSkinRegistration(self, package):
+        """Return wether to use generic setup for registering skins or not.
+        """
+        sr = package.getTaggedValue('skin_registration', 'genericsetup')
+        if sr == 'oldschool':
+            return False
+        return True
+    
+    def _useGSTypeRegistration(self, package):
+        """Return wether to use generic setup for registering types or not.
+        """
+        tr = package.getTaggedValue('type_registration', 'genericsetup')
+        if tr == 'oldschool':
+            return False
+        return True
