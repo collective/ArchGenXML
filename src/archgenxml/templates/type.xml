@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<object name="<dtml-var "type['name']">"
+        meta_type="<dtml-var "type['meta_type']">"
+        xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+   
+ <property name="title"><dtml-var "type['type_name']"></property>
+ <property name="description"><dtml-var "type['type_description']"></property>
+ <property name="content_icon"><dtml-var "type['content_icon']"></property>
+ <property name="content_meta_type"><dtml-var "type['content_meta_type']"></property>
+ <property name="product">TODODODODODO</property>
+ <property name="factory">TODODODODODO</property>
+ <property name="immediate_view"><dtml-var "type['immediate_view']"></property>
+ <property name="global_allow"><dtml-var "type['global_allow']"></property>
+ <property name="filter_content_types"><dtml-var "type['filter_content_types']"></property>
+ <property name="allowed_content_types">TODODODODODO</property>
+ <property name="allow_discussion">TODODODODODO</property>
+ 
+ <dtml-comment>
+ <dtml-in "typeAliases">
+ <alias from="<dtml-var "_['sequence-item']['from']">"
+        to="<dtml-var "_['sequence-item']['to']">"/>
+ </dtml-in>
+ 
+ <dtml-in "typeActions">
+ <action title="<dtml-var "_['sequence-item']['title']">"
+         action_id="<dtml-var "_['sequence-item']['action_id']">"
+         category="<dtml-var "_['sequence-item']['category']">"
+         condition_expr="<dtml-var "_['sequence-item']['condition_expr']">"
+         url_expr="<dtml-var "_['sequence-item']['url_expression']">"
+         visible="<dtml-var "_['sequence-item']['visible']">">
+  <dtml-in "_['sequence-item']['permissions']">
+  <permission value="<dtml-var "_['sequence-item']['permission']">"/>
+ </action>
+ </dtml-in>
+ </dtml-in>
+ </dtml-comment>
+</object>

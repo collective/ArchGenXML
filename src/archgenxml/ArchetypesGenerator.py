@@ -2944,14 +2944,14 @@ class ArchetypesGenerator(BaseGenerator):
         for typedef in defs:
             typedef.update(__builtins__)
     
-            #templ = self.readTemplate('type.xml')
-            #dtml = HTML(templ, typedef)
-            #res = dtml()
+            templ = self.readTemplate('type.xml')
+            dtml = HTML(templ, {'type': typedef})
+            res = dtml()
     
-            #typepath = os.path.join(typesdir, '%s.xml' % typedef['name'])
-            #txml = self.makeFile(typepath)
-            #txml.write(res)
-            #txml.close()
+            typepath = os.path.join(typesdir, '%s.xml' % typedef['name'])
+            txml = self.makeFile(typepath)
+            txml.write(res)
+            txml.close()
         
     def generateApeConf(self, target,package):
         #generates apeconf.xml
@@ -3517,22 +3517,16 @@ class ArchetypesGenerator(BaseGenerator):
                 continue
             
             fti = self._getFTI(pclass)
-            print fti
             typedef = dict()
+            typedef.update(fti)
             typedef['name'] = pclass.getCleanName()
             if pclass.getTaggedValue('migrate_dynamic_view_fti', '') != '':
                 typedef['meta_type'] = 'Factory-based Type Information ' + \
                                        'with dynamic views'
             else:
                 typedef['meta_type'] = 'Factory-based Type Information'
-            
-            typedef['title'] = ''
-            description = ''
-            typedef['description'] = ''
-            typedef['content_icon'] = pclass.getTaggedValue('content_icon', '')
             typedef['content_meta_type'] = pclass.getCleanName()
-            
-            
+                
             defs.append(typedef)
     
     def _isContentClass(self, cclass):
@@ -3578,11 +3572,11 @@ class ArchetypesGenerator(BaseGenerator):
         
         # Or if it is a tool-like thingy
         if (cclass.hasStereoType(self.portal_tools,
-                                  umlprofile=self.uml_profile) or \
+                                 umlprofile=self.uml_profile) or \
             cclass.hasStereoType(self.vocabulary_item_stereotype,
-                                  umlprofile=self.uml_profile) or \
+                                 umlprofile=self.uml_profile) or \
             cclass.hasStereoType(self.remember_stereotype,
-                                  umlprofile=self.uml_profile) or \
+                                 umlprofile=self.uml_profile) or \
             cclass.isAbstract()):
             fti['global_allow'] = False
         
