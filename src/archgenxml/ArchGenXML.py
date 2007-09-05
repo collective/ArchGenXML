@@ -38,8 +38,9 @@ def main():
     # Import zope here as we want to possibly inject an extra
     # directory into the import path. Just depending on a zope in the
     # normal import path can easily mess up existing zope sites.
-
-    zcmlConfigFile = resource_filename(__name__, 'configure.zcml')
+    
+    #zcmlConfigFile = resource_filename(__name__, 'configure.zcml')
+    zcmlConfigFile = resource_filename('archgenxml', 'configure.zcml')
     xmlconfig.file(zcmlConfigFile, package=archgenxml)
     log.debug("Finished initializing zope3 machinery.")
 
