@@ -1,3 +1,13 @@
+2007-09-05 Jens Klein <jens@bluedynamics.com> and 
+           Robert Niederreiter <robertnqbluedynamics.com>
+
+	* change the handling of skins directories and its registration.
+	generate/ use GS-profile for skin registration. use directory
+	structure like in DIYPloneStyle as default. keep BBB. make it
+	configureable. see documentation of tgv skin_registration and 
+	skin_directories.
+	* change the type registration: use a GS-profile.
+
 2007-08-20  Maurits van Rees  <maurits@vanrees.org>
 
 	* src/archgenxml/WorkflowGenerator.py

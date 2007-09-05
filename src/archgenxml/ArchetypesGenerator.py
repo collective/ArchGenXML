@@ -3439,14 +3439,32 @@ class ArchetypesGenerator(BaseGenerator):
         #create the directories
         self.makeDir(root.getFilePath())
         self.makeDir(os.path.join(root.getFilePath(),'skins'))
-        self.makeDir(os.path.join(root.getFilePath(),'skins',
-            root.getProductModuleName()))
-        # [reinout:] I removed the creation of /skins/..._public/
-        of = self.makeFile(os.path.join(root.getFilePath(), 'skins',
-                           root.getProductModuleName(), 'readme.txt'))
-        print >> of, READMELOWEST % root.getProductName()
-        of.close()
-
+        
+        # create skins directories
+        # in agx 1.6 we keep the oldschool single directory with Products name
+        # if it already exists (bbb). if skins is empty we create by default the 
+        # templates, images and styles directories prefixes with a lowercase 
+        # product name and _. this can get an override by a tagged value
+        # skin_directories, which is a comma separated list of alternatives
+        # for templates, images and styles, but they will get prefixed too, to
+        # not expose namesapce conflicts.
+        # [jensens]
+        
+        skindirs = root.getTaggedValue('skin_directories', 
+                                       'templates, styles, images')
+        oldschooldir = os.path.join(root.getFilePath(),'skins',
+                                    root.getProductModuleName())
+        if not os.path.exists(oldschooldir):
+            skindirs = [sd.strip() for sd in skindirs.split(',')]
+            for skindir in skindirs:
+                if not sd:
+                    continue
+                sd = "%s_%s" % (root.getName().lower(), skindir)
+                sdpath = os.path.join(root.getFilePath(),'skins', sd)
+                self.makeDir(sdpath)
+                log.info("Keeping/ creating skinsdir at: %s" % sdpath)
+        else:
+            log.info("Keeping old school skindir at: '%s'.", oldschooldir)
         # prepare messagecatalog
         if has_i18ndude and self.build_msgcatalog:
             self.makeDir(os.path.join(root.getFilePath(), 'i18n'))
@@ -3457,7 +3475,8 @@ class ArchetypesGenerator(BaseGenerator):
                 authors, emails, authorline = self.getAuthors(root)
                 PotTemplate = PotTemplate % {
                     'author':', '.join(authors) or 'unknown author',
-                    'email':', '.join([email[1:-1] for email in emails]) or 'unknown@email.address',
+                    'email':', '.join([email[1:-1] for email in emails]) or \
+                            'unknown@email.address',
                     'year': str(time.localtime()[0]),
                     'datetime': time.ctime(),
                     'charset': 'UTF-8',
