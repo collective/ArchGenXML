@@ -2836,10 +2836,15 @@ class ArchetypesGenerator(BaseGenerator):
                 '.'.join(klass.getPath()),
                 klass.getCleanName(),
             ])
+            toolname = klass.getTaggedValue('tool_instance_name', None)
+            if toolname:
+                tool_id = toolname
+            else:
+                tool_id = 'portal_%s' % klass.getCleanName().lower()
             tools.append(
                 {
                     'klass': path,
-                    'tool_id': 'portal_%s' % klass.getCleanName().lower(),
+                    'tool_id': tool_id,
                 }
             )
         
