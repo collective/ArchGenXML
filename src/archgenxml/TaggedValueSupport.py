@@ -214,6 +214,12 @@ setuphandlers and import_steps! This feature will be removed in Version 1.7.
 """
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'dependend_profiles'
+explanation = """GenericSetup profiles your product depends on. A list of 
+profile names separated by commas.
+"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 
 # Package level tagged values
 category = 'package'

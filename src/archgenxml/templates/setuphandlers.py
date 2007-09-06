@@ -12,6 +12,9 @@ from Products.ExternalMethod.ExternalMethod import ExternalMethod
 
 def installGSDependencies(context):
     """Install dependend profiles."""
+    dependencies = [<dtml-var "', '.join(dependend_profiles)">]
+    if not dependencies:
+        return
     # XXX TODO
     pass
 

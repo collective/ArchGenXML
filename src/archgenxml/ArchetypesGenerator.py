@@ -2953,13 +2953,17 @@ class ArchetypesGenerator(BaseGenerator):
     def generateGSsetuphandlers(self, package):
         """generates setuphandlers.py and import_steps.xml"""
         # generate setuphandlers
+        dependend_profiles = package.getTaggedValue('dependend_profiles', '')
+        dependend_profiles = [dp.strip() for dp in dependend_profiles.split(',')\
+                              if dp.strip()]
         templateparams = {
             'generator': self,
             'package': package,
             'product_name': package.getProductModuleName(),
             'now': datetime.datetime.isoformat(datetime.datetime.now()),
             'bbbExcecuteAppInstall': package.getTaggedValue('execute_appinstall', 
-                                                            False)
+                                                            False),
+            'dependend_profiles': dependend_profiles,
         }        
         handleSectionedFile(os.path.join(self.templateDir, 'setuphandlers.py'), 
                             os.path.join(package.getFilePath(),
