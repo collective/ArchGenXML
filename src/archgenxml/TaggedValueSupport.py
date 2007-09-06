@@ -922,11 +922,6 @@ for category in ['model', 'package', 'class']:
     direct from CMFDynamicViewFTI.browserdefault.BrowserDefaultMixin."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-    tagname = 'cmf_target_version'
-    explanation = """Controls CMF Version specific behaviour, primary to
-    avoid 'Deprecation warnings.' Defaults to '1.4'."""
-    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
     tagname = 'use_workflow'
     explanation = """Tie the class to the named workflow. A state diagram
     (=workflow) attached to a class in the UML diagram is automatically
