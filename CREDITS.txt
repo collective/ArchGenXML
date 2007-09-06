@@ -9,7 +9,7 @@ Authors
   Jens Klein (jens@bluedynamics.com)
 
     Jens hates copy and paste and loves code generation. He created
-    much of the documentation and new featuresxi, like tool and control
+    much of the documentation and new features, like tool and control
     panel integration, automatic msgid/pot generation with i18ndude,
     module-info-header support and config-file support, CMFMember support
     and several other little fixes and features.
@@ -57,6 +57,8 @@ Sponsors:
     For further information: "zuccaro.biblhertz.it":http://zuccaro.biblhertz.it/
 
   BlueDynamics Alliance, Austria
+  
+    Phil invented ArchGenXML and Jens pushed it together with him.
 
   Zest Software, Netherlands
 

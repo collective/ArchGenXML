@@ -6,7 +6,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# Copyright:   (c) 2003-2006 BlueDynamics
+# Copyright:   (c) 2003-2007 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
 
@@ -2578,19 +2578,19 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateHeader(self, element):
         outfile=StringIO()
-        i18ncontent = self.getOption('i18ncontent',element,
-                                        self.i18n_content_support)
+        i18ncontent = self.getOption('i18ncontent', element,
+                                      self.i18n_content_support)
 
+        genparentsstereotypes = element.getRealizationParents()
         if i18ncontent in self.i18n_at and element.isI18N():
             s1 = TEMPLATE_HEADER_I18N_I18N_AT
-        elif i18ncontent == 'linguaplone':
+        elif i18ncontent == 'linguaplone' and \
+             not element.hasStereoType('remember'):
             s1 = TEMPLATE_HEADER_I18N_LINGUAPLONE
         else:
             s1 = TEMPLATE_HEADER
 
         outfile.write(s1)
-
-        genparentsstereotypes = element.getRealizationParents()
         hasz3parent = False
         if (genparentsstereotypes and
             self.default_interface_type == 'z3'):

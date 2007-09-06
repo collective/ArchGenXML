@@ -7,7 +7,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# Copyright:   (c) 2003 BlueDynamics
+# Copyright:   (c) 2003-2007 BlueDynamics
 # Licence:     GPL
 #-----------------------------------------------------------------------------
 
