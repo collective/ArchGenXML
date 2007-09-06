@@ -7,16 +7,16 @@
         default_skin="Plone Default"
         request_varname="plone_skin">
 
- <dtml-in "skinDirs">
+<dtml-in "skinDirs">
  <object name="<dtml-var "_['sequence-item']['name']">"
          meta_type="Filesystem Directory View"
          directory="<dtml-var "_['sequence-item']['directory']">"/>
- </dtml-in>
+</dtml-in>
  
  <skin-path name="Plone Default">
-  <dtml-in "skinDirs">
+<dtml-in "skinDirs">
   <layer name="<dtml-var "_['sequence-item']['name']">"/>
-  </dtml-in>
+</dtml-in>
  </skin-path>
 
 </object>
