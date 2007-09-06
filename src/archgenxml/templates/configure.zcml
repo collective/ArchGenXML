@@ -3,5 +3,8 @@
            xmlns:five="http://namespaces.zope.org/five">
   
   <include file="profiles.zcml" />
+  
+  <!-- ##code-section configure.zcml #fill in your manual code here -->
+  <!-- ##/code-section configure.zcml -->
 
 </configure>

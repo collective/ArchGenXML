@@ -10,5 +10,8 @@
       description="Extension profile for <dtml-var "product_name">."
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
+  
+  <!-- ##code-section profiles.zcml #fill in your manual code here -->
+  <!-- ##/code-section profiles.zcml -->
 
 </configure>

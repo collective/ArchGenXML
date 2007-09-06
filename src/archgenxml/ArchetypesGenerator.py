@@ -2848,6 +2848,8 @@ class ArchetypesGenerator(BaseGenerator):
     def generateConfigureAndProfilesZCML(self, package):
         """Generate configure.zcml and profiles.zcml if type registration or
         skin registration is set to 'genericsetup'
+        
+        TODO: consider the protected section to profiles.zcml and configure.zcml
         """
         if not self._useGSSkinRegistration(package) \
           and not self._useGSTypeRegistration(package):
@@ -2934,7 +2936,7 @@ class ArchetypesGenerator(BaseGenerator):
         profiledir = os.path.join(package.getFilePath(), 'profiles', 'default')
         
         defs = list()
-        self._getTypeDefinitions(defs, package)
+        self._getTypeDefinitions(defs, package, package.getProductName())
         
         d = {
             'portalTypes': defs,
@@ -2970,7 +2972,7 @@ class ArchetypesGenerator(BaseGenerator):
             raise Exception('types is not a directory')
         
         defs = list()
-        self._getTypeDefinitions(defs, package)
+        self._getTypeDefinitions(defs, package, package.getProductName())
         
         for typedef in defs:
             typedef.update(__builtins__)
@@ -3535,13 +3537,13 @@ class ArchetypesGenerator(BaseGenerator):
             log.warn("Can't strip html from doc-strings. Module 'stripogram' not found.")
         self.generateProduct(root)
     
-    def _getTypeDefinitions(self, defs, package):
+    def _getTypeDefinitions(self, defs, package, productname):
         """Iterate recursice through package and create class definitions
         """
         classes = package.getClasses()
         if not classes:
             for package in package.getPackages():
-                self._getTypeDefinitions(defs, package)
+                self._getTypeDefinitions(defs, package, productname)
         
         for pclass in classes:
             if not self._isContentClass(pclass):
@@ -3557,6 +3559,48 @@ class ArchetypesGenerator(BaseGenerator):
             else:
                 typedef['meta_type'] = 'Factory-based Type Information'
             typedef['content_meta_type'] = pclass.getCleanName()
+            typedef['product_name'] = productname
+            typedef['factory'] = 'add%s' % pclass.getCleanName()
+            
+            allowed_types = pclass.getTaggedValue('allowed_content_types', [])
+            if isinstance(allowed_types, str):
+                allowed_types.strip('[]')
+                allowed_types.strip('()')
+                allowed_types.split(',')
+                allowed_types = [t.strip() for t in allowed_types \
+                                     if t.strip() != '']
+            
+            if pclass.isAbstract():
+                allowed_types= tuple(pclass.getGenChildrenNames())
+            else:
+                allowed_types= (pclass.getName(),) + \
+                                tuple(pclass.getGenChildrenNames())
+            
+            typedef['allowed_content_types'] = allowed_types
+            
+            typedef['allow_discussion'] = pclass.getTaggedValue( \
+                                              'allow_discussion', 'False')
+            
+            typedef['type_aliases'] = []
+            if pclass.getTaggedValue('migrate_dynamic_view_fti', False):
+                # TODO: same as on oldschool generation, write type_aliases
+                # to protected section and comment out.
+                typedef['type_aliases'] = [
+                    {'from': '(Default)', 'to': '(dynamic view)'},
+                    {'from': 'edit', 'to': 'base_edit'},
+                    {'from': 'index.html', 'to': '(dynamic view)'},
+                    {'from': 'view', 'to': '(selected layout)'},
+                ]
+            
+            typedef['suppl_views'] = eval(typedef['suppl_views'])
+            
+            # get the type actions
+            # this is a hack!
+            type_actions = self.generateMethodActions(pclass).strip()
+            actionsstring = ''
+            for action in type_actions.split('\n'):
+                actionsstring += action.strip()
+            typedef['type_actions'] = eval('[%s]' % actionsstring)
                 
             defs.append(typedef)
     

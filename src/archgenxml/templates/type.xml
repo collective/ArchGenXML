@@ -7,31 +7,34 @@
  <property name="description"><dtml-var "type['type_description']"></property>
  <property name="content_icon"><dtml-var "type['content_icon']"></property>
  <property name="content_meta_type"><dtml-var "type['content_meta_type']"></property>
- <property name="product">TODODODODODO</property>
- <property name="factory">TODODODODODO</property>
+ <property name="product"><dtml-var "type['product_name']"></property>
+ <property name="factory"><dtml-var "type['factory']"></property>
  <property name="immediate_view"><dtml-var "type['immediate_view']"></property>
  <property name="global_allow"><dtml-var "type['global_allow']"></property>
  <property name="filter_content_types"><dtml-var "type['filter_content_types']"></property>
- <property name="allowed_content_types">TODODODODODO</property>
- <property name="allow_discussion">TODODODODODO</property>
- 
- <dtml-comment>
- <dtml-in "typeAliases">
- <alias from="<dtml-var "_['sequence-item']['from']">"
-        to="<dtml-var "_['sequence-item']['to']">"/>
- </dtml-in>
- 
- <dtml-in "typeActions">
- <action title="<dtml-var "_['sequence-item']['title']">"
-         action_id="<dtml-var "_['sequence-item']['action_id']">"
-         category="<dtml-var "_['sequence-item']['category']">"
-         condition_expr="<dtml-var "_['sequence-item']['condition_expr']">"
-         url_expr="<dtml-var "_['sequence-item']['url_expression']">"
-         visible="<dtml-var "_['sequence-item']['visible']">">
-  <dtml-in "_['sequence-item']['permissions']">
-  <permission value="<dtml-var "_['sequence-item']['permission']">"/>
+ <property name="allowed_content_types">
+<dtml-in "type['allowed_content_types']">
+   <element value="<dtml-var "_['sequence-item']">"/>
+</dtml-in>
+ </property>
+ <property name="allow_discussion"><dtml-var "type['allow_discussion']"></property>
+ <property name="default_view"><dtml-var "type['default_view']"></property>
+ <property name="view_methods">
+<dtml-in "type['suppl_views']">
+  <element value="<dtml-var "_['sequence-item']">"/>
+</dtml-in>
+ </property>
+ <property name="default_view_fallback">False</property>
+<dtml-in "type['type_aliases']">
+ <alias from="<dtml-var "_['sequence-item']['from']">" to="<dtml-var "_['sequence-item']['to']">"/>
+</dtml-in>
+<dtml-in "type['type_actions']">
+ <action title="<dtml-var "_['sequence-item']['name']">" action_id="<dtml-var "_['sequence-item']['id']">"
+         category="<dtml-var "_['sequence-item']['category']">" condition_expr="<dtml-var "_['sequence-item']['condition']">"
+         url_expr="<dtml-var "_['sequence-item']['action']">" visible="True">
+<dtml-in "_['sequence-item']['permissions']">
+  <permission value="<dtml-var "_['sequence-item']">"/>
+</dtml-in>
  </action>
- </dtml-in>
- </dtml-in>
- </dtml-comment>
+</dtml-in>
 </object>
