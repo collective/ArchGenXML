@@ -2786,6 +2786,8 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateGSStylesheetsXML(package)
         # generate GS jsregistry.xml
         self.generateGSJavascriptsXML(package)
+        # generate toolset.xml
+        self.generateGSToolsetXML(package)
         
 
     def generateConfigureAndProfilesZCML(self, package):
@@ -2816,6 +2818,37 @@ class ArchetypesGenerator(BaseGenerator):
         profileDefaultDir = os.path.join(profileDir, 'default')
         self.makeDir(profileDefaultDir)
     
+    def generateGSToolsetXML(self, package):
+        """Generate the factorytool.xml.
+        """
+        if not self._useGSTypeRegistration(package):
+            return
+        
+        tools = []
+        
+        klasses = self.getGeneratedTools(package)
+        for klass in klasses:
+            if utils.isTGVFalse(klass.getTaggedValue('autoinstall')):
+                continue
+            path = '.'.join([
+                'Products',
+                klass.getPackage().getProductName(),
+                '.'.join(klass.getPath()),
+                klass.getCleanName(),
+            ])
+            tools.append(
+                {
+                    'klass': path,
+                    'tool_id': 'portal_%s' % klass.getCleanName().lower(),
+                }
+            )
+        
+        ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
+        handleSectionedFile(os.path.join(self.templateDir, 'toolset.xml'),
+                            os.path.join(ppath, 'toolset.xml'),
+                            sectionnames=['toolset.xml'],
+                            templateparams={ 'tools': tools })
+    
     def generateGSFactoryTooXMLFile(self, package):
         """Generate the factorytool.xml.
         """
@@ -2825,6 +2858,8 @@ class ArchetypesGenerator(BaseGenerator):
         klasses = self.getGeneratedClasses(package)
         factorytypes = []
         for klass in klasses:
+            if klass.hasStereoType(['tool', 'portal_tool']):
+                continue
             factoryopt = self.getOption('use_portal_factory', klass, True)
             if utils.isTGVTrue(factoryopt) \
               and not (klass.getPackage().hasStereoType('tests') \
@@ -3540,6 +3575,9 @@ class ArchetypesGenerator(BaseGenerator):
         
         for pclass in classes:
             if not self._isContentClass(pclass):
+                continue
+            
+            if pclass.hasStereoType(['tool', 'portal_tool']):
                 continue
             
             fti = self._getFTI(pclass)

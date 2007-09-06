@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<tool-setup>
+<dtml-in "tools">
+ <required tool_id="<dtml-var "_['sequence-item']['tool_id']">"
+           class="<dtml-var "_['sequence-item']['klass']">"/>
+</dtml-in>
+
+ <!-- ##code-section toolset.xml -->
+ <!-- ##/code-section toolset.xml -->
+</tool-setup>
