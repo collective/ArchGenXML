@@ -2767,6 +2767,8 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateGSTypesFolderAndXMLFiles(package)
         # Generate configure.zcml and profiles.zcml
         self.generateConfigureAndProfilesZCML(package) 
+        # Generate factorytool.xml
+        self.generateGSFactoryTooXMLFile(package)
 
     def generateConfigureAndProfilesZCML(self, package):
         """Generate configure.zcml and profiles.zcml if type registration or
@@ -2795,6 +2797,29 @@ class ArchetypesGenerator(BaseGenerator):
         self.makeDir(profileDir)
         profileDefaultDir = os.path.join(profileDir, 'default')
         self.makeDir(profileDefaultDir)
+    
+    def generateGSFactoryTooXMLFile(self, package):
+        """Generate the factorytool.xml.
+        """
+        if not self._useGSTypeRegistration(package):
+            return
+        
+        klasses = self.getGeneratedClasses(package)
+        factorytypes = []
+        for klass in klasses:
+            factoryopt = self.getOption('use_portal_factory', klass, True)
+            if utils.isTGVTrue(factoryopt) \
+              and not (klass.getPackage().hasStereoType('tests') \
+              or klass.isAbstract() \
+              or klass.hasStereoType(['widget', 'field', 'stub'])):
+                klassname = klass.getTaggedValue('portal_type') \
+                            or klass.getCleanName()
+                factorytypes.append(klassname)
+        
+        ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
+        handleSectionedFile(os.path.join(self.templateDir, 'factorytool.xml'),
+                            os.path.join(ppath, 'factorytool.xml'),
+                            templateparams={ 'factory_types': factorytypes })
     
     def generateGSSkinsXMLFile(self, package):
         """Create the skins.xml file if skin_registrarion tagged value is set
