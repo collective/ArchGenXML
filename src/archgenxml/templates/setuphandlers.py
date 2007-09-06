@@ -19,7 +19,7 @@ def installGSDependencies(context):
     site = context.getSite()
     setup_tool = getToolByName(site, 'portal_setup')
     for dependency in dependencies:
-        if dependency.find(':') = -1:
+        if dependency.find(':') == -1:
             dependency += ':default'
         old_context = setup_tool.getImportContextID()
         setup_tool.setImportContext(dependency)
