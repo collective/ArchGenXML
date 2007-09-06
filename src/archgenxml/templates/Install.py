@@ -176,6 +176,7 @@ def install(self, reinstall=False):
 
 </dtml-if>
 
+<dtml-if "not generator._useGSTypeRegistration(package)">
 <dtml-let klasses="[klass for klass in generator.getGeneratedClasses(package) if utils.isTGVTrue(generator.getOption('use_portal_factory', klass, True)) and not (klass.getPackage().hasStereoType('tests') or klass.isAbstract() or klass.hasStereoType(['widget', 'field', 'stub']))]">
 <dtml-if "klasses">
     # enable portal_factory for given types
@@ -189,6 +190,7 @@ def install(self, reinstall=False):
     factory_tool.manage_setPortalFactoryTypes(listOfTypeIds=factory_types)
 </dtml-if>
 </dtml-let>
+</dtml-if>
 <dtml-let klasses="[(klass.getTaggedValue('portal_type') or klass.getCleanName()) for klass in generator.getGeneratedClasses(package) if utils.isTGVFalse(generator.getOption('searchable_type', klass, True))]">
 <dtml-if "klasses">
     # hide selected classes in the search form
@@ -220,7 +222,7 @@ def install(self, reinstall=False):
 
     return out.getvalue()
 
-
+<dtml-comment>
 def uninstall(self, reinstall=False):
     out = StringIO()
 <dtml-let remembers="[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.remember_stereotype)]">
@@ -380,3 +382,4 @@ def afterInstall(self, reinstall, product):
     else:
         print >>out, 'no custom afterInstall'
     return out
+</dtml-comment>
