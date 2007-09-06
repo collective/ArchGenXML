@@ -19,6 +19,16 @@
    Install quickinstaller dependencies for <dtml-var "product_name">
  </import-step>
  
+ <dtml-if "toolnames">
+ <import-step 
+    id="<dtml-var "product_name">-Hide-Tools-From-Navigation" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.setupHideToolsFromNavigation"
+    title="Hide Custom tools from Navigation for <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   <dependency step="<dtml-var "now">-QI-dependencies"/>
+   Hides custom tools from navigation tree for <dtml-var "product_name">
+ </import-step>
+ </dtml-if>
  <dtml-if "bbbExcecuteAppInstall">
  <import-step 
     id="<dtml-var "product_name">-BBB-AppInstall" 

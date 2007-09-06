@@ -446,11 +446,6 @@ explanation = """The id to use for the tool. Defaults to 'portal_<name>',
 where &lt;name&gt; is the class name in lowercase."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-tagname = 'autoinstall'
-explanation = """Set to true (1) to automatically install the tool when
-your product is installed."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 tagname = 'configlet'
 explanation = """Set to true (1) to set up a configlet in the Plone control
 panel for your tool."""

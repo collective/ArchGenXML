@@ -2996,6 +2996,9 @@ class ArchetypesGenerator(BaseGenerator):
         dependend_profiles = package.getTaggedValue('dependend_profiles', '')
         dependend_profiles = [dp.strip() for dp in dependend_profiles.split(',')\
                               if dp.strip()]
+        alltools = self.getGeneratedTools(package)
+        toolnames = [t.getTaggedValue('tool_instance_name') or \
+                     'portal_%s' % t.getName().lower() for t in alltools]
         templateparams = {
             'generator': self,
             'package': package,
@@ -3004,6 +3007,9 @@ class ArchetypesGenerator(BaseGenerator):
             'bbbExcecuteAppInstall': package.getTaggedValue('execute_appinstall', 
                                                             False),
             'dependend_profiles': dependend_profiles,
+            'alltools': alltools,
+            'toolnames': toolnames,
+            
         }        
         handleSectionedFile(os.path.join(self.templateDir, 'setuphandlers.py'), 
                             os.path.join(package.getFilePath(),

@@ -91,57 +91,7 @@ def install(self, reinstall=False):
 </dtml-if>
 </dtml-let>
 
-<dtml-let autoinstall_tools="[c.getName() for c in generator.getGeneratedTools(package) if not utils.isTGVFalse(c.getTaggedValue('autoinstall')) ]">
-<dtml-if "autoinstall_tools">
-    # autoinstall tools
-    portal = getToolByName(self,'portal_url').getPortalObject()
-    for t in <dtml-var "repr(autoinstall_tools)">:
-        try:
-            portal.manage_addProduct[PROJECTNAME].manage_addTool(t)
-        except BadRequest:
-            # if an instance with the same name already exists this error will
-            # be swallowed. Zope raises in an unelegant manner a 'Bad Request' error
-            pass
-        except:
-            e = sys.exc_info()
-            if e[0] != 'Bad Request':
-                raise
 
-    # hide tools in the search form
-    portalProperties = getToolByName(self, 'portal_properties', None)
-    if portalProperties is not None:
-        siteProperties = getattr(portalProperties, 'site_properties', None)
-        if siteProperties is not None and siteProperties.hasProperty('types_not_searched'):
-            for tool in <dtml-var "repr(autoinstall_tools)">:
-                current = list(siteProperties.getProperty('types_not_searched'))
-                if tool not in current:
-                    current.append(tool)
-                    siteProperties.manage_changeProperties(**{'types_not_searched' : current})
-
-</dtml-if>
-</dtml-let>
-<dtml-let all_tools="[c for c in generator.getGeneratedTools(package)]">
-<dtml-if "all_tools">
-    # uncatalog tools
-    for toolname in <dtml-var "[t.getTaggedValue('tool_instance_name') or 'portal_%s' % t.getName().lower() for t in all_tools]">:
-        try:
-            portal[toolname].unindexObject()
-        except:
-            pass
-
-    # hide tools in the navigation
-    portalProperties = getToolByName(self, 'portal_properties', None)
-    if portalProperties is not None:
-        navtreeProperties = getattr(portalProperties, 'navtree_properties', None)
-        if navtreeProperties is not None and navtreeProperties.hasProperty('idsNotToList'):
-            for toolname in <dtml-var "[t.getTaggedValue('tool_instance_name') or 'portal_%s' % t.getName().lower() for t in all_tools]">:
-                current = list(navtreeProperties.getProperty('idsNotToList'))
-                if toolname not in current:
-                    current.append(toolname)
-                    navtreeProperties.manage_changeProperties(**{'idsNotToList' : current})
-
-</dtml-if>
-</dtml-let>
 <dtml-let configlet_tools="[cn for cn in generator.getGeneratedTools(package) if not utils.isTGVFalse(cn.getTaggedValue('autoinstall')) and cn.getTaggedValue('configlet', None)]">
 <dtml-if "configlet_tools">
     # register tools as configlets
