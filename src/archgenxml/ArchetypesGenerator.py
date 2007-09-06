@@ -202,13 +202,6 @@ at_uml_profile.addStereoType(
     template='tests/InterfaceTestcase.py',
     description='Turns a class into a testcase for the interfaces.')
 
-# This looks like a tagged value...
-#at_uml_profile.addStereoType(
-#    'relation_implementation',
-#    ['XMIClass', 'XMIAssociation', 'XMIPackage'],
-#    default='basic',
-#    description='specifies how relations should be implemented')
-
 at_uml_profile.addStereoType(
     'field', ['XMIClass'],
     dispatching=1,
@@ -761,8 +754,7 @@ class ArchetypesGenerator(BaseGenerator):
 
 
     def generateActionsAndViews(self, element, subtypes):
-        """Generate the views and actions (used to be in generateFti())
-        """
+        """Generate the views and actions."""
         
         hasActions=False
         actTempl=ACTIONS_START
@@ -790,88 +782,17 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             return
         
-    def generateFti(self, element, subtypes):
+    def generateFti(self, element):
         ''' generates Factory Type Information related attributes on the class'''
-
-        ftiTempl=FTI_TEMPL
-        immediate_view = self.getOption('immediate_view', element, default='base_view')        
-        default_view = self.getOption('default_view', element, default=immediate_view)
-        suppl_views = self.getOption('suppl_views', element, default='()')
-
-        # In principle, allow globally
-        global_allow = True
-        # Unless it is only contained by another element
-        if element.isDependent():
-            # WARNING! isDependent() doesn't seem to work,
-            # aggregates and compositions aren't detected.
-            # 2005-05-11 reinout
-            global_allow = False
-        # Or if it is a hidden element
-        if element.hasStereoType('hidden', umlprofile=self.uml_profile):
-            global_allow = False
-        # Or if it is a tool-like thingy
-        if (element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile) or
-            element.hasStereoType(self.vocabulary_item_stereotype, umlprofile=self.uml_profile) or
-            element.hasStereoType(self.remember_stereotype, umlprofile=self.uml_profile) or
-            element.isAbstract()):
-            global_allow = False
-        # But the tagged value overwrites all
-        tgvglobalallow = self.getOption('global_allow', element, default=None)
-        if utils.isTGVFalse(tgvglobalallow):
-            global_allow = False
-        if utils.isTGVTrue(tgvglobalallow):
-            global_allow = True
-
-        has_content_icon=''
-        content_icon=element.getTaggedValue('content_icon')
-        if not content_icon:
-            # If an icon file with the default name exists in the skin, do not
-            # comment out the icon definition
-            content_icon = element.getCleanName()+'.gif'
-            icon_filename = os.path.join(self.getSkinPath(element), content_icon)
-            if not os.path.isfile(icon_filename):
-                has_content_icon='#'
-
-        # If we are generating a tool, include the template which sets
-        # a tool icon
-        if element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile):
-            ftiTempl += TOOL_FTI_TEMPL
-
-        has_toolicon=''
-        toolicon = element.getTaggedValue('toolicon')
-        if not toolicon:
-            has_toolicon='#'
-            toolicon = element.getCleanName()+'.gif'
-
-
-        # Filter content types?
-        # Filter by default if it's a folder-like thingy
-        filter_default = self.elementIsFolderish(element)
-        # But a tagged value overrides
-        filter_content_types = utils.isTGVTrue(element.getTaggedValue('filter_content_types',
-                                                                filter_default))
-        # Set a type description.
-
-        typeName = element.getTaggedValue('archetype_name') or \
-                    element.getTaggedValue('label') or \
-                    element.getName ()
-                        
-
-        typeDescription = utils.getExpression(element.getTaggedValue('typeDescription', typeName))
-
-        res = ftiTempl % {
-            'subtypes'             : repr(tuple(subtypes)),
-            'has_content_icon'     : has_content_icon,
-            'content_icon'         : content_icon,
-            'has_toolicon'         : has_toolicon,
-            'toolicon'             : toolicon,
-            'global_allow'         : global_allow,
-            'immediate_view'       : immediate_view,
-            'default_view'         : default_view,
-            'suppl_views'          : suppl_views,
-            'filter_content_types' : filter_content_types,
-            'typeDescription'      : typeDescription,
-            'type_name_lc'         : element.getName().lower()}
+        # :-( subtypes is not longer used
+        # FTI attributes are only needed if we dont use GenericSetup for 
+        # type-registration:        
+        if self._useGSTypeRegistration(element):
+            return ''
+        
+        ftiTempl = FTI_TEMPL
+        ftiinfo = self._getFTI(element)
+        res = ftiTempl % ftiinfo
 
         # Only set allow_discussion if it is explicitly set with a
         # tagged value. Leave empty if not, otherwise it cannot be
@@ -2432,7 +2353,7 @@ class ArchetypesGenerator(BaseGenerator):
         # FTI as attributes on class
         # [optilude] Don't generate FTI for abstract mixins
         if not element.isAbstract():
-            fti=self.generateFti(element,aggregatedClasses)
+            fti=self.generateFti(element)
             print >> outfile,fti
         # But *do* add the actions, views, etc.
         actions_views = self.generateActionsAndViews(element,
@@ -2577,7 +2498,7 @@ class ArchetypesGenerator(BaseGenerator):
 
 
     def generateHeader(self, element):
-        outfile=StringIO()
+        outfile = StringIO()
         i18ncontent = self.getOption('i18ncontent', element,
                                       self.i18n_content_support)
 
@@ -3697,15 +3618,14 @@ class ArchetypesGenerator(BaseGenerator):
         fti['filter_content_types'] = utils.isTGVTrue(cclass.getTaggedValue( \
                                                       'filter_content_types',
                                                       filter_default))
-        # Set a type description.
+        # Set a type name and description.
         fti['type_name'] = cclass.getTaggedValue('archetype_name') or \
                            cclass.getTaggedValue('label') or \
                            cclass.getName ()
-                        
+        fti['type_name_lc'] = fti['type_name'].lower()                        
         fti['type_description'] = utils.getExpression( \
                                       cclass.getTaggedValue('typeDescription',
-                                                            fti['type_name']))
-        
+                                                            fti['type_name']))        
         return fti
     
     def _useGSSkinRegistration(self, package):

@@ -75,7 +75,7 @@ FTI_TEMPL = """\
     immediate_view = '%(immediate_view)s'
     default_view = '%(default_view)s'
     suppl_views = %(suppl_views)s
-    typeDescription = %(typeDescription)s
+    typeDescription = %(type_description)s
     typeDescMsgId = 'description_edit_%(type_name_lc)s'
 """
 
