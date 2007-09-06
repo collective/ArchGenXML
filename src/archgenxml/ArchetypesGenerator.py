@@ -2830,10 +2830,10 @@ class ArchetypesGenerator(BaseGenerator):
         for klass in klasses:
             if utils.isTGVFalse(klass.getTaggedValue('autoinstall')):
                 continue
+            
             path = '.'.join([
                 'Products',
-                klass.getPackage().getProductName(),
-                '.'.join(klass.getPath()),
+                klass.getQualifiedModuleName(),
                 klass.getCleanName(),
             ])
             toolname = klass.getTaggedValue('tool_instance_name', None)
@@ -3595,11 +3595,13 @@ class ArchetypesGenerator(BaseGenerator):
             typedef = dict()
             typedef.update(fti)
             typedef['name'] = pclass.getCleanName()
+            
             if pclass.getTaggedValue('migrate_dynamic_view_fti', '') != '':
                 typedef['meta_type'] = 'Factory-based Type Information ' + \
                                        'with dynamic views'
             else:
                 typedef['meta_type'] = 'Factory-based Type Information'
+            
             typedef['content_meta_type'] = pclass.getCleanName()
             typedef['product_name'] = productname
             typedef['factory'] = 'add%s' % pclass.getCleanName()
