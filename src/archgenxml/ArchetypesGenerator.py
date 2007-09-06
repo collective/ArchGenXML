@@ -34,6 +34,8 @@ from archgenxml.interfaces import IOptions
 from BaseGenerator import BaseGenerator
 from WorkflowGenerator import WorkflowGenerator
 
+from CodeSectionHandler import handleSectionedFile
+
 from documenttemplate.documenttemplate import HTML
 
 from zope import interface
@@ -2769,33 +2771,22 @@ class ArchetypesGenerator(BaseGenerator):
     def generateConfigureAndProfilesZCML(self, package):
         """Generate configure.zcml and profiles.zcml if type registration or
         skin registration is set to 'genericsetup'
-        
-        TODO: consider the protected section to profiles.zcml and configure.zcml
         """
         if not self._useGSSkinRegistration(package) \
           and not self._useGSTypeRegistration(package):
             return
         
-        templ = self.readTemplate('configure.zcml')
-        czcml = self.makeFile(os.path.join(package.getFilePath(),
-                                           'configure.zcml'))
-        czcml.write(templ)
-        czcml.close()
+        ppath = package.getFilePath()
+        pname = package.getProductName()
         
-        d = {
-            'product_name': package.getProductName(),
-        }
-        d.update(__builtins__)
-
-        templ = self.readTemplate('profiles.zcml')
+        handleSectionedFile(os.path.join(self.templateDir, 'profiles.zcml'),
+                            os.path.join(ppath, 'profiles.zcml'),
+                            sectionnames=['profiles.zcml'],
+                            templateparams={'product_name': pname})
         
-        dtml = HTML(templ, d)
-        res = dtml()
-
-        pzcml = self.makeFile(os.path.join(package.getFilePath(),
-                                           'profiles.zcml'))
-        pzcml.write(res)
-        pzcml.close()
+        handleSectionedFile(os.path.join(self.templateDir, 'configure.zcml'),
+                            os.path.join(ppath, 'configure.zcml'),
+                            sectionnames=['configure.zcml'])
     
     def generateGSDirectory(self, package):
         """Create genericsetup directory profiles/default.
@@ -2815,13 +2806,7 @@ class ArchetypesGenerator(BaseGenerator):
         if not self._useGSSkinRegistration(package):
             return
         
-        installTemplate = open(os.path.join(self.templateDir, 
-                                            'skins.xml')).read()
-        
-        profiledir = os.path.join(package.getFilePath(), 'profiles', 'default')
-        
         dirs = os.listdir(os.path.join(package.getFilePath(), 'skins'))
-        
         pname = package.getProductName()
         skindirs = []
         for dir in dirs:
@@ -2831,18 +2816,10 @@ class ArchetypesGenerator(BaseGenerator):
                 skindir['directory'] = '%s/skins/%s' % (pname, dir)
                 skindirs.append(skindir)
         
-        d = {
-            'skinDirs': skindirs,
-        }
-        d.update(__builtins__)
-
-        templ = self.readTemplate('skins.xml')
-        dtml = HTML(templ, d)
-        res = dtml()
-
-        sxml = self.makeFile(os.path.join(profiledir, 'skins.xml'))
-        sxml.write(res)
-        sxml.close()
+        ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
+        handleSectionedFile(os.path.join(self.templateDir, 'skins.xml'),
+                            os.path.join(ppath, 'skins.xml'),
+                            templateparams={ 'skinDirs': skindirs })
         
     def generateGSTypesXMLFile(self, package):
         """Create the types.xml file if type_registrarion tagged value is set
@@ -2851,26 +2828,13 @@ class ArchetypesGenerator(BaseGenerator):
         if not self._useGSTypeRegistration(package):
             return
         
-        installTemplate = open(os.path.join(self.templateDir, 
-                                            'types.xml')).read()
-        
-        profiledir = os.path.join(package.getFilePath(), 'profiles', 'default')
-        
         defs = list()
         self._getTypeDefinitions(defs, package, package.getProductName())
         
-        d = {
-            'portalTypes': defs,
-        }
-        d.update(__builtins__)
-
-        templ = self.readTemplate('types.xml')
-        dtml = HTML(templ, d)
-        res = dtml()
-
-        txml = self.makeFile(os.path.join(profiledir, 'types.xml'))
-        txml.write(res)
-        txml.close()
+        ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
+        handleSectionedFile(os.path.join(self.templateDir, 'types.xml'),
+                            os.path.join(ppath, 'types.xml'),
+                            templateparams={ 'portalTypes': defs })
     
     def generateGSTypesFolderAndXMLFiles(self, package):
         """Create the types folder and the corresponding xml files for the
@@ -2879,9 +2843,6 @@ class ArchetypesGenerator(BaseGenerator):
         """
         if not self._useGSTypeRegistration(package):
             return
-        
-        installTemplate = open(os.path.join(self.templateDir, 
-                                            'type.xml')).read()
         
         profiledir = os.path.join(package.getFilePath(), 'profiles', 'default')
         typesdir = os.path.join(profiledir, 'types')
@@ -2896,16 +2857,10 @@ class ArchetypesGenerator(BaseGenerator):
         self._getTypeDefinitions(defs, package, package.getProductName())
         
         for typedef in defs:
-            typedef.update(__builtins__)
-    
-            templ = self.readTemplate('type.xml')
-            dtml = HTML(templ, {'type': typedef})
-            res = dtml()
-    
-            typepath = os.path.join(typesdir, '%s.xml' % typedef['name'])
-            txml = self.makeFile(typepath)
-            txml.write(res)
-            txml.close()
+            filename = '%s.xml' % typedef['name']
+            handleSectionedFile(os.path.join(self.templateDir, 'type.xml'),
+                                os.path.join(typesdir, filename),
+                                templateparams={ 'ctype': typedef })
         
     def generateApeConf(self, target,package):
         #generates apeconf.xml
@@ -3499,6 +3454,8 @@ class ArchetypesGenerator(BaseGenerator):
             
             typedef['allowed_content_types'] = allowed_types
             
+            # check if allow_discussion has to be set to None as default
+            # further check for boolean wrapper
             typedef['allow_discussion'] = pclass.getTaggedValue( \
                                               'allow_discussion', 'False')
             

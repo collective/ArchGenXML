@@ -1,34 +1,34 @@
 <?xml version="1.0"?>
-<object name="<dtml-var "type['name']">"
-        meta_type="<dtml-var "type['meta_type']">"
+<object name="<dtml-var "ctype['name']">"
+        meta_type="<dtml-var "ctype['meta_type']">"
         xmlns:i18n="http://xml.zope.org/namespaces/i18n">
    
- <property name="title"><dtml-var "type['type_name']"></property>
- <property name="description"><dtml-var "type['type_description']"></property>
- <property name="content_icon"><dtml-var "type['content_icon']"></property>
- <property name="content_meta_type"><dtml-var "type['content_meta_type']"></property>
- <property name="product"><dtml-var "type['product_name']"></property>
- <property name="factory"><dtml-var "type['factory']"></property>
- <property name="immediate_view"><dtml-var "type['immediate_view']"></property>
- <property name="global_allow"><dtml-var "type['global_allow']"></property>
- <property name="filter_content_types"><dtml-var "type['filter_content_types']"></property>
+ <property name="title"><dtml-var "ctype['type_name']"></property>
+ <property name="description"><dtml-var "ctype['type_description']"></property>
+ <property name="content_icon"><dtml-var "ctype['content_icon']"></property>
+ <property name="content_meta_type"><dtml-var "ctype['content_meta_type']"></property>
+ <property name="product"><dtml-var "ctype['product_name']"></property>
+ <property name="factory"><dtml-var "ctype['factory']"></property>
+ <property name="immediate_view"><dtml-var "ctype['immediate_view']"></property>
+ <property name="global_allow"><dtml-var "ctype['global_allow']"></property>
+ <property name="filter_content_types"><dtml-var "ctype['filter_content_types']"></property>
  <property name="allowed_content_types">
-<dtml-in "type['allowed_content_types']">
+<dtml-in "ctype['allowed_content_types']">
    <element value="<dtml-var "_['sequence-item']">"/>
 </dtml-in>
  </property>
- <property name="allow_discussion"><dtml-var "type['allow_discussion']"></property>
- <property name="default_view"><dtml-var "type['default_view']"></property>
+ <property name="allow_discussion"><dtml-var "ctype['allow_discussion']"></property>
+ <property name="default_view"><dtml-var "ctype['default_view']"></property>
  <property name="view_methods">
-<dtml-in "type['suppl_views']">
+<dtml-in "ctype['suppl_views']">
   <element value="<dtml-var "_['sequence-item']">"/>
 </dtml-in>
  </property>
  <property name="default_view_fallback">False</property>
-<dtml-in "type['type_aliases']">
+<dtml-in "ctype['type_aliases']">
  <alias from="<dtml-var "_['sequence-item']['from']">" to="<dtml-var "_['sequence-item']['to']">"/>
 </dtml-in>
-<dtml-in "type['type_actions']">
+<dtml-in "ctype['type_actions']">
  <action title="<dtml-var "_['sequence-item']['name']">" action_id="<dtml-var "_['sequence-item']['id']">"
          category="<dtml-var "_['sequence-item']['category']">" condition_expr="<dtml-var "_['sequence-item']['condition']">"
          url_expr="<dtml-var "_['sequence-item']['action']">" visible="True">
