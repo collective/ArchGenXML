@@ -27,8 +27,6 @@ from Products.GenericSetup import profile_registry
 from config import *
 
 DirectoryView.registerDirectory('skins', product_globals)
-DirectoryView.registerDirectory('skins/<dtml-var "product_name">',
-                                    product_globals)
 <dtml-if "additional_permissions">
 
 # Register additional (custom) permissions used by this product

@@ -15,6 +15,7 @@ import time
 import types
 import os.path
 import logging
+import datetime
 from types import StringTypes
 
 import utils
@@ -1860,12 +1861,17 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             parent = None
 
-        return BaseGenerator.generatePythonClass(self, element, template, parent=parent, nolog=True, **kw)
+        return BaseGenerator.generatePythonClass(self, element, template, 
+                                                 parent=parent, nolog=True, 
+                                                 **kw)
         
     def generateTestcaseClass(self, element, template, **kw):
-        log.info("%sGenerating testcase '%s'.", '    '*self.infoind, element.getName())
+        log.info("%sGenerating testcase '%s'.", '    ' * self.infoind, 
+                 element.getName())
 
-        assert element.hasStereoType('plone_testcase', umlprofile=self.uml_profile) or element.getCleanName().startswith('test'), \
+        assert element.hasStereoType('plone_testcase', 
+                                     umlprofile=self.uml_profile) or \
+                                     element.getCleanName().startswith('test'), \
                "names of test classes _must_ start with 'test', but this class is named '%s'" % element.getCleanName()
 
         assert element.getPackage().getCleanName() == 'tests', \
@@ -1877,7 +1883,9 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             parent = None
 
-        return BaseGenerator.generatePythonClass(self, element, template, parent=parent, nolog=True, **kw)
+        return BaseGenerator.generatePythonClass(self, element, template, 
+                                                 parent=parent, nolog=True, 
+                                                 **kw)
 
     def generateWidgetClass(self, element, template, zptname='widget.pt'):
         log.info("%sGenerating widget '%s'.",
@@ -1951,7 +1959,8 @@ class ArchetypesGenerator(BaseGenerator):
                   element.name)
         # This entire method hould probably be moved off to the element classes.
         # Copy-pasted from generateArchetypesClass()...
-        aggregatedClasses = element.getRefs() + element.getSubtypeNames(recursive=0,filter=['class'])
+        aggregatedClasses = element.getRefs() + \
+                            element.getSubtypeNames(recursive=0,filter=['class'])
         log.debug("Found %s aggregated classes.",
                   len(aggregatedClasses))
         #also check if the parent classes can have subobjects
@@ -1966,8 +1975,10 @@ class ArchetypesGenerator(BaseGenerator):
                   len(aggregatedInterfaces))
         log.debug("Based on this info and the tagged value 'folderish' or the "
                   "stereotypes 'folder' and 'ordered', we look if it's a folder.")
-        isFolderish = aggregatedInterfaces or aggregatedClasses or baseaggregatedClasses or \
-                      element.hasStereoType(self.folder_stereotype, umlprofile=self.uml_profile)
+        isFolderish = aggregatedInterfaces or aggregatedClasses or \
+                      baseaggregatedClasses or \
+                      element.hasStereoType(self.folder_stereotype, 
+                                            umlprofile=self.uml_profile)
         log.debug("End verdict on folderish character: %s.",
                   bool(isFolderish))
         return bool(isFolderish)
@@ -2767,6 +2778,8 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateGSTypesFolderAndXMLFiles(package)
         # Generate configure.zcml and profiles.zcml
         self.generateConfigureAndProfilesZCML(package) 
+        # Generate setuphandlers.py and import_steps.xml
+        self.generateGSsetuphandlers(package)
         # Generate factorytool.xml
         self.generateGSFactoryTooXMLFile(package)
         # generate GS cssregistry.xml
@@ -2936,7 +2949,32 @@ class ArchetypesGenerator(BaseGenerator):
             handleSectionedFile(os.path.join(self.templateDir, 'type.xml'),
                                 os.path.join(typesdir, filename),
                                 templateparams={ 'ctype': typedef })
-        
+            
+    def generateGSsetuphandlers(self, package):
+        """generates setuphandlers.py and import_steps.xml"""
+        # generate setuphandlers
+        templateparams = {
+            'generator': self,
+            'package': package,
+            'product_name': package.getProductModuleName(),
+            'now': datetime.datetime.isoformat(datetime.datetime.now()),
+            'bbbExcecuteAppInstall': package.getTaggedValue('execute_appinstall', 
+                                                            False)
+        }        
+        handleSectionedFile(os.path.join(self.templateDir, 'setuphandlers.py'), 
+                            os.path.join(package.getFilePath(),
+                                         'setuphandlers.py'),
+                            sectionnames=('HEAD', 'FOOT'),
+                            templateparams=templateparams
+                           )
+        # generate import_steps.xml
+        profiledir = os.path.join(package.getFilePath(), 'profiles', 'default')
+        handleSectionedFile(os.path.join(self.templateDir, 'import_steps.xml'), 
+                            os.path.join(profiledir, 'import_steps.xml'),
+                            sectionnames=('ADDITIONALSTEPS',),
+                            templateparams=templateparams
+                           )                                    
+    
     def generateApeConf(self, target,package):
         #generates apeconf.xml
 
@@ -3671,7 +3709,8 @@ class ArchetypesGenerator(BaseGenerator):
     def _useGSTypeRegistration(self, package):
         """Return wether to use generic setup for registering types or not.
         """
-        tr = package.getTaggedValue('type_registration', 'genericsetup')
+        tr = package.getRootPackage().getTaggedValue('type_registration', 
+                                               'genericsetup')
         if tr == 'oldschool':
             return False
         return True

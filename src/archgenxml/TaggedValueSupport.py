@@ -207,6 +207,13 @@ prefix.
 """
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'execute_appinstall'
+explanation = """For BBB reasons you can switch on execution of your old 
+Extensions/AppInstall.py. Its not recommended to use this, better add 
+setuphandlers and import_steps! This feature will be removed in Version 1.7.
+"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 
 # Package level tagged values
 category = 'package'

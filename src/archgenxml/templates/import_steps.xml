@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<import-steps>
+
+<import-step 
+    id="<dtml-var "product_name">-GS-dependencies" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.installGSDependencies"
+    title="Dependend GS profiles for <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   <dependency step="plone-final"/>
+   Install Generic Setup profile dependencies for <dtml-var "product_name">
+ </import-step>
+
+ <import-step 
+    id="<dtml-var "product_name">-QI-dependencies" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.installQIDependencies"
+    title="Dependend QI installables for <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   <dependency step="<dtml-var "now">-GS-dependencies"/>
+   Install quickinstaller dependencies for <dtml-var "product_name">
+ </import-step>
+ 
+ <dtml-if "bbbExcecuteAppInstall">
+ <import-step 
+    id="<dtml-var "product_name">-BBB-AppInstall" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.installQIDependencies"
+    title="BBB: Execute AppInstall <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   <dependency step="<dtml-var "now">-QI-dependencies"/>
+   Backward compatibility: Execute AppInstall.py of  <dtml-var "product_name">
+ </import-step>
+</dtml-if>
+
+<!-- ##code-section ADDITIONALSTEPS -->
+<!-- ##/code-section ADDITIONALSTEPS --> 
+
+</import-steps>
+ 

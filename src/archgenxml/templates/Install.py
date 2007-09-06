@@ -32,22 +32,10 @@ def install(self, reinstall=False):
     """ External Method to install <dtml-var "package.getProductModuleName()"> """
     out = StringIO()
     print >> out, "Installation log of %s:" % PROJECTNAME
-
-    # If the config contains a list of dependencies, try to install
-    # them.  Add a list called DEPENDENCIES to your custom
-    # AppConfig.py (imported by config.py) to use it.
-    try:
-        from Products.<dtml-var "package.getProductModuleName()">.config import DEPENDENCIES
-    except:
-        DEPENDENCIES = []
-    portal = getToolByName(self,'portal_url').getPortalObject()
-    quickinstaller = portal.portal_quickinstaller
-    for dependency in DEPENDENCIES:
-        print >> out, "Installing dependency %s:" % dependency
-        quickinstaller.installProduct(dependency)
-        import transaction
-        transaction.savepoint(optimistic=True)
-
+    
+    # DEPENDENCIES are installed using an import step (GenericSetup)
+    # so this is no longer in here
+    
 <dtml-if "not generator._useGSSkinRegistration(package)">    
     install_subskin(self, out, product_globals)
     
@@ -102,22 +90,7 @@ def install(self, reinstall=False):
         atool.setCatalogsByType(meta_type, list(current_catalogs))
 </dtml-if>
 </dtml-let>
-<dtml-comment>
-#NO LONGER SUPPORTED (Plone 3.0), keep it for reference [jensens]
-<dtml-if "generator.left_slots or generator.right_slots">
-    portal = getToolByName(self,'portal_url').getPortalObject()
-</dtml-if>
-<dtml-if "generator.left_slots">
-    for slot in <dtml-var "repr(generator.left_slots)">:
-       if slot not in portal.left_slots:
-           portal.left_slots = list(portal.left_slots) + [slot]
-</dtml-if>
-<dtml-if "generator.right_slots">
-    for slot in <dtml-var "repr(generator.right_slots)">:
-       if slot not in portal.right_slots:
-           portal.right_slots = list(portal.right_slots) + [slot]
-</dtml-if>
-</dtml-comment>
+
 <dtml-let autoinstall_tools="[c.getName() for c in generator.getGeneratedTools(package) if not utils.isTGVFalse(c.getTaggedValue('autoinstall')) ]">
 <dtml-if "autoinstall_tools">
     # autoinstall tools
@@ -252,6 +225,7 @@ def install(self, reinstall=False):
     relations_tool.importXML(xml)
 
 </dtml-if>
+
 <dtml-let klasses="[klass for klass in generator.getGeneratedClasses(package) if utils.isTGVTrue(generator.getOption('use_portal_factory', klass, True)) and not (klass.getPackage().hasStereoType('tests') or klass.isAbstract() or klass.hasStereoType(['widget', 'field', 'stub']))]">
 <dtml-if "klasses">
     # enable portal_factory for given types
@@ -294,63 +268,6 @@ def install(self, reinstall=False):
 </dtml-if>
 </dtml-let>
 
-    from Products.<dtml-var "package.getProductModuleName()">.config import STYLESHEETS
-    try:
-        portal_css = getToolByName(portal, 'portal_css')
-        for stylesheet in STYLESHEETS:
-            try:
-                portal_css.unregisterResource(stylesheet['id'])
-            except:
-                pass
-            defaults = {'id': '',
-            'media': 'all',
-            'enabled': True}
-            defaults.update(stylesheet)
-            portal_css.registerStylesheet(**defaults)
-    except:
-        # No portal_css registry
-        pass
-    from Products.<dtml-var "package.getProductModuleName()">.config import JAVASCRIPTS
-    try:
-        portal_javascripts = getToolByName(portal, 'portal_javascripts')
-        for javascript in JAVASCRIPTS:
-            try:
-                portal_javascripts.unregisterResource(javascript['id'])
-            except:
-                pass
-            defaults = {'id': ''}
-            defaults.update(javascript)
-            portal_javascripts.registerScript(**defaults)
-    except:
-        # No portal_javascripts registry
-        pass
-
-    # try to call a custom install method
-    # in 'AppInstall.py' method 'install'
-    try:
-        install = ExternalMethod('temp', 'temp',
-                                 PROJECTNAME+'.AppInstall', 'install')
-    except NotFound:
-        install = None
-
-    if install:
-        print >>out,'Custom Install:'
-        try:
-            res = install(self, reinstall)
-        except TypeError:
-            res = install(self)
-        if res:
-            print >>out,res
-        else:
-            print >>out,'no output'
-    else:
-        print >>out,'no custom install'
-    setup_tool = getToolByName(portal, 'portal_setup')
-    old_context = setup_tool.getImportContextID()
-    setup_tool.setImportContext('profile-<dtml-var "product_name">:default')
-    setup_tool.runAllImportSteps()
-    setup_tool.setImportContext(old_context)
-    print >> out, "Ran all GS import steps."
     return out.getvalue()
 
 

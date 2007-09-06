@@ -1,3 +1,7 @@
+2007-09-06 Jens Klein <jens@bluedynamics.com> and 
+           Robert Niederreiter <robertnqbluedynamics.com>
+	* tons of refactorings toward Genericsetup usage.
+	get rid of Install.py!
 
 2007-09-05 Jens Klein <jens@bluedynamics.com> and 
            Robert Niederreiter <robertnqbluedynamics.com>
