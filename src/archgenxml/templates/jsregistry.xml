@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<object name="portal_javascripts" meta_type="JavaScripts Registry">
+<dtml-in "scripts">
+ <!-- EXAMPLE DEFINITION
+ <javascript cacheable="<dtml-var "_['sequence-item']['cacheable']">"
+             compression="<dtml-var "_['sequence-item']['compression']">"
+             cookable="<dtml-var "_['sequence-item']['cookable']">"
+             enabled="<dtml-var "_['sequence-item']['enabled']">"
+             expression="<dtml-var "_['sequence-item']['expression']">"
+             id="<dtml-var "_['sequence-item']['id']">"
+             inline="<dtml-var "_['sequence-item']['inline']">"/>
+ -->
+</dtml-in>
+
+ <!-- ##code-section jsregistry.xml -->
+ <!-- ##/code-section jsregistry.xml -->
+
+</object>

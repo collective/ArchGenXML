@@ -2769,6 +2769,11 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateConfigureAndProfilesZCML(package) 
         # Generate factorytool.xml
         self.generateGSFactoryTooXMLFile(package)
+        # generate GS cssregistry.xml
+        self.generateGSStylesheetsXML(package)
+        # generate GS jsregistry.xml
+        self.generateGSJavascriptsXML(package)
+        
 
     def generateConfigureAndProfilesZCML(self, package):
         """Generate configure.zcml and profiles.zcml if type registration or
@@ -2820,6 +2825,51 @@ class ArchetypesGenerator(BaseGenerator):
         handleSectionedFile(os.path.join(self.templateDir, 'factorytool.xml'),
                             os.path.join(ppath, 'factorytool.xml'),
                             templateparams={ 'factory_types': factorytypes })
+    
+    def generateGSStylesheetsXML(self, package):
+        """Generate the cssregistry.xml file.
+        """
+        if not self._useGSSkinRegistration(package):
+            return
+        
+        style = dict()
+        style['title'] = ''
+        style['cacheable'] = 'True'
+        style['compression'] = 'save'
+        style['cookable'] = 'True'
+        style['enabled'] = '1'
+        style['expression'] = ''
+        style['id'] = 'myfancystyle.css'
+        style['media'] = 'all'
+        style['rel'] = 'stylesheet'
+        style['rendering'] = 'import'
+        
+        ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
+        handleSectionedFile(os.path.join(self.templateDir, 'cssregistry.xml'),
+                            os.path.join(ppath, 'cssregistry.xml'),
+                            sectionnames=['cssregistry.xml'],
+                            templateparams={ 'css': [style] })
+    
+    def generateGSJavascriptsXML(self, package):
+        """Generate the jsregistry.xml file.
+        """
+        if not self._useGSSkinRegistration(package):
+            return
+        
+        script = dict()
+        script['cacheable'] = 'True'
+        script['compression'] = 'save'
+        script['cookable'] = 'True'
+        script['enabled'] = 'True'
+        script['expression'] = ''
+        script['id'] = 'myfancyscript.js'
+        script['inline'] = 'False'
+        
+        ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
+        handleSectionedFile(os.path.join(self.templateDir, 'jsregistry.xml'),
+                            os.path.join(ppath, 'jsregistry.xml'),
+                            sectionnames=['jsregistry.xml'],
+                            templateparams={ 'scripts': [script] })
     
     def generateGSSkinsXMLFile(self, package):
         """Create the skins.xml file if skin_registrarion tagged value is set
