@@ -1,0 +1,14 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="<dtml-var "product_name">">
+
+  <genericsetup:registerProfile
+      name="default"
+      title="<dtml-var "product_name">"
+      directory="profiles/default"
+      description="Extension profile for <dtml-var "product_name">."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
+</configure>

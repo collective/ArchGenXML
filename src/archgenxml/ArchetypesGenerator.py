@@ -2842,7 +2842,38 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateGSTypesXMLFile(package)
         # Generate GS types folder and tape.xml files
         self.generateGSTypesFolderAndXMLFiles(package)
+        # Generate configure.zcml and profiles.zcml
+        self.generateConfigureAndProfilesZCML(package) 
 
+    def generateConfigureAndProfilesZCML(self, package):
+        """Generate configure.zcml and profiles.zcml if type registration or
+        skin registration is set to 'genericsetup'
+        """
+        if not self._useGSSkinRegistration(package) \
+          and not self._useGSTypeRegistration(package):
+            return
+        
+        templ = self.readTemplate('configure.zcml')
+        czcml = self.makeFile(os.path.join(package.getFilePath(),
+                                           'configure.zcml'))
+        czcml.write(templ)
+        czcml.close()
+        
+        d = {
+            'product_name': package.getProductName(),
+        }
+        d.update(__builtins__)
+
+        templ = self.readTemplate('profiles.zcml')
+        
+        dtml = HTML(templ, d)
+        res = dtml()
+
+        pzcml = self.makeFile(os.path.join(package.getFilePath(),
+                                           'profiles.zcml'))
+        pzcml.write(res)
+        pzcml.close()
+    
     def generateGSDirectory(self, package):
         """Create genericsetup directory profiles/default.
         """
