@@ -46,11 +46,11 @@ Requirements & Optional
 
   Required:
 
-	- Python 2.3.5 or 2.4 (might work with different versions too)
+	- Python 2.4 (might work with different versions too)
 
   Required to run generated code
 
-    - Plone 2.5.something or plone 3.0.something
+    - Plone 2.3.x
 
   Optional:
 

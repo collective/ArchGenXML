@@ -1,0 +1,6 @@
+This branch targets at Plone 3.0 only! It gets a huge cleanup.
+
+We will take the chainsaw and remove much of the BBB code!!!
+
+You'll need refactoring of custom parts such as AppInstall.py
+if you migrate your product using archgenxml 2.0

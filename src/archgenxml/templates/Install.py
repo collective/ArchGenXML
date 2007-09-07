@@ -62,34 +62,6 @@ def install(self, reinstall=False):
     # Configure CatalogMultiplex:
     # explicit add classes (meta_types) be indexed in catalogs (white)
     # or removed from indexing in a catalog (black)
-    atool = getToolByName(self, ARCHETYPETOOLNAME)
-    catalogmap = {}
-<dtml-in "klasses">
-<dtml-let klass="_['sequence-item']">
-    catalogmap['<dtml-var "klass.getCleanName()">'] = {}
-<dtml-if "generator.getOption('catalogmultiplex:white', klass, None)">
-    catalogmap['<dtml-var "klass.getCleanName()">']['white'] = [<dtml-var "', '.join( ['\'%s\'' % s.strip() for s in generator.getOption('catalogmultiplex:white', klass).split(',')])">]
-</dtml-if>
-<dtml-if "generator.getOption('catalogmultiplex:black', klass, None)">
-    catalogmap['<dtml-var "klass.getCleanName()">']['black'] = [<dtml-var "', '.join( ['\'%s\'' % s.strip() for s in generator.getOption('catalogmultiplex:black', klass).split(',')])">]
-</dtml-if>
-</dtml-let>
-</dtml-in>
-    for meta_type in catalogmap:
-        submap = catalogmap[meta_type]
-        current_catalogs = Set([c.id for c in atool.getCatalogsByType(meta_type)])
-        if 'white' in submap:
-            for catalog in submap['white']:
-                if not getToolByName(self, catalog, False):
-                    raise AttributeError, 'Catalog "%s" does not exist!' % catalog
-                current_catalogs.update([catalog])
-        if 'black' in submap:
-            for catalog in submap['black']:
-                if catalog in current_catalogs:
-                    current_catalogs.remove(catalog)
-        atool.setCatalogsByType(meta_type, list(current_catalogs))
-</dtml-if>
-</dtml-let>
 
 
 <dtml-let configlet_tools="[cn for cn in generator.getGeneratedTools(package) if not utils.isTGVFalse(cn.getTaggedValue('autoinstall')) and cn.getTaggedValue('configlet', None)]">

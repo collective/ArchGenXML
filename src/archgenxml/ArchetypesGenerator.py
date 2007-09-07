@@ -2999,6 +2999,9 @@ class ArchetypesGenerator(BaseGenerator):
         alltools = self.getGeneratedTools(package)
         toolnames = [t.getTaggedValue('tool_instance_name') or \
                      'portal_%s' % t.getName().lower() for t in alltools]
+        catalogmultiplexed =  [klass for klass in self.getGeneratedClasses(package) \
+                               if self.getOption('catalogmultiplex:white', klass, None) \
+                               or self.getOption('catalogmultiplex:black', klass, None)]
         templateparams = {
             'generator': self,
             'package': package,
@@ -3009,6 +3012,7 @@ class ArchetypesGenerator(BaseGenerator):
             'dependend_profiles': dependend_profiles,
             'alltools': alltools,
             'toolnames': toolnames,
+            'catalogmultiplexed': catalogmultiplexed,
             
         }        
         handleSectionedFile(os.path.join(self.templateDir, 'setuphandlers.py'), 

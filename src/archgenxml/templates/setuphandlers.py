@@ -58,6 +58,47 @@ def setupHideToolsFromNavigation(context):
             navtreeProperties.manage_changeProperties({'idsNotToList': current})
                 
 </dtml-if>
+<dtml-if "catalogmultiplexed">
+def setupCatalogMultiplex(context):
+    """ Configure CatalogMultiplex.
+    
+    explicit add classes (meta_types) be indexed in catalogs (white)
+    or removed from indexing in a catalog (black) 
+    """
+    site = context.getSite()
+    muliplexed = <dtml-var "repr(catalogmultiplexed)">
+
+    atool = getToolByName(site, 'archetypes_tool')
+    catalogmap = {}
+<dtml-in "catalogmultiplexed">
+<dtml-let klass="_['sequence-item']">
+    catalogmap['<dtml-var "klass.getCleanName()">'] = {}
+<dtml-if "generator.getOption('catalogmultiplex:white', klass, None)">
+    catalogmap['<dtml-var "klass.getCleanName()">']['white'] = [<dtml-var "', '.join( ['\'%s\'' % s.strip() for s in generator.getOption('catalogmultiplex:white', klass).split(',')])">]
+</dtml-if>
+<dtml-if "generator.getOption('catalogmultiplex:black', klass, None)">
+    catalogmap['<dtml-var "klass.getCleanName()">']['black'] = [<dtml-var "', '.join( ['\'%s\'' % s.strip() for s in generator.getOption('catalogmultiplex:black', klass).split(',')])">]
+</dtml-if>
+</dtml-let>
+</dtml-in>
+    for meta_type in catalogmap:
+        submap = catalogmap[meta_type]
+        current_catalogs = Set([c.id for c in atool.getCatalogsByType(meta_type)])
+        if 'white' in submap:
+            for catalog in submap['white']:
+                if not getToolByName(self, catalog, False):
+                    raise AttributeError, 'Catalog "%s" does not exist!' % catalog
+                current_catalogs.update([catalog])
+        if 'black' in submap:
+            for catalog in submap['black']:
+                if catalog in current_catalogs:
+                    current_catalogs.remove(catalog)
+        atool.setCatalogsByType(meta_type, list(current_catalogs))
+</dtml-if>
+</dtml-let>
+
+
+</dtml-if>
 <dtml-if "bbbExcecuteAppInstall">
 def installOldSchoolAppInstall(context):
     """BBB code, deprecated, will be removed in AGX 1.7"""
