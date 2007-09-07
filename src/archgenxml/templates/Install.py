@@ -61,17 +61,6 @@ def install(self, reinstall=False):
 </dtml-if>
 </dtml-let>
 
-<dtml-if "package.num_generated_relations">
-    # configuration for Relations
-    relations_tool = getToolByName(self,'relations_library')
-    xmlpath = os.path.join(package_home(product_globals),'relations.xml')
-    f = open(xmlpath)
-    xml = f.read()
-    f.close()
-    relations_tool.importXML(xml)
-
-</dtml-if>
-
 <dtml-let klasses="[(klass.getTaggedValue('portal_type') or klass.getCleanName()) for klass in generator.getGeneratedClasses(package) if utils.isTGVFalse(generator.getOption('searchable_type', klass, True))]">
 <dtml-if "klasses">
     # hide selected classes in the search form

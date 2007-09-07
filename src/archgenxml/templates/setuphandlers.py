@@ -3,6 +3,8 @@ import logging
 logger = logging.getLogger('<dtml-var "product_name">: setuphandlers')
 from config import PROJECTNAME
 from config import DEPENDENCIES
+from config import product_globals
+
 from Products.CMFCore.utils import getToolByName
 ##code-section HEAD
 ##/code-section HEAD
@@ -91,7 +93,20 @@ def setupCatalogMultiplex(context):
                 if catalog in current_catalogs:
                     current_catalogs.remove(catalog)
         atool.setCatalogsByType(meta_type, list(current_catalogs))
+        
 </dtml-if>
-
+<dtml-if "catalogmultiplexed">
+def installRelations(context):
+    """imports the relations.xml file"""
+    site = context.getSite()
+    relations_tool = getToolByName(site,'relations_library')
+    xmlpath = os.path.join(package_home(product_globals), 'data', 
+                           'relations.xml')
+    f = open(xmlpath)
+    xml = f.read()
+    f.close()
+    relations_tool.importXML(xml)    
+    
+</dtml-if>
 ##code-section FOOT
 ##/code-section FOOT

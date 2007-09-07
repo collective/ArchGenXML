@@ -29,6 +29,16 @@
    Hides custom tools from navigation tree for <dtml-var "product_name">
  </import-step>
  </dtml-if>
+ <dtml-if "hasrelations">
+ <import-step 
+    id="<dtml-var "product_name">-Import-Relations" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.installRelations"
+    title="Install Relations for <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   <dependency step="<dtml-var "now">-QI-dependencies"/>
+   Installs the relations.xml file into relations library for <dtml-var "product_name">
+ </import-step>
+ </dtml-if>
 
 <!-- ##code-section ADDITIONALSTEPS -->
 <!-- ##/code-section ADDITIONALSTEPS --> 

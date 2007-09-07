@@ -2948,6 +2948,7 @@ class ArchetypesGenerator(BaseGenerator):
             'alltools': alltools,
             'toolnames': toolnames,
             'catalogmultiplexed': catalogmultiplexed,
+            'hasrelations': package.num_generated_relations > 0,
             
         }        
         handleSectionedFile(os.path.join(self.templateDir, 'setuphandlers.py'), 
@@ -3309,13 +3310,13 @@ class ArchetypesGenerator(BaseGenerator):
                                                     type,
                                                     'SimpleVocabularyTerm'
                     )                    
-
-            #/ATVM
-
             package.num_generated_relations += 1
 
         if package.num_generated_relations:
-            of=self.makeFile(os.path.join(package.getFilePath(),'relations.xml'))
+            self.makeDir(os.path.join(package.getFilePath(), 'data', 
+                                      'relations.xml'))
+            of=self.makeFile(os.path.join(package.getFilePath(),'data',
+                                          'relations.xml'))
             print >>of,doc.toprettyxml()
             of.close()
 
