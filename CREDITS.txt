@@ -45,6 +45,10 @@ Authors
 
     Bug killer and some tricks with workflow, portal tools, install,
     etc.
+    
+  Robert Niederreiter (rnix)
+  
+    Generic Setup profile Generation and cleanup.
 
 Sponsors:
 
