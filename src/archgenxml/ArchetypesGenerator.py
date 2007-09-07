@@ -1071,8 +1071,8 @@ class ArchetypesGenerator(BaseGenerator):
                     widgetmap.update( {k: check_map[k]} )
 
             # remove description_msgid if there is no description
-            if 'description' not in widgetmap.keys() and 'description_msgid' in widgetmap.keys() \
-                and not self.default_description_generation:
+            if 'description' not in widgetmap.keys() and \
+               'description_msgid' in widgetmap.keys(): 
                 del widgetmap['description_msgid']
 
             if 'label_msgid' in widgetmap.keys() and has_enhanced_strip_support:
@@ -2936,9 +2936,22 @@ class ArchetypesGenerator(BaseGenerator):
         alltools = self.getGeneratedTools(package)
         toolnames = [t.getTaggedValue('tool_instance_name') or \
                      'portal_%s' % t.getName().lower() for t in alltools]
-        catalogmultiplexed =  [klass for klass in self.getGeneratedClasses(package) \
-                               if self.getOption('catalogmultiplex:white', klass, None) \
-                               or self.getOption('catalogmultiplex:black', klass, None)]
+        allclasses = self.getGeneratedClasses(package)
+        catalogmultiplexed =  [klass for klass in allclasses \
+                               if self.getOption('catalogmultiplex:white', 
+                                                 klass, None) \
+                               or self.getOption('catalogmultiplex:black', 
+                                                 klass, None)]
+        notsearchabletypes = [(klass.getTaggedValue('portal_type') or \
+                              klass.getCleanName()) \
+                              for klass in allclasses\
+                              if utils.isTGVFalse(self.getOption('searchable_type', \
+                                                                 klass, True))]
+        hidemetatypes = [(klass.getTaggedValue('portal_type') or \
+                          klass.getCleanName()) \
+                          for klass in allclasses \
+                          if utils.isTGVFalse(self.getOption('display_in_navigation', 
+                                                             klass, True))]
         templateparams = {
             'generator': self,
             'package': package,
@@ -2949,6 +2962,9 @@ class ArchetypesGenerator(BaseGenerator):
             'toolnames': toolnames,
             'catalogmultiplexed': catalogmultiplexed,
             'hasrelations': package.num_generated_relations > 0,
+            'hasvocabularies': package.getProductName() in self.vocabularymap.keys(),
+            'notsearchabletypes': notsearchabletypes,
+            'hidemetatypes': hidemetatypes,
             
         }        
         handleSectionedFile(os.path.join(self.templateDir, 'setuphandlers.py'), 

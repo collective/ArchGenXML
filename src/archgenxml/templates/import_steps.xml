@@ -19,6 +19,28 @@
    Install quickinstaller dependencies for <dtml-var "product_name">
  </import-step>
  
+ <dtml-if "notsearchabletypes">
+ <import-step 
+    id="<dtml-var "product_name">-Hide-Types-From-Search" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.setupHideTypesFromSearch"
+    title="Hide types from search for <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   <dependency step="<dtml-var "now">-QI-dependencies"/>
+   Hides types from the search form for <dtml-var "product_name">
+ </import-step>
+ 
+ </dtml-if>
+ <dtml-if "hidemetatypes">
+ <import-step 
+    id="<dtml-var "product_name">-Hide-Types-From-Navigation" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.setupHideMetaTypesFromNavigations"
+    title="Hide types from navigation for <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   <dependency step="<dtml-var "now">-QI-dependencies"/>
+   Hides types from the navigation tree for <dtml-var "product_name">
+ </import-step>
+ 
+ </dtml-if>
  <dtml-if "toolnames">
  <import-step 
     id="<dtml-var "product_name">-Hide-Tools-From-Navigation" 
@@ -28,6 +50,7 @@
    <dependency step="<dtml-var "now">-QI-dependencies"/>
    Hides custom tools from navigation tree for <dtml-var "product_name">
  </import-step>
+ 
  </dtml-if>
  <dtml-if "hasrelations">
  <import-step 
@@ -38,8 +61,19 @@
    <dependency step="<dtml-var "now">-QI-dependencies"/>
    Installs the relations.xml file into relations library for <dtml-var "product_name">
  </import-step>
+ 
  </dtml-if>
-
+ <dtml-if "hasvocabularies">
+ <import-step 
+    id="<dtml-var "product_name">-Install-Vocabularies" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.installVocabularies"
+    title="Install Vocabularies for <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   <dependency step="<dtml-var "now">-QI-dependencies"/>
+   Installs the vocabulary files into vocabulary library for <dtml-var "product_name">
+ </import-step>
+ 
+ </dtml-if>
 <!-- ##code-section ADDITIONALSTEPS -->
 <!-- ##/code-section ADDITIONALSTEPS --> 
 
