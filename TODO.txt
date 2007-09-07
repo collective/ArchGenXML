@@ -1,5 +1,8 @@
 TODO's for ArchGenXML
 ---------------------
+* make use_dynamic_view tgv usage sane.
+
+* tgv "hide_actions" need to get respect in types.xml 
 
 * make generateMethodActions() in ArchetypesGenerator function return simply a
   list of dicts and not an already rendered code snipped for twice use in
@@ -24,13 +27,6 @@ TODO's for ArchGenXML
     - action_view.pt
     - generated.pot
     - portlet_template.pt
-
-* stereotype <<portlet>> does not work, but <<portlet_view>>
-  does. Documentation points to portlet. Tagged value autoinstall is
-  registered for <<portlet>> only.  Here a clean up is needed.
-
-* portlet sample code is Plone 2.0.x style and doenst work with Plone
-  2.1.
 
 * Move class, interface generation to DTML. There are too many
   conditionals and strings being generated in the current code. :-)
