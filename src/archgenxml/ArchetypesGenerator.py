@@ -398,7 +398,6 @@ class ArchetypesGenerator(BaseGenerator):
                        'atevent',
                        ]
 
-    i18n_at = ['i18n-archetypes', 'i18n', 'i18n-at']
     generate_datatypes = ['field', 'compound_field']
 
     left_slots = []
@@ -1244,10 +1243,6 @@ class ArchetypesGenerator(BaseGenerator):
 
         atype = self.typeMap[ctype]['field']
 
-        if ctype != 'generic' and self.i18n_content_support in self.i18n_at \
-           and attr.isI18N():
-            atype = 'I18N' + atype
-
         if ctype=='generic':
             fieldclassname=attr.type            
         else:
@@ -1948,11 +1943,6 @@ class ArchetypesGenerator(BaseGenerator):
                 baseclass ='BaseFolder'
                 baseschema ='BaseFolderSchema'
 
-            # XXX: How should <<ordered>> affect this?
-            if self.i18n_content_support in self.i18n_at and element.isI18N():
-                baseclass = 'I18NBaseFolder'
-                baseschema = 'I18NBaseFolderSchema'
-
         else:
             # contentish
             if element.hasStereoType(['atfile'],
@@ -1970,10 +1960,6 @@ class ArchetypesGenerator(BaseGenerator):
             else:
                 baseclass = 'BaseContent'
                 baseschema = 'BaseSchema'
-
-            if self.i18n_content_support in self.i18n_at and element.isI18N():
-                baseclass ='I18NBaseContent'
-                baseschema ='I18NBaseSchema'    
                 
         # use CMFDynamicViewFTI?
         if not parent_is_archetype and \
@@ -2441,9 +2427,7 @@ class ArchetypesGenerator(BaseGenerator):
                                       self.i18n_content_support)
 
         genparentsstereotypes = element.getRealizationParents()
-        if i18ncontent in self.i18n_at and element.isI18N():
-            s1 = TEMPLATE_HEADER_I18N_I18N_AT
-        elif i18ncontent == 'linguaplone' and \
+        if i18ncontent == 'linguaplone' and \
              not element.hasStereoType('remember'):
             s1 = TEMPLATE_HEADER_I18N_LINGUAPLONE
         else:
