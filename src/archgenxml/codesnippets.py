@@ -111,17 +111,6 @@ SCHEMA_TOOL = u"""\
         ),
 """
 
-TEMPL_APE_HEADER = u"""
-from Products.Archetypes.ApeSupport import constructGateway,constructSerializer
-
-def ApeGateway():
-    return constructGateway(%(class_name)s)
-
-def ApeSerializer():
-    return constructSerializer(%(class_name)s)
-
-"""
-
 TEMPL_TOOL_HEADER=u"""
 from Products.CMFCore.utils import UniqueObject
 
@@ -309,15 +298,6 @@ TEMPLATE_CONFIG_IMPORT = u"""\
 from Products.%(module)s.config import *
 
 """
-
-
-TEMPL_APECONFIG_BEGIN = u"""<?xml version="1.0"?>
-
-<!-- Basic Zope 2 configuration for Ape. -->
-
-<configuration>"""
-
-TEMPL_APECONFIG_END = u"""</configuration>"""
 
 READMELOWEST = u"""\
 Directory 'skins/%s':

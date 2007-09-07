@@ -4,9 +4,6 @@ logger = logging.getLogger('<dtml-var "product_name">: setuphandlers')
 from config import PROJECTNAME
 from config import DEPENDENCIES
 from Products.CMFCore.utils import getToolByName
-<dtml-if "bbbExcecuteAppInstall">
-from Products.ExternalMethod.ExternalMethod import ExternalMethod
-</dtml-if>
 ##code-section HEAD
 ##/code-section HEAD
 
@@ -95,29 +92,6 @@ def setupCatalogMultiplex(context):
                     current_catalogs.remove(catalog)
         atool.setCatalogsByType(meta_type, list(current_catalogs))
 </dtml-if>
-</dtml-let>
 
-
-</dtml-if>
-<dtml-if "bbbExcecuteAppInstall">
-def installOldSchoolAppInstall(context):
-    """BBB code, deprecated, will be removed in AGX 1.7"""
-    # try to call a custom install method
-    # in 'AppInstall.py' method 'install'    
-    try:
-        install = ExternalMethod('temp', 'temp',
-                                 PROJECTNAME+'.AppInstall', 'install')
-    except NotFound:
-        return
-
-    logger.info('BBB code execution! AppInstall.py will be removed in AGX 1.7')
-    try:
-        res = install(self, reinstall)
-    except TypeError:
-        res = install(self)
-    if res:
-        logger.info("AppInstall.py returned:\n%s" % res) 
-               
-</dtml-if>  
 ##code-section FOOT
 ##/code-section FOOT

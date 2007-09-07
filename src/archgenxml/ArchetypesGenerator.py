@@ -397,9 +397,7 @@ class ArchetypesGenerator(BaseGenerator):
     # generateActions = 1
     # generateDefaultActions = 0
     # prefix = ''
-    # parse_packages = [] # Packages to scan for classes
     # generate_packages = [] # Packages to be generated
-    # ape_support = 0 # Generate APE config and serializers/gateways?
     # i18n_content_support = 0
 
     build_msgcatalog = 1
@@ -769,12 +767,6 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             actTempl = actTempl % ''
 
-        if self.generateDefaultActions or element.getTaggedValue('default_actions'):
-            hasActions=True
-            actTempl += DEFAULT_ACTIONS
-            if subtypes:
-                actTempl=actTempl+DEFAULT_ACTIONS_FOLDERISH
-
         method_actions = self.generateMethodActions(element)
         if method_actions.strip():
             hasActions=True
@@ -785,27 +777,6 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             return
         
-    def generateFti(self, element):
-        ''' generates Factory Type Information related attributes on the class'''
-        # :-( subtypes is not longer used
-        # FTI attributes are only needed if we dont use GenericSetup for 
-        # type-registration:        
-        if self._useGSTypeRegistration(element):
-            return ''
-        
-        ftiTempl = FTI_TEMPL
-        ftiinfo = self._getFTI(element)
-        res = ftiTempl % ftiinfo
-
-        # Only set allow_discussion if it is explicitly set with a
-        # tagged value. Leave empty if not, otherwise it cannot be
-        # (un)set in Plone afterwards
-        allow_discussion = element.getTaggedValue('allow_discussion', 'NOTSET')
-        template = "    allow_discussion = %s\n"
-        if allow_discussion != 'NOTSET':
-            res += template % allow_discussion
-        return res
-
     # TypeMap for Fields, format is
     #   type: {field: 'Y',
     #          lines: [key1=value1,key2=value2, ...]
@@ -2274,16 +2245,13 @@ class ArchetypesGenerator(BaseGenerator):
             return outfile.getvalue()
         AlreadyGenerated.append(element.getType())
 
-        if self.ape_support:
-            print >> outfile, TEMPL_APE_HEADER % {'class_name': name}
-
         # [optilude] It's possible parents may become empty now...
         if parents:
             parents = "(%s)" % (parents,)
         else:
             parents = ''
         # [optilude] ... so we can't have () around the last %s
-        classDeclaration = 'class %s%s%s:\n' % (self.prefix, name, parents)
+        classDeclaration = 'class %s%s:\n' % (name, parents)
 
         wrt(classDeclaration)
 
@@ -2363,11 +2331,6 @@ class ArchetypesGenerator(BaseGenerator):
             print >> outfile, CLASS_ALLOWED_CONTENT_INTERFACES % \
                   (','.join(aggregatedInterfaces), parentAggregatedInterfaces)
 
-        # FTI as attributes on class
-        # [optilude] Don't generate FTI for abstract mixins
-        if not element.isAbstract():
-            fti=self.generateFti(element)
-            print >> outfile,fti
         # But *do* add the actions, views, etc.
         actions_views = self.generateActionsAndViews(element,
                                                      aggregatedClasses)
@@ -2793,11 +2756,7 @@ class ArchetypesGenerator(BaseGenerator):
     def generateConfigureAndProfilesZCML(self, package):
         """Generate configure.zcml and profiles.zcml if type registration or
         skin registration is set to 'genericsetup'
-        """
-        if not self._useGSSkinRegistration(package) \
-          and not self._useGSTypeRegistration(package):
-            return
-        
+        """       
         ppath = package.getFilePath()
         pname = package.getProductName()
         
@@ -2821,11 +2780,7 @@ class ArchetypesGenerator(BaseGenerator):
     def generateGSToolsetXML(self, package):
         """Generate the factorytool.xml.
         """
-        if not self._useGSTypeRegistration(package):
-            return
-        
         tools = []
-        
         klasses = self.getGeneratedTools(package)
         for klass in klasses:
             if utils.isTGVFalse(klass.getTaggedValue('autoinstall')):
@@ -2857,9 +2812,6 @@ class ArchetypesGenerator(BaseGenerator):
     def generateGSFactoryTooXMLFile(self, package):
         """Generate the factorytool.xml.
         """
-        if not self._useGSTypeRegistration(package):
-            return
-        
         klasses = self.getGeneratedClasses(package)
         factorytypes = []
         for klass in klasses:
@@ -2882,9 +2834,6 @@ class ArchetypesGenerator(BaseGenerator):
     def generateGSStylesheetsXML(self, package):
         """Generate the cssregistry.xml file.
         """
-        if not self._useGSSkinRegistration(package):
-            return
-        
         style = dict()
         style['title'] = ''
         style['cacheable'] = 'True'
@@ -2906,9 +2855,6 @@ class ArchetypesGenerator(BaseGenerator):
     def generateGSJavascriptsXML(self, package):
         """Generate the jsregistry.xml file.
         """
-        if not self._useGSSkinRegistration(package):
-            return
-        
         script = dict()
         script['cacheable'] = 'True'
         script['compression'] = 'save'
@@ -2931,9 +2877,6 @@ class ArchetypesGenerator(BaseGenerator):
         Reads all directories from productname/skins and generates and uses
         them for xml file generation.
         """
-        if not self._useGSSkinRegistration(package):
-            return
-        
         dirs = os.listdir(os.path.join(package.getFilePath(), 'skins'))
         pname = package.getProductName()
         skindirs = []
@@ -2953,9 +2896,6 @@ class ArchetypesGenerator(BaseGenerator):
         """Create the types.xml file if type_registrarion tagged value is set
         to genericsetup.
         """
-        if not self._useGSTypeRegistration(package):
-            return
-        
         defs = list()
         self._getTypeDefinitions(defs, package, package.getProductName())
         
@@ -2969,9 +2909,6 @@ class ArchetypesGenerator(BaseGenerator):
         portal types inside it if type_registrarion tagged value is set
         to genericsetup.
         """
-        if not self._useGSTypeRegistration(package):
-            return
-        
         profiledir = os.path.join(package.getFilePath(), 'profiles', 'default')
         typesdir = os.path.join(profiledir, 'types')
         
@@ -3007,8 +2944,6 @@ class ArchetypesGenerator(BaseGenerator):
             'package': package,
             'product_name': package.getProductModuleName(),
             'now': datetime.datetime.isoformat(datetime.datetime.now()),
-            'bbbExcecuteAppInstall': package.getTaggedValue('execute_appinstall', 
-                                                            False),
             'dependend_profiles': dependend_profiles,
             'alltools': alltools,
             'toolnames': toolnames,
@@ -3029,38 +2964,6 @@ class ArchetypesGenerator(BaseGenerator):
                             templateparams=templateparams
                            )                                    
     
-    def generateApeConf(self, target,package):
-        #generates apeconf.xml
-
-        #remove trailing slash
-        if target[-1] in ('/','\\'):
-            target=target[:-1]
-
-        
-        apeconfig_object=open(
-            os.path.join(self.templateDir,
-                         'apeconf_object.xml')).read()
-        apeconfig_folder=open(
-            os.path.join(self.templateDir,
-                         'apeconf_folder.xml')).read()
-        of=self.makeFile(os.path.join(target,'apeconf.xml'))
-        print >> of, TEMPL_APECONFIG_BEGIN
-        for el in self.root.getClasses():
-            if el.isInternal() or el.hasStereoType(self.stub_stereotypes, umlprofile=self.uml_profile):
-                continue
-
-            print >>of
-            if el.getRefs() + el.getSubtypeNames(recursive=1):
-                print >>of, apeconfig_folder % {
-                    'project_name': package.getProductName(),
-                    'class_name': el.getCleanName()}
-            else:
-                print >>of, apeconfig_object % {
-                    'project_name': package.getProductName(),
-                    'class_name': el.getCleanName()}
-
-        print >>of, TEMPL_APECONFIG_END
-        of.close()
 
     def getGeneratedClasses(self,package):
         classes = package.getAnnotation('generatedClasses') or []
@@ -3499,9 +3402,6 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateRelations(root)
         self.generatePackage(root)
 
-        if self.ape_support:
-            self.generateApeConf(root.getFilePath(),root)
-
         #start Workflow creation
         wfg = WorkflowGenerator(package, self)
         wfg.generateWorkflows()
@@ -3528,7 +3428,7 @@ class ArchetypesGenerator(BaseGenerator):
         if suff.lower() in ('.xmi','.xml', '.uml'):
             log.debug("Opening xmi...")
             self.root = root= XMIParser.parse(self.xschemaFileName,
-                                              packages=self.parse_packages,
+                                              packages=self.generate_packages,
                                               generator=self,
                                               generate_datatypes=self.generate_datatypes)
             log.debug("Created a root XMI parser.")
@@ -3539,7 +3439,7 @@ class ArchetypesGenerator(BaseGenerator):
             assert(len(xmis)==1)
             buf=zf.read(xmis[0])
             self.root=root=XMIParser.parse(xschema=buf,
-                packages=self.parse_packages, generator=self,
+                packages=self.generate_packages, generator=self,
                 generate_datatypes=self.generate_datatypes)
         else:
             raise TypeError,'input file not of type .xmi, .xml, .zargo, .zuml'
@@ -3757,19 +3657,3 @@ class ArchetypesGenerator(BaseGenerator):
                                                             fti['type_name']))        
         return fti
     
-    def _useGSSkinRegistration(self, package):
-        """Return wether to use generic setup for registering skins or not.
-        """
-        sr = package.getTaggedValue('skin_registration', 'genericsetup')
-        if sr == 'oldschool':
-            return False
-        return True
-    
-    def _useGSTypeRegistration(self, package):
-        """Return wether to use generic setup for registering types or not.
-        """
-        tr = package.getRootPackage().getTaggedValue('type_registration', 
-                                               'genericsetup')
-        if tr == 'oldschool':
-            return False
-        return True

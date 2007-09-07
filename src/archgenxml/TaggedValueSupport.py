@@ -185,32 +185,11 @@ tagname = 'default_interface_type'
 explanation = """default type of interfaces (z2 or z3)."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-tagname = 'skin_registration'
-explanation = """A switch between "oldschool" Quickinstaller skin installation
-or "genericsetup" profile usage to install and register the skin directories.
-defaults to "genericsetup".
-"""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
-tagname = 'type_registration'
-explanation = """A switch between "oldschool" Quickinstaller type registration
-or "genericsetup" profile usage to install and register the portal types.
-defaults to "genericsetup".
-"""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 tagname = 'skin_directories'
 explanation = """A comma seperated list of subdirectories to be generated
 inside the products skins directory. each of this directories is prefixed with
 productname in lowercase. the default value is the productname as is without a
 prefix.
-"""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
-tagname = 'execute_appinstall'
-explanation = """For BBB reasons you can switch on execution of your old 
-Extensions/AppInstall.py. Its not recommended to use this, better add 
-setuphandlers and import_steps! This feature will be removed in Version 1.7.
 """
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 

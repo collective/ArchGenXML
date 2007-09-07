@@ -360,22 +360,10 @@ group.add_option("--generate-packages",
                  action="append",
                  dest="generate_packages",
                  type="commalist",
-                 )
-
-# XXX: When would this be the right option to use, as opposed to
-# generate-packages, above? - WJB
-
-group.add_option("-P",
-                 "--parse-packages",
-                 type="commalist",
-                 action="append",
-                 metavar="GENERAL",
-                 dest="parse_packages",
-                 help="Names of packages to scan for classes (can specify "
-                 "as comma-separated list, or specify several times). "
-                 "FIXME: Leaving this empty probably means that all "
-                 "packages are scanned.",
-                 section="GENERAL",
+                 help="Names of packages to scan for classes and generate "
+                 "output for (can specify as comma-separated list, or specify "
+                 "several times). Leaving this empty means that all packages "
+                 "are scanned and generated",
                  )
 
 group.add_option("-f",
@@ -393,37 +381,12 @@ parser.add_option_group(group)
 
 group = OptionGroup(parser, "Generation Options")
 
-group.add_option("--widget-enhancement",
-                 dest="widget_enhancement",
-                 type="yesno",
-                 default=1,
-                 help="Create widgets with default label, label_msgid, description,"
-                 " description_msgid, and i18ndomain (default is 1).",
-                 section="CLASSES",
-                 )
-
 group.add_option("--generate-actions",
                  type='yesno',
                  dest="generateActions",
                  default=1,
                  help="Generate actions (default is 1)",
                  section="CLASSES",
-                 )
-
-group.add_option("--default-actions",
-                 help="Generate default actions explicitly for each class (default is 0).",
-                 dest="generateDefaultActions",
-                 type="yesno",
-                 default=0,
-                 section="CLASSES",
-                 ),
-
-group.add_option("--customization-policy",
-                 dest="customization_policy",
-                 type="yesno",
-                 default=0,
-                 help="Generate a customization policy (default is 0).",
-                 section="GENERAL",
                  )
 
 group.add_option("--rcs-id",
@@ -472,14 +435,6 @@ group.add_option("--backreferences-support",
 group.add_option("--default-field-generation",
                  dest="default_field_generation",
                  help="Always generate 'id' and 'title' fields (default is 0).",
-                 type="yesno",
-                 default=0,
-                 section="CLASSES",
-                 )
-
-group.add_option("--default-description-generation",
-                 dest="default_description_generation",
-                 help="Generate the default widget descriptions (default is 0).",
                  type="yesno",
                  default=0,
                  section="CLASSES",
@@ -579,8 +534,6 @@ group.add_option("--copyright",
                  section="DOCUMENTATION",
                  )
 
-# Added US spelling of license as alternate
-
 group.add_option("--license",
                  "--licence",
                  help="Set default license (default is the GPL).",
@@ -630,29 +583,6 @@ group.add_option("--detailed-creation-permissions",
 parser.add_option_group(group)
 
 #----------------------------------------------------------------------------
-# Storage Options
-
-group = OptionGroup(parser, "Storage Options")
-
-group.add_option("--ape-support",
-                 dest="ape_support",
-                 type="yesno",
-                 help="Generate configuration and generators for APE (default is 0).",
-                 section="STORAGE",
-                 default=0,
-                 )
-
-group.add_option("--sql-storage-support",
-                 dest="sql_storage_support",
-                 type="yesno",
-                 help="FIXME: not sure it this is used. (default is 0)",
-                 section="CLASSES",
-                 default=0,
-                 )
-
-parser.add_option_group(group)
-
-#----------------------------------------------------------------------------
 # Relation Options
 
 group = OptionGroup(parser, "Relations")
@@ -689,30 +619,6 @@ group.add_option("--manual-code-sections",
                  "(default is yes)",
                  section="GENERAL",
                  default=1,
-                 )
-parser.add_option_group(group)
-
-#----------------------------------------------------------------------------
-# Deprecated options
-
-# group = OptionGroup(parser, "Deprecated")
-# Deprecated options go here
-# parser.add_option_group(group)
-
-#----------------------------------------------------------------------------
-# FIXME: Broken/undocumented options
-
-group = OptionGroup(parser, "Possibly broken options")
-
-# FIXME: This feature doesn't seem working currently in ArchGenXML--the
-# class def gets the prefix, but nothing else does.
-
-group.add_option("--prefix",
-                 help="Adds PREFIX before each class name (default is '').",
-                 default='',
-                 type="string",
-                 dest="prefix",
-                 section="GENERAL",
                  )
 
 parser.add_option_group(group)
