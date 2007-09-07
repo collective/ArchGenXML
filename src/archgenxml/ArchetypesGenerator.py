@@ -17,7 +17,7 @@ import os.path
 import logging
 import datetime
 from types import StringTypes
-
+from sets import Set
 import utils
 from odict import odict
 from codesnippets import *
@@ -332,28 +332,6 @@ at_uml_profile.addStereoType(
     "'<<archetype>>'.")
 
 at_uml_profile.addStereoType(
-    'portlet', ['XMIMethod'],
-    description='Create a simple portlet page template with the same '
-                'name as the method. You can override the name by setting '
-                'the "view" tagged value on the method. If you add a '
-                'tagged value "autoinstall" and set it to "left" or '
-                '"right", the portlet will be automatically installed '
-                'with your product in either the left or the right slot. '
-                'If the page template already exists, it will not be '
-                'overwritten.')
-
-at_uml_profile.addStereoType(
-    'portlet_view', ['XMIMethod'],
-    description='Create a simple portlet page template with the same '
-                'name as the method. You can override the name by setting '
-                'the "view" tagged value on the method. If you add a '
-                'tagged value "autoinstall" and set it to "left" or '
-                '"right", the portlet will be automatically installed '
-                'with your product in either the left or the right slot. '
-                'If the page template already exists, it will not be '
-    "overwritten. Same as '<<portlet>>'.")
-
-at_uml_profile.addStereoType(
     'tool', ['XMIClass'],
     description='Turns the class into a portal tool. Similar to '
     "'<<portal_tool>>'.")
@@ -537,15 +515,15 @@ class ArchetypesGenerator(BaseGenerator):
         out = StringIO()
         res = BaseGenerator.generateDependentImports(self, element)
         print >> out, res
-        generate_expression_validator = False
+        print >> out, 'from CMFDynamicViewFTI.browserdefault import BrowserDefaultMixin'
 
+        generate_expression_validator = False
         for att in element.getAttributeDefs():
             if att.getTaggedValue('validation_expression'):
                 generate_expression_validator = True
-
         if generate_expression_validator:
             print >> out, 'from Products.validation.validators import ExpressionValidator'
-
+        
         # Check for necessity to import DataGridField and DataGridWidget
         import_datagrid = False
         for att in element.getAttributeDefs():
@@ -665,23 +643,6 @@ class ArchetypesGenerator(BaseGenerator):
                     
                     viewTemplate=open(os.path.join(self.templateDir,'action_view.pt')).read()
                     f.write(viewTemplate % code)
-
-            elif m.hasStereoType(['portlet_view','portlet'], umlprofile=self.uml_profile):
-                view_name=m.getTaggedValue('view').strip() or method_name
-                autoinstall=m.getTaggedValue('autoinstall')
-                portlet='here/%s/macros/portlet' % view_name
-                if autoinstall=='left':
-                    self.left_slots.append(portlet)
-                if autoinstall=='right':
-                    self.right_slots.append(portlet)
-
-                f=self.makeFile(os.path.join(self.getSkinPath(element),view_name+'.pt'),0)
-                if f:
-                    
-                    viewTemplate=open(os.path.join(self.templateDir,'portlet_template.pt')).read()
-                    label = m.getTaggedValue('label', method_name)
-                    f.write(viewTemplate % {'method_name': method_name,
-                                            'label': label})
 
         res=outfile.getvalue()
         return res
@@ -1706,8 +1667,8 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateMethod(self, outfile, m, klass, mode='class'):
         #ignore actions and views here because they are generated separately
-        if m.hasStereoType(['action', 'view', 'form', 'portlet_view',
-                            'portlet'], umlprofile=self.uml_profile):
+        if m.hasStereoType(['action', 'view', 'form'], 
+                           umlprofile=self.uml_profile):
             return
 
         wrt = outfile.write
@@ -1992,9 +1953,6 @@ class ArchetypesGenerator(BaseGenerator):
                 baseclass = 'I18NBaseFolder'
                 baseschema = 'I18NBaseFolderSchema'
 
-            if element.getTaggedValue('folder_base_class'):
-                raise ValueError, "DEPRECATED: Usage of Tagged Value "\
-                      "folder_base_class' in class %s" % element.getCleanName
         else:
             # contentish
             if element.hasStereoType(['atfile'],
@@ -2015,17 +1973,25 @@ class ArchetypesGenerator(BaseGenerator):
 
             if self.i18n_content_support in self.i18n_at and element.isI18N():
                 baseclass ='I18NBaseContent'
-                baseschema ='I18NBaseSchema'
+                baseschema ='I18NBaseSchema'    
+                
+        # use CMFDynamicViewFTI?
+        if not parent_is_archetype and \
+           self.getOption('use_dynamic_view', element, True) and \
+           not element.hasStereoType(self.atct_stereotype, 
+                                     umlprofile=self.uml_profile):
+            parentnames.append('BrowserDefaultMixin')
 
         # if a parent is already an archetype we dont need a baseschema!
         if parent_is_archetype:
             baseclass = None
 
         # remember support
-        if element.hasStereoType(self.remember_stereotype, umlprofile=self.uml_profile):
+        if element.hasStereoType(self.remember_stereotype, 
+                                 umlprofile=self.uml_profile):
             if 'BaseMember' not in parentnames:
                 parentnames.insert(0, 'BaseMember')
-            # baseschema = 'BaseMember.schema'
+            # baseschema = 'BaseMember.schema'            
 
         ## however: tagged values have priority
         # tagged values for base-class overrule
@@ -2045,19 +2011,15 @@ class ArchetypesGenerator(BaseGenerator):
             if (utils.isTGVTrue(element.getTaggedValue('parentclass_first')) or 
                 utils.isTGVTrue(element.getTaggedValue('parentclasses_first')) or 
                 element.hasStereoType(self.remember_stereotype, umlprofile=self.uml_profile)):
-                # In case of remember, BaseMember needs to come first, to ensure that BaseMember.validate_roles overrides RoleManager.validate_roles
-                parentnames = parentnames + baseclasses #this way base_class is used after generalization parents
+                # In case of remember, BaseMember needs to come first, to 
+                # ensure that BaseMember.validate_roles overrides 
+                # RoleManager.validate_roles
+                # this way base_class is used after generalization parents:
+                parentnames = parentnames + baseclasses 
             else:
-                parentnames = baseclasses + parentnames #this way base_class is used before anything else
-        parentnames = [klass.strip() for klass in parentnames]
-
-        #remove double entries in parentnames
-        #this could be needed if base_class is one of the parents in parentnames...
-        parentnames_ordered_set = []
-        for klass in parentnames:
-            if not klass in parentnames_ordered_set:
-                parentnames_ordered_set.append(klass)
-        parentnames = parentnames_ordered_set
+                # this way base_class is used before anything else
+                parentnames = baseclasses + parentnames 
+        parentnames = list(Set([klass.strip() for klass in parentnames]))
         return baseclass, baseschema, parentnames
 
     def generateArchetypesClass(self, element, **kw):
@@ -2501,13 +2463,13 @@ class ArchetypesGenerator(BaseGenerator):
 
         return outfile.getvalue()
 
-    def getTools(self,package,autoinstallOnly=0):
+    def getTools(self,package):
         """ returns a list of  generated tools """
         res=[c for c in package.getClasses(recursive=1) if
                     c.hasStereoType(self.portal_tools, umlprofile=self.uml_profile)]
 
         if autoinstallOnly:
-            res=[c for c in res if utils.isTGVTrue(c.getTaggedValue('autoinstall')) ]
+            res=[c for c in res if utils.isTGVTrue(c.getTaggedValue('autoinstall', 1)) ]
 
         return res
 
@@ -2783,7 +2745,7 @@ class ArchetypesGenerator(BaseGenerator):
         tools = []
         klasses = self.getGeneratedTools(package)
         for klass in klasses:
-            if utils.isTGVFalse(klass.getTaggedValue('autoinstall')):
+            if utils.isTGVFalse(klass.getTaggedValue('autoinstall',1)):
                 continue
             
             path = '.'.join([
@@ -3517,7 +3479,7 @@ class ArchetypesGenerator(BaseGenerator):
             typedef.update(fti)
             typedef['name'] = pclass.getCleanName()
             
-            if pclass.getTaggedValue('migrate_dynamic_view_fti', '') != '':
+            if utils.isTGVTrue(pclass.getTaggedValue('use_dynamic_view', '1')):
                 typedef['meta_type'] = 'Factory-based Type Information ' + \
                                        'with dynamic views'
             else:
@@ -3549,7 +3511,7 @@ class ArchetypesGenerator(BaseGenerator):
                                               'allow_discussion', 'False')
             
             typedef['type_aliases'] = []
-            if pclass.getTaggedValue('migrate_dynamic_view_fti', False):
+            if utils.isTGVFalse(pclass.getTaggedValue('use_dynamic_view', '1')):
                 # TODO: same as on oldschool generation, write type_aliases
                 # to protected section and comment out.
                 typedef['type_aliases'] = [

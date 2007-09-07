@@ -12,25 +12,6 @@
 # Licence:     GPL
 #-----------------------------------------------------------------------------
 
-ACT_TEMPL = u"""
-       {'action': %(action)s,
-        'category': %(action_category)s,
-        'id': '%(action_id)s',
-        'name': '%(action_label)s',
-        'permissions': (%(permission)s,),
-        'condition': '%(condition)s'
-       },
-"""
-
-MODIFY_FTI = u"""\
-def modify_fti(fti):
-    # Hide unnecessary tabs (usability enhancement)
-    for a in fti['actions']:
-        if a['id'] in [%(hideactions)s]:
-            a['visible'] = 0
-    return fti
-"""
-
 ACTIONS_START = u"""
     actions = %s (
 """
@@ -65,22 +46,6 @@ DEFAULT_ACTIONS_FOLDERISH = u"""
         'permissions': ('View',)
        },
 
-"""
-
-# FTI_TEMPL must not be unicode!
-FTI_TEMPL = """\
-    filter_content_types = %(filter_content_types)d
-    global_allow = %(global_allow)d
-    %(has_content_icon)scontent_icon = '%(content_icon)s'
-    immediate_view = '%(immediate_view)s'
-    default_view = '%(default_view)s'
-    suppl_views = %(suppl_views)s
-    typeDescription = %(type_description)s
-    typeDescMsgId = 'description_edit_%(type_name_lc)s'
-"""
-
-TOOL_FTI_TEMPL = u"""\
-    %(has_toolicon)stoolicon = '%(toolicon)s'
 """
 
 CLASS_SCHEMA = u"""\
@@ -228,6 +193,9 @@ DFSLTEXT = u"""\
 # The License may be obtained under <http://www.d-fsl.org>."""
 
 LICENSES = {
+    # THE AUTHORS OF ARCHGENXML ALLOW TO AUTOMATICALLY RE-LICENCE THE CODE
+    # WHILE GENERATION TO ONE OUT OD THE FOLLOWING LICENCES:
+    # OTHER OSI-CERTIFED LICENCES ARE ALLOWED TOO, ADD THEM HERE.
 
     'GPL': {
         'name': u'GNU General Public License (GPL)',
@@ -252,8 +220,6 @@ LICENSES = {
         'name': u'German Free Software License (D-FSL)',
         'text': DFSLTEXT,
     },
-    'NONE': { 'name':'', 'text':'' },
-
 }
 
 REGISTER_VOCABULARY_ITEM = u"""registerVocabularyTerm(%s, '%s')"""
@@ -299,26 +265,8 @@ from Products.%(module)s.config import *
 
 """
 
-READMELOWEST = u"""\
-Directory 'skins/%s':
-
-Put your templates, css and javascript files in here. When first
-installed, this skin layer is added to the plone skin. It is added
-right below the 'custom' layer. Later, other products can move it a
-little bit down, but it'll always be above the plone skin layers. So:
-you can use it to overwrite plone stuff.
-"""
-
-CMFMEMBER_IMPORTS = u"""\
-# imports needed by CMFMember
-from Products.CMFMember import Member as BaseMember
-from Products.CMFMember.MemberPermissions import \\
-        VIEW_PUBLIC_PERMISSION, EDIT_ID_PERMISSION, \\
-        EDIT_PROPERTIES_PERMISSION, VIEW_OTHER_PERMISSION,  \\
-        VIEW_SECURITY_PERMISSION, EDIT_PASSWORD_PERMISSION, \\
-        EDIT_SECURITY_PERMISSION, MAIL_PASSWORD_PERMISSION, \\
-        ADD_MEMBER_PERMISSION
-from AccessControl import ModuleSecurityInfo
+TEMPLATE_CMFDYNAMICVIEWFTI_IMPORT = u"""\
+from CMFDynamicViewFTI.browserdefault import BrowserDefaultMixin
 """
 
 REMEMBER_IMPORTS = u"""\
@@ -338,30 +286,6 @@ REMEMBER_CALL = u"""
     def __call__(self, *args, **kwargs):
         return self.getId()
         """
-
-# This corresponds to remember.tools.membership.addMember, which we
-# don't need to generate ..
-CMFMEMBER_ADD = u"""\
-
-# Generate the add%(prefix)s%(name)s method ourselves so we can do some extra
-# initialization, i.e. so we can set an initial password
-security = ModuleSecurityInfo('Products.%(module)s.%(prefix)s%(name)s')
-
-security.declareProtected(ADD_MEMBER_PERMISSION, 'add%(prefix)s%(name)s')
-def add%(prefix)s%(name)s(self, id, **kwargs):
-    o = %(prefix)s%(name)s(id)
-    self._setObject(id, o)
-    o = getattr(self, id)
-    o.initializeArchetype(**kwargs)
-    o.getUser()
-    o._setPassword(o._generatePassword())
-
-"""
-CMFMEMBER_SETUP_IMPORT = u"""\
-from Products.CMFMember.Extensions.toolbox import SetupMember
-"""
-CMFMEMBER_SETUP_INSTALL = u"""\
-"""
 
 ARRAYFIELD = u"""    ArrayField(
 %s

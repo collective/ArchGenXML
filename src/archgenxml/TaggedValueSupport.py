@@ -216,19 +216,6 @@ the file (which is the name of the doctestcase class + '.txt'). ArchGenXML
 appends the '.txt' extension automatically, so you don't need to specify it."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-# tagname = 'quickinstall_dependencies'
-# explanation = """In a tests package, setting the stereotype '<<plone_testcase>>'
-# on a class turns it into a base testcase. The base testcase will install all
-# listed products to the test portal using CMFQuickInstallerTool. The list has
-# the form: '"ProductsA", "ProductB"."""
-# tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
-# tagname = 'quickinstall_self'
-# explanation = """In a tests package, setting the stereotype '<<plone_testcase>>'
-# on a class turns it into a base testcase. The base testcase will install
-# the current Product (where the testcase resides in) using CMFQuickInstallerTool."""
-# tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 tagname = 'portal_type'
 explanation = """Sets the CMF portal-type this class will be registered with,
 defaults to the class-name."""
@@ -257,6 +244,10 @@ the user interface."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'typeDescription'
+explanation = """DEPRECATED. Use 'description' instead. """
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'description'
 explanation = """A description of the type, a sentence or two in length.
 Used to describe the type to the user."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
@@ -349,12 +340,6 @@ explanation = """By default, a child type will inherit the allowable content
 types from its parents. Set this property to false (0) to turn this off."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-tagname = 'default_actions'
-explanation = """If set to true (1), generate explicitly the default 'view'
-and 'edit' actions. Usually, these are inherited from the Archetypes base
-classes, but if you have a funny base class, this may be necessary."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 tagname = 'hide_actions'
 explanation = """A comma- or newline-separated list of action ids to hide on
 the class. For example, set to 'metadata, sharing' to turn off the metadata
@@ -425,6 +410,11 @@ explanation = """The id to use for the tool. Defaults to 'portal_<name>',
 where &lt;name&gt; is the class name in lowercase."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'autoinstall'
+explanation = """Controls, wether the tool is automatically installed when
+your product is installed. Boolean, default is True."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'configlet'
 explanation = """Set to true (1) to set up a configlet in the Plone control
 panel for your tool."""
@@ -472,12 +462,6 @@ category = 'method'
 
 # The following tagged values can be set on methods to alter their
 # behaviour:
-
-tagname = 'autoinstall'
-explanation = """OUTDATED, need refactoring. Set this to right or left on a method with a
-stereotype '<<portlet>>', this adds the portlet to left_slots or
-right_slots. See the documentation for the stereotype."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'code'
 explanation = """The actual python code of the method. Only use this for
@@ -534,30 +518,6 @@ for tagname in ['action', 'view', 'form']:
     into '..../tagged_value'.""" % tagname
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-tagname = 'action_label'
-explanation = """TODO."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
-# Portlets
-
-category = 'portlet'
-
-#  For methods with the '<<portlet>>' or '<<portlet_view>>'
-#  stereotypes, the following tagged values can be used:
-
-tagname = 'autoinstall'
-explanation = """OUTDATED, needs refactoring. Set to 'left' or 'right' to automatically install the
-portlet (a class with the stereotype '<<portlet>>') with the product
-in the left or right slots, respectively. If it already exists in the
-slot it won't get overwritten."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
-tagname = 'view'
-explanation = """Set the name of the portlet. Defaults to the method
-name. This will be used as the name of the auto-created page template
-for the portlet."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 # Field classes
 category = 'field'
 
@@ -606,10 +566,6 @@ explanation = """Sets the macro used by the widget. This will be used as
 the name of the auto-created page template for the widget."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-tagname = 'show_hm'
-explanation = """Setting this boolean value to False will show only the date entry."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 # Attributes
 
 category = 'attribute'
@@ -633,7 +589,7 @@ be used to create it in multiple catalogs:
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'validators'
-explanation = """TODO."""
+explanation = """TODO. Not supported for now."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'widget'
@@ -877,8 +833,8 @@ for category in ['model', 'package', 'class']:
     #tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
     tagname = 'use_portal_factory'
-    explanation = """Setting this boolean value enables the registration
-    of the type for use with portal_factory."""
+    explanation = """This boolean value controls the registration
+    of the type for use with portal_factory. Default: True."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
     tagname = 'display_in_navigation'
@@ -896,11 +852,10 @@ for category in ['model', 'package', 'class']:
     file (default is 1)."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-    tagname = 'migrate_dynamic_view_fti'
-    explanation = """Migrates FTI of a type/class to CMFDynamicViewFTI. This
-    works only if the class derives from an ATContentType, from ATCTMixIn or
-    direct from CMFDynamicViewFTI.browserdefault.BrowserDefaultMixin."""
-    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+    tagname = 'use_dynamic_view'
+    explanation = """Controles wether CMFDynamicViewFTI is used for a type/class.
+    Boolean, default is True."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)    
 
     tagname = 'use_workflow'
     explanation = """Tie the class to the named workflow. A state diagram
