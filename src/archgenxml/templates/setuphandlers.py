@@ -44,6 +44,7 @@ def installQIDependencies(context):
 <dtml-if "notsearchabletypes">
 def setupHideTypesFromSearch(context):
     """hide selected classes in the search form"""
+    # XXX use https://svn.plone.org/svn/collective/DIYPloneStyle/trunk/profiles/default/properties.xml
     portalProperties = getToolByName(self, 'portal_properties')
     siteProperties = getattr(portalProperties, 'site_properties')
     for klass in <dtml-var "repr(notsearchabletypes)">:
@@ -57,7 +58,7 @@ def setupHideTypesFromSearch(context):
 <dtml-if "hidemetatypes">
 def setupHideMetaTypesFromNavigations(context):
     """hide selected classes in the search form"""
-    # hide selected classes in the search form
+    # XXX use https://svn.plone.org/svn/collective/DIYPloneStyle/trunk/profiles/default/properties.xml
     portalProperties = getToolByName(self, 'portal_properties')
     siteProperties = getattr(portalProperties, 'site_properties')
     for klass in <dtml-var "repr(hidemetatypes)">:
