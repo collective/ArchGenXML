@@ -355,7 +355,6 @@ group.add_option("-t",
         )
 
 group.add_option("--generate-packages",
-                 help="Name of packages to generate (can specify as comma-separated list, or specify several times)",
                  section="GENERAL",
                  action="append",
                  dest="generate_packages",

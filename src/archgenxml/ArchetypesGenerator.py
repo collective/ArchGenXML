@@ -1755,15 +1755,18 @@ class ArchetypesGenerator(BaseGenerator):
 
 
         testname=element.getTaggedValue('doctest_name') or element.getCleanName()
-        self.makeDir(os.path.join(element.getPackage().getProduct().getFilePath(),'doc'))
-        docfile=os.path.join(element.getPackage().getProduct().getFilePath(),'doc','%s.txt' % testname)
+        self.makeDir(os.path.join(element.getPackage().getProduct().getFilePath(),
+                                  'doc'))
+        docfile=os.path.join(element.getPackage().getProduct().getFilePath(),
+                             'doc', '%s.txt' % testname)
         if not self.readFile(docfile):
             of=self.makeFile(docfile)
             of.write(testdoc)
             of.close()
 
         init='#'
-        of=self.makeFile(os.path.join(element.getPackage().getProduct().getFilePath(),'doc','__init__.py' ))
+        of=self.makeFile(os.path.join(element.getPackage().getProduct().getFilePath(),
+                                      'doc', '__init__.py' ))
 
         of.write(init)
         of.close()
@@ -1774,14 +1777,18 @@ class ArchetypesGenerator(BaseGenerator):
     ##
     #
     def generateFunctionalTestcaseClass(self, element, template, **kw):
-        log.info("%sGenerating testcase '%s'.", '    '*self.infoind, element.getName())
+        log.info("%sGenerating testcase '%s'.", '    '*self.infoind, 
+                 element.getName())
 
-        assert element.hasStereoType('plonefunctional_testcase', umlprofile=self.uml_profile) or element.getCleanName().startswith('browser'), \
+        assert element.hasStereoType('plonefunctional_testcase', 
+                                     umlprofile=self.uml_profile) or \
+                                     element.getCleanName().startswith('browser'), \
                "names of test classes _must_ start with 'browser', but this class is named '%s'" % element.getCleanName()
 
         assert element.getPackage().getCleanName() == 'tests', \
             "testcase classes only make sense inside a package called 'tests' \
-                 but this class is named '%s' and located in package '%s'" % (element.getCleanName(),element.getPackage().getCleanName())
+                 but this class is named '%s' and located in package '%s'" % \
+                 (element.getCleanName(),element.getPackage().getCleanName())
 
         if element.getGenParents():
             parent = element.getGenParents()[0]
@@ -1803,7 +1810,8 @@ class ArchetypesGenerator(BaseGenerator):
 
         assert element.getPackage().getCleanName() == 'tests', \
             "testcase classes only make sense inside a package called 'tests' \
-                 but this class is named '%s' and located in package '%s'" % (element.getCleanName(),element.getPackage().getCleanName())
+                 but this class is named '%s' and located in package '%s'" % \
+                 (element.getCleanName(),element.getPackage().getCleanName())
 
         if element.getGenParents():
             parent = element.getGenParents()[0]
@@ -2604,7 +2612,7 @@ class ArchetypesGenerator(BaseGenerator):
            'protected_init_section_bottom': protectedInitCodeB,
            }
 
-        templ=self.readTemplate('__init__.py')
+        templ=self.readTemplate('__init__product.py')
         dtml=HTML(templ,d)
         res=dtml()
 

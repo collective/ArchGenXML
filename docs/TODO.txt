@@ -1,13 +1,5 @@
 TODO's for ArchGenXML
 ---------------------
-* put all non-python, like templates, argo-profiles, docu, ... outside
-  src/archgenxml, such like docs, umltools/argouml, templates/plone,
-  templates/python, etc.
-  At the moment the debian-package tries to compile all *.py (also those in 
-  templates) and throws warnings on package installation. discussing it, the
-  result was: its bad style to have those resources mixed with the code-part.
-  -- jensens 
-
 * tgv "hide_actions" need to get respect in types.xml 
 
 * make generateMethodActions() in ArchetypesGenerator function return simply a
