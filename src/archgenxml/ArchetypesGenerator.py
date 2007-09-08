@@ -2721,7 +2721,9 @@ class ArchetypesGenerator(BaseGenerator):
         
         handleSectionedFile(['templates', 'configure.zcml'],
                             os.path.join(ppath, 'configure.zcml'),
-                            sectionnames=['configure.zcml'])
+                             # user extensible xml-namespaces are missing
+                             # needs include with custom file for now.
+                            sectionnames=['HEAD', 'FOOT'])
     
     def generateGSDirectory(self, package):
         """Create genericsetup directory profiles/default.

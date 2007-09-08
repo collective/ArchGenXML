@@ -16,8 +16,8 @@ ENDPATTERN = '##/code-section %s'
 
 import os
 from StringIO import StringIO
-from documenttemplate.documenttemplate import HTML
-from pkg_resources import resource_string
+from pkg_resources import resource_string, resource_stream
+from archgenxml.documenttemplate import HTML
 
 def handleSectionedFile(templatepath, outputpath,
                         sectionnames=[], templateparams=None):
@@ -29,16 +29,16 @@ def handleSectionedFile(templatepath, outputpath,
     @param sectionnames - list of section names to consider
     @param templateparams - the placeholderparams for the dtml template
     """
+    
     if templateparams:
+        template = resource_string(__name__, os.path.join(*templatepath))
         templateparams.update(__builtins__)
-        template = resource_string(__name__, os.path.join(templatepath))
         template = HTML(template, templateparams)
         template = template()
         templatebuffer = StringIO(template).readlines()
     else:
-        templatefile = open(templatepath, 'r')
-        templatebuffer = templatefile.readlines()
-        templatefile.close()
+        templatestream = resource_stream(__name__, os.path.join(*templatepath))
+        templatebuffer = templatestream.readlines()
     try:
         existentfile = open(outputpath)
         existentbuffer = existentfile.readlines()
