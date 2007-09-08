@@ -15,8 +15,9 @@ ArchGenXML - Python/Zope/Plone code generator
 
 SVN notice
 
-  **Warning**: svn trunk is now for the development of the 1.6
-    version. The stable 1.5 is now in the 1.5 branch.
+  **Warning**: svn trunk is now for the development of the 2.0
+    version. The stable 1.5 is now in the 1.5 branch. The almost stable 1.6
+    is in the 1.6 branch.
 
 Supported Features
 
@@ -50,7 +51,7 @@ Requirements & Optional
 
   Required to run generated code
 
-    - Plone 2.3.x
+    - Plone 3.0.x
 
   Optional:
 
@@ -96,8 +97,8 @@ Requirements & Optional
       from http://svn.plone.org/svn/archetypes/MoreFieldsAndWidgets/ATBackRef/trunk/
       Required to use backreferences feature.
 
-    - ATVocabularyManager
-
+    - ATVocabularyManager 1.3+
+    
       Dynamic ttw vocabularies:
 
       http://plone.org/products/atvocabularymanager
