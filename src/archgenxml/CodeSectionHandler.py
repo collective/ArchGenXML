@@ -6,7 +6,9 @@
 #
 # Created:     2007/09/06
 
-__author__ = 'Robert Niederreiter <office@squarewave.at>'
+__author__ = """\
+Robert Niederreiter <robertn@bluedynamics.com>,
+Jens Klein <jens@bluedynamics.com>"""
 __licence__ = 'GPL'
 
 BEGINPATTERN = '##code-section %s'
@@ -15,21 +17,21 @@ ENDPATTERN = '##/code-section %s'
 import os
 from StringIO import StringIO
 from documenttemplate.documenttemplate import HTML
+from pkg_resources import resource_string
 
 def handleSectionedFile(templatepath, outputpath,
                         sectionnames=[], templateparams=None):
     """Do some magic here since we are decayed :)
     
-    @param templatepath - the path to the template file
+    @param templatepath - the relative path (as list of strings) to the 
+                          template file, including it as last item
     @param outputpath - the path to the target file
     @param sectionnames - list of section names to consider
     @param templateparams - the placeholderparams for the dtml template
     """
     if templateparams:
         templateparams.update(__builtins__)
-        templatefile = open(templatepath, 'r')
-        template = templatefile.read()
-        templatefile.close()
+        template = resource_string(__name__, os.path.join(templatepath))
         template = HTML(template, templateparams)
         template = template()
         templatebuffer = StringIO(template).readlines()
@@ -37,7 +39,6 @@ def handleSectionedFile(templatepath, outputpath,
         templatefile = open(templatepath, 'r')
         templatebuffer = templatefile.readlines()
         templatefile.close()
-    
     try:
         existentfile = open(outputpath)
         existentbuffer = existentfile.readlines()

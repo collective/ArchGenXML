@@ -2714,12 +2714,12 @@ class ArchetypesGenerator(BaseGenerator):
         ppath = package.getFilePath()
         pname = package.getProductName()
         
-        handleSectionedFile(os.path.join(self.templateDir, 'profiles.zcml'),
+        handleSectionedFile(['templates', 'profiles.zcml'],
                             os.path.join(ppath, 'profiles.zcml'),
                             sectionnames=['profiles.zcml'],
                             templateparams={'product_name': pname})
         
-        handleSectionedFile(os.path.join(self.templateDir, 'configure.zcml'),
+        handleSectionedFile(['templates', 'configure.zcml'],
                             os.path.join(ppath, 'configure.zcml'),
                             sectionnames=['configure.zcml'])
     
@@ -2758,7 +2758,7 @@ class ArchetypesGenerator(BaseGenerator):
             )
         
         ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
-        handleSectionedFile(os.path.join(self.templateDir, 'toolset.xml'),
+        handleSectionedFile(['templates', 'toolset.xml'],
                             os.path.join(ppath, 'toolset.xml'),
                             sectionnames=['toolset.xml'],
                             templateparams={ 'tools': tools })
@@ -2781,7 +2781,7 @@ class ArchetypesGenerator(BaseGenerator):
                 factorytypes.append(klassname)
         
         ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
-        handleSectionedFile(os.path.join(self.templateDir, 'factorytool.xml'),
+        handleSectionedFile(['templates', 'factorytool.xml'],
                             os.path.join(ppath, 'factorytool.xml'),
                             templateparams={ 'factory_types': factorytypes })
     
@@ -2801,7 +2801,7 @@ class ArchetypesGenerator(BaseGenerator):
         style['rendering'] = 'import'
         
         ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
-        handleSectionedFile(os.path.join(self.templateDir, 'cssregistry.xml'),
+        handleSectionedFile(['templates', 'cssregistry.xml'],
                             os.path.join(ppath, 'cssregistry.xml'),
                             sectionnames=['cssregistry.xml'],
                             templateparams={ 'css': [style] })
@@ -2819,7 +2819,7 @@ class ArchetypesGenerator(BaseGenerator):
         script['inline'] = 'False'
         
         ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
-        handleSectionedFile(os.path.join(self.templateDir, 'jsregistry.xml'),
+        handleSectionedFile(['templates', 'jsregistry.xml'],
                             os.path.join(ppath, 'jsregistry.xml'),
                             sectionnames=['jsregistry.xml'],
                             templateparams={ 'scripts': [script] })
@@ -2842,7 +2842,7 @@ class ArchetypesGenerator(BaseGenerator):
                 skindirs.append(skindir)
         
         ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
-        handleSectionedFile(os.path.join(self.templateDir, 'skins.xml'),
+        handleSectionedFile(['templates', 'skins.xml'],
                             os.path.join(ppath, 'skins.xml'),
                             templateparams={ 'skinDirs': skindirs })
         
@@ -2854,7 +2854,7 @@ class ArchetypesGenerator(BaseGenerator):
         self._getTypeDefinitions(defs, package, package.getProductName())
         
         ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
-        handleSectionedFile(os.path.join(self.templateDir, 'types.xml'),
+        handleSectionedFile(['templates', 'types.xml'],
                             os.path.join(ppath, 'types.xml'),
                             templateparams={ 'portalTypes': defs })
     
@@ -2877,7 +2877,7 @@ class ArchetypesGenerator(BaseGenerator):
         
         for typedef in defs:
             filename = '%s.xml' % typedef['name']
-            handleSectionedFile(os.path.join(self.templateDir, 'type.xml'),
+            handleSectionedFile(['templates', 'type.xml'],
                                 os.path.join(typesdir, filename),
                                 templateparams={ 'ctype': typedef })
             
@@ -2921,7 +2921,7 @@ class ArchetypesGenerator(BaseGenerator):
             'hidemetatypes': hidemetatypes,
             
         }        
-        handleSectionedFile(os.path.join(self.templateDir, 'setuphandlers.py'), 
+        handleSectionedFile(['templates', 'setuphandlers.py'], 
                             os.path.join(package.getFilePath(),
                                          'setuphandlers.py'),
                             sectionnames=('HEAD', 'FOOT'),
@@ -2929,7 +2929,7 @@ class ArchetypesGenerator(BaseGenerator):
                            )
         # generate import_steps.xml
         profiledir = os.path.join(package.getFilePath(), 'profiles', 'default')
-        handleSectionedFile(os.path.join(self.templateDir, 'import_steps.xml'), 
+        handleSectionedFile(['templates', 'import_steps.xml'], 
                             os.path.join(profiledir, 'import_steps.xml'),
                             sectionnames=('ADDITIONALSTEPS',),
                             templateparams=templateparams
