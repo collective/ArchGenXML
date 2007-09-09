@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+#
 # File: XMLSectionParser.py
 #
 # generate files out of templated considering protected sections in existing
@@ -7,7 +8,7 @@
 # Created:     2007/09/06
 
 __author__ = """\
-Robert Niederreiter <robertn@bluedynamics.com>,
+Robert Niederreiter <rnix@squarewave.at>,
 Jens Klein <jens@bluedynamics.com>"""
 __licence__ = 'GPL'
 
