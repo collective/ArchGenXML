@@ -78,15 +78,16 @@ def setupHideToolsFromNavigation(context):
     portalProperties = getToolByName(self, 'portal_properties')    
     navtreeProperties = getattr(portalProperties, 'navtree_properties')
     if navtreeProperties.hasProperty('idsNotToList'):
-    for toolname in toolnames:
-        try:
-            portal[toolname].unindexObject()
-        except:
-            pass        
-        current = list(navtreeProperties.getProperty('idsNotToList'))
-        if toolname not in current:
-            current.append(toolname)
-            navtreeProperties.manage_changeProperties({'idsNotToList': current})
+        for toolname in toolnames:
+            try:
+                portal[toolname].unindexObject()
+            except:
+                pass        
+            current = list(navtreeProperties.getProperty('idsNotToList'))
+            if toolname not in current:
+                current.append(toolname)
+                kwargs = {'idsNotToList': current}
+                navtreeProperties.manage_changeProperties(**kwargs)
                 
 </dtml-if>
 <dtml-if "catalogmultiplexed">
