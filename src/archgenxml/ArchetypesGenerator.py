@@ -32,7 +32,7 @@ import XMIParser
 from archgenxml.interfaces import IOptions
 
 from atumlprofile import at_uml_profile
-from maps import typeMap, widgetMap, coerceMap, hide_classes
+from atmaps import typeMap, widgetMap, coerceMap, hide_classes
 
 from BaseGenerator import BaseGenerator
 from WorkflowGenerator import WorkflowGenerator
@@ -121,7 +121,7 @@ class ArchetypesGenerator(BaseGenerator):
     default_interface_type = 'z3'
     uml_profile = at_uml_profile
     
-    # from maps.py
+    # from atmaps.py
     hide_classes = hide_classes
     typeMap = typeMap
     widgetMap = widgetMap
