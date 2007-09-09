@@ -45,7 +45,7 @@ def installQIDependencies(context):
 def setupHideTypesFromSearch(context):
     """hide selected classes in the search form"""
     # XXX use https://svn.plone.org/svn/collective/DIYPloneStyle/trunk/profiles/default/properties.xml
-    portalProperties = getToolByName(self, 'portal_properties')
+    portalProperties = getToolByName(context, 'portal_properties')
     siteProperties = getattr(portalProperties, 'site_properties')
     for klass in <dtml-var "repr(notsearchabletypes)">:
         propertyid = 'types_not_searched'
@@ -59,7 +59,7 @@ def setupHideTypesFromSearch(context):
 def setupHideMetaTypesFromNavigations(context):
     """hide selected classes in the search form"""
     # XXX use https://svn.plone.org/svn/collective/DIYPloneStyle/trunk/profiles/default/properties.xml
-    portalProperties = getToolByName(self, 'portal_properties')
+    portalProperties = getToolByName(context, 'portal_properties')
     siteProperties = getattr(portalProperties, 'site_properties')
     for klass in <dtml-var "repr(hidemetatypes)">:
         propertyid = 'metaTypesNotToList'
@@ -75,7 +75,7 @@ def setupHideToolsFromNavigation(context):
     # uncatalog tools
     site = context.getSite()
     toolnames = <dtml-var "repr(toolnames)">
-    portalProperties = getToolByName(self, 'portal_properties')    
+    portalProperties = getToolByName(context, 'portal_properties')    
     navtreeProperties = getattr(portalProperties, 'navtree_properties')
     if navtreeProperties.hasProperty('idsNotToList'):
         for toolname in toolnames:
@@ -118,7 +118,7 @@ def setupCatalogMultiplex(context):
         current_catalogs = Set([c.id for c in atool.getCatalogsByType(meta_type)])
         if 'white' in submap:
             for catalog in submap['white']:
-                if not getToolByName(self, catalog, False):
+                if not getToolByName(context, catalog, False):
                     raise AttributeError, 'Catalog "%s" does not exist!' % catalog
                 current_catalogs.update([catalog])
         if 'black' in submap:
@@ -132,7 +132,7 @@ def setupCatalogMultiplex(context):
 def installRelations(context):
     """imports the relations.xml file"""
     site = context.getSite()
-    relations_tool = getToolByName(site,'relations_library')
+    relations_tool = getToolByName(site, 'relations_library')
     xmlpath = os.path.join(package_home(product_globals), 'data', 
                            'relations.xml')
     f = open(xmlpath)
