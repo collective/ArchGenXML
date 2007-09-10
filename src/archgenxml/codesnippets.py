@@ -266,7 +266,7 @@ from Products.%(module)s.config import *
 """
 
 TEMPLATE_CMFDYNAMICVIEWFTI_IMPORT = u"""\
-from CMFDynamicViewFTI.browserdefault import BrowserDefaultMixin
+from Products.CMFDynamicViewFTI.browserdefault import BrowserDefaultMixin
 """
 
 REMEMBER_IMPORTS = u"""\

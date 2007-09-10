@@ -29,10 +29,10 @@ from cStringIO import StringIO
 # AGX-specific imports
 import PyParser
 import XMIParser
+import atmaps
 from archgenxml.interfaces import IOptions
 
 from atumlprofile import at_uml_profile
-from atmaps import typeMap, widgetMap, coerceMap, hide_classes
 
 from BaseGenerator import BaseGenerator
 from WorkflowGenerator import WorkflowGenerator
@@ -115,17 +115,17 @@ class DummyModel:
 
 
 class ArchetypesGenerator(BaseGenerator):
-
+    
     generator_generator = 'archetypes'
     default_class_type = 'content_class'
     default_interface_type = 'z3'
     uml_profile = at_uml_profile
     
     # from atmaps.py
-    hide_classes = hide_classes
-    typeMap = typeMap
-    widgetMap = widgetMap
-    coerceMap = coerceMap
+    hide_classes = atmaps.HIDE_CLASSES
+    typeMap = atmaps.TYPE_MAP
+    widgetMap = atmaps.WIDGET_MAP
+    coerceMap = atmaps.COERCE_MAP
 
     # The defaults here are already handled by OptionParser
     # (And we want only a single authorative source of information :-)
@@ -274,7 +274,7 @@ class ArchetypesGenerator(BaseGenerator):
         out = StringIO()
         res = BaseGenerator.generateDependentImports(self, element)
         print >> out, res
-        print >> out, 'from CMFDynamicViewFTI.browserdefault import BrowserDefaultMixin'
+        print >> out, TEMPLATE_CMFDYNAMICVIEWFTI_IMPORT
 
         generate_expression_validator = False
         for att in element.getAttributeDefs():
@@ -348,6 +348,69 @@ class ArchetypesGenerator(BaseGenerator):
             module_id = os.path.join(element.getPackage().getFilePath(includeRoot=0),
                                      element.getName()+'.py')
             msgcat.add(msgid, msgstr=msgstr, references=[module_id])
+    
+    def getMethodActionsDict(self, element):
+        log.debug("Generating method actions dict...")
+        log.debug("First finding our methods.")
+        
+        ret = []
+        
+        for m in element.getMethodDefs():
+            method_name = m.getName()
+            code = utils.indent(m.getTaggedValue('code', ''), 1)
+            if m.hasStereoType(['action', 'view', 'form'],
+                               umlprofile=self.uml_profile):
+                log.debug("Method has stereotype action/view/form.")
+                action_name = m.getTaggedValue('action','').strip()
+                if not action_name:
+                    log.debug("No tagged value 'action', trying '%s' with a "
+                              "default to the methodname.",
+                              m.getStereoType())
+                    action_name=m.getTaggedValue(m.getStereoType(),
+                                                 method_name).strip()
+                log.debug("Ok, generating %s for %s.",
+                          m.getStereoType(), action_name)
+                dict={}
+
+                if not action_name.startswith('string:') \
+                  and not action_name.startswith('python:'):
+                    action_target='string:${object_url}/'+action_name
+                else:
+                    action_target=action_name
+
+                dict['action'] = action_target
+                dict['category'] = m.getTaggedValue('category', 'object')
+                dict['id'] = m.getTaggedValue('id',method_name)
+                dict['name'] = m.getTaggedValue('label',method_name)
+                dict['permissions'] = m.getTaggedValue('permission', ['View'])
+
+                condition=m.getTaggedValue('condition') or '1'
+                dict['condition']='python:%s' % condition
+
+                if not (m.hasTaggedValue('create_action') \
+                  and utils.isTGVFalse(m.getTaggedValue('create_action'))):
+                    #print >>outfile, ACT_TEMPL % dict
+                    ret.append(dict)
+
+            #LATER
+            
+            #if m.hasStereoType('view', umlprofile=self.uml_profile):
+            #    f=self.makeFile(os.path.join(self.getSkinPath(element),action_name+'.pt'),0)
+            #    if f:
+            #        
+            #        viewTemplate=open(os.path.join(self.templateDir,'action_view.pt')).read()
+            #        f.write(viewTemplate % code)
+            #
+            #elif m.hasStereoType('form', umlprofile=self.uml_profile):
+            #    f=self.makeFile(os.path.join(self.getSkinPath(element),action_name+'.cpt'),0)
+            #    if f:
+            #
+            #        viewTemplate=open(os.path.join(self.templateDir,'action_view.pt')).read()
+            #        f.write(viewTemplate % code)
+
+        #res=outfile.getvalue()
+        #return res
+        return ret
 
     def generateMethodActions(self, element):
         log.debug("Generating method actions...")
@@ -386,26 +449,29 @@ class ArchetypesGenerator(BaseGenerator):
                 condition=m.getTaggedValue('condition') or '1'
                 dict['condition']='python:'+condition
 
-                if not (m.hasTaggedValue('create_action') and utils.isTGVFalse(m.getTaggedValue('create_action'))):
-                    print >>outfile, ACT_TEMPL % dict
-
+                if not (m.hasTaggedValue('create_action') \
+                  and utils.isTGVFalse(m.getTaggedValue('create_action'))):
+                    ##############################################
+                    #print >>outfile, ACT_TEMPL % dict
+                    pass
+                    ##############################################
+            
             if m.hasStereoType('view', umlprofile=self.uml_profile):
                 f=self.makeFile(os.path.join(self.getSkinPath(element),action_name+'.pt'),0)
                 if f:
                     
                     viewTemplate=open(os.path.join(self.templateDir,'action_view.pt')).read()
                     f.write(viewTemplate % code)
-
+            
             elif m.hasStereoType('form', umlprofile=self.uml_profile):
                 f=self.makeFile(os.path.join(self.getSkinPath(element),action_name+'.cpt'),0)
                 if f:
-                    
+            
                     viewTemplate=open(os.path.join(self.templateDir,'action_view.pt')).read()
                     f.write(viewTemplate % code)
 
         res=outfile.getvalue()
         return res
-
 
     def generateAdditionalImports(self, element):
         outfile = StringIO()
@@ -476,7 +542,6 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateActionsAndViews(self, element, subtypes):
         """Generate the views and actions."""
-        
         hasActions=False
         actTempl=ACTIONS_START
         base_actions=element.getTaggedValue('base_actions', '').strip()
@@ -2504,6 +2569,7 @@ class ArchetypesGenerator(BaseGenerator):
         self._getTypeDefinitions(defs, package, package.getProductName())
         
         for typedef in defs:
+            #print typedef
             filename = '%s.xml' % typedef['name']
             handleSectionedFile(['templates', 'type.xml'],
                                 os.path.join(typesdir, filename),
@@ -3078,7 +3144,7 @@ class ArchetypesGenerator(BaseGenerator):
         if not XMIParser.has_stripogram:
             log.warn("Can't strip html from doc-strings. Module 'stripogram' not found.")
         self.generateProduct(root)
-    
+       
     def _getTypeDefinitions(self, defs, package, productname):
         """Iterate recursice through package and create class definitions
         """
@@ -3099,11 +3165,13 @@ class ArchetypesGenerator(BaseGenerator):
             typedef.update(fti)
             typedef['name'] = pclass.getCleanName()
             
-            if utils.isTGVTrue(pclass.getTaggedValue('use_dynamic_view', '1')):
-                typedef['meta_type'] = 'Factory-based Type Information ' + \
-                                       'with dynamic views'
-            else:
-                typedef['meta_type'] = 'Factory-based Type Information'
+            #if utils.isTGVTrue(pclass.getTaggedValue('use_dynamic_view', '1')):
+            #    typedef['meta_type'] = 'Factory-based Type Information ' + \
+            #                           'with dynamic views'
+            #else:
+            #    typedef['meta_type'] = 'Factory-based Type Information'
+            typedef['meta_type'] = 'Factory-based Type Information ' + \
+                                   'with dynamic views'
             
             typedef['content_meta_type'] = pclass.getCleanName()
             typedef['product_name'] = productname
@@ -3123,6 +3191,7 @@ class ArchetypesGenerator(BaseGenerator):
                 allowed_types= (pclass.getName(),) + \
                                 tuple(pclass.getGenChildrenNames())
             
+            print allowed_types
             typedef['allowed_content_types'] = allowed_types
             
             # check if allow_discussion has to be set to None as default
@@ -3130,27 +3199,22 @@ class ArchetypesGenerator(BaseGenerator):
             typedef['allow_discussion'] = pclass.getTaggedValue( \
                                               'allow_discussion', 'False')
             
-            typedef['type_aliases'] = []
-            if utils.isTGVFalse(pclass.getTaggedValue('use_dynamic_view', '1')):
-                typedef['type_aliases'] = [
-                    {'from': '(Default)', 'to': '(dynamic view)'},
-                    {'from': 'edit', 'to': 'base_edit'},
-                    {'from': 'index.html', 'to': '(dynamic view)'},
-                    {'from': 'view', 'to': '(selected layout)'},
-                ]
+            folderish = self.elementIsFolderish(pclass)
+            if folderish:
+                typedef['type_aliases'] = atmaps.DEFAULT_FOLDERISH_ALIASES
+            else:
+                typedef['type_aliases'] = atmaps.DEFAULT_ALIASES
             
             typedef['suppl_views'] = eval(typedef['suppl_views'])
-            if not typedef['suppl_views']:
+            if not typedef['suppl_views'] and folderish:
                 typedef['suppl_views'] = (typedef['immediate_view'],)
             
-            # get the type actions
-            # this is a hack!
-            type_actions = self.generateMethodActions(pclass).strip()
-            print type_actions
-            actionsstring = ''
-            for action in type_actions.split('\n'):
-                actionsstring += action.strip()
-            typedef['type_actions'] = eval('[%s]' % actionsstring)
+            default_actions = atmaps.DEFAULT_ACTIONS
+            #actions = self.getMethodActionsDict(pclass)
+            #for action in default_actions:
+            #    for act in actions:
+                    
+            typedef['type_actions'] = default_actions
                 
             defs.append(typedef)
     

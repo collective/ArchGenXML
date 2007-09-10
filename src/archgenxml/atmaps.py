@@ -6,6 +6,57 @@
 #
 # Created:     2007/09/09
 
+DEFAULT_ALIASES = [
+    {'from': '(Default)', 'to': '(dynamic view)'},
+    {'from': 'index.html', 'to': '(dynamic view)'},
+    {'from': 'view', 'to': '(selected layout)'},
+    {'from': 'edit', 'to': 'base_edit'},
+    {'from': 'properties', 'to': 'base_metadata'},
+]
+
+DEFAULT_FOLDERISH_ALIASES = [
+    {'from': '(Default)', 'to': '(dynamic view)'},
+    {'from': 'view', 'to': '(selected layout)'},
+    {'from': 'edit', 'to': 'base_edit'},
+    {'from': 'properties', 'to': 'base_metadata'},
+    {'from': 'sharing', 'to': 'folder_localrole_form'},
+]
+
+DEFAULT_ACTIONS = [
+    {
+        'name': 'View',
+        'id': 'view',
+        'category': 'object',
+        'condition': '',
+        'action': 'string:${object_url}/view',
+        'permissions': ['View'],
+    },
+    {
+        'name': 'Edit',
+        'id': 'edit',
+        'category': 'object',
+        'condition': 'not:object/@@plone_lock_info/is_locked_for_current_user',
+        'action': 'string:${object_url}/edit',
+        'permissions': ['Modify portal content'],
+    },
+    {
+        'name': 'Properties',
+        'id': 'metadata',
+        'category': 'object',
+        'condition': '',
+        'action': 'string:${object_url}/properties',
+        'permissions': ['Modify portal content'],
+    },
+    {
+        'name': 'References',
+        'id': 'references',
+        'category': 'object',
+        'condition': 'object/archetype_tool/has_graphviz',
+        'action': 'string:${object_url}/reference_graph',
+        'permissions': ['Modify portal content', 'Review portal content'],
+    },
+]
+
 """
 TypeMap for Fields, format is
   type: {field: 'Y',
@@ -13,7 +64,7 @@ TypeMap for Fields, format is
   ...
   }
 """
-typeMap= {
+TYPE_MAP = {
     'string': {'field': u'StringField',
                'map': {},
                },
@@ -87,7 +138,7 @@ typeMap= {
                 },
     }
 
-widgetMap={
+WIDGET_MAP = {
     'string': u'StringWidget' ,
     'fixedpoint': u'DecimalWidget' ,
     'float': u'DecimalWidget',
@@ -104,7 +155,7 @@ widgetMap={
     'BackReference': u'BackReferenceWidget'
 }
 
-coerceMap={
+COERCE_MAP = {
     'xs:string': u'string',
     'xs:int': u'integer',
     'xs:integer': u'integer',
@@ -130,8 +181,8 @@ coerceMap={
     None: u'string',
 }
 
-hide_classes=['EARootClass','int','float','boolean','long','bool',
+HIDE_CLASSES = ['EARootClass','int','float','boolean','long','bool',
     'void','string', 'dict','tuple','list','object','integer',
     'java::lang::int','java::lang::string','java::lang::long',
     'java::lang::float','java::lang::void']+\
-    list(typeMap.keys())+list(coerceMap.keys()) # Enterprise Architect and other automagically created crap Dummy Class
+    list(TYPE_MAP.keys())+list(COERCE_MAP.keys()) # Enterprise Architect and other automagically created crap Dummy Class

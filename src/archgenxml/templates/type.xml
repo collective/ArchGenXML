@@ -4,7 +4,7 @@
         xmlns:i18n="http://xml.zope.org/namespaces/i18n">
    
  <property name="title"><dtml-var "ctype['type_name']"></property>
- <property name="description"><dtml-var "ctype['type_description']"></property>
+ <property name="description"></property>
  <property name="content_icon"><dtml-var "ctype['content_icon']"></property>
  <property name="content_meta_type"><dtml-var "ctype['content_meta_type']"></property>
  <property name="product"><dtml-var "ctype['product_name']"></property>
@@ -18,12 +18,14 @@
 </dtml-in>
  </property>
  <property name="allow_discussion"><dtml-var "ctype['allow_discussion']"></property>
+<dtml-if "ctype['suppl_views']">
  <property name="default_view"><dtml-var "ctype['default_view']"></property>
  <property name="view_methods">
 <dtml-in "ctype['suppl_views']">
   <element value="<dtml-var "_['sequence-item']">"/>
 </dtml-in>
  </property>
+</dtml-if>
  <property name="default_view_fallback">False</property>
 <dtml-in "ctype['type_aliases']">
  <alias from="<dtml-var "_['sequence-item']['from']">" to="<dtml-var "_['sequence-item']['to']">"/>
