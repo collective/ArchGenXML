@@ -230,3 +230,33 @@ HIDE_CLASSES = [
 ]
 # Enterprise Architect and other automagically created crap Dummy Class
 HIDE_CLASSES += list(TYPE_MAP.keys())+list(COERCE_MAP.keys())
+
+NONSTRING_TGVS = [
+    'columns',
+    'widget',
+    'provideNullValue',
+    'allow_brightness',
+    'languageIndependent',
+    'vocabulary',
+    'required',
+    'precision', 
+    'storage',
+    'enforceVocabulary',
+    'multiValued',
+    'visible',
+    'validators',
+    'validation_expression',
+    'sizes',
+    'original_size',
+    'max_size',
+    'searchable',
+    'show_hm',
+    'move:pos',
+    'move:top',
+    'move:bottom',
+    'primary',
+    'array:widget',
+    'array:size',
+    'widget:starting_year',
+    'widget:ending_year',
+]

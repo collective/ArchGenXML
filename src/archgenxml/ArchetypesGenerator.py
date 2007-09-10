@@ -74,29 +74,18 @@ Force = 0
 
 
 class DummyModel:
-
+    
     def __init__(self, name=''):
         self.name = name
 
     def getName(self):
         return self.name
 
-    getCleanName = getName
-    getFilePath = getName
-    getModuleFilePath = getName
-    getProductModuleName = getName
-    getProductName = getName
-
     def hasStereoType(self, s, umlprofile=None):
         return True
 
     def getClasses(self, *a, **kw):
         return []
-
-    getInterfaces = getClasses
-    getPackages = getClasses
-    getStateMachines = getClasses
-    getAssociations = getClasses
 
     def isRoot(self):
         return 1
@@ -112,6 +101,17 @@ class DummyModel:
 
     def getParent(self, *a, **kw):
         return None
+    
+    getCleanName = getName
+    getFilePath = getName
+    getModuleFilePath = getName
+    getProductModuleName = getName
+    getProductName = getName
+    
+    getInterfaces = getClasses
+    getPackages = getClasses
+    getStateMachines = getClasses
+    getAssociations = getClasses
 
 
 class ArchetypesGenerator(BaseGenerator):
@@ -119,24 +119,13 @@ class ArchetypesGenerator(BaseGenerator):
     generator_generator = 'archetypes'
     default_class_type = 'content_class'
     default_interface_type = 'z3'
+    
     uml_profile = at_uml_profile
     
-    # from atmaps.py
     hide_classes = atmaps.HIDE_CLASSES
     typeMap = atmaps.TYPE_MAP
     widgetMap = atmaps.WIDGET_MAP
     coerceMap = atmaps.COERCE_MAP
-
-    # The defaults here are already handled by OptionParser
-    # (And we want only a single authorative source of information :-)
-
-    # force = 1
-    # unknownTypesAsString = 0
-    # generateActions = 1
-    # generateDefaultActions = 0
-    # prefix = ''
-    # generate_packages = [] # Packages to be generated
-    # i18n_content_support = 0
 
     build_msgcatalog = 1
     striphtml = 0
@@ -152,16 +141,9 @@ class ArchetypesGenerator(BaseGenerator):
     remember_stereotype = ['remember']
     python_stereotype = ['python', 'python_class', 'view']
     folder_stereotype = ['atfolder', 'folder', 'ordered', 'large', 'btree']
-    atct_stereotype = ['atfolder',
-                       'atfile',
-                       'atdocument',
-                       'atevent',
-                       ]
+    atct_stereotype = ['atfolder', 'atfile', 'atdocument', 'atevent',]
 
     generate_datatypes = ['field', 'compound_field']
-
-    left_slots = []
-    right_slots = []
 
     # Should be 'Products.' be prepended to all absolute paths?
     force_plugin_root = 1
@@ -176,16 +158,7 @@ class ArchetypesGenerator(BaseGenerator):
     parsed_sources = []
 
     # TaggedValues that are not strings, e.g. widget or vocabulary
-    nonstring_tgvs = ['columns', 'widget', 'provideNullValue',
-                      'allow_brightness', 'languageIndependent', 'vocabulary',
-                      'required', 'precision', 
-                      'storage', 'enforceVocabulary', 'multiValued',
-                      'visible', 'validators', 'validation_expression',
-                      'sizes', 'original_size', 'max_size',
-                      'searchable',
-                      'show_hm', 'move:pos', 'move:top', 'move:bottom',
-                      'primary', 'array:widget','array:size',
-                      'widget:starting_year', 'widget:ending_year',]
+    nonstring_tgvs = atmaps.NONSTRING_TGVS
 
     msgcatstack = []
 
@@ -281,7 +254,8 @@ class ArchetypesGenerator(BaseGenerator):
             if att.getTaggedValue('validation_expression'):
                 generate_expression_validator = True
         if generate_expression_validator:
-            print >> out, 'from Products.validation.validators import ExpressionValidator'
+            print >> out, 'from Products.validation.validators import ' + \
+                          'ExpressionValidator'
         
         # Check for necessity to import DataGridField and DataGridWidget
         import_datagrid = False
@@ -291,7 +265,8 @@ class ArchetypesGenerator(BaseGenerator):
                 break
 
         if import_datagrid:
-            print >>out, 'from Products.DataGridField import DataGridField, DataGridWidget'
+            print >>out, 'from Products.DataGridField import ' + \
+                         'DataGridField, DataGridWidget'
 
         # Check for necessity to import ATColorPickerWidget
         import_color = False
@@ -301,7 +276,8 @@ class ArchetypesGenerator(BaseGenerator):
                 break
 
         if import_color:
-            print >>out, 'from Products.ATColorPickerWidget.ColorPickerWidget import ColorPickerWidget'
+            print >>out, 'from Products.ATColorPickerWidget.' + \
+                         'ColorPickerWidget import ColorPickerWidget'
 
         # Check for necessity to import CountryWidget
         import_country = False
@@ -311,7 +287,8 @@ class ArchetypesGenerator(BaseGenerator):
                 break
         
         if import_country:
-            print >>out, 'from Products.ATCountryWidget.Widget import CountryWidget'
+            print >>out, 'from Products.ATCountryWidget.Widget import ' + \
+                         'CountryWidget'
 
         # Check for necessity to import ArrayField
         import_array_field = False
@@ -321,17 +298,22 @@ class ArchetypesGenerator(BaseGenerator):
                 break
 
         if import_array_field:
-            print >>out, 'from Products.CompoundField.ArrayField import ArrayField'
+            print >>out, 'from Products.CompoundField.ArrayField ' + \
+                         'import ArrayField'
 
         start_marker = True
         for iface in self.getAggregatedInterfaces(element):
             if start_marker:
-                print >>out, 'from Products.Archetypes.AllowedTypesByIface import AllowedTypesByIfaceMixin'
+                print >>out, 'from Products.Archetypes.AllowedTypesByIface' + \
+                             ' import AllowedTypesByIfaceMixin'
                 start_marker = False
-            print >>out, 'from %s import %s' % (iface.getQualifiedModuleName(forcePluginRoot=True),iface.getCleanName())
+            print >>out, 'from %s import %s' % ( \
+                         iface.getQualifiedModuleName(forcePluginRoot=True),
+                         iface.getCleanName())
 
         if self.backreferences_support:
-            print >>out, 'from Products.ATBackRef.BackReferenceField import BackReferenceField, BackReferenceWidget'
+            print >>out, 'from Products.ATBackRef.BackReferenceField ' + \
+                         'import BackReferenceField, BackReferenceWidget'
             
         return out.getvalue()
 
@@ -345,8 +327,9 @@ class ArchetypesGenerator(BaseGenerator):
         if has_i18ndude and self.build_msgcatalog and len(self.msgcatstack):
             msgcat = self.msgcatstack[len(self.msgcatstack)-1]
             package = element.getPackage()
-            module_id = os.path.join(element.getPackage().getFilePath(includeRoot=0),
-                                     element.getName()+'.py')
+            module_id = os.path.join( \
+                            element.getPackage().getFilePath(includeRoot=0),
+                            element.getName()+'.py')
             msgcat.add(msgid, msgstr=msgstr, references=[module_id])
     
     def getMethodActionsDict(self, element):
@@ -412,78 +395,20 @@ class ArchetypesGenerator(BaseGenerator):
         #return res
         return ret
 
-    def generateMethodActions(self, element):
-        log.debug("Generating method actions...")
-        outfile=StringIO()
-        print >> outfile
-        log.debug("First finding our methods.")
-        for m in element.getMethodDefs():
-            method_name = m.getName()
-            code = utils.indent(m.getTaggedValue('code', ''), 1)
-            if m.hasStereoType(['action', 'view', 'form'],
-                               umlprofile=self.uml_profile):
-                log.debug("Method has stereotype action/view/form.")
-                action_name = m.getTaggedValue('action','').strip()
-                if not action_name:
-                    log.debug("No tagged value 'action', trying '%s' with a "
-                              "default to the methodname.",
-                              m.getStereoType())
-                    action_name=m.getTaggedValue(m.getStereoType(), method_name).strip()
-                log.debug("Ok, generating %s for %s.",
-                          m.getStereoType(), action_name)
-                dict={}
-
-                if not action_name.startswith('string:') and not action_name.startswith('python:'):
-                    action_target='string:${object_url}/'+action_name
-                else:
-                    action_target=action_name
-
-                dict['action'] = utils.getExpression(action_target)
-                dict['action_category'] = utils.getExpression(m.getTaggedValue('category','object'))
-                dict['action_id'] = m.getTaggedValue('id',method_name)
-                dict['action_label'] = m.getTaggedValue('action_label') or \
-                                       m.getTaggedValue('label',method_name)
-                # action_label is deprecated and for backward compability only!
-                dict['permission'] = utils.getExpression(m.getTaggedValue('permission','View'))
-
-                condition=m.getTaggedValue('condition') or '1'
-                dict['condition']='python:'+condition
-
-                if not (m.hasTaggedValue('create_action') \
-                  and utils.isTGVFalse(m.getTaggedValue('create_action'))):
-                    ##############################################
-                    #print >>outfile, ACT_TEMPL % dict
-                    pass
-                    ##############################################
-            
-            if m.hasStereoType('view', umlprofile=self.uml_profile):
-                f=self.makeFile(os.path.join(self.getSkinPath(element),action_name+'.pt'),0)
-                if f:
-                    
-                    viewTemplate=open(os.path.join(self.templateDir,'action_view.pt')).read()
-                    f.write(viewTemplate % code)
-            
-            elif m.hasStereoType('form', umlprofile=self.uml_profile):
-                f=self.makeFile(os.path.join(self.getSkinPath(element),action_name+'.cpt'),0)
-                if f:
-            
-                    viewTemplate=open(os.path.join(self.templateDir,'action_view.pt')).read()
-                    f.write(viewTemplate % code)
-
-        res=outfile.getvalue()
-        return res
-
     def generateAdditionalImports(self, element):
         outfile = StringIO()
 
         if element.hasAssocClass:
-            print >> outfile,'from Products.Archetypes.ReferenceEngine import ContentReferenceCreator'
+            print >> outfile,'from Products.Archetypes.ReferenceEngine ' + \
+                             'import ContentReferenceCreator'
 
         useRelations = 0
 
         #check wether we have to import Relation's Relation Field
         for rel in element.getFromAssociations():
-            if self.getOption('relation_implementation',rel,'basic') == 'relations':
+            if self.getOption('relation_implementation',
+                              rel,
+                              'basic') == 'relations':
                 useRelations = 1
 
         for rel in element.getToAssociations():
@@ -538,29 +463,6 @@ class ArchetypesGenerator(BaseGenerator):
 
         hide_actions=', '.join(["'"+a.strip()+"'" for a in hide_actions.split('\n')])
         return MODIFY_FTI % {'hideactions':hide_actions, }
-
-
-    def generateActionsAndViews(self, element, subtypes):
-        """Generate the views and actions."""
-        hasActions=False
-        actTempl=ACTIONS_START
-        base_actions=element.getTaggedValue('base_actions', '').strip()
-        if base_actions:
-            hasActions=True
-            base_actions += ' + '
-            actTempl = actTempl % base_actions
-        else:
-            actTempl = actTempl % ''
-
-        method_actions = self.generateMethodActions(element)
-        if method_actions.strip():
-            hasActions=True
-            actTempl +=method_actions
-        actTempl+=ACTIONS_END
-        if hasActions:
-            return actTempl
-        else:
-            return
         
     def coerceType(self, intypename):
         #print 'coerceType: ',intypename,' -> ',
