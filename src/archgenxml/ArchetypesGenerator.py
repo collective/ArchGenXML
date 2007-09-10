@@ -3144,7 +3144,62 @@ class ArchetypesGenerator(BaseGenerator):
         if not XMIParser.has_stripogram:
             log.warn("Can't strip html from doc-strings. Module 'stripogram' not found.")
         self.generateProduct(root)
-       
+    
+    def _getSubtypes(self, element):
+        """extract the allowed subtypes
+        """
+        # Normally, archgenxml also looks at the parents of the
+        # current class for allowed subitems. Likewise, subclasses of
+        # classes allowed as subitems are also allowed on this
+        # class. Classic polymorphing. In case this isn't desired, set
+        # the tagged value 'disable_polymorphing' to 1.
+        disable_polymorphing = element.getTaggedValue('disable_polymorphing', 0)
+        if disable_polymorphing:
+            recursive = 0
+        else:
+            recursive = 1
+        
+        aggregatedClasses = element.getRefs() + \
+                            element.getSubtypeNames(recursive=recursive,
+                                                    filter=['class'])
+        
+        if element.getTaggedValue('allowed_content_types'):
+            #aggregatedClasses = [e for e in aggregatedClasses] # hae?
+            for e in element.getTaggedValue('allowed_content_types').split(','):
+                e = e.strip()
+                if e not in aggregatedClasses:
+                    aggregatedClasses.append(e)
+        
+        # also check if the parent classes can have subobjects
+        baseaggregatedClasses = []
+        for b in element.getGenParents():
+            baseaggregatedClasses.extend(b.getRefs())
+            baseaggregatedClasses.extend(b.getSubtypeNames(recursive=1))
+        
+        #allowed_content_classes
+        parentAggregates = []
+        
+        if utils.isTGVTrue(element.getTaggedValue('inherit_allowed_types', \
+           True)) and element.getGenParents():
+            for gp in element.getGenParents():
+                if gp.hasStereoType(self.python_stereotype,
+                                    umlprofile=self.uml_profile):
+                    continue
+                pt = gp.getTaggedValue('portal_type', None)
+                if pt is not None:
+                    parentAggregates.append(pt)
+                else:
+                    parentAggregates.append(gp.getCleanName())
+
+        ret = {
+            'parent_types': parentAggregates,
+            'aggregated_classes': aggregatedClasses,
+        }
+        print ret
+        return ret
+        
+        
+        
     def _getTypeDefinitions(self, defs, package, productname):
         """Iterate recursice through package and create class definitions
         """
@@ -3177,21 +3232,7 @@ class ArchetypesGenerator(BaseGenerator):
             typedef['product_name'] = productname
             typedef['factory'] = 'add%s' % pclass.getCleanName()
             
-            allowed_types = pclass.getTaggedValue('allowed_content_types', [])
-            if isinstance(allowed_types, str):
-                allowed_types.strip('[]')
-                allowed_types.strip('()')
-                allowed_types.split(',')
-                allowed_types = [t.strip() for t in allowed_types \
-                                     if t.strip() != '']
-            
-            if pclass.isAbstract():
-                allowed_types= tuple(pclass.getGenChildrenNames())
-            else:
-                allowed_types= (pclass.getName(),) + \
-                                tuple(pclass.getGenChildrenNames())
-            
-            print allowed_types
+            allowed_types = self._getSubtypes(pclass)['aggregated_classes']
             typedef['allowed_content_types'] = allowed_types
             
             # check if allow_discussion has to be set to None as default
