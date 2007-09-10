@@ -2582,7 +2582,7 @@ class ArchetypesGenerator(BaseGenerator):
         # generate membrane_tool.xml if stereotype is remember
         self.generateGSMembraneToolXML(package)
         # Generate configure.zcml
-        self.generateProductConfigureZcml(package)
+        #self.generateProductConfigureZcml(package)
 
         
 
@@ -2597,12 +2597,6 @@ class ArchetypesGenerator(BaseGenerator):
                             os.path.join(ppath, 'profiles.zcml'),
                             sectionnames=['profiles.zcml'],
                             templateparams={'product_name': pname})
-        
-        handleSectionedFile(['templates', 'configure.zcml'],
-                            os.path.join(ppath, 'configure.zcml'),
-                             # user extensible xml-namespaces are missing
-                             # needs include with custom file for now.
-                            sectionnames=['HEAD', 'FOOT'])
     
         packageIncludes = [m.getModuleName() for m in 
                           package.getAnnotation('generatedPackages') or []
@@ -2612,7 +2606,7 @@ class ArchetypesGenerator(BaseGenerator):
                                                      umlprofile=self.uml_profile))
                           ]
 
-        handleSectionedFile(os.path.join(self.templateDir, 'configure.zcml'),
+        handleSectionedFile(['templates', 'configure.zcml'],
                             os.path.join(ppath, 'configure.zcml'),
                             sectionnames=['configure.zcml'],
                             templateparams={'packages': packageIncludes})
