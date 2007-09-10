@@ -65,78 +65,105 @@ TypeMap for Fields, format is
   }
 """
 TYPE_MAP = {
-    'string': {'field': u'StringField',
-               'map': {},
-               },
-    'text':  {'field': u'TextField',
-              'map': {},
-              },
-    'richtext': {'field': u'TextField',
-                 'map': {u'default_output_type': u"'text/html'",
-                         u'allowable_content_types': u"('text/plain', 'text/structured', 'text/html', 'application/msword',)",
-                         },
-                 },
-    'selection': {'field': u'StringField',
-                  'map': {},
-                  },
-    'multiselection': {'field': u'LinesField',
-                       'map': {u'multiValued': u'1',
-                               },
-                       },
-    'integer': {'field': u'IntegerField',
-                'map': {},
-                },
-    'float': {'field': u'FloatField',
-              'map': {},
-              },
-    'fixedpoint': {'field': u'FixedPointField',
-                   'map': {},
-                   },
-    'lines': {'field': u'LinesField',
-             'map': {},
-             },
-    'color': {'field': u'StringField',
-             'map': {},
-             },
-    'country': {'field': u'StringField',
-             'map': {},
-             },
-    'datagrid': {'field': u'DataGridField',
-             'map': {},
-             },
-    'date': {'field': u'DateTimeField',
-             'map': {},
-             },
-    'image': {'field': u'ImageField',
-              'map': {u'storage': u'AttributeStorage()',
-                      },
-              },
-    'file': {'field': u'FileField',
-             'map': {u'storage': u'AttributeStorage()',
-                     },
-             },
-    'reference': {'field': u'ReferenceField',
-                  'map': {},
-                  },
-    'relation': {'field': u'RelationField',
-                 'map': {},
-                 },
-    'backreference': {'field': u'BackReferenceField',
-                      'map': {},
-                      },
-    'boolean': {'field': u'BooleanField',
-                'map': {},
-                },
-    'computed': {'field': u'ComputedField',
-                 'map': {},
-                 },
-    'photo': {'field': u'PhotoField',
-              'map': {},
-              },
-    'generic': {'field': u'%(type)sField',
-                'map': {},
-                },
-    }
+    'string': {
+        'field': u'StringField',
+        'map': {},
+    },
+    'text':  {
+        'field': u'TextField',
+        'map': {},
+    },
+    'richtext': {
+        'field': u'TextField',
+        'map': {
+            u'default_output_type': u"'text/html'",
+            u'allowable_content_types': u"('text/plain', 'text/structured'," + \
+                                        " 'text/html', 'application/msword',)",
+        },
+    },
+    'selection': {
+        'field': u'StringField',
+        'map': {},
+    },
+    'multiselection': {
+        'field': u'LinesField',
+        'map': {
+            u'multiValued': u'1',
+        },
+    },
+    'integer': {
+        'field': u'IntegerField',
+        'map': {},
+    },
+    'float': {
+        'field': u'FloatField',
+        'map': {},
+    },
+    'fixedpoint': {
+        'field': u'FixedPointField',
+        'map': {},
+    },
+    'lines': {
+        'field': u'LinesField',
+        'map': {},
+    },
+    'color': {
+        'field': u'StringField',
+        'map': {},
+    },
+    'country': {
+        'field': u'StringField',
+        'map': {},
+    },
+    'datagrid': {
+        'field': u'DataGridField',
+        'map': {},
+    },
+    'date': {
+        'field': u'DateTimeField',
+        'map': {},
+    },
+    'image': {
+        'field': u'ImageField',
+        'map': {
+            u'storage': u'AttributeStorage()',
+        },
+    },
+    'file': {
+        'field': u'FileField',
+        'map': {
+            u'storage': u'AttributeStorage()',
+        },
+    },
+    'reference': {
+        'field': u'ReferenceField',
+        'map': {},
+    },
+    'relation': {
+        'field': u'RelationField',
+        'map': {},
+    },
+    'backreference': {
+        'field': u'BackReferenceField',
+        'map': {},
+    },
+    'boolean': {
+        'field': u'BooleanField',
+        'map': {},
+    },
+    'computed': {
+        'field': u'ComputedField',
+        'map': {},
+    },
+    'photo': {
+        'field': u'PhotoField',
+        'map': {},
+    },
+    'generic': {
+        'field': u'%(type)sField',
+        'map': {},
+    },
+}
 
 WIDGET_MAP = {
     'string': u'StringWidget' ,
@@ -181,8 +208,25 @@ COERCE_MAP = {
     None: u'string',
 }
 
-HIDE_CLASSES = ['EARootClass','int','float','boolean','long','bool',
-    'void','string', 'dict','tuple','list','object','integer',
-    'java::lang::int','java::lang::string','java::lang::long',
-    'java::lang::float','java::lang::void']+\
-    list(TYPE_MAP.keys())+list(COERCE_MAP.keys()) # Enterprise Architect and other automagically created crap Dummy Class
+HIDE_CLASSES = [
+    'EARootClass',
+    'int',
+    'float',
+    'boolean',
+    'long',
+    'bool',
+    'void',
+    'string',
+    'dict',
+    'tuple',
+    'list',
+    'object',
+    'integer',
+    'java::lang::int',
+    'java::lang::string',
+    'java::lang::long',
+    'java::lang::float',
+    'java::lang::void'
+]
+# Enterprise Architect and other automagically created crap Dummy Class
+HIDE_CLASSES += list(TYPE_MAP.keys())+list(COERCE_MAP.keys())
