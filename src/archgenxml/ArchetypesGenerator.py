@@ -2154,6 +2154,11 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateFlavorZcml(self,element):
         
+        # name this flavor.zcml and include it into main configure.zcml if needed
+        # generate it only if flavors are used.
+        # dont use minidom, use dtml+codesectionhandler.
+        return
+        
         name = element.getCleanName()
         impl = minidom.getDOMImplementation()
         zcmlDocument = impl.createDocument("http://namespaces.objectrealms.net/plone", "zope:configure", None)
@@ -2486,6 +2491,9 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateFlavorPackageZcml(self,package):
         """ Generate configure.zcml for packages """
+        # name this flavor.zcml and include it into main configure.zcml if 
+        # needed. 
+        return
         
         # TODO: update namespaces according to uses of this file, at the moment it's for ContentFlavors only
         impl = minidom.getDOMImplementation()
@@ -2572,7 +2580,7 @@ class ArchetypesGenerator(BaseGenerator):
         # generate toolset.xml
         self.generateGSToolsetXML(package)
         # Generate configure.zcml
-        # self.generateProductConfigureZcml(package)
+        self.generateProductConfigureZcml(package)
         
 
     def generateConfigureAndProfilesZCML(self, package):
