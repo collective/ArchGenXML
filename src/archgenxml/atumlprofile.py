@@ -34,7 +34,8 @@ at_uml_profile.addStereoType(
     'z2', ['XMIInterface'],
     dispatching=1,
     generator='generateZope2Interface',
-    description='Generates a Zope 2 Interface inheriting from Zope.Interface.Base.')
+    description='Generates a Zope 2 Interface inheriting from ' + \
+                'Zope.Interface.Base.')
 
 at_uml_profile.addStereoType(
     'tests', ['XMIPackage'],
@@ -172,7 +173,8 @@ at_uml_profile.addStereoType(
     'atfolder', ['XMIClass'],
     description='Turns the class into an ATFolder subclass.',
     imports=['from Products.ATContentTypes.content.folder import ATFolder',
-             'from Products.ATContentTypes.content.folder import ATFolderSchema',]
+             'from Products.ATContentTypes.content.folder ' + \
+             'import ATFolderSchema',]
     )
 
 at_uml_profile.addStereoType(
@@ -193,7 +195,8 @@ at_uml_profile.addStereoType(
     'atdocument', ['XMIClass'],
     description='Turns the class into an Atdocument subclass.',
     imports=['from Products.ATContentTypes.content.document import ATDocument',
-             'from Products.ATContentTypes.content.document import ATDocumentSchema',]
+             'from Products.ATContentTypes.content.document ' + \
+             'import ATDocumentSchema',]
     )
 
 at_uml_profile.addStereoType(
