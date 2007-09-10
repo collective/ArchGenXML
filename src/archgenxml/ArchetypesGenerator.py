@@ -1919,12 +1919,6 @@ class ArchetypesGenerator(BaseGenerator):
             print >> outfile, CLASS_ALLOWED_CONTENT_INTERFACES % \
                   (','.join(aggregatedInterfaces), parentAggregatedInterfaces)
 
-        # But *do* add the actions, views, etc.
-        actions_views = self.generateActionsAndViews(element,
-                                                     aggregatedClasses)
-        if actions_views:
-            print >> outfile, actions_views
-
         # _at_rename_after_creation
         rename_after_creation = self.getOption('rename_after_creation',
                                                element, default=True)
