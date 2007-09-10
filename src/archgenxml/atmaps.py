@@ -22,7 +22,42 @@ DEFAULT_FOLDERISH_ALIASES = [
     {'from': 'sharing', 'to': 'folder_localrole_form'},
 ]
 
-DEFAULT_ACTIONS = [
+DEFAULT_ACTIONS_2_5 = [
+    {
+        'name': 'View',
+        'id': 'view',
+        'category': 'object',
+        'condition': '',
+        'action': 'string:${object_url}/view',
+        'permissions': ['View'],
+    },
+    {
+        'name': 'Edit',
+        'id': 'edit',
+        'category': 'object',
+        'condition': '',
+        'action': 'string:${object_url}/edit',
+        'permissions': ['Modify portal content'],
+    },
+    {
+        'name': 'Properties',
+        'id': 'metadata',
+        'category': 'object',
+        'condition': '',
+        'action': 'string:${object_url}/properties',
+        'permissions': ['Modify portal content'],
+    },
+    {
+        'name': 'References',
+        'id': 'references',
+        'category': 'object',
+        'condition': 'object/archetype_tool/has_graphviz',
+        'action': 'string:${object_url}/reference_graph',
+        'permissions': ['Modify portal content', 'Review portal content'],
+    },
+]
+
+DEFAULT_ACTIONS_3_0 = [
     {
         'name': 'View',
         'id': 'view',

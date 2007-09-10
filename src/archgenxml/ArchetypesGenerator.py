@@ -3108,7 +3108,11 @@ class ArchetypesGenerator(BaseGenerator):
             if not typedef['suppl_views']: #  and folderish:
                 typedef['suppl_views'] = (typedef['immediate_view'],)
             
-            default_actions = atmaps.DEFAULT_ACTIONS
+            if self.getOption('plone_target_version', pclass, '3.0') == '3.0':
+                default_actions = atmaps.DEFAULT_ACTIONS_3_0
+            else:
+                default_actions = atmaps.DEFAULT_ACTIONS_2_5
+                
             #actions = self.getMethodActionsDict(pclass)
             #for action in default_actions:
             #    for act in actions:

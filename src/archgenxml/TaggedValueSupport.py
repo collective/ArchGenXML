@@ -181,6 +181,11 @@ tgvRegistry = TaggedValueRegistry()
 # Model level tagged values
 category = 'model'
 
+tagname = 'plone_target_version'
+explanation = """The target version of Plone. Defaults to 3.0 Possible values 
+are 2.5 and 3.0"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'default_interface_type'
 explanation = """default type of interfaces (z2 or z3)."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)

@@ -1,6 +1,8 @@
 TODO's for ArchGenXML
 ---------------------
 
+* atm only the default actions are taken for generation
+
 * move STATE_PERMISSION_MAPPING out of TaggedValueSupport and
   move the conversion of permission-short cuts over to the 
   WorkflowGenerator.
