@@ -568,7 +568,7 @@ class ArchetypesGenerator(BaseGenerator):
             atype = widgettype
         default_widget = self.getOption('default:widget:%s' % fieldclassname, element, None)
         if not default_widget:
-        default_widget = self.getOption('default:widget:%s' % atype, element, None)
+            default_widget = self.getOption('default:widget:%s' % atype, element, None)
         
         if default_widget:
             widgetcode = default_widget + u'(\n'
