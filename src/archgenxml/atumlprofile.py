@@ -31,6 +31,12 @@ at_uml_profile.addStereoType(
     description='TODO')
 
 at_uml_profile.addStereoType(
+    'flavor', ['XMIClass'],
+    dispatching=1,
+    generator='generateFlavor',
+    description='Generates a ContentFlavors'' flavor from this class.')
+
+at_uml_profile.addStereoType(
     'z2', ['XMIInterface'],
     dispatching=1,
     generator='generateZope2Interface',
