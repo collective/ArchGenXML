@@ -3195,10 +3195,7 @@ class ArchetypesGenerator(BaseGenerator):
             'parent_types': parentAggregates,
             'aggregated_classes': aggregatedClasses,
         }
-        print ret
         return ret
-        
-        
         
     def _getTypeDefinitions(self, defs, package, productname):
         """Iterate recursice through package and create class definitions
