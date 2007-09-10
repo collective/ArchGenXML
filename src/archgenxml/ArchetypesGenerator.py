@@ -1779,29 +1779,10 @@ class ArchetypesGenerator(BaseGenerator):
             wrt(additionalImports)
             wrt(u'\n')
 
-        # Normally, archgenxml also looks at the parents of the
-        # current class for allowed subitems. Likewise, subclasses of
-        # classes allowed as subitems are also allowed on this
-        # class. Classic polymorphing. In case this isn't desired, set
-        # the tagged value 'disable_polymorphing' to 1.
-        disable_polymorphing = element.getTaggedValue('disable_polymorphing', 0)
-        if disable_polymorphing:
-            recursive = 0
-        else:
-            recursive = 1
-        aggregatedClasses = element.getRefs() + \
-                            element.getSubtypeNames(recursive=recursive,
-                                                    filter=['class'])
         # We *do* want the resursive=0 below, though!
         aggregatedInterfaces = element.getRefs() + \
                                element.getSubtypeNames(recursive=0,
                                                        filter=['interface'])
-        if element.getTaggedValue('allowed_content_types'):
-            aggregatedClasses = [e for e in aggregatedClasses]
-            for e in element.getTaggedValue('allowed_content_types').split(','):
-                e = e.strip()
-                if e not in aggregatedClasses:
-                    aggregatedClasses.append(e)
 
         # if it's a derived class check if parent has stereotype 'archetype'
         parent_is_archetype = False
@@ -1925,11 +1906,6 @@ class ArchetypesGenerator(BaseGenerator):
 
         print >> outfile, self.generateImplements(element, parentnames)
 
-        # Zapped in the tgv cleanup
-        #header = element.getTaggedValue('class_header')
-        #if header:
-        #    print >> outfile,utils.indent(header, 1)
-
         archetype_name = element.getTaggedValue('archetype_name') or \
                          element.getTaggedValue('label')
         if not archetype_name:
@@ -1948,28 +1924,6 @@ class ArchetypesGenerator(BaseGenerator):
         # Let's see if we have to set use_folder_tabs to 0.
         if utils.isTGVTrue(element.getTaggedValue('hide_folder_tabs', False)):
             print >> outfile, CLASS_FOLDER_TABS % 0
-
-        #allowed_content_classes
-        parentAggregates = ''
-
-        if utils.isTGVTrue(element.getTaggedValue('inherit_allowed_types', \
-           True)) and element.getGenParents():
-            act = []
-            for gp in element.getGenParents():
-                if gp.hasStereoType(self.python_stereotype,
-                                    umlprofile=self.uml_profile):
-                    continue
-                pt = gp.getTaggedValue('portal_type', None)
-                if pt is not None:
-                    act.append(pt)
-                else:
-                    act.append(gp.getCleanName())
-            act = ["list(getattr(%s, 'allowed_content_types', []))" % i
-                   for i in act]
-            if act:
-                parentAggregates = ' + ' + ' + '.join(act)
-        print >> outfile, CLASS_ALLOWED_CONTENT_TYPES % \
-              (repr(aggregatedClasses),parentAggregates)
 
         # allowed_interfaces
         parentAggregatedInterfaces = ''
