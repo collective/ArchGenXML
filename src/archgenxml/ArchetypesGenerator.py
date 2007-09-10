@@ -2146,44 +2146,20 @@ class ArchetypesGenerator(BaseGenerator):
 
         self.generateProtectedSection(outfile, element, 'module-footer')
         
-        # generate or update configure.zcml for flavors
-        # annotate package with a DOM containing the Flavors' ZCML of that package
-        self.generateFlavorZcml(element)
+        # prepare for generation the flavors.zcml file of that package
+        # annotate package with the list of generated flavors
 
-        return outfile.getvalue()
+        flavor = {}
+        flavor['name'] = name
+        flavor['packageName'] = name
+        flavor['fullName'] = name + ".default"
+        flavor['title'] = name + " !"
+        flavor['description'] = name + "'s description"
+        flavor['schemaName'] = name + "Schema"
+        flavor['markerName'] = name
+        flavor['handlerName'] = "apply" + name
+        flavor['implementers'] = []
 
-    def generateFlavorZcml(self,element):
-        
-        # name this flavor.zcml and include it into main configure.zcml if needed
-        # generate it only if flavors are used.
-        # dont use minidom, use dtml+codesectionhandler.
-        return
-        
-        name = element.getCleanName()
-        impl = minidom.getDOMImplementation()
-        zcmlDocument = impl.createDocument("http://namespaces.objectrealms.net/plone", "zope:configure", None)
-        zope_configure = zcmlDocument.documentElement
-        zope_configure.setAttribute("xmlns:zope","http://namespaces.zope.org/zope")
-        zope_configure.setAttribute("xmlns:five","http://namespaces.zope.org/five")
-        zope_configure.setAttribute("xmlns:or","http://namespaces.objectrealms.net/plone")
-        
-        # the flavor itself
-        zope_configure.appendChild(zcmlDocument.createComment(" " + name + " flavor "))
-        flavor = zcmlDocument.createElementNS("http://namespaces.objectrealms.net/plone","or:flavor")
-        flavor.setAttribute("name",name + ".default")
-        flavor.setAttribute("title",name + " !")
-        flavor.setAttribute("description",name + "'s description")
-        flavor.setAttribute("archetype_schema","." + name + "." + name + "Schema")
-        flavor.setAttribute("marker","." + name + "." + name)
-        zope_configure.appendChild(flavor)
-        # and its required event subscriber
-        zope_configure.appendChild(zcmlDocument.createComment(" Subscriber to let new items receive the " + name + " flavor "))
-        subscriber = zcmlDocument.createElementNS("http://namespaces.zope.org/zope","zope:subscriber")
-        subscriber.setAttribute("for","." + name + "." + name + " zope.lifecycleevent.interfaces.IObjectCreatedEvent")
-        subscriber.setAttribute("handler","." + name + ".apply" + name)
-        zope_configure.appendChild(subscriber)
-        # declare implementations of this flavor
-        zope_configure.appendChild(zcmlDocument.createComment(" Types that can have the " + name + " flavor "))
         for implementer in element.getRealizationChildren(recursive=True):
             # TODO: filter out those implementers whose stereotype makes the following declaration useless
             # if not implementer.hasStereotype(self.some_stereotypes_I_dont_know_which_ones):
@@ -2195,15 +2171,15 @@ class ArchetypesGenerator(BaseGenerator):
             else:
                 qualifiedImplementerClass = implementer.getQualifiedModuleName(None,forcePluginRoot=self.force_plugin_root,includeRoot=0,) + "." + implementer.getName()
             if qualifiedImplementerClass:
-                implements = zcmlDocument.createElementNS("http://namespaces.zope.org/five","five:implements")
-                implements.setAttribute("class",qualifiedImplementerClass)
-                implements.setAttribute("interface","." + name + "." + name)
-                zope_configure.appendChild(implements)
-        # add this new document to a list annotated to the package of the current element
+                flavor['implementers'].append(qualifiedImplementerClass)
+
+        # add this new flavor to a list annotated to the package of the current element
         package = element.getPackage()
-        zcmlList = package.getAnnotation('generatedZcmlDocuments')
-        zcmlList.append(zcmlDocument)
-        package.annotate('generatedZcmlDocuments',zcmlList)
+        flavorsList = package.getAnnotation('generatedFlavors')
+        flavorsList.append(flavor)
+        package.annotate('generatedFlavors',flavorsList)
+
+        return outfile.getvalue()
 
     def generateZope2Interface(self, element, **kw):
         outfile = StringIO()
@@ -2313,8 +2289,8 @@ class ArchetypesGenerator(BaseGenerator):
 
         # Generate an __init__.py
         self.generatePackageInitPy(package)
-        # Generate a configure.zcml
-        self.generateFlavorPackageZcml(package)
+        # Generate a flavors.zcml
+        self.generatePackageFlavorsZcml(package)
 
     def updateVersionForProduct(self, package):
         """Increment the build number in verion.txt,"""
@@ -2460,8 +2436,17 @@ class ArchetypesGenerator(BaseGenerator):
         """ Generate __init__.py for packages from the DTML template"""
 
         # Get the names of packages and classes to import
-        packageImports = [m.getModuleName () for m in package.getAnnotation('generatedPackages') or []]
-        classImports   = [m.getModuleName () for m in package.generatedModules]
+        packageImports = [m.getModuleName() for m in 
+                          package.getAnnotation('generatedPackages') or []
+                          if not (m.hasStereoType('tests',
+                                                  umlprofile=self.uml_profile)
+                                  or m.hasStereoType('stub',
+                                                     umlprofile=self.uml_profile))
+                          ]
+        classImports   = [m.getModuleName() for m in
+                          package.generatedModules 
+                          if not m.hasStereoType('tests',
+                                                 umlprofile=self.uml_profile)]
 
         # Get the preserved code sections
         parsed = utils.parsePythonModule(self.targetRoot,
@@ -2489,45 +2474,30 @@ class ArchetypesGenerator(BaseGenerator):
         of.close()
         return
 
-    def generateFlavorPackageZcml(self,package):
-        """ Generate configure.zcml for packages """
-        # name this flavor.zcml and include it into main configure.zcml if 
-        # needed. 
-        return
+    def subPackagesWithFlavors(self,package):
+        """ returns the (possibly empty) list of direct sub-packages which (recursively) contain at least one flavor """
+        sp = []
+        for subPackage in package.getAnnotation('generatedPackages') or []:
+            if not (subPackage.hasStereoType('tests', umlprofile=self.uml_profile) or subPackage.hasStereoType('stub',umlprofile=self.uml_profile)):
+                if subPackage.getAnnotation('generatedFlavors'):
+                    sp.append(subPackage)
+                elif self.subPackagesWithFlavors(subPackage) != []:
+                    sp.append(subPackage)
+        return sp
         
-        # TODO: update namespaces according to uses of this file, at the moment it's for ContentFlavors only
-        impl = minidom.getDOMImplementation()
-        zcmlDocument = impl.createDocument("http://namespaces.zope.org/zope", "configure", None)
-        zope_configure = zcmlDocument.documentElement
-        zope_configure.setAttribute("xmlns:zope","http://namespaces.zope.org/zope")
-        zope_configure.setAttribute("xmlns:or","http://namespaces.objectrealms.net/plone")
-        zope_configure.setAttribute("xmlns:five","http://namespaces.zope.org/five")
-        zope_configure.setAttribute("xmlns","http://namespaces.zope.org/zope")
+    def generatePackageFlavorsZcml(self,package):
+        """ Generate flavors.zcml for packages if it contains flavors """
         
-        packageZcmlElements = [doc.documentElement for doc in package.getAnnotation('generatedZcmlDocuments') or []]
-        for zcmlElt in packageZcmlElements:
-            for child in zcmlElt.childNodes:
-                zope_configure.appendChild(child.cloneNode(True))
+        generatedFlavors = package.getAnnotation('generatedFlavors') or []
+        subPackagesWithFlavors = [m.getModuleName() for m in self.subPackagesWithFlavors(package)]
             
-        packageIncludes = [m.getModuleName() for m in 
-                          package.getAnnotation('generatedPackages') or []
-                          if not (m.hasStereoType('tests',
-                                                  umlprofile=self.uml_profile)
-                                  or m.hasStereoType('stub',
-                                                     umlprofile=self.uml_profile))
-                          ]
-
-        for inc in packageIncludes:
-            zope_include = zcmlDocument.createElementNS("http://namespaces.zope.org/zope","include")
-            zope_include.setAttribute("package","."+inc)
-            zope_include.setAttribute("file","configure.zcml")
-            zope_configure.appendChild(zope_include)
-
-        of=self.makeFile(os.path.join(package.getFilePath(),"configure.zcml"))
-        of.write(zcmlDocument.toprettyxml())
-        of.close()
-        return
-
+        if generatedFlavors != [] or subPackagesWithFlavors != []:
+            ppath = package.getFilePath()
+            handleSectionedFile(['templates', 'flavors.zcml'],
+                                os.path.join(ppath, 'flavors.zcml'),
+                                sectionnames=['HEAD','FOOT'],
+                                templateparams={'flavors': generatedFlavors,
+                                                'subPackagesWithFlavors': subPackagesWithFlavors})
 
     def generateStdFilesForProduct(self, package):
         """Generate __init__.py,  various support files and and the skins
@@ -2581,8 +2551,8 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateGSToolsetXML(package)
         # generate membrane_tool.xml if stereotype is remember
         self.generateGSMembraneToolXML(package)
-        # Generate configure.zcml
-        #self.generateProductConfigureZcml(package)
+        # Generate flavors.zcml
+        self.generatePackageFlavorsZcml(package)
 
         
 
@@ -2606,10 +2576,15 @@ class ArchetypesGenerator(BaseGenerator):
                                                      umlprofile=self.uml_profile))
                           ]
 
+        generatedFlavors = package.getAnnotation('generatedFlavors') or []
+        packagesWithFlavors = [m.getModuleName() for m in self.subPackagesWithFlavors(package)]
+        containsFlavors = generatedFlavors != [] or packagesWithFlavors != []
+
         handleSectionedFile(['templates', 'configure.zcml'],
                             os.path.join(ppath, 'configure.zcml'),
                             sectionnames=['configure.zcml'],
-                            templateparams={'packages': packageIncludes})
+                            templateparams={'packages': packageIncludes,
+                                            'containsFlavors': containsFlavors})
     
     def generateGSDirectory(self, package):
         """Create genericsetup directory profiles/default.

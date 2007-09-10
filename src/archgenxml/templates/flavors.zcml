@@ -1,0 +1,42 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           xmlns:five="http://namespaces.zope.org/five"
+           xmlns:or="http://namespaces.objectrealms.net/plone"
+           xmlns:zope="http://namespaces.zope.org/zope">
+>
+
+  <!-- ##code-section HEAD -->
+  <!-- ##/code-section HEAD -->
+  
+<dtml-in "subPackagesWithFlavors">
+ <include file="flavors.zcml" package=".<dtml-var "_['sequence-item']">"/>
+</dtml-in>
+
+<dtml-in "flavors">
+    <dtml-let flavor="_['sequence-item']">
+	<!-- <dtml-var "flavor['name']"> flavor -->
+	<or:flavor
+		archetype_schema=".<dtml-var "flavor['packageName']">.<dtml-var "flavor['schemaName']">"
+		description="<dtml-var "flavor['description']">"
+		marker=".<dtml-var "flavor['packageName']">.<dtml-var "flavor['markerName']">"
+		name="<dtml-var "flavor['fullName']">"
+		title="<dtml-var "flavor['title']">"
+	/>
+	<!-- Subscriber to let new items receive the <dtml-var "flavor['name']"> flavor -->
+	<zope:subscriber
+		for=".<dtml-var "flavor['packageName']">.<dtml-var "flavor['name']"> zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+		handler=".<dtml-var "flavor['packageName']">.<dtml-var "flavor['handlerName']">"/>
+	<!-- Types that can have the <dtml-var "flavor['name']"> flavor -->
+	<dtml-in "flavor['implementers']">
+	<five:implements
+			class="<dtml-var "_['sequence-item']">"
+			interface=".<dtml-var "flavor['packageName']">.<dtml-var "flavor['markerName']">"
+		/>
+    </dtml-in>
+    </dtml-let>
+</dtml-in>
+  
+  <!-- ##code-section FOOT -->
+  <!-- ##/code-section FOOT -->
+
+</configure>
