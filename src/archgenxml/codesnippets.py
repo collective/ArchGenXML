@@ -82,9 +82,9 @@ from Products.CMFCore.utils import UniqueObject
     """
 
 CLASS_META_TYPE = u"""    meta_type = '%s'"""
-CLASS_PORTAL_TYPE = u"""    portal_type = '%s'"""
-CLASS_ARCHETYPE_NAME = u"""    # This name appears in the 'add' box
-    archetype_name = '%s'\n"""
+#CLASS_PORTAL_TYPE = u"""    portal_type = '%s'"""
+#CLASS_ARCHETYPE_NAME = u"""    # This name appears in the 'add' box
+#    archetype_name = '%s'\n"""
 CLASS_FOLDER_TABS = u"""    use_folder_tabs = %s\n"""
 CLASS_IMPLEMENTS = u"""    __implements__ = %(baseclass_interfaces)s + (%(realizations)s,)"""
 CLASS_IMPLEMENTS_BASE = u"""    __implements__ = %(baseclass_interfaces)s"""
