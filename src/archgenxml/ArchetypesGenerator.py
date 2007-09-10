@@ -918,6 +918,13 @@ class ArchetypesGenerator(BaseGenerator):
         if obj.isAbstract():
             allowed_types= tuple(obj.getGenChildrenNames())
         else:
+            try:
+                isFlavor = obj.hasStereotype('flavor', umlprofile=self.uml_profile)
+            except AttributeError:
+                isFlavor = False
+            if isFlavor == True:
+                allowed_types=tuple(obj.getRealizationChildrenNames(recursive=True))
+            else:
             allowed_types=(obj.getName(),) + tuple(obj.getGenChildrenNames())
 
         if int(rel.toEnd.mult[1]) == -1:
@@ -1925,6 +1932,274 @@ class ArchetypesGenerator(BaseGenerator):
                                                   creation_roles])
         return outfile.getvalue()
 
+    def generateFlavor(self, element, **kw):
+        """this is the all singing all dancing core generator logic for a
+           full featured Flavor
+        """
+        log.info("%sGenerating flavor '%s'.",
+                 '    '*self.infoind, element.getName())
+
+        name = element.getCleanName()
+
+        # Prepare file
+        outfile = StringIO()
+        wrt = outfile.write
+
+        # generate header
+        wrt(self.generateHeader(element))
+
+        # generate basic imports
+
+        dependentImports = self.generateDependentImports(element)
+        if dependentImports.strip():
+            log.debug("Generating dependent imports...")
+            wrt(dependentImports)
+
+        additionalImports = self.generateAdditionalImports(element)
+        if additionalImports:
+            log.debug("Generating additional imports...")
+            wrt(additionalImports)
+
+        # imports needed for optional support of SQLStorage
+        if utils.isTGVTrue(self.getOption('sql_storage_support',element,0)):
+            wrt('from Products.Archetypes.SQLStorage import *\n')
+
+        # import Product config.py
+        #wrt(TEMPLATE_CONFIG_IMPORT % {
+        #    'module': element.getRootPackage().getProductModuleName()})
+
+        # imports by tagged values
+        additionalImports = self.getImportsByTaggedValues(element)
+        if additionalImports:
+            wrt(u"# additional imports from tagged value 'import'\n")
+            wrt(additionalImports)
+            wrt(u'\n')
+            
+        # import for flavor's interface
+        wrt("from zope.interface import Interface\n")
+        
+        # import for flavor's event subscriber
+        wrt("from Products.ContentFlavors.interfaces import IFlavorProvider\n")
+
+        # Normally, archgenxml also looks at the parents of the
+        # current class for allowed subitems. Likewise, subclasses of
+        # classes allowed as subitems are also allowed on this
+        # class. Classic polymorphing. In case this isn't desired, set
+        # the tagged value 'disable_polymorphing' to 1.
+        disable_polymorphing = element.getTaggedValue('disable_polymorphing', 0)
+        if disable_polymorphing:
+            recursive = 0
+        else:
+            recursive = 1
+        aggregatedClasses = element.getRefs() + \
+                            element.getSubtypeNames(recursive=recursive,
+                                                    filter=['class'])
+        # We *do* want the resursive=0 below, though!
+        aggregatedInterfaces = element.getRefs() + \
+                               element.getSubtypeNames(recursive=0,
+                                                       filter=['interface'])
+        if element.getTaggedValue('allowed_content_types'):
+            aggregatedClasses = [e for e in aggregatedClasses]
+            for e in element.getTaggedValue('allowed_content_types').split(','):
+                e = e.strip()
+                if e not in aggregatedClasses:
+                    aggregatedClasses.append(e)
+
+        # if it's a derived class check if parent has stereotype 'archetype'
+        parent_is_archetype = False
+        for p in element.getGenParents():
+            parent_is_archetype = parent_is_archetype or \
+                                  p.hasStereoType(self.archetype_stereotype,
+                                                  umlprofile=self.uml_profile)
+
+        # also check if the parent classes can have subobjects
+        baseaggregatedClasses = []
+        for b in element.getGenParents():
+            baseaggregatedClasses.extend(b.getRefs())
+            baseaggregatedClasses.extend(b.getSubtypeNames(recursive=1))
+
+        #also check if the interfaces used can have subobjects
+        baseaggregatedInterfaces = []
+        for b in element.getGenParents(recursive=1):
+            baseaggregatedInterfaces.extend(b.getSubtypeNames(recursive=1,filter=['interface']))
+
+        parentnames = [p.getCleanName() for p in element.getGenParents()]
+        additionalParents = element.getTaggedValue('additional_parents')
+        if additionalParents:
+            parentnames = additionalParents.split(',') + list(parentnames)
+
+        # find base
+        #baseclass, baseschema, parentnames = self.getArchetypesBase(element, parentnames, parent_is_archetype)
+
+        # Interface aggregation
+        if self.getAggregatedInterfaces(element):
+            parentnames.insert(0, 'AllowedTypesByIfaceMixin')
+        
+        # this flavor's class is an Z3 interface
+        parentnames.insert(0,'Interface')
+
+        parents = ', '.join(parentnames)
+        
+        # protected section
+        self.generateProtectedSection(outfile, element, 'module-header')
+
+        # generate local Schema from local field specifications
+        field_specs = self.getLocalFieldSpecs(element)
+        # no baseschema to be referred to
+        self.generateArcheSchema(element, field_specs, None, outfile)
+
+        # protected section
+        self.generateProtectedSection(outfile, element, 'after-local-schema')
+
+        # generate complete Schema
+        # prepare schema as class attribute
+        parent_schema = ["getattr(%s, 'schema', Schema(()))" % p.getCleanName()
+                         for p in element.getGenParents()
+                         if not p.hasStereoType(self.python_stereotype,
+                                                umlprofile=self.uml_profile)]
+
+        schema = parent_schema
+
+        # own schema overrules base and parents
+        schema += ['schema']
+
+        schemaName = '%sSchema' % name
+        print >> outfile, utils.indent(schemaName + ' = ' + ' + \\\n    '.join(['%s.copy()' % s for s in schema]), 0)
+
+        # move fields based on move: tagged values
+        self.generateFieldMoves(outfile, schemaName, field_specs)
+
+        # protected section
+        self.generateProtectedSection(outfile, element, 'after-schema')
+
+        # declare event subscriber
+        subscriber = "def apply" + name + "(context, event):\n"
+        wrt(subscriber)
+        wrt("    provider = IFlavorProvider(context)\n")
+        wrt("    provider.flavor_names += ('"+name+".default',)\n\n")
+
+        # protected section
+        self.generateProtectedSection(outfile, element, 'after-subscriber')
+
+        if not element.isComplex():
+            print "I: stop complex: ", element.getName()
+            return outfile.getvalue()
+        if element.getType() in AlreadyGenerated:
+            print "I: stop already generated:", element.getName()
+            return outfile.getvalue()
+        AlreadyGenerated.append(element.getType())
+
+        #if self.ape_support:
+        #    print >> outfile, TEMPL_APE_HEADER % {'class_name': name}
+
+        # [optilude] It's possible parents may become empty now...
+        if parents:
+            parents = "(%s)" % (parents,)
+        else:
+            parents = ''
+        
+        classDeclaration = 'class %s%s:\n' % (name, parents)
+        wrt(classDeclaration)
+
+        doc = element.getDocumentation(striphtml=self.strip_html)
+        parsedDoc = ''
+        if element.parsed_class:
+            parsedDoc = element.parsed_class.getDocumentation()
+        if doc:
+            print >> outfile, utils.indent('"""%s\n"""' % doc, 1,
+                                           stripBlank=True)
+        elif parsedDoc:
+            # Bit tricky, parsedDoc is already indented...
+            print >> outfile, '    """%s"""' % parsedDoc
+        else:
+            print >> outfile, '    """\n    """'
+
+        #print >> outfile, self.generateImplements(element, parentnames)
+
+        # allowed_interfaces
+        parentAggregatedInterfaces = ''
+        if utils.isTGVTrue(element.getTaggedValue('inherit_allowed_types', \
+           True)) and element.getGenParents():
+            pattern = "getattr(%s, 'allowed_interfaces', [])"
+            extras = ' + '.join([pattern % p.getCleanName()
+                                 for p in element.getGenParents()])
+            parentAggregatedInterfaces = '+ ' + extras
+
+        if aggregatedInterfaces or baseaggregatedInterfaces:
+            print >> outfile, CLASS_ALLOWED_CONTENT_INTERFACES % \
+                  (','.join(aggregatedInterfaces), parentAggregatedInterfaces)
+
+        # But *do* add the actions, views, etc.
+        #actions_views = self.generateActionsAndViews(element,
+        #                                             aggregatedClasses)
+        #if actions_views:
+        #    print >> outfile, actions_views
+
+        # schema attribute
+        #wrt(utils.indent('schema = %s' % schemaName, 0) + '\n\n')
+
+        #self.generateProtectedSection(outfile, element, 'class-header', 1)
+
+        # self.generateDefaultAdapterMethods(outfile, element)
+
+        wrt('# end of flavor %s\n\n' % name)
+
+        self.generateProtectedSection(outfile, element, 'module-footer')
+        
+        # generate or update configure.zcml for flavors
+        # annotate package with a DOM containing the Flavors' ZCML of that package
+        self.generateFlavorZcml(element)
+
+        return outfile.getvalue()
+
+    def generateFlavorZcml(self,element):
+        
+        name = element.getCleanName()
+        impl = minidom.getDOMImplementation()
+        zcmlDocument = impl.createDocument("http://namespaces.objectrealms.net/plone", "zope:configure", None)
+        zope_configure = zcmlDocument.documentElement
+        zope_configure.setAttribute("xmlns:zope","http://namespaces.zope.org/zope")
+        zope_configure.setAttribute("xmlns:five","http://namespaces.zope.org/five")
+        zope_configure.setAttribute("xmlns:or","http://namespaces.objectrealms.net/plone")
+        
+        # the flavor itself
+        zope_configure.appendChild(zcmlDocument.createComment(" " + name + " flavor "))
+        flavor = zcmlDocument.createElementNS("http://namespaces.objectrealms.net/plone","or:flavor")
+        flavor.setAttribute("name",name + ".default")
+        flavor.setAttribute("title",name + " !")
+        flavor.setAttribute("description",name + "'s description")
+        flavor.setAttribute("archetype_schema","." + name + "." + name + "Schema")
+        flavor.setAttribute("marker","." + name + "." + name)
+        zope_configure.appendChild(flavor)
+        # and its required event subscriber
+        zope_configure.appendChild(zcmlDocument.createComment(" Subscriber to let new items receive the " + name + " flavor "))
+        subscriber = zcmlDocument.createElementNS("http://namespaces.zope.org/zope","zope:subscriber")
+        subscriber.setAttribute("for","." + name + "." + name + " zope.lifecycleevent.interfaces.IObjectCreatedEvent")
+        subscriber.setAttribute("handler","." + name + ".apply" + name)
+        zope_configure.appendChild(subscriber)
+        # declare implementations of this flavor
+        zope_configure.appendChild(zcmlDocument.createComment(" Types that can have the " + name + " flavor "))
+        for implementer in element.getRealizationChildren(recursive=True):
+            # TODO: filter out those implementers whose stereotype makes the following declaration useless
+            # if not implementer.hasStereotype(self.some_stereotypes_I_dont_know_which_ones):
+            qualifiedImplementerClass = None
+            if implementer.hasStereoType(self.stub_stereotypes):
+                # In principle, don't do a thing, but...
+                if implementer.getTaggedValue('import_from', None):
+                    qualifiedImplementerClass = implementer.getTaggedValue('import_from') + "." + implementer.getName()
+            else:
+                qualifiedImplementerClass = implementer.getQualifiedModuleName(None,forcePluginRoot=self.force_plugin_root,includeRoot=0,) + "." + implementer.getName()
+            if qualifiedImplementerClass:
+                implements = zcmlDocument.createElementNS("http://namespaces.zope.org/five","five:implements")
+                implements.setAttribute("class",qualifiedImplementerClass)
+                implements.setAttribute("interface","." + name + "." + name)
+                zope_configure.appendChild(implements)
+        # add this new document to a list annotated to the package of the current element
+        package = element.getPackage()
+        zcmlList = package.getAnnotation('generatedZcmlDocuments')
+        zcmlList.append(zcmlDocument)
+        package.annotate('generatedZcmlDocuments',zcmlList)
+
     def generateZope2Interface(self, element, **kw):
         outfile = StringIO()
         log.info("%sGenerating zope2 interface '%s'.",
@@ -2033,6 +2308,8 @@ class ArchetypesGenerator(BaseGenerator):
 
         # Generate an __init__.py
         self.generatePackageInitPy(package)
+        # Generate a configure.zcml
+        self.generateFlavorPackageZcml(package)
 
     def updateVersionForProduct(self, package):
         """Increment the build number in verion.txt,"""
@@ -2207,6 +2484,43 @@ class ArchetypesGenerator(BaseGenerator):
         of.close()
         return
 
+    def generateFlavorPackageZcml(self,package):
+        """ Generate configure.zcml for packages """
+        
+        # TODO: update namespaces according to uses of this file, at the moment it's for ContentFlavors only
+        impl = minidom.getDOMImplementation()
+        zcmlDocument = impl.createDocument("http://namespaces.zope.org/zope", "configure", None)
+        zope_configure = zcmlDocument.documentElement
+        zope_configure.setAttribute("xmlns:zope","http://namespaces.zope.org/zope")
+        zope_configure.setAttribute("xmlns:or","http://namespaces.objectrealms.net/plone")
+        zope_configure.setAttribute("xmlns:five","http://namespaces.zope.org/five")
+        zope_configure.setAttribute("xmlns","http://namespaces.zope.org/zope")
+        
+        packageZcmlElements = [doc.documentElement for doc in package.getAnnotation('generatedZcmlDocuments') or []]
+        for zcmlElt in packageZcmlElements:
+            for child in zcmlElt.childNodes:
+                zope_configure.appendChild(child.cloneNode(True))
+            
+        packageIncludes = [m.getModuleName() for m in 
+                          package.getAnnotation('generatedPackages') or []
+                          if not (m.hasStereoType('tests',
+                                                  umlprofile=self.uml_profile)
+                                  or m.hasStereoType('stub',
+                                                     umlprofile=self.uml_profile))
+                          ]
+
+        for inc in packageIncludes:
+            zope_include = zcmlDocument.createElementNS("http://namespaces.zope.org/zope","include")
+            zope_include.setAttribute("package","."+inc)
+            zope_include.setAttribute("file","configure.zcml")
+            zope_configure.appendChild(zope_include)
+
+        of=self.makeFile(os.path.join(package.getFilePath(),"configure.zcml"))
+        of.write(zcmlDocument.toprettyxml())
+        of.close()
+        return
+
+
     def generateStdFilesForProduct(self, package):
         """Generate __init__.py,  various support files and and the skins
         directory. The result is a QuickInstaller installable product
@@ -2257,6 +2571,8 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateGSJavascriptsXML(package)
         # generate toolset.xml
         self.generateGSToolsetXML(package)
+        # Generate configure.zcml
+        # self.generateProductConfigureZcml(package)
         
 
     def generateConfigureAndProfilesZCML(self, package):
@@ -2276,6 +2592,19 @@ class ArchetypesGenerator(BaseGenerator):
                              # user extensible xml-namespaces are missing
                              # needs include with custom file for now.
                             sectionnames=['HEAD', 'FOOT'])
+    
+        packageIncludes = [m.getModuleName() for m in 
+                          package.getAnnotation('generatedPackages') or []
+                          if not (m.hasStereoType('tests',
+                                                  umlprofile=self.uml_profile)
+                                  or m.hasStereoType('stub',
+                                                     umlprofile=self.uml_profile))
+                          ]
+
+        handleSectionedFile(os.path.join(self.templateDir, 'configure.zcml'),
+                            os.path.join(ppath, 'configure.zcml'),
+                            sectionnames=['configure.zcml'],
+                            templateparams={'packages': packageIncludes})
     
     def generateGSDirectory(self, package):
         """Create genericsetup directory profiles/default.
@@ -3070,7 +3399,7 @@ class ArchetypesGenerator(BaseGenerator):
             if not self._isContentClass(pclass):
                 continue
             
-            if pclass.hasStereoType(['tool', 'portal_tool']):
+            if pclass.hasStereoType(['tool', 'portal_tool', 'flavor', 'interface']):
                 continue
             
             fti = self._getFTI(pclass)

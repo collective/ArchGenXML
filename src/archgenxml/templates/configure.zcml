@@ -6,6 +6,9 @@
   <!-- ##/code-section HEAD -->
   
   <include file="profiles.zcml" />
+<dtml-in "packages">
+  <include file="configure.zcml" package=".<dtml-var "_['sequence-item']">"/>
+</dtml-in>
   
   <!-- ##code-section FOOT -->
   <!-- ##/code-section FOOT -->

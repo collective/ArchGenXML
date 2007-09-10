@@ -182,7 +182,15 @@ class XMI1_0:
 
     def isAssocEndAggregation(self, el):
         aggs = el.getElementsByTagName(XMI.AGGREGATION)
-        return aggs and aggs[0].getAttribute('xmi.value') in self.aggregates
+        # Sig: AFAIK non-folderish items can't be turned into folderish items at run time (e.g. via an adapter)
+        # therefore, if an assocEnd ends at a flavor, it should never be considered as an aggregation end
+        # unless we know how to let ContentFlavor folderize that item
+        isFlavorEnd = False
+        if hasattr(el,"hasStereotype"):
+            isFlavorEnd = el.hasStereotype('flavor')
+        return aggs \
+               and aggs[0].getAttribute('xmi.value') in self.aggregates \
+               and not isFlavorEnd
 
     def getAssocEndAggregation(self, el):
         aggs = el.getElementsByTagName(XMI.AGGREGATION)
@@ -568,7 +576,14 @@ class XMI1_2 (XMI1_1):
     # XMI version specific stuff goes there
 
     def isAssocEndAggregation(self, el):
-        return str(el.getAttribute('aggregation')) in self.aggregates
+        # Sig: AFAIK non-folderish items can't be turned into folderish items at run time (e.g. via an adapter)
+        # therefore, if an assocEnd ends at a flavor, it should never be considered as an aggregation end
+        # unless we know how to let ContentFlavor folderize that item
+        isFlavorEnd = False
+        if hasattr(el,"hasStereotype"):
+            isFlavorEnd = el.hasStereotype('flavor')
+        return str(el.getAttribute('aggregation')) in self.aggregates \
+               and not isFlavorEnd
 
     def getAssocEndAggregation(self, el):
         return str(el.getAttribute('aggregation'))
