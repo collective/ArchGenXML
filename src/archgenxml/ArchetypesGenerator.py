@@ -1906,8 +1906,8 @@ class ArchetypesGenerator(BaseGenerator):
 
         print >> outfile, self.generateImplements(element, parentnames)
 
-#        archetype_name = element.getTaggedValue('archetype_name') or \
-#                         element.getTaggedValue('label')
+        archetype_name = element.getTaggedValue('archetype_name') or \
+                         element.getTaggedValue('label')
 #        if not archetype_name:
 #            archetype_name = name
 #        if type(archetype_name) != types.UnicodeType:
@@ -1958,7 +1958,9 @@ class ArchetypesGenerator(BaseGenerator):
         if element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile):
             tool_instance_name = element.getTaggedValue('tool_instance_name') \
                                  or 'portal_%s' % element.getName().lower()
-            print >> outfile, TEMPL_CONSTR_TOOL % (baseclass,tool_instance_name,archetype_name)
+            print >> outfile, TEMPL_CONSTR_TOOL % (baseclass,
+                                                   tool_instance_name,
+                                                   archetype_name)
             self.generateProtectedSection(outfile, element,
                                           'constructor-footer', 2)
             print >> outfile, TEMPL_POST_EDIT_METHOD_TOOL
