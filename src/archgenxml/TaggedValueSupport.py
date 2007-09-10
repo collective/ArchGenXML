@@ -242,6 +242,10 @@ class name must be valid and unique python identifier, the archetype_name can
 be any string."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'active_workflow_states'
+explanation = """The active workflow states for a remember type."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'content_icon'
 explanation = """The name of an image file, which must be found in the skins
 directory of the product. This will be used to represent the content type in
