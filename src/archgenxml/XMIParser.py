@@ -1078,7 +1078,7 @@ class XMIElement:
                 return True
         return False
 
-    def getFullQualifiedName():
+    def getFullQualifiedName(self):
         return self.getName()
 
     def getPackage(self):
@@ -1712,10 +1712,13 @@ class XMIClass(XMIElement, StateMachineContainer):
         self.realizationParents.append(c)
 
     def getRealizationChildren(self, recursive=0):
+        """ Returns the list of realizations of this element, recursively or not
+        NB: here, recursively does not mean that it will also return the realizations of the realizations of that interface
+		it rather means that it will also return the subclasses of the classes that realize this interface """
         res = [c for c in self.realizationChildren]
         if recursive:
             for r in res:
-                res.extend(r.getRealizationChildren(1))
+                res.extend(r.getGenChildren(1))
         return res
 
     def getRealizationChildrenNames(self, recursive=0):
