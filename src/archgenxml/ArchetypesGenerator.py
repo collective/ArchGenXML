@@ -3244,7 +3244,7 @@ class ArchetypesGenerator(BaseGenerator):
                 typedef['type_aliases'] = atmaps.DEFAULT_ALIASES
             
             typedef['suppl_views'] = eval(typedef['suppl_views'])
-            if not typedef['suppl_views'] and folderish:
+            if not typedef['suppl_views']: #  and folderish:
                 typedef['suppl_views'] = (typedef['immediate_view'],)
             
             default_actions = atmaps.DEFAULT_ACTIONS
