@@ -1,12 +1,9 @@
 TODO's for ArchGenXML
 ---------------------
-* tgv "hide_actions" need to get respect in types.xml 
 
-* make generateMethodActions() in ArchetypesGenerator function return simply a
-  list of dicts and not an already rendered code snipped for twice use in
-  oldschool QI and new generic setup generated files. ATM the
-  genericsetup approach calls an eval to convert this snippet back to a python
-  dictionary. this is more than a dirty hack.
+* write a import step adding inherited allowed types
+
+* tgv "hide_actions" need to get respect in types.xml 
 
 * BUG: Method that end with a comma-newline-value lose that value. For example:
 
