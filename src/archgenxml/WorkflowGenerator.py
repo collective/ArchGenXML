@@ -197,6 +197,22 @@ class WorkflowGenerator(BaseGenerator):
             item['id'] = id_
             item['workflowId'] = classes[id_]
             result.append(item)
+            
+        # remember special case
+        remembertypes = []
+        self.atgenerator.getRememberTypes(remembertypes, self.package)
+        for remembertype in remembertypes:
+            existent = False
+            for type in result:
+                if type['id'] == remembertype['portal_type']:
+                    existent = True
+            if existent:
+                continue
+            additionaltype = dict()
+            additionaltype['id'] = remembertype['portal_type']
+            additionaltype['workflowId'] = remembertype['workflow']
+            result.append(additionaltype)
+        
         return result
 
     def extraRoles(self):

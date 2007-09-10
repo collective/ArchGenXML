@@ -925,7 +925,7 @@ class ArchetypesGenerator(BaseGenerator):
             if isFlavor == True:
                 allowed_types=tuple(obj.getRealizationChildrenNames(recursive=True))
             else:
-            allowed_types=(obj.getName(),) + tuple(obj.getGenChildrenNames())
+                allowed_types=(obj.getName(),) + tuple(obj.getGenChildrenNames())
 
         if int(rel.toEnd.mult[1]) == -1:
             multiValued = 1
@@ -2579,8 +2579,11 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateGSJavascriptsXML(package)
         # generate toolset.xml
         self.generateGSToolsetXML(package)
+        # generate membrane_tool.xml if stereotype is remember
+        self.generateGSMembraneToolXML(package)
         # Generate configure.zcml
         self.generateProductConfigureZcml(package)
+
         
 
     def generateConfigureAndProfilesZCML(self, package):
@@ -2825,7 +2828,45 @@ class ArchetypesGenerator(BaseGenerator):
                             os.path.join(profiledir, 'import_steps.xml'),
                             sectionnames=('ADDITIONALSTEPS',),
                             templateparams=templateparams
-                           )                                    
+                           )
+    
+    def generateGSMembraneToolXML(self, package):
+        types = []
+        self.getRememberTypes(types, package)
+        profiledir = os.path.join(package.getFilePath(), 'profiles', 'default')
+        handleSectionedFile(['templates', 'membrane_tool.xml'], 
+                            os.path.join(profiledir, 'membrane_tool.xml'),
+                            templateparams={'membrane_types': types}
+                           )
+    
+    def getRememberTypes(self, types, package):
+        # TODO: consider if there is an own workflow on a matched object.
+        # then, this workflow has precedence and use_workflow and
+        # active_workflow_states has to be ignored and the ones from the
+        # set workflow must be used.
+        klasses = package.getClasses()
+        if not klasses:
+            for package in package.getPackages():
+                self.getRememberTypes(types, package)
+        
+        for klass in klasses:
+            if klass.hasStereoType(['remember'], umlprofile=self.uml_profile):
+                workflow = klass.getTaggedValue('use_workflow', None)
+                if not workflow:
+                    raise Exception('No workflow set for remember type, ' + \
+                                    'aborting.')
+                
+                workflow_states = klass.getTaggedValue('active_workflow_states',
+                                                      None)
+                if not workflow_states:
+                   raise Exception('No workflow states set for remember ' + \
+                                   'type, aborting.')
+                
+                type = dict()
+                type['portal_type'] = klass.getCleanName()
+                type['workflow'] = workflow
+                type['active_states'] = eval(workflow_states)
+                types.append(type)
     
 
     def getGeneratedClasses(self,package):

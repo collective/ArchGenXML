@@ -1,6 +1,10 @@
 TODO's for ArchGenXML
 ---------------------
 
+* consider own workflow for remember types - read docstring of
+  ArchetypesGenerator.getRememberTypes for details. if an own workflow is set
+  on such types, the setup is broken atm
+
 * atm only the default actions are taken for generation
 
 * move STATE_PERMISSION_MAPPING out of TaggedValueSupport and
