@@ -566,6 +566,8 @@ class ArchetypesGenerator(BaseGenerator):
             atype = element.type
         else:
             atype = widgettype
+        default_widget = self.getOption('default:widget:%s' % fieldclassname, element, None)
+        if not default_widget:
         default_widget = self.getOption('default:widget:%s' % atype, element, None)
         
         if default_widget:
@@ -599,7 +601,8 @@ class ArchetypesGenerator(BaseGenerator):
             custom = True
             widgetcode = self.widgetMap[widgettype]
 
-        elif fieldclassname:
+        elif fieldclassname and not default_widget:
+            # use fieldclassname if and only if no default widget has been given
             widgetcode="%s._properties['widget'](\n" % fieldclassname
 
         if ')' not in widgetcode: # XXX bad check *sigh*
