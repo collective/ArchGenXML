@@ -15,20 +15,45 @@ from Products.CMFCore.utils import getToolByName
 
 def installGSDependencies(context):
     """Install dependend profiles."""
-    # XXX this one needs testing and review!
+    
+    # XXX Hacky, but works for now. has to be refactored as soon as generic
+    # setup allows a more flexible way to handle dependencies.
+    
     dependencies = [<dtml-var "', '.join(dependend_profiles)">]
     if not dependencies:
         return
+    
     site = context.getSite()
     setup_tool = getToolByName(site, 'portal_setup')
     for dependency in dependencies:
         if dependency.find(':') == -1:
             dependency += ':default'
         old_context = setup_tool.getImportContextID()
-        setup_tool.setImportContext(dependency)
-        setup_tool.runAllImportSteps()
-        setup_tool.setImportContext(old_context)    
-
+        setup_tool.setImportContext('profile-%s' % dependency)
+        importsteps = setup_tool.getImportStepRegistry().sortSteps()
+        excludes = [
+            u'<dtml-var "product_name">-QI-dependencies',
+            u'<dtml-var "product_name">-GS-dependencies'
+        ]
+        importsteps = [s for s in importsteps if s not in excludes]
+        for step in importsteps:
+            setup_tool.runImportStep(step) # purging flag here?
+        setup_tool.setImportContext(old_context)
+    
+    # re-run some steps to be sure the current profile applies as expected
+    importsteps = setup_tool.getImportStepRegistry().sortSteps()
+    filter = [
+        u'typeinfo',
+        u'workflow',
+        u'membranetool',
+        u'factorytool',
+        u'content_type_registry',
+        u'membrane-sitemanager'
+    ]
+    importsteps = [s for s in importsteps if s in filter]
+    for step in importsteps:
+        setup_tool.runImportStep(step) # purging flag here?
+        
 def installQIDependencies(context):
     """This is for old-style products using QuickInstaller"""
     site = context.getSite()
