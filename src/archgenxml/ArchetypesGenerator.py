@@ -1906,20 +1906,20 @@ class ArchetypesGenerator(BaseGenerator):
 
         print >> outfile, self.generateImplements(element, parentnames)
 
-        archetype_name = element.getTaggedValue('archetype_name') or \
-                         element.getTaggedValue('label')
-        if not archetype_name:
-            archetype_name = name
-        if type(archetype_name) != types.UnicodeType:
-            archetype_name = archetype_name.decode('utf8')
-        portaltype_name = element.getTaggedValue('portal_type') or name
+#        archetype_name = element.getTaggedValue('archetype_name') or \
+#                         element.getTaggedValue('label')
+#        if not archetype_name:
+#            archetype_name = name
+#        if type(archetype_name) != types.UnicodeType:
+#            archetype_name = archetype_name.decode('utf8')
+#        portaltype_name = element.getTaggedValue('portal_type') or name
 
         # [optilude] Only output portal type and AT name if it's not an abstract
         # mixin
         if not element.isAbstract():
             print >> outfile, (CLASS_ARCHETYPE_NAME % archetype_name).encode('utf8')
-            print >> outfile, CLASS_META_TYPE % name
-            print >> outfile, CLASS_PORTAL_TYPE % portaltype_name
+            #print >> outfile, CLASS_META_TYPE % name
+            #print >> outfile, CLASS_PORTAL_TYPE % portaltype_name
 
         # Let's see if we have to set use_folder_tabs to 0.
         if utils.isTGVTrue(element.getTaggedValue('hide_folder_tabs', False)):
