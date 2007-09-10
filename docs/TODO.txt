@@ -1,6 +1,10 @@
 TODO's for ArchGenXML
 ---------------------
 
+* move STATE_PERMISSION_MAPPING out of TaggedValueSupport and
+  move the conversion of permission-short cuts over to the 
+  WorkflowGenerator.
+
 * write a import step adding inherited allowed types
 
 * tgv "hide_actions" need to get respect in types.xml 

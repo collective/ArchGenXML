@@ -769,7 +769,8 @@ STATE_PERMISSION_MAPPING = {
     'view'   : 'View',
     'modify' : 'Modify portal content',
     'list'   : 'List folder contents',
-    'add' : 'Add portal content',
+    'add'    : 'Add portal content',
+    'delete' : 'Delete objects',
 }
 for (tagname, permissionname) in STATE_PERMISSION_MAPPING.items():
     explanation = "Shortcut for '%s'." % permissionname
