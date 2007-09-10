@@ -271,7 +271,8 @@ class BaseGenerator:
         else:
             z2iface_implements = None
 
-        if parentnames:
+        # do not generate its Zope2 __implements__ statement from its parents if this is a Z3 interface or it has no parents
+        if parentnames and not (element.isInterface() and self.getInterfaceType(element) == 'z3'):
             z2parentclasses_implements = \
                     ' + '.join(["(getattr(%s,'__implements__',()),)" % i for i in parentnames])
         else:
