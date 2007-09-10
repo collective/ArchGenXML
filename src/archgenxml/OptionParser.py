@@ -359,9 +359,9 @@ group.add_option("--generate-packages",
                  action="append",
                  dest="generate_packages",
                  type="commalist",
-                 help="Names of packages to scan for classes and generate "
-                 "output for (can specify as comma-separated list, or specify "
-                 "several times). Leaving this empty means that all packages "
+                 help="Names of packages to scan for classes and generate " + \
+                 "output for (can specify as comma-separated list, or specify " + \
+                 "several times). Leaving this empty means that all packages " + \
                  "are scanned and generated",
                  )
 
