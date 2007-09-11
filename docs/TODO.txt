@@ -1,6 +1,9 @@
 TODO's for ArchGenXML
 ---------------------
 
+* importGSDependencies - some more research on how to filter the import steps
+  by profile and how to define an import step as the very first executed one.
+
 * refactor generateFieldMoves machinery. does not consider copied fields atm!
   (no one used this until now??)
 
