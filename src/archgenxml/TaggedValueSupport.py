@@ -243,7 +243,8 @@ be any string."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'active_workflow_states'
-explanation = """The active workflow states for a remember type."""
+explanation = """The active workflow states for a remember type. MUST be set
+on <<remember>> types. Format is ['state', 'anotherstate']."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'content_icon'

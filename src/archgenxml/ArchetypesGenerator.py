@@ -2820,10 +2820,16 @@ class ArchetypesGenerator(BaseGenerator):
         
         for klass in klasses:
             if klass.hasStereoType(['remember'], umlprofile=self.uml_profile):
-                workflow = klass.getTaggedValue('use_workflow', None)
-                if not workflow:
-                    raise Exception('No workflow set for remember type, ' + \
-                                    'aborting.')
+                
+                statemachine = klass.getStateMachine()
+                
+                if not statemachine:
+                    workflow = klass.getTaggedValue('use_workflow', None)
+                    if not workflow:
+                        raise Exception('No workflow set for remember ' + \
+                                        'type, aborting.')
+                else:
+                    workflow = statemachine.getCleanName()
                 
                 workflow_states = klass.getTaggedValue('active_workflow_states',
                                                       None)

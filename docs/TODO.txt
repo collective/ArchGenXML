@@ -7,10 +7,6 @@ TODO's for ArchGenXML
 * refactor generateFieldMoves machinery. does not consider copied fields atm!
   (no one used this until now??)
 
-* consider own workflow for remember types - read docstring of
-  ArchetypesGenerator.getRememberTypes for details. if an own workflow is set
-  on such types, the setup is broken atm
-
 * atm only the default actions are taken for generation
 
 * move STATE_PERMISSION_MAPPING out of TaggedValueSupport and
