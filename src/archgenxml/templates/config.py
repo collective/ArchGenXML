@@ -47,15 +47,6 @@ DEPENDENCIES = []
 # override in custom configuration
 PRODUCT_DEPENDENCIES = []
 
-# You can overwrite these two in an AppConfig.py:
-# STYLESHEETS = [
-#     {'id': 'my_global_stylesheet.css'},
-#     {'id': 'my_contenttype.css',
-#      'expression': 'python:object.getTypeInfo().getId() == "MyType"'}]
-# You can do the same with JAVASCRIPTS.
-STYLESHEETS = []
-JAVASCRIPTS = []
-
 <dtml-var "generator.getProtectedSection(parsed_config,'config-bottom')">
 
 # Load custom configuration not managed by archgenxml
