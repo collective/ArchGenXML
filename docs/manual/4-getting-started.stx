@@ -1,30 +1,35 @@
-id: getting-started
 title: Getting started
-allowDiscussion: 1
-subject: 
 description: Create your first content type with ArchGenXML
-creators: jensens
-effectiveDate: 2004/11/30 18:34:22 Universal
-expirationDate: None
-language: en
-creation_date: 2004/11/30 16:33:48.118 US/Eastern
-modification_date: 2005/12/09 14:21:16.256 Universal
 Content-Type: text/structured
 
 Creating a minimal content type in UML
 
- Open the UML tool of your choice. Make a new UML model and add a class diagram. Choose the tool for class creation and add a class to the diagram. Give it a name such as "MyFirstAGXContent" and add an attribute MyTextField with type 'text'. See also: "example_1.xmi":example_1.xmi
+ Open the UML tool of your choice. Make a new UML model and add a class diagram. 
+ Choose the tool for class creation and add a class to the diagram. Give it a 
+ name such as "MyFirstAGXContent" and add an attribute MyTextField with type 
+ 'text'. See also: "example_1.xmi":4_1_a.xmi/view
 
  "Example: First Minimal Content Type in UML":img:example-4_1_a.png
 
 Generating the product
 
- Save/export your model as an XMI file with the name MyFirstExample.xmi (or in an XMI-container format like .zargo or .zuml). Then go to the command line and execute::
+ Save/export your model as an XMI file with the name MyFirstExample.xmi (or in 
+ an XMI-container format like .uml, .zargo or .zuml). Then go to the command line 
+ and execute::
 
-  ArchGenXML.py MyFirstAGXExample.xmi
+  archgenxml MyFirstAGXExample.xmi
 
- ArchGenXML will begin code generation. When it completes, you will have a new folder 'MyFirstAGXContent' on your file system. (The folder will be named 'MyFirstAGXContent' if that's the name you gave to your model; you can overwrite this output directory with the '-o' option).
+ ArchGenXML will begin code generation. When it completes, you will have a new 
+ folder 'MyFirstAGXContent' on your file system. (The folder will be named 
+ 'MyFirstAGXContent' if that's the name you gave to your model; you can 
+ overwrite this output directory with the '-o' option).
 
 Installing and using the generated product
 
- Move the whole folder 'MyFirstAGXContent' to your Zope instance's 'Products' folder. Restart  Zope, open Plone in a browser and log in as manager. Choose 'Plone Setup' from the personal bar and choose 'Add/Remove Products'. A new product 'MyFirstAGXContent' should now appear in the list of products available for install. Choose it and click 'install'. Go to your personal folder. In the list of addable items you'll find the new product as an addable content type. Add a test instance to see if it works.
+ Move the whole folder 'MyFirstAGXContent' to your Zope instance's 'Products' 
+ folder. Restart  Zope, open Plone in a browser and log in as manager. Choose 
+ 'Plone Setup' from the personal bar and choose 'Add/Remove Products'. A new 
+ product 'MyFirstAGXContent' should now appear in the list of products
+ available for install. Choose it and click 'install'. Go to your personal 
+ folder. In the list of addable items you'll find the new product as an 
+ addable content type. Add a test instance to see if it works.
