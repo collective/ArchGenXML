@@ -1,6 +1,14 @@
 TODO's for ArchGenXML
 ---------------------
 
+* update umltools/argouml/argouml_profile.xmi
+
+* make setuptools or at least debian copy it to /usr/share/archgenxml
+
+* update docs/manual/*registry* and check quickref
+
+* sync docs/manual with manual
+
 * importGSDependencies - some more research on how to filter the import steps
   by profile and how to define an import step as the very first executed one.
 
