@@ -1,32 +1,26 @@
-id: relations
-title: Third Party Product Integration: Relations
-allowDiscussion: 1
-subject: 
-description: Create relations between portal-types model-driven. Support for Relations Product (complex references). Define sets of rules for validation, creation and lifetime of Archetypes references. ArchGenXML can generate the necessary code and XML-configuration data to use this product.
-creators: jensens
-effectiveDate: 2005/06/09 11:35:36.544 GMT-4
-expirationDate: None
-language: en
-creation_date: 2005/06/09 10:47:16.713 GMT-4
-modification_date: 2005/06/09 13:29:58.042 GMT-4
+title: Relations
+description: Create relations between portal-types model-driven. Support for 
+Relations Product (complex references). Define sets of rules for validation, 
+creation and lifetime of Archetypes references. ArchGenXML can generate the 
+necessary code and XML-configuration data to use this product.
 Content-Type: text/structured
 
 Prerequisites
 
- To enable Relations install the Product ("code-location":http://svn.plone.org/archetypes/Relations/).
+ To enable Relations install the Product ("code-location":http://plone.org/products/relations/).
 
 Basics
 
- As an option on command line,  up to a tagged-value on model-level or on a single UML-Assoziation you just define the 
+ As an option on command line,  up to a tagged-value on model-level or on a single UML-Association you just define the 
 'relation_implementation' and set it to 'relations'. A directed Assoziation results in one Relation. 
 
- Give the assoziation and its assoziation ends names. They'll be used as the names for the RelationField. 
+ **Give the association and its assoziation ends names.** They'll be used as the names for the RelationField. If you dont want a field turn it off by setting a tagged value 'generate_reference_fields' on class (or package, model) level to '0'.
 
 Inverse Relation
 
- If the assoziation is not directed (navigable on both assoziation ends) an inverse relation will be created. 
+ If the association is not directed (navigable on both association ends) an inverse relation will be created. 
 
- The tagged-value 'inverse_relation_name' will be used for the back-relation on undirected assoziations. It defaults to the assoziation name postfixed by '_inverse'.
+ The tagged-value 'inverse_relation_name' will be used for the back-relation on undirected associations. It defaults to a relation named 'toend_fromend', where these are the lowercased versions of the association ends. If the two ends are named the same, then the relation will be named 'association_inv', where 'association' is the name of the association. (Finally, if the option 'old_inverse_relation_name' is set, then it defaults to the association name postfixed by '_inverse'.)
 
 Cardinality
 
@@ -35,13 +29,13 @@ You can use the minimum and maximun value here using the syntax '1..5' which mea
 
 Constraints
  
- type-constraint -- as described above an assoziation between two portal-types will be created.
+ type-constraint -- as described above an association between two portal-types will be created.
 
- interface-constraint -- an assoziation between an archetypes class and an interface will create an interface-constraint. the relation is allowed to all classes implementing this interface.
+ interface-constraint -- an association between an archetypes class and an interface will create an interface-constraint. the relation is allowed to all classes implementing this interface.
 
-Assoziation classes
+Association classes
 
- Assoziation classes can be used to store data on the relation as an object. You can model it using the UML assoziation class or using a tagged value 'association_class' on the assoziation.
+ Association classes can be used to store data on the relation as an object. You can model it using the UML association class or using a tagged value 'association_class' on the association.
 
 
 

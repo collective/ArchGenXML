@@ -1,14 +1,5 @@
-id: widgets-extension
-title: Basics: Widgets
-allowDiscussion: 1
-subject: ArchGenXML
-description: Simple content type creation: Setting up the Widgets.
-creators: jensens
-effectiveDate: 2004/11/30 18:34:22 Universal
-expirationDate: None
-language: en
-creation_date: 2004/11/30 18:28:02.749 US/Eastern
-modification_date: 2005/12/09 14:21:16.712 Universal
+title: Widgets
+description: Setting up the Widgets.
 Content-Type: text/structured
 
 ArchGenXML will pick a default widget for your fields and fill in default labels and descriptions. For example, a 'string' field gets a 'StringWidget' by default. You can override this in two ways.

@@ -1,16 +1,5 @@
-id: workflow
-title: Basics: Workflow Generation
-allowDiscussion: 1
-subject: Workflow
-  workflow
-  ArchGenXML
-description: ArchGenXML can use state diagrams to create custom workflows for your types.
-creators: optilude
-effectiveDate: 2005/12/09 08:18:17.972 Universal
-expirationDate: None
-language: en
-creation_date: 2005/03/02 15:15:14.712 US/Eastern
-modification_date: 2005/12/16 13:38:14.195 Universal
+title: Workflows
+description: Usage of state diagrams to create custom workflows.
 Content-Type: text/structured
 
 ArchGenXML can use state diagrams to generate workflows for a portal type. Workflows are used to set the various states an object can be in, and the transitions between them. 
@@ -42,6 +31,8 @@ Transitions
 
   For each possible transition between states, add a transition arrow to your UML model. The name of the transition becomes the name of the workflow action. You can set the 'label' tagged value on the transition to set a custom label to display to the user. 
 
+  If a transition with the same name/target is used more than one time, you can use the stereotype '<<primary>>' to define its settings once and use it by name on all similar transitions.
+
 
   Transition guards
 
@@ -71,11 +62,19 @@ Permissions
 
   list -- refers to the 'List folder contents' permission.
 
-  Hence, if you want your state to permit anonymous users and members to view your content, only permit managers to modify, and permit both the owner and managers to add new objects controlled by the 'Add MySubTypes' permission, you can add three tagged values to the workflow state::
+  delete -- refers to the 'Delete objects' permission.
+
+  Hence, if you want your state to permit anonymous users and members to view your content, only permit managers to modify, and permit both the owner and managers to add new objects controlled by the 'Add MySubTypes' permission, you can add tagged values to the workflow state::
 
     view           ==> Anonymous, Member
     modify         ==> Manager
     Add MySubTypes ==> Owner, Manager
+
+  If you want to aquire the permissions and add new ones you can use the value 'aquire'::
+
+    view           ==> acquire, Anonymous, Member
+
+  (One special case: if you leave the value empty, no one gets that permission (which is logical), but it also explicitly unsets acquisition of the permission).
   
 Workflow actions
 

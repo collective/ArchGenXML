@@ -1,14 +1,5 @@
-id: methods-actions
 title: Basics: Methods and Actions
-allowDiscussion: 1
-subject: 
-description: Simple Content-Type creation: Defining Methods and Actions
-creators: jensens
-effectiveDate: 2004/11/30 18:34:22 Universal
-expirationDate: None
-language: en
-creation_date: 2004/11/30 18:30:56.191 US/Eastern
-modification_date: 2005/12/09 14:21:16.819 Universal
+description: Defining Methods and Actions
 Content-Type: text/structured
 
 To create a method in your class, add a method to the UML diagram, with the desired parameters. The types of the parameters and the type of the return value are ignored, since Python does not support this.
@@ -31,9 +22,9 @@ documentation -- Content of the python doc-string of the method. You can also us
 
 permission -- Applies to methods with 'public' visiblity only. If you set the permission tagged value to 'My custom permission' results in security.declareProtected("""My custom permission""",'methodname') - that is, access to your method is protected by the permission with the name 'My custom permission'. 
 
-  If you want to use the CMF core permissions, add an 'imports' tagged value to the method's class containing 'from Products.CMFCore import CMFCorePermissions', and then set the permission tagged value of your method to 'python:CMFCorePermissions.View', 'python:CMFCorePermissions.ModifyPortalContent' or any other core permission. You can also use the common paradigm of defining permissions in config.py as constants with names like EDIT_PERMISSION. With newer versions of ArchGenXML, a config.py is automatically generated and its contents imported, so you can just set the permission tagged value to, for example, 'python:EDIT_PERMISSION'.
+  If you want to use the CMF core permissions, add an 'imports' tagged value to the method's class containing 'from Products.CMFCore import permissions', and then set the permission tagged value of your method to 'python:permissions.View', 'python:permissions.ModifyPortalContent' or any other core permission. You can also use the common paradigm of defining permissions in config.py as constants with names like EDIT_PERMISSION. A config.py is automatically generated and its contents imported, so you can just set the permission tagged value to, for example, 'python:EDIT_PERMISSION'.
 
-Archetypes uses actions and forms for generating custom tabs for accessing data of an Archetype object. ArchGenXML can generate actions and forms for you: Just define a method without any parameters and set its stereotype to one of the following three:
+Archetypes uses actions and forms (for forms better use zope3 view classes called from an action) for generating custom tabs for accessing data of an Archetype object. ArchGenXML can generate actions and forms for you: Just define a method without any parameters and set its stereotype to one of the following three:
 
 &lt;&lt;action&gt;&gt; -- Generates a general action.
 

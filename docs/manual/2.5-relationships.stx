@@ -1,14 +1,9 @@
-id: relationships
 title: Basics: Relationships between classes and objects
-allowDiscussion: 1
-subject: 
 description: How to use references, associations, aggregations and compositions
-creators: jensens
-effectiveDate: 2004/12/28 23:32:32.259 US/Eastern
-expirationDate: None
-language: en
-creation_date: 2004/11/30 18:43:44.401 US/Eastern
-modification_date: 2005/12/10 21:42:39.155 Universal
+Content-Type: text/x-rst
+
+title: Basics: Relationships between classes and objects
+description: How to use references, associations, aggregations and compositions
 Content-Type: text/x-rst
 
 With aggregations, compositions and associations you define where your new type will show up, what it might contain and to which content it can point to.

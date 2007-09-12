@@ -6,9 +6,9 @@ Prerequisites
 
  You must install to additional Products:
  
- * "membrane":http://plone.org/products/membrane" 
+ * "membrane":http://plone.org/products/membrane
 
- * "http://plone.org/products/remember":remember 
+ * "remember":http://plone.org/products/remember
    (using "Five 1.4.3+":http://codespeak.net/z3/five/)
    
  You should also read the documentation of both and understand how they work!
