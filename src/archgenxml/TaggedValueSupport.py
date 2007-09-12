@@ -522,6 +522,10 @@ tagname = 'category'
 explanation = """The category for the action. Defaults to 'object'."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'visible'
+explanation = """Sets the visible property, default to 'True'"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 for tagname in ['action', 'view', 'form']:
     explanation = """For a stereotype '%s', this tagged value can
     be used to overwrite the default URL ('..../name_of_method')
