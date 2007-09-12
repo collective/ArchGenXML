@@ -79,7 +79,7 @@ class WorkflowGenerator(BaseGenerator):
                       smDir)
             # Generate workflow script
             log.info("Generating workflow '%s'.", smName)
-            templ = self.readTemplate('definition.xml')
+            templ = self.readTemplate(['profiles', 'definition.xml'])
             scriptpath = os.path.join(smDir, 'definition.xml')
             dtml = HTML(templ, d)
             res = dtml()
@@ -90,7 +90,8 @@ class WorkflowGenerator(BaseGenerator):
             # Generate workflow transition script, if any
             if sm.getAllTransitionActionNames():
                 log.info("Generating workflow script(s).")
-                templ = self.readTemplate('create_workflow_script.py')
+                templ = self.readTemplate(['profiles', 
+                                           'create_workflow_script.py'])
                 scriptpath = os.path.join(extDir, smName + '_scripts.py')
                 filesrc = self.atgenerator.readFile(scriptpath) or ''
                 parsedModule = PyModule(filesrc, mode='string')
@@ -112,7 +113,7 @@ class WorkflowGenerator(BaseGenerator):
         d['workflowNames'] = self.workflowNames()
         d['workflowless'] = self.workflowLessTypes()
         d['typeMapping'] = self.typeMapping()
-        templ = self.readTemplate('workflows.xml')
+        templ = self.readTemplate(['profiles', 'workflows.xml'])
         scriptpath = os.path.join(profileDir, 'workflows.xml')
         dtml = HTML(templ, d)
         res = dtml()
@@ -125,7 +126,7 @@ class WorkflowGenerator(BaseGenerator):
             return
         log.debug("Creating rolemap.xml file.")
         d['extraRoles'] = self.extraRoles()
-        templ = self.readTemplate('rolemap.xml')
+        templ = self.readTemplate(['profiles', 'rolemap.xml'])
         scriptpath = os.path.join(profileDir, 'rolemap.xml')
         dtml = HTML(templ, d)
         res = dtml()

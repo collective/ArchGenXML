@@ -17,8 +17,10 @@ _marker = DummyMarker()
 import os
 import time
 import logging
+import types
 from StringIO import StringIO
 from pkg_resources import resource_filename
+from pkg_resources import resource_string
 from pkg_resources import Requirement
 
 from documenttemplate.documenttemplate import HTML
@@ -77,10 +79,21 @@ class BaseGenerator:
         # Set egg-friendly template dir
         self.templateDir = resource_filename(__name__, "templates")
 
-    def readTemplate(self, filename):
-        log.debug("Trying to read template '%s'.", filename)
-        template = open(os.path.join(self.templateDir,
-                                     filename)).read()
+    def readTemplate(self, templatepath):
+        """reads a template
+        
+        @param templatepath - the relative path (as list of strings) to the 
+                              template file, including it as last item
+        """        
+        # BBB:
+        if type(templatepath) in types.StringTypes:
+            log.warn('Deprecated: old style readTemplate call: %s' % templatepath)
+            templatepath = [templatepath]
+        # assume all templates under archgenxml/templates
+        templatepath = ['templates'] + templatepath
+        templatepath = os.path.join(*templatepath)
+        log.debug("Trying to read template '%s'.", templatepath)
+        template = resource_string(__name__, templatepath)
         log.debug("Succesfully opened the template, returning it.")
         return template
 

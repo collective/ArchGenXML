@@ -30,7 +30,7 @@ def handleSectionedFile(templatepath, outputpath,
     @param sectionnames - list of section names to consider
     @param templateparams - the placeholderparams for the dtml template
     """
-    
+    templatepath = ['templates'] + templatepath
     if templateparams:
         template = resource_string(__name__, os.path.join(*templatepath))
         templateparams.update(__builtins__)

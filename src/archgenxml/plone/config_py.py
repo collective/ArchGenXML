@@ -64,7 +64,7 @@ class ConfigPyView(object):
            }
         d.update(__builtins__)
 
-        templ=generator.readTemplate('config.py')
+        templ=generator.readTemplate(['config.py'])
         dtml=HTML(templ,d)
         res=dtml()
 
