@@ -1821,7 +1821,7 @@ class ArchetypesGenerator(BaseGenerator):
         
         print >> outfile, utils.indent('security = ClassSecurityInfo()',1)
 
-        print >> outfile, self.generateImplements(element, parentnames)
+        #print >> outfile, self.generateImplements(element, parentnames)
         
         markerimplements = 'implements(I%s)' % element.getCleanName()
         print >> outfile, utils.indent(markerimplements ,1)
