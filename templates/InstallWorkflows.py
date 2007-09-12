@@ -16,17 +16,18 @@ def installWorkflows(self, package, out):
                                         productname+'.'+'<dtml-var "generator.cleanName(sm.getName())">',
                                         'create<dtml-var "generator.cleanName(sm.getName())">')
     workflow = ourProductWorkflow(self, '<dtml-var "generator.cleanName(sm.getName())">')
-    if '<dtml-var "generator.cleanName(sm.getName())">' in workflowTool.listWorkflows():
-        print >> out, '<dtml-var "generator.cleanName(sm.getName())"> already in workflows.'
+    if workflow.getId() in workflowTool.listWorkflows():
+        print >> out, '%s already in workflows.' % workflow.getId()
     else:
-        workflowTool._setOb('<dtml-var "generator.cleanName(sm.getName())">', workflow)
+        workflowTool._setObject(workflow.getId(), workflow)
+        print >> out, '%s added in workflows.' % workflow.getId()
     workflowTool.setChainForPortalTypes(<dtml-var "repr(sm.getClassNames())">, workflow.getId())
 </dtml-let>
 </dtml-in>
 
 <dtml-var "generator.getProtectedSection(parsedModule,
 'after-workflow-install', 1)">
-    return workflowTool
+    return out
 
 def uninstallWorkflows(self, package, out):
     """Deinstall the workflows.
