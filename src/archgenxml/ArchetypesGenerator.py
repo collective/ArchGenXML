@@ -2553,8 +2553,8 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateGSMembraneToolXML(package)
         # Generate flavors.zcml
         self.generatePackageFlavorsZcml(package)
-
-        
+        # Generate the dcworkflow patch.
+        self.generateDCWorkflowPatch(package)
 
     def generateConfigureAndProfilesZCML(self, package):
         """Generate configure.zcml and profiles.zcml if type registration or
@@ -2807,6 +2807,14 @@ class ArchetypesGenerator(BaseGenerator):
                             os.path.join(profiledir, 'membrane_tool.xml'),
                             templateparams={'membrane_types': types}
                            )
+    
+    def generateDCWorkflowPatch(self, package):
+        if self.getOption('plone_target_version', package, '3.0') == '3.0':
+            return
+        
+        handleSectionedFile(['templates', 'dcworkflowpatch.py'], 
+                            os.path.join(os.path.join(package.getFilePath()),
+                                         'dcworkflowpatch.py'))
     
     def getRememberTypes(self, types, package):
         # TODO: consider if there is an own workflow on a matched object.

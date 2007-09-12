@@ -1,6 +1,9 @@
 TODO's for ArchGenXML
 ---------------------
 
+* remove workflowscript generation, generate event subscribers instead
+  for plone2.5 target version a patch exists and is generated
+
 * update umltools/argouml/argouml_profile.xmi
 
 * make setuptools or at least debian copy it to /usr/share/archgenxml
