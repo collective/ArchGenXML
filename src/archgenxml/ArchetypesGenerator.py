@@ -245,8 +245,13 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateDependentImports(self, element):
         out = StringIO()
+        
+        print >> out, 'from zope.interface import implements'
+        print >> out, 'from interfaces import I%s' % element.getCleanName()
+        
         res = BaseGenerator.generateDependentImports(self, element)
         print >> out, res
+        
         print >> out, TEMPLATE_CMFDYNAMICVIEWFTI_IMPORT
 
         generate_expression_validator = False
@@ -1813,10 +1818,13 @@ class ArchetypesGenerator(BaseGenerator):
             print >> outfile, '    """%s"""' % parsedDoc
         else:
             print >> outfile, '    """\n    """'
-
+        
         print >> outfile, utils.indent('security = ClassSecurityInfo()',1)
 
         print >> outfile, self.generateImplements(element, parentnames)
+        
+        markerimplements = 'implements(I%s)' % element.getCleanName()
+        print >> outfile, utils.indent(markerimplements ,1)
 
         archetype_name = element.getTaggedValue('archetype_name') or \
                          element.getTaggedValue('label')
@@ -2812,7 +2820,7 @@ class ArchetypesGenerator(BaseGenerator):
         if self.getOption('plone_target_version', package, '3.0') == '3.0':
             return
         
-        handleSectionedFile(['templates', 'dcworkflowpatch.py'], 
+        handleSectionedFile(['dcworkflowpatch.py'], 
                             os.path.join(os.path.join(package.getFilePath()),
                                          'dcworkflowpatch.py'))
     
@@ -2864,6 +2872,7 @@ class ArchetypesGenerator(BaseGenerator):
         return res
     
     def generatePackage(self, package, recursive=1):
+        
         log.debug("Generating package %s.",
                   package)
         if package.hasStereoType(self.stub_stereotypes, umlprofile=self.uml_profile):
@@ -2877,6 +2886,8 @@ class ArchetypesGenerator(BaseGenerator):
             return
 
         self.makeDir(package.getFilePath())
+
+        self.generatePackageInterfacesPy(package)
 
         for element in package.getClasses()+package.getInterfaces():
             if not self._isContentClass(element):
@@ -2971,6 +2982,32 @@ class ArchetypesGenerator(BaseGenerator):
                 package.annotate('generatedPackages',generatedPkg)
 
         self.generateStdFiles(package)
+    
+    def generatePackageInterfacesPy(self, package):
+        """Generates the interfaces.py for and in the specific package.
+        """
+        markers = list()
+        for element in package.getClasses():
+            if not self._isContentClass(element):
+                continue
+            
+            classname = element.getCleanName()
+            modulename = element.getModuleName()
+            marker = dict()
+            marker['name'] = 'I%s' % classname
+            marker['description'] = '.%s.%s' % (modulename, classname)
+            markers.append(marker)
+        
+        for element in package.getInterfaces():
+            if not self._isContentClass(element):
+                continue
+            # later implementation
+            
+        handleSectionedFile(['interfaces.py'], 
+                            os.path.join(package.getFilePath(),
+                                         'interfaces.py'),
+                            sectionnames=['HEAD', 'FOOT'],
+                            templateparams={'type_marker_interfaces': markers})
 
     def generateRelation(self, doc, collection, relname, relid,
             allowed_source_types=[], allowed_target_types=[],
@@ -3366,7 +3403,7 @@ class ArchetypesGenerator(BaseGenerator):
         if not XMIParser.has_stripogram:
             log.warn("Can't strip html from doc-strings. Module 'stripogram' not found.")
         self.generateProduct(root)
-    
+        
     def _getSubtypes(self, element):
         """extract the allowed subtypes
         """

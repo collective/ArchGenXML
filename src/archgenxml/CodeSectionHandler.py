@@ -99,7 +99,8 @@ class CodeSectionHandler(object):
                 ret.append(line)
             if line.find(BEGINPATTERN % name) != -1:
                 sectioncontent = True
-        raise Exception('Section not found or no section end pattern set.')
+        raise Exception('%s - Section not found or no section end pattern set.'\
+                        % name)
     
     def setProtectedSection(self, name, code):
         """Set the contents of the protected section with name.
@@ -119,5 +120,6 @@ class CodeSectionHandler(object):
             if line.find(BEGINPATTERN % name) != -1:
                 startindex = index
             index += 1
-        raise Exception('Section not found or no section end pattern set.')
+        raise Exception('%s - Section not found or no section end pattern set.'\
+                         % name)
 
