@@ -147,6 +147,11 @@ at_uml_profile.addStereoType(
                 'control the behaviour of the action.')
 
 at_uml_profile.addStereoType(
+    'noaction', ['XMIMethod'],
+    description="Disables standard actions, applied to a method out of 'view', "
+                "'edit', 'metadata', 'references.")
+
+at_uml_profile.addStereoType(
     'archetype', ['XMIClass'],
     description='Explicitly specify that a class represents an Archetypes '
                 'type. This may be necessary if you are including a class '

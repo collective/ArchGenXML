@@ -30,6 +30,7 @@ DEFAULT_ACTIONS_2_5 = [
         'condition': '',
         'action': 'string:${object_url}/view',
         'permissions': ['View'],
+        'visible': 'True',
     },
     {
         'name': 'Edit',
@@ -38,6 +39,7 @@ DEFAULT_ACTIONS_2_5 = [
         'condition': '',
         'action': 'string:${object_url}/edit',
         'permissions': ['Modify portal content'],
+        'visible': 'True',
     },
     {
         'name': 'Properties',
@@ -46,6 +48,7 @@ DEFAULT_ACTIONS_2_5 = [
         'condition': '',
         'action': 'string:${object_url}/properties',
         'permissions': ['Modify portal content'],
+        'visible': 'True',
     },
     {
         'name': 'References',
@@ -54,6 +57,7 @@ DEFAULT_ACTIONS_2_5 = [
         'condition': 'object/archetype_tool/has_graphviz',
         'action': 'string:${object_url}/reference_graph',
         'permissions': ['Modify portal content', 'Review portal content'],
+        'visible': 'True',
     },
 ]
 

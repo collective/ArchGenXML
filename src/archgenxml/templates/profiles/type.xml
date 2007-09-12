@@ -33,7 +33,7 @@
 <dtml-in "ctype['type_actions']">
  <action title="<dtml-var "_['sequence-item']['name']">" action_id="<dtml-var "_['sequence-item']['id']">"
          category="<dtml-var "_['sequence-item']['category']">" condition_expr="<dtml-var "_['sequence-item']['condition']">"
-         url_expr="<dtml-var "_['sequence-item']['action']">" visible="True">
+         url_expr="<dtml-var "_['sequence-item']['action']">" visible="<dtml-var "_['sequence-item']['visible']">">
 <dtml-in "_['sequence-item']['permissions']">
   <permission value="<dtml-var "_['sequence-item']">"/>
 </dtml-in>

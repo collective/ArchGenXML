@@ -341,7 +341,7 @@ class ArchetypesGenerator(BaseGenerator):
         log.debug("Generating method actions dict...")
         log.debug("First finding our methods.")
         
-        ret = []
+        ret = {}
         
         for m in element.getMethodDefs():
             method_name = m.getName()
@@ -371,14 +371,14 @@ class ArchetypesGenerator(BaseGenerator):
                 dict['id'] = m.getTaggedValue('id',method_name)
                 dict['name'] = m.getTaggedValue('label',method_name)
                 dict['permissions'] = m.getTaggedValue('permission', ['View'])
+                dict['visible'] = m.getTaggedValue('visible', 'True')
 
                 condition=m.getTaggedValue('condition') or '1'
                 dict['condition']='python:%s' % condition
 
                 if not (m.hasTaggedValue('create_action') \
                   and utils.isTGVFalse(m.getTaggedValue('create_action'))):
-                    #print >>outfile, ACT_TEMPL % dict
-                    ret.append(dict)
+                    ret[dict['id']] = dict
 
             #LATER
             
@@ -399,6 +399,16 @@ class ArchetypesGenerator(BaseGenerator):
         #res=outfile.getvalue()
         #return res
         return ret
+    
+    def getDisabledMethodActions(self, element):
+        """returns a list of disabled method ids."""
+        ret = []
+        for m in element.getMethodDefs():
+            if m.hasStereoType(['noaction']):
+                ret.append(m.getName())
+        return ret
+                
+                
 
     def generateAdditionalImports(self, element):
         outfile = StringIO()
@@ -3507,16 +3517,22 @@ class ArchetypesGenerator(BaseGenerator):
                 typedef['suppl_views'] = (typedef['immediate_view'],)
             
             if self.getOption('plone_target_version', pclass, '3.0') == '3.0':
-                default_actions = atmaps.DEFAULT_ACTIONS_3_0
+                actions = atmaps.DEFAULT_ACTIONS_3_0
             else:
-                default_actions = atmaps.DEFAULT_ACTIONS_2_5
-                
-            #actions = self.getMethodActionsDict(pclass)
-            #for action in default_actions:
-            #    for act in actions:
-                    
-            typedef['type_actions'] = default_actions
-                
+                actions = atmaps.DEFAULT_ACTIONS_2_5
+                                
+            # handle <<action>> and <<unaction>> stereotypes
+            allactions = []
+            disabled = self.getDisabledMethodActions(pclass)
+            newactions = self.getMethodActionsDict(pclass)
+            for i in range(0, len(actions)):
+                if actions[i]['id'] not in disabled and \
+                   actions[i]['id'] not in newactions.keys():
+                     allactions.append(actions[i].copy())
+            for key in newactions.keys():
+                allactions.append(newactions[key])
+            typedef['type_actions'] = allactions                
+            
             defs.append(typedef)
     
     def _isContentClass(self, cclass):
