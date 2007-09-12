@@ -24,13 +24,15 @@ __version__ = "$Revision:  $"
 # $Id:  $
 __docformat__ = 'restructuredtext'
 
+import sys
 import os.path
-
-from TaggedValueSupport import tgvRegistry
+from archgenxml.TaggedValueSupport import tgvRegistry
 from archgenxml import loginitializer
 loginitializer.addConsoleLogging()
 import logging
 log = logging.getLogger("argouml")
+
+outfile = sys.argv[1:] or 'argouml_profile.xmi'
 
 ## Base file construction for ArgoUMl profile
 ## variable: {stereotypes, datatypes, definitions}
@@ -132,7 +134,7 @@ def main():
     """
     #datatype_categories = ('datatype',)
 
-    log.info("Starting to generate 'argouml_profile.xmi'.")
+    log.info("Starting to generate '%s'." % outfile)
 
     from archgenxml import zopeimportfixer
     from archgenxml.ArchetypesGenerator import at_uml_profile
@@ -198,7 +200,7 @@ def main():
                 })
             index = index + 1
     ## One for rules them all
-    f = file(os.path.join('argouml', 'argouml_profile.xmi'), 'w')
+    f = file(outfile, 'w')
     f.write(BASE_FILE % {
         'logs': '',
         'stereotypes': '\n'.join(stereotypes),
