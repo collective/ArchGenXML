@@ -501,7 +501,7 @@ class ArchetypesGenerator(BaseGenerator):
     def getFieldAttributes(self,element):
         """ converts the tagged values of a field into extended attributes for the archetypes field """
         noparams=['documentation','element.uuid','transient','volatile',
-                  'widget','copy_from','source_name']
+                  'widget','copy_from','source_name', 'index']
         convtostring=['expression']
         map={}
         tgv=element.getTaggedValues()
@@ -532,9 +532,10 @@ class ArchetypesGenerator(BaseGenerator):
         searchable = self.getOption('searchable', element, default = _marker)
         if searchable is not _marker:
              tgv.update({'searchable': searchable})
-        index = self.getOption('index', element, default=_marker)
-        if index is not _marker:
-             tgv.update({'index': index})
+        
+        #index = self.getOption('index', element, default=_marker)
+        #if index is not _marker:
+        #     tgv.update({'index': index})
 
         # set attributes from tgv
         for k in tgv.keys():
@@ -2567,6 +2568,8 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateGSJavascriptsXML(package)
         # generate toolset.xml
         self.generateGSToolsetXML(package)
+        # generate catalog.xml
+        self.generateGSCatalogXML(package)
         # generate membrane_tool.xml if stereotype is remember
         self.generateGSMembraneToolXML(package)
         # Generate flavors.zcml
@@ -2643,6 +2646,61 @@ class ArchetypesGenerator(BaseGenerator):
                             os.path.join(ppath, 'toolset.xml'),
                             sectionnames=['toolset.xml'],
                             templateparams={ 'tools': tools })
+    
+    def generateGSCatalogXML(self, package):
+        """Generate the catalog.xml file
+        """
+        defs = dict()
+        defs['indexes'] = list()
+        defs['columns'] = list()
+        self._getIndexDefinitions(defs, package)
+        
+        ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
+        handleSectionedFile(['profiles', 'catalog.xml'],
+                            os.path.join(ppath, 'catalog.xml'),
+                            sectionnames=['INDEXES', 'COLUMNS'],
+                            templateparams={ 'defs': defs })
+        
+    
+    def _getIndexDefinitions(self, defs, package):
+        """return the index definitions for catalog.xml
+        """
+        klasses = package.getClasses()
+        if not klasses:
+            for package in package.getPackages():
+                self._getIndexDefinitions(defs, package)
+        
+        for klass in klasses:
+            if not self._isContentClass(klass):
+                continue
+            
+            for attribute in klass.getAttributeDefs():
+                index = self.getOption('index', attribute, None)
+                if not index:
+                    continue
+                
+                accessor = attribute.getTaggedValue('index_method', None)
+                if not accessor:
+                    accessor = attribute.getTaggedValue('accessor', None)
+                if not accessor:
+                    accessor = attribute.getCleanName()
+                    accessor = 'get%s' % accessor.capitalize()
+                
+                # TODO ois megliche
+                
+                indexdef = dict()
+                indexdef['name'] = accessor
+                indexdef['meta_type'] = index
+                indexdef['indexed_attributes'] = [accessor]
+                indexdef['extras'] = []
+                indexdef['properties'] = []
+                
+                defs['indexes'].append(indexdef)
+                
+                #todo metadata
+                #defs['colums'].append(columndef)
+                
+                
     
     def generateGSFactoryTooXMLFile(self, package):
         """Generate the factorytool.xml.
