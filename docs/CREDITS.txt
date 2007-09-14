@@ -4,21 +4,20 @@ Authors
 
     Phil was the original author of the product. He says he had to
     start this project because he is too lazy for coding. He added
-    tons of features and core functionality
+    tons of features and core functionality. He is the l'éminence grise 
+    maintainer.
 
   Jens Klein (jens@bluedynamics.com)
 
-    Jens hates copy and paste and loves code generation. He created
-    much of the documentation and new features, like tool and control
-    panel integration, automatic msgid/pot generation with i18ndude,
-    module-info-header support and config-file support, CMFMember support
-    and several other little fixes and features.
+    Jens hates copy and paste and loves code generation. He is ArchGenXML
+    developer from the beginning, did much of the documentation, refactored
+    several parts and added tons of features. He is the release manager.
 
   Reinout van Rees
 
     Reinout did lots of cleanup and added documentation features. He
     started the 1.6 development branch (now trunk) and moved
-    archgenxml to setuptools.
+    archgenxml to setuptools. He is the co release manager.
 
   Martin Aspeli (optilude)
 
@@ -62,7 +61,7 @@ Sponsors:
 
   BlueDynamics Alliance, Austria
   
-    Phil invented ArchGenXML and Jens pushed it together with him.
+    Phil invented ArchGenXML and Jens pushed it together with him. 
 
   Zest Software, Netherlands
 

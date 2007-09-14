@@ -501,23 +501,23 @@ class ArchetypesGenerator(BaseGenerator):
         """ converts the tagged values of a field into extended attributes for the archetypes field """
         noparams=['documentation','element.uuid','transient','volatile',
                   'widget','copy_from','source_name', 'index']
-        convtostring=['expression']
-        map={}
-        tgv=element.getTaggedValues()
+        convtostring = ['expression']
+        map = {}
+        tgv = element.getTaggedValues()
 
-        for kt in [('storage',),('callStorageOnSet',),('call_storage_on_set','callStorageOnSet')]:
-            if len(kt)>1:
-                skey=kt[0]
-                key=kt[1]
+        for kt in [('storage',),('callStorageOnSet',),
+                   ('call_storage_on_set','callStorageOnSet')]:
+            if len(kt) > 1:
+                skey = kt[0]
+                key = kt[1]
             else:
-                skey=kt[0]
-                key=kt[0]
+                skey = kt[0]
+                key = kt[0]
 
             if skey not in tgv.keys():
-                v=self.getOption(skey,element,None)
+                v = self.getOption(skey,element,None)
                 if v:
                     tgv.update({key:v})
-
 
         # set permissions, if theres one arround in the model
         perm=self.getOption('read_permission',element,default=None)
@@ -892,8 +892,8 @@ class ArchetypesGenerator(BaseGenerator):
                     return ", '"+errormsgs[ind]+"'"
                 return ""
             expval = ["""ExpressionValidator('''python:%s'''%s)""" %
-                      (expression,corresponding_error(errormsgs,exp_index))
-                      for exp_index,expression in enumerate(expressions)]
+                      (expression, corresponding_error(errormsgs,exp_index))
+                      for exp_index, expression in enumerate(expressions)]
 
             if map.has_key('validators'):
                 map['validators'] = repr(map.get('validators',())) + \

@@ -130,8 +130,8 @@ TYPE_MAP = {
             u'default_output_type': u"'text/html'",
             u'allowable_content_types': u"('text/plain', 'text/structured'," + \
                                         " 'text/html', 'application/msword',)",
-        'index': 'ZCTextIndex',
         },
+        'index': 'ZCTextIndex',
     },
     'integer': {
         'field': u'IntegerField',
