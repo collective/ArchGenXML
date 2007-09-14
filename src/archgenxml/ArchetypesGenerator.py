@@ -2346,6 +2346,8 @@ class ArchetypesGenerator(BaseGenerator):
         d={'package'    : package,
            'generator'  : self,
            'product_name': package.getProductName(),
+           'target_version': self.getOption('plone_target_version', 
+                                            package, '3.0'),
            'builtins'   : __builtins__,
            'utils'       :utils,
         }
