@@ -1268,8 +1268,11 @@ class ArchetypesGenerator(BaseGenerator):
            and 'at_post_edit_script' not in method_names:
             method_names.append('at_post_edit_script')
 
-        log.debug("We are to preserve methods, so we're looking for manual methods.")
-        cl = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name, None)
+        log.debug("We are to preserve methods, so we're looking for " + \
+                  "manual methods.")
+        filebasepath = element.getPackage().getFilePath()
+        cl = self.parsed_class_sources.get('%s/%s'%(filebasepath, element.name),
+                                           None)
         if cl:
             log.debug("The class has the following methods: %r.", cl.methods.keys())
             manual_methods = [mt for mt in cl.methods.values() if mt.name not in method_names]
@@ -1287,7 +1290,7 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateMethod(self, outfile, m, klass, mode='class'):
         #ignore actions and views here because they are generated separately
-        if m.hasStereoType(['action', 'view', 'form'], 
+        if m.hasStereoType(atmaps.ACTION_STEREOTYPES, 
                            umlprofile=self.uml_profile):
             return
 

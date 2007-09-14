@@ -6,6 +6,13 @@
 #
 # Created:     2007/09/09
 
+ACTION_STEREOTYPES = [
+    'noaction',
+    'action',
+    'view',
+    'form'
+]
+
 DEFAULT_ALIASES = [
     {'from': '(Default)', 'to': '(dynamic view)'},
     {'from': 'index.html', 'to': '(dynamic view)'},
