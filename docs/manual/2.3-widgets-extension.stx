@@ -2,13 +2,13 @@ title: Widgets
 description: Setting up the Widgets.
 Content-Type: text/structured
 
-ArchGenXML will pick a default widget for your fields and fill in default labels and descriptions. For example, a 'string' field gets a 'StringWidget' by default. You can override this in two ways.
-
-First of all, you can set a tagged value 'widget' on your field and provide the code for the entire widget definition. This method is depreciated in favour of individual widget properties, which make it much easier to manage your widgets, however. 
+ArchGenXML will pick a default widget for your fields and fill in default labels and descriptions. For example, a 'string' field gets a 'StringWidget' by default, but a 'selection' field type gets 'SelectionWidget' on a StringField! You can override this in two ways. So ArchGenXML mixes up fields and widgets slightly for convinience reasons. Anyway, you can override all predefined definitions using widget options.
 
 Widget options are specified with the prefix 'widget:'. As with normal field tagged values, unrecognised options will be passed straight through to the widget definition.
 
 The most common widget options are:
+
+widget:type -- sets the widget type used. Its the name of the widget class. You can use all widgets shipped within the Archetypes-Framework by just providing this tagged value. To use 3rd-Party widgets you additionally need to import the class using the *imports* tagged value on class level.
 
 widget:label -- sets the widget's label
 
@@ -20,29 +20,10 @@ widget:description_msgid --  overrides the default description message id (i18n)
 
 widget:i18n_domain -- sets the i18n domain (defaults to the product name)
 
-You may also use widget-specific options, such as 'widget:size' where they apply.
+You may also use widget-specific options, such as 'widget:size' where they apply. Look up possible widget-specific options at the documentation of the widget you want to use.
 
-Changing the widget of a field
 
-  Let's assume you use a StringField for capturing the type of a fruit and you know that you'll just have 5 types of fruit to select from (apple, peach, pear, banana and cherry). It's probably the best to use a 'SelectionWidget', coupled with a vocabulary set on the field (by setting the tagged value 'vocabulary' to 'python:["apple", "peach", "pear", "banana"]') to restrict the user to these addable types.
+Changing the default widgets
 
-The first way to achieve this may be to use the 'widget' tagged value to set the entire widget in one go. For example, you could write::
-
-    SelectionWidget(
-            label="""Fruit type""",
-            description="""Select one of the fruits""",
-            label_msgid='label_fruit_type',
-            description_msgid='help_fruit_type',
-            i18n_domain='fruit',
-        ),
-
-However, that method is depreciated in the latest version of ArchGenXML, where you can set the property 'widget:type' to be the name of your chosen widget type, such as 'StringWidget' or 'SelectionWidget'. In previous versions of ArchGenXML, you can accomplish the same thing by setting 'widget' to be the name of your widget only, and use the specific tagged values (such as 'widget:label') to set the fields of the widget explicitly.
-
-Using custom widgets
-
-  You  have two options to change the type of the widget to a custom type, a type outside Archetypes base framework:
-
-To change the type for one field use 'widget:type' and set it to 'MyCustomWidget' if you want to use 'MyCustomWidget'
-
-To change a the widget used for one field-type for the whole model, a product, a package or just for all fields in one class you can set on mode, product, package or class level the tagged value 'default:widget:FIELDNAMEABBREVIATION' to 'WIDGETNAME'. For example use the tagged value 'default:widget:Reference' and set it to 'ReferenceBrowserWidget' to use the ReferenceBrowserWidget instead of the ReferenceWidget. You might also want to use also the 'additional_imports' tagged value and set it to 'from ATReferenceBrowserWidget.ATReferenceBrowserWidget import ReferenceBrowserWidget' on your class to ensure that you get the widget definition imported into your class.
+ To change a the widget used for one field-type for the whole model, a product, a package or just for all fields in one class you can set on mode,  product, package or class level the tagged value 'default:widget:FIELDNAMEABBREVIATION' to 'WIDGETNAME'. For example use the tagged value 'default:widget:Reference' and set it to 'ReferenceBrowserWidget' to use the ReferenceBrowserWidget instead of the ReferenceWidget. You might also want to use also the 'additional_imports' tagged value and set it to 'from ATReferenceBrowserWidget.ATReferenceBrowserWidget import ReferenceBrowserWidget' on your class to ensure that you get the widget definition imported into your class.
 

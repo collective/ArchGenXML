@@ -1,5 +1,5 @@
 title: Classes/ Content-Types
-description: Use and generate content types, tools and interfaces.
+description: Use classes to generate content types and portal tools.
 Content-Type: text/structured
 
 Overview
@@ -137,21 +137,7 @@ Variants of Content Types
    To derive from ATDocument just use a stereotype <<atdocument>>. Also 
    possible with <<atfile>, <<atevent>> and <<atfolder>>.
 
- XXX TODO Interfaces
-
-  Interfaces are a way of formally documenting the public interface to your 
-  code. By convention, they are usually in the 'interfaces' package (see below). 
-  Use your UML modeller's interface tool to create new interfaces.
-
-  Interfaces do not have most of the added fluff that content types do - they 
-  do not even have method bodies. They do, however, have extensive 
-  documentation. A class is said to "realise" an interface when it provides 
-  implementations for the methods defined in the interface. The UML realisation 
-  arrow (a dotted line with an empty arrowhead) will ensure that your content 
-  types are linked to the correct interfaces by way of the '__implements__' 
-  class attribute.
-
- Packages - bring order to your code
+Packages - bring order to your code
 
   Packages are both a UML concept and a Python concept. In Python, packages are 
   directories under your product containing a set of modules (.py files). In 
