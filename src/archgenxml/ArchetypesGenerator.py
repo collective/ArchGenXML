@@ -3040,8 +3040,6 @@ class ArchetypesGenerator(BaseGenerator):
             module = element.getModuleName()
             package.generatedModules.append(element)
             modulefile = '%s.py' % module
-            if utils.isTGVTrue(self.getOption('modules_lowercase', element, '1')):
-                modulefile = modulefile.lower()
             outfilepath = os.path.join(package.getFilePath(), modulefile)
 
             # parse current code
@@ -3049,8 +3047,10 @@ class ArchetypesGenerator(BaseGenerator):
                                           package.getFilePath(), 
                                           modulefile)
             self.parsed_sources.append(mod)
-            for c in mod.classes.values():
-                self.parsed_class_sources[package.getFilePath()+'/'+c.name] = c
+            if mod:
+                self.parsed_sources.append(mod)
+                for c in mod.classes.values():
+                    self.parsed_class_sources[package.getFilePath()+'/'+c.name] = c
             
             # generate class
             try:
