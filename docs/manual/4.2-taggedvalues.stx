@@ -1,15 +1,3 @@
-id: tagged-value-overview
-title: Tagged value overview
-allowDiscussion: 1
-subject: 
-description: This pages provides the full overview of the tagged values that are recognised by ArchGenXML.
-creators: reinout
-effectiveDate: 2005/08/22 06:10:43.097 GMT-4
-expirationDate: None
-language: en
-creation_date: 2005/08/22 06:04:43.776 GMT-4
-modification_date: 2005/12/02 05:14:46.564 US/Eastern
-Content-Type: text/structured
 
 action/form/view
 
@@ -17,15 +5,10 @@ action/form/view
     overwrite the default URL ('..../name_of_method') into
     '..../tagged_value'.
 
- action_label -- TODO.
-
  category -- The category for the action. Defaults to 'object'.
 
  condition -- A TALES expresson defining a condition which will be
     evaluated to determine whether the action should be displayed.
-
- documentation -- You can add documention via this tag; it's better to
-    use  your UML tool's documentation field.
 
  form -- For a stereotype 'form', this tagged value can be used to
     overwrite the default URL ('..../name_of_method') into
@@ -38,6 +21,8 @@ action/form/view
  view -- For a stereotype 'view', this tagged value can be used to
     overwrite the default URL ('..../name_of_method') into
     '..../tagged_value'.
+
+ visible -- Sets the visible property, default to 'True'
 
 
 association
@@ -52,8 +37,10 @@ association
 
  back_reference_field -- Use a custom field instead of ReferenceField.
 
- documentation -- You can add documention via this tag; it's better to
-    use  your UML tool's documentation field.
+ field -- Synonymous with either reference_field or relation_field,
+    depending on whether you use it on the *from* end or the *to* end of
+    a relation. Works only together with 'Relations' Product and
+    relation_implementation set to 'relations'.
 
  inverse_relation_name -- Together with 'Relations' Product you have
     inverse relations. the name default to
@@ -73,6 +60,8 @@ association
     archetypes references or 'relations' for use of the 'Relations'
     Product.
 
+ relationship -- Standard relationship for ReferenceField
+
 
 attribute
 
@@ -81,6 +70,32 @@ attribute
     'description' be sure to set the correct accessor names such as
     'Title' and 'Description'; by default these accessors would be
     generated as getTitle() or getDescription().
+
+ array:widget -- specify which custom ArrayWidget should be used for a
+    field (only applies if the field has cardinality >1.
+
+ catalog:attributes -- The attributes to use for index or metadata
+    (string or comma separated list of strings). This are the methods
+    called at indexing time. Normally it is enough to provide one index
+    method, but for some specific use cases you might need to provide
+    alternatives. If you don not provide this tagged value, the name of
+    the accessor of the field is the default.
+
+ catalog:index -- Add the field (or all fields of a class, package,
+    model) to the index. Boolean, 1 or 0. Default is 0. If set, you may
+    need to provide 'index:*' tagged values too.
+
+ catalog:metadata -- Adds the field to the metadata record on the query
+    result. Boolean, 1 or 0. If you do not provide 'index:attributes',
+    the name of the accessor of the field is the default. If
+    'catalog:attributes' is given for each attribute one field at the
+    record will be created.
+
+ catalog:name -- Sometimes you need to add an index to a other catalog
+    than 'portal_catalog' and its XML-File 'catalog.xml'. Provide a
+    tuple of comma separated strings, id of the catalog and the filename
+    of its configuration file. default is "portal_catalog, Plone Catalog
+    Tool'.
 
  copy_from -- To copy an attribute from another schema, give it the type
     'copy'. The tagged value 'copy_from' is then used to specify which
@@ -94,20 +109,34 @@ attribute
  default_method -- Set the name of a method on the object which will be
     called to determine the default value of the field.
 
- documentation -- You can add documention via this tag; it's better to
-    use  your UML tool's documentation field.
-
  enforceVocabulary -- Set to true (1) to ensure that only items from the
     vocabulary are permitted.
 
- index -- Add an index to the attribute. The value of the tagged value
-    should be the same that archetypes expects, so something like
-    'FieldIndex' or 'FieldIndex:brains'.
+ index -- DEPRECATED: Add an index to the attribute. Use catalog:index
+    and the index:* tagged value instead.
+
+ index:extras -- Some indexes are using so called 'extras' on
+    installation as configuration. If the index need extras you'll need
+    to declare them here. Provide a comma separated list.
+
+ index:name -- the name of the index used (string). Use this name in
+    your queries. If you do not provide a name, the name of the accessor
+    of the field is the default.
+
+ index:properties -- Some indexes are using 'properties' on installation
+    as configuration. If the index need properties you'll need to
+    declare them here. Provide a comma separated list.
+
+ index:type -- the type of index used as (string), for example
+    'FieldIndex', 'KeywordIndex', 'DateIndex' or any available index in
+    your portal. For known types a default is guessed, such as
+    FieldIndex for StringFields or DateIndex for DateFields. If no guess
+    is possible, we assume a FieldIndex.
 
  label -- Sets the readable name.
 
  multiValued -- Certain fields, such as reference fields, can optionally
-    accept morethan one value if multiValued is set to true (1)
+    accept more than one value if multiValued is set to true (1)
 
  mutator -- Similarly, set the name of the mutator (setter) method.
 
@@ -138,7 +167,11 @@ attribute
  validation_expression -- Use an ExpressionValidator and sets the by
     value given expression.
 
- validators -- TODO.
+ validation_expression_errormsg -- Sets the error message to the
+    ExpressionValidator (use with validation_expression to define the
+    validation expression to which this error message applies).
+
+ validators -- TODO. Not supported for now.
 
  vocabulary -- Set to a python list, a DisplayList or a method name
     (quoted) which provides the vocabulary for a selection widget.
@@ -146,19 +179,17 @@ attribute
  vocabulary:name -- Togther with Products 'ATVocabularyManager' this
     sets the name of the vocabulary.
 
+ vocabulary:term_type -- For use with 'ATVocabularyManager'. Defaults to
+    'SimplevocabularyTerm'. Let you define the portal_type of the
+    vocabularyterm used for the default term that is created in
+    Install.py.
+
  vocabulary:type -- Enables support for Products 'ATVocabularyManager'
     by setting value to 'ATVocabularyManager'.
 
- vocabulary:vocabulary_type -- For use with 'ATVocabularyManager'.
-    Defaults to 'Simplevocabulary'. Let you define the portal_type of
-    the vocabulary used as initial vocabulary at Product install time.
-    If VdexVocabulary is used, the install-script tries to install a
-    vocabulary from a vdex file names
-    'Products/PRODUCTNAME/data/VOCABULARYNAME.vdex'.
-
  widget -- Allows you to set the widget to be used for this attribute.
 
- widget:description -- Set the widget's description
+ widget:description -- Set the widget's description.
 
  widget:description_msgid -- Set the description i18n message id.
     Defaults to a name generated from the field name.
@@ -166,7 +197,7 @@ attribute
  widget:i18n_domain -- Set the i18n domain. Defaults to the product
     name.
 
- widget:label -- Set the widget's label
+ widget:label -- Set the widget's label.
 
  widget:label_msgid -- Set the label i18n message id. Defaults to a name
     generated from the field name.
@@ -182,6 +213,10 @@ attribute
 
 class
 
+ active_workflow_states -- The active workflow states for a remember
+    type. MUST be set on <<remember>> types. Format is ['state',
+    'anotherstate'].
+
  additional_parents -- A comma-separated list of the names of classes
     which should be used as additional parents to this class, in
     addition to the Archetypes BaseContent, BaseFolder or
@@ -190,6 +225,9 @@ class
 
  allow_discussion -- Whether or not the content type should be
     discussable in the portal by default.
+
+ allowable_content_types -- A comma-separated list of allowed test
+    format for a textarea widget.
 
  allowed_content_types -- A comma-separated list of allowed sub-types
     for a (folderish) content type. Note that allowed content types are
@@ -202,36 +240,60 @@ class
     identifier, the archetype_name can be any string.
 
  author -- You can set the author project-wide with the '--author'
-    commandline parameter (or in the config file). This tag allows you
-    to overwrite it on a class level.
+    commandline parameter (or in the config file). This TGV allows you
+    to use/ overwrite it on a class level.
 
  base_actions -- Sets the base actions in the class's factory type
     information (FTI).
 
  base_class -- Explicitly set the base class of a content type,
     overriding the automatic selection of BaseContent, BaseFolder or
-    OrderedBaseFolder as well as any parent classes in the model. See
-    also additional_parents.
+    OrderedBaseFolder as well as any parent classes in the model. What
+    you specify here ends up as the first item (or items: comma-separate
+    them) in the classes it inherits from. So this is also a handy way
+    to place one class explicitly in front of the other. See also
+    additional_parents.
 
  base_schema -- Explicitly set the base schema for a content type,
     overriding the automatic selection of the parent's schema or
     BaseSchema, BaseFolderSchema or OrderedBaseFolderSchema.
 
- class_header -- An arbitrary string which is injected into the header
-    section of the class, before any methods are defined.
+ catalog:index -- Add the field (or all fields of a class, package,
+    model) to the index. Boolean, 1 or 0. Default is 0. If set, you may
+    need to provide 'index:*' tagged values too.
 
- cmf_target_version -- Controls CMF Version specific behaviour, primary
-    to avoid 'Deprecation warnings.' Defaults to '1.4'.
+ catalog:metadata -- Adds the field to the metadata record on the query
+    result. Boolean, 1 or 0. If you do not provide 'index:attributes',
+    the name of the accessor of the field is the default. If
+    'catalog:attributes' is given for each attribute one field at the
+    record will be created.
 
- contact_schema -- TODO. CMFMember related.
+ catalog:name -- Sometimes you need to add an index to a other catalog
+    than 'portal_catalog' and its XML-File 'catalog.xml'. Provide a
+    tuple of comma separated strings, id of the catalog and the filename
+    of its configuration file. default is "portal_catalog, Plone Catalog
+    Tool'.
+
+ catalogmultiplex:black -- Remove an archetypes class (identified by
+    meta_type) from one or more catalogs to be cataloged in. Comma-
+    separated list of catalogs. Example-value: 'portal_catalog,
+    another_catalog'. Explaination: Instances of the class wont be
+    catalogged in portal_catalog anymore.
+
+ catalogmultiplex:white -- Add an archetypes class (identified by
+    meta_type) to one or more catalogs to be cataloged in. Comma-
+    separated list of catalogs. Example-value: 'myfancy_catalog,
+    another_catalog'. Explaination: Additionally to the default
+    'portal_catalog' the instances of this class will be catalogged in
+    the two given catalogs.
 
  content_icon -- The name of an image file, which must be found in the
     skins directory of the product. This will be used to represent the
     content type in the user interface.
 
  copyright -- You can set the copyright project-wide with the '--
-    copyright' commandline parameter (or in the config file). This tag
-    allows you to overwrite it on a class level.
+    copyright' commandline parameter (or in the config file). This TGV
+    allows you to use/ overwrite it on a class level.
 
  creation_permission -- Sets the creation permission for the class.
     Example: 'Add portal content'.
@@ -240,15 +302,19 @@ class
     type. Use an Tuple of Strings. Default and example for this value:
     '("Manager", "Owner", "Member")'.
 
- default_actions -- If set to true (1), generate explicitly the default
-    'view' and 'edit' actions. Usually, these are inherited from the
-    Archetypes base classes, but if you have a funny base class, this
-    may be necessary.
+ default_interface_type -- default type of interfaces (z2 or z3).
 
  default_view -- The TemplateMixin class in Archetypes allows your class
     to present several alternative view templates for a content type.
     The default_view value sets the default one. Defaults to
     'base_view'. Only relevant if you use TemplateMixin.
+
+ description -- A description of the type, a sentence or two in length.
+    Used to describe the type to the user.
+
+ detailed_creation_permissions -- Give the content-type (types in the
+    package, model) own creation permissions, named automagically
+    'ProductName: Add ClassName'.
 
  disable_polymorphing -- Normally, archgenxml looks at the parents of
     the current class for content types that are allowed as items in a
@@ -257,6 +323,10 @@ class
     allowed on this class. Classic polymorphing. In case this isn't
     desired, set the tagged value 'disable_polymorphing' to 1.
 
+ display_in_navigation -- Setting this boolean value adds the type to
+    'Displayed content types' in the portals navigation settings.
+    Default is True
+
  doctest_name -- In a tests package, setting the stereotype
     '<<doc_testcase>>' on a class turns it into a doctest. The doctest
     itself is placed in the doc/ subdirectory. The 'doctest_name' tagged
@@ -264,12 +334,9 @@ class
     the doctestcase class + '.txt'). ArchGenXML appends the '.txt'
     extension automatically, so you don't need to specify it.
 
- documentation -- You can add documention via this tag; it's better to
-    use  your UML tool's documentation field.
-
  email -- You can set the email project-wide with the '--email'
-    commandline parameter (or in the config file). This tag allows you
-    to overwrite it on a class level.
+    commandline parameter (or in the config file). This TGV allows you
+    to use/ overwrite it on a class level.
 
  filter_content_types -- If set to true (1), explicitly turn on the
     filter_content_types factory type information value. If this is off,
@@ -282,25 +349,22 @@ class
  folder_base_class -- Useful when using the '<<folder>>' stereotype in
     order to set the folderish base class.
 
- folderish -- Explicitly specify that a class is folderish. It is
-    usually better to the the '<<folder>>' stereotype instead.
-
  generate_reference_fields -- Per default (True) navigable reference (or
     relation) ends are resulting in a ReferenceField (or RelationField).
     Setting this value to False results in not generating
     ReferenceFields automagically.
 
- global_allow -- Overwrite the AGX-calculated 'global_allow' setting.
-    Setting it to '1' makes your content type addable everywhere (in
-    principle), setting it to '0' limits it to places where it's
+ global_allow -- Overwrite the AGX-calculated 'global_allow' setting of
+    class. Setting it to '1' makes your content type addable everywhere
+    (in principle), setting it to '0' limits it to places where it's
     explicitly allowed as content.
 
  hide_actions -- A comma- or newline-separated list of action ids to
     hide on the class. For example, set to 'metadata, sharing' to turn
     off the metadata (properties) and sharing tabs.
 
- hide_folder_tabs -- Hides the folder tabs for this content type.
-    (Mostly the "Contents" tab).
+ hide_folder_tabs -- When you want to hide the folder tabs (mostly the
+    "contents" tab, just set this tagged value to 1.
 
  immediate_view -- Set the immediate_view factory type information
     value. This should be the name of a page template, and defaults to
@@ -326,6 +390,12 @@ class
     statements, one per line, or by adding several tagged values with
     the name 'imports'.
 
+ index:type -- the type of index used as (string), for example
+    'FieldIndex', 'KeywordIndex', 'DateIndex' or any available index in
+    your portal. For known types a default is guessed, such as
+    FieldIndex for StringFields or DateIndex for DateFields. If no guess
+    is possible, we assume a FieldIndex.
+
  inherit_allowed_types -- By default, a child type will inherit the
     allowable content types from its parents. Set this property to false
     (0) to turn this off.
@@ -333,57 +403,42 @@ class
  label -- Sets the readable name.
 
  license -- You can set the license project-wide with the '--license'
-    commandline parameter (or in the config file). This tag allows you
-    to overwrite it on a class level.
-
- login_info_schema -- TODO. CMFMember related.
-
- marshall -- Specify a marshaller to use for the class' schema.
+    commandline parameter (or in the config file). This TGV allows you
+    to use/ overwrite it on a class level.
 
  marshaller -- Specify a marshaller to use for the class' schema.
-
- migrate_dynamic_view_fti -- Migrates FTI of a type/class to
-    CMFDynamicViewFTI. This works only if the class derives from an
-    ATContentType, from ATCTMixIn or direct from
-    CMFDynamicViewFTI.browserdefault.BrowserDefaultMixin.
 
  module -- Like 'module_name', it overwrites the name of the directory
     it'd be normally placed in.
 
- module_name -- Like 'module', it overwrites the name of the directory
-    it'd be normally placed in.
+ parentclass_first -- if this tgv is set to true generalization parents
+    are used before the standard base classes (e.g. BaseContent) this
+    option is sometimes necessary when inheriting from some special
+    parents (e.g. CMFMember or ReMember style classes).
 
- plone_schema -- TODO. CMFMember related.
-
- policy -- TODO.
+ parentclasses_first -- if this tgv is set to true generalization
+    parents are used before the standard base classes (e.g. BaseContent)
+    this option is sometimes necessary when inheriting from some special
+    parents (e.g. CMFMember or ReMember style classes).
 
  portal_type -- Sets the CMF portal-type this class will be registered
     with, defaults to the class-name.
-
- quickinstall_dependencies -- In a tests package, setting the stereotype
-    '<<plone_testcase>>' on a class turns it into a base testcase. The
-    base testcase will install all listed products to the test portal
-    using CMFQuickInstallerTool. The list has the form:  '"ProductsA",
-    "ProductB".
-
- quickinstall_self -- In a tests package, setting the stereotype
-    '<<plone_testcase>>' on a class turns it into a base testcase. The
-    base testcase will install the current Product (where the testcase
-    resides in) using CMFQuickInstallerTool.
 
  read_permission -- Defines archetypes fields read-permission. Use it
     together with workflow to control ability to view fields based on
     roles/permissions.
 
- rename_after_creation -- Setting this boolean value enables or disables
-    explicit the after creation rename feature using
-    '_at_rename_after_creation' class-attribute.
+ register -- CMFMember related. Set as default member type.
 
  searchable -- Per default a fields 'searchable' property is set to
-    False. Sometimes you want it for all fields True. This tgv let you
+    False. Sometimes you want it for all fields True. This TGV let you
     define the default for a class, package or model.
 
- security_schema -- TODO. CMFMember related.
+ searchable_type -- Setting this boolean value adds the type to 'types
+    to be searched' in the portals search settings. Default is True
+
+ strict -- On a class with the <<interface_doctest>> stereotype: check
+    for inherited interfaces as well.
 
  suppl_views -- The TemplateMixin class in Archetypes allows your class
     to present several alternative view templates for a content type.
@@ -391,17 +446,31 @@ class
     '("my_view", "myother_view")'. Defaults to '()'. Only relevant if
     you use TemplateMixin.
 
- typeDescription -- A description of the type, a sentence or two in
-    length. Used to describe the type to the user in the base_edit
-    form.
+ typeDescription -- DEPRECATED. Use 'description' instead.
 
- use_portal_factory -- Setting this boolean value enables the
-    registration of the type for use with portal_factory.
+ use_dynamic_view -- Controles wether CMFDynamicViewFTI is used for a
+    type/class. Boolean, default is True.
+
+ use_portal_factory -- This boolean value controls the registration of
+    the type for use with portal_factory. Default: True.
 
  use_workflow -- Tie the class to the named workflow. A state diagram
     (=workflow) attached to a class in the UML diagram is automatically
     used as that class's workflow; this tagged value allows you to tie
-    the  workflow to other classes.
+    the workflow to other classes.
+
+ version_info -- Add ArchGenXML version information to the generated
+    file (default is 1).
+
+ vocabulary:type -- Enables support for Products 'ATVocabularyManager'
+    by setting value to 'ATVocabularyManager'.
+
+ vocabulary:vocabulary_type -- For use with 'ATVocabularyManager'.
+    Defaults to 'Simplevocabulary'. Let you define the portal_type of
+    the vocabulary used as initial vocabulary at Product install time.
+    If VdexVocabulary is used, the install-script tries to install a
+    vocabulary from a vdex file names
+    'Products/PRODUCTNAME/data/VOCABULARYNAME.vdex'.
 
  write_permission -- Defines archetypes fields write-permission. Use it
     together with workflow to control ability to write data to a field
@@ -410,30 +479,27 @@ class
 
 field
 
- description -- Sets an description for this field. It's used for field
+ description -- Sets a description for this field. It's used for field
     documentation while registering inside Archetypes.
-
- documentation -- You can add documention via this tag; it's better to
-    use  your UML tool's documentation field.
 
  label -- Sets the readable name.
 
  validation_expression -- Use an ExpressionValidator and sets the by
     value given expression.
 
+ validation_expression_errormsg -- Sets the error message to the
+    ExpressionValidator (use with validation_expression to define the
+    validation expression to which this error message applies).
+
 
 method
-
- autoinstall -- Set this to 'right' or 'left' on a method with a
-    stereotype'<<portlet>>', this adds the portlet to 'left_slots' or
-    'right_slots'. See the documentation for the stereotype.
 
  code -- The actual python code of the method. Only use this for simple
     one-liners. Code filled into the generated file will be preserved
     when the model is re-generated.
 
  documentation -- You can add documention via this tag; it's better to
-    use  your UML tool's documentation field.
+    use your UML tool's documentation field.
 
  label -- Sets the readable name.
 
@@ -456,15 +522,41 @@ model
     of the relation.
 
  author -- You can set the author project-wide with the '--author'
-    commandline parameter (or in the config file). This tag allows you
-    to overwrite it on a model level.
+    commandline parameter (or in the config file). This TGV allows you
+    to use/ overwrite it on a model level.
 
- cmf_target_version -- Controls CMF Version specific behaviour, primary
-    to avoid 'Deprecation warnings.' Defaults to '1.4'.
+ catalog:index -- Add the field (or all fields of a class, package,
+    model) to the index. Boolean, 1 or 0. Default is 0. If set, you may
+    need to provide 'index:*' tagged values too.
+
+ catalog:metadata -- Adds the field to the metadata record on the query
+    result. Boolean, 1 or 0. If you do not provide 'index:attributes',
+    the name of the accessor of the field is the default. If
+    'catalog:attributes' is given for each attribute one field at the
+    record will be created.
+
+ catalog:name -- Sometimes you need to add an index to a other catalog
+    than 'portal_catalog' and its XML-File 'catalog.xml'. Provide a
+    tuple of comma separated strings, id of the catalog and the filename
+    of its configuration file. default is "portal_catalog, Plone Catalog
+    Tool'.
+
+ catalogmultiplex:black -- Remove an archetypes class (identified by
+    meta_type) from one or more catalogs to be cataloged in. Comma-
+    separated list of catalogs. Example-value: 'portal_catalog,
+    another_catalog'. Explaination: Instances of the class wont be
+    catalogged in portal_catalog anymore.
+
+ catalogmultiplex:white -- Add an archetypes class (identified by
+    meta_type) to one or more catalogs to be cataloged in. Comma-
+    separated list of catalogs. Example-value: 'myfancy_catalog,
+    another_catalog'. Explaination: Additionally to the default
+    'portal_catalog' the instances of this class will be catalogged in
+    the two given catalogs.
 
  copyright -- You can set the copyright project-wide with the '--
-    copyright' commandline parameter (or in the config file). This tag
-    allows you to overwrite it on a model level.
+    copyright' commandline parameter (or in the config file). This TGV
+    allows you to use/ overwrite it on a model level.
 
  creation_permission -- Sets the creation permission for the class.
     Example: 'Add portal content'.
@@ -473,17 +565,32 @@ model
     type. Use an Tuple of Strings. Default and example for this value:
     '("Manager", "Owner", "Member")'.
 
- documentation -- You can add documention via this tag; it's better to
-    use  your UML tool's documentation field.
+ default_interface_type -- default type of interfaces (z2 or z3).
+
+ dependend_profiles -- GenericSetup profiles your product depends on. A
+    list of profile names separated by commas.
+
+ detailed_creation_permissions -- Give the content-type (types in the
+    package, model) own creation permissions, named automagically
+    'ProductName: Add ClassName'.
+
+ display_in_navigation -- Setting this boolean value adds the type to
+    'Displayed content types' in the portals navigation settings.
+    Default is True
 
  email -- You can set the email project-wide with the '--email'
-    commandline parameter (or in the config file). This tag allows you
-    to overwrite it on a model level.
+    commandline parameter (or in the config file). This TGV allows you
+    to use/ overwrite it on a model level.
 
  generate_reference_fields -- Per default (True) navigable reference (or
     relation) ends are resulting in a ReferenceField (or RelationField).
     Setting this value to False results in not generating
     ReferenceFields automagically.
+
+ global_allow -- Overwrite the AGX-calculated 'global_allow' setting of
+    class. Setting it to '1' makes your content type addable everywhere
+    (in principle), setting it to '0' limits it to places where it's
+    explicitly allowed as content.
 
  imports -- A list of python import statements which will be placed at
     the top of the generated file. Use this to make new field and widget
@@ -495,22 +602,23 @@ model
     statements, one per line, or by adding several tagged values with
     the name 'imports'.
 
+ index:type -- the type of index used as (string), for example
+    'FieldIndex', 'KeywordIndex', 'DateIndex' or any available index in
+    your portal. For known types a default is guessed, such as
+    FieldIndex for StringFields or DateIndex for DateFields. If no guess
+    is possible, we assume a FieldIndex.
+
  label -- Sets the readable name.
 
  license -- You can set the license project-wide with the '--license'
-    commandline parameter (or in the config file). This tag allows you
-    to overwrite it on a model level.
-
- migrate_dynamic_view_fti -- Migrates FTI of a type/class to
-    CMFDynamicViewFTI. This works only if the class derives from an
-    ATContentType, from ATCTMixIn or direct from
-    CMFDynamicViewFTI.browserdefault.BrowserDefaultMixin.
+    commandline parameter (or in the config file). This TGV allows you
+    to use/ overwrite it on a model level.
 
  module -- Like 'module_name', it overwrites the name of the directory
     it'd be normally placed in.
 
- module_name -- Like 'module', it overwrites the name of the directory
-    it'd be normally placed in.
+ plone_target_version -- The target version of Plone. Defaults to 3.0
+    Possible values are 2.5 and 3.0
 
  read_permission -- Defines archetypes fields read-permission. Use it
     together with workflow to control ability to view fields based on
@@ -521,21 +629,41 @@ model
     archetypes references or 'relations' for use of the 'Relations'
     Product.
 
- rename_after_creation -- Setting this boolean value enables or disables
-    explicit the after creation rename feature using
-    '_at_rename_after_creation' class-attribute.
-
  searchable -- Per default a fields 'searchable' property is set to
-    False. Sometimes you want it for all fields True. This tgv let you
+    False. Sometimes you want it for all fields True. This TGV let you
     define the default for a class, package or model.
 
- use_portal_factory -- Setting this boolean value enables the
-    registration of the type for use with portal_factory.
+ searchable_type -- Setting this boolean value adds the type to 'types
+    to be searched' in the portals search settings. Default is True
+
+ skin_directories -- A comma seperated list of subdirectories to be
+    generated inside the products skins directory. each of this
+    directories is prefixed with productname in lowercase. the default
+    value is the productname as is without a prefix.
+
+ use_dynamic_view -- Controles wether CMFDynamicViewFTI is used for a
+    type/class. Boolean, default is True.
+
+ use_portal_factory -- This boolean value controls the registration of
+    the type for use with portal_factory. Default: True.
 
  use_workflow -- Tie the class to the named workflow. A state diagram
     (=workflow) attached to a class in the UML diagram is automatically
     used as that class's workflow; this tagged value allows you to tie
-    the  workflow to other classes.
+    the workflow to other classes.
+
+ version_info -- Add ArchGenXML version information to the generated
+    file (default is 1).
+
+ vocabulary:type -- Enables support for Products 'ATVocabularyManager'
+    by setting value to 'ATVocabularyManager'.
+
+ vocabulary:vocabulary_type -- For use with 'ATVocabularyManager'.
+    Defaults to 'Simplevocabulary'. Let you define the portal_type of
+    the vocabulary used as initial vocabulary at Product install time.
+    If VdexVocabulary is used, the install-script tries to install a
+    vocabulary from a vdex file names
+    'Products/PRODUCTNAME/data/VOCABULARYNAME.vdex'.
 
  write_permission -- Defines archetypes fields write-permission. Use it
     together with workflow to control ability to write data to a field
@@ -553,15 +681,41 @@ package
     of the relation.
 
  author -- You can set the author project-wide with the '--author'
-    commandline parameter (or in the config file). This tag allows you
-    to overwrite it on a package level.
+    commandline parameter (or in the config file). This TGV allows you
+    to use/ overwrite it on a package level.
 
- cmf_target_version -- Controls CMF Version specific behaviour, primary
-    to avoid 'Deprecation warnings.' Defaults to '1.4'.
+ catalog:index -- Add the field (or all fields of a class, package,
+    model) to the index. Boolean, 1 or 0. Default is 0. If set, you may
+    need to provide 'index:*' tagged values too.
+
+ catalog:metadata -- Adds the field to the metadata record on the query
+    result. Boolean, 1 or 0. If you do not provide 'index:attributes',
+    the name of the accessor of the field is the default. If
+    'catalog:attributes' is given for each attribute one field at the
+    record will be created.
+
+ catalog:name -- Sometimes you need to add an index to a other catalog
+    than 'portal_catalog' and its XML-File 'catalog.xml'. Provide a
+    tuple of comma separated strings, id of the catalog and the filename
+    of its configuration file. default is "portal_catalog, Plone Catalog
+    Tool'.
+
+ catalogmultiplex:black -- Remove an archetypes class (identified by
+    meta_type) from one or more catalogs to be cataloged in. Comma-
+    separated list of catalogs. Example-value: 'portal_catalog,
+    another_catalog'. Explaination: Instances of the class wont be
+    catalogged in portal_catalog anymore.
+
+ catalogmultiplex:white -- Add an archetypes class (identified by
+    meta_type) to one or more catalogs to be cataloged in. Comma-
+    separated list of catalogs. Example-value: 'myfancy_catalog,
+    another_catalog'. Explaination: Additionally to the default
+    'portal_catalog' the instances of this class will be catalogged in
+    the two given catalogs.
 
  copyright -- You can set the copyright project-wide with the '--
-    copyright' commandline parameter (or in the config file). This tag
-    allows you to overwrite it on a package level.
+    copyright' commandline parameter (or in the config file). This TGV
+    allows you to use/ overwrite it on a package level.
 
  creation_permission -- Sets the creation permission for the class.
     Example: 'Add portal content'.
@@ -570,17 +724,27 @@ package
     type. Use an Tuple of Strings. Default and example for this value:
     '("Manager", "Owner", "Member")'.
 
- documentation -- You can add documention via this tag; it's better to
-    use  your UML tool's documentation field.
+ detailed_creation_permissions -- Give the content-type (types in the
+    package, model) own creation permissions, named automagically
+    'ProductName: Add ClassName'.
+
+ display_in_navigation -- Setting this boolean value adds the type to
+    'Displayed content types' in the portals navigation settings.
+    Default is True
 
  email -- You can set the email project-wide with the '--email'
-    commandline parameter (or in the config file). This tag allows you
-    to overwrite it on a package level.
+    commandline parameter (or in the config file). This TGV allows you
+    to use/ overwrite it on a package level.
 
  generate_reference_fields -- Per default (True) navigable reference (or
     relation) ends are resulting in a ReferenceField (or RelationField).
     Setting this value to False results in not generating
     ReferenceFields automagically.
+
+ global_allow -- Overwrite the AGX-calculated 'global_allow' setting of
+    class. Setting it to '1' makes your content type addable everywhere
+    (in principle), setting it to '0' limits it to places where it's
+    explicitly allowed as content.
 
  imports -- A list of python import statements which will be placed at
     the top of the generated file. Use this to make new field and widget
@@ -592,21 +756,19 @@ package
     statements, one per line, or by adding several tagged values with
     the name 'imports'.
 
+ index:type -- the type of index used as (string), for example
+    'FieldIndex', 'KeywordIndex', 'DateIndex' or any available index in
+    your portal. For known types a default is guessed, such as
+    FieldIndex for StringFields or DateIndex for DateFields. If no guess
+    is possible, we assume a FieldIndex.
+
  label -- Sets the readable name.
 
  license -- You can set the license project-wide with the '--license'
-    commandline parameter (or in the config file). This tag allows you
-    to overwrite it on a package level.
-
- migrate_dynamic_view_fti -- Migrates FTI of a type/class to
-    CMFDynamicViewFTI. This works only if the class derives from an
-    ATContentType, from ATCTMixIn or direct from
-    CMFDynamicViewFTI.browserdefault.BrowserDefaultMixin.
+    commandline parameter (or in the config file). This TGV allows you
+    to use/ overwrite it on a package level.
 
  module -- Like 'module_name', it overwrites the name of the directory
-    it'd be normally placed in.
-
- module_name -- Like 'module', it overwrites the name of the directory
     it'd be normally placed in.
 
  read_permission -- Defines archetypes fields read-permission. Use it
@@ -618,93 +780,63 @@ package
     archetypes references or 'relations' for use of the 'Relations'
     Product.
 
- rename_after_creation -- Setting this boolean value enables or disables
-    explicit the after creation rename feature using
-    '_at_rename_after_creation' class-attribute.
-
  searchable -- Per default a fields 'searchable' property is set to
-    False. Sometimes you want it for all fields True. This tgv let you
+    False. Sometimes you want it for all fields True. This TGV let you
     define the default for a class, package or model.
 
- use_portal_factory -- Setting this boolean value enables the
-    registration of the type for use with portal_factory.
+ searchable_type -- Setting this boolean value adds the type to 'types
+    to be searched' in the portals search settings. Default is True
+
+ use_dynamic_view -- Controles wether CMFDynamicViewFTI is used for a
+    type/class. Boolean, default is True.
+
+ use_portal_factory -- This boolean value controls the registration of
+    the type for use with portal_factory. Default: True.
 
  use_workflow -- Tie the class to the named workflow. A state diagram
     (=workflow) attached to a class in the UML diagram is automatically
     used as that class's workflow; this tagged value allows you to tie
-    the  workflow to other classes.
+    the workflow to other classes.
+
+ version_info -- Add ArchGenXML version information to the generated
+    file (default is 1).
+
+ vocabulary:type -- Enables support for Products 'ATVocabularyManager'
+    by setting value to 'ATVocabularyManager'.
+
+ vocabulary:vocabulary_type -- For use with 'ATVocabularyManager'.
+    Defaults to 'Simplevocabulary'. Let you define the portal_type of
+    the vocabulary used as initial vocabulary at Product install time.
+    If VdexVocabulary is used, the install-script tries to install a
+    vocabulary from a vdex file names
+    'Products/PRODUCTNAME/data/VOCABULARYNAME.vdex'.
 
  write_permission -- Defines archetypes fields write-permission. Use it
     together with workflow to control ability to write data to a field
     based on roles/permissions.
 
 
-portlet
-
- author -- You can set the author project-wide with the '--author'
-    commandline parameter (or in the config file). This tag allows you
-    to overwrite it on a portlet level.
-
- autoinstall -- Set to 'left' or 'right' to automatically install the
-    portlet (a class with the stereotype '<<portlet>>') with the product
-    in the left or right slots, respectively. If it already exists in
-    the slot it won't get overwritten.
-
- copyright -- You can set the copyright project-wide with the '--
-    copyright' commandline parameter (or in the config file). This tag
-    allows you to overwrite it on a portlet level.
-
- creation_permission -- Sets the creation permission for the class.
-    Example: 'Add portal content'.
-
- creation_roles -- You can set an own role who should be able to add a
-    type. Use an Tuple of Strings. Default and example for this value:
-    '("Manager", "Owner", "Member")'.
-
- documentation -- You can add documention via this tag; it's better to
-    use  your UML tool's documentation field.
-
- email -- You can set the email project-wide with the '--email'
-    commandline parameter (or in the config file). This tag allows you
-    to overwrite it on a portlet level.
-
- imports -- A list of python import statements which will be placed at
-    the top of the generated file. Use this to make new field and widget
-    types available, for example. Note that in the generated code you
-    will be able to enter additional import statements in a preserved
-    code section near the top of the file. Prefer using the imports
-    tagged value when it imports something that is directly used by
-    another element in your model. You can have several import
-    statements, one per line, or by adding several tagged values with
-    the name 'imports'.
-
- label -- Sets the readable name.
-
- license -- You can set the license project-wide with the '--license'
-    commandline parameter (or in the config file). This tag allows you
-    to overwrite it on a portlet level.
-
- module -- Like 'module_name', it overwrites the name of the directory
-    it'd be normally placed in.
-
- module_name -- Like 'module', it overwrites the name of the directory
-    it'd be normally placed in.
-
- view -- Set the name of the portlet. Defaults to the method name. This
-    will be used as the name of the auto-created page template for the
-    portlet.
-
-
 state
 
- documentation -- You can add documention via this tag; it's better to
-    use  your UML tool's documentation field.
+ access -- Shortcut for 'Access contents information'.
+
+ add -- Shortcut for 'Add portal content'.
+
+ delete -- Shortcut for 'Delete objects'.
+
+ description -- Sets the state description.
 
  initial_state -- Sets this state to be the initial state. This allows
     you to use a normal state in your UML diagram instead of the special
     round starting-state symbol.
 
  label -- Sets the readable name.
+
+ list -- Shortcut for 'List folder contents'.
+
+ modify -- Shortcut for 'Modify portal content'.
+
+ view -- Shortcut for 'View'.
 
  worklist -- Attach objects in this state to the named worklist. An
     example of a worklist is the to-review list.
@@ -718,24 +850,23 @@ state
 
 state transition
 
- documentation -- You can add documention via this tag; it's better to
-    use  your UML tool's documentation field.
-
  label -- Sets the readable name.
 
  trigger_type -- Sets the trigger type, following what is defined by
     DCWorkflow:  0 : Automatic 1 : User Action (default) 2 : Workflow
     Method
 
+ url -- Action URL, need 'PloneWorkflowTransitions' to see it in Plone.
+
 
 tool
 
  author -- You can set the author project-wide with the '--author'
-    commandline parameter (or in the config file). This tag allows you
-    to overwrite it on a tool level.
+    commandline parameter (or in the config file). This TGV allows you
+    to use/ overwrite it on a tool level.
 
- autoinstall -- Set to true (1) to automatically install the tool when
-    your product is installed.
+ autoinstall -- Controls, wether the tool is automatically installed
+    when your product is installed. Boolean, default is True.
 
  configlet -- Set to true (1) to set up a configlet in the Plone control
     panel for your tool.
@@ -754,7 +885,8 @@ tool
 
  configlet:section -- The section of the control panel where the
     configlet should be displayed. One of 'Plone', 'Products' (default)
-    or 'Members'.
+    or 'Member'. **warning**: older documentation versions mentioned
+    'Members' here.
 
  configlet:title -- The name of the configlet.
 
@@ -763,8 +895,8 @@ tool
     (which is usually base_view)
 
  copyright -- You can set the copyright project-wide with the '--
-    copyright' commandline parameter (or in the config file). This tag
-    allows you to overwrite it on a tool level.
+    copyright' commandline parameter (or in the config file). This TGV
+    allows you to use/ overwrite it on a tool level.
 
  creation_permission -- Sets the creation permission for the class.
     Example: 'Add portal content'.
@@ -773,12 +905,9 @@ tool
     type. Use an Tuple of Strings. Default and example for this value:
     '("Manager", "Owner", "Member")'.
 
- documentation -- You can add documention via this tag; it's better to
-    use  your UML tool's documentation field.
-
  email -- You can set the email project-wide with the '--email'
-    commandline parameter (or in the config file). This tag allows you
-    to overwrite it on a tool level.
+    commandline parameter (or in the config file). This TGV allows you
+    to use/ overwrite it on a tool level.
 
  imports -- A list of python import statements which will be placed at
     the top of the generated file. Use this to make new field and widget
@@ -793,13 +922,10 @@ tool
  label -- Sets the readable name.
 
  license -- You can set the license project-wide with the '--license'
-    commandline parameter (or in the config file). This tag allows you
-    to overwrite it on a tool level.
+    commandline parameter (or in the config file). This TGV allows you
+    to use/ overwrite it on a tool level.
 
  module -- Like 'module_name', it overwrites the name of the directory
-    it'd be normally placed in.
-
- module_name -- Like 'module', it overwrites the name of the directory
     it'd be normally placed in.
 
  tool_instance_name -- The id to use for the tool. Defaults to
@@ -808,5 +934,141 @@ tool
  toolicon -- The name of an image file, which must be found in the skins
     directory of the product. This will be used to represent your tool
     in the Zope Management Interface.
+
+
+unknown
+
+ Modify --
+
+ access --
+
+ allow_empty_rows --
+
+ columns --
+
+ default:widget:Reference --
+
+ default_content_type --
+
+ default_output_type --
+
+ default_page_type --
+
+ i18ncontent --
+
+ index_method --
+
+ languageIndependent --
+
+ rename_after_creation --
+
+ storage --
+
+ widget:addable --
+
+ widget:allow_brightness --
+
+ widget:allow_browse --
+
+ widget:allow_file_upload --
+
+ widget:allow_search --
+
+ widget:allow_sorting --
+
+ widget:append_only --
+
+ widget:auto_insert --
+
+ widget:available_indexes --
+
+ widget:base_query --
+
+ widget:checkbox_bound --
+
+ widget:cols --
+
+ widget:columns --
+
+ widget:default_search_index --
+
+ widget:destination --
+
+ widget:destination_types --
+
+ widget:divider --
+
+ widget:dollars_and_cents --
+
+ widget:ending_year --
+
+ widget:force_close_on_insert --
+
+ widget:format --
+
+ widget:future_years --
+
+ widget:history_length --
+
+ widget:image_method --
+
+ widget:image_portal_types --
+
+ widget:maxlength --
+
+ widget:nullValueTitle --
+
+ widget:omitCountries --
+
+ widget:only_for_review_states --
+
+ widget:provideNullValue --
+
+ widget:restrict_browsing_to_startup_directory --
+
+ widget:rows --
+
+ widget:search_catalog --
+
+ widget:show_hm --
+
+ widget:show_indexes --
+
+ widget:show_path --
+
+ widget:show_review_state --
+
+ widget:show_ymd --
+
+ widget:size --
+
+ widget:starting_year --
+
+ widget:startup_directory --
+
+ widget:thousands_commas --
+
+ widget:visible --
+
+ widget:whole_dollars --
+
+
+widget
+
+ description -- Sets a description for this widget. It's used for widget
+    documentation while registering inside Archetypes.
+
+ label -- Sets the readable name.
+
+ macro -- Sets the macro used by the widget. This will be used as the
+    name of the auto-created page template for the widget.
+
+ title -- Sets the widget title. It's used for widget documentation
+    while registering inside Archetypes.
+
+ used_for -- Sets the possible fields which can use this widget. It's
+    used for widget documentation while registering inside Archetypes.
+    The list has the form: '"Products.Archetypes.Field.Field1Name",
+    "Products.Archetypes.Field.FieldName2"'.
 
 
