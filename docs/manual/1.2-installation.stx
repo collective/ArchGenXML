@@ -41,7 +41,7 @@ Download & Installation
    choice with latest Plone Versions - from the 
    "Subversion repository":https://svn.plone.org/svn/archetypes/ArchGenXML/trunk/.
  
-   * untar 'tar xzf ArchGenXML-xx.yy.tgz' to a directory of your choice.
+   * untar 'tar xzf ArchGenXML-2.xy.tgz' to a directory of your choice.
    
    * change into the directory 'cd ArchGenXML'
    
@@ -69,7 +69,14 @@ Download & Installation
      
  after installation configuration
 
-  XXX TODO: the .archgenxml file
+  You need to tell ArchGenXML where to find Zope 3.3 or Zope 2.10 (which includes 
+  Zope 3.3.). You can include the path to your Zope into the 'PYTHONPATH'. This has
+  one major disadvantage: A Zope instance running on your system might get confused 
+  by it, which might result in fancy behaviour of Zope. 
+
+  A better solution is to provide a file '.agx_zope_path' in your users HOME-directory.
+  Put one single line with the full '/PATH/TO/zope2.10/lib/python' in here. ArchGenXML
+  will add it to its internal python library search pyth and will find the zope modules.
 
 Additional software
 
