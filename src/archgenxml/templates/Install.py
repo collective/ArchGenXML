@@ -19,7 +19,7 @@ def install(self, reinstall=False):
     setuptool.runAllImportSteps()
 </dtml-if>
 <dtml-if "target_version=='3.0'">
-    profileid = '%s:default' % PROJECTNAME
+    profileid = 'Products.%s:default' % PROJECTNAME
     setuptool.runAllImportStepsFromProfile(profileid)
 </dtml-if>
 
