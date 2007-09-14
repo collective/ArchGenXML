@@ -26,6 +26,8 @@ ArchGenXML is hosted at "svn.plone.org":http://svn.plone.org/archetypes/ArchGenX
 as a subproject of the Archetypes project. It is released under GNU General 
 Public Licence 2 or later.
 
+"Eyecatcher: UML Model, small image as an example, from a real life project of BlueDynamics":img:uml-model-small.png
+
 Why should I use ArchGenXML?
 
  Major reasons:
@@ -65,6 +67,8 @@ Contributors
   Fabiano Weimar dos Santos (Ideas, Testing, Bugfixing, Workflow) -- "Weimar Desenvolvimento e Consultoria em Informatica Ltda.":http://www.xiru.org/, "xiru@xiru.org":mailto:xiru@xiru.org,
 
   Martin Aspeli (Improvements, bug fixes and documentation) -- "Martin Aspeli":mailto:optilude@gmx.net
+
+  Robert Niederreiter (Lots of base work on AGX 2.0) -- "Robert Niederreiter":mailto:rnix@squarewave.at
 
   and others -- thanks to everybody who contributed with testing, doc-writing or code-pieces!
 

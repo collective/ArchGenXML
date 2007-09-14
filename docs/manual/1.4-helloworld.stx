@@ -27,7 +27,7 @@ Generating the product
   |-- Extensions
   |   |-- Install.py
   |   `-- __init__.py
-  |-- HelloType.py
+  |-- hellotype.py
   |-- __init__.py
   |-- config.py
   |-- configure.zcml
