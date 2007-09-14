@@ -1,24 +1,28 @@
 <?xml version="1.0"?>
-<object name="portal_catalog" meta_type="Plone Catalog Tool">
-<dtml-in "defs['indexes']">
- <index name="<dtml-var "_['sequence-item']['name']">" meta_type="<dtml-var "_['sequence-item']['meta_type']">">
+<!-- ##code-section HEAD -->
+<!-- ##/code-section HEAD -->
+<dtml-in "defs.keys()">
+<dtml-let catalogid="_['sequence-item']">
+<dtml-let catalog="defs[catalogid]">
+<object name="<dtml-var "catalogid">" meta_type="<dtml-var "catalog['metatype']">">
+<dtml-in "catalog['indexes']">
+  <index name="<dtml-var "_['sequence-item']['name']">" meta_type="<dtml-var "_['sequence-item']['meta_type']">">
 <dtml-in "_['sequence-item']['indexed_attributes']">
-  <indexed_attr value="<dtml-var "_['sequence-item']">"/>
+    <indexed_attr value="<dtml-var "_['sequence-item']">"/>
 </dtml-in>
 <dtml-in "_['sequence-item']['extras']">
-  <extra name="<dtml-var "_['sequence-item']['name']">" value="<dtml-var "_['sequence-item']['value']">"/>
+    <extra name="<dtml-var "_['sequence-item']['name']">" value="<dtml-var "_['sequence-item']['value']">"/>
 </dtml-in>
 <dtml-in "_['sequence-item']['properties']">
-  <property name="<dtml-var "_['sequence-item']['name']">"><dtml-var "_['sequence-item']['value']"></property>
+    <property name="<dtml-var "_['sequence-item']['name']">"><dtml-var "_['sequence-item']['value']"></property>
 </dtml-in>
- </index>
 </dtml-in>
-<!-- ##code-section INDEXES -->
-<!-- ##/code-section INDEXES -->
-
-<dtml-in "defs['columns']">
- <column value="<dtml-var "_['sequence-item']">"/>
+<dtml-in "catalog['columns']">
+  <column value="<dtml-var "_['sequence-item']['value']">"/>
 </dtml-in>
-<!-- ##code-section COLUMNS -->
-<!-- ##/code-section COLUMNS -->
 </object>
+</dtml-let>
+</dtml-let>
+</dtml-in>
+<!-- ##code-section FOOT -->
+<!-- ##/code-section FOOT -->

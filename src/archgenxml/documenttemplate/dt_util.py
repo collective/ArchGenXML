@@ -16,6 +16,8 @@
 $Id$
 """
 import re
+import logging
+log = logging.getLogger('dtml')
 from pdocumenttemplate import \
      InstanceDict, TemplateDict, render_blocks
 
@@ -75,8 +77,13 @@ class Eval:
                     # might not actually need the name.  If it
                     # does need the name, a NameError will occur.
                     pass
-
-        return eval(code, {'__builtins__': None}, d)
+        try:
+            ret =  eval(code, {'__builtins__': None}, d)
+        except:
+            msg = "Problem to evaluate expression: \n%s" % self.expr
+            log.error(msg)
+            raise
+        return ret
 
 
     def __call__(self, **kw):

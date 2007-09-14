@@ -16,9 +16,12 @@ BEGINPATTERN = '##code-section %s'
 ENDPATTERN = '##/code-section %s'
 
 import os
+import logging
 from StringIO import StringIO
 from pkg_resources import resource_string, resource_stream
 from archgenxml.documenttemplate import HTML
+log = logging.getLogger('CodeSectionHandler')
+
 
 def handleSectionedFile(templatepath, outputpath,
                         sectionnames=[], templateparams=None):
@@ -33,9 +36,16 @@ def handleSectionedFile(templatepath, outputpath,
     templatepath = ['templates'] + templatepath
     if templateparams:
         template = resource_string(__name__, os.path.join(*templatepath))
+        origparams = templateparams.copy()
         templateparams.update(__builtins__)
         template = HTML(template, templateparams)
-        template = template()
+        try:
+            template = template()
+        except:
+            msg = "Problem rendering %s\n" % os.path.join(*templatepath)
+            msg+= "params = %s" % origparams
+            log.error(msg)
+            raise
         templatebuffer = StringIO(template).readlines()
     else:
         templatestream = resource_stream(__name__, os.path.join(*templatepath))

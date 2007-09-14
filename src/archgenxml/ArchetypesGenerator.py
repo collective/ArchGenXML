@@ -372,7 +372,6 @@ class ArchetypesGenerator(BaseGenerator):
                 dict['name'] = m.getTaggedValue('label',method_name)
                 dict['permissions'] = m.getTaggedValue('permission', ['View'])
                 dict['visible'] = m.getTaggedValue('visible', 'True')
-
                 condition=m.getTaggedValue('condition') or '1'
                 dict['condition']='python:%s' % condition
 
@@ -2653,21 +2652,22 @@ class ArchetypesGenerator(BaseGenerator):
     def generateGSCatalogXML(self, package):
         """Generate the catalog.xml file
         """
-        defs = dict()
-        defs['indexes'] = list()
-        defs['columns'] = list()
-        self._getIndexDefinitions(defs, package)
-        
+        alldefs = dict()
+        self._getIndexDefinitions(alldefs, package)
+        if not alldefs:
+            return
         ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
         handleSectionedFile(['profiles', 'catalog.xml'],
                             os.path.join(ppath, 'catalog.xml'),
-                            sectionnames=['INDEXES', 'COLUMNS'],
-                            templateparams={ 'defs': defs })
+                            sectionnames=['HEAD', 'FOOT'],
+                            templateparams={ 
+                                'defs': alldefs }
+                            )
         
     
     def _getIndexDefinitions(self, defs, package):
         """return the index definitions for catalog.xml
-        """
+        """        
         klasses = package.getClasses()
         if not klasses:
             for package in package.getPackages():
@@ -2679,30 +2679,112 @@ class ArchetypesGenerator(BaseGenerator):
             
             for attribute in klass.getAttributeDefs():
                 index = self.getOption('index', attribute, None)
-                if not index:
+                if index:
+                    log.warn('Deprecated index usage!')
+                    if '/' in index:
+                        catalogname, index = index.split('/')
+                    else:
+                        catalogname = 'portal_catalog'
+                    if ':' in index:
+                        index, metadata = index.split(':') 
+                    else:
+                        metadata = None               
+                    if not catalogname in defs.keys():
+                        defs[catalogname] = dict()
+                        defs[catalogname]['metatype'] = 'Plone Catalog Tool'
+                        defs[catalogname]['indexes'] = list()
+                        defs[catalogname]['columns'] = list()
+                    
+                    accessor = attribute.getTaggedValue('index_method', None)
+                    if not accessor:
+                        accessor = attribute.getTaggedValue('accessor', None)
+                    if not accessor:
+                        accessor = attribute.getCleanName()
+                        accessor = 'get%s' % accessor.capitalize()
+                    indexdef = dict()
+                    indexdef['name'] = accessor
+                    indexdef['meta_type'] = index
+                    indexdef['indexed_attributes'] = [accessor]
+                    indexdef['extras'] = []
+                    indexdef['properties'] = []
+                    
+                    if not catalogname in defs.keys():
+                        defs[catalogname] = dict()                        
+                    defs[catalogname]['indexes'].append(indexdef)
+                    
+                    if metadata:
+                        columndef = {
+                            'value': accessor,
+                        }
+                        defs[catalogid]['columns'].append(columndef) 
+                    
+                    #defs['colums'].append(columndef)
                     continue
                 
-                accessor = attribute.getTaggedValue('index_method', None)
-                if not accessor:
-                    accessor = attribute.getTaggedValue('accessor', None)
+                # new sytle AGX2x index declaration
+                metadata = self.getOption('catalog:metadata', attribute, '0')
+                metadata = utils.isTGVTrue(metadata)
+                index = self.getOption('catalog:index', attribute, '0')
+                index = utils.isTGVTrue(index)
+                if not (index or metadata):
+                    continue
+                catalogname = self.getOption('catalog:name', attribute, 
+                                             'portal_catalog, Plone Catalog Tool')
+                catalogid, catalogmetatype = [a.strip() 
+                                              for a in catalogname.split(',')]
+                
+                # find accessor
+                accessor = attribute.getTaggedValue('accessor', '')
                 if not accessor:
                     accessor = attribute.getCleanName()
                     accessor = 'get%s' % accessor.capitalize()
-                
-                # TODO ois megliche
-                
-                indexdef = dict()
-                indexdef['name'] = accessor
-                indexdef['meta_type'] = index
-                indexdef['indexed_attributes'] = [accessor]
-                indexdef['extras'] = []
-                indexdef['properties'] = []
-                
-                defs['indexes'].append(indexdef)
-                
-                #todo metadata
-                #defs['colums'].append(columndef)
-                
+                    
+                # find attributes            
+                attributes = attribute.getTaggedValue('catalog:attributes', [])
+                if type(attributes) in types.StringTypes:
+                    if ',' in attributes:
+                        attributes = [a.strip() for a in attributes.split(',')]
+                    else:
+                        attributes = [attributes.strip()]                
+                if len(attributes) < 1:
+                    attributes = [accessor.strip()]
+
+                if not catalogname in defs.keys():
+                    defs[catalogid] = dict()
+                    defs[catalogid]['metatype'] = catalogmetatype
+                    defs[catalogid]['indexes'] = list()
+                    defs[catalogid]['columns'] = list()
+                                                    
+                if index:                    
+                    indexdef = dict()
+                    indexdef['name'] = attribute.getTaggedValue('index:name', 
+                                                                accessor)
+                    indexdef['meta_type'] = self.getOption('index:type', 
+                                                           attribute, None)
+                    ctypedef = atmaps.TYPE_MAP.get(attribute.type.lower(), None)
+                    if not indexdef['meta_type'] and ctypedef and ctypedef['index']:
+                        indexdef['meta_type'] = ctypedef['index']
+                    else:
+                        indexdef['meta_type'] = 'FieldIndex'                        
+
+                    indexdef['indexed_attributes'] = attributes
+                    extras = attribute.getTaggedValue('index:extras', [])
+                    if ',' in extras:
+                        extras = [e.strip() for e in extras.split(',')]
+                    indexdef['extras'] = extras
+                    props = attribute.getTaggedValue('index:properties', [])
+                    if ',' in props:
+                        props = [p.strip() for p in props.split(',')]                    
+                    indexdef['properties'] = props
+
+                    defs[catalogid]['indexes'].append(indexdef)
+                    
+                if metadata:                    
+                    for attr in attributes:
+                        columndef = {
+                            'value': attr,
+                        }
+                        defs[catalogid]['columns'].append(columndef)                    
                 
     
     def generateGSFactoryTooXMLFile(self, package):

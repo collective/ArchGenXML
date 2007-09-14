@@ -67,6 +67,7 @@ DEFAULT_ACTIONS_3_0 = [
         'condition': '',
         'action': 'string:${object_url}/view',
         'permissions': ['View'],
+        'visible': 'True',
     },
     {
         'name': 'Edit',
@@ -75,6 +76,7 @@ DEFAULT_ACTIONS_3_0 = [
         'condition': 'not:object/@@plone_lock_info/is_locked_for_current_user',
         'action': 'string:${object_url}/edit',
         'permissions': ['Modify portal content'],
+        'visible': 'True',
     },
     {
         'name': 'Properties',
@@ -83,6 +85,7 @@ DEFAULT_ACTIONS_3_0 = [
         'condition': '',
         'action': 'string:${object_url}/properties',
         'permissions': ['Modify portal content'],
+        'visible': 'True',
     },
 ]
 
@@ -97,10 +100,29 @@ TYPE_MAP = {
     'string': {
         'field': u'StringField',
         'map': {},
+        'index': 'FieldIndex',
+    },
+    'selection': {
+        'field': u'StringField',
+        'map': {},
+        'index': 'FieldIndex',
+    },
+    'lines': {
+        'field': u'LinesField',
+        'map': {},
+        'index': 'KeywordIndex',
+    },
+    'multiselection': {
+        'field': u'LinesField',
+        'map': {
+            u'multiValued': u'1',
+        },
+        'index': 'KeywordIndex',
     },
     'text':  {
         'field': u'TextField',
         'map': {},
+        'index': 'ZCTextIndex',
     },
     'richtext': {
         'field': u'TextField',
@@ -108,89 +130,92 @@ TYPE_MAP = {
             u'default_output_type': u"'text/html'",
             u'allowable_content_types': u"('text/plain', 'text/structured'," + \
                                         " 'text/html', 'application/msword',)",
-        },
-    },
-    'selection': {
-        'field': u'StringField',
-        'map': {},
-    },
-    'multiselection': {
-        'field': u'LinesField',
-        'map': {
-            u'multiValued': u'1',
+        'index': 'ZCTextIndex',
         },
     },
     'integer': {
         'field': u'IntegerField',
         'map': {},
+        'index': 'FieldIndex',
     },
     'float': {
         'field': u'FloatField',
         'map': {},
+        'index': 'FieldIndex',
     },
     'fixedpoint': {
         'field': u'FixedPointField',
         'map': {},
-    },
-    'lines': {
-        'field': u'LinesField',
-        'map': {},
+        'index': 'FieldIndex',
     },
     'color': {
         'field': u'StringField',
         'map': {},
+        'index': 'FieldIndex',
     },
     'country': {
         'field': u'StringField',
         'map': {},
+        'index': 'FieldIndex',
     },
     'datagrid': {
         'field': u'DataGridField',
         'map': {},
+        'index': None,
     },
     'date': {
         'field': u'DateTimeField',
         'map': {},
+        'index': 'DateIndex',
     },
     'image': {
         'field': u'ImageField',
         'map': {
             u'storage': u'AttributeStorage()',
         },
+        'index': None,
     },
     'file': {
         'field': u'FileField',
         'map': {
             u'storage': u'AttributeStorage()',
         },
+        'index': None,
     },
     'reference': {
         'field': u'ReferenceField',
         'map': {},
+        'index': None,
     },
     'relation': {
         'field': u'RelationField',
         'map': {},
+        'index': None,
     },
     'backreference': {
         'field': u'BackReferenceField',
         'map': {},
+        'index': None,
     },
     'boolean': {
         'field': u'BooleanField',
         'map': {},
+        'index': 'FieldIndex',
     },
     'computed': {
         'field': u'ComputedField',
         'map': {},
+        'index': None,
     },
     'photo': {
         'field': u'PhotoField',
         'map': {},
+        'index': None,
     },
     'generic': {
         'field': u'%(type)sField',
         'map': {},
+        'index': None,
     },
 }
 
