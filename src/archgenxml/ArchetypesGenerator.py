@@ -1837,18 +1837,9 @@ class ArchetypesGenerator(BaseGenerator):
 
         archetype_name = element.getTaggedValue('archetype_name') or \
                          element.getTaggedValue('label')
-#        if not archetype_name:
-#            archetype_name = name
-#        if type(archetype_name) != types.UnicodeType:
-#            archetype_name = archetype_name.decode('utf8')
-#        portaltype_name = element.getTaggedValue('portal_type') or name
 
-        # [optilude] Only output portal type and AT name if it's not an abstract
-        # mixin
         if not element.isAbstract():
-            #print >> outfile, (CLASS_ARCHETYPE_NAME % archetype_name).encode('utf8')
             print >> outfile, CLASS_META_TYPE % name
-            #print >> outfile, CLASS_PORTAL_TYPE % portaltype_name
 
         # Let's see if we have to set use_folder_tabs to 0.
         if utils.isTGVTrue(element.getTaggedValue('hide_folder_tabs', False)):
@@ -3042,43 +3033,32 @@ class ArchetypesGenerator(BaseGenerator):
             if not self._isContentClass(element):
                 continue
 
-            module=element.getModuleName()
+            module = element.getModuleName()
             package.generatedModules.append(element)
-            outfilepath=os.path.join(package.getFilePath(), module+'.py')
+            modulefile = '%s.py' % module
+            if utils.isTGVTrue(self.getOption('modules_lowercase', element, '1')):
+                modulefile = modulefile.lower()
+            outfilepath = os.path.join(package.getFilePath(), modulefile)
 
-            # below: utils.parsePythonModule?
-            filename = os.path.join(self.targetRoot, outfilepath)
-            log.debug("Filename (joined with targetroot) is "
-                      "'%s'.", filename)
-            try:
-                mod=PyParser.PyModule(filename)
-                log.debug("Existing sources found for element %s: %s.",
-                          element.getName(), outfilepath)
-                self.parsed_sources.append(mod)
-                for c in mod.classes.values():
-                    self.parsed_class_sources[package.getFilePath()+'/'+c.name]=c
-            except IOError:
-                log.debug("No source found at %s.",
-                          filename)
-                pass
-            except:
-                log.critical("Error while reparsing file '%s'.",
-                             outfilepath)
-                raise
-            # ^^^ utils.parsePythonModule?
-
+            # parse current code
+            mod = utils.parsePythonModule(self.targetRoot, 
+                                          package.getFilePath(), 
+                                          modulefile)
+            self.parsed_sources.append(mod)
+            for c in mod.classes.values():
+                self.parsed_class_sources[package.getFilePath()+'/'+c.name] = c
+            
+            # generate class
             try:
                 outfile = StringIO()
                 element.parsed_class = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name,None)
+                outfile.write(self.generateModuleInfoHeader(element))
                 if not element.isInterface():
-                    outfile.write(self.generateModuleInfoHeader(element))
                     print >>outfile, self.dispatchXMIClass(element)
                     generated_classes = package.getAnnotation('generatedClasses') or []
                     generated_classes.append(element)
                     package.annotate('generatedClasses', generated_classes)
                 else:
-                    outfile = StringIO()
-                    outfile.write(self.generateModuleInfoHeader(element))
                     print >>outfile, self.dispatchXMIInterface(element)
                     generated_interfaces = package.getAnnotation('generatedInterfaces') or []
                     generated_interfaces.append(element)
