@@ -27,10 +27,11 @@ Generating the product
   |-- Extensions
   |   |-- Install.py
   |   `-- __init__.py
-  |-- hellotype.py
   |-- __init__.py
   |-- config.py
   |-- configure.zcml
+  |-- hellotype.py
+  |-- interfaces.py
   |-- profiles
   |   `-- default
   |       |-- cssregistry.xml
@@ -55,10 +56,15 @@ Generating the product
 
 Installing and using the generated product
 
- Move the whole folder 'HelloWorld' to your Zope instance's 'Products' 
+ Move the whole folder 'HelloWorld' to your Zope/Plone 3 instance's 'Products' 
  folder. Restart  Zope, open Plone in a browser and log in as Manager. Choose 
  'Plone Setup' from the personal bar and choose 'Add/Remove Products'. A new 
  product 'HelloWordl' should now appear in the list of products
  available for install. Choose it and click 'install'. Go to your personal 
  folder. In the list of addable items you'll find the new product as an 
  addable content type. Add a test instance to see if it works.
+
+ "Plone: HelloType in action":img:helloworld-plone-shot.png
+
+ Thats the trick. By the way: The title is always part of the schema. But you can
+ hide it or recycle it later, don't worry
