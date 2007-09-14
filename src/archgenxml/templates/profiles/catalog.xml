@@ -16,6 +16,7 @@
 <dtml-in "_['sequence-item']['properties']">
     <property name="<dtml-var "_['sequence-item']['name']">"><dtml-var "_['sequence-item']['value']"></property>
 </dtml-in>
+  </index>
 </dtml-in>
 <dtml-in "catalog['columns']">
   <column value="<dtml-var "_['sequence-item']['value']">"/>
