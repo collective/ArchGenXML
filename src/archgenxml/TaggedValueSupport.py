@@ -594,12 +594,8 @@ explanation = """Set to true (1) to make the field required"""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'index'
-explanation = """Add an index to the attribute. The value of the tagged value should
-be the same that archetypes expects, so something like 'FieldIndex' or
-'FieldIndex:brains'. Not needed in 99.9% of the cases, but a tuple can
-be used to create it in multiple catalogs:
-'python:("portal_catalog/FieldIndex:schema",
-"another_catalog/FieldIndex:schema", )'"""
+explanation = """DEPRECATED: Add an index to the attribute. Use catalog:index 
+and the index:* tagged value instead."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'validators'
@@ -716,6 +712,63 @@ explanation = """specify which custom ArrayWidget should be used for a field
 (only applies if the field has cardinality >1."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'catalog:attributes'
+explanation = """The attributes to use for index or metadata (string or comma 
+separated list of strings). This are the methods called at indexing time. 
+Normally it is enough to provide one index method, but for some specific use 
+cases you might need to provide alternatives. If you don not provide this 
+tagged value, the name of the accessor of the field is the default."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'index:name'
+explanation = """the name of the index used (string). Use this name in your 
+queries. If you do not provide a name, the name of the accessor of the field 
+is the default."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'index:extras'
+explanation = """Some indexes are using so called 'extras' on installation as 
+configuration. If the index need extras you'll need to declare them here. 
+Provide a comma separated list."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'index:properties'
+explanation = """Some indexes are using 'properties' on installation as 
+configuration. If the index need properties you'll need to declare them here. 
+Provide a comma separated list."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+
+for category in ['model', 'package', 'class', 'attribute']:
+    tagname = 'catalog:metadata'
+    explanation = """Adds the field to the metadata record on the query result. 
+    Boolean, 1 or 0. If you do not provide 'index:attributes', the name of the 
+    accessor of the field is the default. If 'catalog:attributes' is given for 
+    each attribute one field at the record will be created."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+    tagname = 'catalog:index'
+    explanation = """Add the field (or all fields of a class, package, model) 
+    to the index. Boolean, 1 or 0. Default is 0. If set, you may need to provide 
+    'index:*' tagged values too."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+    
+    tagname = 'catalog:name'
+    explanation = """Sometimes you need to add an index to a other catalog than 
+    'portal_catalog' and its XML-File 'catalog.xml'. Provide a tuple of comma 
+    separated strings, id of the catalog and the filename of its configuration 
+    file. default is "portal_catalog, Plone Catalog Tool'."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+    tagname = 'index:type'
+    explanation = """the type of index used as (string), for example 
+    'FieldIndex', 'KeywordIndex', 'DateIndex' or any available index in your 
+    portal. For known types a default is guessed, such as FieldIndex for 
+    StringFields or DateIndex for DateFields. If no guess is possible, we 
+    assume a FieldIndex."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+        
+    
 # widgets (not a separate category!)
 
 # Similarly, tagged values with the prefix 'widget:' will be passed
@@ -945,7 +998,7 @@ for category in ['model', 'package', 'class', 'attribute']:
     value to 'ATVocabularyManager'."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-for category in ['model', 'package', 'class', 'tool', 'portlet']:
+for category in ['model', 'package', 'class', 'tool']:
     for tagname in ['author', 'email', 'copyright', 'license']:
         explanation = """You can set the %s project-wide with the '--%s'
         commandline parameter (or in the config file). This TGV allows
@@ -1018,6 +1071,7 @@ undocumented_tags = [
     'Modify', 'access', 'i18ncontent', 'default_page_type',
     # class tags
     'rename_after_creation', 'storage',
+    'index_method',
     # field tags
     'languageIndependent', 'default_content_type', 'default_output_type',
     # widget tags
