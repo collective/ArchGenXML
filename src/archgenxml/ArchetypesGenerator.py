@@ -498,9 +498,10 @@ class ArchetypesGenerator(BaseGenerator):
         return ctype
 
     def getFieldAttributes(self,element):
-        """ converts the tagged values of a field into extended attributes for the archetypes field """
-        noparams=['documentation','element.uuid','transient','volatile',
-                  'widget','copy_from','source_name', 'index']
+        """ converts the tagged values of a field into extended attributes for 
+        the archetypes field """
+        noparams = ['documentation','element.uuid','transient','volatile',
+                    'widget','copy_from','source_name', 'index']
         convtostring = ['expression']
         map = {}
         tgv = element.getTaggedValues()
@@ -520,10 +521,10 @@ class ArchetypesGenerator(BaseGenerator):
                     tgv.update({key:v})
 
         # set permissions, if theres one arround in the model
-        perm=self.getOption('read_permission',element,default=None)
+        perm = self.getOption('read_permission', element, default=None)
         if perm:
             tgv.update({'read_permission':perm})
-        perm=self.getOption('write_permission',element,default=None)
+        perm = self.getOption('write_permission', element, default=None)
         if perm:
             tgv.update({'write_permission':perm})
 
@@ -553,7 +554,8 @@ class ArchetypesGenerator(BaseGenerator):
                 map.update({k: v})
         return map
 
-    def getWidget(self, widgettype, element, fieldname, elementclass, fieldclassname=None):
+    def getWidget(self, widgettype, element, fieldname, elementclass, 
+                  fieldclassname=None):
         """ returns either default widget, widget according to
         attributes or no widget.
 
@@ -628,7 +630,7 @@ class ArchetypesGenerator(BaseGenerator):
                 if key == 'type':
                     continue
                 if key not in self.nonstring_tgvs:
-                    val=utils.getExpression(val)
+                    val = utils.getExpression(val)
                     # [optilude] Permit python: if people forget they don't have to (I often do!)
                 else:
                     if type(val) in StringTypes:
