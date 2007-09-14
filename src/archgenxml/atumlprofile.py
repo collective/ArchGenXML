@@ -203,6 +203,13 @@ at_uml_profile.addStereoType(
     )
 
 at_uml_profile.addStereoType(
+    'atimaget', ['XMIClass'],
+    description='Turns the class into an ATImage subclass.',
+    imports=['from Products.ATContentTypes.content.image import ATImage',
+             'from Products.ATContentTypes.content.image import ATImageSchema',]
+    )
+
+at_uml_profile.addStereoType(
     'atdocument', ['XMIClass'],
     description='Turns the class into an Atdocument subclass.',
     imports=['from Products.ATContentTypes.content.document import ATDocument',

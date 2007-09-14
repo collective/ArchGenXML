@@ -141,7 +141,7 @@ class ArchetypesGenerator(BaseGenerator):
     remember_stereotype = ['remember']
     python_stereotype = ['python', 'python_class', 'view']
     folder_stereotype = ['atfolder', 'folder', 'ordered', 'large', 'btree']
-    atct_stereotype = ['atfolder', 'atfile', 'atdocument', 'atevent',]
+    atct_stereotype = ['atfolder', 'atfile', 'atdocument', 'atevent', 'atimage']
 
     generate_datatypes = ['field', 'compound_field']
 
@@ -1580,6 +1580,10 @@ class ArchetypesGenerator(BaseGenerator):
                                        umlprofile=self.uml_profile):
                 baseclass ='ATFile'
                 baseschema ='ATFileSchema'
+            elif element.hasStereoType(['atimage'],
+                                       umlprofile=self.uml_profile):
+                baseclass ='ATImage'
+                baseschema ='ATImageSchema'
             elif element.hasStereoType(['atevent'],
                                        umlprofile=self.uml_profile):
                 baseclass ='ATEvent'
