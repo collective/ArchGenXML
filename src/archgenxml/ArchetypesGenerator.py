@@ -577,19 +577,23 @@ class ArchetypesGenerator(BaseGenerator):
             atype = element.type
         else:
             atype = widgettype
-        default_widget = self.getOption('default:widget:%s' % fieldclassname, element, None)
+        default_widget = self.getOption('default:widget:%s' % fieldclassname, 
+                                        element, None)
         if not default_widget:
-            default_widget = self.getOption('default:widget:%s' % atype, element, None)
+            default_widget = self.getOption('default:widget:%s' % atype, 
+                                            element, None)
         
         if default_widget:
             widgetcode = default_widget + u'(\n'
 
         modulename = elementclass.getPackage().getProductName()
         check_map = odict()
-        check_map['label']              = u"'%s'" % fieldname.capitalize().decode('utf8')
-        check_map['label_msgid']        = u"'%s_label_%s'" % (modulename, utils.normalize(fieldname, 1))
-        check_map['description_msgid']  = u"'%s_help_%s'" % (modulename, utils.normalize(fieldname, 1))
-        check_map['i18n_domain']        = u"'%s'" % modulename
+        check_map['label'] = u"'%s'" % fieldname.capitalize().decode('utf8')
+        check_map['label_msgid'] = u"'%s_label_%s'" % (modulename, 
+                                                       utils.normalize(fieldname, 1))
+        check_map['description_msgid'] = u"'%s_help_%s'" % (modulename, 
+                                                            utils.normalize(fieldname, 1))
+        check_map['i18n_domain'] = u"'%s'" % modulename
 
         wt = {} # helper
 
