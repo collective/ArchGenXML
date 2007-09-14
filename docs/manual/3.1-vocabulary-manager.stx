@@ -20,16 +20,16 @@ Using simple flat vocabularies
 
  We are now finished with the UML. Save it and let AGX do the work. What still is missing, is to install the countries vocabulary.  Therefore:
 
- * Add a file called 'AppInstall.py' in the /Extensions folder of your product
+ * Add a function called 'setupVocabularies' to the protected code section in 'setuphandlers.py' in your product and register it as an import step in '/profiles/default/import_steps.xml' in a code section (make it dependend from you '*QI-Dependencies' step.
   
- * Add the following code (this sets up a vocabulary 'countries' with the given values, and registers it with ATVocabularyManager)::
+ * Add the following code to your setuphandler.yp (this sets up a vocabulary 'countries' with the given values, and registers it with ATVocabularyManager)::
 
    
    from Products.ATVocabularyManager.config import TOOL_NAME as ATVOCABULARYTOOL
    from Products.CMFCore.utils import getToolByName
    from Products.ATVocabularyManager.utils import createSimpleVocabs
 
-   def install(self):
+   def setupVocabularies(self, context):
      """let's install the countries vocab"""
 
      vocabs = {}
@@ -40,8 +40,8 @@ Using simple flat vocabularies
             ('tyr', u'Tyrol'),
             ('auf', u'Ausserfern'),
         )
-     portal=getToolByName(self,'portal_url').getPortalObject()
-     atvm = getToolByName(portal, ATVOCABULARYTOOL)
+     site = context.getSite()
+     atvm = getToolByName(site, ATVOCABULARYTOOL)
      createSimpleVocabs(atvm, vocabs)
 
 Using simple tree vocabularies
