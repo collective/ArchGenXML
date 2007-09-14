@@ -13,8 +13,10 @@ def install(self, reinstall=False):
     print >> out, "Installation log of %s:" % PROJECTNAME
 
     setuptool = getToolByName(self, 'portal_setup')
-    importcontext = 'profile-%s:default' % PROJECTNAME
+    importcontext = 'profile-Products.%s:default' % PROJECTNAME
     setuptool.setImportContext(importcontext)
-    setuptool.runAllSteps()
+    
+    # TODO: need to refactor this
+    #setuptool.runAllSteps()
 
     return out.getvalue()
