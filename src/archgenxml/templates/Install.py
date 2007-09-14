@@ -18,5 +18,6 @@ def install(self, reinstall=False):
     
     # TODO: need to refactor this
     #setuptool.runAllSteps()
+    raise ValueError, 'NotImplemented'
 
     return out.getvalue()
