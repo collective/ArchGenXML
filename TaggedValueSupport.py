@@ -266,6 +266,11 @@ tagname = 'portal_tool'
 explanation = """"""
 tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
 
+tagname = 'primary'
+explanation = """Stereotype to force  which transition in the UML schema is to
+use to get extra informations when several transitions have the same id."""
+tgvRegistry.addTaggedValue(category='stereotransition', tagname=tagname, explanation=explanation)
+
 tagname = 'python_class'
 explanation = """"""
 tgvRegistry.addTaggedValue(category='stereoclass', tagname=tagname, explanation=explanation)
@@ -1321,6 +1326,8 @@ undocumented_tags = [
     'rename_after_creation', 'storage',
     # field tags
     'languageIndependent', 'default_content_type', 'default_output_type', 'mode',
+    # image field tags
+    'max_size', 'pil_resize_algo', 'pil_quality', 'swallowResizeExceptions',
     # widget tags
     'default:widget:Reference',
     'widget:size', 'widget:maxlength', 'widget:rows', 'widget:cols',
