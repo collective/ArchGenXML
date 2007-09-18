@@ -128,7 +128,7 @@ def main():
     categories = tgvRegistry.getCategories()
     #print categories
     stereotype_categories = ('stereomodel', 'stereopackage', 'interface', 'stereoclass',
-                             'operation')
+                             'operation', 'stereotransition')
     datatype_categories = ('datatype',)
     definition_categories = [ category for category in categories
                               if category not in stereotype_categories + datatype_categories ]
