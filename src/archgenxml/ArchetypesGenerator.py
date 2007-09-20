@@ -2858,6 +2858,8 @@ class ArchetypesGenerator(BaseGenerator):
         pname = package.getProductName()
         skindirs = []
         for dir in dirs:
+            if dir == '.svn':
+                continue
             if os.path.isdir(os.path.join(package.getFilePath(), 'skins', dir)):
                 skindir = dict()
                 skindir['name'] = dir
