@@ -2711,7 +2711,7 @@ class ArchetypesGenerator(BaseGenerator):
                         columndef = {
                             'value': accessor,
                         }
-                        defs[catalogid]['columns'].append(columndef) 
+                        defs[catalogname]['columns'].append(columndef) 
                     
                     #defs['colums'].append(columndef)
                     continue
