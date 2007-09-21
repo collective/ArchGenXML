@@ -2667,11 +2667,7 @@ class ArchetypesGenerator(BaseGenerator):
     def _getIndexDefinitions(self, defs, package):
         """return the index definitions for catalog.xml
         """        
-        klasses = package.getClasses()
-        if not klasses:
-            for package in package.getPackages():
-                self._getIndexDefinitions(defs, package)
-        
+        klasses = package.getClasses(recursive=1)
         for klass in klasses:
             if not self._isContentClass(klass):
                 continue
@@ -2876,8 +2872,7 @@ class ArchetypesGenerator(BaseGenerator):
         to genericsetup.
         """
         defs = list()
-        self._getTypeDefinitions(defs, package, package.getProductName())
-        
+        self._getTypeDefinitions(defs, package)
         ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
         handleSectionedFile(['profiles', 'types.xml'],
                             os.path.join(ppath, 'types.xml'),
@@ -2898,7 +2893,7 @@ class ArchetypesGenerator(BaseGenerator):
             raise Exception('types is not a directory')
         
         defs = list()
-        self._getTypeDefinitions(defs, package, package.getProductName())
+        self._getTypeDefinitions(defs, package)
         
         for typedef in defs:
             #print typedef
@@ -2983,11 +2978,8 @@ class ArchetypesGenerator(BaseGenerator):
         # then, this workflow has precedence and use_workflow and
         # active_workflow_states has to be ignored and the ones from the
         # set workflow must be used.
-        klasses = package.getClasses()
-        if not klasses:
-            for package in package.getPackages():
-                self.getRememberTypes(types, package)
-        
+
+        klasses = package.getClasses(recursive=1)
         for klass in klasses:
             if klass.hasStereoType(['remember'], umlprofile=self.uml_profile):
                 
@@ -3599,14 +3591,10 @@ class ArchetypesGenerator(BaseGenerator):
         }
         return ret
         
-    def _getTypeDefinitions(self, defs, package, productname):
+    def _getTypeDefinitions(self, defs, package):
         """Iterate recursice through package and create class definitions
         """
-        classes = package.getClasses()
-        if not classes:
-            for package in package.getPackages():
-                self._getTypeDefinitions(defs, package, productname)
-        
+        classes = package.getClasses(recursive=1)
         for pclass in classes:
             if not self._isContentClass(pclass):
                 continue
@@ -3628,7 +3616,7 @@ class ArchetypesGenerator(BaseGenerator):
                                    'with dynamic views'
             
             typedef['content_meta_type'] = pclass.getCleanName()
-            typedef['product_name'] = productname
+            typedef['product_name'] = package.getProductName()
             typedef['factory'] = 'add%s' % pclass.getCleanName()
             
             allowed_types = self._getSubtypes(pclass)['aggregated_classes']
