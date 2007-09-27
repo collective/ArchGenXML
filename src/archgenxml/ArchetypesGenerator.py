@@ -2959,6 +2959,8 @@ class ArchetypesGenerator(BaseGenerator):
     def generateGSMembraneToolXML(self, package):
         types = []
         self.getRememberTypes(types, package)
+        if not types:
+            return
         profiledir = os.path.join(package.getFilePath(), 'profiles', 'default')
         handleSectionedFile(['profiles', 'membrane_tool.xml'], 
                             os.path.join(profiledir, 'membrane_tool.xml'),
