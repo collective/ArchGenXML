@@ -673,6 +673,11 @@ class ArchetypesGenerator(BaseGenerator):
            element.hasAttributeWithTaggedValue('vocabulary:type','ATVocabularyManager'):
             print >> outfile, 'from Products.ATVocabularyManager.namedvocabulary import NamedVocabulary'
 
+        # PloneVocabularyManager imports
+        if self.getOption('vocabulary:type', element, None) == 'PloneVocabularyManager' or \
+           element.hasAttributeWithTaggedValue('vocabulary:type','PloneVocabularyManager'):
+            print >> outfile, 'from Products.PloneVocabularyManager.public import NamedVocabulary'
+
         return outfile.getvalue()
 
 

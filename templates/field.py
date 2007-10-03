@@ -15,6 +15,9 @@ except ImportError:
 <dtml-if "klass.hasAttributeWithTaggedValue('vocabulary:type','ATVocabularyManager')">
 from Products.ATVocabularyManager.namedvocabulary import NamedVocabulary
 </dtml-if>
+<dtml-if "klass.hasAttributeWithTaggedValue('vocabulary:type','PloneVocabularyManager')">
+from Products.PloneVocabularyManager.public import NamedVocabulary
+</dtml-if>
 <dtml-if "klass.getTaggedValue('validation_expression')">
 from Products.validation.validators import ExpressionValidator
 </dtml-if>
