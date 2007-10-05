@@ -74,7 +74,7 @@ Force = 0
 
 
 class DummyModel:
-    
+
     def __init__(self, name=''):
         self.name = name
 
@@ -101,13 +101,13 @@ class DummyModel:
 
     def getParent(self, *a, **kw):
         return None
-    
+
     getCleanName = getName
     getFilePath = getName
     getModuleFilePath = getName
     getProductModuleName = getName
     getProductName = getName
-    
+
     getInterfaces = getClasses
     getPackages = getClasses
     getStateMachines = getClasses
@@ -115,13 +115,13 @@ class DummyModel:
 
 
 class ArchetypesGenerator(BaseGenerator):
-    
+
     generator_generator = 'archetypes'
     default_class_type = 'content_class'
     default_interface_type = 'z3'
-    
+
     uml_profile = at_uml_profile
-    
+
     hide_classes = atmaps.HIDE_CLASSES
     typeMap = atmaps.TYPE_MAP
     widgetMap = atmaps.WIDGET_MAP
@@ -245,13 +245,13 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateDependentImports(self, element):
         out = StringIO()
-        
+
         print >> out, 'from zope.interface import implements'
         print >> out, 'from interfaces import I%s' % element.getCleanName()
-        
+
         res = BaseGenerator.generateDependentImports(self, element)
         print >> out, res
-        
+
         print >> out, TEMPLATE_CMFDYNAMICVIEWFTI_IMPORT
 
         generate_expression_validator = False
@@ -260,8 +260,8 @@ class ArchetypesGenerator(BaseGenerator):
                 generate_expression_validator = True
         if generate_expression_validator:
             print >> out, 'from Products.validation.validators import ' + \
-                          'ExpressionValidator'
-        
+                  'ExpressionValidator'
+
         # Check for necessity to import DataGridField and DataGridWidget
         import_datagrid = False
         for att in element.getAttributeDefs():
@@ -271,7 +271,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         if import_datagrid:
             print >>out, 'from Products.DataGridField import ' + \
-                         'DataGridField, DataGridWidget'
+                  'DataGridField, DataGridWidget'
 
         # Check for necessity to import ATColorPickerWidget
         import_color = False
@@ -282,7 +282,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         if import_color:
             print >>out, 'from Products.ATColorPickerWidget.' + \
-                         'ColorPickerWidget import ColorPickerWidget'
+                  'ColorPickerWidget import ColorPickerWidget'
 
         # Check for necessity to import CountryWidget
         import_country = False
@@ -290,10 +290,10 @@ class ArchetypesGenerator(BaseGenerator):
             if att.getType() == 'country':
                 import_country = True
                 break
-        
+
         if import_country:
             print >>out, 'from Products.ATCountryWidget.Widget import ' + \
-                         'CountryWidget'
+                  'CountryWidget'
 
         # Check for necessity to import ArrayField
         import_array_field = False
@@ -304,22 +304,22 @@ class ArchetypesGenerator(BaseGenerator):
 
         if import_array_field:
             print >>out, 'from Products.CompoundField.ArrayField ' + \
-                         'import ArrayField'
+                  'import ArrayField'
 
         start_marker = True
         for iface in self.getAggregatedInterfaces(element):
             if start_marker:
                 print >>out, 'from Products.Archetypes.AllowedTypesByIface' + \
-                             ' import AllowedTypesByIfaceMixin'
+                      ' import AllowedTypesByIfaceMixin'
                 start_marker = False
             print >>out, 'from %s import %s' % ( \
-                         iface.getQualifiedModuleName(forcePluginRoot=True),
-                         iface.getCleanName())
+                iface.getQualifiedModuleName(forcePluginRoot=True),
+                iface.getCleanName())
 
         if self.backreferences_support:
             print >>out, 'from Products.ATBackRef.BackReferenceField ' + \
-                         'import BackReferenceField, BackReferenceWidget'
-            
+                  'import BackReferenceField, BackReferenceWidget'
+
         return out.getvalue()
 
     def addMsgid(self, msgid, msgstr, element, fieldname):
@@ -333,16 +333,16 @@ class ArchetypesGenerator(BaseGenerator):
             msgcat = self.msgcatstack[len(self.msgcatstack)-1]
             package = element.getPackage()
             module_id = os.path.join( \
-                            element.getPackage().getFilePath(includeRoot=0),
-                            element.getName()+'.py')
+                element.getPackage().getFilePath(includeRoot=0),
+                element.getName()+'.py')
             msgcat.add(msgid, msgstr=msgstr, references=[module_id])
-    
+
     def getMethodActionsDict(self, element):
         log.debug("Generating method actions dict...")
         log.debug("First finding our methods.")
-        
+
         ret = {}
-        
+
         for m in element.getMethodDefs():
             method_name = m.getName()
             code = utils.indent(m.getTaggedValue('code', ''), 1)
@@ -361,7 +361,7 @@ class ArchetypesGenerator(BaseGenerator):
                 dict={}
 
                 if not action_name.startswith('string:') \
-                  and not action_name.startswith('python:'):
+                   and not action_name.startswith('python:'):
                     action_target='string:${object_url}/'+action_name
                 else:
                     action_target=action_name
@@ -376,11 +376,11 @@ class ArchetypesGenerator(BaseGenerator):
                 dict['condition']='python:%s' % condition
 
                 if not (m.hasTaggedValue('create_action') \
-                  and utils.isTGVFalse(m.getTaggedValue('create_action'))):
+                        and utils.isTGVFalse(m.getTaggedValue('create_action'))):
                     ret[dict['id']] = dict
 
             #LATER
-            
+
             #if m.hasStereoType('view', umlprofile=self.uml_profile):
             #    f=self.makeFile(os.path.join(self.getSkinPath(element),action_name+'.pt'),0)
             #    if f:
@@ -398,7 +398,7 @@ class ArchetypesGenerator(BaseGenerator):
         #res=outfile.getvalue()
         #return res
         return ret
-    
+
     def getDisabledMethodActions(self, element):
         """returns a list of disabled method ids."""
         ret = []
@@ -406,15 +406,15 @@ class ArchetypesGenerator(BaseGenerator):
             if m.hasStereoType(['noaction']):
                 ret.append(m.getName())
         return ret
-                
-                
+
+
 
     def generateAdditionalImports(self, element):
         outfile = StringIO()
 
         if element.hasAssocClass:
             print >> outfile,'from Products.Archetypes.ReferenceEngine ' + \
-                             'import ContentReferenceCreator'
+                  'import ContentReferenceCreator'
 
         useRelations = 0
 
@@ -427,7 +427,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         for rel in element.getToAssociations():
             if self.getOption('relation_implementation',rel,'basic') == 'relations' and \
-                (rel.getTaggedValue('inverse_relation_name') or rel.fromEnd.isNavigable) :
+               (rel.getTaggedValue('inverse_relation_name') or rel.fromEnd.isNavigable) :
                 useRelations = 1
 
         if useRelations:
@@ -477,7 +477,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         hide_actions=', '.join(["'"+a.strip()+"'" for a in hide_actions.split('\n')])
         return MODIFY_FTI % {'hideactions':hide_actions, }
-        
+
     def coerceType(self, intypename):
         #print 'coerceType: ',intypename,' -> ',
         typename=intypename.lower()
@@ -531,8 +531,8 @@ class ArchetypesGenerator(BaseGenerator):
         # check for global settings
         searchable = self.getOption('searchable', element, default = _marker)
         if searchable is not _marker:
-             tgv.update({'searchable': searchable})
-        
+            tgv.update({'searchable': searchable})
+
         # set attributes from tgv
         for k in tgv.keys():
             if k not in noparams and not k.startswith('widget:'):
@@ -584,7 +584,7 @@ class ArchetypesGenerator(BaseGenerator):
         if not default_widget:
             default_widget = self.getOption('default:widget:%s' % atype, 
                                             element, None)
-        
+
         if default_widget:
             widgetcode = default_widget + u'(\n'
 
@@ -612,7 +612,7 @@ class ArchetypesGenerator(BaseGenerator):
         elif [wt.update({t[0]:t[1]}) for t in widgetoptions if t[0] == u'widget:type']:
             custom = True
             widgetcode = wt['widget:type']
-        
+
         elif self.widgetMap.has_key(widgettype) and not default_widget:
             # default widget for this widgettype found in widgetMap
             custom = True
@@ -656,16 +656,16 @@ class ArchetypesGenerator(BaseGenerator):
 
             if 'label_msgid' in widgetmap.keys() and has_enhanced_strip_support:
                 self.addMsgid(widgetmap['label_msgid'].strip("'").strip('"'),
-                    widgetmap.has_key('label') and widgetmap['label'].strip("'").strip('"') or fieldname,
-                    elementclass,
-                    fieldname
-                )
+                              widgetmap.has_key('label') and widgetmap['label'].strip("'").strip('"') or fieldname,
+                              elementclass,
+                              fieldname
+                          )
             if 'description_msgid' in widgetmap.keys() and has_enhanced_strip_support:
                 self.addMsgid(widgetmap['description_msgid'].strip("'").strip('"'),
-                    widgetmap.has_key('description') and widgetmap['description'].strip("'").strip('"') or fieldname,
-                    elementclass,
-                    fieldname
-                )
+                              widgetmap.has_key('description') and widgetmap['description'].strip("'").strip('"') or fieldname,
+                              elementclass,
+                              fieldname
+                          )
             keqvs = list()
             for key in widgetmap:
                 value = widgetmap[key]
@@ -680,7 +680,7 @@ class ArchetypesGenerator(BaseGenerator):
                 u',\n'.join(keqvs),
                 1,
                 skipFirstRow=0) \
-                + u',\n'
+                       + u',\n'
             widgetcode += u')'
 
         return widgetcode
@@ -692,7 +692,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         log.debug("Trying to get formatted field. name='%s', fieldtype='%s', "
                   "doc='%s', rawType='%s'.", name, fieldtype, doc, rawType)
-	name = utils.normalize(name, 1)
+        name = utils.normalize(name, 1)
         res = u''
         if array_field:
             array_options={}
@@ -701,7 +701,7 @@ class ArchetypesGenerator(BaseGenerator):
                     nkey=key[len(u'array:'):]
                     array_options[nkey]=map[key]
                     del map[key]
-            
+
         # Capitalize only first letter of fields class name, keep camelcase
         a = rawType[0].upper()
         rawType = a + rawType[1:]
@@ -716,7 +716,7 @@ class ArchetypesGenerator(BaseGenerator):
             rawType = rawType[:-5]
 
         res += utils.indent(u"%s(\n    name='%s',\n" % (
-                   fieldtype % {'type': rawType}, name), indent_level)
+            fieldtype % {'type': rawType}, name), indent_level)
         if map:
             prepend = utils.indent(u'', indent_level)
             for key in map:
@@ -750,7 +750,7 @@ class ArchetypesGenerator(BaseGenerator):
 
             array_defs = u',\n'.join([u"%s=%s" % item for item in array_options.items()])
             res =  ARRAYFIELD % ( utils.indent(res, 2), utils.indent(array_defs, 2) ) 
-            
+
         return res
 
     def getFieldsFormatted(self, field_specs):
@@ -768,7 +768,7 @@ class ArchetypesGenerator(BaseGenerator):
                     # need this for copied fields
                     res += field_spec
                 elif (field_spec.has_key('rawType') and
-                    field_spec.has_key('array_field')):
+                      field_spec.has_key('array_field')):
                     res += self.getFieldFormatted(field_spec['name'], 
                                                   field_spec['fieldtype'],
                                                   field_spec['map'],
@@ -776,14 +776,14 @@ class ArchetypesGenerator(BaseGenerator):
                                                   field_spec['indent_level'],
                                                   field_spec['rawType'],
                                                   field_spec['array_field'],
-                                                  )
+                                              )
                 else:
                     res += self.getFieldFormatted(field_spec['name'], 
                                                   field_spec['fieldtype'],
                                                   field_spec['map'],
                                                   field_spec['doc'],
                                                   field_spec['indent_level']
-                                                  )
+                                              )
             except Exception, e:
                 log.critical("Couldn't render fields from field_specs: '%s'.",
                              field_specs)
@@ -834,8 +834,8 @@ class ArchetypesGenerator(BaseGenerator):
 
             if not vocaboptions['name'] in self.vocabularymap[currentproduct].keys():
                 self.vocabularymap[currentproduct][vocaboptions['name']] = (
-                                                vocaboptions['vocabulary_type'],
-                                                vocaboptions['term_type'])
+                    vocaboptions['vocabulary_type'],
+                    vocaboptions['term_type'])
             else:
                 log.warn("Vocabulary with name '%s' defined more than once.",
                          vocaboptions['name'])
@@ -903,7 +903,7 @@ class ArchetypesGenerator(BaseGenerator):
 
             if map.has_key('validators'):
                 map['validators'] = repr(map.get('validators',())) + \
-                                    '+('+','.join(expval)+',)'
+                   '+('+','.join(expval)+',)'
             else:
                 map['validators'] = '(' + ','.join(expval) + ',)'
 
@@ -912,12 +912,12 @@ class ArchetypesGenerator(BaseGenerator):
                 del map['validation_expression_errormsg']
 
         res={'name':attr.getName(),
-            'fieldtype':atype,
-            'map':map,
-            'doc':doc,
-            'indent_level':indent_level,
-            'rawType':attr.getType(),
-            'array_field':attr.getUpperBound() != 1}
+             'fieldtype':atype,
+             'map':map,
+             'doc':doc,
+             'indent_level':indent_level,
+             'rawType':attr.getType(),
+             'array_field':attr.getUpperBound() != 1}
 
         return res
 
@@ -953,16 +953,16 @@ class ArchetypesGenerator(BaseGenerator):
             log.debug("Using the 'relations' relation implementation.")
             # The relation can override the field
             field = self.getOption('reference_field',rel,None) or \
-                    rel.getTaggedValue('reference_field') or \
-                    rel.toEnd.getTaggedValue('reference_field') or \
-                    rel.getTaggedValue('field') or \
-                    rel.toEnd.getTaggedValue('field') or \
-                    self.typeMap['relation']['field']
+                  rel.getTaggedValue('reference_field') or \
+                  rel.toEnd.getTaggedValue('reference_field') or \
+                  rel.getTaggedValue('field') or \
+                  rel.toEnd.getTaggedValue('field') or \
+                  self.typeMap['relation']['field']
             # TBD: poseidon reference-as-field handling or so...
             if not field:
                 message = "Somehow we couldn't get at the fieldname. " \
-                          "Use normal drawn associations instead of " \
-                          "a named reference."
+                        "Use normal drawn associations instead of " \
+                        "a named reference."
                 log.critical(message)
                 raise message
 
@@ -976,13 +976,13 @@ class ArchetypesGenerator(BaseGenerator):
             log.debug("Using the standard relation implementation.")
             # The relation can override the field
             field = rel.getTaggedValue('reference_field') or \
-                    rel.toEnd.getTaggedValue('reference_field') or \
-                    self.typeMap['reference']['field']
+                  rel.toEnd.getTaggedValue('reference_field') or \
+                  self.typeMap['reference']['field']
             # TBD: poseidon reference-as-field handling or so...
             if not field:
                 message = "Somehow we couldn't get at the fieldname. " \
-                          "Use normal drawn associations instead of " \
-                          "a named reference."
+                        "Use normal drawn associations instead of " \
+                        "a named reference."
                 log.critical(message)
                 raise message
             map = self.typeMap['reference']['map'].copy()
@@ -1006,10 +1006,10 @@ class ArchetypesGenerator(BaseGenerator):
 
         doc=rel.getDocumentation(striphtml=self.strip_html)
         res={'name':name,
-            'fieldtype':field,
-            'map':map,
-            'doc':doc,
-            'indent_level':indent_level}
+             'fieldtype':field,
+             'map':map,
+             'doc':doc,
+             'indent_level':indent_level}
         return res
 
     def getFieldSpecFromBackAssociation(self, rel, classelement, indent_level=0):
@@ -1031,12 +1031,12 @@ class ArchetypesGenerator(BaseGenerator):
 
         if self.getOption('relation_implementation', rel, 'basic') == \
            'relations'  and (rel.fromEnd.isNavigable or \
-           rel.getTaggedValue('inverse_relation_name')):
+                             rel.getTaggedValue('inverse_relation_name')):
             # The relation can override the field
             field = rel.getTaggedValue('relation_field') or \
-                    rel.getTaggedValue('field') or \
-                    rel.fromEnd.getTaggedValue('field') or \
-                    self.typeMap['relation']['field']
+                  rel.getTaggedValue('field') or \
+                  rel.fromEnd.getTaggedValue('field') or \
+                  self.typeMap['relation']['field']
             map = self.typeMap['relation']['map'].copy()
             backrelname = rel.getInverseName()
             map.update({'multiValued': multiValued,
@@ -1047,11 +1047,11 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             # The relation can override the field
             field = rel.getTaggedValue('reference_field') or \
-                    rel.toEnd.getTaggedValue('back_reference_field') or \
-                    self.typeMap['backreference']['field']
+                  rel.toEnd.getTaggedValue('back_reference_field') or \
+                  self.typeMap['backreference']['field']
             map = self.typeMap['backreference']['map'].copy()
             if rel.fromEnd.isNavigable and (self.backreferences_support or \
-               self.getOption('backreferences_support', rel, '0') == '1'):
+                                            self.getOption('backreferences_support', rel, '0') == '1'):
                 map.update({'allowed_types': repr(allowed_types),
                             'multiValued': multiValued,
                             'relationship': "'%s'" % relname})
@@ -1067,10 +1067,10 @@ class ArchetypesGenerator(BaseGenerator):
 
         doc = rel.getDocumentation(striphtml=self.strip_html)
         res={'name':name,
-            'fieldtype':field,
-            'map':map,
-            'doc':doc,
-            'indent_level':indent_level}
+             'fieldtype':field,
+             'map':map,
+             'doc':doc,
+             'indent_level':indent_level}
         return res
 
     def getLocalFieldSpecs(self, element, indent_level=0):
@@ -1084,7 +1084,7 @@ class ArchetypesGenerator(BaseGenerator):
             mappedName = utils.mapName(name)
 
             field_specs.append(self.getFieldSpecFromAttribute(attrDef, element,
-                                                    indent_level=indent_level+1))
+                                                              indent_level=indent_level+1))
 
         for child in element.getChildren():
             name = child.getCleanName()
@@ -1096,11 +1096,11 @@ class ArchetypesGenerator(BaseGenerator):
 
             if child.isIntrinsicType():
                 field_specs.append(self.getFieldSpec(child, element,
-                                                    indent_level=indent_level+1))
+                                                     indent_level=indent_level+1))
 
         # only add reference fields if tgv generate_reference_fields
         if utils.toBoolean(
-                self.getOption('generate_reference_fields', element, True) ):
+            self.getOption('generate_reference_fields', element, True) ):
             #print 'rels:',element.getName(),element.getFromAssociations()
             # and now the associations
             for rel in element.getFromAssociations():
@@ -1111,8 +1111,8 @@ class ArchetypesGenerator(BaseGenerator):
                 if name in self.reservedAtts:
                     continue
                 field_specs.append(self.getFieldSpecFromAssociation(rel,
-                                                    element,
-                                                    indent_level=indent_level+1))
+                                                                    element,
+                                                                    indent_level=indent_level+1))
 
             #Back References
             for rel in element.getToAssociations():
@@ -1122,8 +1122,8 @@ class ArchetypesGenerator(BaseGenerator):
                 if name in self.reservedAtts:
                     continue
                 fc=self.getFieldSpecFromBackAssociation(rel,
-                                                    element,
-                                                    indent_level=indent_level+1)
+                                                        element,
+                                                        indent_level=indent_level+1)
                 if fc:
                     field_specs.append(fc)
 
@@ -1147,14 +1147,14 @@ class ArchetypesGenerator(BaseGenerator):
                 copyfrom = attr.getTaggedValue('copy_from', base_schema)
                 name = attr.getTaggedValue('source_name',attr.getName())
                 print >> outfile, "copied_fields['%s'] = %s['%s'].copy(%s)" % \
-                         (attr.getName(), copyfrom, name, name!=attr.getName() \
-                         and ("name='%s'" % attr.getName()) or '')
+                      (attr.getName(), copyfrom, name, name!=attr.getName() \
+                       and ("name='%s'" % attr.getName()) or '')
                 map = self.getFieldAttributes(attr)
                 for key in map:
                     if key.startswith('move:'):
                         continue
                     print >>outfile, "copied_fields['%s'].%s = %s" % \
-                                     (attr.getName(), key, map[key])
+                          (attr.getName(), key, map[key])
                 tgv = attr.getTaggedValues()
                 for key in tgv.keys():
                     if not key.startswith('widget:'):
@@ -1162,7 +1162,7 @@ class ArchetypesGenerator(BaseGenerator):
                     if key not in self.nonstring_tgvs:
                         tgv[key]=utils.getExpression(tgv[key])
                     print >>outfile, "copied_fields['%s'].widget.%s = %s" % \
-                                     (attr.getName(), key[7:], tgv[key])
+                          (attr.getName(), key[7:], tgv[key])
                     # add pot msgid if necessary
                     widgetkey = key[7:]
                     widgetvalue = tgv[key]
@@ -1258,8 +1258,8 @@ class ArchetypesGenerator(BaseGenerator):
 
         # As above .. 
         if element.hasStereoType(
-                self.remember_stereotype,
-                umlprofile=self.uml_profile) and '__call__' not in method_names:
+            self.remember_stereotype,
+            umlprofile=self.uml_profile) and '__call__' not in method_names:
             method_names.append('__call__') 
 
         #as __init__ above if at_post_edit_script has to be generated for tools
@@ -1360,7 +1360,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         log.debug('generate base functional testcase class')
         return self.generateFunctionalTestcaseClass(element,template)
-    
+
     def generateBaseTestcaseClass(self,element,template):
         log.debug('write runalltests.py and framework.py')
         runalltests=self.readTemplate(['tests', 'runalltests.py'])
@@ -1411,13 +1411,13 @@ class ArchetypesGenerator(BaseGenerator):
 
         assert element.hasStereoType('plonefunctional_testcase', 
                                      umlprofile=self.uml_profile) or \
-                                     element.getCleanName().startswith('browser'), \
+               element.getCleanName().startswith('browser'), \
                "names of test classes _must_ start with 'browser', but this class is named '%s'" % element.getCleanName()
 
         assert element.getPackage().getCleanName() == 'tests', \
-            "testcase classes only make sense inside a package called 'tests' \
-                 but this class is named '%s' and located in package '%s'" % \
-                 (element.getCleanName(),element.getPackage().getCleanName())
+               "testcase classes only make sense inside a package called 'tests' \
+               but this class is named '%s' and located in package '%s'" % \
+               (element.getCleanName(),element.getPackage().getCleanName())
 
         if element.getGenParents():
             parent = element.getGenParents()[0]
@@ -1427,20 +1427,20 @@ class ArchetypesGenerator(BaseGenerator):
         return BaseGenerator.generatePythonClass(self, element, template, 
                                                  parent=parent, nolog=True, 
                                                  **kw)
-        
+
     def generateTestcaseClass(self, element, template, **kw):
         log.info("%sGenerating testcase '%s'.", '    ' * self.infoind, 
                  element.getName())
 
         assert element.hasStereoType('plone_testcase', 
                                      umlprofile=self.uml_profile) or \
-                                     element.getCleanName().startswith('test'), \
+               element.getCleanName().startswith('test'), \
                "names of test classes _must_ start with 'test', but this class is named '%s'" % element.getCleanName()
 
         assert element.getPackage().getCleanName() == 'tests', \
-            "testcase classes only make sense inside a package called 'tests' \
-                 but this class is named '%s' and located in package '%s'" % \
-                 (element.getCleanName(),element.getPackage().getCleanName())
+               "testcase classes only make sense inside a package called 'tests' \
+               but this class is named '%s' and located in package '%s'" % \
+               (element.getCleanName(),element.getPackage().getCleanName())
 
         if element.getGenParents():
             parent = element.getGenParents()[0]
@@ -1524,7 +1524,7 @@ class ArchetypesGenerator(BaseGenerator):
         # This entire method hould probably be moved off to the element classes.
         # Copy-pasted from generateArchetypesClass()...
         aggregatedClasses = element.getRefs() + \
-                            element.getSubtypeNames(recursive=0,filter=['class'])
+                          element.getSubtypeNames(recursive=0,filter=['class'])
         log.debug("Found %s aggregated classes.",
                   len(aggregatedClasses))
         #also check if the parent classes can have subobjects
@@ -1540,9 +1540,9 @@ class ArchetypesGenerator(BaseGenerator):
         log.debug("Based on this info and the tagged value 'folderish' or the "
                   "stereotypes 'folder' and 'ordered', we look if it's a folder.")
         isFolderish = aggregatedInterfaces or aggregatedClasses or \
-                      baseaggregatedClasses or \
-                      element.hasStereoType(self.folder_stereotype, 
-                                            umlprofile=self.uml_profile)
+                    baseaggregatedClasses or \
+                    element.hasStereoType(self.folder_stereotype, 
+                                          umlprofile=self.uml_profile)
         log.debug("End verdict on folderish character: %s.",
                   bool(isFolderish))
         return bool(isFolderish)
@@ -1583,7 +1583,7 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             # contentish
             if element.hasStereoType(['atfile'],
-                                       umlprofile=self.uml_profile):
+                                     umlprofile=self.uml_profile):
                 baseclass ='ATFile'
                 baseschema ='ATFileSchema'
             elif element.hasStereoType(['atimage'],
@@ -1601,7 +1601,7 @@ class ArchetypesGenerator(BaseGenerator):
             else:
                 baseclass = 'BaseContent'
                 baseschema = 'BaseSchema'
-                
+
         # use CMFDynamicViewFTI?
         if not parent_is_archetype and \
            self.getOption('use_dynamic_view', element, True) and \
@@ -1717,15 +1717,15 @@ class ArchetypesGenerator(BaseGenerator):
 
         # We *do* want the resursive=0 below, though!
         aggregatedInterfaces = element.getRefs() + \
-                               element.getSubtypeNames(recursive=0,
-                                                       filter=['interface'])
+                             element.getSubtypeNames(recursive=0,
+                                                     filter=['interface'])
 
         # if it's a derived class check if parent has stereotype 'archetype'
         parent_is_archetype = False
         for p in element.getGenParents():
             parent_is_archetype = parent_is_archetype or \
-                                  p.hasStereoType(self.archetype_stereotype,
-                                                  umlprofile=self.uml_profile)
+                                p.hasStereoType(self.archetype_stereotype,
+                                                umlprofile=self.uml_profile)
 
         # also check if the parent classes can have subobjects
         baseaggregatedClasses = []
@@ -1781,8 +1781,8 @@ class ArchetypesGenerator(BaseGenerator):
                                                 umlprofile=self.uml_profile)]
 
         if (parent_is_archetype 
-                and not element.hasStereoType(
-                    self.remember_stereotype, umlprofile=self.uml_profile)):
+            and not element.hasStereoType(
+                self.remember_stereotype, umlprofile=self.uml_profile)):
             schema = parent_schema
         else:
             # [optilude] Ignore baseschema in abstract mixin classes
@@ -1837,16 +1837,16 @@ class ArchetypesGenerator(BaseGenerator):
             print >> outfile, '    """%s"""' % parsedDoc
         else:
             print >> outfile, '    """\n    """'
-        
+
         print >> outfile, utils.indent('security = ClassSecurityInfo()',1)
 
         #print >> outfile, self.generateImplements(element, parentnames)
-        
+
         markerimplements = 'implements(I%s)' % element.getCleanName()
         print >> outfile, utils.indent(markerimplements ,1)
 
         archetype_name = element.getTaggedValue('archetype_name') or \
-                         element.getTaggedValue('label')
+                       element.getTaggedValue('label')
 
         if not element.isAbstract():
             print >> outfile, CLASS_META_TYPE % name
@@ -1858,7 +1858,7 @@ class ArchetypesGenerator(BaseGenerator):
         # allowed_interfaces
         parentAggregatedInterfaces = ''
         if utils.isTGVTrue(element.getTaggedValue('inherit_allowed_types', \
-           True)) and element.getGenParents():
+                                                  True)) and element.getGenParents():
             pattern = "getattr(%s, 'allowed_interfaces', [])"
             extras = ' + '.join([pattern % p.getCleanName()
                                  for p in element.getGenParents()])
@@ -1887,7 +1887,7 @@ class ArchetypesGenerator(BaseGenerator):
         # tool __init__ and at_post_edit_script
         if element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile):
             tool_instance_name = element.getTaggedValue('tool_instance_name') \
-                                 or 'portal_%s' % element.getName().lower()
+                               or 'portal_%s' % element.getName().lower()
             print >> outfile, TEMPL_CONSTR_TOOL % (baseclass,
                                                    tool_instance_name,
                                                    archetype_name)
@@ -1911,12 +1911,12 @@ class ArchetypesGenerator(BaseGenerator):
 
         # [optilude] Don't register type for abstract classes or tools
         if not (element.isAbstract() or element.hasStereoType('mixin',
-           umlprofile=self.uml_profile)):
+                                                              umlprofile=self.uml_profile)):
             wrt(REGISTER_ARCHTYPE % name)
 
         # ATVocabularyManager: registration of class
         if element.hasStereoType(self.vocabulary_item_stereotype,
-           umlprofile=self.uml_profile) and not element.isAbstract():
+                                 umlprofile=self.uml_profile) and not element.isAbstract():
             # XXX TODO: fetch container_class - needs to be refined:
             # check if parent has vocabulary_container_stereotype and use its
             # name as container
@@ -1992,10 +1992,10 @@ class ArchetypesGenerator(BaseGenerator):
             wrt(u"# additional imports from tagged value 'import'\n")
             wrt(additionalImports)
             wrt(u'\n')
-            
+
         # import for flavor's interface
         wrt("from zope.interface import Interface\n")
-        
+
         # import for flavor's event subscriber
         wrt("from Products.ContentFlavors.interfaces import IFlavorProvider\n")
 
@@ -2010,12 +2010,12 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             recursive = 1
         aggregatedClasses = element.getRefs() + \
-                            element.getSubtypeNames(recursive=recursive,
-                                                    filter=['class'])
+                          element.getSubtypeNames(recursive=recursive,
+                                                  filter=['class'])
         # We *do* want the resursive=0 below, though!
         aggregatedInterfaces = element.getRefs() + \
-                               element.getSubtypeNames(recursive=0,
-                                                       filter=['interface'])
+                             element.getSubtypeNames(recursive=0,
+                                                     filter=['interface'])
         if element.getTaggedValue('allowed_content_types'):
             aggregatedClasses = [e for e in aggregatedClasses]
             for e in element.getTaggedValue('allowed_content_types').split(','):
@@ -2027,8 +2027,8 @@ class ArchetypesGenerator(BaseGenerator):
         parent_is_archetype = False
         for p in element.getGenParents():
             parent_is_archetype = parent_is_archetype or \
-                                  p.hasStereoType(self.archetype_stereotype,
-                                                  umlprofile=self.uml_profile)
+                                p.hasStereoType(self.archetype_stereotype,
+                                                umlprofile=self.uml_profile)
 
         # also check if the parent classes can have subobjects
         baseaggregatedClasses = []
@@ -2052,12 +2052,12 @@ class ArchetypesGenerator(BaseGenerator):
         # Interface aggregation
         if self.getAggregatedInterfaces(element):
             parentnames.insert(0, 'AllowedTypesByIfaceMixin')
-        
+
         # this flavor's class is an Z3 interface
         parentnames.insert(0,'Interface')
 
         parents = ', '.join(parentnames)
-        
+
         # protected section
         self.generateProtectedSection(outfile, element, 'module-header')
 
@@ -2115,7 +2115,7 @@ class ArchetypesGenerator(BaseGenerator):
             parents = "(%s)" % (parents,)
         else:
             parents = ''
-        
+
         classDeclaration = 'class %s%s:\n' % (name, parents)
         wrt(classDeclaration)
 
@@ -2137,7 +2137,7 @@ class ArchetypesGenerator(BaseGenerator):
         # allowed_interfaces
         parentAggregatedInterfaces = ''
         if utils.isTGVTrue(element.getTaggedValue('inherit_allowed_types', \
-           True)) and element.getGenParents():
+                                                  True)) and element.getGenParents():
             pattern = "getattr(%s, 'allowed_interfaces', [])"
             extras = ' + '.join([pattern % p.getCleanName()
                                  for p in element.getGenParents()])
@@ -2163,7 +2163,7 @@ class ArchetypesGenerator(BaseGenerator):
         wrt('# end of flavor %s\n\n' % name)
 
         self.generateProtectedSection(outfile, element, 'module-footer')
-        
+
         # prepare for generation the flavors.zcml file of that package
         # annotate package with the list of generated flavors
 
@@ -2258,11 +2258,11 @@ class ArchetypesGenerator(BaseGenerator):
     def generateHeader(self, element):
         outfile = StringIO()
         i18ncontent = self.getOption('i18ncontent', element,
-                                      self.i18n_content_support)
+                                     self.i18n_content_support)
 
         genparentsstereotypes = element.getRealizationParents()
         if i18ncontent == 'linguaplone' and \
-             not element.hasStereoType('remember'):
+           not element.hasStereoType('remember'):
             s1 = TEMPLATE_HEADER_I18N_LINGUAPLONE
         else:
             s1 = TEMPLATE_HEADER
@@ -2284,7 +2284,7 @@ class ArchetypesGenerator(BaseGenerator):
     def getTools(self,package):
         """ returns a list of  generated tools """
         res=[c for c in package.getClasses(recursive=1) if
-                    c.hasStereoType(self.portal_tools, umlprofile=self.uml_profile)]
+             c.hasStereoType(self.portal_tools, umlprofile=self.uml_profile)]
 
         if autoinstallOnly:
             res=[c for c in res if utils.isTGVTrue(c.getTaggedValue('autoinstall', 1)) ]
@@ -2294,7 +2294,7 @@ class ArchetypesGenerator(BaseGenerator):
     def getGeneratedTools(self,package):
         """ returns a list of  generated tools """
         return [c for c in self.getGeneratedClasses(package) if
-                    c.hasStereoType(self.portal_tools, umlprofile=self.uml_profile)]
+                c.hasStereoType(self.portal_tools, umlprofile=self.uml_profile)]
 
     def generateStdFiles(self, package):
         if package.isRoot():
@@ -2356,7 +2356,7 @@ class ArchetypesGenerator(BaseGenerator):
                                             package, '3.0'),
            'builtins'   : __builtins__,
            'utils'       :utils,
-        }
+       }
         d.update(__builtins__)
 
         templ=self.readTemplate(['Install.py'])
@@ -2388,9 +2388,9 @@ class ArchetypesGenerator(BaseGenerator):
                           package.getAnnotation('generatedPackages') or []
                           if not (m.hasStereoType('tests',
                                                   umlprofile=self.uml_profile)
-                                  or m.hasStereoType('stub',
-                                                     umlprofile=self.uml_profile))
-                          ]
+                                                  or m.hasStereoType('stub',
+                                                                     umlprofile=self.uml_profile))
+                      ]
         classImports   = [m.getModuleName() for m in
                           package.generatedModules 
                           if not m.hasStereoType('tests',
@@ -2440,7 +2440,7 @@ class ArchetypesGenerator(BaseGenerator):
            'protected_init_section_head': protectedInitCodeH,
            'protected_init_section_top': protectedInitCodeT,
            'protected_init_section_bottom': protectedInitCodeB,
-           }
+       }
 
         templ=self.readTemplate(['__init__product.py'])
         dtml=HTML(templ,d)
@@ -2460,9 +2460,9 @@ class ArchetypesGenerator(BaseGenerator):
                           package.getAnnotation('generatedPackages') or []
                           if not (m.hasStereoType('tests',
                                                   umlprofile=self.uml_profile)
-                                  or m.hasStereoType('stub',
-                                                     umlprofile=self.uml_profile))
-                          ]
+                                                  or m.hasStereoType('stub',
+                                                                     umlprofile=self.uml_profile))
+                      ]
         classImports   = [m.getModuleName() for m in
                           package.generatedModules 
                           if not m.hasStereoType('tests',
@@ -2483,7 +2483,7 @@ class ArchetypesGenerator(BaseGenerator):
              'class_imports': classImports,
              'protected_module_header': headerCode,
              'protected_module_footer': footerCode,
-             }
+         }
 
         templ=self.readTemplate(['__init_package__.py'])
         dtml=HTML(templ,d)
@@ -2504,13 +2504,13 @@ class ArchetypesGenerator(BaseGenerator):
                 elif self.subPackagesWithFlavors(subPackage) != []:
                     sp.append(subPackage)
         return sp
-        
+
     def generatePackageFlavorsZcml(self,package):
         """ Generate flavors.zcml for packages if it contains flavors """
-        
+
         generatedFlavors = package.getAnnotation('generatedFlavors') or []
         subPackagesWithFlavors = [m.getModuleName() for m in self.subPackagesWithFlavors(package)]
-            
+
         if generatedFlavors != [] or subPackagesWithFlavors != []:
             ppath = package.getFilePath()
             handleSectionedFile(['profiles', 'flavors.zcml'],
@@ -2584,19 +2584,19 @@ class ArchetypesGenerator(BaseGenerator):
         """       
         ppath = package.getFilePath()
         pname = package.getProductName()
-        
+
         handleSectionedFile(['profiles', 'profiles.zcml'],
                             os.path.join(ppath, 'profiles.zcml'),
                             sectionnames=['profiles.zcml'],
                             templateparams={'product_name': pname})
-    
+
         packageIncludes = [m.getModuleName() for m in 
-                          package.getAnnotation('generatedPackages') or []
-                          if not (m.hasStereoType('tests',
-                                                  umlprofile=self.uml_profile)
-                                  or m.hasStereoType('stub',
-                                                     umlprofile=self.uml_profile))
-                          ]
+                           package.getAnnotation('generatedPackages') or []
+                           if not (m.hasStereoType('tests',
+                                                   umlprofile=self.uml_profile)
+                                                   or m.hasStereoType('stub',
+                                                                      umlprofile=self.uml_profile))
+                       ]
 
         generatedFlavors = package.getAnnotation('generatedFlavors') or []
         packagesWithFlavors = [m.getModuleName() for m in self.subPackagesWithFlavors(package)]
@@ -2607,7 +2607,7 @@ class ArchetypesGenerator(BaseGenerator):
                             sectionnames=['configure.zcml'],
                             templateparams={'packages': packageIncludes,
                                             'containsFlavors': containsFlavors})
-    
+
     def generateGSDirectory(self, package):
         """Create genericsetup directory profiles/default.
         """
@@ -2615,7 +2615,7 @@ class ArchetypesGenerator(BaseGenerator):
         self.makeDir(profileDir)
         profileDefaultDir = os.path.join(profileDir, 'default')
         self.makeDir(profileDefaultDir)
-    
+
     def generateGSToolsetXML(self, package):
         """Generate the factorytool.xml.
         """
@@ -2624,7 +2624,7 @@ class ArchetypesGenerator(BaseGenerator):
         for klass in klasses:
             if utils.isTGVFalse(klass.getTaggedValue('autoinstall',1)):
                 continue
-            
+
             path = '.'.join([
                 'Products',
                 klass.getQualifiedModuleName(),
@@ -2641,13 +2641,13 @@ class ArchetypesGenerator(BaseGenerator):
                     'tool_id': tool_id,
                 }
             )
-        
+
         ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
         handleSectionedFile(['profiles', 'toolset.xml'],
                             os.path.join(ppath, 'toolset.xml'),
                             sectionnames=['toolset.xml'],
                             templateparams={ 'tools': tools })
-    
+
     def generateGSCatalogXML(self, package):
         """Generate the catalog.xml file
         """
@@ -2661,9 +2661,9 @@ class ArchetypesGenerator(BaseGenerator):
                             sectionnames=['HEAD', 'FOOT'],
                             templateparams={ 
                                 'defs': alldefs }
-                            )
-        
-    
+                        )
+
+
     def _getIndexDefinitions(self, defs, package):
         """return the index definitions for catalog.xml
         """        
@@ -2671,7 +2671,7 @@ class ArchetypesGenerator(BaseGenerator):
         for klass in klasses:
             if not self._isContentClass(klass):
                 continue
-            
+
             for attribute in klass.getAttributeDefs():
                 index = self.getOption('index', attribute, None)
                 if index:
@@ -2689,7 +2689,7 @@ class ArchetypesGenerator(BaseGenerator):
                         defs[catalogname]['metatype'] = 'Plone Catalog Tool'
                         defs[catalogname]['indexes'] = list()
                         defs[catalogname]['columns'] = list()
-                    
+
                     accessor = attribute.getTaggedValue('index_method', None)
                     if not accessor:
                         accessor = attribute.getTaggedValue('accessor', None)
@@ -2702,20 +2702,20 @@ class ArchetypesGenerator(BaseGenerator):
                     indexdef['indexed_attributes'] = [accessor]
                     indexdef['extras'] = []
                     indexdef['properties'] = []
-                    
+
                     if not catalogname in defs.keys():
                         defs[catalogname] = dict()                        
                     defs[catalogname]['indexes'].append(indexdef)
-                    
+
                     if metadata:
                         columndef = {
                             'value': accessor,
                         }
                         defs[catalogname]['columns'].append(columndef) 
-                    
+
                     #defs['colums'].append(columndef)
                     continue
-                
+
                 # new sytle AGX2x index declaration
                 metadata = self.getOption('catalog:metadata', attribute, '0')
                 metadata = utils.isTGVTrue(metadata)
@@ -2727,13 +2727,13 @@ class ArchetypesGenerator(BaseGenerator):
                                              'portal_catalog, Plone Catalog Tool')
                 catalogid, catalogmetatype = [a.strip() 
                                               for a in catalogname.split(',')]
-                
+
                 # find accessor
                 accessor = attribute.getTaggedValue('accessor', '')
                 if not accessor:
                     accessor = attribute.getCleanName()
                     accessor = 'get%s' % accessor.capitalize()
-                    
+
                 # find attributes            
                 attributes = attribute.getTaggedValue('catalog:attributes', [])
                 if type(attributes) in types.StringTypes:
@@ -2749,7 +2749,7 @@ class ArchetypesGenerator(BaseGenerator):
                     defs[catalogid]['metatype'] = catalogmetatype
                     defs[catalogid]['indexes'] = list()
                     defs[catalogid]['columns'] = list()
-                                                    
+
                 if index:                    
                     indexdef = dict()
                     indexdef['name'] = attribute.getTaggedValue('index:name', 
@@ -2773,15 +2773,15 @@ class ArchetypesGenerator(BaseGenerator):
                     indexdef['properties'] = props
 
                     defs[catalogid]['indexes'].append(indexdef)
-                    
+
                 if metadata:                    
                     for attr in attributes:
                         columndef = {
                             'value': attr,
                         }
                         defs[catalogid]['columns'].append(columndef)                    
-                
-    
+
+
     def generateGSFactoryTooXMLFile(self, package):
         """Generate the factorytool.xml.
         """
@@ -2792,18 +2792,18 @@ class ArchetypesGenerator(BaseGenerator):
                 continue
             factoryopt = self.getOption('use_portal_factory', klass, True)
             if utils.isTGVTrue(factoryopt) \
-              and not (klass.getPackage().hasStereoType('tests') \
-              or klass.isAbstract() \
-              or klass.hasStereoType(['widget', 'field', 'stub'])):
+               and not (klass.getPackage().hasStereoType('tests') \
+                        or klass.isAbstract() \
+                        or klass.hasStereoType(['widget', 'field', 'stub'])):
                 klassname = klass.getTaggedValue('portal_type') \
-                            or klass.getCleanName()
+                          or klass.getCleanName()
                 factorytypes.append(klassname)
-        
+
         ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
         handleSectionedFile(['profiles', 'factorytool.xml'],
                             os.path.join(ppath, 'factorytool.xml'),
                             templateparams={ 'factory_types': factorytypes })
-    
+
     def generateGSStylesheetsXML(self, package):
         """Generate the cssregistry.xml file.
         """
@@ -2818,13 +2818,13 @@ class ArchetypesGenerator(BaseGenerator):
         style['media'] = 'all'
         style['rel'] = 'stylesheet'
         style['rendering'] = 'import'
-        
+
         ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
         handleSectionedFile(['profiles', 'cssregistry.xml'],
                             os.path.join(ppath, 'cssregistry.xml'),
                             sectionnames=['cssregistry.xml'],
                             templateparams={ 'css': [style] })
-    
+
     def generateGSJavascriptsXML(self, package):
         """Generate the jsregistry.xml file.
         """
@@ -2836,17 +2836,17 @@ class ArchetypesGenerator(BaseGenerator):
         script['expression'] = ''
         script['id'] = 'myfancyscript.js'
         script['inline'] = 'False'
-        
+
         ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
         handleSectionedFile(['profiles', 'jsregistry.xml'],
                             os.path.join(ppath, 'jsregistry.xml'),
                             sectionnames=['jsregistry.xml'],
                             templateparams={ 'scripts': [script] })
-    
+
     def generateGSSkinsXMLFile(self, package):
         """Create the skins.xml file if skin_registrarion tagged value is set
         to genericsetup.
-        
+
         Reads all directories from productname/skins and generates and uses
         them for xml file generation.
         """
@@ -2861,12 +2861,12 @@ class ArchetypesGenerator(BaseGenerator):
                 skindir['name'] = dir
                 skindir['directory'] = '%s/skins/%s' % (pname, dir)
                 skindirs.append(skindir)
-        
+
         ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
         handleSectionedFile(['profiles', 'skins.xml'],
                             os.path.join(ppath, 'skins.xml'),
                             templateparams={ 'skinDirs': skindirs })
-        
+
     def generateGSTypesXMLFile(self, package):
         """Create the types.xml file if type_registrarion tagged value is set
         to genericsetup.
@@ -2877,7 +2877,7 @@ class ArchetypesGenerator(BaseGenerator):
         handleSectionedFile(['profiles', 'types.xml'],
                             os.path.join(ppath, 'types.xml'),
                             templateparams={ 'portalTypes': defs })
-    
+
     def generateGSTypesFolderAndXMLFiles(self, package):
         """Create the types folder and the corresponding xml files for the
         portal types inside it if type_registrarion tagged value is set
@@ -2885,23 +2885,23 @@ class ArchetypesGenerator(BaseGenerator):
         """
         profiledir = os.path.join(package.getFilePath(), 'profiles', 'default')
         typesdir = os.path.join(profiledir, 'types')
-        
+
         if not 'types' in os.listdir(profiledir):
             os.mkdir(os.path.join(typesdir))
-        
+
         if not os.path.isdir(typesdir):
             raise Exception('types is not a directory')
-        
+
         defs = list()
         self._getTypeDefinitions(defs, package)
-        
+
         for typedef in defs:
             #print typedef
             filename = '%s.xml' % typedef['name']
             handleSectionedFile(['profiles', 'type.xml'],
                                 os.path.join(typesdir, filename),
                                 templateparams={ 'ctype': typedef })
-            
+
     def generateGSsetuphandlers(self, package):
         """generates setuphandlers.py and import_steps.xml"""
         # generate setuphandlers
@@ -2918,10 +2918,10 @@ class ArchetypesGenerator(BaseGenerator):
                                or self.getOption('catalogmultiplex:black', 
                                                  klass, None)]
         notsearchabletypes = [(klass.getTaggedValue('portal_type') or \
-                              klass.getCleanName()) \
-                              for klass in allclasses\
-                              if utils.isTGVFalse(self.getOption('searchable_type', \
-                                                                 klass, True))]
+                               klass.getCleanName()) \
+                               for klass in allclasses\
+                               if utils.isTGVFalse(self.getOption('searchable_type', \
+                                                                  klass, True))]
         hidemetatypes = [(klass.getTaggedValue('portal_type') or \
                           klass.getCleanName()) \
                           for klass in allclasses \
@@ -2940,22 +2940,22 @@ class ArchetypesGenerator(BaseGenerator):
             'hasvocabularies': package.getProductName() in self.vocabularymap.keys(),
             'notsearchabletypes': notsearchabletypes,
             'hidemetatypes': hidemetatypes,
-            
+
         }        
         handleSectionedFile(['profiles', 'setuphandlers.py'], 
                             os.path.join(package.getFilePath(),
                                          'setuphandlers.py'),
                             sectionnames=('HEAD', 'FOOT'),
                             templateparams=templateparams
-                           )
+                        )
         # generate import_steps.xml
         profiledir = os.path.join(package.getFilePath(), 'profiles', 'default')
         handleSectionedFile(['profiles', 'import_steps.xml'], 
                             os.path.join(profiledir, 'import_steps.xml'),
                             sectionnames=('ADDITIONALSTEPS',),
                             templateparams=templateparams
-                           )
-    
+                        )
+
     def generateGSMembraneToolXML(self, package):
         types = []
         self.getRememberTypes(types, package)
@@ -2965,16 +2965,16 @@ class ArchetypesGenerator(BaseGenerator):
         handleSectionedFile(['profiles', 'membrane_tool.xml'], 
                             os.path.join(profiledir, 'membrane_tool.xml'),
                             templateparams={'membrane_types': types}
-                           )
-    
+                        )
+
     def generateDCWorkflowPatch(self, package):
         if self.getOption('plone_target_version', package, '3.0') == '3.0':
             return
-        
+
         handleSectionedFile(['dcworkflowpatch.py'], 
                             os.path.join(os.path.join(package.getFilePath()),
                                          'dcworkflowpatch.py'))
-    
+
     def getRememberTypes(self, types, package):
         # TODO: consider if there is an own workflow on a matched object.
         # then, this workflow has precedence and use_workflow and
@@ -2984,9 +2984,9 @@ class ArchetypesGenerator(BaseGenerator):
         klasses = package.getClasses(recursive=1)
         for klass in klasses:
             if klass.hasStereoType(['remember'], umlprofile=self.uml_profile):
-                
+
                 statemachine = klass.getStateMachine()
-                
+
                 if not statemachine:
                     workflow = klass.getTaggedValue('use_workflow', None)
                     if not workflow:
@@ -2994,19 +2994,19 @@ class ArchetypesGenerator(BaseGenerator):
                                         'type, aborting.')
                 else:
                     workflow = statemachine.getCleanName()
-                
+
                 workflow_states = klass.getTaggedValue('active_workflow_states',
-                                                      None)
+                                                       None)
                 if not workflow_states:
-                   raise Exception('No workflow states set for remember ' + \
-                                   'type, aborting.')
-                
+                    raise Exception('No workflow states set for remember ' + \
+                                    'type, aborting.')
+
                 type = dict()
                 type['portal_type'] = klass.getCleanName()
                 type['workflow'] = workflow
                 type['active_states'] = eval(workflow_states)
                 types.append(type)
-    
+
 
     def getGeneratedClasses(self,package):
         classes = package.getAnnotation('generatedClasses') or []
@@ -3018,9 +3018,9 @@ class ArchetypesGenerator(BaseGenerator):
             if c not in res:
                 res.append(c)
         return res
-    
+
     def generatePackage(self, package, recursive=1):
-        
+
         log.debug("Generating package %s.",
                   package)
         if package.hasStereoType(self.stub_stereotypes, umlprofile=self.uml_profile):
@@ -3055,7 +3055,7 @@ class ArchetypesGenerator(BaseGenerator):
                 self.parsed_sources.append(mod)
                 for c in mod.classes.values():
                     self.parsed_class_sources[package.getFilePath()+'/'+c.name] = c
-            
+
             # generate class
             try:
                 outfile = StringIO()
@@ -3119,7 +3119,7 @@ class ArchetypesGenerator(BaseGenerator):
                 package.annotate('generatedPackages',generatedPkg)
 
         self.generateStdFiles(package)
-    
+
     def generatePackageInterfacesPy(self, package):
         """Generates the interfaces.py for and in the specific package.
         """
@@ -3127,19 +3127,19 @@ class ArchetypesGenerator(BaseGenerator):
         for element in package.getClasses():
             if not self._isContentClass(element):
                 continue
-            
+
             classname = element.getCleanName()
             modulename = element.getModuleName()
             marker = dict()
             marker['name'] = 'I%s' % classname
             marker['description'] = '.%s.%s' % (modulename, classname)
             markers.append(marker)
-        
+
         for element in package.getInterfaces():
             if not self._isContentClass(element):
                 continue
             # later implementation
-            
+
         handleSectionedFile(['interfaces.py'], 
                             os.path.join(package.getFilePath(),
                                          'interfaces.py'),
@@ -3147,14 +3147,14 @@ class ArchetypesGenerator(BaseGenerator):
                             templateparams={'type_marker_interfaces': markers})
 
     def generateRelation(self, doc, collection, relname, relid,
-            allowed_source_types=[], allowed_target_types=[],
-            sourceinterface=None,targetinterface=None,
-            sourcecardinality=(None,None),
-            targetcardinality=(None,None),
-            assocclassname=None,
-            inverse_relation_id=None,
-            primary=0,
-            ):
+                         allowed_source_types=[], allowed_target_types=[],
+                         sourceinterface=None,targetinterface=None,
+                         sourcecardinality=(None,None),
+                         targetcardinality=(None,None),
+                         assocclassname=None,
+                         inverse_relation_id=None,
+                         primary=0,
+                         ):
 
         ruleset=doc.createElement('Ruleset')
         ruleset.setAttribute('id',relname)
@@ -3252,7 +3252,7 @@ class ArchetypesGenerator(BaseGenerator):
         sourcecardinality = None
         targetcardinality = None
         assocclassname = None
-        
+
         doc=minidom.Document()
         lib=doc.createElement('RelationsLibrary')
         doc.appendChild(lib)
@@ -3262,7 +3262,7 @@ class ArchetypesGenerator(BaseGenerator):
         package.num_generated_relations=0
         assocs = package.getAssociations(recursive=1)
         processed = [] # xxx hack and workaround, not solution, avoids double
-                       # generation of relations
+                        # generation of relations
         for assoc in assocs:
             if assoc in processed:
                 continue
@@ -3317,35 +3317,35 @@ class ArchetypesGenerator(BaseGenerator):
 
             assocclassname=getattr(assoc,'isAssociationClass',0) and assoc.getCleanName() or assoc.getTaggedValue('association_class') or self.getOption('association_class',assoc,None)
             self.generateRelation(doc, coll,
-                assoc.getCleanName(),
-                assoc.getId(),
-                allowed_source_types=allowed_source_types,
-                allowed_target_types=allowed_target_types,
-                sourceinterface=sourceinterface,
-                targetinterface=targetinterface,
-                sourcecardinality=sourcecard,
-                targetcardinality=targetcard,
+                                  assoc.getCleanName(),
+                                  assoc.getId(),
+                                  allowed_source_types=allowed_source_types,
+                                  allowed_target_types=allowed_target_types,
+                                  sourceinterface=sourceinterface,
+                                  targetinterface=targetinterface,
+                                  sourcecardinality=sourcecard,
+                                  targetcardinality=targetcard,
 
-                assocclassname=assocclassname,
-                inverse_relation_id=inverse_relation_name,
-                primary=1
-                )
+                                  assocclassname=assocclassname,
+                                  inverse_relation_id=inverse_relation_name,
+                                  primary=1
+                              )
 
             #create the counterrelation
             if inverse_relation_name:
                 self.generateRelation(doc, coll,
-                    inverse_relation_name,
-                    inverse_relation_name,
-                    allowed_source_types=allowed_target_types,
-                    allowed_target_types=allowed_source_types,
-                    sourceinterface=targetinterface,
-                    targetinterface=sourceinterface,
-                    sourcecardinality=targetcard,
-                    targetcardinality=sourcecard,
+                                      inverse_relation_name,
+                                      inverse_relation_name,
+                                      allowed_source_types=allowed_target_types,
+                                      allowed_target_types=allowed_source_types,
+                                      sourceinterface=targetinterface,
+                                      targetinterface=sourceinterface,
+                                      sourcecardinality=targetcard,
+                                      targetcardinality=sourcecard,
 
-                    assocclassname=assocclassname,
-                    inverse_relation_id=assoc.getId()
-                    )
+                                      assocclassname=assocclassname,
+                                      inverse_relation_id=assoc.getId()
+                                  )
 
             # ATVM integration - by jensens
             # very special case: create a vocabulary with the association name
@@ -3360,15 +3360,15 @@ class ArchetypesGenerator(BaseGenerator):
                 type = self.getOption('association_vocabularytype', assoc, 'SimpleVocabulary')
                 if not assoc.getCleanName() in self.vocabularymap[currentproduct].keys():
                     self.vocabularymap[currentproduct][assoc.getCleanName()] = (
-                                                    type,
-                                                    'SimpleVocabularyTerm'
+                        type,
+                        'SimpleVocabularyTerm'
                     )
                 else:
                     print "warning: vocabulary with name %s defined more than once." % assoc.getCleanName()
                 if inverse_relation_name and not inverse_relation_name in self.vocabularymap[currentproduct].keys():
                     self.vocabularymap[currentproduct][inverse_relation_name] = (
-                                                    type,
-                                                    'SimpleVocabularyTerm'
+                        type,
+                        'SimpleVocabularyTerm'
                     )                    
             package.num_generated_relations += 1
 
@@ -3410,7 +3410,7 @@ class ArchetypesGenerator(BaseGenerator):
         #create the directories
         self.makeDir(root.getFilePath())
         self.makeDir(os.path.join(root.getFilePath(),'skins'))
-        
+
         # create skins directories
         # in agx 1.6 we keep the oldschool single directory with Products name
         # if it already exists (bbb). if skins is empty we create by default the 
@@ -3420,7 +3420,7 @@ class ArchetypesGenerator(BaseGenerator):
         # for templates, images and styles, but they will get prefixed too, to
         # not expose namesapce conflicts.
         # [jensens]
-        
+
         skindirs = root.getTaggedValue('skin_directories', 
                                        'templates, styles, images')
         oldschooldir = os.path.join(root.getFilePath(),'skins',
@@ -3447,7 +3447,7 @@ class ArchetypesGenerator(BaseGenerator):
                 PotTemplate = PotTemplate % {
                     'author':', '.join(authors) or 'unknown author',
                     'email':', '.join([email[1:-1] for email in emails]) or \
-                            'unknown@email.address',
+                    'unknown@email.address',
                     'year': str(time.localtime()[0]),
                     'datetime': time.ctime(),
                     'charset': 'UTF-8',
@@ -3457,7 +3457,7 @@ class ArchetypesGenerator(BaseGenerator):
                 of.write(PotTemplate)
                 of.close()
             self.msgcatstack.append(msgcatalog.MessageCatalog(
-                    filename=os.path.join(self.targetRoot, filepath)))
+                filename=os.path.join(self.targetRoot, filepath)))
 
         package = root
         self.generateRelations(root)
@@ -3500,8 +3500,8 @@ class ArchetypesGenerator(BaseGenerator):
             assert(len(xmis)==1)
             buf=zf.read(xmis[0])
             self.root=root=XMIParser.parse(xschema=buf,
-                packages=self.generate_packages, generator=self,
-                generate_datatypes=self.generate_datatypes)
+                                           packages=self.generate_packages, generator=self,
+                                           generate_datatypes=self.generate_datatypes)
         else:
             raise TypeError,'input file not of type .xmi, .xml, .zargo, .zuml'
 
@@ -3540,7 +3540,7 @@ class ArchetypesGenerator(BaseGenerator):
         if not XMIParser.has_stripogram:
             log.warn("Can't strip html from doc-strings. Module 'stripogram' not found.")
         self.generateProduct(root)
-        
+
     def _getSubtypes(self, element):
         """extract the allowed subtypes
         """
@@ -3554,29 +3554,29 @@ class ArchetypesGenerator(BaseGenerator):
             recursive = 0
         else:
             recursive = 1
-        
+
         aggregatedClasses = element.getRefs() + \
-                            element.getSubtypeNames(recursive=recursive,
-                                                    filter=['class'])
-        
+                          element.getSubtypeNames(recursive=recursive,
+                                                  filter=['class'])
+
         if element.getTaggedValue('allowed_content_types'):
             #aggregatedClasses = [e for e in aggregatedClasses] # hae?
             for e in element.getTaggedValue('allowed_content_types').split(','):
                 e = e.strip()
                 if e not in aggregatedClasses:
                     aggregatedClasses.append(e)
-        
+
         # also check if the parent classes can have subobjects
         baseaggregatedClasses = []
         for b in element.getGenParents():
             baseaggregatedClasses.extend(b.getRefs())
             baseaggregatedClasses.extend(b.getSubtypeNames(recursive=1))
-        
+
         #allowed_content_classes
         parentAggregates = []
-        
+
         if utils.isTGVTrue(element.getTaggedValue('inherit_allowed_types', \
-           True)) and element.getGenParents():
+                                                  True)) and element.getGenParents():
             for gp in element.getGenParents():
                 if gp.hasStereoType(self.python_stereotype,
                                     umlprofile=self.uml_profile):
@@ -3592,7 +3592,7 @@ class ArchetypesGenerator(BaseGenerator):
             'aggregated_classes': aggregatedClasses,
         }
         return ret
-        
+
     def _getTypeDefinitions(self, defs, package):
         """Iterate recursice through package and create class definitions
         """
@@ -3600,50 +3600,50 @@ class ArchetypesGenerator(BaseGenerator):
         for pclass in classes:
             if not self._isContentClass(pclass):
                 continue
-            
+
             if pclass.hasStereoType(['tool', 'portal_tool', 'flavor', 'interface']):
                 continue
-            
+
             fti = self._getFTI(pclass)
             typedef = dict()
             typedef.update(fti)
             typedef['name'] = pclass.getCleanName()
-            
+
             #if utils.isTGVTrue(pclass.getTaggedValue('use_dynamic_view', '1')):
             #    typedef['meta_type'] = 'Factory-based Type Information ' + \
             #                           'with dynamic views'
             #else:
             #    typedef['meta_type'] = 'Factory-based Type Information'
             typedef['meta_type'] = 'Factory-based Type Information ' + \
-                                   'with dynamic views'
-            
+                   'with dynamic views'
+
             typedef['content_meta_type'] = pclass.getCleanName()
             typedef['product_name'] = package.getProductName()
             typedef['factory'] = 'add%s' % pclass.getCleanName()
-            
+
             allowed_types = self._getSubtypes(pclass)['aggregated_classes']
             typedef['allowed_content_types'] = allowed_types
-            
+
             # check if allow_discussion has to be set to None as default
             # further check for boolean wrapper
             typedef['allow_discussion'] = pclass.getTaggedValue( \
-                                              'allow_discussion', 'False')
-            
+                'allow_discussion', 'False')
+
             folderish = self.elementIsFolderish(pclass)
             if folderish:
                 typedef['type_aliases'] = atmaps.DEFAULT_FOLDERISH_ALIASES
             else:
                 typedef['type_aliases'] = atmaps.DEFAULT_ALIASES
-            
+
             typedef['suppl_views'] = eval(typedef['suppl_views'])
             if not typedef['suppl_views']: #  and folderish:
                 typedef['suppl_views'] = (typedef['immediate_view'],)
-            
+
             if self.getOption('plone_target_version', pclass, '3.0') == '3.0':
                 actions = atmaps.DEFAULT_ACTIONS_3_0
             else:
                 actions = atmaps.DEFAULT_ACTIONS_2_5
-                                
+
             # handle <<action>> and <<unaction>> stereotypes
             allactions = []
             disabled = self.getDisabledMethodActions(pclass)
@@ -3651,19 +3651,19 @@ class ArchetypesGenerator(BaseGenerator):
             for i in range(0, len(actions)):
                 if actions[i]['id'] not in disabled and \
                    actions[i]['id'] not in newactions.keys():
-                     allactions.append(actions[i].copy())
+                    allactions.append(actions[i].copy())
             for key in newactions.keys():
                 allactions.append(newactions[key])
             typedef['type_actions'] = allactions                
-            
+
             defs.append(typedef)
-    
+
     def _isContentClass(self, cclass):
         """Check if given class is content class
         """
         if cclass.isInternal() \
-         or cclass.getName() in self.hide_classes \
-         or cclass.getName().lower().startswith('java::'): # Enterprise Architect fix!
+           or cclass.getName() in self.hide_classes \
+           or cclass.getName().lower().startswith('java::'): # Enterprise Architect fix!
             log.debug("Ignoring unnecessary class '%s'.", cclass.getName())
             return False
         if cclass.hasStereoType(self.stub_stereotypes,
@@ -3671,7 +3671,7 @@ class ArchetypesGenerator(BaseGenerator):
             log.debug("Ignoring stub class '%s'.", cclass.getName())
             return False
         return True
-    
+
     def _getFTI(self, cclass):
         """Return the FTI information of the content class
         """
@@ -3679,11 +3679,11 @@ class ArchetypesGenerator(BaseGenerator):
         fti['immediate_view'] = self.getOption('immediate_view',
                                                cclass,
                                                default='base_view')        
-        
+
         fti['default_view'] = self.getOption('default_view',
                                              cclass,
                                              default=fti['immediate_view'])
-        
+
         fti['suppl_views'] = self.getOption('suppl_views',
                                             cclass,
                                             default='()')
@@ -3694,21 +3694,21 @@ class ArchetypesGenerator(BaseGenerator):
             # aggregates and compositions aren't detected.
             # 2005-05-11 reinout
             fti['global_allow'] = False
-        
+
         # Or if it is a hidden element
         if cclass.hasStereoType('hidden', umlprofile=self.uml_profile):
             fti['global_allow'] = False
-        
+
         # Or if it is a tool-like thingy
         if (cclass.hasStereoType(self.portal_tools,
                                  umlprofile=self.uml_profile) or \
-            cclass.hasStereoType(self.vocabulary_item_stereotype,
-                                 umlprofile=self.uml_profile) or \
-            cclass.hasStereoType(self.remember_stereotype,
-                                 umlprofile=self.uml_profile) or \
-            cclass.isAbstract()):
+                                 cclass.hasStereoType(self.vocabulary_item_stereotype,
+                                                      umlprofile=self.uml_profile) or \
+                                 cclass.hasStereoType(self.remember_stereotype,
+                                                      umlprofile=self.uml_profile) or \
+                                 cclass.isAbstract()):
             fti['global_allow'] = False
-        
+
         # But the tagged value overwrites all
         tgvglobalallow = self.getOption('global_allow',
                                         cclass,
@@ -3749,15 +3749,14 @@ class ArchetypesGenerator(BaseGenerator):
         filter_default = self.elementIsFolderish(cclass)
         # But a tagged value overrides
         fti['filter_content_types'] = utils.isTGVTrue(cclass.getTaggedValue( \
-                                                      'filter_content_types',
-                                                      filter_default))
+            'filter_content_types',
+            filter_default))
         # Set a type name and description.
         fti['type_name'] = cclass.getTaggedValue('archetype_name') or \
-                           cclass.getTaggedValue('label') or \
-                           cclass.getName ()
+           cclass.getTaggedValue('label') or \
+           cclass.getName ()
         fti['type_name_lc'] = fti['type_name'].lower()                        
         fti['type_description'] = utils.getExpression( \
-                                      cclass.getTaggedValue('typeDescription',
-                                                            fti['type_name']))        
+            cclass.getTaggedValue('typeDescription',
+                                  fti['type_name']))        
         return fti
-    
