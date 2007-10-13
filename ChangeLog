@@ -1,4 +1,8 @@
 2007-10-13 Encolpe Degoute <encolpe.degoute@ingeniweb.com>
+    * Fix class generation that try to import IClassName when ClassName is an
+	interface
+
+2007-10-13 Encolpe Degoute <encolpe.degoute@ingeniweb.com>
     * autoinstallOnly name was removed from getTools parameters but not into
 	its code.
 

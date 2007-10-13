@@ -247,7 +247,10 @@ class ArchetypesGenerator(BaseGenerator):
         out = StringIO()
 
         print >> out, 'from zope.interface import implements'
-        print >> out, 'from interfaces import I%s' % element.getCleanName()
+
+        if not element.isinterface:
+            # Do not try to import an interface in itself
+            print >> out, 'from interfaces import I%s' % element.getCleanName()
 
         res = BaseGenerator.generateDependentImports(self, element)
         print >> out, res
