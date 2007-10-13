@@ -80,7 +80,7 @@ class DummyModel:
 
     def getName(self):
         return self.name
-
+<
     def hasStereoType(self, s, umlprofile=None):
         return True
 
@@ -2711,9 +2711,7 @@ class ArchetypesGenerator(BaseGenerator):
                         columndef = {
                             'value': accessor,
                         }
-                        defs[catalogname]['columns'].append(columndef) 
-
-                    #defs['colums'].append(columndef)
+                        defs[catalogname]['columns'].append(columndef)
                     continue
 
                 # new sytle AGX2x index declaration
