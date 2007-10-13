@@ -80,7 +80,7 @@ class DummyModel:
 
     def getName(self):
         return self.name
-<
+
     def hasStereoType(self, s, umlprofile=None):
         return True
 
