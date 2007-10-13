@@ -2548,7 +2548,8 @@ class ArchetypesGenerator(BaseGenerator):
         # Generate config.py from template
         self.generateConfigPy(package)
         # Generate Extensions/Install.py
-        self.generateInstallPy(package)
+        if self.getOption('plone_target_version', package, '3.0').startswith('2'):
+            self.generateInstallPy(package)
         # Generate generic setup profile
         self.generateGSDirectory(package)
         # Generate GS skins.xml file
