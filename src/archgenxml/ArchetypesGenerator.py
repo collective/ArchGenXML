@@ -3135,6 +3135,10 @@ class ArchetypesGenerator(BaseGenerator):
             if not self._isContentClass(element):
                 continue
             # later implementation
+        
+        if not markers:
+            # dont generate empty interfaces.py
+            return
 
         handleSectionedFile(['interfaces.py'], 
                             os.path.join(package.getFilePath(),
