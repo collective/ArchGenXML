@@ -51,12 +51,12 @@ class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-v
 <dtml-else>
 
     def <dtml-var "m.getName()">(<dtml-var "', '.join(m.getParamNames())">):
-       """
+        """
 
-       """
-       <dtml-if "not klass.isinterface">pass</dtml-if> 
+        """
+        <dtml-if "not klass.isinterface">pass</dtml-if> 
 
-       <dtml-if "m.isStatic()"><dtml-var "m.getName()"> = staticmethod(<dtml-var "m.getName()">)</dtml-if>
+        <dtml-if "m.isStatic()"><dtml-var "m.getName()"> = staticmethod(<dtml-var "m.getName()">)</dtml-if>
 
 </dtml-if>
 </dtml-let>
