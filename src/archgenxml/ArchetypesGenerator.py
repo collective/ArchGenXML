@@ -2286,9 +2286,6 @@ class ArchetypesGenerator(BaseGenerator):
         res=[c for c in package.getClasses(recursive=1) if
              c.hasStereoType(self.portal_tools, umlprofile=self.uml_profile)]
 
-        if autoinstallOnly:
-            res=[c for c in res if utils.isTGVTrue(c.getTaggedValue('autoinstall', 1)) ]
-
         return res
 
     def getGeneratedTools(self,package):

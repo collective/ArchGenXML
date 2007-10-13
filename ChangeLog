@@ -1,3 +1,7 @@
+2007-10-13 Encolpe Degoute <encolpe.degoute@ingeniweb.com>
+    * autoinstallOnly name was removed from getTools parameters but not into
+	its code.
+
 2007-09-06 Jens Klein <jens@bluedynamics.com> and 
            Robert Niederreiter <robertnqbluedynamics.com>
 	* tons of refactorings toward Genericsetup usage.

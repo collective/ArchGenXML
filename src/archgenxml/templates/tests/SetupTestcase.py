@@ -28,9 +28,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
     def test_tools(self):
         ids = self.portal.objectIds()
         self.failUnless('archetype_tool' in ids)
-<dtml-if "generator.getTools(klass.getPackage().getProduct())">
-        # <dtml-var "[c.getName() for c in generator.getTools(klass.getPackage().getProduct(), autoinstallOnly=1)]">
-</dtml-if>
+<dtml-call "generator.getTools(klass.getPackage().getProduct())">
 <dtml-else><dtml-var "parsed_class.methods['test_tools'].getSrc()"></dtml-if>
 
 <dtml-if "not parsed_class or 'test_types' not in parsed_class.methods.keys()">
