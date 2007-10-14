@@ -203,10 +203,24 @@ at_uml_profile.addStereoType(
     )
 
 at_uml_profile.addStereoType(
+    'atnewsitem', ['XMIClass'],
+    description='Turns the class into an ATNewsItem subclass.',
+    imports=['from Products.ATContentTypes.content.newsitem import ATNewsItem',
+             'from Products.ATContentTypes.content.newsitem import ATNewsItemSchema',]
+    )
+
+at_uml_profile.addStereoType(
     'atimage', ['XMIClass'],
     description='Turns the class into an ATImage subclass.',
     imports=['from Products.ATContentTypes.content.image import ATImage',
              'from Products.ATContentTypes.content.image import ATImageSchema',]
+    )
+
+at_uml_profile.addStereoType(
+    'atlink', ['XMIClass'],
+    description='Turns the class into an ATLink subclass.',
+    imports=['from Products.ATContentTypes.content.link import ATLink',
+             'from Products.ATContentTypes.content.link import ATLinkSchema',]
     )
 
 at_uml_profile.addStereoType(

@@ -141,7 +141,8 @@ class ArchetypesGenerator(BaseGenerator):
     remember_stereotype = ['remember']
     python_stereotype = ['python', 'python_class', 'view']
     folder_stereotype = ['atfolder', 'folder', 'ordered', 'large', 'btree']
-    atct_stereotype = ['atfolder', 'atfile', 'atdocument', 'atevent', 'atimage']
+    atct_stereotype = ['atfolder', 'atfile', 'atdocument', 'atevent', 'atimage', 
+                       'atnewsitem', 'atlink']
 
     generate_datatypes = ['field', 'compound_field']
 
@@ -382,7 +383,7 @@ class ArchetypesGenerator(BaseGenerator):
                         and utils.isTGVFalse(m.getTaggedValue('create_action'))):
                     ret[dict['id']] = dict
 
-            #LATER
+            #XXX LATER
 
             #if m.hasStereoType('view', umlprofile=self.uml_profile):
             #    f=self.makeFile(os.path.join(self.getSkinPath(element),action_name+'.pt'),0)
