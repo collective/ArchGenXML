@@ -741,6 +741,54 @@ explanation = """Some indexes are using 'properties' on installation as
 configuration. If the index need properties you'll need to declare them here. 
 Provide a comma separated list."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+ 
+tagname = 'collection:criteria'
+explanation = """Add the index to the Collection (aka Smart Folder) Indexes 
+available for defining Criteria. Provide a comma seprated list of criteria 
+that will be available by default.
+Available criterias are: ATBooleanCriterion, 
+ATDateCriteria, ATDateRangeCriterion, ATListCriterion, ATPortalTypeCriterion, 
+ATReferenceCriterion, ATSelectionCriterion, ATSimpleIntCriterion, 
+ATSimpleStringCriterion, ATSortCriterion, ATCurrentAuthorCriterion, 
+ATPathCriterion, ATRelativePathCriterion. You must provide an index:type as well.
+"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)        
+    
+tagname = 'collection:criteria_help'
+explanation = """A help text (string), used for collection:criteria. 
+Its added to the generated.pot as a literal. 
+If not provided the widget:description is used.
+"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)        
+    
+tagname = 'collection:criteria_label'
+explanation = """The display name of the collection:criteria, called 
+friendly name (string). Its added to the generated.pot as a literal. 
+If not given the widget:label is taken if provided.
+"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)        
+    
+tagname = 'collection:metadata'
+explanation = """register the catalog:metadata as an available column in a 
+Collection. Can be used as an alternative for catalog:metadata. 
+catalog:metadata_accessor is used if given.
+"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)   
+
+tagname = 'collection:metadata_help'
+explanation = """A help text (string), used for collection:criteria. Its added to the 
+generated.pot as a literal. If not provided the collection:criteria_help 
+or - if not provided - widget:description is used.
+"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)   
+
+tagname = 'collection:metadata_label'
+explanation = """the display name of the collection:metadata, 
+called friendly name (string), used for index:criteria. 
+Its added to the generated.pot as a literal. 
+If not given the widget:label is taken if provided.
+"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)   
 
 
 for category in ['model', 'package', 'class', 'attribute']:
@@ -771,7 +819,7 @@ for category in ['model', 'package', 'class', 'attribute']:
     StringFields or DateIndex for DateFields. If no guess is possible, we 
     assume a FieldIndex."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-        
+    
     
 # widgets (not a separate category!)
 
