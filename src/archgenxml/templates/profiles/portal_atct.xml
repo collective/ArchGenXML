@@ -1,24 +1,24 @@
 <?xml version="1.0"?>
 <atcttool>
  <topic_indexes>
-  <dtml-in "topic_indexes">
+<dtml-in "topic_indexes">
   <index name="<dtml-var "_['sequence-item']['name']">"
      description="<dtml-var "_['sequence-item']['description']">"
      enabled="True" 
      friendlyName="<dtml-var "_['sequence-item']['label']">">
-   <dtml-in "_['sequence-item']['criteria']">
+<dtml-in "_['sequence-item']['criteria']">
    <criteria><dtml-var "_['sequence-item']"></criteria>
-   </dtml-in>
+</dtml-in>
   </index>
-  </dtml-in>
+</dtml-in>
  </topic_indexes>
  <topic_metadata>
- <dtml-in "topic_metadata">
+<dtml-in "topic_metadata">
   <metadata name="<dtml-var "_['sequence-item']['name']">" 
      description="<dtml-var "_['sequence-item']['description']">"
      enabled="True" 
      friendlyName="<dtml-var "_['sequence-item']['label']">"/>
-  </dtml-in>
+</dtml-in>
  </topic_metadata>
 </atcttool>
 </xml>
