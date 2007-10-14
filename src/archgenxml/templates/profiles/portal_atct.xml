@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <atcttool>
  <topic_indexes>
+  <!-- ##code-section indexes -->
+  <!-- ##/code-section indexes -->
 <dtml-in "topic_indexes">
   <index name="<dtml-var "_['sequence-item']['name']">"
      description="<dtml-var "_['sequence-item']['description']">"
@@ -13,6 +15,8 @@
 </dtml-in>
  </topic_indexes>
  <topic_metadata>
+  <!-- ##code-section metadata -->
+  <!-- ##/code-section metadata -->
 <dtml-in "topic_metadata">
   <metadata name="<dtml-var "_['sequence-item']['name']">" 
      description="<dtml-var "_['sequence-item']['description']">"

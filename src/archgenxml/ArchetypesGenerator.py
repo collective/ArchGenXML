@@ -2337,6 +2337,9 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateInstallPy(self, package):
         """Generate Extensions/Install.py from the DTML template"""
+        if self.getOption('plone_target_version', package, '3.0') == '3.0':
+            # dont generate it for 3.0
+            return
 
         # create Extension directory
         installTemplate = open(os.path.join(self.templateDir, 
@@ -2548,9 +2551,8 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateProductInitPy(package)
         # Generate config.py from template
         self.generateConfigPy(package)
-        # Generate Extensions/Install.py
-        if self.getOption('plone_target_version', package, '3.0').startswith('2'):
-            self.generateInstallPy(package)
+        # Generate Extensions/Install.py (2.5 only)
+        self.generateInstallPy(package)
         # Generate generic setup profile
         self.generateGSDirectory(package)
         # Generate GS skins.xml file
@@ -2877,6 +2879,7 @@ class ArchetypesGenerator(BaseGenerator):
         ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
         handleSectionedFile(['profiles', 'factorytool.xml'],
                             os.path.join(ppath, 'factorytool.xml'),
+                            sectionnames=['indexes', 'metadata'],
                             templateparams={ 'factory_types': factorytypes })
 
     def generateGSStylesheetsXML(self, package):
