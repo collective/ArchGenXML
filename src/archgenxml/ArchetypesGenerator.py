@@ -2856,6 +2856,7 @@ class ArchetypesGenerator(BaseGenerator):
         ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
         handleSectionedFile(['profiles', 'portal_atct.xml'],
                             os.path.join(ppath, 'portal_atct.xml'),
+                            sectionnames=['indexes', 'metadata'],                            
                             templateparams=params)
         
 
@@ -2879,7 +2880,6 @@ class ArchetypesGenerator(BaseGenerator):
         ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
         handleSectionedFile(['profiles', 'factorytool.xml'],
                             os.path.join(ppath, 'factorytool.xml'),
-                            sectionnames=['indexes', 'metadata'],
                             templateparams={ 'factory_types': factorytypes })
 
     def generateGSStylesheetsXML(self, package):
