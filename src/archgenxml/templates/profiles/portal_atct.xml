@@ -5,9 +5,9 @@
   <index name="<dtml-var "_['sequence-item']['name']">"
      description="<dtml-var "_['sequence-item']['description']">"
      enabled="True" 
-     friendlyName="<dtml-var "_['sequence-item']['lable']">">
-   <dtml-in "criteria">
-   <criteria><dtml-var "_['sequence-item']['criteria']"></criteria>
+     friendlyName="<dtml-var "_['sequence-item']['label']">">
+   <dtml-in "_['sequence-item']['criteria']">
+   <criteria><dtml-var "_['sequence-item']"></criteria>
    </dtml-in>
   </index>
   </dtml-in>
@@ -17,7 +17,7 @@
   <metadata name="<dtml-var "_['sequence-item']['name']">" 
      description="<dtml-var "_['sequence-item']['description']">"
      enabled="True" 
-     friendlyName="<dtml-var "_['sequence-item']['lable']">"/>
+     friendlyName="<dtml-var "_['sequence-item']['label']">"/>
   </dtml-in>
  </topic_metadata>
 </atcttool>

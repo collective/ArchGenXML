@@ -2573,6 +2573,8 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateGSToolsetXML(package)
         # generate catalog.xml
         self.generateGSCatalogXML(package)
+        # generate portal_atct.xml
+        self.generatePortalatctXMLFile(package)
         # generate membrane_tool.xml if stereotype is remember
         self.generateGSMembraneToolXML(package)
         # Generate flavors.zcml
@@ -2664,8 +2666,7 @@ class ArchetypesGenerator(BaseGenerator):
                             templateparams={ 
                                 'defs': alldefs }
                         )
-
-
+        
     def _getIndexDefinitions(self, defs, package):
         """return the index definitions for catalog.xml
         """        
@@ -2718,6 +2719,7 @@ class ArchetypesGenerator(BaseGenerator):
 
                 # new sytle AGX2x index declaration
                 metadata = self.getOption('catalog:metadata', attribute, '0')
+                metadata = self.getOption('collection:metadata', attribute, metadata)
                 metadata = utils.isTGVTrue(metadata)
                 index = self.getOption('catalog:index', attribute, '0')
                 index = utils.isTGVTrue(index)
@@ -2735,7 +2737,7 @@ class ArchetypesGenerator(BaseGenerator):
                     accessor = 'get%s' % accessor.capitalize()
 
                 # find attributes            
-                attributes = attribute.getTaggedValue('catalog:attributes', [])
+                attributes = attribute.getTaggedValue('index:attributes', [])
                 if type(attributes) in types.StringTypes:
                     if ',' in attributes:
                         attributes = [a.strip() for a in attributes.split(',')]
@@ -2774,13 +2776,84 @@ class ArchetypesGenerator(BaseGenerator):
 
                     defs[catalogid]['indexes'].append(indexdef)
 
-                if metadata:                    
-                    for attr in attributes:
-                        columndef = {
-                            'value': attr,
-                        }
-                        defs[catalogid]['columns'].append(columndef)                    
+                if metadata:           
+                    accessor = self.getOption('catalog:metadata_accessor', 
+                                              attribute, accessor)         
+                    columndef = {'value': accessor }
+                    defs[catalogid]['columns'].append(columndef)                    
 
+
+    def generatePortalatctXMLFile(self, package):
+        """Create the portal_atct.xml file to configure
+        """
+        params = dict()
+        params['topic_indexes'] = list()
+        params['topic_metadata'] = list()
+        
+        klasses = package.getClasses(recursive=1)
+        for klass in klasses:
+            if not self._isContentClass(klass):
+                continue
+
+            for attribute in klass.getAttributeDefs():  
+                # find accessor
+                accessor = attribute.getTaggedValue('accessor', '')
+                if not accessor:
+                    accessor = attribute.getCleanName()
+                    accessor = 'get%s' % accessor.capitalize()
+
+                # find label ...
+                criteria_label = self.getOption('collection:criteria_label', 
+                                                attribute, None)
+                if criteria_label is None:
+                    criteria_label = self.getOption('widget:label', attribute, 
+                                                    attribute.getName())
+                metadata_label = self.getOption('collection:metadata_label', 
+                                                attribute, criteria_label)
+                # ... and description.
+                criteria_descr = self.getOption('collection:criteria_description', 
+                                                attribute, None)
+                if criteria_descr is None:
+                    criteria_descr = self.getOption('widget:description', 
+                                                    attribute, 
+                                                    '')
+                metadata_descr = self.getOption('collection:metadata_description', 
+                                                attribute, criteria_descr)                
+                # metadata, column?                  
+                metadata = self.getOption('collection:metadata', attribute, '0')
+                metadata = utils.isTGVTrue(metadata)
+                if metadata:
+                    mdef = {}
+                    mdef['name'] = self.getOption('catalog:metadata_accessor', 
+                                                  attribute, accessor)
+                    desc = self.getOption('catalog:metadata_label', 
+                                          attribute, None)
+                    if desc is None:
+                        desc = self.getOption('catalog:criteria_label', 
+                                          attribute, None)
+                    mdef['label'] = metadata_label
+                    mdef['description'] = metadata_descr
+                    params['topic_metadata'].append(mdef)
+                
+                # criteria?
+                criteria = self.getOption('collection:criteria', attribute, None)
+                if type(criteria) in types.StringTypes:
+                    if ',' in criteria:
+                        criteria = [a.strip() for a in criteria.split(',')]
+                    else:
+                        criteria = [criteria.strip()]      
+                if criteria:
+                    mdef = {}
+                    mdef['criteria'] = criteria
+                    mdef['label'] = criteria_label
+                    mdef['description'] = criteria_descr       
+                    params['topic_indexes'].append(mdef)     
+                                    
+        ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
+        handleSectionedFile(['profiles', 'portal_atct.xml'],
+                            os.path.join(ppath, 'portal_atct.xml'),
+                            templateparams=params)
+        
 
     def generateGSFactoryTooXMLFile(self, package):
         """Generate the factorytool.xml.
@@ -2877,6 +2950,7 @@ class ArchetypesGenerator(BaseGenerator):
         handleSectionedFile(['profiles', 'types.xml'],
                             os.path.join(ppath, 'types.xml'),
                             templateparams={ 'portalTypes': defs })
+
 
     def generateGSTypesFolderAndXMLFiles(self, package):
         """Create the types folder and the corresponding xml files for the
