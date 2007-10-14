@@ -2852,6 +2852,10 @@ class ArchetypesGenerator(BaseGenerator):
                     mdef['label'] = criteria_label
                     mdef['description'] = criteria_descr       
                     params['topic_indexes'].append(mdef)     
+                    
+        if len(params['topic_indexes']) == 0 and \
+           len(params['topic_metadata']) == 0:
+            return
                                     
         ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
         handleSectionedFile(['profiles', 'portal_atct.xml'],
