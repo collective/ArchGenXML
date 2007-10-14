@@ -2844,6 +2844,8 @@ class ArchetypesGenerator(BaseGenerator):
                         criteria = [criteria.strip()]      
                 if criteria:
                     mdef = {}
+                    mdef['name'] = attribute.getTaggedValue('index:name', 
+                                                            accessor)
                     mdef['criteria'] = criteria
                     mdef['label'] = criteria_label
                     mdef['description'] = criteria_descr       
