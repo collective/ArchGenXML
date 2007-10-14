@@ -754,7 +754,7 @@ ATPathCriterion, ATRelativePathCriterion. You must provide an index:type as well
 """
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)        
     
-tagname = 'collection:criteria_help'
+tagname = 'collection:criteria_description'
 explanation = """A help text (string), used for collection:criteria. 
 Its added to the generated.pot as a literal. 
 If not provided the widget:description is used.
@@ -775,7 +775,7 @@ catalog:metadata_accessor is used if given.
 """
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)   
 
-tagname = 'collection:metadata_help'
+tagname = 'collection:metadata_description'
 explanation = """A help text (string), used for collection:criteria. Its added to the 
 generated.pot as a literal. If not provided the collection:criteria_help 
 or - if not provided - widget:description is used.
