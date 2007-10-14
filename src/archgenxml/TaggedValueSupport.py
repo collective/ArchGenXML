@@ -712,6 +712,10 @@ explanation = """specify which custom ArrayWidget should be used for a field
 (only applies if the field has cardinality >1."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'allowed_types'
+explanation = """Sets the types allowed for a ReferenceField. Default is []"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'catalog:attributes'
 explanation = """The attributes to use for index or metadata (string or comma 
 separated list of strings). This are the methods called at indexing time. 
@@ -1032,6 +1036,34 @@ for category in ['model', 'package', 'class', 'tool']:
     directory it'd be normally placed in."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+    tagname = 'module_name'
+    explanation = """Like 'module', it overwrites the name of the
+    directory it'd be normally placed in."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+    tagname = 'immediate_view'
+    explanation = """Set the immediate_view factory type information value. This
+    should be the name of a page template, and defaults to 'base_view'. Note that
+    Plone at this time does not make use of immediate_view, which in CMF core
+    allows you to specify a different template to be used when an object is first
+    created from when it is subsequently accessed."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+    tagname = 'default_view'
+    explanation = """The TemplateMixin class in Archetypes allows your class to
+    present several alternative view templates for a content type. The default_view
+    value sets the default one. Defaults to 'base_view'. Only relevant if you use
+    TemplateMixin."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+    tagname = 'suppl_views'
+    explanation = """The TemplateMixin class in Archetypes allows your class to
+    present several alternative view templates for a content type. The suppl_views
+    value sets the available views. Example: '("my_view", "myother_view")'.
+    Defaults to '()'. Only relevant if you use TemplateMixin."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+
 for category in ['model', 'package', 'association']:
 
     tagname = 'relation_implementation'
@@ -1073,7 +1105,9 @@ undocumented_tags = [
     'rename_after_creation', 'storage',
     'index_method',
     # field tags
-    'languageIndependent', 'default_content_type', 'default_output_type',
+    'languageIndependent', 'default_content_type', 'default_output_type', 'mode',
+    # image field tags
+    'max_size', 'pil_resize_algo', 'pil_quality', 'swallowResizeExceptions',
     # widget tags
     'default:widget:Reference',
     'widget:size', 'widget:maxlength', 'widget:rows', 'widget:cols',
