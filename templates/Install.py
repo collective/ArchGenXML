@@ -204,25 +204,26 @@ def install(self, reinstall=False):
     for vocabname in vocabmap.keys():
         if not vocabname in atvm.contentIds():
             atvm.invokeFactory(vocabmap[vocabname][0], vocabname)
-
-        if len(atvm[vocabname].contentIds()) < 1:
-            if vocabmap[vocabname][0] == "VdexVocabulary":
-                vdexpath = os.path.join(
-                    package_home(GLOBALS), 'data', '%s.vdex' % vocabname)
-                if not (os.path.exists(vdexpath) and os.path.isfile(vdexpath)):
-                    print >>out, 'No VDEX import file provided at %s.' % vdexpath
-                    continue
-                try:
-                    #read data
-                    f = open(vdexpath, 'r')
-                    data = f.read()
-                    f.close()
-                except:
-                    print >>out, 'Problems while reading VDEX import file provided at %s.' % vdexpath
-                    continue
-                atvm[vocabname].importXMLBinding(data)
-            else:
-                pass
+        if vocabmap[vocabname][0] in ["VdexVocabulary", "VdexFileVocabulary"]:
+            if vocabmap[vocabname][0] == "VdexVocabulary" and \
+               len(atvm[vocabname].contentIds()) > 0:
+                continue
+            vdexpath = os.path.join(
+                package_home(GLOBALS), 'data', '%s.vdex' % vocabname)
+            if not (os.path.exists(vdexpath) and os.path.isfile(vdexpath)):
+                print >>out, 'No VDEX import file provided at %s.' % vdexpath
+                continue
+            try:
+                #read data
+                f = open(vdexpath, 'r')
+                data = f.read()
+                f.close()
+            except:
+                print >>out, 'Problems while reading VDEX import file provided at %s.' % vdexpath
+                continue
+            atvm[vocabname].importXMLBinding(data)
+        else:
+            pass
 </dtml-if>
 <dtml-let cmfmembers="[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.cmfmember_stereotype)]">
 <dtml-if "cmfmembers">

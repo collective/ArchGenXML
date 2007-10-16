@@ -19,7 +19,13 @@ def installWorkflows(self, package, out):
     if workflow.getId() in workflowTool.listWorkflows():
         print >> out, '%s already in workflows.' % workflow.getId()
     else:
-        workflowTool._setObject(workflow.getId(), workflow)
+        try:
+            # plone 2.x
+            workflowTool._setObject('<dtml-var "generator.cleanName(sm.getName())">', workflow)
+        except:
+            # works in Plone 3.0, but isnt perfect! use ArchGenXML 2.0 for a 
+            # better result!
+            workflowTool._setOb('<dtml-var "generator.cleanName(sm.getName())">', workflow)
         print >> out, '%s added in workflows.' % workflow.getId()
     workflowTool.setChainForPortalTypes(<dtml-var "repr(sm.getClassNames())">, workflow.getId())
 </dtml-let>
