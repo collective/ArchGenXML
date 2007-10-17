@@ -23,6 +23,9 @@ from Products.CMFCore import permissions as cmfpermissions
 from Products.CMFCore import utils as cmfutils
 from Products.CMFPlone.utils import ToolInit
 from config import *
+<dtml-if "generator.getOption('plone_target_version', package, '3.0') == '3.0'">
+import dcworkflowpatch
+</dtml-if>
 
 DirectoryView.registerDirectory('skins', product_globals)
 <dtml-if "additional_permissions">
