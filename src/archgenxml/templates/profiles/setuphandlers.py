@@ -70,7 +70,8 @@ def installQIDependencies(context):
 def setupHideTypesFromSearch(context):
     """hide selected classes in the search form"""
     # XXX use https://svn.plone.org/svn/collective/DIYPloneStyle/trunk/profiles/default/properties.xml
-    portalProperties = getToolByName(context, 'portal_properties')
+    site = context.getSite()
+    portalProperties = getToolByName(site, 'portal_properties')
     siteProperties = getattr(portalProperties, 'site_properties')
     for klass in <dtml-var "repr(notsearchabletypes)">:
         propertyid = 'types_not_searched'
@@ -84,7 +85,8 @@ def setupHideTypesFromSearch(context):
 def setupHideMetaTypesFromNavigations(context):
     """hide selected classes in the search form"""
     # XXX use https://svn.plone.org/svn/collective/DIYPloneStyle/trunk/profiles/default/properties.xml
-    portalProperties = getToolByName(context, 'portal_properties')
+    site = context.getSite()
+    portalProperties = getToolByName(site, 'portal_properties')
     siteProperties = getattr(portalProperties, 'site_properties')
     for klass in <dtml-var "repr(hidemetatypes)">:
         propertyid = 'metaTypesNotToList'
@@ -143,7 +145,7 @@ def setupCatalogMultiplex(context):
         current_catalogs = Set([c.id for c in atool.getCatalogsByType(meta_type)])
         if 'white' in submap:
             for catalog in submap['white']:
-                if not getToolByName(context, catalog, False):
+                if not getToolByName(site, catalog, False):
                     raise AttributeError, 'Catalog "%s" does not exist!' % catalog
                 current_catalogs.update([catalog])
         if 'black' in submap:
