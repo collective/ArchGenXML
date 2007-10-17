@@ -100,7 +100,7 @@ def setupHideToolsFromNavigation(context):
     # uncatalog tools
     site = context.getSite()
     toolnames = <dtml-var "repr(toolnames)">
-    portalProperties = getToolByName(context, 'portal_properties')    
+    portalProperties = getToolByName(site, 'portal_properties')    
     navtreeProperties = getattr(portalProperties, 'navtree_properties')
     if navtreeProperties.hasProperty('idsNotToList'):
         for toolname in toolnames:
