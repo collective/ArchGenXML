@@ -15,7 +15,8 @@
  
  <skin-path name="Plone Default">
 <dtml-in "skinDirs">
-  <layer name="<dtml-var "_['sequence-item']['name']">"/>
+  <layer insert-after="custom" 
+         name="<dtml-var "_['sequence-item']['name']">"/>
 </dtml-in>
  </skin-path>
 
