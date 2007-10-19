@@ -5,6 +5,8 @@ from config import PROJECTNAME
 from config import DEPENDENCIES
 <dtml-if "hasvocabularies or hasrelations">
 from config import product_globals
+import os
+from Globals import package_home
 </dtml-if>
 <dtml-if "hasvocabularies">
 from Products.ATVocabularyManager.config import TOOL_NAME as ATVOCABULARYTOOL
