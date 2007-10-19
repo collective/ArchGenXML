@@ -2761,10 +2761,11 @@ class ArchetypesGenerator(BaseGenerator):
                     indexdef['meta_type'] = self.getOption('index:type', 
                                                            attribute, None)
                     ctypedef = atmaps.TYPE_MAP.get(attribute.type.lower(), None)
-                    if not indexdef['meta_type'] and ctypedef and ctypedef['index']:
-                        indexdef['meta_type'] = ctypedef['index']
-                    else:
-                        indexdef['meta_type'] = 'FieldIndex'                        
+                    if not indexdef['meta_type']:
+                        if ctypedef and ctypedef['index']:
+                            indexdef['meta_type'] = ctypedef['index']
+                        else:
+                            indexdef['meta_type'] = 'FieldIndex'                        
 
                     indexdef['indexed_attributes'] = attributes
                     extras = attribute.getTaggedValue('index:extras', [])
