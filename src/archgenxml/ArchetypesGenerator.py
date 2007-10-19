@@ -2517,7 +2517,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         if generatedFlavors != [] or subPackagesWithFlavors != []:
             ppath = package.getFilePath()
-            handleSectionedFile(['profiles', 'flavors.zcml'],
+            handleSectionedFile(['flavors.zcml'],
                                 os.path.join(ppath, 'flavors.zcml'),
                                 sectionnames=['HEAD','FOOT'],
                                 templateparams={'flavors': generatedFlavors,
