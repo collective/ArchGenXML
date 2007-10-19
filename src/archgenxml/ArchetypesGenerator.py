@@ -3460,11 +3460,12 @@ class ArchetypesGenerator(BaseGenerator):
             package.num_generated_relations += 1
 
         if package.num_generated_relations:
-            self.makeDir(os.path.join(package.getFilePath(), 'data', 
-                                      'relations.xml'))
-            of=self.makeFile(os.path.join(package.getFilePath(),'data',
-                                          'relations.xml'))
-            print >>of,doc.toprettyxml()
+            relDirPath = os.path.join(package.getFilePath(), 'data')
+            if not os.path.exists(relDirPath):
+                self.makeDir(relDirPath)
+            relFilePath = os.path.join(package.getFilePath(), 'data', 'relations.xml')
+            of=self.makeFile(relFilePath)
+            of.write(doc.toprettyxml())
             of.close()
 
     def generateProduct(self, root):
