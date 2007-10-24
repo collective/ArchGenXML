@@ -6,12 +6,14 @@
 <dtml-let catalog="defs[catalogid]">
 <object name="<dtml-var "catalogid">" meta_type="<dtml-var "catalog['metatype']">">
 <dtml-in "catalog['indexes']">
-  <index name="<dtml-var "_['sequence-item']['name']">" meta_type="<dtml-var "_['sequence-item']['meta_type']">">
+  <index name="<dtml-var "_['sequence-item']['name']">" 
+         meta_type="<dtml-var "_['sequence-item']['meta_type']">">
 <dtml-in "_['sequence-item']['indexed_attributes']">
     <indexed_attr value="<dtml-var "_['sequence-item']">"/>
 </dtml-in>
 <dtml-in "_['sequence-item']['extras']">
-    <extra name="<dtml-var "_['sequence-item']['name']">" value="<dtml-var "_['sequence-item']['value']">"/>
+    <extra name="<dtml-var "_['sequence-item']['name']">" 
+           value="<dtml-var "_['sequence-item']['value']">"/>
 </dtml-in>
 <dtml-in "_['sequence-item']['properties']">
     <property name="<dtml-var "_['sequence-item']['name']">"><dtml-var "_['sequence-item']['value']"></property>

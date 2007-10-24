@@ -143,6 +143,12 @@ class ArchetypesGenerator(BaseGenerator):
     folder_stereotype = ['atfolder', 'folder', 'ordered', 'large', 'btree']
     atct_stereotype = ['atfolder', 'atfile', 'atdocument', 'atevent', 'atimage', 
                        'atnewsitem', 'atlink']
+    teststereotype = ['testcase', 'plone_testcase', 'plonefunctional_testcase',
+                      'functional_testcase', 'doc_testcase', 'setup_testcase',
+                      'doc_testcase', 'interface_testcase']
+    widgetfieldstereotype = ['widget', 'field']
+    noncontentstereotype = stub_stereotypes + python_stereotype + \
+                           teststereotype + widgetfieldstereotype
 
     generate_datatypes = ['field', 'compound_field']
 
@@ -1356,9 +1362,12 @@ class ArchetypesGenerator(BaseGenerator):
     def generateBaseFunctionalTestcaseClass(self,element,template):
         log.debug('write testFunctional.py, only if needed.')
 
-        if not os.path.exists(os.path.join(self.targetRoot, element.getPackage().getFilePath(),'testFunctional.py')):
+        if not os.path.exists(os.path.join(self.targetRoot, 
+                                           element.getPackage().getFilePath(),
+                                           'testFunctional.py')):
             file=self.readTemplate(['tests','testFunctional.py'])
-            of=self.makeFile(os.path.join(element.getPackage().getFilePath(),'testFunctional.py'))
+            of=self.makeFile(os.path.join(element.getPackage().getFilePath(),
+                                          'testFunctional.py'))
             of.write(file)
             of.close()
 
@@ -1371,11 +1380,13 @@ class ArchetypesGenerator(BaseGenerator):
         framework=self.readTemplate(['tests', 'framework.py'])
 
         log.debug('generate base testcase class')
-        of=self.makeFile(os.path.join(element.getPackage().getFilePath(),'runalltests.py'))
+        of=self.makeFile(os.path.join(element.getPackage().getFilePath(),
+                                      'runalltests.py'))
         of.write(runalltests)
         of.close()
 
-        of=self.makeFile(os.path.join(element.getPackage().getFilePath(),'framework.py'))
+        of=self.makeFile(os.path.join(element.getPackage().getFilePath(),
+                                      'framework.py'))
         of.write(framework)
         of.close()
 
@@ -3755,9 +3766,10 @@ class ArchetypesGenerator(BaseGenerator):
            or cclass.getName().lower().startswith('java::'): # Enterprise Architect fix!
             log.debug("Ignoring unnecessary class '%s'.", cclass.getName())
             return False
-        if cclass.hasStereoType(self.stub_stereotypes,
+
+        if cclass.hasStereoType(self.noncontentstereotype,
                                 umlprofile=self.uml_profile):
-            log.debug("Ignoring stub class '%s'.", cclass.getName())
+            log.debug("Ignoring non content class '%s'.", cclass.getName())
             return False
         return True
 

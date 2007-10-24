@@ -77,12 +77,12 @@ at_uml_profile.addStereoType(
     "other '<<functionaltestcase>>' classes inside a '<<test>>' package.")
 
 at_uml_profile.addStereoType(
-    'functionaltestcase', ['XMIClass'],
+    'functional_testcase', ['XMIClass'],
     dispatching=1,
     template='tests/GenericFunctionalTestcase.py',
     generator='generateFunctionalTestcaseClass',
     description='Turns a class into a functional testcase. It must subclass a '
-    "'<<plonefunctional_testcase>>'. Adding an interface arrow to "
+    "'<<functional_testcase>>'. Adding an interface arrow to "
                 'another class automatically adds that class\'s '
                 'methods to the testfile for testing.')
 
