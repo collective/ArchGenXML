@@ -3,17 +3,19 @@ TODO's for ArchGenXML
 
 * remove workflowscript generation, generate event subscribers instead
   for plone2.5 target version a patch exists and is generated
+  subscriber geneartion started, non-trivial thing!
 
 * update umltools/argouml/argouml_profile.xmi
-
-* make setuptools or at least debian copy it to /usr/share/archgenxml
+  make setuptools or at least debian copy it to /usr/share/archgenxml
 
 * update docs/manual/*registry* and check quickref
 
-* sync docs/manual with manual
+* sync docs/manual with online manual (=master) at plone.org
 
 * importGSDependencies - some more research on how to filter the import steps
   by profile and how to define an import step as the very first executed one.
+  (After Plone Conference and talking with several people this might be solved 
+  in a future release of GS)
 
 * refactor generateFieldMoves machinery. does not consider copied fields atm!
   (no one used this until now??)
@@ -24,9 +26,10 @@ TODO's for ArchGenXML
   move the conversion of permission-short cuts over to the 
   WorkflowGenerator.
 
-* write a import step adding inherited allowed types
+* write an import step adding inherited allowed types
 
-* tgv "hide_actions" need to get respect in types.xml 
+* tgv "hide_actions" need to get respect in types.xml (deprecated: use stereotype
+  <<noaction>>
 
 * BUG: Method that end with a comma-newline-value lose that value. For example:
 
@@ -69,7 +72,5 @@ TODO's for ArchGenXML
 
 * Support plone 3.0 viewlets (replacement of many included macros).
 
-* Perhaps look at new 3.0 editor role.
+* Perhaps look at new 3.0 editor role. (default roles?)^
 
-* Move index and brain generation from archetypes fields to
-  catalog.xml.
