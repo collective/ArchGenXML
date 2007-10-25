@@ -47,7 +47,7 @@ Authors
     
   Robert Niederreiter (rnix)
   
-    Generic Setup profile Generation and cleanup.
+    Generic Setup profile generation and cleanup for AGX 2.0. 
 
 Sponsors:
 

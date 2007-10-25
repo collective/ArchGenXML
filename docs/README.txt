@@ -51,7 +51,9 @@ Requirements & Optional
 
   Required to run generated code
 
-    - Plone 3.0.x
+    - Plone 2.5.x
+
+    - Plone 3.0.x (prefered)
 
   Optional:
 
@@ -110,6 +112,10 @@ Requirements & Optional
 
       http://plone.org/products/relations
 
+    - remember
+
+    - CompoundField
+
 
 Quick Start
 
@@ -136,7 +142,7 @@ Documentation
 
   A tutorial and manual is located at
 
-    http://plone.org/documentation/tutorial/archgenxml-getting-started
+    http://plone.org/documentation/manual/archgenxml2
 
 
 Known Limitations
