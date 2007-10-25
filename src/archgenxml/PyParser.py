@@ -7,6 +7,7 @@ import pprint
 import sys
 import types
 import logging
+from odict import odict
 log = logging.getLogger('pyparser')
 
 PROTECTED_BEGIN = '##code-section'
@@ -26,9 +27,9 @@ class PyModule:
     ast = None
     code = None
     src = None
-    classes = {}
-    functions = {}
-    protectedSections = {}
+    classes = odict()
+    functions = odict()
+    protectedSections = odict()
 
     def __init__(self, file, mode='file'):
         """Start dividing 'file' in chunks.
