@@ -1186,7 +1186,7 @@ class StateMachineContainer:
         res = {}
         statemachines = self.findStateMachines()
         for m in statemachines:
-            sm = XMIStateMachine(m,parent=self)
+            sm = XMIStateMachine(m, parent=self)
             if sm.getName():
                 # Determine the correct product where it belongs
                 products = [c.getPackage().getProduct()
@@ -1203,7 +1203,7 @@ class StateMachineContainer:
                 res.update(p.buildStateMachines())
         return res
 
-    def addStateMachine(self, sm, reparent=1):
+    def addStateMachine(self, sm, reparent=0):
         if not sm in self.statemachines:
             self.statemachines.append(sm)
             if reparent:
@@ -2107,9 +2107,8 @@ class XMIDependency(XMIElement):
 #-----------------------------------
 
 class XMIStateContainer(XMIElement):
-
-    def __init__(self, *args, **kwargs):
-        self.states = []
+    states = []
+    def __init__(self, *args, **kwargs):        
         XMIElement.__init__(self, *args, **kwargs)
 
     def addState(self, state):
@@ -2364,9 +2363,27 @@ class XMIStateMachine(XMIStateContainer):
                   results[0])
         return results[0]
 
+    def getWorklistGuardExpression(self, worklistname):
+        """Returns the guard expression associated with the worklistname."""
+        log.debug("Getting the guard expression for the worklist...")
+        default = ''
+        results = [s.getTaggedValue('worklist:guard_expressions')
+                   for s in self.getStates(no_duplicates = 1)
+                   if s.getTaggedValue('worklist') == worklistname
+                   and s.getTaggedValue('worklist:guard_permissions')]
+        if not results:
+            log.debug("No tagged value found, returning the default: '%s'.",
+                      default)
+            return default
+        # There might be more than one guard_permissions tgv, take the first
+        log.debug("Tagged value(s) found, taking the first (or only) one: '%s'.",
+                  results[0])
+        return results[0]
+
 
 class XMIStateTransition(XMIElement):
     targetState = None
+    sourceState = None
     action = None
     guard = None
 
@@ -2390,6 +2407,18 @@ class XMIStateTransition(XMIElement):
             return
         guardel = getSubElement(el)
         self.guard = XMIGuard(guardel)
+
+    def setSourceState(self, state):
+        self.sourceState = state
+
+    def getSourceState(self):
+        return self.sourceState
+
+    def getSourceStateName(self):
+        if self.getSourceState():
+            return self.getSourceState().getName()
+        else:
+            return None
 
     def setTargetState(self, state):
         self.targetState = state
@@ -2578,6 +2607,7 @@ class XMIState(XMIElement):
 
     def addOutgoingTransition(self, tran):
         self.outgoingTransitions.append(tran)
+        tran.setSourceState(self)
 
     def getIncomingTransitions(self):
         return self.incomingTransitions
