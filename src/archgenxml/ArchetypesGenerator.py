@@ -2594,6 +2594,8 @@ class ArchetypesGenerator(BaseGenerator):
         self.generatePackageFlavorsZcml(package)
         # Generate the dcworkflow patch.
         self.generateDCWorkflowPatch(package)
+        # generate subscribers
+        self.generateSubscribers(package)
 
     def generateConfigureAndProfilesZCML(self, package):
         """Generate configure.zcml and profiles.zcml if type registration or
@@ -2624,6 +2626,71 @@ class ArchetypesGenerator(BaseGenerator):
                             sectionnames=['configure.zcml'],
                             templateparams={'packages': packageIncludes,
                                             'containsFlavors': containsFlavors})
+        
+
+    def generateSubscribers(self, package):
+        log.info("%s: Generating subscribers '%s'" % (self.infoind, 
+                                                      package.getName()))
+
+        # Generate the template        
+        pt = self.readTemplate(['subscribers.py'])
+        
+        # Get the current code
+        parsed = utils.parsePythonModule(self.targetRoot, package.getFilePath(),
+                                         'subscribers.py')        
+    
+        subscribers = []
+
+        # get effect info of wf events
+        effects = []
+        for sm in package.getStateMachines():
+            for transition in sm.getTransitions(self):
+                before = transition.getBeforeActionName()
+                after = transition.getAfterActionName()                
+                if before:
+                    effects.append(self._transEffectInfo(transition, 'before')
+                if after:
+                    effects.append(self._transEffectInfo(transition, 'after')    
+        
+        # make subscriber info for each effect  
+        for effect in effects:
+            pass # XXX TODO, not now.
+        # get other subscribers
+        # TODO (not critical, new feature)
+        klasses = self.getGeneratedTools(package)
+        
+        return # unfinished, will do later --jensens
+    
+    def _transEffectInfo(self, transition, type):
+        res = {}
+        action = transition.getAction()
+        res['sourcestate'] = transition.getSourceState()
+        res['targetstate'] = transition.getTargetState()
+        res['workflow'] = transition.getParent().getName()
+        if type == 'before':
+            res['effectname'] = action.getBeforeActionName()
+            res['wfinterface'] = 'ITransitionBeforeEvent'
+        else:
+            res['effectname'] = action.getAfterActionName()
+            res['wfinterface'] = 'ITransitionAfterEvent'
+        klass = res['sourcestate'].getParent().getParent()
+        if klass.hasStereoType(self.noncontentstereotype,
+                               umlprofile=self.uml_profile):
+            defaultbinding = '*'
+        else:
+            # take the generated marker interface as defaultbinding
+            path = klass.getQualifiedModuleName(klass.getPackage(), 
+                                               includeRoot=0)
+            rdot = path.rfind('.')
+            if rdot >= 0:
+                path = '.' + path[:rdot+1]
+            else:
+                path = '.'
+            defaultbinding = '%sinterfaces.I%s' % (path, klass.getCleanName())        
+        res['objinterface'] = action.getTaggedValue(('%s:binding' % type), 
+                                                    defaultbinding)
+        print res
+        return res
 
     def generateGSDirectory(self, package):
         """Create genericsetup directory profiles/default.
