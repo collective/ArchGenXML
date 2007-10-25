@@ -2648,9 +2648,9 @@ class ArchetypesGenerator(BaseGenerator):
                 before = transition.getBeforeActionName()
                 after = transition.getAfterActionName()                
                 if before:
-                    effects.append(self._transEffectInfo(transition, 'before')
+                    effects.append(self._transEffectInfo(transition, 'before'))
                 if after:
-                    effects.append(self._transEffectInfo(transition, 'after')    
+                    effects.append(self._transEffectInfo(transition, 'after'))  
         
         # make subscriber info for each effect  
         for effect in effects:
