@@ -1012,6 +1012,11 @@ associated default widget, but if you need a different one (e.g. a
 SelectionWidget for a string field), use this value to override."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'widget:macro'
+explanation = """Sets the macro used by the widget. This will be used as
+the name of the auto-created page template for the widget."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'widget:label'
 explanation = """Set the widget's label."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
