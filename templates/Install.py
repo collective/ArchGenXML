@@ -195,7 +195,7 @@ def install(self, reinstall=False):
 </dtml-in>
 </dtml-if>
 </dtml-let>
-<dtml-if "package.getProductName() in generator.vocabularymap.keys()">
+<dtml-if "'ATVocabularyManager' in generator.vocabularymap.keys() and package.getProductName() in generator.vocabularymap['ATVocabularyManager'].keys()">
 
     # Create vocabularies in vocabulary lib
     from Products.ATVocabularyManager.config import TOOL_NAME as ATVOCABULARYTOOL
