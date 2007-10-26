@@ -422,6 +422,9 @@ class ArchetypesGenerator(BaseGenerator):
     # ATVM: collects all used vocabularies in the format:
     # { productsname: (name, meta_type) }
     # If metatype is None, it defaults to SimpleVocabulary.
+    # XXX this is too ATVM centric: extended this for PVM
+    # XXX new format:
+    # XXX {'VocabularyProduct': { productsname: (name, meta_type) }}
     vocabularymap = {}
 
     # If a reference has the same name as another _and_
@@ -1296,6 +1299,7 @@ class ArchetypesGenerator(BaseGenerator):
 
             if not 'type' in vocaboptions.keys():
                 vtype = self.getOption('vocabulary:type', attr, None)
+                # XXX Why None ATVM is default
                 if vtype:
                     vocaboptions['type'] = vtype
 
@@ -1308,6 +1312,10 @@ class ArchetypesGenerator(BaseGenerator):
             currentproduct = package.getProductName()
             if not currentproduct in self.vocabularymap.keys():
                 self.vocabularymap[currentproduct] = {}
+
+            # XXX Quick fix, need more work to move currentproduct in it
+            if not vocaboptions.get('type') in self.vocabularymap.keys():
+                self.vocabularymap[vocaboptions['type']] = {}
 
             if not vocaboptions['name'] in self.vocabularymap[currentproduct].keys():
                 self.vocabularymap[currentproduct][vocaboptions['name']] = (
