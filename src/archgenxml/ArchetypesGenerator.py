@@ -2690,7 +2690,6 @@ class ArchetypesGenerator(BaseGenerator):
             defaultbinding = '%sinterfaces.I%s' % (path, klass.getCleanName())        
         res['objinterface'] = action.getTaggedValue(('%s:binding' % type), 
                                                     defaultbinding)
-        print res
         return res
 
     def generateGSDirectory(self, package):
@@ -3074,7 +3073,6 @@ class ArchetypesGenerator(BaseGenerator):
 
 
         for typedef in defs:
-            #print typedef
             filename = '%s.xml' % typedef['name']
             handleSectionedFile(['profiles', 'type.xml'],
                                 os.path.join(typesdir, filename),
@@ -3459,7 +3457,6 @@ class ArchetypesGenerator(BaseGenerator):
             sourcecard=list(assoc.fromEnd.mult)
             sourcecard[0]=None #temporary pragmatic fix
             targetcard[0]=None #temporary pragmatic fix
-            #print 'relation:',assoc.getName(),'target cardinality:',targetcard,'sourcecard:',sourcecard
             allowed_source_types=None
             allowed_target_types=None
             sourceinterface=None
