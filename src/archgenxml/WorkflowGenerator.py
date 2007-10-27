@@ -56,8 +56,10 @@ class WorkflowGenerator(BaseGenerator):
         }
         d.update(__builtins__)
 
+        # we do not create the Extensiond directory here any longer, since
+        # it is just used by workflow scripts (we aim to get
+        # rid of them too), so we create it jit when scripts are generated.
         extDir = os.path.join(self.package.getFilePath(), 'Extensions')
-        self.atgenerator.makeDir(extDir)
         profileDir = os.path.join(self.package.getFilePath(),
                                   'profiles', 'default')
         self.atgenerator.makeDir(profileDir)
@@ -89,6 +91,8 @@ class WorkflowGenerator(BaseGenerator):
 
             # Generate workflow transition script, if any
             if sm.getAllTransitionActionNames():
+                if not os.path.exists(extDir):
+                    self.atgenerator.makeDir(extDir)
                 log.info("Generating workflow script(s).")
                 templ = self.readTemplate(['profiles', 
                                            'create_workflow_script.py'])
@@ -221,8 +225,15 @@ class WorkflowGenerator(BaseGenerator):
         extra = []
         for sm in statemachines:
             unknown = sm.getAllRoles(
-                ignore=['Owner', 'Manager', 'Member', 'Reviewer',
-                        'Authenticated', 'Anonymous'])
+                ignore=['Owner',
+                        'Manager',
+                        'Member',
+                        'Reviewer',
+                        'Authenticated',
+                        'Anonymous',
+                        'Contributor',
+                        'Editor',
+                        'Reader'])
             for item in unknown:
                 if item not in extra:
                     extra.append(item)

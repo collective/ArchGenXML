@@ -2371,7 +2371,7 @@ class ArchetypesGenerator(BaseGenerator):
                                             package, '3.0'),
            'builtins'   : __builtins__,
            'utils'       :utils,
-       }
+        }
         d.update(__builtins__)
 
         templ=self.readTemplate(['Install.py'])
