@@ -2629,8 +2629,8 @@ class ArchetypesGenerator(BaseGenerator):
         
 
     def generateSubscribers(self, package):
-        log.info("%s: Generating subscribers '%s'" % (self.infoind, 
-                                                      package.getName()))
+        #log.info("%s: Generating subscribers '%s'" % (self.infoind, 
+        #                                              package.getName()))
 
         # Generate the template        
         pt = self.readTemplate(['subscribers.py'])
@@ -2725,7 +2725,8 @@ class ArchetypesGenerator(BaseGenerator):
                     'tool_id': tool_id,
                 }
             )
-
+        if not tools:
+            return
         ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
         handleSectionedFile(['profiles', 'toolset.xml'],
                             os.path.join(ppath, 'toolset.xml'),
@@ -2959,7 +2960,8 @@ class ArchetypesGenerator(BaseGenerator):
                 klassname = klass.getTaggedValue('portal_type') \
                           or klass.getCleanName()
                 factorytypes.append(klassname)
-
+        if not factorytypes:
+            return
         ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
         handleSectionedFile(['profiles', 'factorytool.xml'],
                             os.path.join(ppath, 'factorytool.xml'),
@@ -3034,6 +3036,8 @@ class ArchetypesGenerator(BaseGenerator):
         """
         defs = list()
         self._getTypeDefinitions(defs, package)
+        if not defs:
+            return
         ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
         handleSectionedFile(['profiles', 'types.xml'],
                             os.path.join(ppath, 'types.xml'),
@@ -3045,6 +3049,11 @@ class ArchetypesGenerator(BaseGenerator):
         portal types inside it if type_registrarion tagged value is set
         to genericsetup.
         """
+        defs = list()
+        self._getTypeDefinitions(defs, package)
+        if not defs:
+            return
+        
         profiledir = os.path.join(package.getFilePath(), 'profiles', 'default')
         typesdir = os.path.join(profiledir, 'types')
 
@@ -3054,8 +3063,6 @@ class ArchetypesGenerator(BaseGenerator):
         if not os.path.isdir(typesdir):
             raise Exception('types is not a directory')
 
-        defs = list()
-        self._getTypeDefinitions(defs, package)
 
         for typedef in defs:
             #print typedef
