@@ -47,7 +47,7 @@ cmfpermissions.setDefaultRoles('<dtml-var "product_name">: <dtml-var "permdef[0]
 def initialize(context):
     """initialize product (called by zope)"""
 <dtml-var "protected_init_section_top">
-<dtml-if "class_imports">
+<dtml-if "class_imports or package_imports">
     # imports packages and types for registration
 <dtml-in "package_imports">
 <dtml-if sequence-item>
@@ -69,7 +69,7 @@ def initialize(context):
                 ).initialize( context )
 
 </dtml-if>
-<dtml-if "class_imports">
+<dtml-if "class_imports or package_imports">
     # Initialize portal content
 <dtml-if "creation_permissions">
     all_content_types, all_constructors, all_ftis = process_types(
