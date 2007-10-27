@@ -2970,6 +2970,8 @@ class ArchetypesGenerator(BaseGenerator):
     def generateGSStylesheetsXML(self, package):
         """Generate the cssregistry.xml file.
         """
+        if not self._hasSkinsDir(package):
+            return        
         style = dict()
         style['title'] = ''
         style['cacheable'] = 'True'
@@ -2991,6 +2993,8 @@ class ArchetypesGenerator(BaseGenerator):
     def generateGSJavascriptsXML(self, package):
         """Generate the jsregistry.xml file.
         """
+        if not self._hasSkinsDir(package):
+            return
         script = dict()
         script['cacheable'] = 'True'
         script['compression'] = 'save'
@@ -3013,7 +3017,10 @@ class ArchetypesGenerator(BaseGenerator):
         Reads all directories from productname/skins and generates and uses
         them for xml file generation.
         """
-        dirs = os.listdir(os.path.join(package.getFilePath(), 'skins'))
+        if not self._hasSkinsDir(package):
+            return        
+        skinbase = os.path.join(package.getFilePath(), 'skins')
+        dirs = os.listdir(skinbase)
         pname = package.getProductName()
         skindirs = []
         for dir in dirs:
@@ -3024,7 +3031,8 @@ class ArchetypesGenerator(BaseGenerator):
                 skindir['name'] = dir
                 skindir['directory'] = '%s/skins/%s' % (pname, dir)
                 skindirs.append(skindir)
-
+        if not skindirs:
+            return
         ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
         handleSectionedFile(['profiles', 'skins.xml'],
                             os.path.join(ppath, 'skins.xml'),
@@ -3553,6 +3561,43 @@ class ArchetypesGenerator(BaseGenerator):
             of=self.makeFile(relFilePath)
             of.write(doc.toprettyxml())
             of.close()
+            
+    def generateSkinsDirectories(self, root):
+        """create the skins directories if needed"""
+        # create skins directories
+        # in agx 1.6 we keep the oldschool single directory with Products name
+        # if it already exists (bbb). if skins is empty we create by default the 
+        # templates, images and styles directories prefixes with a lowercase 
+        # product name and _. this can get an override by a tagged value
+        # skin_directories, which is a comma separated list of alternatives
+        # for templates, images and styles, but they will get prefixed too, to
+        # not expose namesapce conflicts.
+        # [jensens]
+
+        skindirs = root.getTaggedValue('skin_directories', 
+                                       'templates, styles, images')
+        if skindirs.strip() == 'no':
+            log.debug("Do not creates skinsdir")
+            return
+
+        #create the directories
+        self.makeDir(root.getFilePath())
+        self.makeDir(os.path.join(root.getFilePath(),'skins'))
+
+        oldschooldir = os.path.join(root.getFilePath(),'skins',
+                                    root.getProductModuleName())        
+        if not os.path.exists(oldschooldir):
+            skindirs = [sd.strip() for sd in skindirs.split(',')]
+            for skindir in skindirs:
+                if not sd:
+                    continue
+                sd = "%s_%s" % (root.getName().lower(), skindir)
+                sdpath = os.path.join(root.getFilePath(),'skins', sd)
+                self.makeDir(sdpath)
+                log.debug("Keeping/ creating skinsdir at: %s" % sdpath)
+        else:
+            log.info("Keeping old school skindir at: '%s'.", oldschooldir)
+        
 
     def generateProduct(self, root):
         dirMode=0
@@ -3580,36 +3625,9 @@ class ArchetypesGenerator(BaseGenerator):
         # stack in orderto reinitialize the permissions
         self.creation_permission_stack.append(self.creation_permissions)
         self.creation_permissions = []
+        
+        self.generateSkinsDirectories(root)
 
-        #create the directories
-        self.makeDir(root.getFilePath())
-        self.makeDir(os.path.join(root.getFilePath(),'skins'))
-
-        # create skins directories
-        # in agx 1.6 we keep the oldschool single directory with Products name
-        # if it already exists (bbb). if skins is empty we create by default the 
-        # templates, images and styles directories prefixes with a lowercase 
-        # product name and _. this can get an override by a tagged value
-        # skin_directories, which is a comma separated list of alternatives
-        # for templates, images and styles, but they will get prefixed too, to
-        # not expose namesapce conflicts.
-        # [jensens]
-
-        skindirs = root.getTaggedValue('skin_directories', 
-                                       'templates, styles, images')
-        oldschooldir = os.path.join(root.getFilePath(),'skins',
-                                    root.getProductModuleName())
-        if not os.path.exists(oldschooldir):
-            skindirs = [sd.strip() for sd in skindirs.split(',')]
-            for skindir in skindirs:
-                if not sd:
-                    continue
-                sd = "%s_%s" % (root.getName().lower(), skindir)
-                sdpath = os.path.join(root.getFilePath(),'skins', sd)
-                self.makeDir(sdpath)
-                log.info("Keeping/ creating skinsdir at: %s" % sdpath)
-        else:
-            log.info("Keeping old school skindir at: '%s'.", oldschooldir)
         # prepare messagecatalog
         if has_i18ndude and self.build_msgcatalog:
             self.makeDir(os.path.join(root.getFilePath(), 'i18n'))
@@ -3935,3 +3953,7 @@ class ArchetypesGenerator(BaseGenerator):
             cclass.getTaggedValue('typeDescription',
                                   fti['type_name']))        
         return fti
+
+    def _hasSkinsDir(self, product):
+        skinsdir = os.path.join(product.getFilePath(),'skins')
+        return os.path.exists(skinsdir)
