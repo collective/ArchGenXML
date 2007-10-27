@@ -4,12 +4,17 @@
  <object name="<dtml-var "_['sequence-item']">" meta_type="Workflow"/>
 </dtml-in>
  <bindings>
+<dtml-if "defaultId">
+  <default>
+   <bound-workflow workflow_id="<dtml-var "defaultId">" />
+  </default>
+</dtml-if>
 <dtml-in "workflowless">
-  <type type_id="<dtml-var "_['sequence-item']">"/>
+  <type type_id="<dtml-var "_['sequence-item']">" />
 </dtml-in>
 <dtml-in "typeMapping">
   <type type_id="<dtml-var "_['sequence-item']['id']">">
-   <bound-workflow workflow_id="<dtml-var "_['sequence-item']['workflowId']">"/>
+   <bound-workflow workflow_id="<dtml-var "_['sequence-item']['workflowId']">" />
   </type>
 </dtml-in>
  </bindings>

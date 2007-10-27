@@ -2450,6 +2450,7 @@ class ArchetypesGenerator(BaseGenerator):
            'class_imports': classImports,
            'additional_permissions': additional_permissions,
            'has_tools': hasTools,
+           'has_skins': self._hasSkinsDir(package),
            'tool_names': toolNames,
            'creation_permissions': self.creation_permissions,
            'protected_init_section_head': protectedInitCodeH,

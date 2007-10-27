@@ -117,6 +117,7 @@ class WorkflowGenerator(BaseGenerator):
         d['workflowNames'] = self.workflowNames()
         d['workflowless'] = self.workflowLessTypes()
         d['typeMapping'] = self.typeMapping()
+        d['defaultId'] = self.findDefaultWorkflowId()
         templ = self.readTemplate(['profiles', 'workflows.xml'])
         scriptpath = os.path.join(profileDir, 'workflows.xml')
         dtml = HTML(templ, d)
@@ -191,8 +192,11 @@ class WorkflowGenerator(BaseGenerator):
         statemachines = self.package.getStateMachines()
         classes = {}
         for sm in statemachines:
-            workflowId = utils.cleanName(sm.getName())
-            for name in sm.getClassNames():
+            workflowId = sm.getCleanName()
+            for klass in sm.getClasses():
+                if not self.atgenerator._isContentClass(klass):
+                    continue
+                name = klass.getCleanName()
                 classes[name] = workflowId
         classNames = classes.keys()
         classNames.sort()
@@ -240,6 +244,12 @@ class WorkflowGenerator(BaseGenerator):
         extra.sort()
         return extra
 
+    def findDefaultWorkflowId(self):
+        statemachines = self.package.getStateMachines()
+        for sm in statemachines:
+            if utils.isTGVTrue(sm.getTaggedValue('default', '0')):
+                return sm.getCleanName()
+        return None
 
 class WorkflowInfo(object):
     """View-like utility class.

@@ -18,7 +18,9 @@ import Products.CMFPlone.interfaces
 from Products.Archetypes import listTypes
 from Products.Archetypes.atapi import *
 from Products.Archetypes.utils import capitalize
+<dtml-if "has_skins">
 from Products.CMFCore import DirectoryView
+</dtml-if>
 from Products.CMFCore import permissions as cmfpermissions
 from Products.CMFCore import utils as cmfutils
 from Products.CMFPlone.utils import ToolInit
@@ -27,9 +29,11 @@ from config import *
 import dcworkflowpatch
 </dtml-if>
 
+<dtml-if "has_skins">
 DirectoryView.registerDirectory('skins', product_globals)
-<dtml-if "additional_permissions">
 
+</dtml-if>
+<dtml-if "additional_permissions">
 # Register additional (custom) permissions used by this product
 <dtml-in "additional_permissions">
 <dtml-let permdef="_['sequence-item']">
@@ -41,7 +45,9 @@ cmfpermissions.setDefaultRoles('<dtml-var "product_name">: <dtml-var "permdef[0]
 <dtml-var "protected_init_section_head">
 
 def initialize(context):
+    """initialize product (called by zope)"""
 <dtml-var "protected_init_section_top">
+<dtml-if "class_imports">
     # imports packages and types for registration
 <dtml-in "package_imports">
 <dtml-if sequence-item>
@@ -53,6 +59,7 @@ def initialize(context):
     import <dtml-var sequence-item>
 </dtml-in>
 
+</dtml-if>
 <dtml-if "has_tools">
     # Initialize portal tools
     tools = [<dtml-var "', '.join (tool_names)">]
@@ -62,6 +69,7 @@ def initialize(context):
                 ).initialize( context )
 
 </dtml-if>
+<dtml-if "class_imports">
     # Initialize portal content
 <dtml-if "creation_permissions">
     all_content_types, all_constructors, all_ftis = process_types(
@@ -97,6 +105,7 @@ def initialize(context):
         extra_constructors = constructors,
         fti                = ftis,
         ).initialize(context)
+</dtml-if>
 </dtml-if>
 
 <dtml-var "protected_init_section_bottom">
