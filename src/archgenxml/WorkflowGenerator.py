@@ -56,7 +56,7 @@ class WorkflowGenerator(BaseGenerator):
         }
         d.update(__builtins__)
 
-        # we do not create the Extensiond directory here any longer, since
+        # we do not create the Extension directory here any longer, since
         # it is just used by workflow scripts (we aim to get
         # rid of them too), so we create it jit when scripts are generated.
         extDir = os.path.join(self.package.getFilePath(), 'Extensions')

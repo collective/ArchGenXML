@@ -42,7 +42,7 @@ default_wrap_width = 64
 clean_trans = string.maketrans(':-. /$', '______')
 
 
-class XMI1_0:
+class XMI1_0(object):
     XMI_CONTENT = "XMI.content"
     OWNED_ELEMENT = "Foundation.Core.Namespace.ownedElement"
 
@@ -675,7 +675,7 @@ class XMI1_2 (XMI1_1):
                     datatypenames.append(att.type)
 
 
-class NoObject:
+class NoObject(object):
     pass
 
 
@@ -764,7 +764,7 @@ def hasClassFeatures(domClass):
                 len(domClass.getElementsByTagName(XMI.METHOD))
 
 
-class PseudoElement:
+class PseudoElement(object):
     #urgh, needed to pretend a class
     def __init__(self, **kw):
         self.__dict__.update(kw)
@@ -776,7 +776,7 @@ class PseudoElement:
         return self.getName()
 
 
-class XMIElement:
+class XMIElement(object):
     package = None
     parent = None
 
@@ -881,13 +881,16 @@ class XMIElement:
         else:
             res = self.id
         return normalize(res, doReplace)
+    
+    @property
+    def classcategory(self):
+        return "%s.%s" % (self.__class__.__module__, self.__class__.__name__)
 
     def getTaggedValue(self, name, default=''):
         log.debug("Getting value for tag '%s' (default=%s). "
                   "Note: we're not doing this recursively.",
                   name, default)
-        category = str(self.__class__)
-        if not tgvRegistry.isRegistered(name, category):
+        if not tgvRegistry.isRegistered(name, self.classcategory):
             # The registry does the complaining :-)
             pass
         res = self.taggedValues.get(name, default)
@@ -922,9 +925,9 @@ class XMIElement:
         return False
 
     def getTaggedValues(self):
-        category = str(self.__class__)
         for tagname in self.taggedValues.keys():
-            if not tgvRegistry.isRegistered(tagname, category, silent=True):
+            if not tgvRegistry.isRegistered(tagname, self.classcategory, 
+                                            silent=True):
                 # The registry does the complaining :-)
                 pass
         return self.taggedValues
@@ -1076,18 +1079,17 @@ class XMIElement:
 
     def hasStereoType(self, stereotypes, umlprofile=None):
         log.debug("Looking if element has stereotype %r", stereotypes)
-        category = str(self.__class__)
         if isinstance(stereotypes, (str, unicode)):
             stereotypes = [stereotypes]
         if umlprofile:
             for stereotype in stereotypes:
-                found = umlprofile.findStereoTypes(entities=[category])
+                found = umlprofile.findStereoTypes(entities=[self.classcategory])
                 if found:
                     log.debug("Stereotype '%s' is registered.",
                               stereotype)
                 else:
                     log.warn("DEVELOPERS: Stereotype '%s' isn't registered "
-                             "for element '%s'.", stereotype, self.__class__)
+                             "for element '%s'.", stereotype, self.classcategory)
         for stereotype in stereotypes:
             if stereotype in self.getStereoTypes():
                 return True
@@ -1149,7 +1151,7 @@ class XMIElement:
 
         return res
 
-class StateMachineContainer:
+class StateMachineContainer(object):
     def __init__(self):
         self.statemachines = []
 
@@ -2106,10 +2108,21 @@ class XMIDependency(XMIElement):
 # Workflow support
 #-----------------------------------
 
-class XMIStateContainer(XMIElement):
-    states = []
+class XMIStateMachine(XMIElement):
+    
     def __init__(self, *args, **kwargs):        
+        self.states = []    
+        self.transitions = []
+        self.classes = []
         XMIElement.__init__(self, *args, **kwargs)
+        self.setParent(kwargs.get('parent', None))
+        log.debug("Created statemachine '%s'.", self.getId())
+
+    def initFromDOM(self, domElement=None):
+        XMIElement.initFromDOM(self, domElement)
+        self.buildTransitions()
+        self.buildStates()
+        self.associateClasses()
 
     def addState(self, state):
         self.states.append(state)
@@ -2137,24 +2150,6 @@ class XMIStateContainer(XMIElement):
         return [s.getCleanName() for s in
                 self.getStates(no_duplicates=no_duplicates) if s.getName()]
 
-
-class XMIStateMachine(XMIStateContainer):
-
-    def init(self):
-        self.transitions = []
-        self.classes = []
-
-    def __init__(self, *args, **kwargs):
-        self.init()
-        self.setParent(kwargs.get('parent',None))
-        XMIStateContainer.__init__(self, *args, **kwargs)
-        log.debug("Created statemachine '%s'.", self.getId())
-
-    def initFromDOM(self, domElement=None):
-        XMIStateContainer.initFromDOM(self, domElement)
-        self.buildTransitions()
-        self.buildStates()
-        self.associateClasses()
 
     def associateClasses(self):
         context = getElementByTagName(self.domElement,
@@ -2616,10 +2611,10 @@ class XMIState(XMIElement):
         return self.outgoingTransitions
 
     def getTaggedValues(self):
-        category = str(self.__class__)
         for tagname in self.taggedValues.keys():
             if tagname in self.non_permissions:
-                if not tgvRegistry.isRegistered(tagname, category, silent=True):
+                if not tgvRegistry.isRegistered(tagname, self.classcategory, 
+                                                silent=True):
                     # The registry does the complaining :-)
                     pass
         return self.taggedValues

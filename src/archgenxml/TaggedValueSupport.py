@@ -49,23 +49,23 @@ class TaggedValueRegistry:
         self._registry = {}
         self.categoryFromClassMap = {
             #'XMIParser.XMIElement': [],
-            'XMIParser.XMIPackage': ['package'],
-            'XMIParser.XMIModel': ['model'],
-            'XMIParser.XMIClass': ['class', 'tool', 'field', 'widget'],
+            'archgenxml.XMIParser.XMIPackage': ['package'],
+            'archgenxml.XMIParser.XMIModel': ['model'],
+            'archgenxml.XMIParser.XMIClass': ['class', 'tool', 'field', 'widget'],
             #'XMIParser.XMIInterface': [],
             #'XMIParser.XMIMethodParameter': [],
-            'XMIParser.XMIMethod': ['method', 'action/form/view'],
-            'XMIParser.XMIAttribute': ['attribute'],
+            'archgenxml.XMIParser.XMIMethod': ['method', 'action/form/view'],
+            'archgenxml.XMIParser.XMIAttribute': ['attribute'],
             #'XMIParser.XMIAssocEnd': [],
-            'XMIParser.XMIAssociation': ['association'],
+            'archgenxml.XMIParser.XMIAssociation': ['association'],
             #'XMIParser.XMIAbstraction': [],
             #'XMIParser.XMIDependency': [],
             #'XMIParser.XMIStateContainer': [],
             #'XMIParser.XMIStateMachine': [],
-            'XMIParser.XMIStateTransition': ['state transition'],
+            'archgenxml.XMIParser.XMIStateTransition': ['state transition'],
             #'XMIParser.XMIAction': [],
             #'XMIParser.XMIGuard': [],
-            'XMIParser.XMIState': ['state'],
+            'archgenxml.XMIParser.XMIState': ['state'],
             #'XMIParser.XMICompositeState': [],
             #'XMIParser.XMIDiagram': [],
             }
@@ -84,7 +84,7 @@ class TaggedValueRegistry:
         self.log.debug("Added tagged value '%s' to registry.", tagname)
 
     def isRegistered(self, tagname='', category='', silent=False):
-        """Return True if the TGV is in te registry
+        """Return True if the TGV is in the registry
 
         If category has been passed, check for that too. Otherwise, be
         a bit more loose. Needed for simple isTGVFalse/True support
