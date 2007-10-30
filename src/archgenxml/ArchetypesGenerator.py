@@ -1609,6 +1609,14 @@ class ArchetypesGenerator(BaseGenerator):
                                        umlprofile=self.uml_profile):
                 baseclass ='ATEvent'
                 baseschema ='ATEventSchema'
+            elif element.hasStereoType(['atnewsitem'],
+                                       umlprofile=self.uml_profile):
+                baseclass ='ATNewsItem'
+                baseschema ='ATNewsItemSchema'
+            elif element.hasStereoType(['atlink'],
+                                       umlprofile=self.uml_profile):
+                baseclass ='ATLink'
+                baseschema ='ATLinkSchema'
             elif element.hasStereoType(['atdocument'],
                                        umlprofile=self.uml_profile):
                 baseclass ='ATDocument'
