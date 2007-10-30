@@ -203,7 +203,7 @@ class WorkflowGenerator(BaseGenerator):
         result = []
         for id_ in classNames:
             item = {}
-            item['id'] = id_
+            item['id'] = id_ # portal type
             item['workflowId'] = classes[id_]
             result.append(item)
             
@@ -221,6 +221,16 @@ class WorkflowGenerator(BaseGenerator):
             additionaltype['id'] = remembertype['portal_type']
             additionaltype['workflowId'] = remembertype['workflow']
             result.append(additionaltype)
+            
+        # take tgv on state maschine itself into account
+        for sm in statemachines:
+            bindings = sm.getTaggedValue('bindings', '')
+            bindings = [b.strip() for b in bindings.split(', ') if b.strip()]
+            for binding in bindings:
+                item = {}
+                item['id'] = binding
+                item['workflowId'] = sm.getCleanName()
+                result.append(item)
         
         return result
 
