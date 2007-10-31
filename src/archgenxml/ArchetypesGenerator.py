@@ -3144,6 +3144,7 @@ class ArchetypesGenerator(BaseGenerator):
         profiledir = os.path.join(package.getFilePath(), 'profiles', 'default')
         handleSectionedFile(['profiles', 'membrane_tool.xml'], 
                             os.path.join(profiledir, 'membrane_tool.xml'),
+                            sectionnames=('INDEXMAP',),
                             templateparams={'membrane_types': types}
                         )
 
