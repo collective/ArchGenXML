@@ -305,13 +305,17 @@ class BaseGenerator:
 
 
         # Zope 3 interfaces
-        z3reparentnames = ['I'+element.getCleanName()]+[p.getName() for p in reparents 
+        z3reparentnames = [p.getName() for p in reparents 
                            if (self.getInterfaceType(p) == 'z3'
                                or p.hasStereoType('view_class'))]
+                               
+        if 'z3' in element.getStereoTypes() and not element.isInterface():
+            z3reparentnames = ['I'+element.getCleanName()]+z3reparentnames
         if z3reparentnames:
+                
             print >> outfile, utils.indent('# zope3 interfaces', 1)
             concatstring = ', '.join(z3reparentnames)
-            print >> outfile, utils.indent("interface.implements(%s)" % concatstring, 1)
+            print >> outfile, utils.indent("implements(%s)" % concatstring, 1)
         return outfile.getvalue()
 
     def getMethodsToGenerate(self, element):
