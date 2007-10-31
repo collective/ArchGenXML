@@ -1862,11 +1862,7 @@ class ArchetypesGenerator(BaseGenerator):
             print >> outfile, '    """\n    """'
 
         print >> outfile, utils.indent('security = ClassSecurityInfo()',1)
-
-        #print >> outfile, self.generateImplements(element, parentnames)
-
-        markerimplements = 'implements(I%s)' % element.getCleanName()
-        print >> outfile, utils.indent(markerimplements ,1)
+        print >> outfile, self.generateImplements(element, parentnames)
 
         archetype_name = element.getTaggedValue('archetype_name') or \
                        element.getTaggedValue('label')
@@ -3465,8 +3461,8 @@ class ArchetypesGenerator(BaseGenerator):
             sourcecard=list(assoc.fromEnd.mult)
             sourcecard[0]=None #temporary pragmatic fix
             targetcard[0]=None #temporary pragmatic fix
-            allowed_source_types=None
-            allowed_target_types=None
+            allowed_source_types=[]
+            allowed_target_types=[]
             sourceinterface=None
             targetinterface=None
 

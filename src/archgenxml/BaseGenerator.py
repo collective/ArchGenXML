@@ -305,7 +305,7 @@ class BaseGenerator:
 
 
         # Zope 3 interfaces
-        z3reparentnames = [p.getName() for p in reparents 
+        z3reparentnames = ['I'+element.getCleanName()]+[p.getName() for p in reparents 
                            if (self.getInterfaceType(p) == 'z3'
                                or p.hasStereoType('view_class'))]
         if z3reparentnames:
