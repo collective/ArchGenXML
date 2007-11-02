@@ -267,13 +267,18 @@ class BaseGenerator:
         if element.hasStereoType('z3'):
             return 'z3'
         elif element.hasStereoType('z2'):
+            log.warning('Zope 2 interfaces are used! Get rid of them!')
             return 'z2'
         else:
-            return self.getOption('default_interface_type', element)
+            return self.getOption('default_interface_type', element, 'z3')
 
     def generateImplements(self, element, parentnames):
         outfile = StringIO()
         # Zope 2 Interfaces
+        
+        # NEVER use z2 interfaces in ArchGenXML 2.0 - its just one thing: wrong.
+        # we need to get rid of them, and fix the other code using them
+        # --jensens
         reparents = element.getRealizationParents()
         
         z2reparentnames = [p.getName() for p in reparents if self.getInterfaceType(p) == 'z2']
@@ -301,6 +306,7 @@ class BaseGenerator:
         if z2iface_implements is not None:
             z2implements_line += z2iface_implements
         if z2implements_line is not None:
+            log.warning('Zope 2 interfaces are used! Get rid of them! It will break!')
             print >> outfile, utils.indent(z2implements_line, 1)
 
 

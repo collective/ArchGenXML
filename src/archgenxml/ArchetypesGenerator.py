@@ -1862,7 +1862,12 @@ class ArchetypesGenerator(BaseGenerator):
             print >> outfile, '    """\n    """'
 
         print >> outfile, utils.indent('security = ClassSecurityInfo()',1)
-        print >> outfile, self.generateImplements(element, parentnames)
+        
+        markerimplements = 'implements(I%s)' % element.getCleanName() 
+        print >> outfile, utils.indent(markerimplements ,1)         
+        
+        # DO NOT USE OLD STYLE INTERFACES, fix the other Code! -- jensens
+        # print >> outfile, self.generateImplements(element, parentnames)
 
         archetype_name = element.getTaggedValue('archetype_name') or \
                        element.getTaggedValue('label')
@@ -2150,8 +2155,6 @@ class ArchetypesGenerator(BaseGenerator):
             print >> outfile, '    """%s"""' % parsedDoc
         else:
             print >> outfile, '    """\n    """'
-
-        #print >> outfile, self.generateImplements(element, parentnames)
 
         # allowed_interfaces
         parentAggregatedInterfaces = ''
