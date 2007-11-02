@@ -1,6 +1,8 @@
 TODO's for ArchGenXML
 ---------------------
 
+* auto tool installation is broken. may need some GSification here.
+
 * generate pot file into "locales", instead i18n, keep some BBB, so if 
   folder i18n exists take it. offer a sync script.
 
