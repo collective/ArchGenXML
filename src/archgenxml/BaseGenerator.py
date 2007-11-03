@@ -274,42 +274,8 @@ class BaseGenerator:
 
     def generateImplements(self, element, parentnames):
         outfile = StringIO()
-        # Zope 2 Interfaces
-        
-        # NEVER use z2 interfaces in ArchGenXML 2.0 - its just one thing: wrong.
-        # we need to get rid of them, and fix the other code using them
-        # --jensens
         reparents = element.getRealizationParents()
         
-        z2reparentnames = [p.getName() for p in reparents if self.getInterfaceType(p) == 'z2']
-                
-        if z2reparentnames:
-            z2iface_implements = \
-                ' + '.join(["(%s,)" % i for i in z2reparentnames])
-        else:
-            z2iface_implements = None
-
-        # do not generate its Zope2 __implements__ statement from its parents if this is a Z3 interface or it has no parents
-        if parentnames and not (element.isInterface() and self.getInterfaceType(element) == 'z3'):
-            z2parentclasses_implements = \
-                    ' + '.join(["(getattr(%s,'__implements__',()),)" % i for i in parentnames])
-        else:
-            z2parentclasses_implements = None
-
-        z2implements_line = None
-        if z2iface_implements is not None or z2parentclasses_implements is not None:
-            z2implements_line = '__implements__ = '
-        if z2parentclasses_implements is not None:
-            z2implements_line += z2parentclasses_implements
-        if z2iface_implements and z2parentclasses_implements:
-            z2implements_line += ' + '
-        if z2iface_implements is not None:
-            z2implements_line += z2iface_implements
-        if z2implements_line is not None:
-            log.warning('Zope 2 interfaces are used! Get rid of them! It will break!')
-            print >> outfile, utils.indent(z2implements_line, 1)
-
-
         # Zope 3 interfaces
         z3reparentnames = [p.getName() for p in reparents 
                            if (self.getInterfaceType(p) == 'z3'
@@ -318,8 +284,6 @@ class BaseGenerator:
         if 'z3' in element.getStereoTypes() and not element.isInterface():
             z3reparentnames = ['I'+element.getCleanName()]+z3reparentnames
         if z3reparentnames:
-                
-            print >> outfile, utils.indent('# zope3 interfaces', 1)
             concatstring = ', '.join(z3reparentnames)
             print >> outfile, utils.indent("implements(%s)" % concatstring, 1)
         return outfile.getvalue()
