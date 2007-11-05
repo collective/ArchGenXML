@@ -39,7 +39,7 @@
     <guard-role><dtml-var "_['sequence-item']"></guard-role>
 </dtml-in>
 <dtml-if "transition.guardExpression">
-    <guard-expression><dtml-var "transition['guardExpression']"></guard-expression>
+    <guard-expression><dtml-var "transition.guardExpression"></guard-expression>
 </dtml-if>
   </guard>
  </transition>
