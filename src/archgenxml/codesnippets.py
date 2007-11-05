@@ -12,6 +12,15 @@
 # Licence:     GPL
 #-----------------------------------------------------------------------------
 
+MODIFY_FTI = u"""\
+def modify_fti(fti):
+    # Hide unnecessary tabs (usability enhancement)
+    for a in fti['actions']:
+        if a['id'] in [%(hideactions)s]:
+            a['visible'] = 0
+    return fti
+"""
+
 ACTIONS_START = u"""
     actions = %s (
 """
