@@ -1732,7 +1732,7 @@ class XMIClass(XMIElement, StateMachineContainer):
     def getRealizationChildren(self, recursive=0):
         """ Returns the list of realizations of this element, recursively or not
         NB: here, recursively does not mean that it will also return the realizations of the realizations of that interface
-		it rather means that it will also return the subclasses of the classes that realize this interface """
+        it rather means that it will also return the subclasses of the classes that realize this interface """
         res = [c for c in self.realizationChildren]
         if recursive:
             for r in res:
@@ -1745,7 +1745,10 @@ class XMIClass(XMIElement, StateMachineContainer):
                 self.getRealizationChildren(recursive=recursive)]
 
     def getRealizationParents(self):
-        return self.realizationParents
+        log.debug("Looking for this class's realization parents...")
+        res = self.realizationParents
+        log.debug("Realization parents found %r" % res)
+        return res
 
     def getQualifiedModulePath(self, ref, pluginRoot='Products',
                                forcePluginRoot=0, includeRoot=1):
