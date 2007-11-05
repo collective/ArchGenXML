@@ -1,3 +1,6 @@
+2007-11-05 Encolpe Degoute <encolpe.degoute@free.fr>
+    * Fix  #133 — Workflows crash on generate with Poseidon zuml files
+
 2007-10-15 Encolpe Degoute <encolpe.degoute@free.fr>
     * Add a workflow generation sample for ArgoUML.
 
