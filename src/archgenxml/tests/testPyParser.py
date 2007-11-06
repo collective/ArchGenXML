@@ -9,15 +9,8 @@ same inputs. Ah well.
 import os
 import sys
 import unittest
-# Something dirty. It is assumed that ArchGenXML isn't installed as a
-# python module but that it resides "just somewhere" on the
-# filesystem.
+from archgenxml.PyParser import PyModule
 testDir = os.path.dirname(os.path.abspath(__file__))
-parentDir = testDir[:-6] # Strips off '/tests'
-# Appends the parent dir to the module search path
-sys.path.append(parentDir)
-from PyParser import PyModule
-
 
 class TestPyModule(unittest.TestCase):
     def setUp(self):
@@ -234,6 +227,4 @@ def test_suite():
     return suite
 
 if __name__ == '__main__':
-    import utils
-    utils.initLog('runalltests.log')
     unittest.main()
