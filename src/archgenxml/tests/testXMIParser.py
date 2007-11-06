@@ -6,44 +6,34 @@ testcases' being subclasses of eachother, this results in a lot of
 tests which are effectively called a number of times with exactly the
 same inputs. Ah well.
 """
-import os
-import sys
-import unittest
-# Something dirty. It is assumed that ArchGenXML isn't installed as a
-# python module but that it resides "just somewhere" on the
-# filesystem.
-testDir = os.path.dirname(os.path.abspath(__file__))
-parentDir = testDir[:-6] # Strips off '/tests'
-# Appends the parent dir to the module search path
-sys.path.append(parentDir)
 
-from XMIParser import XMI1_0
-from XMIParser import XMI1_1 
-from XMIParser import XMI1_2 
-from XMIParser import NoObject
-from XMIParser import PseudoElement
-from XMIParser import XMIElement
-from XMIParser import StateMachineContainer
-from XMIParser import XMIPackage
-from XMIParser import XMIModel
-from XMIParser import XMIClass 
-from XMIParser import XMIInterface
-from XMIParser import XMIMethodParameter
-from XMIParser import XMIMethod 
-from XMIParser import XMIAttribute 
-from XMIParser import XMIAssocEnd 
-from XMIParser import XMIAssociation 
-from XMIParser import XMIAssociationClass 
-from XMIParser import XMIAbstraction
-from XMIParser import XMIDependency
-from XMIParser import XMIStateContainer
-from XMIParser import XMIStateMachine
-from XMIParser import XMIStateTransition
-from XMIParser import XMIAction
-from XMIParser import XMIGuard
-from XMIParser import XMIState
-from XMIParser import XMICompositeState
-from XMIParser import XMIDiagram
+import unittest
+from archgenxml.XMIParser import XMI1_0
+from archgenxml.XMIParser import XMI1_1 
+from archgenxml.XMIParser import XMI1_2 
+from archgenxml.XMIParser import NoObject
+from archgenxml.XMIParser import PseudoElement
+from archgenxml.XMIParser import XMIElement
+from archgenxml.XMIParser import StateMachineContainer
+from archgenxml.XMIParser import XMIPackage
+from archgenxml.XMIParser import XMIModel
+from archgenxml.XMIParser import XMIClass 
+from archgenxml.XMIParser import XMIInterface
+from archgenxml.XMIParser import XMIMethodParameter
+from archgenxml.XMIParser import XMIMethod 
+from archgenxml.XMIParser import XMIAttribute 
+from archgenxml.XMIParser import XMIAssocEnd 
+from archgenxml.XMIParser import XMIAssociation 
+from archgenxml.XMIParser import XMIAssociationClass 
+from archgenxml.XMIParser import XMIAbstraction
+from archgenxml.XMIParser import XMIDependency
+from archgenxml.XMIParser import XMIStateMachine
+from archgenxml.XMIParser import XMIStateTransition
+from archgenxml.XMIParser import XMIAction
+from archgenxml.XMIParser import XMIGuard
+from archgenxml.XMIParser import XMIState
+from archgenxml.XMIParser import XMICompositeState
+from archgenxml.XMIParser import XMIDiagram
 
 
 class TestXMI1_0(unittest.TestCase):
