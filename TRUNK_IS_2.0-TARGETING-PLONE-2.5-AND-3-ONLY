@@ -3,4 +3,8 @@ This branch targets at Plone 2.5 and 3.0. It gets a huge cleanup.
 We will take the chainsaw and remove much of the BBB code!!!
 
 You'll need refactoring of custom parts such as AppInstall.py
-if you migrate your product using archgenxml 2.0
+if you migrate your product using archgenxml 2.0.
+
+To generate code for Plone 2.5 you need to set the tagged value
+'plone_target_version' on model level to '2.5' (defaults to '3.0').
+

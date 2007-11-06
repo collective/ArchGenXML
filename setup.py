@@ -9,7 +9,7 @@ from setuptools import setup
 from setuptools import find_packages
 
 setup(name='archgenxml',
-      version='2.0-beta2',
+      version='2.0-beta3',
       license='GPL',
       description='Generates Plone products from UML',
       long_description="""
@@ -46,6 +46,7 @@ fear of losing your hand-written code.
             ]
         },
       test_suite='archgenxml.tests.runalltests.suite',
+      zip_safe=False,
       # The stuff below messes up zope instances running on the same
       # python...
       #install_requires="""
