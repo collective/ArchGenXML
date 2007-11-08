@@ -1,7 +1,8 @@
 TODO's for ArchGenXML
 ---------------------
 
-* auto tool installation is broken. may need some GSification here.
+* configlet installation is missing, a sample controlpanel.xml is already there, 
+  need to wire in
 
 * generate pot file into "locales", instead i18n, keep some BBB, so if 
   folder i18n exists take it. offer a sync script.
@@ -70,8 +71,6 @@ TODO's for ArchGenXML
 * Longer term: add defaults to the tagged values.
 
 * Allow python package products instead of zope products.
-
-* Empty out install.py in favour of genericsetup. (almost done)
 
 * Support plone 3.0 portlets.
 
