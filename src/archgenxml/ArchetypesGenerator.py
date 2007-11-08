@@ -3208,7 +3208,8 @@ class ArchetypesGenerator(BaseGenerator):
             return
         package.generatedModules = []
         if package.getName().lower().startswith('java') or not package.getName():
-            #to suppress these unneccesary implicit created java packages (ArgoUML and Poseidon)
+            #to suppress these unneccesary implicit created java packages 
+            # (ArgoUML and Poseidon)
             log.debug("Ignoring unneeded package '%s'.",
                       package.getName())
             return
@@ -3218,9 +3219,19 @@ class ArchetypesGenerator(BaseGenerator):
         self.generatePackageInterfacesPy(package)
 
         for element in package.getClasses()+package.getInterfaces():
-            if not self._isContentClass(element):
+            #skip stub and internal classes
+            if element.isInternal() or element.getName() in self.hide_classes or\
+               element.getName().lower().startswith('java::'): 
+                # Enterprise Architect fix!
+                log.debug("Ignoring unnecessary class '%s'.", element.getName())
                 continue
 
+            if element.hasStereoType(self.stub_stereotypes, 
+                                     umlprofile=self.uml_profile):
+                log.debug("Ignoring stub class '%s'.",
+                         element.getName())
+                continue
+            
             module = element.getModuleName()
             package.generatedModules.append(element)
             modulefile = '%s.py' % module
