@@ -255,7 +255,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         print >> out, 'from zope.interface import implements'
 
-        if not element.isinterface:
+        if not element.isinterface and self._isContentClass(element):
             # Do not try to import an interface in itself
             print >> out, 'from interfaces import I%s' % element.getCleanName()
 
@@ -3811,7 +3811,7 @@ class ArchetypesGenerator(BaseGenerator):
             if not self._isContentClass(pclass):
                 continue
 
-            if pclass.hasStereoType(['tool', 'portal_tool', 'flavor', 'interface']):
+            if pclass.hasStereoType(['flavor', 'interface']):
                 continue
 
             fti = self._getFTI(pclass)

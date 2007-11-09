@@ -1,8 +1,8 @@
 <dtml-var "generator.generateModuleInfoHeader(package, name='setuphandlers')">
 import logging
 logger = logging.getLogger('<dtml-var "product_name">: setuphandlers')
-from config import PROJECTNAME
-from config import DEPENDENCIES
+from Products.<dtml-var "product_name">.config import PROJECTNAME
+from Products.<dtml-var "product_name">.config import DEPENDENCIES
 <dtml-if "hasvocabularies or hasrelations">
 from config import product_globals
 import os
@@ -60,6 +60,7 @@ def installQIDependencies(context):
     """This is for old-style products using QuickInstaller"""
     site = context.getSite()
     qi = getToolByName(site, 'portal_quickinstaller')
+
     for dependency in DEPENDENCIES:
         if qi.isProductInstalled(dependency):            
             logger.info("Re-Installing dependency %s:" % dependency)
@@ -77,8 +78,8 @@ def setupHideTypesFromSearch(context):
     siteProperties = getattr(portalProperties, 'site_properties')
     for klass in <dtml-var "repr(notsearchabletypes)">:
         propertyid = 'types_not_searched'
-        lines = list(siteProperties.getProperty(propertyid))
-        if klass not in current:
+        lines = list(siteProperties.getProperty(propertyid) or [])
+        if klass not in lines:
             lines.append(klass)
             siteProperties.manage_changeProperties(**{propertyid: lines})
 
@@ -92,8 +93,8 @@ def setupHideMetaTypesFromNavigations(context):
     siteProperties = getattr(portalProperties, 'site_properties')
     for klass in <dtml-var "repr(hidemetatypes)">:
         propertyid = 'metaTypesNotToList'
-        lines = list(siteProperties.getProperty(propertyid))
-        if klass not in current:
+        lines = list(siteProperties.getProperty(propertyid) or [])
+        if klass not in lines:
             lines.append(klass)
             siteProperties.manage_changeProperties(**{propertyid: lines})
 
@@ -112,7 +113,7 @@ def setupHideToolsFromNavigation(context):
                 portal[toolname].unindexObject()
             except:
                 pass        
-            current = list(navtreeProperties.getProperty('idsNotToList'))
+            current = list(navtreeProperties.getProperty('idsNotToList') or [])
             if toolname not in current:
                 current.append(toolname)
                 kwargs = {'idsNotToList': current}
@@ -127,7 +128,8 @@ def setupCatalogMultiplex(context):
     or removed from indexing in a catalog (black) 
     """
     site = context.getSite()
-    muliplexed = <dtml-var "repr(catalogmultiplexed)">
+    #dd#
+    muliplexed = <dtml-var "repr([m.getCleanName() for m in catalogmultiplexed or []])">
 
     atool = getToolByName(site, 'archetypes_tool')
     catalogmap = {}
