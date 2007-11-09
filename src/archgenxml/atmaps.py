@@ -233,6 +233,7 @@ WIDGET_MAP = {
     'date': u'CalendarWidget',
     'selection': u'SelectionWidget',
     'multiselection': u'MultiSelectionWidget',
+    'reference': u'ReferenceBrowserWidget',
     'BackReference': u'BackReferenceWidget'
 }
 
