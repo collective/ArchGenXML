@@ -17,10 +17,10 @@ With ArchGenXML you can create working python code without writing one single
 line of python. It is is a commandline utility that generates fully functional 
 Zope Products based on the Archetypes framework from UML models using XMI 
 (.xmi, .zargo, .zuml) files. The most common use case is to generate a set of 
-custom content types, possibly with a few tools, a CMFMember type and some 
+custom content types, possibly with a few tools, a custom Member type and some 
 workflows thrown in.
 
-In practice, you draw your UML diagrams in a tool like Poseidon or ObjectDomain 
+In practice, you draw your UML diagrams in a tool like ArgoUML or Poseidon
 which has the ability to generate XMI files. Once you are ready to test your 
 product, you run ArchGenXML on the XMI file, which will generate the product 
 directory. After generation, you will be able to install your product in Plone 
