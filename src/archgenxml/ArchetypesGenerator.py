@@ -255,7 +255,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         print >> out, 'from zope.interface import implements'
 
-        if not element.isinterface and self._isContentClass(element):
+        if not element.isInterface() and self._isContentClass(element):
             # Do not try to import an interface in itself
             print >> out, 'import interfaces'
 

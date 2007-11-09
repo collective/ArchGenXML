@@ -281,7 +281,7 @@ class BaseGenerator:
                            if (self.getInterfaceType(p) == 'z3'
                                or p.hasStereoType('view_class'))]
                                
-        if 'z3' in element.getStereoTypes() or not element.isInterface():
+        if not element.isInterface() and self._isContentClass(element):
             z3reparentnames = ['interfaces.I'+element.getCleanName()]+z3reparentnames
         if z3reparentnames:
             concatstring = ', '.join(z3reparentnames)
