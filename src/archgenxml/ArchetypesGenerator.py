@@ -257,7 +257,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         if not element.isinterface and self._isContentClass(element):
             # Do not try to import an interface in itself
-            print >> out, 'from interfaces import I%s' % element.getCleanName()
+            print >> out, 'import interfaces'
 
         res = BaseGenerator.generateDependentImports(self, element)
         print >> out, res
