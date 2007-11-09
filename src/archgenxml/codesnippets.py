@@ -299,3 +299,7 @@ ARRAYFIELD = u"""    ArrayField(
     ),
 
 """
+
+REFERENCEBROWSERWIDGET_IMPORT = u"""\
+from Products.ATReferenceBrowserWidget.ATReferenceBrowserWidget import ReferenceBrowserWidget
+"""
