@@ -1,1 +1,1 @@
-2.0-beta4 (svn/dev)
+2.0-beta4
