@@ -37,13 +37,6 @@ at_uml_profile.addStereoType(
     description='Generates a ContentFlavors'' flavor from this class.')
 
 at_uml_profile.addStereoType(
-    'z2', ['XMIInterface'],
-    dispatching=1,
-    generator='generateZope2Interface',
-    description='Generates a Zope 2 Interface inheriting from ' + \
-                'Zope.Interface.Base.')
-
-at_uml_profile.addStereoType(
     'tests', ['XMIPackage'],
     description='Treats a package as test package. Inside such a test '
     "package, you need at a '<<plone_testcase>>' and a "
@@ -136,7 +129,7 @@ at_uml_profile.addStereoType(
     'Note that you need to install the separate remember product. ')
 
 at_uml_profile.addStereoType(
-    'action', ['XMIMethod'],
+    'action', ['XMIMethod', 'XMIOperation'],
     description='Generate a CMF action which will be available on the '
                 'object. The tagged values "action" (defaults to method '
                 'name), "id" (defaults to method name), "category" '
@@ -147,7 +140,7 @@ at_uml_profile.addStereoType(
                 'control the behaviour of the action.')
 
 at_uml_profile.addStereoType(
-    'noaction', ['XMIMethod'],
+    'noaction', ['XMIMethod', 'XMIOperation'],
     description="Disables standard actions, applied to a method out of 'view', "
                 "'edit', 'metadata', 'references.")
 
@@ -238,7 +231,7 @@ at_uml_profile.addStereoType(
                 'manually.')
 
 at_uml_profile.addStereoType(
-    'form', ['XMIMethod'],
+    'form', ['XMIMethod', 'XMIOperation'],
     description="Generate an action like with the '<<action>>' stereotype, "
                 'but also copy an empty controller page template to the '
                 'skins directory with the same name as the method and set '
@@ -274,7 +267,7 @@ at_uml_profile.addStereoType(
                 'deriving from the VariableSchema mixin class.')
 
 at_uml_profile.addStereoType(
-    'view', ['XMIMethod'],
+    'view', ['XMIMethod', 'XMIOperation'],
     description="Generate an action like with the '<<action>>' stereotype, "
                 'but also copy an empty page template to the skins '
                 'directory with the same name as the method and set this '
