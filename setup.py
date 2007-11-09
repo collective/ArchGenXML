@@ -34,8 +34,8 @@ public interfaces, its methods and its attributes in the UML model, without
 fear of losing your hand-written code.
       """,
       keywords="zope plone UML",
-      author='Reinout van Rees',
-      author_email='reinout@vanrees.org',
+      author='Phil Auersperg, Jens Klein',
+      author_email='dev@bluedynamics.com',
       url='http://plone.org/products/archgenxml',
       packages=find_packages('src'),
       package_dir={'': 'src'},
