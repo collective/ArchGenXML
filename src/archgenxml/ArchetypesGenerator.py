@@ -566,6 +566,7 @@ class ArchetypesGenerator(BaseGenerator):
     
     def getWidget(self, widgettype, element, fieldname, elementclass, 
                   fieldclassname=None):
+        """the rendered widget"""
         widgetdef = self._getWidgetDefinition(widgettype, element, fieldname, 
                                                elementclass, fieldclassname)
         templ = self.readTemplate(['archetypes', 'widgetdef.pysnippet'])
@@ -575,11 +576,11 @@ class ArchetypesGenerator(BaseGenerator):
 
     def _getWidgetDefinition(self, widgettype, element, fieldname, elementclass, 
                   fieldclassname=None):
-        """ returns either default widget, widget according to
-        attributes or no widget.
+        """a widget definition dictionary
 
         atributes/tgv's can be:
-            * widget and a whole widget code block or
+            * widget and a whole widget code block (DEPRECATED) or
+            * widget:type defines the kind of the widget and then
             * widget:PARAMETER which will be rendered as a PARAMETER=value
 
         """
