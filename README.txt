@@ -1,5 +1,8 @@
-ArchGenXML documentation, such as README, INSTALL and manual
-are located in the ./docs directory.
+ArchGenXML documentation, such as 
+ * README, 
+ * INSTALL and 
+ * manual
+are located in the './docs 'directory!
 
 Note 1)
 

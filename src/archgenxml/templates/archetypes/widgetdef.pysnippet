@@ -4,6 +4,4 @@
     <dtml-var "key">=<dtml-var "map[key]">,
 </dtml-let>
 </dtml-in>
-<dtml-if "map">
-)
-</dtml-if>
+<dtml-if "map">)</dtml-if>
