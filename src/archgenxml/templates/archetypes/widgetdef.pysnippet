@@ -1,0 +1,9 @@
+<dtml-var "startcode">
+<dtml-in "map.keys()">
+<dtml-let key="_['sequence-item']">
+    <dtml-var "key">=<dtml-var "map[key]">,
+</dtml-let>
+</dtml-in>
+<dtml-if "map">
+)
+</dtml-if>

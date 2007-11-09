@@ -563,8 +563,17 @@ class ArchetypesGenerator(BaseGenerator):
 
                 map.update({k: v})
         return map
-
+    
     def getWidget(self, widgettype, element, fieldname, elementclass, 
+                  fieldclassname=None):
+        widgetdef = self._getWidgetDefinition(widgettype, element, fieldname, 
+                                               elementclass, fieldclassname)
+        templ = self.readTemplate(['archetypes', 'widgetdef.pysnippet'])
+        dtml = HTML(templ, widgetdef)
+        res = dtml()
+        return res
+
+    def _getWidgetDefinition(self, widgettype, element, fieldname, elementclass, 
                   fieldclassname=None):
         """ returns either default widget, widget according to
         attributes or no widget.
@@ -574,10 +583,11 @@ class ArchetypesGenerator(BaseGenerator):
             * widget:PARAMETER which will be rendered as a PARAMETER=value
 
         """
+        wdef = odict()
+        wdef['map'] = odict()
+        wdef['startcode'] = widgettype.capitalize()+'Widget'
+
         tgv = element.getTaggedValues()
-        widgetcode = widgettype.capitalize()+'Widget'
-        widgetmap = odict()
-        custom = False # is there a custom setting for widget?
         widgetoptions = [t for t in tgv.items() if t[0].startswith('widget:')]
 
         # check if a global default overrides a widget. setting defaults is
@@ -589,14 +599,13 @@ class ArchetypesGenerator(BaseGenerator):
             atype = element.type
         else:
             atype = widgettype
+
+        # try to find a default widget defined in the model
         default_widget = self.getOption('default:widget:%s' % fieldclassname, 
                                         element, None)
         if not default_widget:
             default_widget = self.getOption('default:widget:%s' % atype, 
                                             element, None)
-
-        if default_widget:
-            widgetcode = default_widget + u'(\n'
 
         modulename = elementclass.getPackage().getProductName()
         check_map = odict()
@@ -611,89 +620,84 @@ class ArchetypesGenerator(BaseGenerator):
 
         if tgv.has_key('widget'):
             # Custom widget defined in attributes
-            custom = True
+            # really ugly, we deprectae it (jensens)
+            log.warn('Deprecated: old style definiton in %s' % fieldclassname)
             formatted = u''
             for line in tgv['widget'].split(u'\n'):
                 if formatted:
                     line = utils.indent(line.strip(), 1)
                 formatted += u"%s\n" % line
-            widgetcode =  formatted
+            wdef['startcode'] =  formatted
 
         elif [wt.update({t[0]:t[1]}) for t in widgetoptions if t[0] == u'widget:type']:
-            custom = True
-            widgetcode = wt['widget:type']
+            wdef['startcode'] = wt['widget:type']
 
         elif self.widgetMap.has_key(widgettype) and not default_widget:
             # default widget for this widgettype found in widgetMap
-            custom = True
-            widgetcode = self.widgetMap[widgettype]
+            wdef['startcode'] = self.widgetMap[widgettype]
 
         elif fieldclassname and not default_widget:
             # use fieldclassname if and only if no default widget has been given
-            widgetcode="%s._properties['widget'](\n" % fieldclassname
+            wdef['startcode'] = "%s._properties['widget'](" % fieldclassname
+        elif default_widget:
+            wdef['startcode'] = default_widget + u'('
+            
 
-        if ')' not in widgetcode: # XXX bad check *sigh*
+        if ')' in wdef['startcode']: # XXX bad check *sigh*
+            return wdef
 
-            for tup in widgetoptions:
-                key=tup[0][7:]
-                val=tup[1]
-                if key == 'type':
-                    continue
-                if key not in self.nonstring_tgvs:
-                    val = utils.getExpression(val)
-                    # [optilude] Permit python: if people forget they don't have to (I often do!)
-                else:
-                    if type(val) in StringTypes:
-                        if val.startswith('python:'):
-                            val = val[7:]
+        if '(' not in wdef['startcode']: # XXX bad check *sigh* again
+            wdef['startcode'] += '('
 
-                widgetmap.update({key:val})
+        for tup in widgetoptions:
+            key=tup[0][7:]
+            val=tup[1]
+            if key == 'type':
+                continue
+            if key not in self.nonstring_tgvs:
+                val = utils.getExpression(val)
+                # [optilude] Permit python: if people forget they don't 
+                # have to (I often do!)
+            else:
+                if type(val) in StringTypes:
+                    if val.startswith('python:'):
+                        val = val[7:]
 
-            if '(' not in widgetcode:
-                widgetcode += '(\n'
+            wdef['map'].update({key:val})
 
-            ## before update the widget mapping, try to make a
-            ## better description based on the given label
 
-            for k in check_map:
-                if not (k in widgetmap.keys()): # XXX check if disabled
-                    widgetmap.update( {k: check_map[k]} )
+        ## before update the widget mapping, try to make a
+        ## better description based on the given label
+        for k in check_map:
+            if not (k in wdef['map'].keys()): # XXX check if disabled
+                 wdef['map'].update( {k: check_map[k]} )
 
-            # remove description_msgid if there is no description
-            if 'description' not in widgetmap.keys() and \
-               'description_msgid' in widgetmap.keys(): 
-                del widgetmap['description_msgid']
+        # remove description_msgid if there is no description
+        if 'description' not in wdef['map'].keys() and \
+           'description_msgid' in wdef['map'].keys(): 
+            del  wdef['map']['description_msgid']
 
-            if 'label_msgid' in widgetmap.keys() and has_enhanced_strip_support:
-                self.addMsgid(widgetmap['label_msgid'].strip("'").strip('"'),
-                              widgetmap.has_key('label') and widgetmap['label'].strip("'").strip('"') or fieldname,
-                              elementclass,
-                              fieldname
-                          )
-            if 'description_msgid' in widgetmap.keys() and has_enhanced_strip_support:
-                self.addMsgid(widgetmap['description_msgid'].strip("'").strip('"'),
-                              widgetmap.has_key('description') and widgetmap['description'].strip("'").strip('"') or fieldname,
-                              elementclass,
-                              fieldname
-                          )
-            keqvs = list()
-            for key in widgetmap:
-                value = widgetmap[key]
-                if (type(value) != types.UnicodeType
-                    and type(value) in StringTypes):
-                    # StringTypes filters out integer values
-                    value = value.decode('utf-8')
-                keqv = u'%s=%s' % (key, value)
-                keqvs.append(keqv)
+        if 'label_msgid' in  wdef['map'].keys() and has_enhanced_strip_support:
+            self.addMsgid( wdef['map']['label_msgid'].strip("'").strip('"'),
+                           wdef['map'].has_key('label') and  \
+                           wdef['map']['label'].strip("'").strip('"') or fieldname,
+                          elementclass,
+                          fieldname
+                      )
+        if 'description_msgid' in  wdef['map'].keys() and has_enhanced_strip_support:
+            self.addMsgid( wdef['map']['description_msgid'].strip("'").strip('"'),
+                           wdef['map'].has_key('description') and \
+                           wdef['map']['description'].strip("'").strip('"') or fieldname,
+                          elementclass,
+                          fieldname
+                      )
+        for key in  wdef['map']:
+            value =  wdef['map'][key]
+            if (type(value) != types.UnicodeType
+                and type(value) in StringTypes):
+                wdef['map'][key] = value.decode('utf-8')
 
-            widgetcode += utils.indent( \
-                u',\n'.join(keqvs),
-                1,
-                skipFirstRow=0) \
-                       + u',\n'
-            widgetcode += u')'
-
-        return widgetcode
+        return wdef
 
     def getFieldFormatted(self, name, fieldtype, map={}, doc=None,
                           indent_level=0, rawType='String', array_field=False):
