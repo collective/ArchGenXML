@@ -3445,21 +3445,19 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateRelations(self, package):
         # Initializing some stuff as I got an error report.
-        sourcetype = None
-        targettype = None
         sourceinterface = None
         targetinterface = None
         sourcecardinality = None
         targetcardinality = None
         assocclassname = None
 
-        doc=minidom.Document()
-        lib=doc.createElement('RelationsLibrary')
+        doc = minidom.Document()
+        lib = doc.createElement('RelationsLibrary')
         doc.appendChild(lib)
-        coll=doc.createElement('RulesetCollection')
+        coll = doc.createElement('RulesetCollection')
         coll.setAttribute('id',package.getCleanName())
         lib.appendChild(coll)
-        package.num_generated_relations=0
+        package.num_generated_relations = 0
         assocs = package.getAssociations(recursive=1)
         processed = [] # xxx hack and workaround, not solution, avoids double
                         # generation of relations
@@ -3467,20 +3465,20 @@ class ArchetypesGenerator(BaseGenerator):
             if assoc in processed:
                 continue
             processed.append(assoc)
-            if self.getOption('relation_implementation',assoc,'basic') != 'relations':
+            if self.getOption('relation_implementation', assoc, 'basic') != 'relations':
                 continue
 
-            source=assoc.fromEnd.obj
-            target=assoc.toEnd.obj
+            source = assoc.fromEnd.obj
+            target = assoc.toEnd.obj
 
-            targetcard=list(assoc.toEnd.mult)
-            sourcecard=list(assoc.fromEnd.mult)
-            sourcecard[0]=None #temporary pragmatic fix
-            targetcard[0]=None #temporary pragmatic fix
-            allowed_source_types=[]
-            allowed_target_types=[]
-            sourceinterface=None
-            targetinterface=None
+            targetcard = list(assoc.toEnd.mult)
+            sourcecard = list(assoc.fromEnd.mult)
+            sourcecard[0] = None #temporary pragmatic fix
+            targetcard[0] = None #temporary pragmatic fix
+            allowed_source_types = []
+            allowed_target_types = []
+            sourceinterface = None
+            targetinterface = None
 
             def getAllowedTypes(obj):
                 if obj.isAbstract():
