@@ -44,7 +44,8 @@ fear of losing your hand-written code.
         'console_scripts':[
             'archgenxml = archgenxml.ArchGenXML:main',
             'agx_taggedvalues = archgenxml.TaggedValueSupport:main',
-            'agx_stereotypes = archgenxml.UMLProfile:main'
+            'agx_stereotypes = archgenxml.UMLProfile:main',
+            'agx_argouml_profile = archgenxml.ArgoUMLProfileGenerator:main',
             ]
         },
       test_suite='archgenxml.tests.runalltests.suite',
