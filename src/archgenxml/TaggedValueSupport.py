@@ -903,9 +903,9 @@ category = 'state transition'
 tagname = 'trigger_type'
 explanation = """Sets the trigger type, following what is defined by DCWorkflow:
 
-            0 : Automatic
-            1 : User Action (default)
-            2 : Workflow Method
+            automatic
+            user action (default)
+            workflow method
 """
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
