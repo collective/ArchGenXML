@@ -15,14 +15,23 @@ easy_install archgenxml, so the usual.
 SVN directories - what is stable, what is not?
 ----------------------------------------------
 
-ArchGenXML's svn trunk has been changed to be the 1.6 development
+ArchGenXML's svn trunk has been changed to be the 2.x development
 version. The stable version is in the 1.5 branch.
 
 As usual, the goal is to keep trunk workable. Some of the developers
-work and develop on the edge: trunk. There might be some reordering
-and deprecation. There will especially be quite a lot of reordering to
-move towards genericsetup. If you need stability, use the released
-1.5.2 version or the 1.5 branch.
+work and develop on the edge: trunk. 
+
+If you need stability, use the latest release.
+
+Major changes in 2.0
+--------------------
+
+We updated ArchGenXML and changed tons of things to get modernized generated
+code.
+
+As a warning: Using an old model with ArchGenXML 2.0 creates some work. This
+specially if you ave lots of logic in AppInstall.py or custom workflow scripts. 
+You need to migrate such code manually.
 
 
 Installing trunk
@@ -46,10 +55,10 @@ look around quite a bit. If it is a funny location, just symlink it
 from somewhere in your path.
 
 
-Trunk dependency
-----------------
+Dependencies
+------------
 
-Trunk has a dependency on some zope3 machinery. It requires you to
+ArchGenXML has a dependency on some zope3 machinery. It requires you to
 have a zope 3.3 or zope 2.10 lying around somewhere. We'd love to do
 this with eggs, but that messes up other zopes that use the same
 python version. And zope is only half-half eggified.
@@ -58,4 +67,7 @@ So just start "archgenxml" and it'll complain about not finding some
 zope libraries and it'll give you instructions on how to handle
 that. If somebody's got a better idea that doesn't mess up all sorts
 of things: please open a bug in the issue tracker.
+
+Dependencies are: zope.interface, zope.component and zope.configuration.
+
 

@@ -1,6 +1,8 @@
 TODO's for ArchGenXML
 ---------------------
 
+* add worklist and workflow trigger support (missing).
+
 * configlet installation is missing, a sample controlpanel.xml is already there, 
   need to wire in
 

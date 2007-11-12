@@ -48,6 +48,11 @@ Authors
   Robert Niederreiter (rnix)
   
     Generic Setup profile generation and cleanup for AGX 2.0. 
+    
+  Encolpe Degoute (encolpe)
+  
+    Lots of good work and help with AGX 2.0, including documentation and
+    argouml support.
 
 Sponsors:
 
