@@ -350,6 +350,12 @@ explanation = """By default, a child type will inherit the allowable content
 types from its parents. Set this property to false (0) to turn this off."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'hide_actions'
+explanation = """A comma- or newline-separated list of action ids to hide on
+the class. For example, set to 'metadata, sharing' to turn off the metadata
+(properties) and sharing tabs."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'immediate_view'
 explanation = """Set the immediate_view factory type information value. This
 should be the name of a page template, and defaults to 'base_view'. Note that
