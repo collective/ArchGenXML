@@ -42,7 +42,9 @@ fear of losing your hand-written code.
       include_package_data=True,
       entry_points={
         'console_scripts':[
-            'archgenxml = archgenxml.ArchGenXML:main'
+            'archgenxml = archgenxml.ArchGenXML:main',
+            'agx_taggedvalues = archgenxml.TaggedValueSupport:main',
+            'agx_stereotypes = archgenxml.UMLProfile:main'
             ]
         },
       test_suite='archgenxml.tests.runalltests.suite',

@@ -1193,5 +1193,9 @@ explanation = ''
 for tagname in undocumented_tags:
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-if __name__ == '__main__':
+
+def main():
     print tgvRegistry.documentation()
+
+if __name__ == '__main__':
+    main()

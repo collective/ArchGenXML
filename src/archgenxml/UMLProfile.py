@@ -288,11 +288,13 @@ class UMLProfile:
         indentedLines = [(spaces + line) for line in lines]
         return '\n'.join(indentedLines)
 
+def main():
+    from ArchetypesGenerator import ArchetypesGenerator
+    uml_profile = ArchetypesGenerator.uml_profile
+    print uml_profile.documentation()
 
 if __name__=='__main__':
     # The tests that were originally here have been moved to
     # tests/testUMLProfile.py.
-    from ArchetypesGenerator import ArchetypesGenerator
-    uml_profile = ArchetypesGenerator.uml_profile
-    print uml_profile.documentation()
+    main()
 
