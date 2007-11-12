@@ -364,49 +364,32 @@ class ArchetypesGenerator(BaseGenerator):
                     log.debug("No tagged value 'action', trying '%s' with a "
                               "default to the methodname.",
                               m.getStereoType())
-                    action_name=m.getTaggedValue(m.getStereoType(),
-                                                 method_name).strip()
+                    action_name = m.getTaggedValue(m.getStereoType(),
+                                                   method_name).strip()
                 log.debug("Ok, generating %s for %s.",
                           m.getStereoType(), action_name)
                 dict={}
 
                 if not action_name.startswith('string:') \
                    and not action_name.startswith('python:'):
-                    action_target='string:${object_url}/'+action_name
+                    action_target = 'string:${object_url}/'+action_name
                 else:
-                    action_target=action_name
+                    action_target = action_name
 
                 dict['action'] = action_target
                 dict['category'] = m.getTaggedValue('category', 'object')
                 dict['id'] = m.getTaggedValue('id',method_name)
                 dict['name'] = m.getTaggedValue('label',method_name)
-                dict['permissions'] = m.getTaggedValue('permission', ['View'])
+                perms = m.getTaggedValue('permission', 'View')
+                perms = [p.strip() for p in perms.split(',') if p.strip()]
+                dict['permissions'] = perms
                 dict['visible'] = m.getTaggedValue('visible', 'True')
-                condition=m.getTaggedValue('condition') or '1'
+                condition = m.getTaggedValue('condition') or '1'
                 dict['condition']='python:%s' % condition
 
                 if not (m.hasTaggedValue('create_action') \
                         and utils.isTGVFalse(m.getTaggedValue('create_action'))):
                     ret[dict['id']] = dict
-
-            #XXX LATER
-
-            #if m.hasStereoType('view', umlprofile=self.uml_profile):
-            #    f=self.makeFile(os.path.join(self.getSkinPath(element),action_name+'.pt'),0)
-            #    if f:
-            #        
-            #        viewTemplate=open(os.path.join(self.templateDir,'action_view.pt')).read()
-            #        f.write(viewTemplate % code)
-            #
-            #elif m.hasStereoType('form', umlprofile=self.uml_profile):
-            #    f=self.makeFile(os.path.join(self.getSkinPath(element),action_name+'.cpt'),0)
-            #    if f:
-            #
-            #        viewTemplate=open(os.path.join(self.templateDir,'action_view.pt')).read()
-            #        f.write(viewTemplate % code)
-
-        #res=outfile.getvalue()
-        #return res
         return ret
 
     def getDisabledMethodActions(self, element):

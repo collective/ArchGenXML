@@ -54,7 +54,7 @@ class TaggedValueRegistry:
             'archgenxml.XMIParser.XMIClass': ['class', 'tool', 'field', 'widget'],
             #'XMIParser.XMIInterface': [],
             #'XMIParser.XMIMethodParameter': [],
-            'archgenxml.XMIParser.XMIMethod': ['method', 'action/form/view'],
+            'archgenxml.XMIParser.XMIMethod': ['method', 'action'],
             'archgenxml.XMIParser.XMIAttribute': ['attribute'],
             #'XMIParser.XMIAssocEnd': [],
             'archgenxml.XMIParser.XMIAssociation': ['association'],
@@ -350,12 +350,6 @@ explanation = """By default, a child type will inherit the allowable content
 types from its parents. Set this property to false (0) to turn this off."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-tagname = 'hide_actions'
-explanation = """A comma- or newline-separated list of action ids to hide on
-the class. For example, set to 'metadata, sharing' to turn off the metadata
-(properties) and sharing tabs."""
-tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
 tagname = 'immediate_view'
 explanation = """Set the immediate_view factory type information value. This
 should be the name of a page template, and defaults to 'base_view'. Note that
@@ -497,13 +491,12 @@ unsafe code to access. Methods with package visibility use the class
 default security and do not get security declarations at all."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-# Actions/forms/views
+# Actions
 
-category = 'action/form/view'
+category = 'action'
 
-# For methods with either of the '<<action>>'', '<<form>>' or
-# '<<view>>' stereotypes, the following tagged values can be used to
-# control the generated actions:
+# For methods with '<<action>>' stereotypes, the following tagged values can 
+# be used to control the generated actions:
 
 tagname = 'id'
 explanation = """The id of the action. Use 'id', """
@@ -526,11 +519,16 @@ tagname = 'visible'
 explanation = """Sets the visible property, default to 'True'"""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-for tagname in ['action', 'view', 'form']:
-    explanation = """For a stereotype '%s', this tagged value can
-    be used to overwrite the default URL ('..../name_of_method')
-    into '..../tagged_value'.""" % tagname
-    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+tagname = 'permission'
+explanation = """The permission used for the action, a string or comma 
+separated list of strings, default to 'View'."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'action'
+explanation = """For a stereotype 'action', this tagged value can
+be used to overwrite the default URL ('..../name_of_method')
+into '..../tagged_value'.""" 
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 # Field classes
 category = 'field'
