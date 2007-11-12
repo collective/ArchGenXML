@@ -11,8 +11,8 @@ TODO's for ArchGenXML
   for plone2.5 target version a patch exists and is generated
   subscriber geneartion started, non-trivial thing!
 
-* update umltools/argouml/argouml_profile.xmi
-  make setuptools or at least debian copy it to /usr/share/archgenxml
+* make setuptools or at least debian copy umltools/argouml/argouml_profile.xmi
+  to /usr/share/archgenxml
 
 * update docs/manual/*registry* and check quickref
 
@@ -51,10 +51,6 @@ TODO's for ArchGenXML
 
 * Move remainder of templates in templates/ to DTML
 
-    - action_view.pt
-    - generated.pot
-    - portlet_template.pt
-
 * Move class, interface generation to DTML. There are too many
   conditionals and strings being generated in the current code. :-)
   Having DTML conditionals and loops would make it much clearer and
@@ -75,6 +71,4 @@ TODO's for ArchGenXML
 * Support plone 3.0 portlets.
 
 * Support plone 3.0 viewlets (replacement of many included macros).
-
-* Perhaps look at new 3.0 editor role. (default roles?)^
 
