@@ -1,4 +1,4 @@
-<dtml-var "generator.generateModuleInfoHeader(package, name='wfsubscribers.py')">
+<dtml-var "generator.generateModuleInfoHeader(package, name='wfsubscribers')">
 <dtml-var "generator.getProtectedSection(parsed_module, 'module-header')">
 
 <dtml-in "subscribers.keys()">
