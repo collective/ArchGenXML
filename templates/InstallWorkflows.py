@@ -41,6 +41,12 @@ def uninstallWorkflows(self, package, out):
     This code doesn't really do anything, but you can place custom
     code here in the protected section.
     """
+    workflowTool = getToolByName(self, 'portal_workflow')
+<dtml-in "package.getStateMachines()">
+<dtml-let sm="_['sequence-item']">
+    workflowTool.manage_delObjects(['<dtml-var "generator.cleanName(sm.getName())">'])
+</dtml-let>
+</dtml-in>
 
 <dtml-var "generator.getProtectedSection(parsedModule,
 'workflow-uninstall', 1)">
