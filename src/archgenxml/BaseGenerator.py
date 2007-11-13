@@ -5,8 +5,7 @@
 # Author:      Jens Klein
 #
 # Created:     2005-01-10
-# RCS-ID:      $Id: BaseGenerator.py 3411 2005-01-05 01:55:45Z yenzenz $
-# Copyright:   (c) 2005-2006 BlueDynamics Alliance, Austria
+# Copyright:   (c) 2005-2007 BlueDynamics Alliance, Austria
 # Licence:     GPL
 #-----------------------------------------------------------------------------
 
@@ -483,23 +482,24 @@ class BaseGenerator:
         res = HTML(templ, d)()
         return res
 
-    def getLicenseInfo(self, element):
+    def getLicenseInfo(self, element, all=0):
+        """this piece of code do automatic relicensing of the code
+        this is permitted by the authors and limited to the licenses
+        shipped with archgenxml.
+        """
         license_name = self.getOption('license', element, self.license)
         license = LICENSES.get(license_name)
         if license is None:
-            license = {
-                'name': license_name,
-                'text': self.getOption('license_text', element, ''),
-            }
-        if license['name'] or license['text']:
-            license_text = '%(name)s\n#\n%(text)s' % license
-        else:
-            license_text = ""
-        log.debug("License: %r.", license_text)
+            log.error('Automatic relicensing of the generated code is only '
+                      'permitted into one of the given licenses. ')
+        log.debug("License: %r.", license['name'])
+        if not all:
+            return license['name']
+        license_text = '%(name)s\n#\n%(text)s' % license
         return license_text
 
 
-    def getHeaderInfo(self, element, name=None):
+    def getHeaderInfo(self, element, name=None, all=0):
         log.debug("Getting info for the header...")
 
         copyright = COPYRIGHT % \
@@ -507,7 +507,7 @@ class BaseGenerator:
              self.getOption('copyright', element, self.copyright) or self.author)
         log.debug("Copyright = %r.", copyright)
 
-        license = self.getLicenseInfo(element)
+        license = self.getLicenseInfo(element, all=all)
         authors, emails, authorline = self.getAuthors(element)
 
         if self.getOption('rcs_id', element, False):
@@ -549,7 +549,7 @@ class BaseGenerator:
         }
         return moduleinfo
 
-    def generateModuleInfoHeader(self, element, name=None):
+    def generateModuleInfoHeader(self, element, name=None, all=0):
         """Generate the module header.
         
         Watch out: generate at least the encoding header, the rest is
@@ -557,9 +557,9 @@ class BaseGenerator:
         """
 
         result = ''
-        fileheaderinfo = self.getHeaderInfo(element, name=name)
+        fileheaderinfo = self.getHeaderInfo(element, name=name, all=all)
         result = ENCODING_HEADER % fileheaderinfo
-        if self.module_info_header:
+        if all or self.module_info_header:
             result += MODULE_INFO_HEADER % fileheaderinfo
         return result
 

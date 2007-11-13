@@ -1,10 +1,10 @@
-import os
 from operator import itemgetter
+import os.path
 import utils
 import logging
 from PyParser import PyModule
 from BaseGenerator import BaseGenerator
-from documenttemplate.documenttemplate import HTML
+from archgenxml.documenttemplate.documenttemplate import HTML
 
 log = logging.getLogger('workflow')
 
@@ -18,26 +18,6 @@ class WorkflowGenerator(BaseGenerator):
         self.package = package
         self.atgenerator = atgenerator
         self.__dict__.update(atgenerator.__dict__)
-
-    # XXX: now i start here something ugly, but i dont have time to
-    # cleanup XMIParsers code - it has too much logic in, which should
-    # be in this class.
-    # Permissions from XMI are supposed to be strings upon here. But
-    # we may have an import of a class containing the permissions as
-    # attributes. So lets do a processExpression on each permission.
-    def getPermissionsDefinitions(self, state):
-        pdefs = state.getPermissionsDefinitions()
-        for p_dict in pdefs:
-            p_dict['permission'] = self.processExpression(
-                p_dict['permission'], asString=False)
-        return pdefs
-
-    # XXX: Almost the same again.
-    def getAllPermissionNames(self, statemachine):
-        source_pdefs = statemachine.getAllPermissionNames()
-        result_pdefs = [self.processExpression(pdef, asString=False)
-                        for pdef in source_pdefs]
-        return result_pdefs
 
     def generateWorkflows(self):
         log.debug("Generating workflows.")
@@ -69,17 +49,21 @@ class WorkflowGenerator(BaseGenerator):
         for sm in statemachines:
             d['statemachine'] = sm
             d['info'] = WorkflowInfo(sm, self)
-            d['scripts'] = self.scripts(sm)
+            
+            # start BBB warning 
             smName = utils.cleanName(sm.getName())
             smDir = os.path.join(workflowDir, smName)
             oldFile = os.path.join(extDir, smName + '.py')
             if os.path.exists(oldFile):
                 log.warn('Workflow now uses generic setup, please '
                          'remove %s.', oldFile)
+            # end BBB warning 
+            
             self.atgenerator.makeDir(smDir)
             log.debug("Generated specific workflow's dir '%s'.",
                       smDir)
-            # Generate workflow script
+            
+            # Generate workflow xml
             log.info("Generating workflow '%s'.", smName)
             templ = self.readTemplate(['profiles', 'definition.xml'])
             scriptpath = os.path.join(smDir, 'definition.xml')
@@ -89,30 +73,20 @@ class WorkflowGenerator(BaseGenerator):
             of.write(res)
             of.close()
 
-            # Generate workflow transition script, if any
-            if sm.getAllTransitionActionNames():
-                if not os.path.exists(extDir):
-                    self.atgenerator.makeDir(extDir)
-                log.info("Generating workflow script(s).")
-                templ = self.readTemplate(['profiles', 
-                                           'create_workflow_script.py'])
-                scriptpath = os.path.join(extDir, smName + '_scripts.py')
-                filesrc = self.atgenerator.readFile(scriptpath) or ''
-                parsedModule = PyModule(filesrc, mode='string')
-                d['parsedModule'] = parsedModule
-                dtml = HTML(templ, d)
-                res = dtml()
-                of = self.atgenerator.makeFile(scriptpath)
-                of.write(res)
-                of.close()
-            else:
-                log.debug("Workflow %s has no script(s)." % smName)
-
+            self._collectSubscribers(sm)
+            
+        # generate wfsubscribers.zcml
+        self._generateWorkflowSubscribers()
+        
         del d['statemachine']
         oldFile = os.path.join(extDir, 'InstallWorkflows.py')
+        
+        # start BBB warning 
         if os.path.exists(oldFile):
             log.warn('Workflow now uses generic setup, please '
                      'remove %s.', oldFile)
+        # end BBB warning 
+        
         log.debug("Creating workflows.xml file.")
         d['workflowNames'] = self.workflowNames()
         d['workflowless'] = self.workflowLessTypes()
@@ -138,35 +112,110 @@ class WorkflowGenerator(BaseGenerator):
         of = self.atgenerator.makeFile(scriptpath)
         of.write(res)
         of.close()
+        
+    def _generateWorkflowSubscribers(self):
+        product = self.package.getProduct()
+        subscribers = product.getAnnotation('subscribers', None)
+        modulepath = os.path.join(product.getFilePath(), 'wfsubscribers.py')
+        if not subscribers:
+            log.debug('No workflow subscribers in this product.')
+            if os.path.exists(modulepath):
+                log.warn('superfluos wfsubscribers.py left, no longer used.')
+            return
+        product = self.package.getProduct()
+        if os.path.exists(modulepath):
+            parsedModule = PyModule(modulepath)
+        else:
+            parsedModule = PyModule('', mode='string')
+        templ = self.readTemplate(['wfsubscribers.py'])
+        d = {
+            'generator': self,
+            'package': self.package,
+            'subscribers': subscribers,
+            'parsed_module': parsedModule,
+            'builtins': __builtins__,
+            'utils': utils,
+        }
+        d.update(__builtins__)
+        res = HTML(templ, d)()
+        of = self.atgenerator.makeFile(modulepath)
+        of.write(res)
+        of.close()
+        return res        
+    
+    def _collectSubscribers(self, sm):
+        """collect info for workflow transition subscribers"""
+        product = self.package.getProduct()
+        subscribers = product.getAnnotation('subscribers', dict())
+        effects = self._effects(sm)
+        for info in effects:
+            id = self._infoid(info)
+            if id in subscribers.keys():
+                continue
+            log.debug('Workflow subscriber added for %s' % sm.getCleanName())
+            
+            subscribers[id] = {}
+            subscribers[id]['type'] = 'workflow'
+            subscribers[id]['payload'] = info
+            subscribers[id]['for'] = [
+                info['objinterface'],
+                info['wfinterface'],
+            ]                
+            subscribers[id]['method'] = self._infoid(info, short=True)
+            subscribers[id]['handler'] = id
+        product.annotate('subscribers', subscribers)
 
-    def getActionScriptName(self, action):
-        trans = action.getParent()
-        wf = trans.getParent()
-        return '%s_%s_%s' % (wf.getCleanName(), trans.getCleanName(),
-                             action.getCleanName())
+        
+    def _effects(self, sm):
+        """ subscriber info"""
+        effects = []        
+        for transition in sm.getTransitions(self):
+            before = transition.getBeforeActionName()
+            after = transition.getAfterActionName()                
+            if before:
+                effects.append(self._transEffectInfo(transition, 'before'))
+            if after:
+                effects.append(self._transEffectInfo(transition, 'after'))  
+        return effects
 
-    def scripts(self, sm):
-        """Return workflow scripts.
-        """
-
-        transitions = sm.getTransitions(no_duplicates = 1)
-        filtered = [t for t in transitions
-                    if t.getName()
-                    and t.getAction()]
-        filtered.sort(cmp=lambda x,y: cmp(x.getName(), y.getName()))
-        results = []
-        smName = utils.cleanName(sm.getName())
-        for transition in filtered:
-            for scriptname in transition.getAction(
-                ).getUsedActionNames():
-                result = {}
-                result['id'] = scriptname
-                productName = self.package.getName()
-                result['module'] = '%s.%s_scripts' % (productName,
-                                                      smName)
-                results.append(result)
-        return results
-
+    def _transEffectInfo(self, transition, type):
+        res = {}
+        action = transition.getAction()
+        res['sourcestate'] = transition.getSourceState()
+        res['targetstate'] = transition.getTargetState()
+        res['transition'] = transition.getName()
+        res['workflow'] = transition.getParent().getCleanName()
+        if type == 'before':
+            res['effectname'] = action.getBeforeActionName()
+            res['wfinterface'] = 'Products.DCWorkflow.interfaces.IBeforeTransitionEvent'
+        else:
+            res['effectname'] = action.getAfterActionName()
+            res['wfinterface'] = 'Products.DCWorkflow.interfaces.IAfterTransitionEvent'
+        klass = res['sourcestate'].getParent().getParent()
+        if klass.hasStereoType(self.atgenerator.noncontentstereotype,
+                               umlprofile=self.atgenerator.uml_profile):
+            defaultbinding = '*'
+        else:
+            # take the generated marker interface as defaultbinding
+            path = klass.getQualifiedModuleName(klass.getPackage(), 
+                                               includeRoot=0)
+            rdot = path.rfind('.')
+            if rdot >= 0:
+                path = '.' + path[:rdot+1]
+            else:
+                path = '.'
+            defaultbinding = '%sinterfaces.I%s' % (path, klass.getCleanName())
+        tag = '%s:binding' % type
+        print tag
+        res['objinterface'] = action.getTaggedValue(tag, defaultbinding)
+        return res
+    
+    def _infoid(self, info, short=False):
+        base = info['effectname']
+        if not short:
+            base = '.wfsubscribers.' + base
+        return base
+        
     def workflowNames(self):
         statemachines = self.package.getStateMachines()
         names = [utils.cleanName(sm.getName()) for sm in
@@ -261,6 +310,26 @@ class WorkflowGenerator(BaseGenerator):
                 return sm.getCleanName()
         return None
 
+    # XXX: now i start here something ugly, but i dont have time to
+    # cleanup XMIParsers code - it has too much logic in, which should
+    # be in this class.
+    # Permissions from XMI are supposed to be strings upon here. But
+    # we may have an import of a class containing the permissions as
+    # attributes. So lets do a processExpression on each permission.
+    def getPermissionsDefinitions(self, state):
+        pdefs = state.getPermissionsDefinitions()
+        for p_dict in pdefs:
+            p_dict['permission'] = self.processExpression(
+                p_dict['permission'], asString=False)
+        return pdefs
+
+    # XXX: Almost the same again.
+    def getAllPermissionNames(self, statemachine):
+        source_pdefs = statemachine.getAllPermissionNames()
+        result_pdefs = [self.processExpression(pdef, asString=False)
+                        for pdef in source_pdefs]
+        return result_pdefs    
+
 class WorkflowInfo(object):
     """View-like utility class.
     """
@@ -268,13 +337,16 @@ class WorkflowInfo(object):
     def __init__(self, sm, generator):
         self.sm = sm # state machine.
         self.generator = generator
-
+    
+    @property
     def id(self):
         return self.sm.getCleanName()
 
-    def initialState(self):
+    @property
+    def initialstate(self):
         return self.sm.getInitialState().getName()
 
+    @property
     def states(self):
         states = self.sm.getStates(no_duplicates = 1)
         filtered = [s for s in states if s.getName()]
@@ -293,6 +365,7 @@ class WorkflowInfo(object):
             result.append(state)
         return result
 
+    @property
     def transitions(self):
         transitions = self.sm.getTransitions(no_duplicates = 1)
         filtered = [t for t in transitions if t.getName()]
@@ -316,6 +389,7 @@ class WorkflowInfo(object):
             tr.guardExpression = guardExpr
         return filtered
 
+    @property
     def worklists(self):
         names = self.sm.getAllWorklistNames()
         worklists = []

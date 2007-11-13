@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
-<dc-workflow workflow_id="<dtml-var "info.id()">"
-             title="<dtml-var "info.id()">"
+<dc-workflow workflow_id="<dtml-var "info.id">"
+             title="<dtml-var "info.id">"
              state_variable="review_state"
-             initial_state="<dtml-var "info.initialState()">">
+             initial_state="<dtml-var "info.initialstate">">
 <dtml-in "generator.getAllPermissionNames(statemachine)">
  <permission><dtml-var "_['sequence-item']"></permission>
 </dtml-in>
-<dtml-in "info.states()">
+<dtml-in "info.states">
  <state state_id="<dtml-var "_['sequence-item']['id']">" 
         title="<dtml-var "_['sequence-item']['title']">">
 <dtml-in "_['sequence-item']['exit-transitions']">
@@ -22,14 +22,14 @@
 </dtml-in>
  </state>
 </dtml-in>
-<dtml-in "info.transitions()">
+<dtml-in "info.transitions">
 <dtml-let transition="_['sequence-item']">
  <transition transition_id="<dtml-var "transition.getName()">" 
              title="<dtml-var "transition.getTaggedValue('label') or transition.getName()">"
              new_state="<dtml-var "transition.getTargetStateName()">"
-             trigger="<dtml-var "transition.getTriggerType()">" 
-             before_script="<dtml-var "transition.getBeforeActionName() or ''">" 
-             after_script="<dtml-var "transition.getAfterActionName() or ''">">
+             trigger="<dtml-var "transition.getTriggerType()">"             
+             before_script="" 
+             after_script="">
   <action url="<dtml-var "transition.getTaggedValue('url')">" category="workflow"><dtml-var "transition.getTaggedValue('label') or transition.getName()"></action>
   <guard>
 <dtml-in "transition.guardPermissions">
@@ -45,7 +45,7 @@
  </transition>
 </dtml-let>
 </dtml-in>
-<dtml-in "info.worklists()">
+<dtml-in "info.worklists">
 <dtml-let worklist="_['sequence-item']">
  <worklist worklist_id="<dtml-var "worklist['id']">" title="<dtml-var "worklist['id']">">
   <action url="<dtml-var "worklist['url']">"
@@ -111,12 +111,5 @@
   <guard>
   </guard>
  </variable>
-<dtml-in "scripts">
-<dtml-let script="_['sequence-item']">
- <script script_id="<dtml-var "script['id']">" type="External Method"
-         filename=""
-         module="<dtml-var "script['module']">"
-         function="<dtml-var "script['id']">"/>
-</dtml-let>
-</dtml-in>
+ <!-- We dont use workflow scripts any more, we use subscribers -->
 </dc-workflow>

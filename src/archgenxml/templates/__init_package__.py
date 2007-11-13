@@ -1,4 +1,4 @@
-<dtml-var "generator.generateModuleInfoHeader(package)">
+<dtml-var "generator.generateModuleInfoHeader(package, all=1)">
 <dtml-var "protected_module_header">
 
 # Subpackages

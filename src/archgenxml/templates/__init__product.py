@@ -1,4 +1,4 @@
-<dtml-var "generator.generateModuleInfoHeader(package)">
+<dtml-var "generator.generateModuleInfoHeader(package, all=1)">
 # There are three ways to inject custom code here:
 #
 #   - To set global configuration variables, create a file AppConfig.py.

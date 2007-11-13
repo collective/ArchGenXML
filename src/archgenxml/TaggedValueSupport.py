@@ -63,7 +63,7 @@ class TaggedValueRegistry:
             #'XMIParser.XMIStateContainer': [],
             #'XMIParser.XMIStateMachine': [],
             'archgenxml.XMIParser.XMIStateTransition': ['state transition'],
-            #'XMIParser.XMIAction': [],
+            'archgenxml.XMIParser.XMIAction': ['state action'],
             #'XMIParser.XMIGuard': [],
             'archgenxml.XMIParser.XMIState': ['state'],
             #'XMIParser.XMICompositeState': [],
@@ -1136,12 +1136,24 @@ for category in ['model', 'package', 'association']:
     'ATVocabularyManager'. Generates an empty vocabulary with
     the name of the relation."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 # Workflow
     category = 'state transition'
     tagname = 'url'
     explanation = """Action URL, need 'PloneWorkflowTransitions'
     to see it in Plone."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+    category = 'state action'
+    tagname = 'binding:before'
+    explanation = """Interface to bind the before effect to."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+    category = 'state action'
+    tagname = 'binding:after'
+    explanation = """Interface to bind the after effect to."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 # Tagged values occurring everywhere
 for category in tgvRegistry._registry:
 

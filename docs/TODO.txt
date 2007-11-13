@@ -9,10 +9,6 @@ TODO's for ArchGenXML
 * generate pot file into "locales", instead i18n, keep some BBB, so if 
   folder i18n exists take it. offer a sync script.
 
-* remove workflowscript generation, generate event subscribers instead
-  for plone2.5 target version a patch exists and is generated
-  subscriber geneartion started, non-trivial thing!
-
 * make setuptools or at least debian copy umltools/argouml/argouml_profile.xmi
   to /usr/share/archgenxml
 

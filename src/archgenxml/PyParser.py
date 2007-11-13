@@ -42,9 +42,9 @@ class PyModule:
         log.debug("Initialising module parser for file '%s'.",
                   file)
         # Dictionary inits
-        self.classes = {}
-        self.functions = {}
-        self.protectedSections = {}
+        self.classes = odict()
+        self.functions = odict()
+        self.protectedSections = odict()
         self.protectionDeclarations = []
         # Read and mangle the file
         self.filebuf = self.readFile(file, mode)

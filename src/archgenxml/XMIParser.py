@@ -1107,18 +1107,15 @@ class XMIElement(object):
 
     def getModuleName(self, lower=False):
         """Gets the name of the module the class is in."""
-        # Zapped tgv 'module_name' in favour of only 'module'
-        # [Reinout, 2006-09-04]
         basename = self.getCleanName()
         return self.getTaggedValue('module') or \
                (lower and basename.lower() or basename)
 
     def annotate(self, key, value):
-        #print "annotate", key, value
         self.annotations[key] = value
 
-    def getAnnotation(self, name):
-        return self.annotations.get(name, [])
+    def getAnnotation(self, name, default=[]):
+        return self.annotations.get(name, default)
 
     def addClientDependency(self, dep):
         self.clientDependencies.append(dep)

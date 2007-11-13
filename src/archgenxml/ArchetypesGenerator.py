@@ -6,7 +6,7 @@
 # Author:      Philipp Auersperg
 #
 # Created:     2003/16/04
-# Copyright:   (c) 2003-2007 BlueDynamics
+# Copyright:   (c) 2003-2007 BlueDynamics 
 # Licence:     GPL
 #-----------------------------------------------------------------------------
 
@@ -2115,9 +2115,6 @@ class ArchetypesGenerator(BaseGenerator):
             return outfile.getvalue()
         AlreadyGenerated.append(element.getType())
 
-        #if self.ape_support:
-        #    print >> outfile, TEMPL_APE_HEADER % {'class_name': name}
-
         # [optilude] It's possible parents may become empty now...
         if parents:
             parents = "(%s)" % (parents,)
@@ -2299,12 +2296,6 @@ class ArchetypesGenerator(BaseGenerator):
         return [c for c in self.getGeneratedClasses(package) if
                 c.hasStereoType(self.portal_tools, umlprofile=self.uml_profile)]
 
-    def generateStdFiles(self, package):
-        if package.isRoot():
-            self.generateStdFilesForProduct(package)
-        else:
-            self.generateStdFilesForPackage(package)
-
     def generateStdFilesForPackage(self, package):
         """Generate the standard files for a non-root package."""
 
@@ -2314,27 +2305,27 @@ class ArchetypesGenerator(BaseGenerator):
         self.generatePackageFlavorsZcml(package)
 
     def updateVersionForProduct(self, package):
-        """Increment the build number in verion.txt,"""
+        """Increment the build number in version.txt,"""
 
-        build=1
-        versionbase='0.1'
+        build = 1
+        versionbase='1.0-alpha'
         fp=os.path.join(package.getFilePath(),'version.txt')
         vertext=self.readFile(fp)
         if vertext:
             versionbase=vertext=vertext.strip()
-            parsed=vertext.split(' ')
+            parsed = vertext.split(' ')
             if parsed.count('build'):
-                ind=parsed.index('build')
+                ind = parsed.index('build')
                 try:
-                    build=int(parsed[ind+1]) + 1
+                    build = int(parsed[ind+1]) + 1
                 except:
-                    build=1
+                    build = 1
 
-                versionbase=' '.join(parsed[:ind])
+                versionbase = ' '.join(parsed[:ind])
 
-        version='%s build %d\n' % (versionbase,build)
-        of=self.makeFile(fp)
-        print >>of,version,
+        version = '%s build %d\n' % (versionbase, build)
+        of = self.makeFile(fp)
+        print >>of, version,
         of.close()
 
     def generateInstallPy(self, package):
@@ -2587,7 +2578,7 @@ class ArchetypesGenerator(BaseGenerator):
         # Generate the dcworkflow patch.
         self.generateDCWorkflowPatch(package)
         # generate subscribers
-        self.generateSubscribers(package)
+        self.generateSubscribersZCML(package)
 
     def generateConfigureAndProfilesZCML(self, package):
         """Generate configure.zcml and profiles.zcml if type registration or
@@ -2612,76 +2603,26 @@ class ArchetypesGenerator(BaseGenerator):
         generatedFlavors = package.getAnnotation('generatedFlavors') or []
         packagesWithFlavors = [m.getModuleName() for m in self.subPackagesWithFlavors(package)]
         containsFlavors = generatedFlavors != [] or packagesWithFlavors != []
-
+        hasSubscribers = package.getAnnotation('subscribers')!={}
         handleSectionedFile(['configure.zcml'],
                             os.path.join(ppath, 'configure.zcml'),
                             sectionnames=['configure.zcml'],
                             templateparams={'packages': packageIncludes,
-                                            'containsFlavors': containsFlavors})
+                                            'containsFlavors': containsFlavors,
+                                            'hasSubscribers': hasSubscribers,})
         
 
-    def generateSubscribers(self, package):
-        #log.info("%s: Generating subscribers '%s'" % (self.infoind, 
-        #                                              package.getName()))
-
-        # Generate the template        
-        pt = self.readTemplate(['subscribers.py'])
-        
-        # Get the current code
-        parsed = utils.parsePythonModule(self.targetRoot, package.getFilePath(),
-                                         'subscribers.py')        
-    
-        subscribers = []
-
-        # get effect info of wf events
-        effects = []
-        for sm in package.getStateMachines():
-            for transition in sm.getTransitions(self):
-                before = transition.getBeforeActionName()
-                after = transition.getAfterActionName()                
-                if before:
-                    effects.append(self._transEffectInfo(transition, 'before'))
-                if after:
-                    effects.append(self._transEffectInfo(transition, 'after'))  
-        
-        # make subscriber info for each effect  
-        for effect in effects:
-            pass # XXX TODO, not now.
-        # get other subscribers
-        # TODO (not critical, new feature)
-        klasses = self.getGeneratedTools(package)
-        
-        return # unfinished, will do later --jensens
-    
-    def _transEffectInfo(self, transition, type):
-        res = {}
-        action = transition.getAction()
-        res['sourcestate'] = transition.getSourceState()
-        res['targetstate'] = transition.getTargetState()
-        res['workflow'] = transition.getParent().getName()
-        if type == 'before':
-            res['effectname'] = action.getBeforeActionName()
-            res['wfinterface'] = 'ITransitionBeforeEvent'
-        else:
-            res['effectname'] = action.getAfterActionName()
-            res['wfinterface'] = 'ITransitionAfterEvent'
-        klass = res['sourcestate'].getParent().getParent()
-        if klass.hasStereoType(self.noncontentstereotype,
-                               umlprofile=self.uml_profile):
-            defaultbinding = '*'
-        else:
-            # take the generated marker interface as defaultbinding
-            path = klass.getQualifiedModuleName(klass.getPackage(), 
-                                               includeRoot=0)
-            rdot = path.rfind('.')
-            if rdot >= 0:
-                path = '.' + path[:rdot+1]
-            else:
-                path = '.'
-            defaultbinding = '%sinterfaces.I%s' % (path, klass.getCleanName())        
-        res['objinterface'] = action.getTaggedValue(('%s:binding' % type), 
-                                                    defaultbinding)
-        return res
+    def generateSubscribersZCML(self, package):
+        """generates the subscribers.zcml"""
+        subscribers = package.getAnnotation('subscribers')        
+        if not subscribers:
+            return
+        log.debug("%s: Generating subscribers zcml" % self.infoind)
+        ppath = package.getFilePath()        
+        handleSectionedFile(['subscribers.zcml'],
+                            os.path.join(ppath, 'generatedsubscribers.zcml'),
+                            sectionnames=['SUBSCRIBERS'],
+                            templateparams={'subscribers': subscribers})
 
     def generateGSDirectory(self, package):
         """Create genericsetup directory profiles/default.
@@ -3297,7 +3238,7 @@ class ArchetypesGenerator(BaseGenerator):
                 generatedPkg.append(p)
                 package.annotate('generatedPackages',generatedPkg)
 
-        self.generateStdFiles(package)
+        self.generateStdFilesForPackage(package)
 
     def generatePackageInterfacesPy(self, package):
         """Generates the interfaces.py for and in the specific package.
@@ -3654,18 +3595,23 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateRelations(root)
         self.generatePackage(root)
 
-        #start Workflow creation
+        # start Workflow creation
         wfg = WorkflowGenerator(package, self)
         wfg.generateWorkflows()
 
+        # call this at the end if all info for things like generic setup are 
+        # already collected
+        self.generateStdFilesForProduct(package)
+
         # write messagecatalog
+        # last but not least
         if has_i18ndude and self.build_msgcatalog:
             filepath = os.path.join(root.getFilePath(), 'i18n', 'generated.pot')
             of = self.makeFile(filepath) or open(filepath, 'w')
             pow = msgcatalog.POWriter(of, self.msgcatstack.pop())
             pow.write(sort=True, msgstrToComment=True)
             of.close()
-
+        
         # post-creation
         self.infoind -= 1
         self.creation_permissions = self.creation_permission_stack.pop()
