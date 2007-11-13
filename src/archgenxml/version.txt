@@ -1,1 +1,1 @@
-2.0-beta5 (dev/svn)
+2.0-beta5
