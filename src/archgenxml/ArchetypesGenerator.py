@@ -2196,9 +2196,11 @@ class ArchetypesGenerator(BaseGenerator):
 
         # add this new flavor to a list annotated to the package of the current element
         package = element.getPackage()
-        flavorsList = package.getAnnotation('generatedFlavors')
-        flavorsList.append(flavor)
-        package.annotate('generatedFlavors',flavorsList)
+        flavorsList = package.getAnnotation('generatedFlavors',None)
+        if not flavorsList:
+            package.annotate('generatedFlavors',[flavor])
+        else:
+            flavorsList.append(flavor)
 
         return outfile.getvalue()
 
