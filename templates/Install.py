@@ -253,13 +253,38 @@ def install(self, reinstall=False):
 <dtml-let remembers="[cn for cn in generator.getGeneratedClasses(package) if cn.hasStereoType(generator.remember_stereotype)]">
 <dtml-if "remembers"> 
     # Adds our types to MemberDataContainer.allowed_content_types
+    from Products.membrane.interfaces import ICategoryMapper
+    from Products.membrane.utils import generateCategorySetIdForType
+    from Products.remember.utils import getAdderUtility
+
+
+
     types_tool = getToolByName(self, 'portal_types')
     act = types_tool.MemberDataContainer.allowed_content_types
     types_tool.MemberDataContainer.manage_changeProperties(allowed_content_types=act+(<dtml-in remembers>'<dtml-var "_['sequence-item'].getCleanName()">', </dtml-in>))
     # registers with membrane tool ...
     membrane_tool = getToolByName(self, 'membrane_tool')
 <dtml-in "remembers">
+    <dtml-let mtype="_['sequence-item']">
+    <dtml-if "mtype.getTaggedValue('active_workflow_states',['private','public'])">
+    
     membrane_tool.registerMembraneType('<dtml-var "_['sequence-item'].getCleanName()">')
+    cat_map = ICategoryMapper(membrane_tool)
+
+    states = <dtml-var "mtype.getTaggedValue('active_workflow_states')">
+    cat_set = generateCategorySetIdForType('<dtml-var "mtype.getCleanName()">')
+    cat_map.replaceCategoryValues(cat_set,
+                                       'active',
+                                       states)
+    </dtml-if>
+    
+    <dtml-if "mtype.hasStereoType(['default_member_type','default'])">
+    
+    adder = getAdderUtility(portal)
+    adder.default_member_type='<dtml-var "mtype.getCleanName()">'    
+    </dtml-if>
+    </dtml-let>
+    
     # print >> out, SetupMember(self, member_type='<dtml-var "_['sequence-item'].getCleanName()">', register=<dtml-var "str(_['sequence-item'].getTaggedValue('register', False))">).finish()
 </dtml-in>
 </dtml-if>

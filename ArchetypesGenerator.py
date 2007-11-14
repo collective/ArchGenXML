@@ -1631,7 +1631,7 @@ class ArchetypesGenerator(BaseGenerator):
                                          umlprofile=self.uml_profile) or
                     element.hasStereoType(self.remember_stereotype,
                                          umlprofile=self.uml_profile) ):
-                    copy = "BaseMember.content_schema"
+                    copybase_schema = "BaseMember.schema"
                 else:
                     copybase_schema = base_schema
                 copyfrom = attr.getTaggedValue('copy_from', copybase_schema)
@@ -1774,6 +1774,7 @@ class ArchetypesGenerator(BaseGenerator):
                     if declaration:
                         print >> outfile, declaration
                     print >> outfile, mt.src.encode('utf-8')
+
                 print >> outfile
 
 
