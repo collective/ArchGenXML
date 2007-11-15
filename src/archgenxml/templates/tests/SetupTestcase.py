@@ -52,7 +52,7 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 <dtml-if "not parsed_class or 'test_workflowChains' not in parsed_class.methods.keys()">
     def test_workflowChains(self):
         getChain = self.portal.portal_workflow.getChainForPortalType
-        self.failUnless('plone_workflow' in getChain('Document'))
+        self.failUnless(('plone_workflow' in getChain('Document')) or ('simple_publication_workflow' in getChain('Document')))
 <dtml-else><dtml-var "parsed_class.methods['test_workflowChains'].getSrc()"></dtml-if>
 <dtml-in "generator.getMethodsToGenerate(klass)[0]">
 
