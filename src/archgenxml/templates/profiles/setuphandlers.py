@@ -163,6 +163,11 @@ def setupCatalogMultiplex(context):
 def installRelations(context):
     """imports the relations.xml file"""
     site = context.getSite()
+    qi = getToolByName(site, 'portal_quickinstaller')
+    if not qi.isProductInstalled('Relations'):
+        # you can't declare relations unless you first install the Relations product
+        logger.info("Installing Relations Product")
+        qi.installProducts(['Relations'])
     relations_tool = getToolByName(site, 'relations_library')
     xmlpath = os.path.join(package_home(product_globals), 'data', 
                            'relations.xml')
