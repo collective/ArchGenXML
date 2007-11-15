@@ -2605,7 +2605,7 @@ class ArchetypesGenerator(BaseGenerator):
         generatedFlavors = package.getAnnotation('generatedFlavors') or []
         packagesWithFlavors = [m.getModuleName() for m in self.subPackagesWithFlavors(package)]
         containsFlavors = generatedFlavors != [] or packagesWithFlavors != []
-        hasSubscribers = package.getAnnotation('subscribers')!={}
+        hasSubscribers = bool(package.getAnnotation('subscribers'))
         handleSectionedFile(['configure.zcml'],
                             os.path.join(ppath, 'configure.zcml'),
                             sectionnames=['configure.zcml'],
