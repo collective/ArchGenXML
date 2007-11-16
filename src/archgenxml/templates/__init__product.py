@@ -25,7 +25,7 @@ from Products.CMFCore import permissions as cmfpermissions
 from Products.CMFCore import utils as cmfutils
 from Products.CMFPlone.utils import ToolInit
 from config import *
-<dtml-if "generator.getOption('plone_target_version', package, 3.0) == 2.5">
+<dtml-if "generator.getOption('plone_target_version', package, 3.0) == 2.5 and has_subscribers">
 import dcworkflowpatch
 </dtml-if>
 

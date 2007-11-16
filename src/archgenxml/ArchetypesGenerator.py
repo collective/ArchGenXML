@@ -2436,6 +2436,8 @@ class ArchetypesGenerator(BaseGenerator):
         protectedInitCodeH = self.getProtectedSection(parsed, 'custom-init-head', 0)
         protectedInitCodeT = self.getProtectedSection(parsed, 'custom-init-top', 1)
         protectedInitCodeB = self.getProtectedSection(parsed, 'custom-init-bottom', 1)
+        
+        hasSubscribers = bool(package.getAnnotation('subscribers'))
 
         # prepare DTML varibles
         d={'generator': self,
@@ -2447,6 +2449,7 @@ class ArchetypesGenerator(BaseGenerator):
            'additional_permissions': additional_permissions,
            'has_tools': hasTools,
            'has_skins': self._hasSkinsDir(package),
+           'has_subscribers': hasSubscribers,
            'tool_names': toolNames,
            'creation_permissions': self.creation_permissions,
            'protected_init_section_head': protectedInitCodeH,
@@ -3091,6 +3094,9 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateDCWorkflowPatch(self, package):
         if self.getOption('plone_target_version', package, '3.0') == '3.0':
+            return
+        
+        if not bool(package.getAnnotation('subscribers')):
             return
 
         handleSectionedFile(['dcworkflowpatch.py'], 
