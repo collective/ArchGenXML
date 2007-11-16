@@ -63,6 +63,9 @@ except:
     has_enhanced_strip_support = False
 else:
     has_enhanced_strip_support = True
+    
+# debug
+from pprint import pprint
 
 #
 # Global variables etc.
@@ -271,6 +274,15 @@ class ArchetypesGenerator(BaseGenerator):
         if generate_expression_validator:
             print >> out, 'from Products.validation.validators import ' + \
                   'ExpressionValidator'
+
+        # Check for necessity to import ReferenceBrowserWidget
+        import_datagrid = False
+        for att in element.getAttributeDefs():
+            if att.getType() == 'reference':
+                import_reference = True
+                print >>out, \
+                      'from Products.ATReferenceBrowserWidget.ATReferenceBrowserWidget'+\
+                             ' import \\\n    ReferenceBrowserWidget'
 
         # Check for necessity to import DataGridField and DataGridWidget
         import_datagrid = False
@@ -2761,7 +2773,7 @@ class ArchetypesGenerator(BaseGenerator):
                 if len(attributes) < 1:
                     attributes = [accessor.strip()]
 
-                if not catalogname in defs.keys():
+                if not catalogid in defs.keys():
                     defs[catalogid] = dict()
                     defs[catalogid]['metatype'] = catalogmetatype
                     defs[catalogid]['indexes'] = list()
@@ -2794,9 +2806,8 @@ class ArchetypesGenerator(BaseGenerator):
 
                 if metadata:           
                     accessor = self.getOption('catalog:metadata_accessor', 
-                                              attribute, accessor)         
-                    columndef = {'value': accessor }
-                    defs[catalogid]['columns'].append(columndef)                    
+                                              attribute, accessor)
+                    defs[catalogid]['columns'].append({'value': accessor})
 
 
     def generatePortalatctXMLFile(self, package):
