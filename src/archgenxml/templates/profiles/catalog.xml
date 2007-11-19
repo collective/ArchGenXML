@@ -8,16 +8,22 @@
 <dtml-in "catalog['indexes']">
   <index name="<dtml-var "_['sequence-item']['name']">" 
          meta_type="<dtml-var "_['sequence-item']['meta_type']">">
-<dtml-in "_['sequence-item']['indexed_attributes']">
+<dtml-let indexed_attributes="_['sequence-item']['indexed_attributes']">
+<dtml-in "indexed_attributes">
     <indexed_attr value="<dtml-var "_['sequence-item']">"/>
 </dtml-in>
-<dtml-in "_['sequence-item']['extras']">
+</dtml-let>
+<dtml-let extras="_['sequence-item']['extras']">
+<dtml-in "extras">
     <extra name="<dtml-var "_['sequence-item']['name']">" 
            value="<dtml-var "_['sequence-item']['value']">"/>
 </dtml-in>
-<dtml-in "_['sequence-item']['properties']">
+</dtml-let>
+<dtml-let properties="_['sequence-item']['properties']">
+<dtml-in "properties">
     <property name="<dtml-var "_['sequence-item']['name']">"><dtml-var "_['sequence-item']['value']"></property>
 </dtml-in>
+</dtml-let>
   </index>
 </dtml-in>
 <dtml-in "catalog['columns']">
