@@ -70,6 +70,11 @@ def readFile(filename):
 def makeDir(directoryName, force=1):
     log.debug("Trying to make directory '%s' (force=%s).", directoryName, force)
     directory = None
+    
+    parent=os.path.join(*os.path.split(directoryName)[:-1])
+    if force and not os.path.exists(parent):
+        makeDir(parent,force=force)
+
     if os.path.exists(directoryName):
         log.debug("Directory already exists. Fine.")
     else:
