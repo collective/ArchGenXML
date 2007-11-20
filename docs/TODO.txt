@@ -3,9 +3,6 @@ TODO's for ArchGenXML
 
 * add worklist and workflow trigger support (missing).
 
-* configlet installation is missing, a sample controlpanel.xml is already there, 
-  need to wire in
-
 * generate pot file into "locales", instead i18n, keep some BBB, so if 
   folder i18n exists take it. offer a sync script.
 
@@ -23,8 +20,6 @@ TODO's for ArchGenXML
 
 * refactor generateFieldMoves machinery. does not consider copied fields atm!
   (no one used this until now??)
-
-* atm only the default actions are taken for generation
 
 * move STATE_PERMISSION_MAPPING out of TaggedValueSupport and
   move the conversion of permission-short cuts over to the 

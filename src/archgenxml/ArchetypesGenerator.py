@@ -2584,6 +2584,8 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateGSJavascriptsXML(package)
         # generate toolset.xml
         self.generateGSToolsetXML(package)
+        # generate controlpanel.xml
+        self.generateGSControlPanelXML(package)
         # generate catalog.xml
         self.generateGSCatalogXML(package)
         # generate portal_atct.xml
@@ -2681,6 +2683,57 @@ class ArchetypesGenerator(BaseGenerator):
                             os.path.join(ppath, 'toolset.xml'),
                             sectionnames=['toolset.xml'],
                             templateparams={ 'tools': tools })
+
+    def generateGSControlPanelXML(self, package):
+        """Generate the controlpanel.xml.
+        """
+        configlets = []
+        for klass in self.getGeneratedTools(package):
+            if utils.isTGVFalse(klass.getTaggedValue('autoinstall', 1)):
+                continue
+            if utils.isTGVFalse(klass.getTaggedValue('configlet', 1)):
+                continue
+            
+            toolname = klass.getTaggedValue('tool_instance_name', None)
+            if toolname:
+                tool_id = toolname
+            else:
+                tool_id = 'portal_%s' % klass.getCleanName().lower()
+
+            title = klass.getTaggedValue('archetype_name', klass.getCleanName())
+            title = klass.getTaggedValue('configlet:title', title)
+            condition = klass.getTaggedValue('configlet:condition', '')
+            view = klass.getTaggedValue('configlet:view', 'view')
+            description = klass.getTaggedValue('configlet:description', '')
+            section = klass.getTaggedValue('configlet:section', 'Products')
+            action_id = utils.cleanName(title)
+            permission = klass.getTaggedValue('configlet:permission', 
+                                              'Manage portal')
+            appid = klass.getPackage().getProductName()
+            url = "string:${portal_url}/%s/%s" % (tool_id, view)
+            
+            configlets.append(
+                {
+                    'title': title,
+                    'action_id': action_id,
+                    'condition': condition,
+                    'permission': permission,
+                    'app_id': appid,
+                    'url': url,
+                    'section': section,
+                }
+            )
+        if not configlets:
+            return
+        ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
+        handleSectionedFile(['profiles', 'controlpanel.xml'],
+                            os.path.join(ppath, 'controlpanel.xml'),
+                            sectionnames=['controlpanel.xml'],
+                            templateparams={ 
+                                'configlets': configlets,
+                                'i18ndomain':  package.getProductName()
+                            }
+        )
 
     def generateGSCatalogXML(self, package):
         """Generate the catalog.xml file
