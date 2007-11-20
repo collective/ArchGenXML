@@ -2314,7 +2314,8 @@ class ArchetypesGenerator(BaseGenerator):
         """Generate the standard files for a non-root package."""
 
         # Generate an __init__.py
-        self.generatePackageInitPy(package)
+        if not package.isProduct():
+            self.generatePackageInitPy(package)
         # Generate a flavors.zcml
         self.generatePackageFlavorsZcml(package)
 
