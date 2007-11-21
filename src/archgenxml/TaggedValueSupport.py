@@ -1055,6 +1055,11 @@ for category in ['model', 'package', 'class', 'attribute']:
     value to 'ATVocabularyManager'."""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+    tagname = 'i18ncontent'
+    explanation = """Enables the content type(s) for LinguaPlone. Only allowed 
+    value is 'linguaplone'."""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 for category in ['model', 'package', 'class', 'tool']:
     for tagname in ['author', 'email', 'copyright', 'license']:
         explanation = """You can set the %s project-wide with the '--%s'
