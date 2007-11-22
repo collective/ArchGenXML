@@ -72,7 +72,7 @@ def makeDir(directoryName, force=1):
     directory = None
     
     parent=os.path.join(*os.path.split(directoryName)[:-1])
-    if force and not os.path.exists(parent):
+    if force and parent and not os.path.exists(parent):
         makeDir(parent,force=force)
 
     if os.path.exists(directoryName):
