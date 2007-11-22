@@ -2746,7 +2746,7 @@ class ArchetypesGenerator(BaseGenerator):
         ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
         handleSectionedFile(['profiles', 'catalog.xml'],
                             os.path.join(ppath, 'catalog.xml'),
-                            sectionnames=['HEAD', 'FOOT'],
+                            sectionnames=['FOOT'],
                             templateparams={ 
                                 'defs': alldefs }
                         )

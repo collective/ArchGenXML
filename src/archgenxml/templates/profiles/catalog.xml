@@ -1,8 +1,5 @@
 <?xml version="1.0"?>
-<!-- ##code-section HEAD -->
-<!-- ##/code-section HEAD -->
-<dtml-in "defs.keys()">
-<dtml-let catalogid="_['sequence-item']">
+<dtml-let catalogid="defs.keys()[0]">
 <dtml-let catalog="defs[catalogid]">
 <object name="<dtml-var "catalogid">" meta_type="<dtml-var "catalog['metatype']">">
 <dtml-in "catalog['indexes']">
@@ -29,9 +26,8 @@
 <dtml-in "catalog['columns']">
   <column value="<dtml-var "_['sequence-item']['value']">"/>
 </dtml-in>
-</object>
 </dtml-let>
 </dtml-let>
-</dtml-in>
-<!-- ##code-section FOOT -->
+s<!-- ##code-section FOOT -->
 <!-- ##/code-section FOOT -->
+</object>
