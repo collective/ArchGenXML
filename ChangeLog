@@ -1,3 +1,7 @@
+2007-11-23  Encolpe Degoute <encolpe.degoute@free.fr>
+    * Fix  #265 — generation crash on widget stereotype
+	Add a very basic skin directories retriever for template generation
+
 2007-11-05 Encolpe Degoute <encolpe.degoute@free.fr>
     * Fix  #133 — Workflows crash on generate with Poseidon zuml files
 

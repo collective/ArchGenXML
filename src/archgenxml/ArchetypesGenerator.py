@@ -249,9 +249,12 @@ class ArchetypesGenerator(BaseGenerator):
         return utils.makeDir(ffn, force=force)
 
     def getSkinPath(self, element):
+        # XXX skins are now split into multiple path that can be choose
+        # We may find an algo to choose the good directory for fields and widgets
+        # check generateSkinsDirectories method [encolpe]
         fp = element.getRootPackage().getFilePath()
-        mn = element.getRootPackage().getModuleName()
-        return os.path.join(fp, 'skins', mn)
+        sdp = self._skin_dirs[0]
+        return os.path.join(fp, sdp)
 
     def generateDependentImports(self, element):
         out = StringIO()
@@ -3578,7 +3581,7 @@ class ArchetypesGenerator(BaseGenerator):
     def generateSkinsDirectories(self, root):
         """create the skins directories if needed"""
         # create skins directories
-        # in agx 1.6 we keep the oldschool single directory with Products name
+        # in agx 2.0 we keep the oldschool single directory with Products name
         # if it already exists (bbb). if skins is empty we create by default the
         # templates, images and styles directories prefixes with a lowercase
         # product name and _. this can get an override by a tagged value
@@ -3597,6 +3600,7 @@ class ArchetypesGenerator(BaseGenerator):
         self.makeDir(root.getFilePath())
         self.makeDir(os.path.join(root.getFilePath(),'skins'))
 
+        self._skin_dirs = []
         oldschooldir = os.path.join(root.getFilePath(),'skins',
                                     root.getProductModuleName())
         if not os.path.exists(oldschooldir):
@@ -3607,8 +3611,10 @@ class ArchetypesGenerator(BaseGenerator):
                 sd = "%s_%s" % (root.getName().lower(), skindir)
                 sdpath = os.path.join(root.getFilePath(),'skins', sd)
                 self.makeDir(sdpath)
+                self._skin_dirs.append(os.path.join('skins', sd))
                 log.debug("Keeping/ creating skinsdir at: %s" % sdpath)
         else:
+            self._skin_dirs.append(os.path.join('skins', root.getProductModuleName()))
             log.info("Keeping old school skindir at: '%s'.", oldschooldir)
 
 
