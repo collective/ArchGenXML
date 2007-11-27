@@ -20,6 +20,8 @@ import logging
 from StringIO import StringIO
 from pkg_resources import resource_string, resource_stream
 from archgenxml.documenttemplate import HTML
+from PyParser import PyModule
+
 log = logging.getLogger('CodeSectionHandler')
 
 
@@ -33,6 +35,23 @@ def handleSectionedFile(templatepath, outputpath,
     @param sectionnames - list of section names to consider
     @param templateparams - the placeholderparams for the dtml template
     """
+    
+    
+    try:
+        existentfile = open(outputpath)
+        existentbuffer = existentfile.readlines()
+        existentfile.close()
+    except IOError:
+        existentbuffer = None
+
+    # if file is a python file, pyparse it first, so that the template can 
+    # reflect existing python constructs
+    
+    if os.path.splitext(outputpath)[-1] in ('.py','.cpy'):
+        parsedModule=PyModule(existentbuffer and '\n'.join(existentbuffer)+'\n' or '', mode='string')
+        if templateparams:
+            templateparams['parsedModule']=parsedModule
+
     templatepath = ['templates'] + templatepath
     if templateparams:
         template = resource_string(__name__, os.path.join(*templatepath))
@@ -50,12 +69,7 @@ def handleSectionedFile(templatepath, outputpath,
     else:
         templatestream = resource_stream(__name__, os.path.join(*templatepath))
         templatebuffer = templatestream.readlines()
-    try:
-        existentfile = open(outputpath)
-        existentbuffer = existentfile.readlines()
-        existentfile.close()
-    except IOError:
-        existentbuffer = None
+
     
     if existentbuffer and sectionnames:
         templatehandler = CodeSectionHandler(templatebuffer)

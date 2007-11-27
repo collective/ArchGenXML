@@ -210,5 +210,21 @@ def installVocabularies(context):
                 pass
             
 </dtml-if>
+
+def updateRoleMappings(context):
+     """after workflow changed update the roles mapping. this is like pressing
+     the button 'Update Security Setting' and portal_workflow"""
+     
+     wft = getToolByName(context.getSite(), 'portal_workflow')
+     wft.updateRoleMappings()
+    
+<dtml-if "'postInstall' not in parsedModule.functions.keys()">
+def postInstall(context):
+    pass
+
+<dtml-else>
+<dtml-var "parsedModule.functions['postInstall'].getSrc()">
+</dtml-if>
+
 ##code-section FOOT
 ##/code-section FOOT

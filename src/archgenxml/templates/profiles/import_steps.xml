@@ -72,8 +72,35 @@
    <dependency step="<dtml-var "now">-QI-dependencies"/>
    Installs the vocabulary files into vocabulary library for <dtml-var "product_name">
  </import-step>
+
+ <import-step 
+    id="<dtml-var "product_name">-Update-RoleMappings" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.updateRoleMappings"
+    title="Update Workflow role mappings for <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   <dependency step="<dtml-var "now">-QI-dependencies"/>
+   updates the workflow role mappings for <dtml-var "product_name">
+ </import-step>
  
 </dtml-if>
+
+ <import-step 
+    id="<dtml-var "product_name">-Update-RoleMappings" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.updateRoleMappings"
+    title="Update Workflow role mappings for <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   <dependency step="<dtml-var "now">-QI-dependencies"/>
+   updates the workflow role mappings for <dtml-var "product_name">
+ </import-step>
+
+ <import-step 
+    id="<dtml-var "product_name">-postInstall" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.postInstall"
+    title="manual coded post-install for <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   <dependency step="<dtml-var "now">-QI-dependencies"/>
+   manual coded post-install for <dtml-var "product_name">
+ </import-step>
 
 <!-- ##code-section ADDITIONALSTEPS -->
 <!-- ##/code-section ADDITIONALSTEPS --> 
