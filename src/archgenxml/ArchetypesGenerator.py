@@ -2830,8 +2830,6 @@ class ArchetypesGenerator(BaseGenerator):
                         attributes = [a.strip() for a in attributes.split(',')]
                     else:
                         attributes = [attributes.strip()]
-                if len(attributes) < 1:
-                    attributes = [accessor.strip()]
 
                 if not catalogid in defs.keys():
                     defs[catalogid] = dict()

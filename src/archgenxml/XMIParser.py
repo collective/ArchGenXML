@@ -23,7 +23,6 @@ from xml.dom import minidom
 from archgenxml.TaggedValueSupport import tgvRegistry
 from zope import interface
 from archgenxml.uml.interfaces import *
-from TaggedValueSupport import STATE_PERMISSION_MAPPING
 
 log = logging.getLogger('XMIparser')
 
@@ -2233,16 +2232,6 @@ class XMIStateMachine(XMIElement):
         self.classes.append(cl)
         cl.setStateMachine(self)
 
-    def getAllPermissionNames(self):
-        ret = []
-        for s in self.getStates():
-            pd = s.getPermissionsDefinitions()
-            for p in pd:
-                perm = p['permission'].strip()
-                if perm not in ret:
-                    ret.append(str(perm))
-        return ret
-
     def getInitialState(self):
         states = self.getStates()
         for s in states:
@@ -2279,101 +2268,7 @@ class XMIStateMachine(XMIElement):
                 actionnames.add(action.getAfterActionName())
         return list(actionnames)
 
-    def getAllRoles(self, ignore=[]):
-        roles = []
-        # Reserved name to set the title
-        ignore.append('label')
-        for tran in self.getTransitions(no_duplicates=1):
-            dummy = [roles.append(r.strip()) \
-                     for r in tran.getGuardRoles().split(';') \
-                     if not (r.strip() in roles or r.strip() in ignore)]
 
-        for state in self.getStates():
-            perms = state.getPermissionsDefinitions()
-            sroles = []
-            dummy = [[sroles.append(j) for j in i] \
-                     for i in [d['roles'] for d in perms] \
-                    ]
-            dummy = [roles.append(r.strip()) \
-                     for r in sroles \
-                     if not (r.strip() in roles or r.strip() in ignore)]
-
-        return [r for r in roles if r]
-
-    def getAllWorklistNames(self):
-        """Return all worklists mentioned in this statemachine.
-
-        A worklist is mentioned by adding a tagged value 'worklist' to a state.
-        """
-        log.debug("Finding all worklists mentioned in this statemachine.")
-        worklists = {}
-        names = [s.getTaggedValue('worklist')
-                 for s in self.getStates(no_duplicates = 1)
-                 if s.getTaggedValue('worklist')]
-        for name in names:
-            worklists[name] = 'just filtering out doubles'
-        result = worklists.keys()
-        log.debug("Found the following worklists: %r.", result)
-        return result
-
-    def getWorklistStateNames(self, worklistname):
-        """Returns the states associated with the worklistname."""
-        results = [s.getName()
-                   for s in self.getStates(no_duplicates = 1)
-                   if s.getTaggedValue('worklist') == worklistname]
-        log.debug("Associated with worklist '%s' are the "
-                  "following states: %r.", worklistname, results)
-        return results
-
-    def getWorklistGuardRole(self, worklistname):
-        """Returns the guard role associated with the worklistname."""
-        log.debug("Getting the guard role for the worklist...")
-        default = ''
-        results = [s.getTaggedValue('worklist:guard_roles')
-                   for s in self.getStates(no_duplicates = 1)
-                   if s.getTaggedValue('worklist') == worklistname
-                   and s.getTaggedValue('worklist:guard_roles')]
-        if not results:
-            log.debug("No tagged value found, returning the default: '%s'.",
-                      default)
-            return default
-        log.debug("Tagged value(s) found, taking the first (or only) "
-                  "one: '%s'.", results[0])
-        return results[0]
-
-    def getWorklistGuardPermission(self, worklistname):
-        """Returns the guard permission associated with the worklistname."""
-        log.debug("Getting the guard permission for the worklist...")
-        default = 'Review portal content'
-        results = [s.getTaggedValue('worklist:guard_permissions')
-                   for s in self.getStates(no_duplicates = 1)
-                   if s.getTaggedValue('worklist') == worklistname
-                   and s.getTaggedValue('worklist:guard_permissions')]
-        if not results:
-            log.debug("No tagged value found, returning the default: '%s'.",
-                      default)
-            return default
-        # There might be more than one guard_permissions tgv, take the first
-        log.debug("Tagged value(s) found, taking the first (or only) one: '%s'.",
-                  results[0])
-        return results[0]
-
-    def getWorklistGuardExpression(self, worklistname):
-        """Returns the guard expression associated with the worklistname."""
-        log.debug("Getting the guard expression for the worklist...")
-        default = ''
-        results = [s.getTaggedValue('worklist:guard_expressions')
-                   for s in self.getStates(no_duplicates = 1)
-                   if s.getTaggedValue('worklist') == worklistname
-                   and s.getTaggedValue('worklist:guard_permissions')]
-        if not results:
-            log.debug("No tagged value found, returning the default: '%s'.",
-                      default)
-            return default
-        # There might be more than one guard_permissions tgv, take the first
-        log.debug("Tagged value(s) found, taking the first (or only) one: '%s'.",
-                  results[0])
-        return results[0]
 
 
 class XMIStateTransition(XMIElement):
@@ -2560,12 +2455,6 @@ class XMIGuard(XMIElement):
 
 class XMIState(XMIElement):
     isinitial = 0
-    non_permissions = [
-        'initial_state', 'documentation',
-        'label', 'description', 'worklist',
-        'worklist:guard_permissions',
-        'worklist:guard_roles',
-    ]
 
     def __init__(self, *args, **kwargs):
         self.incomingTransitions = []
@@ -2611,86 +2500,7 @@ class XMIState(XMIElement):
         return self.outgoingTransitions
 
     def getTaggedValues(self):
-        for tagname in self.taggedValues.keys():
-            if tagname in self.non_permissions:
-                if not tgvRegistry.isRegistered(tagname, self.classcategory, 
-                                                silent=True):
-                    # The registry does the complaining :-)
-                    pass
         return self.taggedValues
-
-    def getPermissionsDefinitions(self):
-        """ return a list of dictionaries with permission definitions
-
-        Each dict contains a key 'permission' with a string value and
-        a key 'roles' with a list of strings as value and a key
-        'acquisition' with value 1 or 0.
-        """
-
-        ### for the records:
-        ### this method contains lots of generation logic. in fact this
-        ### should move over to the WorkflowGenerator.py and reduce here in
-        ### just deliver the pure data
-        ### the parser should really just parse to be as independent as possible
-
-        # permissions_mapping (abbreviations for lazy guys)
-        # keys are case insensitive
-
-        # STATE_PERMISSION_MAPPING in TaggedValueSupport.py now
-        # contains the handy mappings from 'acces' to 'Access contents
-        # information' and so.
-        
-        tagged_values = self.getTaggedValues()
-        permission_definitions = []
-
-        for tag, tag_value in tagged_values.items():
-            # list of tagged values that are NOT permissions
-            if tag in self.non_permissions:
-                continue
-            tag = tag.strip()
-            # look up abbreviations if any
-            permission = STATE_PERMISSION_MAPPING.get(tag.lower(), tag)
-            if not tag_value:
-                log.debug("Empty tag value, treating it as a reset "
-                          "for acquisition, so acquisition=0.")
-                permission_definitions.append({'permission' : permission,
-                                               'roles' : [],
-                                               'acquisition' : 0})
-                continue
-            # split roles-string into list
-            raw_roles=tag_value.replace(';',',')
-            roles = [str(r.strip()) for r in raw_roles.split(',') if r.strip()]
-            # verify if this permission is acquired
-            nv = 'acquire'
-            acquisition = 0
-            if nv in roles:
-                acquisition = 1
-                roles.remove(nv)
-            permission_definitions.append({'permission' : permission,
-                        'roles' : roles,
-                        'acquisition' : acquisition})
-
-        # If View was defined but Access was not defined, the Access
-        # permission should be generated with the same rights defined
-        # for View
-
-        has_access = 0
-        has_view = 0
-        v = {}
-        for permission_definition in permission_definitions:
-            if (permission_definition.get('permission', None) ==
-                STATE_PERMISSION_MAPPING['access']):
-                has_access = 1
-            if (permission_definition.get('permission', None) ==
-                STATE_PERMISSION_MAPPING['view']):
-                v = permission_definition
-                has_view = 1
-        if has_view and not has_access:
-            permission = STATE_PERMISSION_MAPPING['access']
-            permission_definitions.append({'permission': permission,
-                                           'roles': v['roles'],
-                                           'acquisition': v['acquisition']})
-        return permission_definitions
 
     def isInitial(self):
         return self.isinitial
@@ -2702,7 +2512,7 @@ class XMIState(XMIElement):
         """
         return self.getTaggedValue('description', '')
 
-    def getTitle(self, generator):
+    def getTitle(self, striphtml=0):
         """ Return the title for a state
 
         The original is in the templates/create_workflow.py:
@@ -2710,7 +2520,7 @@ class XMIState(XMIElement):
 
         This method mimics that, but also looks at the TGV 'label'
         """
-        fromDocumentation = self.getDocumentation(striphtml=generator.atgenerator.strip_html)
+        fromDocumentation = self.getDocumentation(striphtml=striphtml)
         fromTaggedValue = self.getTaggedValue('label', None)
         default = self.getName()
         return fromTaggedValue or fromDocumentation or default

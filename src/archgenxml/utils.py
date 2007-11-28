@@ -134,6 +134,25 @@ def getExpression(s):
                 return '"""%s"""' % s
             else:
                 return '"%s"' % s
+            
+# almost the same in a other flavour (attention, this one called by 
+# BaseGenerator pendant with same name
+            
+def processExpression(value, asString=True):
+    """Process the string returned by tagged values.
+
+    * python: prefixes a python expression
+    * string: prefixes a string
+    * fallback to default, which is string, if asString isnt set to False
+    """
+    if value.startswith('python:'):
+        return value[7:]
+    elif value.startswith('string:'):
+        return "'%s'" % value[7:]
+    if asString:
+        return "'%s'" % value
+    else:
+        return value            
 
 def isTGVTrue(tgv):
     if isinstance(tgv, (str, unicode)):

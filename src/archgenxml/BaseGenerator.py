@@ -119,14 +119,7 @@ class BaseGenerator:
         * string: prefixes a string
         * fallback to default, which is string, if asString isnt set to False
         """
-        if value.startswith('python:'):
-            return value[7:]
-        elif value.startswith('string:'):
-            return "'%s'" % value[7:]
-        if asString:
-            return "'%s'" % value
-        else:
-            return value
+        return utils.processExpression(value, asString)
 
     def getOption(self, option, element, default=_marker, aggregate=False):
         """Query element for value of an option.

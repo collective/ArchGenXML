@@ -3,7 +3,7 @@
              title="<dtml-var "info.id">"
              state_variable="review_state"
              initial_state="<dtml-var "info.initialstate">">
-<dtml-in "generator.getAllPermissionNames(statemachine)">
+<dtml-in "info.permissionNames">
  <permission><dtml-var "_['sequence-item']"></permission>
 </dtml-in>
 <dtml-in "info.states">

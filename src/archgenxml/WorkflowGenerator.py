@@ -5,7 +5,7 @@ import logging
 from PyParser import PyModule
 from BaseGenerator import BaseGenerator
 from archgenxml.documenttemplate.documenttemplate import HTML
-
+from archgenxml.TaggedValueSupport import STATE_PERMISSION_MAPPING
 log = logging.getLogger('workflow')
 
 
@@ -47,8 +47,7 @@ class WorkflowGenerator(BaseGenerator):
         self.atgenerator.makeDir(workflowDir)
 
         for sm in statemachines:
-            d['statemachine'] = sm
-            d['info'] = WorkflowInfo(sm, self)
+            d['info'] = WorkflowInfo(sm)
             
             # start BBB warning 
             smName = utils.cleanName(sm.getName())
@@ -78,7 +77,6 @@ class WorkflowGenerator(BaseGenerator):
         # generate wfsubscribers.zcml
         self._generateWorkflowSubscribers()
         
-        del d['statemachine']
         oldFile = os.path.join(extDir, 'InstallWorkflows.py')
         
         # start BBB warning 
@@ -287,16 +285,17 @@ class WorkflowGenerator(BaseGenerator):
         statemachines = self.package.getStateMachines()
         extra = []
         for sm in statemachines:
-            unknown = sm.getAllRoles(
-                ignore=['Owner',
-                        'Manager',
-                        'Member',
-                        'Reviewer',
-                        'Authenticated',
-                        'Anonymous',
-                        'Contributor',
-                        'Editor',
-                        'Reader'])
+            wi = WorkflowInfo(sm)
+            unknown = wi.allRoles(
+                        ignore=['Owner',
+                                'Manager',
+                                'Member',
+                                'Reviewer',
+                                'Authenticated',
+                                'Anonymous',
+                                'Contributor',
+                                'Editor',
+                                'Reader'])
             for item in unknown:
                 if item not in extra:
                     extra.append(item)
@@ -310,21 +309,12 @@ class WorkflowGenerator(BaseGenerator):
                 return sm.getCleanName()
         return None
 
-    # XXX: now i start here something ugly, but i dont have time to
-    # cleanup XMIParsers code - it has too much logic in, which should
-    # be in this class.
-    # Permissions from XMI are supposed to be strings upon here. But
-    # we may have an import of a class containing the permissions as
-    # attributes. So lets do a processExpression on each permission.
     def getPermissionsDefinitions(self, state):
-        pdefs = state.getPermissionsDefinitions()
-        for p_dict in pdefs:
-            p_dict['permission'] = self.processExpression(
-                p_dict['permission'], asString=False)
-        return pdefs
+        stateadapter = StateInfo(state)
+        return stateadapter.permissionsDefinitions
 
-    # XXX: Almost the same again.
     def getAllPermissionNames(self, statemachine):
+        wi = WorkflowInfo
         source_pdefs = statemachine.getAllPermissionNames()
         result_pdefs = [self.processExpression(pdef, asString=False)
                         for pdef in source_pdefs]
@@ -333,11 +323,12 @@ class WorkflowGenerator(BaseGenerator):
 class WorkflowInfo(object):
     """View-like utility class.
     """
-
-    def __init__(self, sm, generator):
-        self.sm = sm # state machine.
-        self.generator = generator
     
+    striphtml = 0
+
+    def __init__(self, sm, striphtml=0):
+        self.sm = sm # state machine.        
+            
     @property
     def id(self):
         return self.sm.getCleanName()
@@ -355,11 +346,12 @@ class WorkflowInfo(object):
         for item in filtered:
             state = {}
             state['id'] = item.getName()
-            state['title'] = item.getTitle(self.generator)
+            state['title'] = item.getTitle(striphtml=self.striphtml)
             state['description'] = item.getDescription()
             state['exit-transitions'] = [t.getName() for t in
                                          item.getOutgoingTransitions()]
-            perms = self.generator.getPermissionsDefinitions(item)
+            si = StateInfo(item)
+            perms = si.permissionsDefinitions
             perms.sort(key=itemgetter('permission'))
             state['permissions'] = perms
             result.append(state)
@@ -391,20 +383,228 @@ class WorkflowInfo(object):
 
     @property
     def worklists(self):
-        names = self.sm.getAllWorklistNames()
+        names = self._getAllWorklistNames()
         worklists = []
         for name in names:
             wl = {}
             wl['id'] = name
-            worklistStates = self.sm.getWorklistStateNames(name)
+            worklistStates = self._getWorklistStateNames(name)
             url = ("%(portal_url)s/search?review_state=" +
                    "&review_state=".join(worklistStates))
             wl['url'] = url
-            wl['guardPermission'] = self.sm.getWorklistGuardPermission(name)
-            wl['guardRole'] = self.sm.getWorklistGuardRole(name)
+            wl['guardPermission'] = self._getWorklistGuardPermission(name)
+            wl['guardRole'] = self._getWorklistGuardRole(name)
             wl['states'] = worklistStates
             worklists.append(wl)
         return worklists
+    
+    @property
+    def permissionNames(self):
+        ret = []
+        for state in self.sm.getStates():
+            si = StateInfo(state)
+            pd = si.permissionsDefinitions
+            for pdef in pd:
+                perm = pdef['permission'].strip()
+                if perm not in ret:
+                    ret.append(str(perm))
+        return ret    
+    
+    def allRoles(self, ignore=[]):
+        roles = []
+        # Reserved name to set the title
+        ignore.append('label')
+        for tran in self.sm.getTransitions(no_duplicates=1):
+            dummy = [roles.append(r.strip()) \
+                     for r in tran.getGuardRoles().split(';') \
+                     if not (r.strip() in roles or r.strip() in ignore)]
+
+        for state in self.sm.getStates():
+            si = StateInfo(state)
+            perms = si.permissionsDefinitions
+            sroles = []
+            dummy = [[sroles.append(j) for j in i] \
+                     for i in [d['roles'] for d in perms] \
+                    ]
+            dummy = [roles.append(r.strip()) \
+                     for r in sroles \
+                     if not (r.strip() in roles or r.strip() in ignore)]
+
+        return [r for r in roles if r]    
+    
+    def _getAllWorklistNames(self):
+        """Return all worklists mentioned in this statemachine.
+
+        A worklist is mentioned by adding a tagged value 'worklist' to a state.
+        """
+        log.debug("Finding all worklists mentioned in this statemachine.")
+        worklists = {}
+        names = [s.getTaggedValue('worklist')
+                 for s in self.sm.getStates(no_duplicates = 1)
+                 if s.getTaggedValue('worklist')]
+        for name in names:
+            worklists[name] = 'just filtering out doubles'
+        result = worklists.keys()
+        log.debug("Found the following worklists: %r.", result)
+        return result
+
+    def _getWorklistStateNames(self, worklistname):
+        """Returns the states associated with the worklistname."""
+        results = [s.getName()
+                   for s in self.sm.getStates(no_duplicates = 1)
+                   if s.getTaggedValue('worklist') == worklistname]
+        log.debug("Associated with worklist '%s' are the "
+                  "following states: %r.", worklistname, results)
+        return results
+
+    def _getWorklistGuardRole(self, worklistname):
+        """Returns the guard role associated with the worklistname."""
+        log.debug("Getting the guard role for the worklist...")
+        default = ''
+        results = [s.getTaggedValue('worklist:guard_roles')
+                   for s in self.sm.getStates(no_duplicates = 1)
+                   if s.getTaggedValue('worklist') == worklistname
+                   and s.getTaggedValue('worklist:guard_roles')]
+        if not results:
+            log.debug("No tagged value found, returning the default: '%s'.",
+                      default)
+            return default
+        log.debug("Tagged value(s) found, taking the first (or only) "
+                  "one: '%s'.", results[0])
+        return results[0]
+
+    def _getWorklistGuardPermission(self, worklistname):
+        """Returns the guard permission associated with the worklistname."""
+        log.debug("Getting the guard permission for the worklist...")
+        default = 'Review portal content'
+        results = [s.getTaggedValue('worklist:guard_permissions')
+                   for s in self.sm.getStates(no_duplicates = 1)
+                   if s.getTaggedValue('worklist') == worklistname
+                   and s.getTaggedValue('worklist:guard_permissions')]
+        if not results:
+            log.debug("No tagged value found, returning the default: '%s'.",
+                      default)
+            return default
+        # There might be more than one guard_permissions tgv, take the first
+        log.debug("Tagged value(s) found, taking the first (or only) one: '%s'.",
+                  results[0])
+        return results[0]
+
+    def _getWorklistGuardExpression(self, worklistname):
+        """Returns the guard expression associated with the worklistname."""
+        log.debug("Getting the guard expression for the worklist...")
+        default = ''
+        results = [s.getTaggedValue('worklist:guard_expressions')
+                   for s in self.sm.getStates(no_duplicates = 1)
+                   if s.getTaggedValue('worklist') == worklistname
+                   and s.getTaggedValue('worklist:guard_permissions')]
+        if not results:
+            log.debug("No tagged value found, returning the default: '%s'.",
+                      default)
+            return default
+        # There might be more than one guard_permissions tgv, take the first
+        log.debug("Tagged value(s) found, taking the first (or only) one: '%s'.",
+                  results[0])
+        return results[0]
+    
+    
+class StateInfo(object):
+    """adapter like objetc on a state to fetch information from it"""
+    
+    non_permissions = [
+        'initial_state', 'documentation',
+        'label', 'description', 'worklist',
+        'worklist:guard_permissions',
+        'worklist:guard_roles',
+    ]    
+    
+    def __init__(self, state):
+        self.state = state
+    
+    @property
+    def permissionsDefinitions(self):
+        """ return a list of dictionaries with permission definitions
+
+        Each dict contains a key 'permission' with a string value and
+        a key 'roles' with a list of strings as value and a key
+        'acquisition' with value 1 or 0.
+        """
+
+        ### for the records:
+        ### this method contains lots of generation logic. in fact this
+        ### should move over to the WorkflowGenerator.py and reduce here in
+        ### just deliver the pure data
+        ### the parser should really just parse to be as independent as possible
+
+        # permissions_mapping (abbreviations for lazy guys)
+        # keys are case insensitive
+
+        # STATE_PERMISSION_MAPPING in TaggedValueSupport.py now
+        # contains the handy mappings from 'access' to 'Access contents
+        # information' and so.
+        
+        state = self.state
+        tagged_values = state.getTaggedValues()
+        permission_definitions = []
+
+        for tag, tag_value in tagged_values.items():
+            # list of tagged values that are NOT permissions
+            if tag in self.non_permissions:
+                # short check if its registered, registry complains in log.
+                tgvRegistry.isRegistered(tagname, state.classcategory, 
+                                         silent=True)
+                continue
+            tag = tag.strip()
+            
+            # look up abbreviations if any
+            permission = STATE_PERMISSION_MAPPING.get(tag.lower(), tag)
+            if not tag_value:
+                log.debug("Empty tag value, treating it as a reset "
+                          "for acquisition, so acquisition=0.")
+                permission_definitions.append({'permission' : permission,
+                                               'roles' : [],
+                                               'acquisition' : 0})
+                continue
+            
+            # split roles-string into list
+            raw_roles = tag_value.replace(';', ',')
+            roles = [str(r.strip()) for r in raw_roles.split(',') if r.strip()]
+            
+            # verify if this permission is acquired
+            nv = 'acquire'
+            acquisition = 0
+            if nv in roles:
+                acquisition = 1
+                roles.remove(nv)
+            permission = utils.processExpression(permission, asString=False)
+            permission_definitions.append(
+                        {'permission' : permission,
+                         'roles' : roles,
+                         'acquisition' : acquisition}
+            )
+
+        # If View was defined but Access was not defined, the Access
+        # permission should be generated with the same rights defined
+        # for View
+
+        has_access = 0
+        has_view = 0
+        v = {}
+        for permission_definition in permission_definitions:
+            if (permission_definition.get('permission', None) ==
+                STATE_PERMISSION_MAPPING['access']):
+                has_access = 1
+            if (permission_definition.get('permission', None) ==
+                STATE_PERMISSION_MAPPING['view']):
+                v = permission_definition
+                has_view = 1
+        if has_view and not has_access:
+            permission = STATE_PERMISSION_MAPPING['access']
+            permission_definitions.append({'permission': permission,
+                                           'roles': v['roles'],
+                                           'acquisition': v['acquisition']})            
+        return permission_definitions
+
 
 
 TODO = """
@@ -418,17 +618,6 @@ TODO = """
 </dtml-in>
 
 
-
-in rolemap.xml: extra permissions like this
-
-  <!--
-  <permissions>
-    <permission name="Access inactive portal content"
-                acquire="True">
-      <role name="Owner"/>
-    </permission>
-  </permissions>
-  -->
 
 
 """
