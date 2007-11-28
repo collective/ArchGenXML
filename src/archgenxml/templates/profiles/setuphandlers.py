@@ -219,11 +219,13 @@ def updateRoleMappings(context):
      wft.updateRoleMappings()
     
 <dtml-if "'postInstall' not in parsedModule.functions.keys()">
+
 def postInstall(context):
-    pass
+    '''called as at the end of the setup process and the right place for your code'''
 
 <dtml-else>
 <dtml-var "parsedModule.functions['postInstall'].getSrc()">
+
 </dtml-if>
 
 ##code-section FOOT

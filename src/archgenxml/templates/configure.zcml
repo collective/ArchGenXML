@@ -10,6 +10,9 @@
   <include file="generatedsubscribers.zcml"/>
 </dtml-if>
   
+<dtml-if "hasBrowserViews">
+  <include file="browser.zcml"/>
+</dtml-if>
   <!-- ##code-section configure.zcml -->
   <!-- ##/code-section configure.zcml -->
 
