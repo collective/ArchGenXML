@@ -26,7 +26,7 @@ log = logging.getLogger('CodeSectionHandler')
 
 
 def handleSectionedFile(templatepath, outputpath,
-                        sectionnames=[], templateparams=None):
+                        sectionnames=[], templateparams=None, overwrite=True):
     """Do some magic here since we are decayed :)
     
     @param templatepath - the relative path (as list of strings) to the 
@@ -41,6 +41,10 @@ def handleSectionedFile(templatepath, outputpath,
         existentfile = open(outputpath)
         existentbuffer = existentfile.readlines()
         existentfile.close()
+        
+        #if overwrite isnt desired, stop when target file exists
+        if not overwrite:
+            return
     except IOError:
         existentbuffer = None
 
@@ -123,6 +127,7 @@ class CodeSectionHandler(object):
                 ret.append(line)
             if line.find(BEGINPATTERN % name) != -1:
                 sectioncontent = True
+        return ['']        
         raise Exception('%s - Section not found or no section end pattern set.'\
                         % name)
     

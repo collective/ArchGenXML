@@ -13,6 +13,14 @@
 <dtml-if "hasBrowserViews">
   <include file="browser.zcml"/>
 </dtml-if>
+
+<dtml-in "package.getPackages()">
+<dtml-let package="_['sequence-item']">
+<dtml-if "generator.getViewClasses(package,recursive=True)">
+  <include package=".<dtml-var "package.getName()">" />
+</dtml-if>
+</dtml-let>
+</dtml-in>
   <!-- ##code-section configure.zcml -->
   <!-- ##/code-section configure.zcml -->
 

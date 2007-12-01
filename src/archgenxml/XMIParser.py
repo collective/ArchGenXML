@@ -1121,6 +1121,7 @@ class XMIElement(object):
 
     def getClientDependencies(self, includeParents=False,
                               dependencyStereotypes=None):
+                                  
         res = self.clientDependencies
         if includeParents:
             o = self.getParent()
@@ -1427,7 +1428,7 @@ class XMIPackage(XMIElement, StateMachineContainer):
         path or a relative path if the pack(self) is a subpack of 'ref'.
         """
         path = self.getPath(includeRoot=includeRoot, parent=ref)
-        return path
+        return ".".join([p.getName() for p in path])
 
 
 class XMIModel(XMIPackage):

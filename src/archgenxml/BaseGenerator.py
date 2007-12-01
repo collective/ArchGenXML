@@ -70,7 +70,7 @@ class BaseGenerator:
     uml_profile = base_uml_profile
     default_class_type = 'python_class'
     default_interface_type = 'z3'
-    
+    view_class_stereotype = 'view_class'
     # indent helper for log output:
     infoind = 0
 

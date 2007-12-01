@@ -2321,6 +2321,7 @@ class ArchetypesGenerator(BaseGenerator):
             self.generatePackageInitPy(package)
         # Generate a flavors.zcml
         self.generatePackageFlavorsZcml(package)
+        self.generateBrowserZCML(package,'configure.zcml')
 
     def updateVersionForProduct(self, package):
         """Increment the build number in version.txt,"""
@@ -2602,7 +2603,15 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateDCWorkflowPatch(package)
         # generate subscribers
         self.generateSubscribersZCML(package)
-
+        # generate browser views
+        if self.getViewClasses(package,recursive=True):
+            self.generateBrowserZCML(package)
+        
+    def getViewClasses(self,package,recursive=0):
+        klasses=[k for k in package.getClasses(recursive=recursive) if k.hasStereoType(self.view_class_stereotype)]
+        
+        return klasses
+    
     def generateConfigureAndProfilesZCML(self, package):
         """Generate configure.zcml and profiles.zcml if type registration or
         skin registration is set to 'genericsetup'
@@ -2627,13 +2636,42 @@ class ArchetypesGenerator(BaseGenerator):
         packagesWithFlavors = [m.getModuleName() for m in self.subPackagesWithFlavors(package)]
         containsFlavors = generatedFlavors != [] or packagesWithFlavors != []
         hasSubscribers = bool(package.getAnnotation('subscribers'))
+        hasBrowserViews = self.getViewClasses(package,recursive=False)
         handleSectionedFile(['configure.zcml'],
                             os.path.join(ppath, 'configure.zcml'),
                             sectionnames=['configure.zcml'],
                             templateparams={'packages': packageIncludes,
+                                            'package': package,
+                                            'generator':self,
                                             'containsFlavors': containsFlavors,
-                                            'hasSubscribers': hasSubscribers,})
+                                            'hasSubscribers': hasSubscribers,
+                                            'hasBrowserViews' : hasBrowserViews,})
 
+
+    def generateBrowserZCML(self, package,fname="browser.zcml"):
+        """generates the subscribers.zcml"""
+        browserViews = self.getViewClasses(package)
+        
+        templdir=os.path.join(package.getFilePath(),'templates')
+        self.makeDir(templdir)
+        #create the vanilla templates
+        for view in browserViews:
+            if not view.getTaggedValue('template_name'):
+                view.setTaggedValue('template_name','%s.pt' % view.getName())
+
+            if not view.hasStereoType('stub'):
+                handleSectionedFile(['view_template.pt'],
+                                os.path.join(templdir, view.getTaggedValue('template_name')),
+                                overwrite=False,
+                                templateparams={})
+
+            
+        log.debug("%s: Generating browser zcml" % self.infoind)
+        ppath = package.getFilePath()
+        handleSectionedFile(['browser.zcml'],
+                            os.path.join(ppath, fname),
+                            sectionnames=['BROWSER'],
+                            templateparams={'browserViews': browserViews})
 
     def generateSubscribersZCML(self, package):
         """generates the subscribers.zcml"""

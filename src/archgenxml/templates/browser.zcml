@@ -1,0 +1,35 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           xmlns:five="http://namespaces.zope.org/five"
+           xmlns:zcml="http://namespaces.zope.org/zcml"
+           xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+           i18n_domain="plone">
+ 
+<dtml-in browserViews>
+<dtml-let klass="_['sequence-item']">
+<dtml-in "klass.getClientDependencies()">
+<dtml-let dep="_['sequence-item']" target="dep.getSupplier()">
+  <browser:page
+     for="Products.<dtml-if "target.isInterface()"><dtml-var "target.getQualifiedName(includeRoot=True)"><dtml-else><dtml-var "target.getPackage().getQualifiedName(None,includeRoot=True)">.interfaces.I<dtml-var "target.getName()"></dtml-if>"
+     name="<dtml-var "klass.getTaggedValue('name') or klass.getName()">"
+     class="Products.<dtml-var "klass.getQualifiedName(includeRoot=True)">"
+     template="templates/<dtml-var "klass.getTaggedValue('template_name')">"
+     permission="<dtml-var "klass.getTaggedValue('permission') or 'zope2.View'">"
+     />
+
+</dtml-let>
+<dtml-else>
+  <browser:page
+     for="*"
+     name="<dtml-var "klass.getTaggedValue('name') or klass.getName()">"
+     class="Products.<dtml-var "klass.getQualifiedName(includeRoot=True)">"
+     template="templates/<dtml-var "klass.getTaggedValue('template_name')">"
+     permission="<dtml-var "klass.getTaggedValue('permission') or 'zope2.View'">"
+     />
+</dtml-in>
+</dtml-let>
+</dtml-in>  
+<!-- ##code-section BROWSER #fill in your manual code here -->
+<!-- ##/code-section BROWSER -->
+
+</configure>
