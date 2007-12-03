@@ -570,7 +570,7 @@ class ArchetypesGenerator(BaseGenerator):
         templ = self.readTemplate(['archetypes', 'widgetdef.pysnippet'])
         dtml = HTML(templ, widgetdef)
         res = dtml()
-        return res
+        return res.decode('utf8')
 
     def _getWidgetDefinition(self, widgettype, element, fieldname, elementclass,
                   fieldclassname=None):
