@@ -2653,7 +2653,8 @@ class ArchetypesGenerator(BaseGenerator):
         browserViews = self.getViewClasses(package)
         
         templdir=os.path.join(package.getFilePath(),'templates')
-        self.makeDir(templdir)
+        if browserViews:
+            self.makeDir(templdir)
         #create the vanilla templates
         for view in browserViews:
             if not view.getTaggedValue('template_name'):
