@@ -310,24 +310,27 @@ class BaseGenerator:
 
         return generatedMethods, manual_methods
 
-    def dispatchXMIClass(self, element):
+    def dispatchXMIClass(self, element, umlprofile=None):
         log.debug("Finding suitable dispatching stereotype for element...")
-        dispatching_stereotypes = self.getUMLProfile().findStereoTypes(entities=['XMIClass'],
-                                                                       dispatching=1)
+        profile = self.getUMLProfile()
+        dispatching_stereotypes = profile.findStereoTypes(entities=['XMIClass'],
+                                                          dispatching=1)
         log.debug("Dispatching stereotypes found in our UML profile: %r.",
                   dispatching_stereotypes)
         dispatching_stereotype = None
         for stereotype in dispatching_stereotypes:
-            if element.hasStereoType(stereotype.getName()):
+            if element.hasStereoType(stereotype.getName(), 
+                                     umlprofile=umlprofile):
                 dispatching_stereotype = stereotype
+                break
 
         if not dispatching_stereotype:
             dispatching_stereotype = self.getDefaultClassType()
 
-        generator = dispatching_stereotype.generator
-        return getattr(self, generator)(element,
-                                       template=getattr(dispatching_stereotype,
-                                                        'template', None))
+        generatormethod = dispatching_stereotype.generator
+        generator = getattr(self, generatormethod)
+        template = getattr(dispatching_stereotype, 'template', None)
+        return generator(element, template=template)
 
     def dispatchXMIInterface(self, element):
         log.debug("Finding suitable dispatching stereotype for element...")
@@ -355,7 +358,7 @@ class BaseGenerator:
                      ' '*4*self.infoind,
                      element.getName())
 
-        templ = self.readTemplate(template)
+        templ = self.readTemplate([template])
         d = {
             'klass': element,
             'generator': self,

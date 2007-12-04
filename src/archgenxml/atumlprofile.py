@@ -107,14 +107,15 @@ at_uml_profile.addStereoType(
     dispatching=1,
     generator='generateFieldClass',
     template='field.py',
-    description='TODO')
+    description='Class will target in a ObjectField or CompoundField '
+                '(latter if Attributes are provided)')
 
 at_uml_profile.addStereoType(
     'widget', ['XMIClass'],
     dispatching=1,
     generator='generateWidgetClass',
     template='widget.py',
-    description='TODO')
+    description='A simple stub archetypes-widget class will be created.')
 
 at_uml_profile.addStereoType(
     'value_class', ['XMIDependency'],
