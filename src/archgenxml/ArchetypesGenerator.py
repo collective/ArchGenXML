@@ -57,13 +57,6 @@ except ImportError:
 else:
     has_i18ndude = True
 
-try:
-    'abca'.strip('a')
-except:
-    has_enhanced_strip_support = False
-else:
-    has_enhanced_strip_support = True
-
 # debug
 from pprint import pprint
 
@@ -127,7 +120,6 @@ class ArchetypesGenerator(BaseGenerator):
 
     hide_classes = atmaps.HIDE_CLASSES
     typeMap = atmaps.TYPE_MAP
-    widgetMap = atmaps.WIDGET_MAP
     coerceMap = atmaps.COERCE_MAP
 
     build_msgcatalog = 1
@@ -487,22 +479,23 @@ class ArchetypesGenerator(BaseGenerator):
         return MODIFY_FTI % {'hideactions':hide_actions, }
 
     def coerceType(self, intypename):
-        #print 'coerceType: ',intypename,' -> ',
-        typename=intypename.lower()
+        """coerce a type from the given typename"""
+        if intypename == 'NoneType':
+            typename = None
+        else:
+            typename = intypename.lower()
+            
         if typename in self.typeMap.keys():
             return typename
 
         if typename=='copy':
             return typename
 
-        if self.unknownTypesAsString:
-            ctype=self.coerceMap.get(typename.lower(),'string')
-        else:
-            ctype=self.coerceMap.get(typename.lower(),None)
-            if ctype is None:
-                return 'generic' #raise ValueError,'Warning: unknown datatype : >%s< (use the option --unknown-types-as-string to force unknown types to be converted to string' % typename
-
-        #print ctype,'\n'
+        default = self.unknownTypesAsString and 'string' or None
+        ctype = self.coerceMap.get(typename, default)
+        if ctype is None:
+            return 'generic' 
+        
         return ctype
 
     def getFieldAttributes(self,element):
@@ -562,51 +555,100 @@ class ArchetypesGenerator(BaseGenerator):
                 map.update({k: v})
         return map
 
-    def getWidget(self, widgettype, element, fieldname, elementclass,
-                  fieldclassname=None):
-        """the rendered widget"""
-        widgetdef = self._getWidgetDefinition(widgettype, element, fieldname,
-                                               elementclass, fieldclassname)
+    def getWidget(self, element, fieldname, fieldtype, tgvprefix='widget:'):
+        """the rendered widget.
+        @param element:     the XMIAttribute or XMI Relation End where to fetch 
+                            the tgv from.
+        @param name:        name of the widget
+        @param field:       type of the field
+        @param tgvprefix:   prefix to fetch options from (such as widget:label,
+                            widget:type, etc.)
+        """
+        # XXX remove start in archgenxml 2.1
+        tgv = element.getTaggedValues()
+        if 'widget' in tgv.keys():
+            # Custom widget defined in attributes
+            # really ugly, we deprectae it (jensens)
+            log.warn('Deprecated: old style definiton in %s' % element)
+            formatted = u''
+            for line in tgv['widget'].split(u'\n'):
+                if formatted:
+                    line = utils.indent(line.strip(), 1)
+                formatted += u"%s\n" % line
+            return formatted
+        # remove end
+        
+        widgetdef = self._getWidgetDefinition(element, fieldname, fieldtype, 
+                                              tgvprefix)
+        widget = self.renderWidget(widgetdef)
+        return widget
+    
+    def renderWidget(self, widgetdef):
+        """Renders a widget template with the given widget definition"""
         templ = self.readTemplate(['archetypes', 'widgetdef.pysnippet'])
+        widgetdef['indent'] = utils.indent
+        widgetdef.update(__builtins__)
         dtml = HTML(templ, widgetdef)
         res = dtml()
         return res.decode('utf8')
 
-    def _getWidgetDefinition(self, widgettype, element, fieldname, elementclass,
-                  fieldclassname=None):
-        """a widget definition dictionary
-
-        atributes/tgv's can be:
-            * widget and a whole widget code block (DEPRECATED) or
-            * widget:type defines the kind of the widget and then
-            * widget:PARAMETER which will be rendered as a PARAMETER=value
-
+    def _getWidgetDefinition(self, element, fieldname, fieldtype, tgvprefix):
+        """a widget definition dictionary, 
+        
+        parameters see "getWidget" method
         """
         wdef = odict()
-        wdef['map'] = odict()
-        wdef['startcode'] = widgettype.capitalize()+'Widget'
-
-        tgv = element.getTaggedValues()
-        widgetoptions = [t for t in tgv.items() if t[0].startswith('widget:')]
-
+        wdef['options'] = odict()
+        wdef['type'] = None
+        wdef['fetchfromfield'] = False
+        wdef['fieldclass'] = None
+        wdef['widgetclass'] = None
+        
+        # process the widgets prefixed options 
+        for key, value in element.getTaggedValues().items():
+            if not key.startswith(tgvprefix):
+                continue
+            if key[len(tgvprefix):] == 'type':
+                wdef['type'] = value
+                continue
+            wdef['options'][key[len(tgvprefix):]] = value
+            
         # check if a global default overrides a widget. setting defaults is
         # provided through getOption.
         # to set an default just put:
-        # default:widget:widgettype = widgetname
+        # default:widget:type = widgetname
         # as a tagged value on the package or model
-        if hasattr(element,'widgettype') and element.type != 'NoneType':
-            atype = element.type
-        else:
-            atype = widgettype
 
         # try to find a default widget defined in the model
-        default_widget = self.getOption('default:widget:%s' % fieldclassname,
-                                        element, None)
-        if not default_widget:
-            default_widget = self.getOption('default:widget:%s' % atype,
-                                            element, None)
+        option1 = 'default:widget:%s' % fieldname
+        option2 = 'default:widget:%s' % wdef['type']
+        default = self.getOption(option1, element, None) or \
+                  self.getOption(option2, element, None) 
+        
+        if default:
+            # use default
+            wdef['startcode'] = default     
+        if fieldtype in atmaps.WIDGET_MAP.keys():
+            # default widget for this widgettype found in 
+            wdef['widgetclass'] = atmaps.WIDGET_MAP[fieldtype]
+        else:
+            # use fieldclassname if and only if no default widget has been given
+            wdef['fetchfromfield'] = True
+            wdef['fieldclass'] = self._getFieldClassName(element, nogeneric=True)
+            
 
-        modulename = elementclass.getPackage().getProductName()
+        # Permit python: if people forget they don't have to 
+        for key in wdef['options']:
+            if key not in self.nonstring_tgvs:
+                wdef['options'][key] = utils.getExpression(wdef['options'][key])
+            elif type(wdef['options'][key]) in StringTypes and \
+                 wdef['options'][key].startswith('python:'):
+                    wdef['options'][key] = wdef['options'][key][7:]
+
+
+        ## before update the widget mapping, try to make a
+        ## better description based on the given label
+        modulename = element.getPackage().getProductName()
         check_map = odict()
         check_map['label'] = u"'%s'" % fieldname.capitalize().decode('utf8')
         check_map['label_msgid'] = u"'%s_label_%s'" % (modulename,
@@ -615,188 +657,121 @@ class ArchetypesGenerator(BaseGenerator):
                                                             utils.normalize(fieldname, 1))
         check_map['i18n_domain'] = u"'%s'" % modulename
 
-        wt = {} # helper
-
-        if tgv.has_key('widget'):
-            # Custom widget defined in attributes
-            # really ugly, we deprectae it (jensens)
-            log.warn('Deprecated: old style definiton in %s' % fieldclassname)
-            formatted = u''
-            for line in tgv['widget'].split(u'\n'):
-                if formatted:
-                    line = utils.indent(line.strip(), 1)
-                formatted += u"%s\n" % line
-            wdef['startcode'] =  formatted
-
-        elif [wt.update({t[0]:t[1]}) for t in widgetoptions if t[0] == u'widget:type']:
-            wdef['startcode'] = wt['widget:type']
-
-        elif self.widgetMap.has_key(widgettype) and not default_widget:
-            # default widget for this widgettype found in widgetMap
-            wdef['startcode'] = self.widgetMap[widgettype]
-
-        elif fieldclassname and not default_widget:
-            # use fieldclassname if and only if no default widget has been given
-            wdef['startcode'] = "%s._properties['widget'](" % fieldclassname
-        elif default_widget:
-            wdef['startcode'] = default_widget + u'('
-
-
-        if ')' in wdef['startcode']: # XXX bad check *sigh*
-            return wdef
-
-        if '(' not in wdef['startcode']: # XXX bad check *sigh* again
-            wdef['startcode'] += '('
-
-        for tup in widgetoptions:
-            key=tup[0][7:]
-            val=tup[1]
-            if key == 'type':
+        for key in check_map:
+            if key in wdef['options']:
                 continue
-            if key not in self.nonstring_tgvs:
-                val = utils.getExpression(val)
-                # [optilude] Permit python: if people forget they don't
-                # have to (I often do!)
-            else:
-                if type(val) in StringTypes:
-                    if val.startswith('python:'):
-                        val = val[7:]
-
-            wdef['map'].update({key:val})
-
-
-        ## before update the widget mapping, try to make a
-        ## better description based on the given label
-        for k in check_map:
-            if not (k in wdef['map'].keys()): # XXX check if disabled
-                 wdef['map'].update( {k: check_map[k]} )
+            wdef['options'][key] = check_map[key]
 
         # remove description_msgid if there is no description
-        if 'description' not in wdef['map'].keys() and \
-           'description_msgid' in wdef['map'].keys():
-            del  wdef['map']['description_msgid']
+        if 'description' not in wdef['options'].keys() and \
+           'description_msgid' in wdef['options'].keys():
+            del  wdef['options']['description_msgid']
 
-        if 'label_msgid' in  wdef['map'].keys() and has_enhanced_strip_support:
-            self.addMsgid( wdef['map']['label_msgid'].strip("'").strip('"'),
-                           wdef['map'].has_key('label') and  \
-                           wdef['map']['label'].strip("'").strip('"') or fieldname,
-                          elementclass,
+        if 'label_msgid' in  wdef['options'].keys():
+            self.addMsgid( wdef['options']['label_msgid'].strip("'").strip('"'),
+                           wdef['options'].has_key('label') and  \
+                           wdef['options']['label'].strip("'").strip('"'),
+                          element.getParent(),
                           fieldname
                       )
-        if 'description_msgid' in  wdef['map'].keys() and has_enhanced_strip_support:
-            self.addMsgid( wdef['map']['description_msgid'].strip("'").strip('"'),
-                           wdef['map'].has_key('description') and \
-                           wdef['map']['description'].strip("'").strip('"') or fieldname,
-                          elementclass,
+        if 'description_msgid' in  wdef['options'].keys():
+            self.addMsgid( wdef['options']['description_msgid'].strip("'").strip('"'),
+                           wdef['options'].has_key('description') and \
+                           wdef['options']['description'].strip("'").strip('"'),
+                          element.getParent(),
                           fieldname
                       )
-        for key in  wdef['map']:
-            value =  wdef['map'][key]
+
+        # unicode it all!
+        for key in  wdef['options']:
+            value =  wdef['options'][key]
             if (type(value) != types.UnicodeType
                 and type(value) in StringTypes):
-                wdef['map'][key] = value.decode('utf-8')
+                wdef['options'][key] = value.decode('utf-8')
 
         return wdef
 
     def getFieldFormatted(self, name, fieldtype, map={}, doc=None,
-                          indent_level=0, rawType='String', array_field=False):
+                          indent_level=0, rawType=None, arraydefs=None):
         """Return the a formatted field definition for the schema.
         """
-
         log.debug("Trying to get formatted field. name='%s', fieldtype='%s', "
                   "doc='%s', rawType='%s'.", name, fieldtype, doc, rawType)
-        name = utils.normalize(name, 1)
-        res = u''
-        if array_field:
-            array_options={}
-            for key in map.keys():
-                if key.startswith(u'array:'):
-                    nkey=key[len(u'array:'):]
-                    array_options[nkey]=map[key]
-                    del map[key]
+        fdef = odict()
+        fdef.update(__builtins__)
+        fdef['indent'] = utils.indent
+        fdef['doc'] = doc
+        fdef['fieldclass'] = fieldtype or rawType
+        fdef['options'] = odict()
+        fdef['options']['name'] = "'%s'" % utils.normalize(name, 1)
+        for key in map:
+            if ':' in key:
+                # skip ':' - reserved
+                continue
+            val = map[key]
+            if type(val) not in StringTypes:
+                val = u"%s" % val
+            fdef['options'][key] = val
+            
+        templ = self.readTemplate(['archetypes', 'fielddef.pysnippet'])        
+        dtml = HTML(templ, fdef)
+        res = dtml()        
+        
+        if not arraydefs:
+            res = utils.indent(res, indent_level)
+            return res.decode('utf8')
 
-        # Capitalize only first letter of fields class name, keep camelcase
-        a = rawType[0].upper()
-        rawType = a + rawType[1:]
+        adef = odict()
+        adef.update(__builtins__)
+        adef['indent'] = utils.indent
+        adef['basefield'] = utils.indent(res, indent_level)
+        adef['options'] = arraydefs
+        templ = self.readTemplate(['archetypes', 'arrayfielddef.pysnippet'])
+        dtml = HTML(templ, adef)
+        res = dtml()
+        res = utils.indent(res, indent_level)
+        return res.decode('utf8')        
+    
+    
+    def _getArrayFieldSpec(self, element):
+        """return spec for array field part but w/o field inside"""
+        # check multiplicity:
+        if element.getUpperBound()  == 1:
+            return {}
 
-        # Add comment
-        if doc:
-            res += utils.indent(doc, indent_level, u'#') + u'\n' + res
+        fieldname = "array:%s" % element.getCleanName()
+        defs = odict()
+        defs['widget'] = self.getWidget(element, fieldname, 'array', 
+                                        tgvprefix='array:widget:')
+        tgvs = element.getTaggedValues()
+        for key in tgvs:
+            if not key.startswith('array:') or key.startswith('array:widget:'):
+                continue
+            defs[key[6:]] = tgvs[key]                        
+        return defs    
 
-        # If this is a generic field and the user entered MySpecialField,
-        # then don't suffix it with 'field''
-        if rawType.endswith(u'Field'):
-            rawType = rawType[:-5]
-
-        res += utils.indent(u"%s(\n    name='%s',\n" % (
-            fieldtype % {'type': rawType}, name), indent_level)
-        if map:
-            prepend = utils.indent(u'', indent_level)
-            for key in map:
-                if key.find(u':') >= 0:
-                    continue
-                lines = map[key]
-                if isinstance(lines, basestring):
-                    linebreak = lines.find(u'\n')
-
-                    if linebreak < 0:
-                        linebreak = len(lines)
-                    firstline = lines[:linebreak]
-                else:
-                    firstline = lines
-
-                res += u'%s%s=%s' % (prepend, key, firstline)
-                if isinstance(lines, basestring) and linebreak < len(lines):
-                    for line in lines[linebreak+1:].split(u'\n'):
-                        line = utils.indent(line, indent_level + 1)
-                        res += u"\n%s" % line
-
-                prepend = u',\n%s' % utils.indent('', indent_level +1)
-
-        res += u'\n%s' % utils.indent(u'),', indent_level) + u'\n\n'
-
-        if array_field:
-            res = res.strip()
-            if array_options.get('widget', None):
-                if array_options['widget'].find('(') == -1:
-                    array_options['widget'] += u'()'
-
-            array_defs = u',\n'.join([u"%s=%s" % item for item in array_options.items()])
-            res =  ARRAYFIELD % ( utils.indent(res, 2), utils.indent(array_defs, 2) )
-
-        return res
 
     def getFieldsFormatted(self, field_specs):
         """Return the formatted field definitions for the schema from field_specs.
         """
         res = u''
         for field_spec in field_specs:
-            log.debug("field_spec is %r.",
-                      field_spec)
+            log.debug("field_spec is %r.", field_spec)
+            if type(field_spec) in StringTypes:
+                # need this for copied fields
+                res += field_spec                                    
+                continue
+            if not field_spec.has_key('array_spec'):
+                field_spec['array_spec'] = None
             try:
-                # The following is needed to work around a bug in Sunew's
-                # array_field fix. Apparently associations don't have the
-                # rawType key. Should be fixed elsewhere, though.
-                if type(field_spec) in StringTypes:
-                    # need this for copied fields
-                    res += field_spec
-                elif (field_spec.has_key('rawType') and
-                      field_spec.has_key('array_field')):
-                    res += self.getFieldFormatted(field_spec['name'],
-                                                  field_spec['fieldtype'],
-                                                  field_spec['map'],
-                                                  field_spec['doc'],
-                                                  field_spec['indent_level'],
-                                                  field_spec['rawType'],
-                                                  field_spec['array_field'],
-                                              )
-                else:
-                    res += self.getFieldFormatted(field_spec['name'],
-                                                  field_spec['fieldtype'],
-                                                  field_spec['map'],
-                                                  field_spec['doc'],
-                                                  field_spec['indent_level']
-                                              )
+                res += self.getFieldFormatted(field_spec['name'],
+                                              field_spec['fieldtype'],
+                                              field_spec['map'],
+                                              field_spec['doc'],
+                                              field_spec['indent_level'],
+                                              field_spec['rawType'],
+                                              field_spec['array_spec'],
+                                          )
             except Exception, e:
                 log.critical("Couldn't render fields from field_specs: '%s'.",
                              field_specs)
@@ -854,40 +829,42 @@ class ArchetypesGenerator(BaseGenerator):
                          vocaboptions['name'])
 
         # end ATVM
+        
+    def _getFieldClassName(self, element, nogeneric=False):
+        """returns the fieldclass for the given element"""        
+        rtype = getattr(element, 'type', None)
+        ctype = self.coerceType(rtype)        
+        if nogeneric and ctype=='generic':
+            return rtype
+        ftype = atmaps.TYPE_MAP[ctype].get('field', ctype)
+        return ftype 
 
     def getFieldSpecFromAttribute(self, attr, classelement, indent_level=0):
         """Gets the schema field code."""
-
-        if not hasattr(attr, 'type') or attr.type == 'NoneType':
-            ctype = 'string'
-        else:
-            ctype = self.coerceType(attr.type)
-
-        if ctype=='copy':
+        rtype = getattr(attr, 'type')
+        ctype = self.coerceType(rtype)
+        fieldclass = self._getFieldClassName(attr)
+        
+        #############################
+        # special case: copied fields
+        # bit ugly, but well...
+        if fieldclass == 'copy':
             name = getattr(attr, 'rename_to', attr.getName())
             field = "    copied_fields['%s'],\n\n" % name
             return field
-
+        
+        #############################
+        # normal case: a field class
         map = self.typeMap[ctype]['map'].copy()
-        if attr.hasDefault():
-            map.update({'default': utils.getExpression(attr.getDefault())})
+        
+        # apply field attributes, widget and default value, ...
+        map['widget'] = self.getWidget(attr, attr.getName(), fieldclass)
         map.update(self.getFieldAttributes(attr))
-
-        atype = self.typeMap[ctype]['field']
-
-        if ctype=='generic':
-            fieldclassname=attr.type
-        else:
-            fieldclassname=atype
-
-        widget = self.getWidget(ctype, attr, attr.getName(), classelement, fieldclassname=fieldclassname)
-
-        if not widget.startswith('GenericWidget'):
-            map.update({'widget': widget})
+        if attr.hasDefault():
+            map['default'] = utils.getExpression(attr.getDefault())
 
         self.addVocabulary(classelement, attr, map)
-
-        doc=attr.getDocumentation(striphtml=self.strip_html)
+        doc = attr.getDocumentation(striphtml=self.strip_html)
 
         if attr.hasTaggedValue('validators'):
             #make validators to a list in order to append the ExpressionValidator
@@ -924,23 +901,31 @@ class ArchetypesGenerator(BaseGenerator):
             if map.has_key('validation_expression_errormsg'):
                 del map['validation_expression_errormsg']
 
-        res={'name':attr.getName(),
-             'fieldtype':atype,
-             'map':map,
-             'doc':doc,
-             'indent_level':indent_level,
-             'rawType':attr.getType(),
-             'array_field':attr.getUpperBound() != 1}
-
+        res = {
+            'name': attr.getName(),
+            'fieldtype': fieldclass=='generic' and rtype or fieldclass,
+            'ctype': ctype,
+            'rawType': attr.getType(),
+            'map': map,
+            'doc': doc,
+            'indent_level': indent_level,
+            'array_spec': self._getArrayFieldSpec(attr)
+        }
         return res
 
-    def getFieldSpecFromAssociation(self, rel, classelement, indent_level=0):
+
+    def _getFieldSpecFromAssoc(self, rel, classelement, indent_level=0, back=False):
         """Return the schema field code."""
 
-        log.debug("Getting the field string from an association.")
+        log.info("Getting the field string from an association.")
+        if back:
+            relside = rel.fromEnd
+        else:
+            relside = rel.toEnd
+            
         multiValued = 0
-        obj = rel.toEnd.obj
-        name = rel.toEnd.getName()
+        obj = relside.obj
+        name = relside.getName()
         relname = rel.getName()
         log.debug("Endpoint name: '%s'.", name)
         log.debug("Relationship name: '%s'.", relname)
@@ -957,20 +942,22 @@ class ArchetypesGenerator(BaseGenerator):
             else:
                 allowed_types=(obj.getName(),) + tuple(obj.getGenChildrenNames())
 
-        if int(rel.toEnd.mult[1]) == -1:
+        if int(relside.mult[1]) == -1:
             multiValued = 1
+            
         if name == None:
             name = obj.getName()+'_ref'
 
-        if self.getOption('relation_implementation', rel, 'basic') == 'relations':
-            log.debug("Using the 'relations' relation implementation.")
+        if self.getOption('relation_implementation', rel, 'basic') == 'relations':             
+            log.info("Using the 'relations' relation implementation.")
+            reftype = 'relation'
             # The relation can override the field
             field = self.getOption('reference_field',rel,None) or \
                   rel.getTaggedValue('reference_field') or \
-                  rel.toEnd.getTaggedValue('reference_field') or \
+                  relside.getTaggedValue('reference_field') or \
                   rel.getTaggedValue('field') or \
-                  rel.toEnd.getTaggedValue('field') or \
-                  self.typeMap['relation']['field']
+                  relside.getTaggedValue('field') or \
+                  self.typeMap[reftype]['field']
             # TBD: poseidon reference-as-field handling or so...
             if not field:
                 message = "Somehow we couldn't get at the fieldname. " \
@@ -979,114 +966,57 @@ class ArchetypesGenerator(BaseGenerator):
                 log.critical(message)
                 raise message
 
-            map = self.typeMap['relation']['map'].copy()
-            map.update({'multiValued': multiValued,
-                        'relationship': "'%s'" % relname})
-            map.update(self.getFieldAttributes(rel.toEnd))
-            map.update({'widget': self.getWidget('Reference', rel.toEnd,
-                                                 name, classelement)})
+            map = self.typeMap[reftype]['map'].copy()
         else:
-            log.debug("Using the standard relation implementation.")
+            log.info("Using the standard relation implementation.")            
+            reftype = back and 'backreference' or 'reference'
             # The relation can override the field
             field = rel.getTaggedValue('reference_field') or \
-                  rel.toEnd.getTaggedValue('reference_field') or \
-                  self.typeMap['reference']['field']
+                  relside.getTaggedValue('reference_field') or \
+                  self.typeMap[reftype]['field']
             # TBD: poseidon reference-as-field handling or so...
             if not field:
                 message = "Somehow we couldn't get at the fieldname. " \
-                        "Use normal drawn associations instead of " \
-                        "a named reference."
+                          "Use normal drawn associations instead of " \
+                          "a named reference."
                 log.critical(message)
-                raise message
-            map = self.typeMap['reference']['map'].copy()
-            map.update({'allowed_types': repr(allowed_types),
-                        'multiValued': multiValued,
-                        'relationship': "'%s'" % relname})
-            map.update(self.getFieldAttributes(rel.toEnd))
-            map.update({'widget':self.getWidget('Reference', rel.toEnd,
-                                                name, classelement)})
+                raise AttributeError, message
+            map = self.typeMap[reftype]['map'].copy()
+            map['allowed_types'] = repr(allowed_types)
 
             if getattr(rel,'isAssociationClass',0):
                 # Association classes with stereotype "stub" and tagged
                 # value "import_from" will not use ContentReferenceCreator
                 if rel.hasStereoType(self.stub_stereotypes,
                                      umlprofile=self.uml_profile) :
-                    map.update({'referenceClass':"%s" % rel.getName()})
+                    map['referenceClass'] = "%s" % rel.getName()
                     # do not forget the import!!!
                 else:
-                    map.update({'referenceClass':"ContentReferenceCreator('%s')"
-                                % rel.getName()})
+                    map['referenceClass'] = "ContentReferenceCreator('%s')" \
+                                             % rel.getName()
+        # common map settings
+        map['multiValued'] = multiValued
+        relationship = back and rel.getInverseName() or relname
+        map['relationship'] = "'%s'" % relationship
+        map.update(self.getFieldAttributes(relside))
+        map['widget'] = self.getWidget(relside, relside.getName(), reftype) 
+                                      #element, fieldname,         fieldtype
 
         doc=rel.getDocumentation(striphtml=self.strip_html)
-        res={'name':name,
-             'fieldtype':field,
-             'map':map,
-             'doc':doc,
-             'indent_level':indent_level}
+        res = {
+            'name': name,
+            'fieldtype': field,
+            'map': map,
+            'doc': doc,
+            'rawType': reftype,
+            'indent_level': indent_level
+        }
+        print res
         return res
 
-    def getFieldSpecFromBackAssociation(self, rel, classelement, indent_level=0):
-        """Gets the schema field code"""
-        multiValued = 0
-        obj = rel.fromEnd.obj
-        name = rel.fromEnd.getName()
-        relname = rel.getName()
-
-        if obj.isAbstract():
-            allowed_types= tuple(obj.getGenChildrenNames())
-        else:
-            allowed_types=(obj.getName(),) + tuple(obj.getGenChildrenNames())
-
-        if int(rel.fromEnd.mult[1]) == -1:
-            multiValued = 1
-        if name == None:
-            name = obj.getName() + '_ref'
-
-        if self.getOption('relation_implementation', rel, 'basic') == \
-           'relations'  and (rel.fromEnd.isNavigable or \
-                             rel.getTaggedValue('inverse_relation_name')):
-            # The relation can override the field
-            field = rel.getTaggedValue('relation_field') or \
-                  rel.getTaggedValue('field') or \
-                  rel.fromEnd.getTaggedValue('field') or \
-                  self.typeMap['relation']['field']
-            map = self.typeMap['relation']['map'].copy()
-            backrelname = rel.getInverseName()
-            map.update({'multiValued': multiValued,
-                        'relationship': "'%s'" % backrelname})
-            map.update(self.getFieldAttributes(rel.fromEnd))
-            map.update({'widget':self.getWidget('Reference', rel.fromEnd,
-                                                name, classelement)} )
-        else:
-            # The relation can override the field
-            field = rel.getTaggedValue('reference_field') or \
-                  rel.toEnd.getTaggedValue('back_reference_field') or \
-                  self.typeMap['backreference']['field']
-            map = self.typeMap['backreference']['map'].copy()
-            if rel.fromEnd.isNavigable and (self.backreferences_support or \
-                                            self.getOption('backreferences_support', rel, '0') == '1'):
-                map.update({'allowed_types': repr(allowed_types),
-                            'multiValued': multiValued,
-                            'relationship': "'%s'" % relname})
-                map.update(self.getFieldAttributes(rel.fromEnd))
-                map.update({'widget':self.getWidget('BackReference', rel.fromEnd,
-                                                    name, classelement)})
-
-                if getattr(rel,'isAssociationClass',0):
-                    map.update({'referenceClass': "ContentReferenceCreator('%s')"
-                                % rel.getName()})
-            else:
-                return None
-
-        doc = rel.getDocumentation(striphtml=self.strip_html)
-        res={'name':name,
-             'fieldtype':field,
-             'map':map,
-             'doc':doc,
-             'indent_level':indent_level}
-        return res
 
     def getLocalFieldSpecs(self, element, indent_level=0):
+        """aggregates the different field specifications."""
         field_specs = []
         aggregatedClasses = []
 
@@ -1118,26 +1048,28 @@ class ArchetypesGenerator(BaseGenerator):
             # and now the associations
             for rel in element.getFromAssociations():
                 name = rel.fromEnd.getName()
-                end=rel.fromEnd
+                end = rel.fromEnd
 
                 #print 'generating from assoc'
                 if name in self.reservedAtts:
                     continue
-                field_specs.append(self.getFieldSpecFromAssociation(rel,
-                                                                    element,
+                field_specs.append(self._getFieldSpecFromAssoc(rel, element,
                                                                     indent_level=indent_level+1))
 
-            #Back References
+            # Back References
             for rel in element.getToAssociations():
-                name = rel.fromEnd.getName()
-
-                #print "backreference"
-                if name in self.reservedAtts:
+                if not self.backreferences_support or \
+                   self.getOption('backreferences_support', rel, '0') == '0' or \
+                   self.getOption('relation_implementation', rel, 'basic') == 'basic':
                     continue
-                fc=self.getFieldSpecFromBackAssociation(rel,
-                                                        element,
-                                                        indent_level=indent_level+1)
-                if fc:
+                    name = rel.fromEnd.getName()
+                    if name in self.reservedAtts:
+                        continue
+                    fc = self._getFieldSpecFromAssoc(rel, element,
+                                                          indent_level=indent_level+1,
+                                                          back=True)
+                    if not fc:
+                        continue
                     field_specs.append(fc)
 
         return field_specs
@@ -3786,8 +3718,6 @@ class ArchetypesGenerator(BaseGenerator):
         log.info("Directory in which we're generating the files: '%s'.",
                  self.outfilename)
         log.info('Generating...')
-        if not has_enhanced_strip_support:
-            log.warn("Can't build i18n message catalog. Needs 'python 2.3' or later.")
         if self.build_msgcatalog and not has_i18ndude:
             log.warn("Can't build i18n message catalog. Module 'i18ndude' not found.")
         if not XMIParser.has_stripogram:

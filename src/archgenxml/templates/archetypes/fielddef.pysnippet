@@ -1,8 +1,7 @@
-<dtml-if "fetchfromfield">
-<dtml-var "fieldclass">._properties['widget'](
-<dtml-else>
-<dtml-var "widgetclass">(
+<dtml-if "doc">
+# <dtml-var "doc">
 </dtml-if>
+<dtml-var "fieldclass">(
 <dtml-in "options.keys()">
 <dtml-let key="_['sequence-item']">
 <dtml-if "len(options[key].split('\n'))>1">
@@ -12,4 +11,4 @@
 </dtml-if>
 </dtml-let>
 </dtml-in>
-)
+),

@@ -171,14 +171,14 @@ TYPE_MAP = {
     'image': {
         'field': u'ImageField',
         'map': {
-            u'storage': u'AttributeStorage()',
+            u'storage': u'AttributeStorage()', # XXX
         },
         'index': None,
     },
     'file': {
         'field': u'FileField',
         'map': {
-            u'storage': u'AttributeStorage()',
+            u'storage': u'AttributeStorage()', # XXX
         },
         'index': None,
     },
@@ -213,28 +213,36 @@ TYPE_MAP = {
         'index': None,
     },
     'generic': {
-        'field': u'%(type)sField',
+        'field': None,
+        'map': {},
+        'index': None,
+    },    
+    'copy': {
+        'field': 'copy',
         'map': {},
         'index': None,
     },
 }
 
-WIDGET_MAP = {
-    'string': u'StringWidget' ,
-    'fixedpoint': u'DecimalWidget' ,
-    'float': u'DecimalWidget',
-    'text': u'TextAreaWidget',
+WIDGET_MAP = { # only deal with special cases, such as combined field-widgets
+    'rich': u'RichWidget',
     'richtext': u'RichWidget',
-    'file': u'FileWidget',
-    'image': u'ImageWidget',
-    'color': u'ColorPickerWidget',
-    'country': u'CountryWidget',
-    'datagrid': u'DataGridWidget',
-    'date': u'CalendarWidget',
     'selection': u'SelectionWidget',
     'multiselection': u'MultiSelectionWidget',
     'reference': u'ReferenceBrowserWidget',
-    'BackReference': u'BackReferenceWidget'
+    'backreference': u'BackReferenceWidget',
+    'BackReference': u'BackReferenceWidget', # deprecated
+    'array': u'EnhancedArrayWidget',
+#    'file': u'FileWidget',
+#    'image': u'ImageWidget',
+#    'color': u'ColorPickerWidget',
+#    'country': u'CountryWidget',
+#    'datagrid': u'DataGridWidget',
+#    'date': u'CalendarWidget',
+#    'string': u'StringWidget' ,
+#    'fixedpoint': u'DecimalWidget' ,
+#    'float': u'DecimalWidget',
+#    'text': u'TextAreaWidget',
 }
 
 COERCE_MAP = {
