@@ -597,7 +597,7 @@ class ArchetypesGenerator(BaseGenerator):
         res = dtml()
         return res.decode('utf8')
 
-    def _getWidgetDefinition(self, element, fieldname, fieldtype, tgvprefix):
+    def _getWidgetDefinition(self, element, fieldname, ctype, tgvprefix):
         """a widget definition dictionary, 
         
         parameters see "getWidget" method
@@ -633,9 +633,9 @@ class ArchetypesGenerator(BaseGenerator):
         if default:
             # use default
             wdef['startcode'] = default     
-        if fieldtype in atmaps.WIDGET_MAP.keys():
+        if ctype in atmaps.WIDGET_MAP.keys():
             # default widget for this widgettype found in 
-            wdef['widgetclass'] = atmaps.WIDGET_MAP[fieldtype]
+            wdef['widgetclass'] = atmaps.WIDGET_MAP[ctype]
         else:
             # use fieldclassname if and only if no default widget has been given
             wdef['fetchfromfield'] = True
@@ -731,6 +731,10 @@ class ArchetypesGenerator(BaseGenerator):
         adef['indent'] = utils.indent
         adef['basefield'] = utils.indent(res, indent_level)
         adef['options'] = arraydefs
+        for key in adef['options']:
+            if type(adef['options'][key]) not in StringTypes:
+                adef['options'][key] = u"%s" % adef['options'][key]
+            
         templ = self.readTemplate(['archetypes', 'arrayfielddef.pysnippet'])
         dtml = HTML(templ, adef)
         res = dtml()
@@ -863,7 +867,7 @@ class ArchetypesGenerator(BaseGenerator):
         map = self.typeMap[ctype]['map'].copy()
         
         # apply field attributes, widget and default value, ...
-        map['widget'] = self.getWidget(attr, attr.getName(), fieldclass)
+        map['widget'] = self.getWidget(attr, attr.getName(), ctype)
         map.update(self.getFieldAttributes(attr))
         if attr.hasDefault():
             map['default'] = utils.getExpression(attr.getDefault())
