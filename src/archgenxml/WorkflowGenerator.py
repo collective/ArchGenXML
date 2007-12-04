@@ -119,7 +119,7 @@ class WorkflowGenerator(BaseGenerator):
         if not subscribers:
             log.debug('No workflow subscribers in this product.')
             if os.path.exists(modulepath):
-                log.warn('superfluos wfsubscribers.py left, no longer used.')
+                log.warn('superfluous wfsubscribers.py left, no longer used.')
             return
         product = self.package.getProduct()
         if os.path.exists(modulepath):
