@@ -6,6 +6,7 @@ from PyParser import PyModule
 from BaseGenerator import BaseGenerator
 from archgenxml.documenttemplate.documenttemplate import HTML
 from archgenxml.TaggedValueSupport import STATE_PERMISSION_MAPPING
+from TaggedValueSupport import tgvRegistry
 log = logging.getLogger('workflow')
 
 
@@ -547,17 +548,17 @@ class StateInfo(object):
         tagged_values = state.getTaggedValues()
         permission_definitions = []
 
-        for tag, tag_value in tagged_values.items():
+        for tag_name, tag_value in tagged_values.items():
             # list of tagged values that are NOT permissions
-            if tag in self.non_permissions:
+            if tag_name in self.non_permissions:
                 # short check if its registered, registry complains in log.
-                tgvRegistry.isRegistered(tagname, state.classcategory, 
+                tgvRegistry.isRegistered(tag_name, state.classcategory, 
                                          silent=True)
                 continue
-            tag = tag.strip()
+            tag_name = tag_name.strip()
             
             # look up abbreviations if any
-            permission = STATE_PERMISSION_MAPPING.get(tag.lower(), tag)
+            permission = STATE_PERMISSION_MAPPING.get(tag_name.lower(), tag)
             if not tag_value:
                 log.debug("Empty tag value, treating it as a reset "
                           "for acquisition, so acquisition=0.")
