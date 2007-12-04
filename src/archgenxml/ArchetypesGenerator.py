@@ -415,7 +415,12 @@ class ArchetypesGenerator(BaseGenerator):
         if element.hasAssocClass:
             print >> outfile,'from Products.Archetypes.ReferenceEngine ' + \
                   'import ContentReferenceCreator'
-
+                  
+        
+        if [attr for attr in element.getAttributeDefs() if attr.getUpperBound()  != 1]:
+            print >>outfile, 'from Products.CompoundField.EnhancedArrayWidget'+\
+                             ' import EnhancedArrayWidget'
+            
         useRelations = 0
 
         #check wether we have to import Relation's Relation Field
@@ -426,7 +431,7 @@ class ArchetypesGenerator(BaseGenerator):
                 useRelations = 1
 
         for rel in element.getToAssociations():
-            if self.getOption('relation_implementation',rel,'basic') == 'relations' and \
+            if self.getOption('relation_implementation', rel, 'basic') == 'relations' and \
                (rel.getTaggedValue('inverse_relation_name') or rel.fromEnd.isNavigable) :
                 useRelations = 1
 
