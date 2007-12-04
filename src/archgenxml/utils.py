@@ -89,7 +89,10 @@ def mapName(oldName):
             newName = NameTable[oldName]
     return newName.replace('-', '_')
 
-def indent(s, indent, prepend='', skipFirstRow=False, stripBlank=False):
+def indent(s, indent, prepend='', 
+           skipFirstRow=False, 
+           stripBlank=True, 
+           skipBlank=False):
     """Indent string 's'.
 
     's' is a string with optional '\n's for multiple lines. 's' can be
@@ -106,6 +109,8 @@ def indent(s, indent, prepend='', skipFirstRow=False, stripBlank=False):
         lines = ['    '*indent + prepend + l for l in rows]
     if stripBlank:
         lines = [line.rstrip() for line in lines]
+    if skipBlank:
+        lines = [line.rstrip() for line in lines if line.strip()]
     return '\n'.join(lines)
 
 def getExpression(s):
