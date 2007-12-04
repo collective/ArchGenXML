@@ -1099,7 +1099,11 @@ class XMIElement(object):
 
     def getPackage(self):
         """Returns the package to which this object belongs."""
-        return self.package
+        if self.package is not None:
+            return self.package
+        if self.getParent():
+            return self.getParent().getPackage()
+        return None
 
     def getPath(self):
         return [self.getName()]
