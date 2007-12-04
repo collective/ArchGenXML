@@ -223,7 +223,7 @@ def updateRoleMappings(context):
 def postInstall(context):
     """Called as at the end of the setup process. """
     # the right place for your custom code
-    pass
+    site = context.getSite()
 
 <dtml-else>
 <dtml-var "parsedModule.functions['postInstall'].getSrc()">
