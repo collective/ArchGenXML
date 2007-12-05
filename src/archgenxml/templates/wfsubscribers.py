@@ -8,11 +8,11 @@ def <dtml-var "subscriber['method']">(obj, event):
     # do only change the code section inside this function.
     if not event.transition or \
        event.transition.id != '<dtml-var "subscriber['payload']['transition']">':
-        return            
+        return
 <dtml-var "generator.getProtectedSection(parsed_module, subscriber['method'], 1)">
-    
+
 </dtml-let>
-</dtml-in>    
+</dtml-in>
 <dtml-in "parsed_module.functions.keys()">
 <dtml-let func="parsed_module.functions[_['sequence-item']]">
 <dtml-if "func.name not in [subscribers[k]['method'] for k in subscribers.keys()]">

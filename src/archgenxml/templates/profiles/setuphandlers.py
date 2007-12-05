@@ -17,14 +17,14 @@ from Products.CMFCore.utils import getToolByName
 
 def installGSDependencies(context):
     """Install dependend profiles."""
-    
+
     # XXX Hacky, but works for now. has to be refactored as soon as generic
     # setup allows a more flexible way to handle dependencies.
-    
+
     dependencies = [<dtml-var "', '.join(dependend_profiles)">]
     if not dependencies:
         return
-    
+
     site = context.getSite()
     setup_tool = getToolByName(site, 'portal_setup')
     for dependency in dependencies:
@@ -41,7 +41,7 @@ def installGSDependencies(context):
         for step in importsteps:
             setup_tool.runImportStep(step) # purging flag here?
         setup_tool.setImportContext(old_context)
-    
+
     # re-run some steps to be sure the current profile applies as expected
     importsteps = setup_tool.getImportStepRegistry().sortSteps()
     filter = [
@@ -55,14 +55,14 @@ def installGSDependencies(context):
     importsteps = [s for s in importsteps if s in filter]
     for step in importsteps:
         setup_tool.runImportStep(step) # purging flag here?
-        
+
 def installQIDependencies(context):
     """This is for old-style products using QuickInstaller"""
     site = context.getSite()
     qi = getToolByName(site, 'portal_quickinstaller')
 
     for dependency in DEPENDENCIES:
-        if qi.isProductInstalled(dependency):            
+        if qi.isProductInstalled(dependency):
             logger.info("Re-Installing dependency %s:" % dependency)
             qi.reinstallProducts([dependency])
         else:
@@ -105,27 +105,27 @@ def setupHideToolsFromNavigation(context):
     # uncatalog tools
     site = context.getSite()
     toolnames = <dtml-var "repr(toolnames)">
-    portalProperties = getToolByName(site, 'portal_properties')    
+    portalProperties = getToolByName(site, 'portal_properties')
     navtreeProperties = getattr(portalProperties, 'navtree_properties')
     if navtreeProperties.hasProperty('idsNotToList'):
         for toolname in toolnames:
             try:
                 portal[toolname].unindexObject()
             except:
-                pass        
+                pass
             current = list(navtreeProperties.getProperty('idsNotToList') or [])
             if toolname not in current:
                 current.append(toolname)
                 kwargs = {'idsNotToList': current}
                 navtreeProperties.manage_changeProperties(**kwargs)
-                
+
 </dtml-if>
 <dtml-if "catalogmultiplexed">
 def setupCatalogMultiplex(context):
     """ Configure CatalogMultiplex.
-    
+
     explicit add classes (meta_types) be indexed in catalogs (white)
-    or removed from indexing in a catalog (black) 
+    or removed from indexing in a catalog (black)
     """
     site = context.getSite()
     #dd#
@@ -157,7 +157,7 @@ def setupCatalogMultiplex(context):
                 if catalog in current_catalogs:
                     current_catalogs.remove(catalog)
         atool.setCatalogsByType(meta_type, list(current_catalogs))
-        
+
 </dtml-if>
 <dtml-if "hasrelations">
 def installRelations(context):
@@ -169,13 +169,13 @@ def installRelations(context):
         logger.info("Installing Relations Product")
         qi.installProducts(['Relations'])
     relations_tool = getToolByName(site, 'relations_library')
-    xmlpath = os.path.join(package_home(product_globals), 'data', 
+    xmlpath = os.path.join(package_home(product_globals), 'data',
                            'relations.xml')
     f = open(xmlpath)
     xml = f.read()
     f.close()
-    relations_tool.importXML(xml)    
-    
+    relations_tool.importXML(xml)
+
 </dtml-if>
 <dtml-if "hasvocabularies">
 def installVocabularies(context):
@@ -208,16 +208,16 @@ def installVocabularies(context):
                 atvm[vocabname].importXMLBinding(data)
             else:
                 pass
-            
+
 </dtml-if>
 
 def updateRoleMappings(context):
-     """after workflow changed update the roles mapping. this is like pressing
-     the button 'Update Security Setting' and portal_workflow"""
-     
-     wft = getToolByName(context.getSite(), 'portal_workflow')
-     wft.updateRoleMappings()
-    
+    """after workflow changed update the roles mapping. this is like pressing
+    the button 'Update Security Setting' and portal_workflow"""
+
+    wft = getToolByName(context.getSite(), 'portal_workflow')
+    wft.updateRoleMappings()
+
 <dtml-if "'postInstall' not in parsedModule.functions.keys()">
 
 def postInstall(context):
