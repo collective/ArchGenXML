@@ -36,7 +36,6 @@ def handleSectionedFile(templatepath, outputpath,
     @param templateparams - the placeholderparams for the dtml template
     """
     
-    
     try:
         existentfile = open(outputpath)
         existentbuffer = existentfile.readlines()
@@ -52,7 +51,7 @@ def handleSectionedFile(templatepath, outputpath,
     # reflect existing python constructs
     
     if os.path.splitext(outputpath)[-1] in ('.py','.cpy'):
-        parsedModule=PyModule(existentbuffer and '\n'.join(existentbuffer)+'\n' or '', mode='string')
+        parsedModule=PyModule(existentbuffer and ''.join(existentbuffer)+'\n' or '', mode='string')
         if templateparams:
             templateparams['parsedModule']=parsedModule
 

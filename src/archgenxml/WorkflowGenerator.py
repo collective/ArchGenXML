@@ -407,6 +407,7 @@ class WorkflowInfo(object):
             pd = si.permissionsDefinitions
             for pdef in pd:
                 perm = pdef['permission'].strip()
+ 
                 if perm not in ret:
                     ret.append(str(perm))
         return ret    
@@ -558,7 +559,7 @@ class StateInfo(object):
             tag_name = tag_name.strip()
             
             # look up abbreviations if any
-            permission = STATE_PERMISSION_MAPPING.get(tag_name.lower(), tag)
+            permission = STATE_PERMISSION_MAPPING.get(tag_name.lower(), tag_value or '')
             if not tag_value:
                 log.debug("Empty tag value, treating it as a reset "
                           "for acquisition, so acquisition=0.")

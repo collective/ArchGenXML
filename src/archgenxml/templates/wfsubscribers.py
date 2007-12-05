@@ -17,7 +17,6 @@ def <dtml-var "subscriber['method']">(obj, event):
 <dtml-let func="parsed_module.functions[_['sequence-item']]">
 <dtml-if "func.name not in [subscribers[k]['method'] for k in subscribers.keys()]">
 <dtml-var "func.src">
-
 </dtml-if>
 </dtml-let>
 </dtml-in>
