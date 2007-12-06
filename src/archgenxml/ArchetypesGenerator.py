@@ -2262,7 +2262,7 @@ class ArchetypesGenerator(BaseGenerator):
             self.generatePackageInitPy(package)
         # Generate a flavors.zcml
         self.generatePackageFlavorsZcml(package)
-        self.generateBrowserZCML(package,'configure.zcml')
+        self.generateBrowserZCML(package)
 
     def updateVersionForProduct(self, package):
         """Increment the build number in version.txt,"""
@@ -2589,9 +2589,11 @@ class ArchetypesGenerator(BaseGenerator):
                                             'hasBrowserViews' : hasBrowserViews,})
 
 
-    def generateBrowserZCML(self, package,fname="browser.zcml"):
-        """generates the subscribers.zcml"""
+    def generateBrowserZCML(self, package,fname="generatedbrowser.zcml"):
+        """generates the generatedbrowser.zcml"""
         browserViews = self.getViewClasses(package)
+        if not browserViews:
+            return
         
         templdir=os.path.join(package.getFilePath(),'templates')
         if browserViews:

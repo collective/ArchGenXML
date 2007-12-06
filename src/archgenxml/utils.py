@@ -206,7 +206,7 @@ def wrap(text, width):
 
 ARCHGENXML_VERSION_LINE = """\
 ArchGenXML %s
-(c) 2003-2007 BlueDynamics, Austria, GNU General Public License 2.0 or later\
+(c) 2003-2007 BlueDynamics Alliance, Austria, GPL 2.0 or later\
 """
 
 def version():

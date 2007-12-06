@@ -35,7 +35,6 @@ def handleSectionedFile(templatepath, outputpath,
     @param sectionnames - list of section names to consider
     @param templateparams - the placeholderparams for the dtml template
     """
-    
     try:
         existentfile = open(outputpath)
         existentbuffer = existentfile.readlines()

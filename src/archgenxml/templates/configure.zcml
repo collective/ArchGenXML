@@ -9,9 +9,8 @@
 <dtml-if "hasSubscribers">
   <include file="generatedsubscribers.zcml"/>
 </dtml-if>
-  
 <dtml-if "hasBrowserViews">
-  <include file="browser.zcml"/>
+  <include file="generatedbrowser.zcml"/>
 </dtml-if>
 
 <dtml-in "package.getPackages()">
