@@ -273,7 +273,7 @@ class ArchetypesGenerator(BaseGenerator):
         # Check for necessity to import ReferenceBrowserWidget
         import_datagrid = False
         for att in element.getAttributeDefs():
-            if att.getType() == 'reference':
+            if att.getType() in ('reference','relation'):
                 import_reference = True
                 print >>out, \
                       'from Products.ATReferenceBrowserWidget.ATReferenceBrowserWidget'+\
@@ -930,6 +930,8 @@ class ArchetypesGenerator(BaseGenerator):
         log.info("Getting the field string from an association.")
         if back:
             relside = rel.fromEnd
+            if not rel.fromEnd.isNavigable:
+                return None
         else:
             relside = rel.toEnd
             
@@ -1068,10 +1070,10 @@ class ArchetypesGenerator(BaseGenerator):
 
             # Back References
             for rel in element.getToAssociations():
-                if not self.backreferences_support or \
-                   self.getOption('backreferences_support', rel, '0') == '0' or \
-                   self.getOption('relation_implementation', rel, 'basic') == 'basic':
-                    continue
+                if self.backreferences_support or \
+                   utils.isTGVTrue(self.getOption('backreferences_support', rel, False)) or \
+                   self.getOption('relation_implementation', rel, 'basic') == 'relations':
+                    
                     name = rel.fromEnd.getName()
                     if name in self.reservedAtts:
                         continue
