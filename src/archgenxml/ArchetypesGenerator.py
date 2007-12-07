@@ -715,7 +715,8 @@ class ArchetypesGenerator(BaseGenerator):
                 continue
             val = map[key]
             if type(val) not in StringTypes:
-                val = u"%s" % val
+                #val = u"%s" % val
+                val=str(val)
             fdef['options'][key] = val
             
         templ = self.readTemplate(['archetypes', 'fielddef.pysnippet'])        
@@ -882,7 +883,7 @@ class ArchetypesGenerator(BaseGenerator):
                 map['validators'] = tuple(eval(val))
             except:
                 map['validators'] = tuple(val.split(','))
-
+                
         if map.has_key('validation_expression'):
             #append the validation_expression to the validators
             expressions = attr.getTaggedValue('validation_expression').split('\n')
