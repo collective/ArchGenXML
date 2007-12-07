@@ -271,9 +271,7 @@ class ArchetypesGenerator(BaseGenerator):
                   'ExpressionValidator'
 
         # Check for necessity to import ReferenceBrowserWidget
-        import_datagrid = False
-        for att in element.getAttributeDefs():
-            if att.getType() in ('reference','relation'):
+        if self.getReferenceFieldSpecs(element):
                 import_reference = True
                 print >>out, \
                       'from Products.ATReferenceBrowserWidget.ATReferenceBrowserWidget'+\
@@ -1026,34 +1024,12 @@ class ArchetypesGenerator(BaseGenerator):
         print res
         return res
 
-
-    def getLocalFieldSpecs(self, element, indent_level=0):
-        """aggregates the different field specifications."""
-        field_specs = []
-        aggregatedClasses = []
-
-        for attrDef in element.getAttributeDefs():
-            name = attrDef.getName()
-            #if name in self.reservedAtts:
-            #    continue
-            mappedName = utils.mapName(name)
-
-            field_specs.append(self.getFieldSpecFromAttribute(attrDef, element,
-                                                              indent_level=indent_level+1))
-
-        for child in element.getChildren():
-            name = child.getCleanName()
-            if name in self.reservedAtts:
-                continue
-            unmappedName = child.getUnmappedCleanName()
-            if child.getRef():
-                aggregatedClasses.append(str(child.getRef()))
-
-            if child.isIntrinsicType():
-                field_specs.append(self.getFieldSpec(child, element,
-                                                     indent_level=indent_level+1))
-
+    def getReferenceFieldSpecs(self,element,field_specs=None,checkOnly=False, indent_level=0):
         # only add reference fields if tgv generate_reference_fields
+        # checkOnly parameter is for testing in order to generate the necessary imports
+        if field_specs is None:
+            field_specs=[]
+            
         if utils.toBoolean(
             self.getOption('generate_reference_fields', element, True) ):
             #print 'rels:',element.getName(),element.getFromAssociations()
@@ -1084,6 +1060,35 @@ class ArchetypesGenerator(BaseGenerator):
                         continue
                     field_specs.append(fc)
 
+        return field_specs
+    
+    def getLocalFieldSpecs(self, element, indent_level=0):
+        """aggregates the different field specifications."""
+        field_specs = []
+        aggregatedClasses = []
+
+        for attrDef in element.getAttributeDefs():
+            name = attrDef.getName()
+            #if name in self.reservedAtts:
+            #    continue
+            mappedName = utils.mapName(name)
+
+            field_specs.append(self.getFieldSpecFromAttribute(attrDef, element,
+                                                              indent_level=indent_level+1))
+
+        for child in element.getChildren():
+            name = child.getCleanName()
+            if name in self.reservedAtts:
+                continue
+            unmappedName = child.getUnmappedCleanName()
+            if child.getRef():
+                aggregatedClasses.append(str(child.getRef()))
+
+            if child.isIntrinsicType():
+                field_specs.append(self.getFieldSpec(child, element,
+                                                     indent_level=indent_level+1))
+
+        field_specs.extend(self.getReferenceFieldSpecs(element, indent_level=indent_level))
         return field_specs
 
     # Generate get/set/add member functions.
