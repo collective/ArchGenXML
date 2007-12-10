@@ -713,14 +713,15 @@ class ArchetypesGenerator(BaseGenerator):
                 continue
             val = map[key]
             if type(val) not in StringTypes:
-                #val = u"%s" % val
-                val=str(val)
+                val = str(val)
+            if type(val) == types.UnicodeType:
+                val = val.encode('utf8')
             fdef['options'][key] = val
             
         templ = self.readTemplate(['archetypes', 'fielddef.pysnippet'])        
         dtml = HTML(templ, fdef)
         res = dtml()        
-        
+                
         if not arraydefs:
             res = utils.indent(res, indent_level)
             return res.decode('utf8')
@@ -2570,7 +2571,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         handleSectionedFile(['profiles', 'profiles.zcml'],
                             os.path.join(ppath, 'profiles.zcml'),
-                            sectionnames=['profiles.zcml'],
+                            sectionnames=['profiles.zcml-top', 'profiles.zcml'],
                             templateparams={'product_name': pname})
 
         packageIncludes = [m.getModuleName() for m in

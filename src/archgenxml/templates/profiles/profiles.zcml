@@ -3,6 +3,9 @@
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="<dtml-var "product_name">">
 
+  <!-- ##code-section profiles.zcml-top #fill in your manual code here -->
+  <!-- ##/code-section profiles.zcml-top -->
+
   <genericsetup:registerProfile
       name="default"
       title="<dtml-var "product_name">"
