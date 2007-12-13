@@ -55,6 +55,7 @@ base_uml_profile.addStereoType('view_class', ['XMIClass'],
     description='Generate this class as a zope3 view class '
                 'instead of as an Archetypes class.')
 
+
 base_uml_profile.addStereoType('zope_class', ['XMIClass'],
     dispatching=1,
     generator='generateZopeClass',
@@ -70,7 +71,7 @@ class BaseGenerator:
     uml_profile = base_uml_profile
     default_class_type = 'python_class'
     default_interface_type = 'z3'
-    view_class_stereotype = 'view_class'
+    view_class_stereotype = ['view_class', 'view']
     # indent helper for log output:
     infoind = 0
 

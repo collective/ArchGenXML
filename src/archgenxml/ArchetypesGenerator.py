@@ -134,7 +134,7 @@ class ArchetypesGenerator(BaseGenerator):
     vocabulary_item_stereotype = ['vocabulary_term']
     vocabulary_container_stereotype = ['vocabulary']
     remember_stereotype = ['remember']
-    python_stereotype = ['python', 'python_class', 'view']
+    python_stereotype = ['python', 'python_class', 'view', 'view_class']
     folder_stereotype = ['atfolder', 'folder', 'ordered', 'large', 'btree']
     atct_stereotype = ['atfolder', 'atfile', 'atdocument', 'atevent', 'atimage',
                        'atnewsitem', 'atlink']
@@ -240,12 +240,13 @@ class ArchetypesGenerator(BaseGenerator):
         log.debug("Together with the targetroot that means '%s'.", ffn)
         return utils.makeDir(ffn, force=force)
 
-    def getSkinPath(self, element):
+    def getSkinPath(self, element,part='templates'):
         # XXX skins are now split into multiple path that can be choose
         # We may find an algo to choose the good directory for fields and widgets
         # check generateSkinsDirectories method [encolpe]
         fp = element.getRootPackage().getFilePath()
-        sdp = self._skin_dirs[0]
+        
+        sdp = self._skin_dirs.get(part,self._skin_dirs.get('root'))
         return os.path.join(fp, sdp)
 
     def generateDependentImports(self, element):
@@ -2271,7 +2272,7 @@ class ArchetypesGenerator(BaseGenerator):
             self.generatePackageInitPy(package)
         # Generate a flavors.zcml
         self.generatePackageFlavorsZcml(package)
-        self.generateBrowserZCML(package)
+        self.generateBrowserZCML(package,'browser.zcml')
 
     def updateVersionForProduct(self, package):
         """Increment the build number in version.txt,"""
@@ -3579,34 +3580,38 @@ class ArchetypesGenerator(BaseGenerator):
         # not expose namesapce conflicts.
         # [jensens]
 
-        skindirs = root.getTaggedValue('skin_directories',
-                                       'templates, styles, images')
-        if skindirs.strip() == 'no':
-            log.debug("Do not creates skinsdir")
+        skindirstgv=root.getTaggedValue('skin_directories','').strip()
+        if skindirstgv.strip() == 'no':
+            log.debug("Do not create skinsdir")
             return
+
+        skindirs = skindirstgv and Set(skindirstgv.split(',')) or Set([])
+        skindirs=skindirs.union(Set(['templates', 'styles', 'images']))
+
 
         #create the directories
         self.makeDir(root.getFilePath())
         self.makeDir(os.path.join(root.getFilePath(),'skins'))
 
-        self._skin_dirs = []
+        self._skin_dirs = {}
         oldschooldir = os.path.join(root.getFilePath(),'skins',
                                     root.getProductModuleName())
+
         if not os.path.exists(oldschooldir):
-            skindirs = [sd.strip() for sd in skindirs.split(',')]
+            skindirs = [sd.strip() for sd in skindirs]
             for skindir in skindirs:
                 if not sd:
                     continue
                 sd = "%s_%s" % (root.getName().lower(), skindir)
                 sdpath = os.path.join(root.getFilePath(),'skins', sd)
                 self.makeDir(sdpath)
-                self._skin_dirs.append(os.path.join('skins', sd))
+                self._skin_dirs[skindir]=os.path.join('skins', sd)
                 log.debug("Keeping/ creating skinsdir at: %s" % sdpath)
         else:
-            self._skin_dirs.append(os.path.join('skins', root.getProductModuleName()))
+            self._skin_dirs['root']=(os.path.join('skins', root.getProductModuleName()))
             log.info("Keeping old school skindir at: '%s'.", oldschooldir)
 
-
+        
     def generateProduct(self, root):
         dirMode=0
         outfile=None
@@ -3864,6 +3869,7 @@ class ArchetypesGenerator(BaseGenerator):
     def _isContentClass(self, cclass):
         """Check if given class is content class
         """
+            
         if cclass.isInternal() \
            or cclass.getName() in self.hide_classes \
            or cclass.getName().lower().startswith('java::'): # Enterprise Architect fix!
@@ -3927,11 +3933,29 @@ class ArchetypesGenerator(BaseGenerator):
         if not content_icon:
             # If an icon file with the default name exists in the skin, do not
             # comment out the icon definition
-            fti['content_icon'] = cclass.getCleanName()+'.gif'
-            icon_filename = os.path.join(self.getSkinPath(cclass),
-                                         content_icon)
+            if self.elementIsFolderish(cclass):
+                fti['content_icon'] = cclass.getCleanName()+'.gif'
+            else:
+                fti['content_icon'] = cclass.getCleanName()+'.gif'
+                
         else:
             fti['content_icon'] = content_icon
+
+        default_icon_name=self.elementIsFolderish(cclass) and 'folder_icon.gif' or \
+            'document_icon.gif'
+
+
+        #copy the default icons
+        gifSourcePath = os.path.join(self.templateDir, default_icon_name)
+        toolgif = open(gifSourcePath, 'rb').read()
+
+        gifTargetPath = os.path.join(self.getSkinPath(cclass,part='images'),
+                                     fti['content_icon'])
+
+        of=self.makeFile(gifTargetPath, False, 1)
+        if of:
+            of.write(toolgif)
+            of.close()
 
         # If we are generating a tool, include the template which sets
         # a tool icon
@@ -3943,7 +3967,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         toolicon = cclass.getTaggedValue('toolicon')
         if not toolicon:
-            fti['toolicon'] = cclass.getCleanName()+'.gif'
+            fti['toolicon'] = 'tool.gif'
         else:
             fti['toolicon'] = toolicon
 

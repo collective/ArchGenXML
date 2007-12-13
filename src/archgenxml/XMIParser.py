@@ -1291,8 +1291,15 @@ class XMIPackage(XMIElement, StateMachineContainer):
         self.packages.append(p)
         p.parent = self
 
-    def getPackages(self):
-        return self.packages
+    def getPackages(self, recursive=False):
+        res=self.packages
+
+        if recursive:
+            res = list(res)
+            for p in self.packages:
+                res.extend(p.getPackages(recursive=1))
+
+        return res
 
     def buildPackages(self):
         packEls = XMI.getPackageElements(self.domElement)
