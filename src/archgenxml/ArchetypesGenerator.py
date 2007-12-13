@@ -3880,6 +3880,10 @@ class ArchetypesGenerator(BaseGenerator):
                                 umlprofile=self.uml_profile):
             log.debug("Ignoring non content class '%s'.", cclass.getName())
             return False
+        
+        if cclass.getPackage().hasStereoType(self.stub_stereotypes):
+            return False
+
         return True
 
     def _getFTI(self, cclass):

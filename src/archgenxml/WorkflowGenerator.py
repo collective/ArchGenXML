@@ -23,7 +23,8 @@ class WorkflowGenerator(BaseGenerator):
     def generateWorkflows(self):
         log.debug("Generating workflows.")
         statemachines = self.package.getStateMachines()
-        if not statemachines:
+        typemapping=self.typeMapping()
+        if not statemachines and not typemapping:
             log.debug("No workflows that agx knows off.")
             return
 
@@ -246,6 +247,7 @@ class WorkflowGenerator(BaseGenerator):
                     continue
                 name = klass.getCleanName()
                 classes[name] = workflowId
+
         classNames = classes.keys()
         classNames.sort()
         result = []
@@ -254,7 +256,11 @@ class WorkflowGenerator(BaseGenerator):
             item['id'] = id_ # portal type
             item['workflowId'] = classes[id_]
             result.append(item)
-            
+
+        #handle the use_workflow tgvs
+        for klass in self.package.getProduct().getClasses(recursive=True):
+            if klass.hasTaggedValue('use_workflow'):
+                result.append(dict(id=klass.getCleanName(),workflowId=klass.getTaggedValue('use_workflow')))
         # remember special case
         remembertypes = []
         self.atgenerator.getRememberTypes(remembertypes, self.package)
