@@ -755,7 +755,7 @@ class ArchetypesGenerator(BaseGenerator):
                                         tgvprefix='array:widget:')
         tgvs = element.getTaggedValues()
         for key in tgvs:
-            if not key.startswith('array:') or key.startswith('array:widget:'):
+            if not key.startswith('array:') or key.startswith('array:widget'):
                 continue
             defs[key[6:]] = tgvs[key]                        
         return defs    
