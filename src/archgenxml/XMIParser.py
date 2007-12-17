@@ -1126,7 +1126,7 @@ class XMIElement(object):
     def getClientDependencies(self, includeParents=False,
                               dependencyStereotypes=None):
                                   
-        res = self.clientDependencies
+        res = list(self.clientDependencies)
         if includeParents:
             o = self.getParent()
             if o:

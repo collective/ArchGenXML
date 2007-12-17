@@ -228,5 +228,6 @@ def postInstall(context):
 <dtml-var "parsedModule.functions['postInstall'].getSrc()">
 </dtml-if>
 
+
 ##code-section FOOT
 ##/code-section FOOT
