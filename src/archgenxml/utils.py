@@ -37,6 +37,14 @@ specialrpl = {
     # add more for other language here
 }
 
+def capitalize(s):
+    '''alternative to standard capitalize() method that does not set the trailing
+    chars to lowercase as string.capitzlize() does'''
+    if not s:
+        return s
+    
+    return '%s%s' % (s[0].upper(),s[1:])
+    
 def makeFile(filename, force=1, binary=0):
     log.debug("Calling makeFile to create '%s'.", filename)
     options = component.getUtility(IOptions, name='options')

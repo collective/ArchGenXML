@@ -2751,10 +2751,12 @@ class ArchetypesGenerator(BaseGenerator):
         """
         klasses = package.getClasses(recursive=1)
         for klass in klasses:
+                
             if not self._isContentClass(klass):
                 continue
 
             for attribute in klass.getAttributeDefs():
+                    
                 index = self.getOption('index', attribute, None)
                 if index:
                     log.warn('Deprecated index usage!')
@@ -2777,7 +2779,7 @@ class ArchetypesGenerator(BaseGenerator):
                         accessor = attribute.getTaggedValue('accessor', None)
                     if not accessor:
                         accessor = attribute.getCleanName()
-                        accessor = 'get%s' % accessor.capitalize()
+                        accessor = 'get%s' % utils.capitalize(accessor)
                     indexdef = dict()
                     indexdef['name'] = accessor
                     indexdef['meta_type'] = index
@@ -2799,9 +2801,9 @@ class ArchetypesGenerator(BaseGenerator):
                 # new sytle AGX2x index declaration
                 metadata = self.getOption('catalog:metadata', attribute, '0')
                 metadata = self.getOption('collection:metadata', attribute, metadata)
-                metadata = utils.isTGVTrue(metadata)
+                metadata = utils.isTGVTrue(self.processExpression(metadata))
                 index = self.getOption('catalog:index', attribute, '0')
-                index = utils.isTGVTrue(index)
+                index = utils.isTGVTrue(self.processExpression(index))
                 if not (index or metadata):
                     continue
                 catalogname = self.getOption('catalog:name', attribute,
@@ -2813,7 +2815,7 @@ class ArchetypesGenerator(BaseGenerator):
                 accessor = attribute.getTaggedValue('accessor', '')
                 if not accessor:
                     accessor = attribute.getCleanName()
-                    accessor = 'get%s' % accessor.capitalize()
+                    accessor = 'get%s' % utils.capitalize(accessor)
 
                 # find attributes
                 attributes = attribute.getTaggedValue('index:attributes', [])
@@ -2877,7 +2879,7 @@ class ArchetypesGenerator(BaseGenerator):
                 accessor = attribute.getTaggedValue('accessor', '')
                 if not accessor:
                     accessor = attribute.getCleanName()
-                    accessor = 'get%s' % accessor.capitalize()
+                    accessor = 'get%s' % utils.capitalize(accessor)
 
                 # find label ...
                 criteria_label = self.getOption('collection:criteria_label',
