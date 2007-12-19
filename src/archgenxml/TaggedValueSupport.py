@@ -593,6 +593,10 @@ category = 'attribute'
 # the Archetypes documentation to find out which values you can set on
 # each field. Some of the more common ones are:
 
+tagname = 'expression'
+explanation = """evaluation expression for computed fields."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'required'
 explanation = """Set to true (1) to make the field required"""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
