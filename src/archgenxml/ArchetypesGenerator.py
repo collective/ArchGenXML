@@ -3958,7 +3958,7 @@ class ArchetypesGenerator(BaseGenerator):
         gifTargetPath = os.path.join(self.getSkinPath(cclass,part='images'),
                                      fti['content_icon'])
 
-        of=self.makeFile(gifTargetPath, False, 1)
+        of=self.makeFile(gifTargetPath, False, False)
         if of:
             of.write(toolgif)
             of.close()

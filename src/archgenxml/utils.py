@@ -170,6 +170,9 @@ def processExpression(value, asString=True):
 def isTGVTrue(tgv):
     if isinstance(tgv, (str, unicode)):
         tgv = tgv.lower()
+    else:
+        return bool(tgv)
+    
     return tgv in (1, '1', 'true')
 
 def isTGVFalse(tgv):
@@ -180,6 +183,9 @@ def isTGVFalse(tgv):
     """
     if isinstance(tgv, (str, unicode)):
         tgv = tgv.lower()
+    else:
+        return not bool(tgv)
+    
     return tgv in (0, '0', 'false')
 
 def toBoolean(v):
