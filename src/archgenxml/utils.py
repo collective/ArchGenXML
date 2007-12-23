@@ -158,6 +158,8 @@ def processExpression(value, asString=True):
     * string: prefixes a string
     * fallback to default, which is string, if asString isnt set to False
     """
+    if not isinstance(value, (str, unicode)):
+        return value
     if value.startswith('python:'):
         return value[7:]
     elif value.startswith('string:'):
