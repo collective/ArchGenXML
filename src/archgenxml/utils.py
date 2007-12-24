@@ -186,7 +186,10 @@ def isTGVFalse(tgv):
     if isinstance(tgv, (str, unicode)):
         tgv = tgv.lower()
     else:
-        return not bool(tgv)
+        if not tgv is None:
+            return not bool(tgv)
+        else:
+            return False
     
     return tgv in (0, '0', 'false')
 

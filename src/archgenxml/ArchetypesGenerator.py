@@ -3905,6 +3905,7 @@ class ArchetypesGenerator(BaseGenerator):
                                             default='()')
 
         fti['global_allow'] = True
+            
         if cclass.isDependent():
             # WARNING! isDependent() doesn't seem to work,
             # aggregates and compositions aren't detected.
