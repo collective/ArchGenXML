@@ -4,7 +4,6 @@
         meta_type="Plone Skins Tool"
         allow_any="False"
         cookie_persistence="False"
-        default_skin="Plone Default"
         request_varname="plone_skin">
 
 <dtml-in "skinDirs">
