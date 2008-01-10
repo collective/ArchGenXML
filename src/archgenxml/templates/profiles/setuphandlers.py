@@ -240,7 +240,7 @@ def setupMemberTypes(context):
     
     <dtml-if "mtype.hasStereoType(['default_member_type','default'])">
     
-    adder = getAdderUtility(portal)
+    adder = getAdderUtility(site)
     adder.default_member_type='<dtml-var "mtype.getCleanName()">'    
     </dtml-if>
     </dtml-let>
