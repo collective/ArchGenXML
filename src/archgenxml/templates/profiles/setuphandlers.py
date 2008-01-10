@@ -211,6 +211,44 @@ def installVocabularies(context):
 
 </dtml-if>
 
+<dtml-if "memberclasses">
+from Products.membrane.interfaces import ICategoryMapper
+from Products.membrane.utils import generateCategorySetIdForType
+from Products.remember.utils import getAdderUtility
+
+def setupMemberTypes(context):
+# Adds our types to MemberDataContainer.allowed_content_types
+    site = context.getSite()
+    types_tool = getToolByName(site, 'portal_types')
+    act = types_tool.MemberDataContainer.allowed_content_types
+    types_tool.MemberDataContainer.manage_changeProperties(allowed_content_types=act+(<dtml-in memberclasses>'<dtml-var "_['sequence-item'].getCleanName()">', </dtml-in>))
+    # registers with membrane tool ...
+    membrane_tool = getToolByName(site, 'membrane_tool')
+<dtml-in "memberclasses">
+    <dtml-let mtype="_['sequence-item']">
+    <dtml-if "mtype.getTaggedValue('active_workflow_states',['private','public'])">
+    
+    membrane_tool.registerMembraneType('<dtml-var "_['sequence-item'].getCleanName()">')
+    cat_map = ICategoryMapper(membrane_tool)
+
+    states = <dtml-var "mtype.getTaggedValue('active_workflow_states',['private','public'])">
+    cat_set = generateCategorySetIdForType('<dtml-var "mtype.getCleanName()">')
+    cat_map.replaceCategoryValues(cat_set,
+                                       'active',
+                                       states)
+    </dtml-if>
+    
+    <dtml-if "mtype.hasStereoType(['default_member_type','default'])">
+    
+    adder = getAdderUtility(portal)
+    adder.default_member_type='<dtml-var "mtype.getCleanName()">'    
+    </dtml-if>
+    </dtml-let>
+    
+    # print >> out, SetupMember(site, member_type='<dtml-var "_['sequence-item'].getCleanName()">', register=<dtml-var "str(_['sequence-item'].getTaggedValue('register', False))">).finish()
+</dtml-in>
+</dtml-if>
+
 def updateRoleMappings(context):
     """after workflow changed update the roles mapping. this is like pressing
     the button 'Update Security Setting' and portal_workflow"""

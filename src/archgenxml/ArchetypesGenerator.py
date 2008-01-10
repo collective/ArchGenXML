@@ -3100,6 +3100,8 @@ class ArchetypesGenerator(BaseGenerator):
                           for klass in allclasses \
                           if utils.isTGVFalse(self.getOption('display_in_navigation',
                                                              klass, True))]
+        memberclasses =  [klass for klass in allclasses \
+                               if klass.hasStereoType(self.remember_stereotype)]
         templateparams = {
             'generator': self,
             'package': package,
@@ -3113,6 +3115,7 @@ class ArchetypesGenerator(BaseGenerator):
             'hasvocabularies': package.getProductName() in self.vocabularymap.keys(),
             'notsearchabletypes': notsearchabletypes,
             'hidemetatypes': hidemetatypes,
+            'memberclasses' : memberclasses,
 
         }
         handleSectionedFile(['profiles', 'setuphandlers.py'],
@@ -3165,7 +3168,7 @@ class ArchetypesGenerator(BaseGenerator):
                 statemachine = klass.getStateMachine()
 
                 if not statemachine:
-                    workflow = klass.getTaggedValue('use_workflow', None)
+                    workflow = klass.getTaggedValue('use_workflow', 'member_auto_workflow')
                     if not workflow:
                         raise Exception('No workflow set for remember ' + \
                                         'type, aborting.')
@@ -3173,7 +3176,7 @@ class ArchetypesGenerator(BaseGenerator):
                     workflow = statemachine.getCleanName()
 
                 workflow_states = klass.getTaggedValue('active_workflow_states',
-                                                       None)
+                                                    'private,public,active')
                 if not workflow_states:
                     raise Exception('No workflow states set for remember ' + \
                                     'type, aborting.')
@@ -3181,7 +3184,7 @@ class ArchetypesGenerator(BaseGenerator):
                 type = dict()
                 type['portal_type'] = klass.getCleanName()
                 type['workflow'] = workflow
-                type['active_states'] = eval(workflow_states)
+                type['active_states'] = [s.strip() for s in workflow_states.split(',')]
                 types.append(type)
 
 
