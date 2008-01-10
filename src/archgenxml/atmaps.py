@@ -225,6 +225,7 @@ TYPE_MAP = {
 }
 
 WIDGET_MAP = { # only deal with special cases, such as combined field-widgets
+    'text': u'TextAreaWidget',
     'rich': u'RichWidget',
     'richtext': u'RichWidget',
     'selection': u'SelectionWidget',
@@ -242,7 +243,6 @@ WIDGET_MAP = { # only deal with special cases, such as combined field-widgets
 #    'string': u'StringWidget' ,
 #    'fixedpoint': u'DecimalWidget' ,
 #    'float': u'DecimalWidget',
-#    'text': u'TextAreaWidget',
 }
 
 COERCE_MAP = {
