@@ -13,29 +13,35 @@
 </dtml-in>
 
 <dtml-in "flavors">
-    <dtml-let flavor="_['sequence-item']">
-	<!-- <dtml-var "flavor['name']"> flavor -->
-	<or:flavor
-		archetype_schema=".<dtml-var "flavor['packageName']">.<dtml-var "flavor['schemaName']">"
-		description="<dtml-var "flavor['description']">"
-		marker=".<dtml-var "flavor['packageName']">.<dtml-var "flavor['markerName']">"
-		name="<dtml-var "flavor['fullName']">"
-		title="<dtml-var "flavor['title']">"
-	/>
-	<!-- Subscriber to let new items receive the <dtml-var "flavor['name']"> flavor -->
-	<zope:subscriber
-		for=".<dtml-var "flavor['packageName']">.<dtml-var "flavor['name']"> zope.lifecycleevent.interfaces.IObjectCreatedEvent"
-		handler=".<dtml-var "flavor['packageName']">.<dtml-var "flavor['handlerName']">"/>
-	<!-- Types that can have the <dtml-var "flavor['name']"> flavor -->
-	<dtml-in "flavor['implementers']">
-	<five:implements
-			class="<dtml-var "_['sequence-item']">"
-			interface=".<dtml-var "flavor['packageName']">.<dtml-var "flavor['markerName']">"
-		/>
-    </dtml-in>
-    </dtml-let>
+ <dtml-let flavor="_['sequence-item']">
+
+   <!-- <dtml-var "flavor['name']"> flavor -->
+    <or:flavor
+     archetype_schema=".<dtml-var "flavor['packageName']">.<dtml-var "flavor['schemaName']">"
+     description="<dtml-var "flavor['description']">"
+     marker=".<dtml-var "flavor['packageName']">.<dtml-var "flavor['markerName']">"
+     name="<dtml-var "flavor['fullName']">"
+     title="<dtml-var "flavor['title']">"
+    />
+    <!-- Subscriber to let new items receive the <dtml-var "flavor['name']"> flavor -->
+    <zope:subscriber
+     for=".<dtml-var "flavor['packageName']">.<dtml-var "flavor['name']"> zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+     handler=".<dtml-var "flavor['packageName']">.<dtml-var "flavor['handlerName']">"
+    />
+ </dtml-let>
 </dtml-in>
   
+  <!-- Some types that will have some flavor -->
+
+<dtml-in "implementers">
+ <dtml-let implementer="_['sequence-item']">
+   <five:implements
+    class="<dtml-var "implementer['class']">"
+    interface="<dtml-var "implementer['qualifiedFlavorName']">"
+   />
+ </dtml-let>
+</dtml-in>
+
   <!-- ##code-section FOOT -->
   <!-- ##/code-section FOOT -->
 

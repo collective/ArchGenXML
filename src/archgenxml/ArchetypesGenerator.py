@@ -1923,6 +1923,47 @@ class ArchetypesGenerator(BaseGenerator):
                                                   creation_permission,
                                                   creation_roles])
         return outfile.getvalue()
+    
+    def declareFlavorImplementers(self, element):
+        """ Declares, as an update to a package annotation, the list of classes implementing the given flavor """
+        # add this new flavor to a list annotated to the package of the current element
+
+        package = element.getPackage()
+        if not package.getAnnotation('declaredFlavorImplementers',None):
+            package.annotate('declaredFlavorImplementers',[])
+        implementers = package.getAnnotation('declaredFlavorImplementers',None)
+
+        qualifiedFlavorName = None
+        if element.hasStereoType(self.stub_stereotypes):
+            if element.getTaggedValue('import_from', None):
+                qualifiedFlavorName = element.getTaggedValue('import_from') + "." + element.getName()
+        else:
+            qualifiedFlavorName = element.getQualifiedModuleName(None,forcePluginRoot=self.force_plugin_root,includeRoot=0,) + "." + element.getName()
+        
+        def getImplementers(element):
+            implementers = []
+            for implementer in element.getRealizationChildren(recursive=True):
+                # TODO: filter out those implementers whose stereotype makes the following declaration useless
+                # if not implementer.hasStereotype(self.some_stereotypes_I_dont_know_which_ones):
+                qualifiedImplementerClass = None
+                if implementer.hasStereoType('flavor'):
+                    implementers += getImplementers(implementer)
+                else:
+                    if implementer.hasStereoType(self.stub_stereotypes):
+                        # In principle, don't do a thing, but...
+                        if implementer.getTaggedValue('import_from', None):
+                            qualifiedImplementerClass = implementer.getTaggedValue('import_from') + "." + implementer.getName()
+                    else:
+                        qualifiedImplementerClass = implementer.getQualifiedModuleName(None,forcePluginRoot=self.force_plugin_root,includeRoot=0,) + "." + implementer.getName()
+                    if qualifiedImplementerClass:
+                        implementers.append(qualifiedImplementerClass)
+            return implementers
+        
+        for qualifiedImplementerClass in getImplementers(element):
+            implementer = {}
+            implementer['class'] = qualifiedImplementerClass
+            implementer['qualifiedFlavorName'] = qualifiedFlavorName
+            implementers.append(implementer)
 
     def generateFlavor(self, element, **kw):
         """this is the all singing all dancing core generator logic for a
@@ -2015,7 +2056,7 @@ class ArchetypesGenerator(BaseGenerator):
         for b in element.getGenParents(recursive=1):
             baseaggregatedInterfaces.extend(b.getSubtypeNames(recursive=1,filter=['interface']))
 
-        parentnames = [p.getCleanName() for p in element.getGenParents()]
+        parentnames = [p.getCleanName() for p in element.getGenParents() if p.hasStereoType('flavor')]
         additionalParents = element.getTaggedValue('additional_parents')
         if additionalParents:
             parentnames = additionalParents.split(',') + list(parentnames)
@@ -2145,20 +2186,6 @@ class ArchetypesGenerator(BaseGenerator):
         flavor['schemaName'] = name + "Schema"
         flavor['markerName'] = name
         flavor['handlerName'] = "apply" + name
-        flavor['implementers'] = []
-
-        for implementer in element.getRealizationChildren(recursive=True):
-            # TODO: filter out those implementers whose stereotype makes the following declaration useless
-            # if not implementer.hasStereotype(self.some_stereotypes_I_dont_know_which_ones):
-            qualifiedImplementerClass = None
-            if implementer.hasStereoType(self.stub_stereotypes):
-                # In principle, don't do a thing, but...
-                if implementer.getTaggedValue('import_from', None):
-                    qualifiedImplementerClass = implementer.getTaggedValue('import_from') + "." + implementer.getName()
-            else:
-                qualifiedImplementerClass = implementer.getQualifiedModuleName(None,forcePluginRoot=self.force_plugin_root,includeRoot=0,) + "." + implementer.getName()
-            if qualifiedImplementerClass:
-                flavor['implementers'].append(qualifiedImplementerClass)
 
         # add this new flavor to a list annotated to the package of the current element
         package = element.getPackage()
@@ -2168,6 +2195,8 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             flavorsList.append(flavor)
 
+        self.declareFlavorImplementers(element)
+        
         return outfile.getvalue()
 
     def generateZope2Interface(self, element, **kw):
@@ -2480,14 +2509,16 @@ class ArchetypesGenerator(BaseGenerator):
         """ Generate flavors.zcml for packages if it contains flavors """
 
         generatedFlavors = package.getAnnotation('generatedFlavors') or []
+        declaredFlavorImplementers = package.getAnnotation('declaredFlavorImplementers') or []
         subPackagesWithFlavors = [m.getModuleName() for m in self.subPackagesWithFlavors(package)]
 
-        if generatedFlavors != [] or subPackagesWithFlavors != []:
+        if generatedFlavors != [] or declaredFlavorImplementers != [] or subPackagesWithFlavors != []:
             ppath = package.getFilePath()
             handleSectionedFile(['flavors.zcml'],
                                 os.path.join(ppath, 'flavors.zcml'),
                                 sectionnames=['HEAD','FOOT'],
                                 templateparams={'flavors': generatedFlavors,
+                                                'implementers': declaredFlavorImplementers,
                                                 'subPackagesWithFlavors': subPackagesWithFlavors})
 
     def generateStdFilesForProduct(self, package):
@@ -3228,9 +3259,14 @@ class ArchetypesGenerator(BaseGenerator):
 
             if element.hasStereoType(self.stub_stereotypes,
                                      umlprofile=self.uml_profile):
-                log.debug("Ignoring stub class '%s'.",
-                         element.getName())
-                continue
+                if not element.hasStereoType('flavor'):
+                    log.debug("Ignoring stub class '%s'.",
+                             element.getName())
+                    continue
+                else:
+                    log.debug("Enumerating implementers for stub flavor '%s' then ignoring that flavor.", element.getName())
+                    self.declareFlavorImplementers(element)
+                    continue
 
             module = element.getModuleName()
             package.generatedModules.append(element)
