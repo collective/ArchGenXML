@@ -945,11 +945,7 @@ class ArchetypesGenerator(BaseGenerator):
         if obj.isAbstract():
             allowed_types= tuple(obj.getGenChildrenNames())
         else:
-            try:
-                isFlavor = obj.hasStereotype('flavor', umlprofile=self.uml_profile)
-            except AttributeError:
-                isFlavor = False
-            if isFlavor == True:
+            if obj.hasStereoType('flavor'):
                 allowed_types=tuple(obj.getRealizationChildrenNames(recursive=True))
             else:
                 allowed_types=(obj.getName(),) + tuple(obj.getGenChildrenNames())
