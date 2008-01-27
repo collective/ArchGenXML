@@ -1925,7 +1925,7 @@ class ArchetypesGenerator(BaseGenerator):
                                                   creation_roles])
         return outfile.getvalue()
     
-    def getFlavorImplementers(self,element):
+    def getFlavorImplementers(self,element,includeHidden=True):
         if not element.hasStereoType(self.flavor_stereotypes,umlprofile=self.uml_profile):
             return None
         implementers = []
@@ -1936,12 +1936,13 @@ class ArchetypesGenerator(BaseGenerator):
             if implementer.hasStereoType(self.flavor_stereotypes,umlprofile=self.uml_profile):
                 implementers += self.getFlavorImplementers(implementer)
             else:
-                if implementer.hasStereoType(self.stub_stereotypes):
-                    # In principle, don't do a thing, but...
-                    if implementer.getTaggedValue('import_from', None):
-                        qualifiedImplementerClass = implementer.getTaggedValue('import_from') + "." + implementer.getName()
-                else:
-                    qualifiedImplementerClass = implementer.getQualifiedModuleName(None,forcePluginRoot=self.force_plugin_root,includeRoot=0,) + "." + implementer.getName()
+                if includeHidden == True or not implementer.hasStereoType('hidden', umlprofile=self.uml_profile):
+                    if implementer.hasStereoType(self.stub_stereotypes):
+                        # In principle, don't do a thing, but...
+                        if implementer.getTaggedValue('import_from', None):
+                            qualifiedImplementerClass = implementer.getTaggedValue('import_from') + "." + implementer.getName()
+                    else:
+                        qualifiedImplementerClass = implementer.getQualifiedModuleName(None,forcePluginRoot=self.force_plugin_root,includeRoot=0,) + "." + implementer.getName()
                 if qualifiedImplementerClass:
                     implementers.append(qualifiedImplementerClass)
         return implementers
@@ -3815,9 +3816,8 @@ class ArchetypesGenerator(BaseGenerator):
         # append with flavor implementers when some aggregated class is a flavor
         for e in element.getAggregatedClasses(recursive=0,filter=['class']):
             if e.hasStereoType(self.flavor_stereotypes,umlprofile=self.uml_profile):
-                for imp in self.getFlavorImplementers(e):
-                    if not imp.hasStereoType('hidden', umlprofile=self.uml_profile):
-                        aggregatedClasses.append(imp.split('.')[-1])
+                for imp in self.getFlavorImplementers(e,includeHidden=False):
+                    aggregatedClasses.append(imp.split('.')[-1])
 
         if element.getTaggedValue('allowed_content_types'):
             #aggregatedClasses = [e for e in aggregatedClasses] # hae?
