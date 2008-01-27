@@ -232,6 +232,7 @@ class XMI1_0(object):
                 log.debug("Master '%s', detail '%s'.", master, detail)
                 m = objects.get(masterid, None)
                 d = objects.get(detailid, None)
+                log.debug("In other words: Master id = '%s', Master name = '%s'.", XMI.getId(master), m.getName())
 
                 if not m:
                     log.warn("Master Object not found for aggregation "
@@ -1667,10 +1668,10 @@ class XMIClass(XMIElement, StateMachineContainer):
         UML, a composition is a filled rhomb. (Dutch: 'wybertje').
         """
 
-        log.debug("Trying to figure out if the class is dependent.")
-        aggs = self.getToAssociations(aggtypes=['aggregate'])
+        log.debug("Trying to figure out if the '%s' class is dependent.", self.getName())
+        aggs = self.getToAssociations(aggtypes=['aggregate']) or self.getFromAssociations(aggtypesTo=['aggregate'])
         log.debug("Found aggregations that contain us: %r.", aggs)
-        comps = self.getToAssociations(aggtypes=['composite'])
+        comps = self.getToAssociations(aggtypes=['composite']) or self.getFromAssociations(aggtypesTo=['composite'])
         log.debug("Found compositions that contain us: %r.", comps)
 
         if comps and not aggs:
