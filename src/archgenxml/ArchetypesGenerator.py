@@ -1509,7 +1509,7 @@ class ArchetypesGenerator(BaseGenerator):
                     baseaggregatedClasses or \
                     element.hasStereoType(self.folder_stereotype,
                                           umlprofile=self.uml_profile)
-        log.debug("End verdict on folderish character: %s.",
+        log.debug("End verdict on folderish character of '%s': %s.",element.name,
                   bool(isFolderish))
         return bool(isFolderish)
 
@@ -1620,8 +1620,12 @@ class ArchetypesGenerator(BaseGenerator):
             else:
                 # this way base_class is used before anything else
                 parentnames = baseclasses + parentnames
-        parentnames = list(Set([klass.strip() for klass in parentnames]))
-        return baseclass, baseschema, parentnames
+		# deduplicate parentnames while preserving their order:
+        dedupedParentNames = []
+        for parent in parentnames:
+            if not parent in dedupedParentNames:
+                dedupedParentNames.append(parent)
+        return baseclass, baseschema, dedupedParentNames
 
     def generateArchetypesClass(self, element, **kw):
         """this is the all singing all dancing core generator logic for a
@@ -3804,14 +3808,16 @@ class ArchetypesGenerator(BaseGenerator):
             recursive = 1
 
         aggregatedClasses = element.getRefs() + \
-                          element.getSubtypeNames(recursive=recursive,
-                                                  filter=['class'])
+            [o.getName()
+             for o in element.getAggregatedClasses(recursive=recursive, filter=['class'])
+             if not o.hasStereoType('hidden', umlprofile=self.uml_profile)]
 
         # append with flavor implementers when some aggregated class is a flavor
         for e in element.getAggregatedClasses(recursive=0,filter=['class']):
             if e.hasStereoType(self.flavor_stereotypes,umlprofile=self.uml_profile):
-                for i in self.getFlavorImplementers(e):
-                    aggregatedClasses.append(i.split('.')[-1])
+                for imp in self.getFlavorImplementers(e):
+                    if not imp.hasStereoType('hidden', umlprofile=self.uml_profile):
+                        aggregatedClasses.append(imp.split('.')[-1])
 
         if element.getTaggedValue('allowed_content_types'):
             #aggregatedClasses = [e for e in aggregatedClasses] # hae?
@@ -3835,6 +3841,7 @@ class ArchetypesGenerator(BaseGenerator):
                 if gp.hasStereoType(self.python_stereotype,
                                     umlprofile=self.uml_profile):
                     continue
+                aggregatedClasses.extend(self._getSubtypes(gp)['aggregated_classes'])
                 pt = gp.getTaggedValue('portal_type', None)
                 if pt is not None:
                     parentAggregates.append(pt)
