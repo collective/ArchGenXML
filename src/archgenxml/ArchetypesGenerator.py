@@ -322,6 +322,10 @@ class ArchetypesGenerator(BaseGenerator):
         if import_array_field:
             print >>out, 'from Products.CompoundField.ArrayField ' + \
                   'import ArrayField'
+            print >>out, 'from Products.CompoundField.ArrayWidget ' + \
+                  'import ArrayWidget'
+            print >>out, 'from Products.CompoundField.EnhancedArrayWidget ' + \
+                  'import EnhancedArrayWidget'
 
         start_marker = True
         for iface in self.getAggregatedInterfaces(element):
