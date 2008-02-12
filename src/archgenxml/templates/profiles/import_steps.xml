@@ -7,6 +7,7 @@
     title="Dependend GS profiles for <dtml-var "product_name">"
     version="<dtml-var "now">">
    <dependency step="plone-final"/>
+   <dependency step="<dtml-var "product_name">-QI-dependencies"/>
    Install Generic Setup profile dependencies for <dtml-var "product_name">
  </import-step>
 
@@ -15,7 +16,6 @@
     handler="Products.<dtml-var "product_name">.setuphandlers.installQIDependencies"
     title="Dependend QI installables for <dtml-var "product_name">"
     version="<dtml-var "now">">
-   <dependency step="<dtml-var "now">-GS-dependencies"/>
    Install quickinstaller dependencies for <dtml-var "product_name">
  </import-step>
  
@@ -25,7 +25,7 @@
     handler="Products.<dtml-var "product_name">.setuphandlers.setupHideTypesFromSearch"
     title="Hide types from search for <dtml-var "product_name">"
     version="<dtml-var "now">">
-   <dependency step="<dtml-var "now">-QI-dependencies"/>
+   <dependency step="<dtml-var "product_name">-QI-dependencies"/>
    Hides types from the search form for <dtml-var "product_name">
  </import-step>
  
@@ -36,7 +36,7 @@
     handler="Products.<dtml-var "product_name">.setuphandlers.setupHideMetaTypesFromNavigations"
     title="Hide types from navigation for <dtml-var "product_name">"
     version="<dtml-var "now">">
-   <dependency step="<dtml-var "now">-QI-dependencies"/>
+   <dependency step="<dtml-var "product_name">-QI-dependencies"/>
    Hides types from the navigation tree for <dtml-var "product_name">
  </import-step>
  
@@ -47,7 +47,7 @@
     handler="Products.<dtml-var "product_name">.setuphandlers.setupHideToolsFromNavigation"
     title="Hide Custom tools from Navigation for <dtml-var "product_name">"
     version="<dtml-var "now">">
-   <dependency step="<dtml-var "now">-QI-dependencies"/>
+   <dependency step="<dtml-var "product_name">-QI-dependencies"/>
    Hides custom tools from navigation tree for <dtml-var "product_name">
  </import-step>
  
@@ -58,7 +58,7 @@
     handler="Products.<dtml-var "product_name">.setuphandlers.installRelations"
     title="Install Relations for <dtml-var "product_name">"
     version="<dtml-var "now">">
-   <dependency step="<dtml-var "now">-QI-dependencies"/>
+   <dependency step="<dtml-var "product_name">-QI-dependencies"/>
    Installs the relations.xml file into relations library for <dtml-var "product_name">
  </import-step>
  
@@ -70,7 +70,7 @@
     handler="Products.<dtml-var "product_name">.setuphandlers.installVocabularies"
     title="Install Vocabularies for <dtml-var "product_name">"
     version="<dtml-var "now">">
-   <dependency step="<dtml-var "now">-QI-dependencies"/>
+   <dependency step="<dtml-var "product_name">-QI-dependencies"/>
    Installs the vocabulary files into vocabulary library for <dtml-var "product_name">
  </import-step>
 </dtml-if>
@@ -81,7 +81,7 @@
     handler="Products.<dtml-var "product_name">.setuphandlers.setupMemberTypes"
     title="setup Remember(Membrane) types for <dtml-var "product_name">"
     version="<dtml-var "now">">
-   <dependency step="<dtml-var "now">-QI-dependencies"/>
+   <dependency step="<dtml-var "product_name">-QI-dependencies"/>
    setup Remember(Membrane) types for <dtml-var "product_name">
  </import-step>
 </dtml-if>
@@ -91,7 +91,7 @@
     handler="Products.<dtml-var "product_name">.setuphandlers.updateRoleMappings"
     title="Update Workflow role mappings for <dtml-var "product_name">"
     version="<dtml-var "now">">
-   <dependency step="<dtml-var "now">-QI-dependencies"/>
+   <dependency step="<dtml-var "product_name">-QI-dependencies"/>
    updates the workflow role mappings for <dtml-var "product_name">
  </import-step>
 
@@ -100,7 +100,7 @@
     handler="Products.<dtml-var "product_name">.setuphandlers.postInstall"
     title="manual coded post-install for <dtml-var "product_name">"
     version="<dtml-var "now">">
-   <dependency step="<dtml-var "now">-QI-dependencies"/>
+   <dependency step="<dtml-var "product_name">-QI-dependencies"/>
    manual coded post-install for <dtml-var "product_name">
  </import-step>
 

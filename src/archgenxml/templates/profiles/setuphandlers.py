@@ -12,6 +12,7 @@ from Globals import package_home
 from Products.ATVocabularyManager.config import TOOL_NAME as ATVOCABULARYTOOL
 </dtml-if>
 from Products.CMFCore.utils import getToolByName
+import transaction
 ##code-section HEAD
 ##/code-section HEAD
 
@@ -21,13 +22,22 @@ def installGSDependencies(context):
     # XXX Hacky, but works for now. has to be refactored as soon as generic
     # setup allows a more flexible way to handle dependencies.
 
+    shortContext = context._profile_path.split('/')[-3]
+    if shortContext != '<dtml-var "product_name">':
+        # the current import step is triggered too many times, this creates infinite recursions
+        # therefore, we'll only run it if it is triggered from proper context
+        logger.debug("installGSDependencies will not run in context %s" % shortContext)
+        return
+    logger.info("installGSDependencies started")
     dependencies = [<dtml-var "', '.join(dependend_profiles)">]
     if not dependencies:
         return
 
     site = context.getSite()
     setup_tool = getToolByName(site, 'portal_setup')
+    qi = getToolByName(site, 'portal_quickinstaller')
     for dependency in dependencies:
+        logger.info("  installing GS dependency %s:" % dependency)
         if dependency.find(':') == -1:
             dependency += ':default'
         old_context = setup_tool.getImportContextID()
@@ -39,8 +49,18 @@ def installGSDependencies(context):
         ]
         importsteps = [s for s in importsteps if s not in excludes]
         for step in importsteps:
+            logger.debug("     running import step %s" % step)
             setup_tool.runImportStep(step) # purging flag here?
-        setup_tool.setImportContext(old_context)
+            logger.debug("     finished import step %s" % step)
+        # let's make quickinstaller aware that this product is installed now
+        product_name = dependency.split(':')[0]
+        qi.notifyInstalled(product_name)
+        logger.debug("   notified QI that %s is installed now" % product_name)
+        # maybe a savepoint is welcome here (I saw some in optilude's examples)? maybe not? well...
+        transaction.savepoint()
+        if old_context: # sometimes, for some unknown reason, the old_context is None, believe me
+            setup_tool.setImportContext(old_context)
+        logger.debug("   installed GS dependency %s:" % dependency)
 
     # re-run some steps to be sure the current profile applies as expected
     importsteps = setup_tool.getImportStepRegistry().sortSteps()
@@ -55,24 +75,42 @@ def installGSDependencies(context):
     importsteps = [s for s in importsteps if s in filter]
     for step in importsteps:
         setup_tool.runImportStep(step) # purging flag here?
+    logger.info("installGSDependencies finished")
 
 def installQIDependencies(context):
     """This is for old-style products using QuickInstaller"""
+    shortContext = context._profile_path.split('/')[-3]
+    if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
+        logger.debug("installQIDependencies will not run in context %s" % shortContext)
+        return
+    logger.info("installQIDependencies starting")
     site = context.getSite()
     qi = getToolByName(site, 'portal_quickinstaller')
 
     for dependency in DEPENDENCIES:
         if qi.isProductInstalled(dependency):
-            logger.info("Re-Installing dependency %s:" % dependency)
+            logger.info("   re-Installing QI dependency %s:" % dependency)
             qi.reinstallProducts([dependency])
+            transaction.savepoint() # is a savepoint really needed here?
+            logger.debug("   re-Installed QI dependency %s:" % dependency)
         else:
-            logger.info("Installing dependency %s:" % dependency)
-            qi.installProducts([dependency])
+            if qi.isProductInstallable(dependency):
+                logger.info("   installing QI dependency %s:" % dependency)
+                qi.installProduct(dependency)
+                transaction.savepoint() # is a savepoint really needed here?
+                logger.debug("   installed dependency %s:" % dependency)
+            else:
+                logger.info("   QI dependency %s not installable" % dependency)
+                raise "   QI dependency %s not installable" % dependency
+    logger.info("installQIDependencies finished")
 
 <dtml-if "notsearchabletypes">
 def setupHideTypesFromSearch(context):
     """hide selected classes in the search form"""
     # XXX use https://svn.plone.org/svn/collective/DIYPloneStyle/trunk/profiles/default/properties.xml
+    shortContext = context._profile_path.split('/')[-3]
+    if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
+        return
     site = context.getSite()
     portalProperties = getToolByName(site, 'portal_properties')
     siteProperties = getattr(portalProperties, 'site_properties')
@@ -88,6 +126,9 @@ def setupHideTypesFromSearch(context):
 def setupHideMetaTypesFromNavigations(context):
     """hide selected classes in the search form"""
     # XXX use https://svn.plone.org/svn/collective/DIYPloneStyle/trunk/profiles/default/properties.xml
+    shortContext = context._profile_path.split('/')[-3]
+    if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
+        return
     site = context.getSite()
     portalProperties = getToolByName(site, 'portal_properties')
     siteProperties = getattr(portalProperties, 'site_properties')
@@ -103,6 +144,9 @@ def setupHideMetaTypesFromNavigations(context):
 def setupHideToolsFromNavigation(context):
     """hide tools"""
     # uncatalog tools
+    shortContext = context._profile_path.split('/')[-3]
+    if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
+        return
     site = context.getSite()
     toolnames = <dtml-var "repr(toolnames)">
     portalProperties = getToolByName(site, 'portal_properties')
@@ -127,6 +171,9 @@ def setupCatalogMultiplex(context):
     explicit add classes (meta_types) be indexed in catalogs (white)
     or removed from indexing in a catalog (black)
     """
+    shortContext = context._profile_path.split('/')[-3]
+    if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
+        return
     site = context.getSite()
     #dd#
     muliplexed = <dtml-var "repr([m.getCleanName() for m in catalogmultiplexed or []])">
@@ -162,6 +209,9 @@ def setupCatalogMultiplex(context):
 <dtml-if "hasrelations">
 def installRelations(context):
     """imports the relations.xml file"""
+    shortContext = context._profile_path.split('/')[-3]
+    if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
+        return
     site = context.getSite()
     qi = getToolByName(site, 'portal_quickinstaller')
     if not qi.isProductInstalled('Relations'):
@@ -180,6 +230,9 @@ def installRelations(context):
 <dtml-if "hasvocabularies">
 def installVocabularies(context):
     """creates/imports the atvm vocabs."""
+    shortContext = context._profile_path.split('/')[-3]
+    if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
+        return
     site = context.getSite()
     # Create vocabularies in vocabulary lib
     atvm = getToolByName(site, ATVOCABULARYTOOL)
@@ -218,6 +271,9 @@ from Products.remember.utils import getAdderUtility
 
 def setupMemberTypes(context):
 # Adds our types to MemberDataContainer.allowed_content_types
+    shortContext = context._profile_path.split('/')[-3]
+    if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
+        return
     site = context.getSite()
     types_tool = getToolByName(site, 'portal_types')
     act = types_tool.MemberDataContainer.allowed_content_types
@@ -226,12 +282,12 @@ def setupMemberTypes(context):
     membrane_tool = getToolByName(site, 'membrane_tool')
 <dtml-in "memberclasses">
     <dtml-let mtype="_['sequence-item']">
-    <dtml-if "mtype.getTaggedValue('active_workflow_states',['private','public'])">
+    <dtml-if "mtype.getTaggedValue('active_workflow_states','private,public')">
     
     membrane_tool.registerMembraneType('<dtml-var "_['sequence-item'].getCleanName()">')
     cat_map = ICategoryMapper(membrane_tool)
 
-    states = <dtml-var "mtype.getTaggedValue('active_workflow_states',['private','public'])">
+    states = <dtml-var "[s.strip() for s in mtype.getTaggedValue('active_workflow_states','private,public').split(',')]">
     cat_set = generateCategorySetIdForType('<dtml-var "mtype.getCleanName()">')
     cat_map.replaceCategoryValues(cat_set,
                                        'active',
@@ -253,6 +309,9 @@ def updateRoleMappings(context):
     """after workflow changed update the roles mapping. this is like pressing
     the button 'Update Security Setting' and portal_workflow"""
 
+    shortContext = context._profile_path.split('/')[-3]
+    if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
+        return
     wft = getToolByName(context.getSite(), 'portal_workflow')
     wft.updateRoleMappings()
 
@@ -261,6 +320,9 @@ def updateRoleMappings(context):
 def postInstall(context):
     """Called as at the end of the setup process. """
     # the right place for your custom code
+    shortContext = context._profile_path.split('/')[-3]
+    if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
+        return
     site = context.getSite()
 <dtml-else>
 <dtml-var "parsedModule.functions['postInstall'].getSrc()">
