@@ -324,8 +324,8 @@ class WorkflowGenerator(BaseGenerator):
         wi = WorkflowInfo
         source_pdefs = statemachine.getAllPermissionNames()
         result_pdefs = [self.processExpression(pdef, asString=False)
-                        for pdef in source_pdefs]
-        return result_pdefs    
+                        for pdef in source_pdefs] 
+        return result_pdefs
 
 class WorkflowInfo(object):
     """View-like utility class.
@@ -565,7 +565,9 @@ class StateInfo(object):
             tag_name = tag_name.strip()
             
             # look up abbreviations if any
-            permission = STATE_PERMISSION_MAPPING.get(tag_name.lower(), tag_value or '')
+            permission = STATE_PERMISSION_MAPPING.get(tag_name.lower(),
+                                                      tag_name or '')
+            
             if not tag_value:
                 log.debug("Empty tag value, treating it as a reset "
                           "for acquisition, so acquisition=0.")
@@ -584,6 +586,7 @@ class StateInfo(object):
             if nv in roles:
                 acquisition = 1
                 roles.remove(nv)
+            
             permission = utils.processExpression(permission, asString=False)
             permission_definitions.append(
                         {'permission' : permission,
