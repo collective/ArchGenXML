@@ -636,8 +636,10 @@ class ArchetypesGenerator(BaseGenerator):
         
         if default:
             # use default
-            wdef['startcode'] = default     
-        if ctype in atmaps.WIDGET_MAP.keys():
+            wdef['startcode'] = default
+        if wdef['type']:
+            wdef['widgetclass'] = wdef['type']
+        elif ctype in atmaps.WIDGET_MAP.keys():
             # default widget for this widgettype found in 
             wdef['widgetclass'] = atmaps.WIDGET_MAP[ctype]
         else:
