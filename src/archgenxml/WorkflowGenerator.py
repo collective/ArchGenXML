@@ -197,10 +197,13 @@ class WorkflowGenerator(BaseGenerator):
             defaultbinding = '*'
         else:
             # take the generated marker interface as defaultbinding
-            path = klass.getQualifiedModuleName(klass.getPackage(), 
-                                               includeRoot=0)
+            path = klass.getQualifiedModuleName(klass.getPackage(), includeRoot=1)
+            if path.startswith(self.package.getProduct().getName()):
+                # strip product name - shouldnt be in there, XMIParser is here
+                # a bit buggy :-(
+                path = path[len(self.package.getProduct().getName()):]
             rdot = path.rfind('.')
-            if rdot >= 0:
+            if rdot > 0:
                 path = '.' + path[:rdot+1]
             else:
                 path = '.'
