@@ -281,27 +281,27 @@ def setupMemberTypes(context):
     # registers with membrane tool ...
     membrane_tool = getToolByName(site, 'membrane_tool')
 <dtml-in "memberclasses">
-    <dtml-let mtype="_['sequence-item']">
-    <dtml-if "mtype.getTaggedValue('active_workflow_states','private,public')">
+<dtml-let mtype="_['sequence-item']">
+<dtml-if "generator.getOption('plone_target_version', package, 3.0) == 2.5">
+<dtml-if "mtype.getTaggedValue('active_workflow_states','private,public')">
     
     membrane_tool.registerMembraneType('<dtml-var "_['sequence-item'].getCleanName()">')
     cat_map = ICategoryMapper(membrane_tool)
 
-<dtml-if "generator.getOption('plone_target_version', package, 3.0) == 2.5">
     states = <dtml-var "[s.strip() for s in mtype.getTaggedValue('active_workflow_states','private,public').split(',')]">
     cat_set = generateCategorySetIdForType('<dtml-var "mtype.getCleanName()">')
     cat_map.replaceCategoryValues(cat_set,
                                        'active',
                                        states)
-    </dtml-if>
+</dtml-if>
     
-    <dtml-if "mtype.hasStereoType(['default_member_type','default'])">
+<dtml-if "mtype.hasStereoType(['default_member_type','default'])">
     
     adder = getAdderUtility(site)
     adder.default_member_type='<dtml-var "mtype.getCleanName()">'    
-    </dtml-if>
-    </dtml-let>
 </dtml-if>
+</dtml-if>
+</dtml-let>
 </dtml-in>
 </dtml-if>
 
