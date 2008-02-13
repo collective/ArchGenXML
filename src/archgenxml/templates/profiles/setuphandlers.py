@@ -270,7 +270,7 @@ from Products.membrane.utils import generateCategorySetIdForType
 from Products.remember.utils import getAdderUtility
 
 def setupMemberTypes(context):
-# Adds our types to MemberDataContainer.allowed_content_types
+    """Adds our member types to MemberDataContainer.allowed_content_types."""
     shortContext = context._profile_path.split('/')[-3]
     if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
         return
@@ -278,11 +278,11 @@ def setupMemberTypes(context):
     types_tool = getToolByName(site, 'portal_types')
     act = types_tool.MemberDataContainer.allowed_content_types
     types_tool.MemberDataContainer.manage_changeProperties(allowed_content_types=act+(<dtml-in memberclasses>'<dtml-var "_['sequence-item'].getCleanName()">', </dtml-in>))
+<dtml-if "generator.getOption('plone_target_version', package, 3.0) == 2.5">
     # registers with membrane tool ...
     membrane_tool = getToolByName(site, 'membrane_tool')
 <dtml-in "memberclasses">
 <dtml-let mtype="_['sequence-item']">
-<dtml-if "generator.getOption('plone_target_version', package, 3.0) == 2.5">
 <dtml-if "mtype.getTaggedValue('active_workflow_states','private,public')">
     
     membrane_tool.registerMembraneType('<dtml-var "_['sequence-item'].getCleanName()">')
@@ -300,9 +300,9 @@ def setupMemberTypes(context):
     adder = getAdderUtility(site)
     adder.default_member_type='<dtml-var "mtype.getCleanName()">'    
 </dtml-if>
-</dtml-if>
 </dtml-let>
 </dtml-in>
+</dtml-if>
 </dtml-if>
 
 def updateRoleMappings(context):
