@@ -3196,7 +3196,7 @@ class ArchetypesGenerator(BaseGenerator):
                             os.path.join(os.path.join(package.getFilePath()),
                                          'dcworkflowpatch.py'))
 
-    def getRememberTypes(self, types, package):
+    def getRememberTypes(self, rtypes, package):
         # TODO: consider if there is an own workflow on a matched object.
         # then, this workflow has precedence and use_workflow and
         # active_workflow_states has to be ignored and the ones from the
@@ -3209,7 +3209,8 @@ class ArchetypesGenerator(BaseGenerator):
                 statemachine = klass.getStateMachine()
 
                 if not statemachine:
-                    workflow = klass.getTaggedValue('use_workflow', 'member_auto_workflow')
+                    workflow = klass.getTaggedValue('use_workflow',
+                                                    'member_auto_workflow')
                     if not workflow:
                         raise Exception('No workflow set for remember ' + \
                                         'type, aborting.')
@@ -3221,12 +3222,16 @@ class ArchetypesGenerator(BaseGenerator):
                 if not workflow_states:
                     raise Exception('No workflow states set for remember ' + \
                                     'type, aborting.')
+                
+                if type(workflow_states) in types.StringTypes:
+                    workflow_states = \
+                        [s.strip() for s in workflow_states.split(',')]
 
-                type = dict()
-                type['portal_type'] = klass.getCleanName()
-                type['workflow'] = workflow
-                type['active_states'] = [s.strip() for s in workflow_states.split(',')]
-                types.append(type)
+                rtype = dict()
+                rtype['portal_type'] = klass.getCleanName()
+                rtype['workflow'] = workflow
+                rtype['active_states'] = workflow_states
+                rtypes.append(rtype)
 
 
     def getGeneratedClasses(self,package):
