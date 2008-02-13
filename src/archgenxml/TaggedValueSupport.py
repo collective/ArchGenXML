@@ -33,6 +33,7 @@ return value, as the function prints a warning himself.
 # isTGVTrue() and isTGVFalse are originally copied from utils.py
 
 import logging
+from atmaps import STATE_PERMISSION_MAPPING
 
 class TaggedValueRegistry:
     """ Registry for all known tagged values (TGVs)
@@ -891,15 +892,6 @@ explanation = """Sets the roles needed to be allowed to view the
 worklist. No default value"""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-STATE_PERMISSION_MAPPING = {
-    'access' : 'Access contents information',
-    'view'   : 'View',
-    'modify' : 'Modify portal content',
-    'list'   : 'List folder contents',
-    'add'    : 'Add portal content',
-    'delete' : 'Delete objects',
-    'role'   : 'Change local roles',
-}
 for (tagname, permissionname) in STATE_PERMISSION_MAPPING.items():
     explanation = "Shortcut for '%s'." % permissionname
     tgvRegistry.addTaggedValue(category=category, tagname=tagname,
