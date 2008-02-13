@@ -287,6 +287,7 @@ def setupMemberTypes(context):
     membrane_tool.registerMembraneType('<dtml-var "_['sequence-item'].getCleanName()">')
     cat_map = ICategoryMapper(membrane_tool)
 
+<dtml-if "generator.getOption('plone_target_version', package, 3.0) == 2.5">
     states = <dtml-var "[s.strip() for s in mtype.getTaggedValue('active_workflow_states','private,public').split(',')]">
     cat_set = generateCategorySetIdForType('<dtml-var "mtype.getCleanName()">')
     cat_map.replaceCategoryValues(cat_set,
@@ -300,8 +301,7 @@ def setupMemberTypes(context):
     adder.default_member_type='<dtml-var "mtype.getCleanName()">'    
     </dtml-if>
     </dtml-let>
-    
-    # print >> out, SetupMember(site, member_type='<dtml-var "_['sequence-item'].getCleanName()">', register=<dtml-var "str(_['sequence-item'].getTaggedValue('register', False))">).finish()
+</dtml-if>
 </dtml-in>
 </dtml-if>
 
