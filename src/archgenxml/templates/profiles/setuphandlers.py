@@ -3,9 +3,9 @@ import logging
 logger = logging.getLogger('<dtml-var "product_name">: setuphandlers')
 from Products.<dtml-var "product_name">.config import PROJECTNAME
 from Products.<dtml-var "product_name">.config import DEPENDENCIES
+import os
 <dtml-if "hasvocabularies or hasrelations">
 from config import product_globals
-import os
 from Globals import package_home
 </dtml-if>
 <dtml-if "hasvocabularies">
@@ -22,7 +22,7 @@ def installGSDependencies(context):
     # XXX Hacky, but works for now. has to be refactored as soon as generic
     # setup allows a more flexible way to handle dependencies.
 
-    shortContext = context._profile_path.split('/')[-3]
+    shortContext = context._profile_path.split(os.path.sep)[-3]
     if shortContext != '<dtml-var "product_name">':
         # the current import step is triggered too many times, this creates infinite recursions
         # therefore, we'll only run it if it is triggered from proper context
@@ -79,7 +79,7 @@ def installGSDependencies(context):
 
 def installQIDependencies(context):
     """This is for old-style products using QuickInstaller"""
-    shortContext = context._profile_path.split('/')[-3]
+    shortContext = context._profile_path.split(os.path.sep)[-3]
     if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
         logger.debug("installQIDependencies will not run in context %s" % shortContext)
         return
@@ -108,7 +108,7 @@ def installQIDependencies(context):
 def setupHideTypesFromSearch(context):
     """hide selected classes in the search form"""
     # XXX use https://svn.plone.org/svn/collective/DIYPloneStyle/trunk/profiles/default/properties.xml
-    shortContext = context._profile_path.split('/')[-3]
+    shortContext = context._profile_path.split(os.path.sep)[-3]
     if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
         return
     site = context.getSite()
@@ -126,7 +126,7 @@ def setupHideTypesFromSearch(context):
 def setupHideMetaTypesFromNavigations(context):
     """hide selected classes in the search form"""
     # XXX use https://svn.plone.org/svn/collective/DIYPloneStyle/trunk/profiles/default/properties.xml
-    shortContext = context._profile_path.split('/')[-3]
+    shortContext = context._profile_path.split(os.path.sep)[-3]
     if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
         return
     site = context.getSite()
@@ -144,7 +144,7 @@ def setupHideMetaTypesFromNavigations(context):
 def setupHideToolsFromNavigation(context):
     """hide tools"""
     # uncatalog tools
-    shortContext = context._profile_path.split('/')[-3]
+    shortContext = context._profile_path.split(os.path.sep)[-3]
     if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
         return
     site = context.getSite()
@@ -171,7 +171,7 @@ def setupCatalogMultiplex(context):
     explicit add classes (meta_types) be indexed in catalogs (white)
     or removed from indexing in a catalog (black)
     """
-    shortContext = context._profile_path.split('/')[-3]
+    shortContext = context._profile_path.split(os.path.sep)[-3]
     if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
         return
     site = context.getSite()
@@ -209,7 +209,7 @@ def setupCatalogMultiplex(context):
 <dtml-if "hasrelations">
 def installRelations(context):
     """imports the relations.xml file"""
-    shortContext = context._profile_path.split('/')[-3]
+    shortContext = context._profile_path.split(os.path.sep)[-3]
     if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
         return
     site = context.getSite()
@@ -230,7 +230,7 @@ def installRelations(context):
 <dtml-if "hasvocabularies">
 def installVocabularies(context):
     """creates/imports the atvm vocabs."""
-    shortContext = context._profile_path.split('/')[-3]
+    shortContext = context._profile_path.split(os.path.sep)[-3]
     if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
         return
     site = context.getSite()
@@ -271,7 +271,7 @@ from Products.remember.utils import getAdderUtility
 
 def setupMemberTypes(context):
     """Adds our member types to MemberDataContainer.allowed_content_types."""
-    shortContext = context._profile_path.split('/')[-3]
+    shortContext = context._profile_path.split(os.path.sep)[-3]
     if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
         return
     site = context.getSite()
@@ -309,7 +309,7 @@ def updateRoleMappings(context):
     """after workflow changed update the roles mapping. this is like pressing
     the button 'Update Security Setting' and portal_workflow"""
 
-    shortContext = context._profile_path.split('/')[-3]
+    shortContext = context._profile_path.split(os.path.sep)[-3]
     if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
         return
     wft = getToolByName(context.getSite(), 'portal_workflow')
@@ -320,7 +320,7 @@ def updateRoleMappings(context):
 def postInstall(context):
     """Called as at the end of the setup process. """
     # the right place for your custom code
-    shortContext = context._profile_path.split('/')[-3]
+    shortContext = context._profile_path.split(os.path.sep)[-3]
     if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
         return
     site = context.getSite()
