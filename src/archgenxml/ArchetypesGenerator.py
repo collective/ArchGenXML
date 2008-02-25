@@ -3185,16 +3185,19 @@ class ArchetypesGenerator(BaseGenerator):
                             templateparams={'membrane_types': types}
                         )
 
+    def shouldPatchDCWorkflow(self, package):
+        """Return whether DCWorkflow needs to be patched to provide workflow
+        transition events.
+        """
+        # We need Plone 2.5 compatibility, and there are subscribers:
+        return self.getOption('plone_target_version', package, '3.0') == '2.5' and \
+               package.getAnnotation('subscribers')
+    
     def generateDCWorkflowPatch(self, package):
-        if self.getOption('plone_target_version', package, '3.0') == '3.0':
-            return
-
-        if not bool(package.getAnnotation('subscribers')):
-            return
-
-        handleSectionedFile(['dcworkflowpatch.py'],
-                            os.path.join(os.path.join(package.getFilePath()),
-                                         'dcworkflowpatch.py'))
+        if self.shouldPatchDCWorkflow(package):
+            handleSectionedFile(['dcworkflowpatch.py'],
+                                os.path.join(os.path.join(package.getFilePath()),
+                                             'dcworkflowpatch.py'))
 
     def getRememberTypes(self, rtypes, package):
         # TODO: consider if there is an own workflow on a matched object.
