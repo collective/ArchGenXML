@@ -1,15 +1,30 @@
-Installing archgenxml 1.6 (development version)
-===============================================
-
-From tgz
---------
-
-python setup.py install, so the usual.
+Installing archgenxml 
+=====================
 
 From the cheeseshop
 -------------------
 
-easy_install archgenxml, so the usual.
+``easy_install archgenxml``, so the usual.
+
+
+From tgz
+--------
+
+To install it use the --no-compile option for now. We need to figure out how
+to exclude dtml-files ending with .py from byte-compiling at install time.::
+
+  $ python setup.py install --no-compile
+
+
+At Debian based systems
+-----------------------
+
+To build a Debian Package run::
+
+  $ fakeroot debian/rules binary
+  
+and install the *.deb file as usal.
+
 
 
 SVN directories - what is stable, what is not?

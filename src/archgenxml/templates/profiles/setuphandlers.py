@@ -16,8 +16,12 @@ import transaction
 ##code-section HEAD
 ##/code-section HEAD
 
+def isNot<dtml-var "product_name">Profile(context):
+    return context.readDataFile("<dtml-var "product_name">_marker.txt") is None
+
 def installGSDependencies(context):
     """Install dependend profiles."""
+    if isNot<dtml-var "product_name">Profile(context): return 
 
     # XXX Hacky, but works for now. has to be refactored as soon as generic
     # setup allows a more flexible way to handle dependencies.
@@ -79,6 +83,7 @@ def installGSDependencies(context):
 
 def installQIDependencies(context):
     """This is for old-style products using QuickInstaller"""
+    if isNot<dtml-var "product_name">Profile(context): return 
     shortContext = context._profile_path.split(os.path.sep)[-3]
     if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
         logger.debug("installQIDependencies will not run in context %s" % shortContext)
@@ -107,6 +112,7 @@ def installQIDependencies(context):
 <dtml-if "notsearchabletypes">
 def setupHideTypesFromSearch(context):
     """hide selected classes in the search form"""
+    if isNot<dtml-var "product_name">Profile(context): return 
     # XXX use https://svn.plone.org/svn/collective/DIYPloneStyle/trunk/profiles/default/properties.xml
     shortContext = context._profile_path.split(os.path.sep)[-3]
     if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
@@ -125,6 +131,7 @@ def setupHideTypesFromSearch(context):
 <dtml-if "hidemetatypes">
 def setupHideMetaTypesFromNavigations(context):
     """hide selected classes in the search form"""
+    if isNot<dtml-var "product_name">Profile(context): return 
     # XXX use https://svn.plone.org/svn/collective/DIYPloneStyle/trunk/profiles/default/properties.xml
     shortContext = context._profile_path.split(os.path.sep)[-3]
     if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
@@ -143,6 +150,7 @@ def setupHideMetaTypesFromNavigations(context):
 <dtml-if "toolnames">
 def setupHideToolsFromNavigation(context):
     """hide tools"""
+    if isNot<dtml-var "product_name">Profile(context): return 
     # uncatalog tools
     shortContext = context._profile_path.split(os.path.sep)[-3]
     if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
@@ -171,6 +179,7 @@ def setupCatalogMultiplex(context):
     explicit add classes (meta_types) be indexed in catalogs (white)
     or removed from indexing in a catalog (black)
     """
+    if isNot<dtml-var "product_name">Profile(context): return 
     shortContext = context._profile_path.split(os.path.sep)[-3]
     if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
         return
@@ -209,6 +218,7 @@ def setupCatalogMultiplex(context):
 <dtml-if "hasrelations">
 def installRelations(context):
     """imports the relations.xml file"""
+    if isNot<dtml-var "product_name">Profile(context): return 
     shortContext = context._profile_path.split(os.path.sep)[-3]
     if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
         return
@@ -230,6 +240,7 @@ def installRelations(context):
 <dtml-if "hasvocabularies">
 def installVocabularies(context):
     """creates/imports the atvm vocabs."""
+    if isNot<dtml-var "product_name">Profile(context): return 
     shortContext = context._profile_path.split(os.path.sep)[-3]
     if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
         return
@@ -271,6 +282,7 @@ from Products.remember.utils import getAdderUtility
 
 def setupMemberTypes(context):
     """Adds our member types to MemberDataContainer.allowed_content_types."""
+    if isNot<dtml-var "product_name">Profile(context): return 
     shortContext = context._profile_path.split(os.path.sep)[-3]
     if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
         return
@@ -308,7 +320,7 @@ def setupMemberTypes(context):
 def updateRoleMappings(context):
     """after workflow changed update the roles mapping. this is like pressing
     the button 'Update Security Setting' and portal_workflow"""
-
+    if isNot<dtml-var "product_name">Profile(context): return 
     shortContext = context._profile_path.split(os.path.sep)[-3]
     if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
         return
@@ -320,6 +332,7 @@ def updateRoleMappings(context):
 def postInstall(context):
     """Called as at the end of the setup process. """
     # the right place for your custom code
+    if isNot<dtml-var "product_name">Profile(context): return 
     shortContext = context._profile_path.split(os.path.sep)[-3]
     if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
         return

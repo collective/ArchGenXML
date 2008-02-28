@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #----------------------------------------------------------------------------
 # Name:        ArchetypesGenerator.py
 # Purpose:     main class generating archetypes code out of an UML-model
@@ -1366,8 +1365,8 @@ class ArchetypesGenerator(BaseGenerator):
             of.close()
 
         init='#'
-        of=self.makeFile(os.path.join(element.getPackage().getProduct().getFilePath(),
-                                      'doc', '__init__.py' ))
+        ppath = os.path.join(element.getPackage().getProduct().getFilePath())
+        of = self.makeFile(ppath, 'doc', '__init__.py' )
 
         of.write(init)
         of.close()
@@ -2452,7 +2451,7 @@ class ArchetypesGenerator(BaseGenerator):
            'protected_init_section_bottom': protectedInitCodeB,
        }
 
-        templ=self.readTemplate(['__init__product.py'])
+        templ=self.readTemplate(['__init__product.pydtml'])
         dtml=HTML(templ,d)
         res=dtml()
 
@@ -2495,7 +2494,7 @@ class ArchetypesGenerator(BaseGenerator):
              'protected_module_footer': footerCode,
          }
 
-        templ=self.readTemplate(['__init_package__.py'])
+        templ=self.readTemplate(['__init__package__.pydtml'])
         dtml=HTML(templ,d)
         res=dtml()
 
@@ -2687,6 +2686,12 @@ class ArchetypesGenerator(BaseGenerator):
         self.makeDir(profileDir)
         profileDefaultDir = os.path.join(profileDir, 'default')
         self.makeDir(profileDefaultDir)
+        pname = package.getProductName()
+        handleSectionedFile(['profiles', 'productname_marker.txt'],
+                            os.path.join(profileDefaultDir,
+                                         ('%s_marker.txt' % pname) ),
+                            templateparams={'product_name': pname})
+        
 
     def generateGSToolsetXML(self, package):
         """Generate the factorytool.xml.
