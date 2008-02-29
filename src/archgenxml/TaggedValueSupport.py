@@ -884,7 +884,8 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 
 tagname = 'worklist:guard_permissions'
 explanation = """Sets the permissions needed to be allowed to view the
-worklist. Default value is 'Review portal content'."""
+worklist. Default value is 'Review portal content'. Set to 'False' for no
+guard_permission."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'worklist:guard_roles'

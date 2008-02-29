@@ -486,7 +486,7 @@ class WorkflowInfo(object):
     def _getWorklistGuardPermission(self, worklistname):
         """Returns the guard permission associated with the worklistname."""
         log.debug("Getting the guard permission for the worklist...")
-        default = 'Review portal content'
+        default = 'Review portal content' #XXX odd convention
         results = [s.getTaggedValue('worklist:guard_permissions')
                    for s in self.sm.getStates(no_duplicates = 1)
                    if s.getTaggedValue('worklist') == worklistname
@@ -496,8 +496,11 @@ class WorkflowInfo(object):
                       default)
             return default
         # There might be more than one guard_permissions tgv, take the first
+        result = results[0]
         log.debug("Tagged value(s) found, taking the first (or only) one: '%s'.",
                   results[0])
+        if utils.isTGVFalse(result):
+            return None   
         return results[0]
 
     def _getWorklistGuardExpression(self, worklistname):
@@ -507,7 +510,7 @@ class WorkflowInfo(object):
         results = [s.getTaggedValue('worklist:guard_expressions')
                    for s in self.sm.getStates(no_duplicates = 1)
                    if s.getTaggedValue('worklist') == worklistname
-                   and s.getTaggedValue('worklist:guard_permissions')]
+                   and s.getTaggedValue('worklist:guard_expressions')]
         if not results:
             log.debug("No tagged value found, returning the default: '%s'.",
                       default)

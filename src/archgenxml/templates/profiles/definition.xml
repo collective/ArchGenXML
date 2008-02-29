@@ -47,7 +47,8 @@
 </dtml-in>
 <dtml-in "info.worklists">
 <dtml-let worklist="_['sequence-item']">
- <worklist worklist_id="<dtml-var "worklist['id']">" title="<dtml-var "worklist['id']">">
+ <worklist worklist_id="<dtml-var "worklist['id']">" 
+           title="<dtml-var "worklist['id']">">
   <action url="<dtml-var "worklist['url']">"
           category="global">Pending <dtml-var "worklist['id']"></action>
   <guard>
@@ -59,7 +60,8 @@
 </dtml-if>
   </guard>
 <dtml-in "worklist['states']">
-  <match name="review_state" values="<dtml-var "_['sequence-item']">"/>
+  <match name="review_state" 
+         values="<dtml-var "_['sequence-item']">"/>
 </dtml-in>
  </worklist>
 </dtml-let>
