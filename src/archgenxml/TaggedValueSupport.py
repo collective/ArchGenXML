@@ -62,7 +62,7 @@ class TaggedValueRegistry:
             #'XMIParser.XMIAbstraction': [],
             #'XMIParser.XMIDependency': [],
             #'XMIParser.XMIStateContainer': [],
-            #'XMIParser.XMIStateMachine': [],
+            'archgenxml.XMIParser.XMIStateMachine': ['state machine'],
             'archgenxml.XMIParser.XMIStateTransition': ['state transition'],
             'archgenxml.XMIParser.XMIAction': ['state action'],
             #'XMIParser.XMIGuard': [],
@@ -909,6 +909,19 @@ explanation = """Sets the trigger type, following what is defined by DCWorkflow:
 """
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+# Statemascine tagged values
+category = 'state machine'
+
+tagname = 'bindings'
+explanation = """List of portal-types this workflow should be bound to. 
+Comma-separated, i.e. 'Document, Image, File'.
+"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'default'
+explanation = """A workflow id to be set as the default workflow."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 # Category 'associations'
 category = 'association'
 
@@ -1139,21 +1152,21 @@ for category in ['model', 'package', 'association']:
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 # Workflow
-    category = 'state transition'
-    tagname = 'url'
-    explanation = """Action URL, need 'PloneWorkflowTransitions'
-    to see it in Plone."""
-    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+category = 'state transition'
+tagname = 'url'
+explanation = """Action URL, need 'PloneWorkflowTransitions'
+to see it in Plone."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-    category = 'state action'
-    tagname = 'binding:before'
-    explanation = """Interface to bind the before effect to."""
-    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+category = 'state action'
+tagname = 'before:binding'
+explanation = """Interface to bind the before effect to."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-    category = 'state action'
-    tagname = 'binding:after'
-    explanation = """Interface to bind the after effect to."""
-    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+category = 'state action'
+tagname = 'after:binding'
+explanation = """Interface to bind the after effect to."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 # Tagged values occurring everywhere
 for category in tgvRegistry._registry:

@@ -209,7 +209,6 @@ class WorkflowGenerator(BaseGenerator):
                 path = '.'
             defaultbinding = '%sinterfaces.I%s' % (path, klass.getCleanName())
         tag = '%s:binding' % type
-        print tag
         res['objinterface'] = action.getTaggedValue(tag, defaultbinding)
         return res
     
