@@ -2364,7 +2364,7 @@ class XMIStateTransition(XMIElement):
         for key, value in d_expr.items():
             guard = value.strip()
             if guard:
-                result.update({key:guard})
+                result[key] = guard
         return repr(result)
 
     def getGuardRoles(self):
