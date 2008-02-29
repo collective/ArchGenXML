@@ -45,7 +45,7 @@ at_uml_profile.addStereoType(
 at_uml_profile.addStereoType(
     'plone_testcase', ['XMIClass'],
     dispatching=1,
-    template='tests/PloneTestcase.py',
+    template='tests/PloneTestcase.pydtml',
     generator='generateBaseTestcaseClass',
     description='Turns a class into the (needed) base class for all '
     "other '<<testcase>>' and '<<doc_testcase>>' classes "
@@ -54,7 +54,7 @@ at_uml_profile.addStereoType(
 at_uml_profile.addStereoType(
     'testcase', ['XMIClass'],
     dispatching=1,
-    template='tests/GenericTestcase.py',
+    template='tests/GenericTestcase.pydtml',
     generator='generateTestcaseClass',
     description='Turns a class into a testcase. It must subclass a '
     "'<<plone_testcase>>'. Adding an interface arrow to "
@@ -64,7 +64,7 @@ at_uml_profile.addStereoType(
 at_uml_profile.addStereoType(
     'plonefunctional_testcase', ['XMIClass'],
     dispatching=1,
-    template='tests/PloneFunctionalTestcase.py',
+    template='tests/PloneFunctionalTestcase.pydtml',
     generator='generateBaseFunctionalTestcaseClass',
     description='Turns a class into the base class for all '
     "other '<<functionaltestcase>>' classes inside a '<<test>>' package.")
@@ -72,7 +72,7 @@ at_uml_profile.addStereoType(
 at_uml_profile.addStereoType(
     'functional_testcase', ['XMIClass'],
     dispatching=1,
-    template='tests/GenericFunctionalTestcase.py',
+    template='tests/GenericFunctionalTestcase.pydtml',
     generator='generateFunctionalTestcaseClass',
     description='Turns a class into a functional testcase. It must subclass a '
     "'<<functional_testcase>>'. Adding an interface arrow to "
@@ -82,7 +82,7 @@ at_uml_profile.addStereoType(
 at_uml_profile.addStereoType(
     'doc_testcase', ['XMIClass'],
     dispatching=1,
-    template='tests/DocTestcase.py',
+    template='tests/DocTestcase.pydtml',
     generator='generateDocTestcaseClass',
     description='Turns a class into a doctest class. It must subclass '
     "a '<<plone_testcase>>'.")
@@ -91,7 +91,7 @@ at_uml_profile.addStereoType(
     'setup_testcase', ['XMIClass'],
     dispatching=1,
     generator='generateTestcaseClass',
-    template='tests/SetupTestcase.py',
+    template='tests/SetupTestcase.pydtml',
     description='Turns a class into a testcase for the setup, with '
                 'pre-defined common checks.')
 
@@ -99,14 +99,14 @@ at_uml_profile.addStereoType(
     'interface_testcase', ['XMIClass'],
     dispatching=1,
     generator='generateTestcaseClass',
-    template='tests/InterfaceTestcase.py',
+    template='tests/InterfaceTestcase.pydtml',
     description='Turns a class into a testcase for the interfaces.')
 
 at_uml_profile.addStereoType(
     'field', ['XMIClass'],
     dispatching=1,
     generator='generateFieldClass',
-    template='field.py',
+    template='field.pydtml',
     description='Class will target in a ObjectField or CompoundField '
                 '(latter if Attributes are provided)')
 
@@ -114,7 +114,7 @@ at_uml_profile.addStereoType(
     'widget', ['XMIClass'],
     dispatching=1,
     generator='generateWidgetClass',
-    template='widget.py',
+    template='widget.pydtml',
     description='A simple stub archetypes-widget class will be created.')
 
 at_uml_profile.addStereoType(

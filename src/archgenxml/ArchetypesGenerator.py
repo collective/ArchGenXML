@@ -1321,7 +1321,7 @@ class ArchetypesGenerator(BaseGenerator):
         if not os.path.exists(os.path.join(self.targetRoot,
                                            element.getPackage().getFilePath(),
                                            'testFunctional.py')):
-            file=self.readTemplate(['tests','testFunctional.py'])
+            file=self.readTemplate(['tests','testFunctional.pydtml'])
             of=self.makeFile(os.path.join(element.getPackage().getFilePath(),
                                           'testFunctional.py'))
             of.write(file)
@@ -1332,8 +1332,8 @@ class ArchetypesGenerator(BaseGenerator):
 
     def generateBaseTestcaseClass(self,element,template):
         log.debug('write runalltests.py and framework.py')
-        runalltests=self.readTemplate(['tests', 'runalltests.py'])
-        framework=self.readTemplate(['tests', 'framework.py'])
+        runalltests=self.readTemplate(['tests', 'runalltests.pydtml'])
+        framework=self.readTemplate(['tests', 'framework.pydtml'])
 
         log.debug('generate base testcase class')
         of=self.makeFile(os.path.join(element.getPackage().getFilePath(),
@@ -2343,8 +2343,6 @@ class ArchetypesGenerator(BaseGenerator):
             return
 
         # create Extension directory
-        installTemplate = open(os.path.join(self.templateDir,
-                                            'Install.py')).read()
         extDir = os.path.join(package.getFilePath(), 'Extensions')
         self.makeDir(extDir)
 
@@ -2364,7 +2362,7 @@ class ArchetypesGenerator(BaseGenerator):
         }
         d.update(__builtins__)
 
-        templ=self.readTemplate(['Install.py'])
+        templ=self.readTemplate(['Install.pydtml'])
         dtml=HTML(templ,d)
         res=dtml()
 
@@ -3164,7 +3162,7 @@ class ArchetypesGenerator(BaseGenerator):
             'memberclasses' : memberclasses,
 
         }
-        handleSectionedFile(['profiles', 'setuphandlers.py'],
+        handleSectionedFile(['profiles', 'setuphandlers.pydtml'],
                             os.path.join(package.getFilePath(),
                                          'setuphandlers.py'),
                             sectionnames=('HEAD', 'FOOT'),
@@ -3200,7 +3198,7 @@ class ArchetypesGenerator(BaseGenerator):
     
     def generateDCWorkflowPatch(self, package):
         if self.shouldPatchDCWorkflow(package):
-            handleSectionedFile(['dcworkflowpatch.py'],
+            handleSectionedFile(['dcworkflowpatch.pydtml'],
                                 os.path.join(os.path.join(package.getFilePath()),
                                              'dcworkflowpatch.py'))
 
@@ -3394,7 +3392,7 @@ class ArchetypesGenerator(BaseGenerator):
             # dont generate empty interfaces.py
             return
 
-        handleSectionedFile(['interfaces.py'],
+        handleSectionedFile(['interfaces.pydtml'],
                             os.path.join(package.getFilePath(),
                                          'interfaces.py'),
                             sectionnames=['HEAD', 'FOOT'],

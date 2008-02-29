@@ -37,21 +37,21 @@ base_uml_profile = UMLProfile()
 base_uml_profile.addStereoType('z3', ['XMIInterface'],
     dispatching=1,
     generator='generateZope3Interface',
-    template='zope3_interface.py',
+    template='zope3_interface.pydtml',
     description='Generate this interface class as zope 3 interface. This '
                 'will inherit from zope.interface.Interface.')
 
 base_uml_profile.addStereoType('python_class', ['XMIClass'],
     dispatching=1,
     generator='generatePythonClass',
-    template='python_class.py',
+    template='python_class.pydtml',
     description='Generate this class as a plain python class '
                 'instead of as an Archetypes class.')
 
 base_uml_profile.addStereoType('view_class', ['XMIClass'],
     dispatching=1,
     generator='generateViewClass',
-    template='view_class.py',
+    template='view_class.pydtml',
     description='Generate this class as a zope3 view class '
                 'instead of as an Archetypes class.')
 
@@ -59,7 +59,7 @@ base_uml_profile.addStereoType('view_class', ['XMIClass'],
 base_uml_profile.addStereoType('zope_class', ['XMIClass'],
     dispatching=1,
     generator='generateZopeClass',
-    template='zope_class.py',
+    template='zope_class.pydtml',
     description='Generate this class as a plain Zope class '
                 'instead of as an Archetypes class.')
 

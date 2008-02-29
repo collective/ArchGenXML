@@ -127,7 +127,7 @@ class WorkflowGenerator(BaseGenerator):
             parsedModule = PyModule(modulepath)
         else:
             parsedModule = PyModule('', mode='string')
-        templ = self.readTemplate(['wfsubscribers.py'])
+        templ = self.readTemplate(['wfsubscribers.pydtml'])
         d = {
             'generator': self,
             'package': self.package,
