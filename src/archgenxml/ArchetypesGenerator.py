@@ -138,8 +138,8 @@ class ArchetypesGenerator(BaseGenerator):
     atct_stereotype = ['atfolder', 'atfile', 'atdocument', 'atevent', 'atimage',
                        'atnewsitem', 'atlink']
     teststereotype = ['testcase', 'plone_testcase', 'plonefunctional_testcase',
-                      'functional_testcase', 'doc_testcase', 'setup_testcase',
-                      'doc_testcase', 'interface_testcase']
+                      'functional_testcase', 'doc_testcase', 'functional_doc_testcase',
+                      'setup_testcase', 'doc_testcase', 'interface_testcase']
     widgetfieldstereotype = ['widget', 'field']
     flavor_stereotypes = ['flavor']
     noncontentstereotype = stub_stereotypes + python_stereotype + \
@@ -1366,7 +1366,8 @@ class ArchetypesGenerator(BaseGenerator):
 
         init='#'
         ppath = os.path.join(element.getPackage().getProduct().getFilePath())
-        of = self.makeFile(ppath, 'doc', '__init__.py' )
+        fp = os.path.join(ppath, 'doc', '__init__.py' )
+        of = self.makeFile(fp)
 
         of.write(init)
         of.close()

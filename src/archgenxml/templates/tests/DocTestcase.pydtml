@@ -54,10 +54,11 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
 def test_suite():
     from unittest import TestSuite
     from Testing.ZopeTestCase.zopedoctest import ZopeDocFileSuite
+    from Testing.ZopeTestCase import <dtml-if "klass.hasStereoType('functional_doc_testcase')">FunctionalDocFileSuite<dtml-else>ZopeDocFileSuite</dtml-if>
 
     <dtml-var "generator.getProtectedSection(parsed_class, 'test-suite-in-between')">
 
-    s = ZopeDocFileSuite('<dtml-var "testname">.txt',
+    s = <dtml-if "klass.hasStereoType('functional_doc_testcase')">FunctionalDocFileSuite<dtml-else>ZopeDocFileSuite</dtml-if>('<dtml-var "testname">.txt',
                          package='Products.<dtml-var "klass.getPackage().getProduct().getCleanName()">.doc',
                          test_class=<dtml-var "klass.getCleanName()">)
     if USELAYER:
