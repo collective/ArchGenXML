@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <import-steps>
 
+<dtml-if "dependend_profiles">
 <import-step 
     id="<dtml-var "product_name">-GS-dependencies" 
     handler="Products.<dtml-var "product_name">.setuphandlers.installGSDependencies"
@@ -10,7 +11,9 @@
    <dependency step="<dtml-var "product_name">-QI-dependencies"/>
    Install Generic Setup profile dependencies for <dtml-var "product_name">
  </import-step>
-
+ 
+</dtml-if>
+<dtml-if "qidependencystep">
  <import-step 
     id="<dtml-var "product_name">-QI-dependencies" 
     handler="Products.<dtml-var "product_name">.setuphandlers.installQIDependencies"
@@ -19,7 +22,8 @@
    Install quickinstaller dependencies for <dtml-var "product_name">
  </import-step>
  
- <dtml-if "notsearchabletypes">
+</dtml-if> 
+<dtml-if "notsearchabletypes">
  <import-step 
     id="<dtml-var "product_name">-Hide-Types-From-Search" 
     handler="Products.<dtml-var "product_name">.setuphandlers.setupHideTypesFromSearch"
@@ -29,8 +33,8 @@
    Hides types from the search form for <dtml-var "product_name">
  </import-step>
  
- </dtml-if>
- <dtml-if "hidemetatypes">
+</dtml-if>
+<dtml-if "hidemetatypes">
  <import-step 
     id="<dtml-var "product_name">-Hide-Types-From-Navigation" 
     handler="Products.<dtml-var "product_name">.setuphandlers.setupHideMetaTypesFromNavigations"
@@ -40,8 +44,8 @@
    Hides types from the navigation tree for <dtml-var "product_name">
  </import-step>
  
- </dtml-if>
- <dtml-if "toolnames">
+</dtml-if>
+<dtml-if "toolnames">
  <import-step 
     id="<dtml-var "product_name">-Hide-Tools-From-Navigation" 
     handler="Products.<dtml-var "product_name">.setuphandlers.setupHideToolsFromNavigation"
@@ -51,8 +55,8 @@
    Hides custom tools from navigation tree for <dtml-var "product_name">
  </import-step>
  
- </dtml-if>
- <dtml-if "hasrelations">
+</dtml-if>
+<dtml-if "hasrelations">
  <import-step 
     id="<dtml-var "product_name">-Import-Relations" 
     handler="Products.<dtml-var "product_name">.setuphandlers.installRelations"
@@ -62,7 +66,7 @@
    Installs the relations.xml file into relations library for <dtml-var "product_name">
  </import-step>
  
- </dtml-if>
+</dtml-if>
  
 <dtml-if "hasvocabularies">
  <import-step 
@@ -73,8 +77,8 @@
    <dependency step="<dtml-var "product_name">-QI-dependencies"/>
    Installs the vocabulary files into vocabulary library for <dtml-var "product_name">
  </import-step>
-</dtml-if>
 
+</dtml-if>
 <dtml-if "memberclasses">
  <import-step 
     id="<dtml-var "product_name">-Setup-Member-Types" 
@@ -84,8 +88,8 @@
    <dependency step="<dtml-var "product_name">-QI-dependencies"/>
    setup Remember(Membrane) types for <dtml-var "product_name">
  </import-step>
-</dtml-if>
 
+</dtml-if>
  <import-step 
     id="<dtml-var "product_name">-Update-RoleMappings" 
     handler="Products.<dtml-var "product_name">.setuphandlers.updateRoleMappings"

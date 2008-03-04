@@ -19,6 +19,7 @@ import transaction
 def isNot<dtml-var "product_name">Profile(context):
     return context.readDataFile("<dtml-var "product_name">_marker.txt") is None
 
+<dtml-if "dependend_profiles">
 def installGSDependencies(context):
     """Install dependend profiles."""
     if isNot<dtml-var "product_name">Profile(context): return 
@@ -81,6 +82,8 @@ def installGSDependencies(context):
         setup_tool.runImportStep(step) # purging flag here?
     logger.info("installGSDependencies finished")
 
+</dtml-if>
+<dtml-if "qidependencystep">
 def installQIDependencies(context):
     """This is for old-style products using QuickInstaller"""
     if isNot<dtml-var "product_name">Profile(context): return 
@@ -109,6 +112,7 @@ def installQIDependencies(context):
                 raise "   QI dependency %s not installable" % dependency
     logger.info("installQIDependencies finished")
 
+</dtml-if>
 <dtml-if "notsearchabletypes">
 def setupHideTypesFromSearch(context):
     """hide selected classes in the search form"""

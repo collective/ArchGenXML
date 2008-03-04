@@ -3161,6 +3161,9 @@ class ArchetypesGenerator(BaseGenerator):
             'notsearchabletypes': notsearchabletypes,
             'hidemetatypes': hidemetatypes,
             'memberclasses' : memberclasses,
+            'qidependencystep': utils.isTGVTrue(
+                                self.getOption('dependency_step_qi',
+                                               package, '0'))
 
         }
         handleSectionedFile(['profiles', 'setuphandlers.pydtml'],
