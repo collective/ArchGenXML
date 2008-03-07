@@ -54,6 +54,15 @@
    <dependency step="<dtml-var "product_name">-QI-dependencies"/>
    Hides custom tools from navigation tree for <dtml-var "product_name">
  </import-step>
+
+ <import-step 
+    id="<dtml-var "product_name">-Fix-Tools" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.fixTools"
+    title="Fix tools for <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   <dependency step="<dtml-var "now">-QI-dependencies"/>
+   call initializeArchetyps for tools in <dtml-var "product_name">
+ </import-step>
  
 </dtml-if>
 <dtml-if "hasrelations">

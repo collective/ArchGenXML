@@ -574,7 +574,7 @@ class ArchetypesGenerator(BaseGenerator):
         """
         # XXX remove start in archgenxml 2.1
         tgv = element.getTaggedValues()
-        if 'widget' in tgv.keys():
+        if 0 and 'widget' in tgv.keys():
             # Custom widget defined in attributes
             # really ugly, we deprectae it (jensens)
             log.warn('Deprecated: old style definiton in %s' % element)
@@ -610,7 +610,8 @@ class ArchetypesGenerator(BaseGenerator):
         wdef['type'] = None
         wdef['fetchfromfield'] = False
         wdef['fieldclass'] = None
-        wdef['widgetclass'] = None
+        wdef['widgetclass'] = element.getTaggedValue('widget',None)
+        
         
         # process the widgets prefixed options 
         for key, value in element.getTaggedValues().items():
@@ -2443,6 +2444,7 @@ class ArchetypesGenerator(BaseGenerator):
            'has_tools': hasTools,
            'has_skins': self._hasSkinsDir(package),
            'has_subscribers': hasSubscribers,
+           'generatedTools':generatedTools,
            'tool_names': toolNames,
            'creation_permissions': self.creation_permissions,
            'protected_init_section_head': protectedInitCodeH,
@@ -2711,6 +2713,7 @@ class ArchetypesGenerator(BaseGenerator):
                 tool_id = toolname
             else:
                 tool_id = 'portal_%s' % klass.getCleanName().lower()
+    
             tools.append(
                 {
                     'klass': path,
@@ -4034,11 +4037,14 @@ class ArchetypesGenerator(BaseGenerator):
         gifTargetPath = os.path.join(self.getSkinPath(cclass,part='images'),
                                      fti['content_icon'])
 
-        of=self.makeFile(gifTargetPath, False, False)
-        if of:
-            of.write(toolgif)
-            of.close()
-
+        try:
+            of=self.makeFile(gifTargetPath, False, False)
+            if of:
+                of.write(toolgif)
+                of.close()
+        except:
+            pass
+        
         # If we are generating a tool, include the template which sets
         # a tool icon
         if cclass.hasStereoType(self.portal_tools,

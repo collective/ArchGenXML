@@ -1,4 +1,4 @@
-<dtml-if "fetchfromfield">
+<dtml-if "not widgetclass">
 <dtml-var "fieldclass">._properties['widget'](
 <dtml-else>
 <dtml-var "widgetclass">(
