@@ -585,7 +585,6 @@ class ArchetypesGenerator(BaseGenerator):
                 formatted += u"%s\n" % line
             return formatted
         # remove end
-        
         widgetdef = self._getWidgetDefinition(element, fieldname, fieldtype, 
                                               tgvprefix)
         widget = self.renderWidget(widgetdef)
@@ -963,7 +962,8 @@ class ArchetypesGenerator(BaseGenerator):
         if name == None:
             name = obj.getName()+'_ref'
 
-        if self.getOption('relation_implementation', rel, 'basic') == 'relations':             
+        if self.getOption('relation_implementation', rel, 'basic') == 'relations':    
+            relside.type='RelationField'
             log.info("Using the 'relations' relation implementation.")
             reftype = 'relation'
             # The relation can override the field
