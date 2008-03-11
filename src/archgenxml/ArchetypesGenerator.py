@@ -3150,6 +3150,7 @@ class ArchetypesGenerator(BaseGenerator):
                                                              klass, True))]
         memberclasses =  [klass for klass in allclasses \
                                if klass.hasStereoType(self.remember_stereotype)]
+
         templateparams = {
             'generator': self,
             'package': package,
