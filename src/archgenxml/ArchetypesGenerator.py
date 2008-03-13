@@ -2839,7 +2839,8 @@ class ArchetypesGenerator(BaseGenerator):
 
                     if not catalogname in defs.keys():
                         defs[catalogname] = dict()
-                    defs[catalogname]['indexes'].append(indexdef)
+                    if index:
+                        defs[catalogname]['indexes'].append(indexdef)
 
                     if metadata:
                         columndef = {
