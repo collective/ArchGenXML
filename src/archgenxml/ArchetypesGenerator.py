@@ -4023,25 +4023,23 @@ class ArchetypesGenerator(BaseGenerator):
             # comment out the icon definition
             fti['content_icon'] = cclass.getCleanName() + '.gif'
 
-        default_icon_name = self.elementIsFolderish(cclass) and \
-            'folder_icon.gif' or \
-            'document_icon.gif'
 
-
-        #copy the default icons
-        gifSourcePath = os.path.join(self.templateDir, default_icon_name)
-        toolgif = open(gifSourcePath, 'rb').read()
-
-        gifTargetPath = os.path.join(self.getSkinPath(cclass, part='images'),
-                                     fti['content_icon'])
-
-        try:
-            of = self.makeFile(gifTargetPath, False, False)
-            if of:
-                of.write(toolgif)
-                of.close()
-        except:
-            pass
+        if not cclass.isAbstract():
+            #copy the default icons
+            default_icon_name = self.elementIsFolderish(cclass) and \
+                'folder_icon.gif' or \
+                'document_icon.gif'
+            gifSourcePath = os.path.join(self.templateDir, default_icon_name)
+            toolgif = open(gifSourcePath, 'rb').read()
+            gifTargetPath = os.path.join(self.getSkinPath(cclass, part='images'),
+                                         fti['content_icon'])    
+            try:
+                of = self.makeFile(gifTargetPath, False, False)
+                if of:
+                    of.write(toolgif)
+                    of.close()
+            except:
+                pass
         
         # If we are generating a tool, include the template which sets
         # a tool icon
