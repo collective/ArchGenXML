@@ -764,6 +764,8 @@ class ArchetypesGenerator(BaseGenerator):
             if not key.startswith('array:') or key.startswith('array:widget'):
                 continue
             defs[key[6:]] = tgvs[key]                        
+            if key not in self.nonstring_tgvs:
+                defs[key[6:]] = utils.getExpression(defs[key[6:]])            
         return defs    
 
 
