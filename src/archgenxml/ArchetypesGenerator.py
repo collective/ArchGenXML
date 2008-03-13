@@ -3203,7 +3203,7 @@ class ArchetypesGenerator(BaseGenerator):
         transition events.
         """
         # We need Plone 2.5 compatibility, and there are subscribers:
-        return self.getOption('plone_target_version', package, '3.0') == '2.5' and \
+        return self.getOption('plone_target_version', package, 3.0) == 2.5 and \
                package.getAnnotation('subscribers')
     
     def generateDCWorkflowPatch(self, package):
