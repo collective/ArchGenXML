@@ -3657,8 +3657,8 @@ class ArchetypesGenerator(BaseGenerator):
             log.debug("Do not create skinsdir")
             return
 
-        skindirs = skindirstgv and Set(skindirstgv.split(',')) or Set([])
-        skindirs=skindirs.union(Set(['templates', 'styles', 'images']))
+        defaultdirs = Set(['templates', 'styles', 'images'])
+        skindirs = skindirstgv and Set(skindirstgv.split(',')) or defaultdirs
 
 
         #create the directories
@@ -4016,20 +4016,14 @@ class ArchetypesGenerator(BaseGenerator):
         if utils.isTGVTrue(tgvglobalallow):
             fti['global_allow'] = True
 
-        has_content_icon=''
-        content_icon = cclass.getTaggedValue('content_icon')
-        if not content_icon:
+        fti['content_icon'] = cclass.getTaggedValue('content_icon')
+        if not fti['content_icon']:
             # If an icon file with the default name exists in the skin, do not
             # comment out the icon definition
-            if self.elementIsFolderish(cclass):
-                fti['content_icon'] = cclass.getCleanName()+'.gif'
-            else:
-                fti['content_icon'] = cclass.getCleanName()+'.gif'
-                
-        else:
-            fti['content_icon'] = content_icon
+            fti['content_icon'] = cclass.getCleanName() + '.gif'
 
-        default_icon_name=self.elementIsFolderish(cclass) and 'folder_icon.gif' or \
+        default_icon_name = self.elementIsFolderish(cclass) and \
+            'folder_icon.gif' or \
             'document_icon.gif'
 
 
@@ -4037,11 +4031,11 @@ class ArchetypesGenerator(BaseGenerator):
         gifSourcePath = os.path.join(self.templateDir, default_icon_name)
         toolgif = open(gifSourcePath, 'rb').read()
 
-        gifTargetPath = os.path.join(self.getSkinPath(cclass,part='images'),
+        gifTargetPath = os.path.join(self.getSkinPath(cclass, part='images'),
                                      fti['content_icon'])
 
         try:
-            of=self.makeFile(gifTargetPath, False, False)
+            of = self.makeFile(gifTargetPath, False, False)
             if of:
                 of.write(toolgif)
                 of.close()
