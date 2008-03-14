@@ -3901,11 +3901,6 @@ class ArchetypesGenerator(BaseGenerator):
             typedef.update(fti)
             typedef['name'] = pclass.getCleanName()
 
-            #if utils.isTGVTrue(pclass.getTaggedValue('use_dynamic_view', '1')):
-            #    typedef['meta_type'] = 'Factory-based Type Information ' + \
-            #                           'with dynamic views'
-            #else:
-            #    typedef['meta_type'] = 'Factory-based Type Information'
             typedef['meta_type'] = 'Factory-based Type Information ' + \
                    'with dynamic views'
 
@@ -3913,7 +3908,8 @@ class ArchetypesGenerator(BaseGenerator):
             typedef['product_name'] = package.getProductName()
             typedef['factory'] = 'add%s' % pclass.getCleanName()
 
-            allowed_types = self._getSubtypes(pclass)['aggregated_classes']
+            subs = self._getSubtypes(pclass)
+            allowed_types = subs['aggregated_classes'] 
             typedef['allowed_content_types'] = allowed_types
 
             # check if allow_discussion has to be set to None as default
