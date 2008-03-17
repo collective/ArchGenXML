@@ -20,11 +20,19 @@ loginitializer.addConsoleLogging()
 import zopeimportfixer
 # End of the stuff that needs to be handled first.
 
+try:
+    # speedup: ~15%
+    import psyco
+    psyco.full()
+except ImportError:
+    pass
+
 import archgenxml
 import logging
 import sys
 import utils
 import os
+from time import time
 
 from zope import component
 from zope.configuration import xmlconfig
@@ -34,6 +42,7 @@ from pkg_resources import resource_filename
 
 
 def main():
+    a = time()
     log = logging.getLogger('main')
     # Import zope here as we want to possibly inject an extra
     # directory into the import path. Just depending on a zope in the
@@ -105,6 +114,8 @@ def main():
     optionsHolder.storeOptions(options)
     gen = ArchetypesGenerator(model, **options)
     gen.parseAndGenerate()
+    b = time()
+    log.info('generator run took %1.2f sec.' % (b-a))
 
 def info(type, value, tb):
     # from http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/65287
