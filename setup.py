@@ -8,7 +8,7 @@ import sys
 from setuptools import setup
 from setuptools import find_packages
 
-version = '2.0-rc2'
+version = '2.0-rc3 (svn)'
 shortdesc = 'UML to code generator for Plone'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.txt')).read()
 
