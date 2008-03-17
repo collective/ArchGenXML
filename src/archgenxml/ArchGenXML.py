@@ -44,7 +44,7 @@ except ImportError:
     log.debug("Running without Psyco.")
 
 def main():
-    a = time()
+    starttime = time()
     # Import zope here as we want to possibly inject an extra
     # directory into the import path. Just depending on a zope in the
     # normal import path can easily mess up existing zope sites.
@@ -115,8 +115,7 @@ def main():
     optionsHolder.storeOptions(options)
     gen = ArchetypesGenerator(model, **options)
     gen.parseAndGenerate()
-    b = time()
-    log.info('generator run took %1.2f sec.' % (b-a))
+    log.info('generator run took %1.2f sec.' % (time()-starttime))
 
 def info(type, value, tb):
     # from http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/65287
