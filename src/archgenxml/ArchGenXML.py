@@ -20,13 +20,6 @@ loginitializer.addConsoleLogging()
 import zopeimportfixer
 # End of the stuff that needs to be handled first.
 
-try:
-    # speedup: ~15%
-    import psyco
-    psyco.full()
-except ImportError:
-    pass
-
 import archgenxml
 import logging
 import sys
@@ -40,10 +33,18 @@ from zope.configuration import xmlconfig
 from OptionParser import parser
 from pkg_resources import resource_filename
 
+log = logging.getLogger('main')
+
+try:
+    # speedup: ~15%
+    import psyco
+    psyco.full()
+    log.debug("Running with Psyco.")
+except ImportError:
+    log.debug("Running without Psyco.")
 
 def main():
     a = time()
-    log = logging.getLogger('main')
     # Import zope here as we want to possibly inject an extra
     # directory into the import path. Just depending on a zope in the
     # normal import path can easily mess up existing zope sites.
