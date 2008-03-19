@@ -614,6 +614,10 @@ explanation = """DEPRECATED: Add an index to the attribute. Use catalog:index
 and the index:* tagged value instead."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'index_method'
+explanation = """DEPRECATED: Declares method used for indexing. """
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'validators'
 explanation = """TODO. Not supported for now."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
