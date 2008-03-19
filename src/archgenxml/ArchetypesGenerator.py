@@ -2809,7 +2809,7 @@ class ArchetypesGenerator(BaseGenerator):
                     
                 index = self.getOption('index', attribute, None)
                 if index:
-                    log.warn('Deprecated index usage at class %s, attribute %s!' % \
+                    log.warn("Deprecated index usage at class '%s', attribute '%s'!" % \
                              (klass.getName(), attribute.getName()) )
                     if '/' in index:
                         catalogname, index = index.split('/')
@@ -2825,7 +2825,7 @@ class ArchetypesGenerator(BaseGenerator):
                         defs[catalogname]['indexes'] = list()
                         defs[catalogname]['columns'] = list()
 
-                    accessor = attribute.getTaggedValue('index_method', None)
+                    accessor = attribute.getTaggedValue('indexMethod', None)
                     if not accessor:
                         accessor = attribute.getTaggedValue('accessor', None)
                     if not accessor:
