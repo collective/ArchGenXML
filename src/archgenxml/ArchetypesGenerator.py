@@ -2809,7 +2809,8 @@ class ArchetypesGenerator(BaseGenerator):
                     
                 index = self.getOption('index', attribute, None)
                 if index:
-                    log.warn('Deprecated index usage!')
+                    log.warn('Deprecated index usage at class %s, attribute %s!' % \
+                             (klass.getName(), attribute.getName()) )
                     if '/' in index:
                         catalogname, index = index.split('/')
                     else:
