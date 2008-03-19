@@ -3024,7 +3024,7 @@ class ArchetypesGenerator(BaseGenerator):
         style = dict()
         style['title'] = ''
         style['cacheable'] = 'True'
-        style['compression'] = 'save'
+        style['compression'] = 'safe'
         style['cookable'] = 'True'
         style['enabled'] = '1'
         style['expression'] = ''
@@ -3046,7 +3046,7 @@ class ArchetypesGenerator(BaseGenerator):
             return
         script = dict()
         script['cacheable'] = 'True'
-        script['compression'] = 'save'
+        script['compression'] = 'safe'
         script['cookable'] = 'True'
         script['enabled'] = 'True'
         script['expression'] = ''
