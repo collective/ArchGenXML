@@ -357,18 +357,22 @@ class ArchetypesGenerator(BaseGenerator):
                 element.getName()+'.py')
             msgcat.add(msgid, msgstr=msgstr, references=[module_id])
 
-    def getMethodActionsDict(self, element):
+    def _getMethodActions(self, element):
         log.debug("Generating method actions dict...")
         log.debug("First finding our methods.")
 
         ret = {}
-
-        for m in element.getMethodDefs():
-            method_name = m.getName()
-            code = utils.indent(m.getTaggedValue('code', ''), 1)
-            if m.hasStereoType(['action', 'view', 'form'],
-                               umlprofile=self.uml_profile):
+        klasses = [element] + element.getGenParents(recursive=1)
+        for klass in klasses:
+            for m in klass.getMethodDefs():
+                if not m.hasStereoType(['action', 'view', 'form'],
+                                       umlprofile=self.uml_profile):
+                    continue
+                if m.hasStereoType(['view', 'form']):
+                    log.warn('Deprated usage of stereotype view or form!')
                 log.debug("Method has stereotype action/view/form.")
+                method_name = m.getName()
+                code = utils.indent(m.getTaggedValue('code', ''), 1)
                 action_name = m.getTaggedValue('action','').strip()
                 if not action_name:
                     log.debug("No tagged value 'action', trying '%s' with a "
@@ -379,35 +383,34 @@ class ArchetypesGenerator(BaseGenerator):
                 log.debug("Ok, generating %s for %s.",
                           m.getStereoType(), action_name)
                 dict={}
-
+    
                 if not action_name.startswith('string:') \
                    and not action_name.startswith('python:'):
                     action_target = 'string:${object_url}/'+action_name
                 else:
                     action_target = action_name
-
+    
                 dict['action'] = action_target
                 dict['category'] = m.getTaggedValue('category', 'object')
-                dict['id'] = m.getTaggedValue('id',method_name)
-                dict['name'] = m.getTaggedValue('label',method_name)
+                dict['id'] = m.getTaggedValue('id', method_name)
+                dict['name'] = m.getTaggedValue('label', method_name)
                 perms = m.getTaggedValue('permission', 'View')
                 perms = [p.strip() for p in perms.split(',') if p.strip()]
                 dict['permissions'] = perms
                 dict['visible'] = m.getTaggedValue('visible', 'True')
                 condition = m.getTaggedValue('condition') or '1'
                 dict['condition']='python:%s' % condition
-
-                if not (m.hasTaggedValue('create_action') \
-                        and utils.isTGVFalse(m.getTaggedValue('create_action'))):
-                    ret[dict['id']] = dict
+                ret[dict['id']] = dict
         return ret
 
-    def getDisabledMethodActions(self, element):
+    def _getDisabledMethodActions(self, element):
         """returns a list of disabled method ids."""
         ret = []
-        for m in element.getMethodDefs():
-            if m.hasStereoType(['noaction']):
-                ret.append(m.getName())
+        klasses = [element] + element.getGenParents(recursive=1)
+        for klass in klasses:        
+            for m in klass.getMethodDefs():
+                if m.hasStereoType(['noaction']):
+                    ret.append(m.getName())
         return ret
 
 
@@ -3888,10 +3891,11 @@ class ArchetypesGenerator(BaseGenerator):
         """
         classes = package.getClasses(recursive=1)
         for pclass in classes:
-            if not self._isContentClass(pclass):
+            if not self._isContentClass(pclass) or pclass.isAbstract():
                 continue
 
-            if pclass.hasStereoType(self.flavor_stereotypes,umlprofile=self.uml_profile):
+            if pclass.hasStereoType(self.flavor_stereotypes,
+                                    umlprofile=self.uml_profile):
                 continue
 
             if pclass.hasStereoType(['interface']):
@@ -3935,8 +3939,8 @@ class ArchetypesGenerator(BaseGenerator):
 
             # handle <<action>> and <<unaction>> stereotypes
             allactions = []
-            disabled = self.getDisabledMethodActions(pclass)
-            newactions = self.getMethodActionsDict(pclass)
+            disabled = self._getDisabledMethodActions(pclass)
+            newactions = self._getMethodActions(pclass)
             for i in range(0, len(actions)):
                 if actions[i]['id'] not in disabled and \
                    actions[i]['id'] not in newactions.keys():
