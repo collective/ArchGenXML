@@ -977,7 +977,12 @@ for category in ['model', 'package', 'class']:
     #the after creation rename feature using '_at_rename_after_creation'
     #class-attribute."""
     #tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
-
+    
+    tagname = 'alias'
+    explanation = """FTI Alias definition in the form
+    alias:name=fromvalue,tovalue"""
+    tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+    
     tagname = 'use_portal_factory'
     explanation = """This boolean value controls the registration
     of the type for use with portal_factory. Default: True."""
