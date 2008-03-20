@@ -3884,6 +3884,15 @@ class ArchetypesGenerator(BaseGenerator):
             'aggregated_classes': aggregatedClasses,
         }
         return ret
+    
+    def getTGVofGenParents(self, cklass, tgv, default=None, useoption=False):
+        klasses = [cklass] + cklass.getGenParents(recursive=1)
+        for klass in klasses:
+            if klass.hasTaggedValue(tgv):
+                return klass.getTaggedValue(tgv)
+        if useoption:
+            return self.getOption(tgv, cklass, default)
+        return default
 
     def _getTypeDefinitions(self, defs, package):
         """Iterate recursice through package and create class definitions
@@ -3913,6 +3922,7 @@ class ArchetypesGenerator(BaseGenerator):
             typedef['factory'] = 'add%s' % pclass.getCleanName()
 
             subs = self._getSubtypes(pclass)
+            
             allowed_types = subs['aggregated_classes'] 
             typedef['allowed_content_types'] = allowed_types
 
@@ -3974,17 +3984,20 @@ class ArchetypesGenerator(BaseGenerator):
         """Return the FTI information of the content class
         """
         fti = dict()
-        fti['immediate_view'] = self.getOption('immediate_view',
-                                               cclass,
-                                               default='base_view')
+        fti['immediate_view'] = self.getTGVofGenParents(cclass,
+                                                        'immediate_view',
+                                                        default='base_view',
+                                                        useoption=True)
 
-        fti['default_view'] = self.getOption('default_view',
-                                             cclass,
-                                             default=fti['immediate_view'])
+        fti['default_view'] =self.getTGVofGenParents(cclass,
+                                                     'default_view',
+                                                     default=fti['immediate_view'],
+                                                     useoption=True)
 
-        fti['suppl_views'] = self.getOption('suppl_views',
-                                            cclass,
-                                            default='()')
+        fti['suppl_views'] = self.getTGVofGenParents(cclass,
+                                                     'suppl_views',
+                                                     default='()',
+                                                     useoption=True)
 
         fti['global_allow'] = True
             
@@ -4009,9 +4022,10 @@ class ArchetypesGenerator(BaseGenerator):
             fti['global_allow'] = False
 
         # But the tagged value overwrites all
-        tgvglobalallow = self.getOption('global_allow',
-                                        cclass,
-                                        default=None)
+        tgvglobalallow = self.getTGVofGenParents(cclass,
+                                                 'global_allow',
+                                                 default=None,
+                                                 useoption=True)
         if utils.isTGVFalse(tgvglobalallow):
             fti['global_allow'] = False
         if utils.isTGVTrue(tgvglobalallow):
