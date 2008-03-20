@@ -980,7 +980,7 @@ for category in ['model', 'package', 'class']:
     
     tagname = 'alias'
     explanation = """FTI Alias definition in the form
-    alias:name=fromvalue,tovalue"""
+    alias=fromvalue,tovalue"""
     tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
     
     tagname = 'use_portal_factory'
