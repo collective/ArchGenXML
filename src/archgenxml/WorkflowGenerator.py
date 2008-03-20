@@ -2,6 +2,7 @@ from operator import itemgetter
 import os.path
 import utils
 import logging
+from sets import Set
 from PyParser import PyModule
 from BaseGenerator import BaseGenerator
 from archgenxml.documenttemplate.documenttemplate import HTML
@@ -141,7 +142,7 @@ class WorkflowGenerator(BaseGenerator):
         of = self.atgenerator.makeFile(modulepath)
         of.write(res)
         of.close()
-        return res        
+        return res   
     
     def _collectSubscribers(self, sm):
         """collect info for workflow transition subscribers"""
@@ -149,20 +150,26 @@ class WorkflowGenerator(BaseGenerator):
         subscribers = product.getAnnotation('subscribers', dict())
         effects = self._effects(sm)
         for info in effects:
-            id = self._infoid(info)
+            id = '%s|%s|%s' % (info['objinterface'], info['wfinterface'],
+                                self._infoid(info, short=True))
             if id in subscribers.keys():
+                subscribers[id]['transitions'].update([info['transition']])
                 continue
             log.debug('Workflow subscriber added for %s' % sm.getCleanName())
             
             subscribers[id] = {}
             subscribers[id]['type'] = 'workflow'
             subscribers[id]['payload'] = info
+            if 'transitions' not in subscribers[id]:
+                subscribers[id]['transitions'] = Set()
+            subscribers[id]['transitions'].update([info['transition']])
             subscribers[id]['for'] = [
                 info['objinterface'],
                 info['wfinterface'],
             ]                
             subscribers[id]['method'] = self._infoid(info, short=True)
-            subscribers[id]['handler'] = id
+            dottedpath = ".wfsubscribers.%s" % (subscribers[id]['method'])
+            subscribers[id]['handler'] = dottedpath
         product.annotate('subscribers', subscribers)
 
         

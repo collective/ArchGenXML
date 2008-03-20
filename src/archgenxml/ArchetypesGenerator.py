@@ -2682,7 +2682,6 @@ class ArchetypesGenerator(BaseGenerator):
         ppath = package.getFilePath()
         handleSectionedFile(['subscribers.zcml'],
                             os.path.join(ppath, 'generatedsubscribers.zcml'),
-                            sectionnames=['SUBSCRIBERS'],
                             templateparams={'subscribers': subscribers})
 
     def generateGSDirectory(self, package):
