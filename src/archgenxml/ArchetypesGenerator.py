@@ -3931,11 +3931,7 @@ class ArchetypesGenerator(BaseGenerator):
             typedef['allow_discussion'] = pclass.getTaggedValue( \
                 'allow_discussion', 'False')
 
-            folderish = self.elementIsFolderish(pclass)
-            if folderish:
-                typedef['type_aliases'] = atmaps.DEFAULT_FOLDERISH_ALIASES
-            else:
-                typedef['type_aliases'] = atmaps.DEFAULT_ALIASES
+
 
             typedef['suppl_views'] = eval(typedef['suppl_views'])
             if not typedef['suppl_views']: #  and folderish:
@@ -4085,6 +4081,31 @@ class ArchetypesGenerator(BaseGenerator):
         fti['type_description'] = utils.getExpression( \
             cclass.getTaggedValue('typeDescription',
                                   fti['type_name']))
+        
+        folderish = self.elementIsFolderish(cclass)
+        if folderish:
+            fti['type_aliases'] = atmaps.DEFAULT_FOLDERISH_ALIASES
+        else:
+            fti['type_aliases'] = atmaps.DEFAULT_ALIASES      
+        # alias = fromvalue, tovalue
+        aliases = self.getTGVofGenParents(cclass, 'alias', default=None, 
+                                        useoption=True)
+        if aliases:
+            aliases = aliases.split('\n')
+            for alias in aliases:
+                fromvalue, tovalue = alias.split(',')
+                fromvalue = fromvalue.strip()
+                tovalue = tovalue.strip()
+                updated = False
+                for aliasdef in fti['type_aliases']:
+                    if aliasdef['from'] == fromvalue:
+                        aliasdef['to'] = tovalue
+                        updated = True
+                        break
+                if not updated:
+                    fti['type_aliases'].append({'from': fromvalue, 
+                                                'to': tovalue})
+          
         return fti
 
     def _hasSkinsDir(self, product):
