@@ -736,7 +736,7 @@ tagname = 'allowed_types'
 explanation = """Sets the types allowed for a ReferenceField. Default is []"""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
-tagname = 'catalog:attributes'
+tagname = 'index:attributes'
 explanation = """The attributes to use for index or metadata (string or comma 
 separated list of strings). This are the methods called at indexing time. 
 Normally it is enough to provide one index method, but for some specific use 
