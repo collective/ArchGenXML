@@ -1502,7 +1502,7 @@ class ArchetypesGenerator(BaseGenerator):
         # This entire method hould probably be moved off to the element classes.
         # Copy-pasted from generateArchetypesClass()...
         aggregatedClasses = element.getRefs() + \
-                          element.getSubtypeNames(recursive=0,filter=['class'])
+                          element.getSubtypeNames(recursive=0,filter=['class','associationclass'])
         log.debug("Found %s aggregated classes.",
                   len(aggregatedClasses))
         #also check if the parent classes can have subobjects
@@ -2042,7 +2042,7 @@ class ArchetypesGenerator(BaseGenerator):
             recursive = 1
         aggregatedClasses = element.getRefs() + \
                           element.getSubtypeNames(recursive=recursive,
-                                                  filter=['class'])
+                                                  filter=['class','associationclass'])
         # We *do* want the resursive=0 below, though!
         aggregatedInterfaces = element.getRefs() + \
                              element.getSubtypeNames(recursive=0,
