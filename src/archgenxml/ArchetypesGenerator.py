@@ -3841,11 +3841,11 @@ class ArchetypesGenerator(BaseGenerator):
 
         aggregatedClasses = element.getRefs() + \
             [o.getName()
-             for o in element.getAggregatedClasses(recursive=recursive, filter=['class'])
+             for o in element.getAggregatedClasses(recursive=recursive, filter=['class','associationclass'])
              if not o.hasStereoType('hidden', umlprofile=self.uml_profile)]
 
         # append with flavor implementers when some aggregated class is a flavor
-        for e in element.getAggregatedClasses(recursive=0,filter=['class']):
+        for e in element.getAggregatedClasses(recursive=0,filter=['class','associationclass']):
             if e.hasStereoType(self.flavor_stereotypes,umlprofile=self.uml_profile):
                 for imp in self.getFlavorImplementers(e,includeHidden=False):
                     aggregatedClasses.append(imp.split('.')[-1])

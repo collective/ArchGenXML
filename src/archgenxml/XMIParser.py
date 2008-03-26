@@ -1719,14 +1719,14 @@ class XMIClass(XMIElement, StateMachineContainer):
         return res
 
     def getAggregatedClasses(self, recursive=0,
-                             filter=['class', 'interface'], **kw):
+                             filter=['class', 'associationclass', 'interface'], **kw):
         """Returns the non-intrinsic subtypes classes."""
         res = [o for o in self.subTypes if not o.isAbstract() ]
         if recursive:
             for sc in self.subTypes:
                 res.extend([o for o in sc.getGenChildren(recursive=1)])
-        res = [o for o in res if o.__class__.__name__ in
-               ['XMI'+f.capitalize() for f in filter]]
+        res = [o for o in res if o.__class__.__name__.lower() in
+               ['xmi'+f.lower() for f in filter]]
         return res
 
     def isI18N(self):
