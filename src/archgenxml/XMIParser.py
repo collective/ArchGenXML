@@ -216,6 +216,11 @@ class XMI1_0(object):
             if len(ends) != 2:
                 log.debug('association with != 2 ends found.')
                 continue
+            # will it be a plain Association or an AssociationClass?
+            if rel.nodeName == XMI.ASSOCIATION_CLASS:
+                associationXMIClass = XMIAssociationClass
+            else:
+                associationXMIClass = XMIAssociation
 
             if self.isAssocEndAggregation(ends[0]):
                 master = ends[0]
@@ -226,6 +231,7 @@ class XMI1_0(object):
 
             if master:
                 log.debug("Ok, weve found an aggregation.")
+                log.debug("It's an %s", associationXMIClass)
                 masterid = self.getAssocEndParticipantId(master)
                 detailid = self.getAssocEndParticipantId(detail)
 
@@ -252,12 +258,17 @@ class XMI1_0(object):
                              d.getId(), d.getName(), XMI.getName(m))
                     continue
 
-                assoc = XMIAssociation(rel)
+                # check whether this association already exists or we have to instantiate it
+                relid = self.getId(rel)
+                if allObjects.has_key(relid):
+                    assoc = allObjects[relid]
+                else:
+                    assoc = associationXMIClass(rel)
                 assoc.fromEnd.obj.addAssocFrom(assoc)
                 assoc.toEnd.obj.addAssocTo(assoc)
 
             else:
-                log.debug("It's an assoc, lets model it as association.")
+                log.debug("It's an assoc, lets model it as association or an association class.")
                 try:
                     #check if an association class already exists
                     relid = self.getId(rel)
@@ -265,7 +276,7 @@ class XMI1_0(object):
                         assoc = allObjects[relid]
                         assoc.calcEnds()
                     else:
-                        assoc = XMIAssociation(rel)
+                        assoc = associationXMIClass(rel)
                 except KeyError:
                     log.warn("Child Object not found for aggregation "
                              "'%s', parent='%s'.",
@@ -1322,7 +1333,13 @@ class XMIPackage(XMIElement, StateMachineContainer):
            getElementsByTagName(ownedElement, XMI.ASSOCIATION_CLASS)
         for c in classes:
             if c.nodeName == XMI.ASSOCIATION_CLASS:
-                xc = XMIAssociationClass(c, package=self)
+                # maybe it was already instantiated (when building relations)?
+                classId = c.getAttribute('xmi.id').strip()
+                if allObjects.has_key(classId):
+                    xc = allObjects[classId]
+                    xc.setPackage(self)
+                else:
+                    xc = XMIAssociationClass(c, package=self)
             else:
                 xc = XMIClass(c, package=self)
             if xc.getName():
