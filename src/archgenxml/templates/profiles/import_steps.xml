@@ -60,7 +60,7 @@
     handler="Products.<dtml-var "product_name">.setuphandlers.fixTools"
     title="Fix tools for <dtml-var "product_name">"
     version="<dtml-var "now">">
-   <dependency step="<dtml-var "now">-QI-dependencies"/>
+   <dependency step="<dtml-var "product_name">-QI-dependencies"/>
    call initializeArchetyps for tools in <dtml-var "product_name">
  </import-step>
  
