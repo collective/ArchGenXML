@@ -27,12 +27,6 @@ def installGSDependencies(context):
     # XXX Hacky, but works for now. has to be refactored as soon as generic
     # setup allows a more flexible way to handle dependencies.
 
-    shortContext = context._profile_path.split(os.path.sep)[-3]
-    if shortContext != '<dtml-var "product_name">':
-        # the current import step is triggered too many times, this creates infinite recursions
-        # therefore, we'll only run it if it is triggered from proper context
-        logger.debug("installGSDependencies will not run in context %s" % shortContext)
-        return
     logger.info("installGSDependencies started")
     dependencies = [<dtml-var "', '.join(dependend_profiles)">]
     if not dependencies:
@@ -87,10 +81,6 @@ def installGSDependencies(context):
 def installQIDependencies(context):
     """This is for old-style products using QuickInstaller"""
     if isNot<dtml-var "product_name">Profile(context): return 
-    shortContext = context._profile_path.split(os.path.sep)[-3]
-    if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
-        logger.debug("installQIDependencies will not run in context %s" % shortContext)
-        return
     logger.info("installQIDependencies starting")
     site = context.getSite()
     qi = getToolByName(site, 'portal_quickinstaller')
@@ -118,9 +108,6 @@ def setupHideTypesFromSearch(context):
     """hide selected classes in the search form"""
     if isNot<dtml-var "product_name">Profile(context): return 
     # XXX use https://svn.plone.org/svn/collective/DIYPloneStyle/trunk/profiles/default/properties.xml
-    shortContext = context._profile_path.split(os.path.sep)[-3]
-    if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
-        return
     site = context.getSite()
     portalProperties = getToolByName(site, 'portal_properties')
     siteProperties = getattr(portalProperties, 'site_properties')
@@ -137,9 +124,6 @@ def setupHideMetaTypesFromNavigations(context):
     """hide selected classes in the search form"""
     if isNot<dtml-var "product_name">Profile(context): return 
     # XXX use https://svn.plone.org/svn/collective/DIYPloneStyle/trunk/profiles/default/properties.xml
-    shortContext = context._profile_path.split(os.path.sep)[-3]
-    if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
-        return
     site = context.getSite()
     portalProperties = getToolByName(site, 'portal_properties')
     siteProperties = getattr(portalProperties, 'site_properties')
@@ -156,9 +140,6 @@ def setupHideToolsFromNavigation(context):
     """hide tools"""
     if isNot<dtml-var "product_name">Profile(context): return 
     # uncatalog tools
-    shortContext = context._profile_path.split(os.path.sep)[-3]
-    if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
-        return
     site = context.getSite()
     toolnames = <dtml-var "repr(toolnames)">
     portalProperties = getToolByName(site, 'portal_properties')
@@ -177,12 +158,13 @@ def setupHideToolsFromNavigation(context):
 
 def fixTools(context):
     """do post-processing on auto-installed tool instances"""
+    if isNot<dtml-var "product_name">Profile(context): return 
     site = context.getSite()
-
     tool_ids=<dtml-var "[t.getTaggedValue('tool_instance_name','portal_%s' % t.getCleanName().lower()) for t in alltools]">
     for tool_id in tool_ids:
-        tool=site[tool_id]
-        tool.initializeArchetype()
+	    if hasattr(site, tool_id):
+	        tool=site[tool_id]
+	        tool.initializeArchetype()
 
 </dtml-if>
 <dtml-if "catalogmultiplexed">
@@ -193,9 +175,6 @@ def setupCatalogMultiplex(context):
     or removed from indexing in a catalog (black)
     """
     if isNot<dtml-var "product_name">Profile(context): return 
-    shortContext = context._profile_path.split(os.path.sep)[-3]
-    if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
-        return
     site = context.getSite()
     #dd#
     muliplexed = <dtml-var "repr([m.getCleanName() for m in catalogmultiplexed or []])">
@@ -232,9 +211,6 @@ def setupCatalogMultiplex(context):
 def installRelations(context):
     """imports the relations.xml file"""
     if isNot<dtml-var "product_name">Profile(context): return 
-    shortContext = context._profile_path.split(os.path.sep)[-3]
-    if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
-        return
     site = context.getSite()
     qi = getToolByName(site, 'portal_quickinstaller')
     if not qi.isProductInstalled('Relations'):
@@ -254,9 +230,6 @@ def installRelations(context):
 def installVocabularies(context):
     """creates/imports the atvm vocabs."""
     if isNot<dtml-var "product_name">Profile(context): return 
-    shortContext = context._profile_path.split(os.path.sep)[-3]
-    if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
-        return
     site = context.getSite()
     # Create vocabularies in vocabulary lib
     atvm = getToolByName(site, ATVOCABULARYTOOL)
@@ -296,9 +269,6 @@ from Products.remember.utils import getAdderUtility
 def setupMemberTypes(context):
     """Adds our member types to MemberDataContainer.allowed_content_types."""
     if isNot<dtml-var "product_name">Profile(context): return 
-    shortContext = context._profile_path.split(os.path.sep)[-3]
-    if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
-        return
     site = context.getSite()
     types_tool = getToolByName(site, 'portal_types')
     act = types_tool.MemberDataContainer.allowed_content_types
@@ -334,9 +304,6 @@ def updateRoleMappings(context):
     """after workflow changed update the roles mapping. this is like pressing
     the button 'Update Security Setting' and portal_workflow"""
     if isNot<dtml-var "product_name">Profile(context): return 
-    shortContext = context._profile_path.split(os.path.sep)[-3]
-    if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
-        return
     wft = getToolByName(context.getSite(), 'portal_workflow')
     wft.updateRoleMappings()
 
@@ -346,9 +313,6 @@ def postInstall(context):
     """Called as at the end of the setup process. """
     # the right place for your custom code
     if isNot<dtml-var "product_name">Profile(context): return 
-    shortContext = context._profile_path.split(os.path.sep)[-3]
-    if shortContext != '<dtml-var "product_name">': # avoid infinite recursions
-        return
     site = context.getSite()
 <dtml-else>
 <dtml-var "parsedModule.functions['postInstall'].getSrc()">
