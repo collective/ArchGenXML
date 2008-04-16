@@ -356,7 +356,7 @@ class WorkflowInfo(object):
     @property
     def states(self):
         states = self.sm.getStates(no_duplicates = 1)
-        filtered = [s for s in states if s.getName()]
+        filtered = [s for s in states if s.getName() and not s.iscomposite]
         filtered.sort(cmp=lambda x,y: cmp(x.getName(), y.getName()))
         result = []
         for item in filtered:
@@ -366,6 +366,11 @@ class WorkflowInfo(object):
             state['description'] = item.getDescription()
             state['exit-transitions'] = [t.getName() for t in
                                          item.getOutgoingTransitions()]
+            parentState = item.parentState
+            while parentState is not None:
+                state['exit-transitions'].extend(["%s.%s"%(item.getName(), t.getName())
+                                             for t in parentState.getOutgoingTransitions()])
+                parentState = parentState.parentState
             si = StateInfo(item)
             perms = si.permissionsDefinitions
             perms.sort(key=itemgetter('permission'))
@@ -373,11 +378,36 @@ class WorkflowInfo(object):
             result.append(state)
         return result
 
+    def _duplicateCompositeStateTransition(self, transition, compositeState):
+        transitions = []
+        for child in compositeState.getChildrenState():
+            if not child.iscomposite:
+                tr = TransitionInfo()
+                tr.id = "%s.%s"%(child.getName(), transition.getName())
+                tr.title = transition.getTaggedValue('label') or transition.getName()
+                new_state = transition.getTargetStateName()
+                if transition.getTargetState().iscomposite:
+                    new_state = child.getName()
+                tr.new_state = new_state
+                tr.trigger = transition.getTriggerType()
+                tr.before_script= None
+                tr.after_script= None
+                tr.action_url = transition.getTaggedValue('url')
+                tr.action_label = tr.title
+                tr.guardPermissions = transition.guardPermissions
+                tr.guardRoles = transition.guardRoles
+                tr.guardExpression = transition.guardExpression
+                transitions.append(tr)
+            else:
+                transitions.extend(self._duplicateCompositeStateTransition(transition, child))
+        return transitions
+
     @property
     def transitions(self):
         transitions = self.sm.getTransitions(no_duplicates = 1)
         filtered = [t for t in transitions if t.getName()]
         filtered.sort(cmp=lambda x,y: cmp(x.getName(), y.getName()))
+        transitions=[]
         for tr in filtered:
             guardPermissions = tr.getGuardPermissions()
             guardRoles = tr.getGuardRoles()
@@ -395,7 +425,23 @@ class WorkflowInfo(object):
             roles = [p.strip() for p in roles]
             tr.guardRoles = roles
             tr.guardExpression = guardExpr
-        return filtered
+            if tr.getSourceState().iscomposite:
+                transitions.extend(self._duplicateCompositeStateTransition(tr, tr.getSourceState()))
+            else:
+                tri = TransitionInfo()
+                tri.id = tr.getName()
+                tri.title = tr.getTaggedValue('label') or tr.getName()
+                tri.new_state = tr.getTargetStateName()
+                tri.trigger = tr.getTriggerType()
+                tri.before_script= None
+                tri.after_script= None
+                tri.action_url = tr.getTaggedValue('url')
+                tri.action_label = tri.title
+                tri.guardPermissions = tr.guardPermissions
+                tri.guardRoles = tr.guardRoles
+                tri.guardExpression = tr.guardExpression
+                transitions.append(tri)
+        return transitions
 
     @property
     def worklists(self):
@@ -527,6 +573,19 @@ class WorkflowInfo(object):
                   results[0])
         return results[0]
     
+class TransitionInfo:
+    def __init__(self):
+        self.id = None
+        self.title = None
+        self.new_state = None
+        self.trigger = None
+        self.before_script= None
+        self.after_script= None
+        self.action_url = None
+        self.action_label = None
+        self.guardPermissions = None
+        self.guardRoles = None
+        self.guardExpression = None
     
 class StateInfo(object):
     """adapter like objetc on a state to fetch information from it"""

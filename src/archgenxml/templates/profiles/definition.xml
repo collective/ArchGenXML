@@ -24,13 +24,13 @@
 </dtml-in>
 <dtml-in "info.transitions">
 <dtml-let transition="_['sequence-item']">
- <transition transition_id="<dtml-var "transition.getName()">"
-             title="<dtml-var "transition.getTaggedValue('label') or transition.getName()">"
-             new_state="<dtml-var "transition.getTargetStateName()">"
-             trigger="<dtml-var "transition.getTriggerType()">"
+ <transition transition_id="<dtml-var "transition.id">"
+             title="<dtml-var "transition.title">"
+             new_state="<dtml-var "transition.new_state">"
+             trigger="<dtml-var "transition.trigger">"
              before_script=""
              after_script="">
-  <action url="<dtml-var "transition.getTaggedValue('url')">" category="workflow"><dtml-var "transition.getTaggedValue('label') or transition.getName()"></action>
+  <action url="<dtml-var "transition.action_url">" category="workflow"><dtml-var "transition.action_label"></action>
   <guard>
 <dtml-in "transition.guardPermissions">
     <guard-permission><dtml-var "_['sequence-item']"></guard-permission>

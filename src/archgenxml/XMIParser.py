@@ -2156,13 +2156,14 @@ class XMIStateMachine(XMIElement):
     def initFromDOM(self, domElement=None):
         XMIElement.initFromDOM(self, domElement)
         self.buildTransitions()
+        self.buildCompositeStates()
         self.buildStates()
         self.associateClasses()
 
     def addState(self, state):
         self.states.append(state)
         state.setParent(self)
-
+    
     def getStates(self, no_duplicates=None):
         ret = []
         for s in self.states:
@@ -2250,6 +2251,23 @@ class XMIStateMachine(XMIElement):
         for sel in sels:
             state = XMIState(sel)
             self.addState(state)
+    
+    def buildCompositeStates(self, domElement=None):
+        log.debug("Building composite states...")
+        cpt = 0
+        if domElement is None:
+            domElement = self.domElement
+        for child in domElement.childNodes:
+            if child.nodeType ==  child.TEXT_NODE:
+                continue
+            if child.tagName == XMI.COMPOSITESTATE:
+                state = XMICompositeState(child)
+                self.addState(state)
+                cpt+=1
+            if len(child.childNodes) > 0:
+                self.buildCompositeStates(child)
+
+        log.debug("Found %s composite states.", cpt)
 
     def buildTransitions(self):
         tels = getElementsByTagName(self.domElement, XMI.TRANSITION,
@@ -2492,15 +2510,27 @@ class XMIGuard(XMIElement):
 
 class XMIState(XMIElement):
     isinitial = 0
+    iscomposite = False
 
     def __init__(self, *args, **kwargs):
         self.incomingTransitions = []
         self.outgoingTransitions = []
+        self.parentState = None
+        self.childrenState = []
         XMIElement.__init__(self, *args, **kwargs)
 
     def initFromDOM(self, domElement=None):
         XMIElement.initFromDOM(self, domElement)
         self.associateTransitions()
+        self.initParentState()
+
+    def initParentState(self):
+        if self.domElement.parentNode is not None and \
+                self.domElement.parentNode.tagName == XMI.COMPOSITESTATE_SUBVERTEX:
+            csState = self.domElement.parentNode.parentNode
+            csid = XMI.getId(csState) 
+            self.parentState = allObjects[csid]
+            self.parentState.addChildState(self)
 
     def associateTransitions(self):
 
@@ -2522,6 +2552,9 @@ class XMIState(XMIElement):
                 tran = allObjects[trid]
                 self.addIncomingTransition(tran)
 
+    def addChildState(self, state):
+        self.childrenState.append(state)
+
     def addIncomingTransition(self, tran):
         self.incomingTransitions.append(tran)
         tran.setTargetState(self)
@@ -2529,6 +2562,9 @@ class XMIState(XMIElement):
     def addOutgoingTransition(self, tran):
         self.outgoingTransitions.append(tran)
         tran.setSourceState(self)
+
+    def getChildrenState(self):
+        return self.childrenState
 
     def getIncomingTransitions(self):
         return self.incomingTransitions
@@ -2563,9 +2599,10 @@ class XMIState(XMIElement):
         return fromTaggedValue or fromDocumentation or default
 
 class XMICompositeState(XMIState):
+    iscomposite = True
+
     def __init__(self, *args, **kwargs):
         XMIState.__init__(self, *args, **kwargs)
-        XMIStateMachine.init(self)
 
 
 # Necessary for Poseidon because in Poseidon we cannot assign a name
