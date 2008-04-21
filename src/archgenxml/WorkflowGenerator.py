@@ -356,7 +356,7 @@ class WorkflowInfo(object):
     @property
     def states(self):
         states = self.sm.getStates(no_duplicates = 1)
-        filtered = [s for s in states if s.getName() and not s.iscomposite]
+        filtered = [s for s in states if s.getName() and not s.isComposite()]
         filtered.sort(cmp=lambda x,y: cmp(x.getName(), y.getName()))
         result = []
         for item in filtered:
@@ -381,12 +381,12 @@ class WorkflowInfo(object):
     def _duplicateCompositeStateTransition(self, transition, compositeState):
         transitions = []
         for child in compositeState.getChildrenState():
-            if not child.iscomposite:
+            if not child.isComposite():
                 tr = TransitionInfo()
                 tr.id = "%s.%s"%(child.getName(), transition.getName())
                 tr.title = transition.getTaggedValue('label') or transition.getName()
                 new_state = transition.getTargetStateName()
-                if transition.getTargetState().iscomposite:
+                if transition.getTargetState().isComposite():
                     new_state = child.getName()
                 tr.new_state = new_state
                 tr.trigger = transition.getTriggerType()
@@ -425,7 +425,7 @@ class WorkflowInfo(object):
             roles = [p.strip() for p in roles]
             tr.guardRoles = roles
             tr.guardExpression = guardExpr
-            if tr.getSourceState().iscomposite:
+            if tr.getSourceState().isComposite():
                 transitions.extend(self._duplicateCompositeStateTransition(tr, tr.getSourceState()))
             else:
                 tri = TransitionInfo()

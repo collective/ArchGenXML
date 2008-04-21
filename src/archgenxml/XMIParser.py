@@ -523,6 +523,7 @@ class XMI1_1 (XMI1_0):
     STEREOTYPE = "UML:Stereotype"
     ISABSTRACT = "UML:GeneralizableElement.isAbstract"
     INTERFACE = "UML:Interface"
+    EVENT = "UML:SignalEvent"
 
     ABSTRACTION = "UML:Abstraction"
 
@@ -1242,6 +1243,7 @@ class XMIPackage(XMIElement, StateMachineContainer):
         StateMachineContainer.__init__(self)
         self.classes = []
         self.interfaces = []
+        self.events = []
         self.packages = []
         # outputDirectoryName is used when setting the output
         # directory on the command line. Effectively only used for
@@ -1299,6 +1301,12 @@ class XMIPackage(XMIElement, StateMachineContainer):
         return self.children + self.getClasses() + \
                self.getPackages() + self.getInterfaces()
 
+    def addEvent(self, ev):
+        self.events.append(ev)
+
+    def getEvents(self):
+        return events
+
     def addPackage(self, p):
         self.packages.append(p)
         p.parent = self
@@ -1312,6 +1320,21 @@ class XMIPackage(XMIElement, StateMachineContainer):
                 res.extend(p.getPackages(recursive=1))
 
         return res
+    
+    def buildEvents(self):
+        ownedElement = XMI.getOwnedElement(self.domElement)
+        if not ownedElement:
+            log.warn("Empty package: '%s'.",
+                     self.getName())
+            return
+
+        events = getElementsByTagName(ownedElement, XMI.EVENT)
+
+        for ev in events:
+            xe = XMIEvent(ev)
+            if xe.getName():
+                self.addEvent(xe)
+
 
     def buildPackages(self):
         packEls = XMI.getPackageElements(self.domElement)
@@ -1321,6 +1344,7 @@ class XMIPackage(XMIElement, StateMachineContainer):
             package = XMIPackage(p)
             self.addPackage(package)
             package.buildPackages()
+    
 
     def buildClasses(self):
         ownedElement = XMI.getOwnedElement(self.domElement)
@@ -1510,6 +1534,13 @@ class XMIModel(XMIPackage):
                     log.debug('associated workflow does not exist: %s' % uf)
                     continue
                 smdict[uf].addClass(cl)
+
+class XMIEvent(XMIElement):
+    def __init__(self, *args, **kw):
+        log.debug("Initialising event.")
+        log.debug("Running XMIElement's init...")
+        XMIElement.__init__(self, *args, **kw)
+
 
 
 class XMIClass(XMIElement, StateMachineContainer):
@@ -2250,6 +2281,7 @@ class XMIStateMachine(XMIElement):
                                     recursive=1)
         for sel in sels:
             state = XMIState(sel)
+            state.isfinal = 1
             self.addState(state)
     
     def buildCompositeStates(self, domElement=None):
@@ -2455,6 +2487,13 @@ class XMIStateTransition(XMIElement):
         trigger_type = trigger_types.get(trigger_type, trigger_type)
         return trigger_type
 
+    def getTriggerEvent(self):
+        el = getElementsByTagName(self.domElement, XMI.EVENT, recursive=1)
+        if not len(el) == 1:
+            return
+        else:
+            return allObjects[XMI.getIdRef(el[0])]
+
 
 class XMIAction(XMIElement):
     expression = None
@@ -2510,6 +2549,7 @@ class XMIGuard(XMIElement):
 
 class XMIState(XMIElement):
     isinitial = 0
+    isfinal = 0
     iscomposite = False
 
     def __init__(self, *args, **kwargs):
@@ -2577,6 +2617,12 @@ class XMIState(XMIElement):
 
     def isInitial(self):
         return self.isinitial
+
+    def isFinal(self):
+        return self.isfinal
+    
+    def isComposite(self):
+        return self.iscomposite
 
     def getDescription(self):
         """Return the description for a state.
@@ -2711,7 +2757,8 @@ def buildHierarchy(doc, packagenames):
                 break
 
     buildDataTypes(doc)
-
+    
+    res.buildEvents()
     res.buildPackages()
     res.buildClassesAndInterfaces()
     res.buildStateMachines()
