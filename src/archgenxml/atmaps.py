@@ -7,14 +7,15 @@
 # Created:     2007/09/09
 
 STATE_PERMISSION_MAPPING = {
-    'access' : 'Access contents information',
-    'view'   : 'View',
-    'modify' : 'Modify portal content',
-    'list'   : 'List folder contents',
-    'add'    : 'Add portal content',
-    'delete' : 'Delete objects',
-    'role'   : 'Change local roles',
-    'review' : 'Review portal content',
+    'access'  : 'Access contents information',
+    'view'    : 'View',
+    'modify'  : 'Modify portal content',
+    'list'    : 'List folder contents',
+    'add'     : 'Add portal content',
+    'delete'  : 'Delete objects',
+    'role'    : 'Change local roles',
+    'review'  : 'Review portal content',
+    'inactive': 'Access inactive portal content',
 }
 
 ACTION_STEREOTYPES = [
