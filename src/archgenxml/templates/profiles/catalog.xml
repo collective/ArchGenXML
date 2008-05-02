@@ -6,9 +6,13 @@
   <index name="<dtml-var "_['sequence-item']['name']">" 
          meta_type="<dtml-var "_['sequence-item']['meta_type']">">
 <dtml-let indexed_attributes="_['sequence-item']['indexed_attributes']">
+<dtml-if "indexed_attributes">
 <dtml-in "indexed_attributes">
     <indexed_attr value="<dtml-var "_['sequence-item']">"/>
 </dtml-in>
+<dtml-else>
+</dtml-if>
+    <indexed_attr value="<dtml-var "_['sequence-item']['name']">"/>
 </dtml-let>
 <dtml-let extras="_['sequence-item']['extras']">
 <dtml-in "extras">
