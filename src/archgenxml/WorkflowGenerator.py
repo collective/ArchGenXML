@@ -51,20 +51,20 @@ class WorkflowGenerator(BaseGenerator):
 
         for sm in statemachines:
             d['info'] = WorkflowInfo(sm)
-            
-            # start BBB warning 
+
+            # start BBB warning
             smName = utils.cleanName(sm.getName())
             smDir = os.path.join(workflowDir, smName)
             oldFile = os.path.join(extDir, smName + '.py')
             if os.path.exists(oldFile):
                 log.warn('Workflow now uses generic setup, please '
                          'remove %s.', oldFile)
-            # end BBB warning 
-            
+            # end BBB warning
+
             self.atgenerator.makeDir(smDir)
             log.debug("Generated specific workflow's dir '%s'.",
                       smDir)
-            
+
             # Generate workflow xml
             log.info("Generating workflow '%s'.", smName)
             templ = self.readTemplate(['profiles', 'definition.xml'])
@@ -76,18 +76,18 @@ class WorkflowGenerator(BaseGenerator):
             of.close()
 
             self._collectSubscribers(sm)
-            
+
         # generate wfsubscribers.zcml
         self._generateWorkflowSubscribers()
-        
+
         oldFile = os.path.join(extDir, 'InstallWorkflows.py')
-        
-        # start BBB warning 
+
+        # start BBB warning
         if os.path.exists(oldFile):
             log.warn('Workflow now uses generic setup, please '
                      'remove %s.', oldFile)
-        # end BBB warning 
-        
+        # end BBB warning
+
         log.debug("Creating workflows.xml file.")
         d['workflowNames'] = self.workflowNames()
         d['workflowless'] = self.workflowLessTypes()
@@ -113,7 +113,7 @@ class WorkflowGenerator(BaseGenerator):
         of = self.atgenerator.makeFile(scriptpath)
         of.write(res)
         of.close()
-        
+
     def _generateWorkflowSubscribers(self):
         product = self.package.getProduct()
         subscribers = product.getAnnotation('subscribers', None)
@@ -142,8 +142,8 @@ class WorkflowGenerator(BaseGenerator):
         of = self.atgenerator.makeFile(modulepath)
         of.write(res)
         of.close()
-        return res   
-    
+        return res
+
     def _collectSubscribers(self, sm):
         """collect info for workflow transition subscribers"""
         product = self.package.getProduct()
@@ -156,7 +156,7 @@ class WorkflowGenerator(BaseGenerator):
                 subscribers[id]['transitions'].update([info['transition']])
                 continue
             log.debug('Workflow subscriber added for %s' % sm.getCleanName())
-            
+
             subscribers[id] = {}
             subscribers[id]['type'] = 'workflow'
             subscribers[id]['payload'] = info
@@ -166,23 +166,23 @@ class WorkflowGenerator(BaseGenerator):
             subscribers[id]['for'] = [
                 info['objinterface'],
                 info['wfinterface'],
-            ]                
+            ]
             subscribers[id]['method'] = self._infoid(info, short=True)
             dottedpath = ".wfsubscribers.%s" % (subscribers[id]['method'])
             subscribers[id]['handler'] = dottedpath
         product.annotate('subscribers', subscribers)
 
-        
+
     def _effects(self, sm):
         """ subscriber info"""
-        effects = []        
+        effects = []
         for transition in sm.getTransitions(self):
             before = transition.getBeforeActionName()
-            after = transition.getAfterActionName()                
+            after = transition.getAfterActionName()
             if before:
                 effects.append(self._transEffectInfo(transition, 'before'))
             if after:
-                effects.append(self._transEffectInfo(transition, 'after'))  
+                effects.append(self._transEffectInfo(transition, 'after'))
         return effects
 
     def _transEffectInfo(self, transition, type):
@@ -218,13 +218,13 @@ class WorkflowGenerator(BaseGenerator):
         tag = '%s:binding' % type
         res['objinterface'] = action.getTaggedValue(tag, defaultbinding)
         return res
-    
+
     def _infoid(self, info, short=False):
         base = info['effectname']
         if not short:
             base = '.wfsubscribers.' + base
         return base
-        
+
     def workflowNames(self):
         statemachines = self.package.getStateMachines()
         names = [utils.cleanName(sm.getName()) for sm in
@@ -284,7 +284,7 @@ class WorkflowGenerator(BaseGenerator):
             additionaltype['id'] = remembertype['portal_type']
             additionaltype['workflowId'] = remembertype['workflow']
             result.append(additionaltype)
-            
+
         # take tgv on state maschine itself into account
         for sm in statemachines:
             bindings = sm.getTaggedValue('bindings', '')
@@ -294,7 +294,7 @@ class WorkflowGenerator(BaseGenerator):
                 item['id'] = binding
                 item['workflowId'] = sm.getCleanName()
                 result.append(item)
-        
+
         return result
 
     def extraRoles(self):
@@ -333,18 +333,18 @@ class WorkflowGenerator(BaseGenerator):
         wi = WorkflowInfo
         source_pdefs = statemachine.getAllPermissionNames()
         result_pdefs = [self.processExpression(pdef, asString=False)
-                        for pdef in source_pdefs] 
+                        for pdef in source_pdefs]
         return result_pdefs
 
 class WorkflowInfo(object):
     """View-like utility class.
     """
-    
+
     striphtml = 0
 
     def __init__(self, sm, striphtml=0):
-        self.sm = sm # state machine.        
-            
+        self.sm = sm # state machine.
+
     @property
     def id(self):
         return self.sm.getCleanName()
@@ -413,7 +413,7 @@ class WorkflowInfo(object):
             wl['states'] = worklistStates
             worklists.append(wl)
         return worklists
-    
+
     @property
     def permissionNames(self):
         ret = []
@@ -422,11 +422,11 @@ class WorkflowInfo(object):
             pd = si.permissionsDefinitions
             for pdef in pd:
                 perm = pdef['permission'].strip()
- 
+
                 if perm not in ret:
                     ret.append(str(perm))
-        return ret    
-    
+        return ret
+
     def allRoles(self, ignore=[]):
         roles = []
         # Reserved name to set the title
@@ -447,8 +447,8 @@ class WorkflowInfo(object):
                      for r in sroles \
                      if not (r.strip() in roles or r.strip() in ignore)]
 
-        return [r for r in roles if r]    
-    
+        return [r for r in roles if r]
+
     def _getAllWorklistNames(self):
         """Return all worklists mentioned in this statemachine.
 
@@ -507,7 +507,7 @@ class WorkflowInfo(object):
         log.debug("Tagged value(s) found, taking the first (or only) one: '%s'.",
                   results[0])
         if utils.isTGVFalse(result):
-            return None   
+            return None
         return results[0]
 
     def _getWorklistGuardExpression(self, worklistname):
@@ -526,21 +526,21 @@ class WorkflowInfo(object):
         log.debug("Tagged value(s) found, taking the first (or only) one: '%s'.",
                   results[0])
         return results[0]
-    
-    
+
+
 class StateInfo(object):
     """adapter like objetc on a state to fetch information from it"""
-    
+
     non_permissions = [
         'initial_state', 'documentation',
         'label', 'description', 'worklist',
         'worklist:guard_permissions',
         'worklist:guard_roles',
-    ]    
-    
+    ]
+
     def __init__(self, state):
         self.state = state
-    
+
     @property
     def permissionsDefinitions(self):
         """ return a list of dictionaries with permission definitions
@@ -562,7 +562,7 @@ class StateInfo(object):
         # STATE_PERMISSION_MAPPING in TaggedValueSupport.py now
         # contains the handy mappings from 'access' to 'Access contents
         # information' and so.
-        
+
         state = self.state
         tagged_values = state.getTaggedValues()
         permission_definitions = []
@@ -571,15 +571,15 @@ class StateInfo(object):
             # list of tagged values that are NOT permissions
             if tag_name in self.non_permissions:
                 # short check if its registered, registry complains in log.
-                tgvRegistry.isRegistered(tag_name, state.classcategory, 
+                tgvRegistry.isRegistered(tag_name, state.classcategory,
                                          silent=True)
                 continue
             tag_name = tag_name.strip()
-            
+
             # look up abbreviations if any
             permission = STATE_PERMISSION_MAPPING.get(tag_name.lower(),
                                                       tag_name or '')
-            
+
             if not tag_value:
                 log.debug("Empty tag value, treating it as a reset "
                           "for acquisition, so acquisition=0.")
@@ -587,18 +587,18 @@ class StateInfo(object):
                                                'roles' : [],
                                                'acquisition' : 0})
                 continue
-            
+
             # split roles-string into list
             raw_roles = tag_value.replace(';', ',')
             roles = [str(r.strip()) for r in raw_roles.split(',') if r.strip()]
-            
+
             # verify if this permission is acquired
             nv = 'acquire'
             acquisition = 0
             if nv in roles:
                 acquisition = 1
                 roles.remove(nv)
-            
+
             permission = utils.processExpression(permission, asString=False)
             permission_definitions.append(
                         {'permission' : permission,
@@ -625,7 +625,7 @@ class StateInfo(object):
             permission = STATE_PERMISSION_MAPPING['access']
             permission_definitions.append({'permission': permission,
                                            'roles': v['roles'],
-                                           'acquisition': v['acquisition']})            
+                                           'acquisition': v['acquisition']})
         return permission_definitions
 
 
