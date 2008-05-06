@@ -1,11 +1,7 @@
-<configure xmlns="http://namespaces.zope.org/zope"
-           xmlns:browser="http://namespaces.zope.org/browser"
-           xmlns:five="http://namespaces.zope.org/five">
+<configure xmlns="http://namespaces.zope.org/zope">
   
   <include file="profiles.zcml" />
-<dtml-if "containsFlavors">
-  <include file="flavors.zcml"/>
-</dtml-if>
+
 <dtml-if "hasSubscribers">
   <include file="generatedsubscribers.zcml"/>
 </dtml-if>
@@ -20,6 +16,10 @@
 </dtml-if>
 </dtml-let>
 </dtml-in>
+<dtml-if "hasSubPackagesWithZcml">
+  <include file="includes.zcml"/>
+</dtml-if>
+
   <!-- ##code-section configure.zcml -->
   <!-- ##/code-section configure.zcml -->
 

@@ -212,6 +212,7 @@ class BaseGenerator:
         parents = element.getGenParents()
         parents += element.getRealizationParents()
         parents += element.getClientDependencyClasses(includeParents=True)
+        parents += element.getAdaptationParents()
 
         for p in parents:
 
@@ -267,18 +268,29 @@ class BaseGenerator:
 
     def generateImplements(self, element, parentnames):
         outfile = StringIO()
-        reparents = element.getRealizationParents()
-        
-        # Zope 3 interfaces
-        z3reparentnames = [p.getName() for p in reparents 
-                           if (self.getInterfaceType(p) == 'z3'
-                               or p.hasStereoType('view_class'))]
-                               
-        if not element.isInterface() and self._isContentClass(element):
-            z3reparentnames = ['interfaces.I'+element.getCleanName()]+z3reparentnames
+        if element.hasStereoType('extender'):
+            z3reparentnames = ['ISchemaExtender']
+        else:
+            reparents = element.getRealizationParents()
+            
+            # Zope 3 interfaces
+            z3reparentnames = [p.getName() for p in reparents 
+                               if (self.getInterfaceType(p) == 'z3'
+                                   or p.hasStereoType('view_class'))]
+            
+            if not element.isInterface() and self._isContentClass(element) and not element.hasStereoType('adapter'):
+                z3reparentnames = ['interfaces.I'+element.getCleanName()]+z3reparentnames
         if z3reparentnames:
             concatstring = ', '.join(z3reparentnames)
             print >> outfile, utils.indent("implements(%s)" % concatstring, 1)
+        return outfile.getvalue()
+
+    def generateAdapts(self, element):
+        outfile = StringIO()
+        adaptedClasses = element.getAdaptationParents()
+        for adaptedClass in adaptedClasses:
+            adaptedClassName = adaptedClass.getCleanName()
+            print >> outfile, utils.indent('adapts(%s)' % adaptedClassName, 1)
         return outfile.getvalue()
 
     def getMethodsToGenerate(self, element):

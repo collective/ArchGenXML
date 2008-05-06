@@ -37,8 +37,8 @@ log = logging.getLogger('main')
 
 try:
     # speedup: ~15%
-    import psyco
-    psyco.full()
+    #import psyco
+    #psyco.full()
     log.debug("Running with Psyco.")
 except ImportError:
     log.debug("Running without Psyco.")

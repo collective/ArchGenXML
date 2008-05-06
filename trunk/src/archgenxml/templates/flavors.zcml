@@ -1,17 +1,10 @@
 <configure xmlns="http://namespaces.zope.org/zope"
-           xmlns:browser="http://namespaces.zope.org/browser"
-           xmlns:five="http://namespaces.zope.org/five"
-           xmlns:or="http://namespaces.objectrealms.net/plone"
-           xmlns:zope="http://namespaces.zope.org/zope">
+           xmlns:or="http://namespaces.objectrealms.net/plone">
 >
 
   <!-- ##code-section HEAD -->
   <!-- ##/code-section HEAD -->
   
-<dtml-in "subPackagesWithFlavors">
- <include file="flavors.zcml" package=".<dtml-var "_['sequence-item']">"/>
-</dtml-in>
-
 <dtml-in "flavors">
  <dtml-let flavor="_['sequence-item']">
 
@@ -24,24 +17,13 @@
      title="<dtml-var "flavor['title']">"
     />
     <!-- Subscriber to let new items receive the <dtml-var "flavor['name']"> flavor -->
-    <zope:subscriber
+    <subscriber
      for=".<dtml-var "flavor['packageName']">.<dtml-var "flavor['name']"> zope.lifecycleevent.interfaces.IObjectCreatedEvent"
      handler=".<dtml-var "flavor['packageName']">.<dtml-var "flavor['handlerName']">"
     />
  </dtml-let>
 </dtml-in>
   
-  <!-- Some types that will have some flavor -->
-
-<dtml-in "implementers">
- <dtml-let implementer="_['sequence-item']">
-   <five:implements
-    class="<dtml-var "implementer['class']">"
-    interface="<dtml-var "implementer['qualifiedFlavorName']">"
-   />
- </dtml-let>
-</dtml-in>
-
   <!-- ##code-section FOOT -->
   <!-- ##/code-section FOOT -->
 

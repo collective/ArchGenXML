@@ -64,6 +64,8 @@ CLASS_SCHEMA = u"""\
 SCHEMA_START = u"""schema = Schema((
 """
 
+EXTENDER_SCHEMA_START = u"""    schema = ["""
+
 SCHEMA_TOOL = u"""\
         # a tool does not need be editable in id and title
         StringField(

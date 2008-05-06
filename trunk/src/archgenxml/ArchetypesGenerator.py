@@ -63,9 +63,7 @@ from pprint import pprint
 # Global variables etc.
 #
 
-Elements = []
-AlreadyGenerated = []
-Force = 0
+alreadyGenerated = []
 
 
 class DummyModel:
@@ -142,6 +140,9 @@ class ArchetypesGenerator(BaseGenerator):
                       'setup_testcase', 'doc_testcase', 'interface_testcase']
     widgetfieldstereotype = ['widget', 'field']
     flavor_stereotypes = ['flavor']
+    extender_stereotypes = ['extender']
+    named_adapter_stereotypes = ['named_adapter']
+    adapter_stereotypes = ['adapter'] + named_adapter_stereotypes + extender_stereotypes
     noncontentstereotype = stub_stereotypes + python_stereotype + \
                            teststereotype + widgetfieldstereotype
 
@@ -261,7 +262,8 @@ class ArchetypesGenerator(BaseGenerator):
         res = BaseGenerator.generateDependentImports(self, element)
         print >> out, res
 
-        print >> out, TEMPLATE_CMFDYNAMICVIEWFTI_IMPORT
+        if not element.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile):
+            print >> out, TEMPLATE_CMFDYNAMICVIEWFTI_IMPORT
 
         generate_expression_validator = False
         for att in element.getAttributeDefs():
@@ -958,6 +960,8 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             if obj.hasStereoType(self.flavor_stereotypes,umlprofile=self.uml_profile):
                 allowed_types=tuple(obj.getRealizationChildrenNames(recursive=True))
+            elif obj.hasStereoType(self.extender_stereotypes,umlprofile=self.uml_profile):
+                allowed_types=tuple(obj.getAdaptationParentNames(recursive=True))
             else:
                 allowed_types=(obj.getName(),) + tuple(obj.getGenChildrenNames())
 
@@ -1150,16 +1154,26 @@ class ArchetypesGenerator(BaseGenerator):
                                       tgv['widget:description'].strip("'").strip('"')
                                       or fieldname, element, fieldname)
 
-        fieldsformatted = self.getFieldsFormatted(field_specs) + u'),'
-        print >> outfile, SCHEMA_START
+        # schemaextender requires custom fields; their names will start with 'Extended'
+        if element.hasStereoType(self.extender_stereotypes,umlprofile=self.uml_profile):
+            for field_spec in field_specs:
+                field_spec['fieldtype'] = 'Extended' + field_spec['fieldtype']
+        fieldsformatted = self.getFieldsFormatted(field_specs)
+        if element.hasStereoType(self.extender_stereotypes,umlprofile=self.uml_profile):
+            print >> outfile, EXTENDER_SCHEMA_START
+        else:
+            print >> outfile, SCHEMA_START
         print >> outfile, fieldsformatted.encode('utf8')
 
         marshaller=element.getTaggedValue('marshaller')
         # deprecated tgv 'marschall' here, that's a duplicate
         if marshaller:
             print >> outfile, 'marshall='+marshaller
+        if element.hasStereoType(self.extender_stereotypes,umlprofile=self.uml_profile):
+            print >> outfile, '    ]\n'
+        else:
+            print >> outfile, '),\n)\n'
 
-        print >> outfile, ')\n'
         if asString:
             return outfile.getvalue()
 
@@ -1240,6 +1254,20 @@ class ArchetypesGenerator(BaseGenerator):
         if element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile) \
            and 'at_post_edit_script' not in method_names:
             method_names.append('at_post_edit_script')
+
+        #as above : __init__ has to be generated for adapters
+        #I want this method _not_ to be preserved (hacky but works)
+        #if it is added to method_names it wont be recognized as a manual method
+        if element.hasStereoType(self.adapter_stereotypes, umlprofile=self.uml_profile):
+            if '__init__' not in method_names:
+                method_names.append('__init__')
+
+        #as above : getFields has to be generated for schema extenders
+        #I want this method _not_ to be preserved (hacky but works)
+        #if it is added to method_names it wont be recognized as a manual method
+        if element.hasStereoType(self.extender_stereotypes, umlprofile=self.uml_profile):
+            if 'getFields' not in method_names:
+                method_names.append('getFields')
 
         log.debug("We are to preserve methods, so we're looking for " + \
                   "manual methods.")
@@ -1697,6 +1725,15 @@ class ArchetypesGenerator(BaseGenerator):
         # import Product config.py
         wrt(TEMPLATE_CONFIG_IMPORT % {
             'module': element.getRootPackage().getProductModuleName()})
+        
+        # imports needed for adapters
+        if element.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile):
+            wrt(u'from zope.component import adapts\n')
+        
+        # imports needed for schema extenders
+        if element.hasStereoType(self.extender_stereotypes,umlprofile=self.uml_profile):
+            wrt(u'from archetypes.schemaextender.field import ExtensionField\n\n')
+            wrt(u'from archetypes.schemaextender.interfaces import ISchemaExtender\n\n')
 
         # imports by tagged values
         additionalImports = self.getImportsByTaggedValues(element)
@@ -1751,65 +1788,77 @@ class ArchetypesGenerator(BaseGenerator):
             print >> outfile, TEMPL_TOOL_HEADER
             parentnames.insert(0, 'UniqueObject')
 
-        parents = ', '.join(parentnames)
-
         # protected section
         self.generateProtectedSection(outfile, element, 'module-header')
 
         # generate local Schema from local field specifications
         field_specs = self.getLocalFieldSpecs(element)
-        self.generateArcheSchema(element, field_specs, baseschema, outfile)
 
-        # protected section
-        self.generateProtectedSection(outfile, element, 'after-local-schema')
-
-        # generate complete Schema
-        # prepare schema as class attribute
-        parent_schema = ["getattr(%s, 'schema', Schema(()))" % p.getCleanName()
-                         for p in element.getGenParents()
-                         if not p.hasStereoType(self.python_stereotype,
-                                                umlprofile=self.uml_profile)]
-
-        if (parent_is_archetype
-            and not element.hasStereoType(
-                self.remember_stereotype, umlprofile=self.uml_profile)):
-            schema = parent_schema
-        else:
-            # [optilude] Ignore baseschema in abstract mixin classes
-            if element.isAbstract():
+        if not element.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile):
+            self.generateArcheSchema(element, field_specs, baseschema, outfile)
+            # protected section
+            self.generateProtectedSection(outfile, element, 'after-local-schema')
+    
+            # generate complete Schema
+            # prepare schema as class attribute
+            parent_schema = ["getattr(%s, 'schema', Schema(()))" % p.getCleanName()
+                             for p in element.getGenParents()
+                             if not p.hasStereoType(self.python_stereotype,
+                                                    umlprofile=self.uml_profile)]
+    
+            if (parent_is_archetype
+                and not element.hasStereoType(
+                    self.remember_stereotype, umlprofile=self.uml_profile)):
                 schema = parent_schema
             else:
-                schema = [baseschema] + parent_schema
+                # [optilude] Ignore baseschema in abstract mixin classes
+                if element.isAbstract():
+                    schema = parent_schema
+                else:
+                    schema = [baseschema] + parent_schema
+    
+            if element.hasStereoType(self.remember_stereotype, umlprofile=self.uml_profile):
+                schema.append('BaseMember.schema')
+                schema.append('ExtensibleMetadata.schema')
+    
+            # own schema overrules base and parents
+            schema += ['schema']
+    
+            schemaName = '%s_schema' % name
+            print >> outfile, utils.indent(schemaName + ' = ' + ' + \\\n    '.join(['%s.copy()' % s for s in schema]), 0)
 
-        if element.hasStereoType(self.remember_stereotype, umlprofile=self.uml_profile):
-            schema.append('BaseMember.schema')
-            schema.append('ExtensibleMetadata.schema')
-
-        # own schema overrules base and parents
-        schema += ['schema']
-
-        schemaName = '%s_schema' % name
-        print >> outfile, utils.indent(schemaName + ' = ' + ' + \\\n    '.join(['%s.copy()' % s for s in schema]), 0)
-
-        # move fields based on move: tagged values
-        self.generateFieldMoves(outfile, schemaName, field_specs)
-
-        # protected section
-        self.generateProtectedSection(outfile, element, 'after-schema')
-
+            # move fields based on move: tagged values
+            self.generateFieldMoves(outfile, schemaName, field_specs)
+    
+            # protected section
+            self.generateProtectedSection(outfile, element, 'after-schema')
+        
+            # [optilude] It's possible parents may become empty now...
+            parents = ', '.join(parentnames)
+            if parents:
+                parents = "(%s)" % (parents,)
+            else:
+                parents = ''
+        else: # adapters, including schema extenders
+            if element.hasStereoType(self.extender_stereotypes,umlprofile=self.uml_profile):
+                # for schema extenders, declare extended fields
+                fieldTypes = {}
+                for fieldSpec in field_specs:
+                    fieldTypes[fieldSpec['fieldtype']] = True
+                for fieldType in fieldTypes.keys():
+                    wrt('class Extended'+fieldType+'(ExtensionField, '+fieldType+'):\n')
+                    wrt(utils.indent('"""An extended subclass of '+fieldType+' """\n\n',1))
+            # for all adapters, parents is nothing but object
+            parents = '(object)'
+        
         if not element.isComplex():
             print "I: stop complex: ", element.getName()
             return outfile.getvalue()
-        if element.getType() in AlreadyGenerated:
+        if element.getType() in alreadyGenerated:
             print "I: stop already generated:", element.getName()
             return outfile.getvalue()
-        AlreadyGenerated.append(element.getType())
+        alreadyGenerated.append(element.getType())
 
-        # [optilude] It's possible parents may become empty now...
-        if parents:
-            parents = "(%s)" % (parents,)
-        else:
-            parents = ''
         # [optilude] ... so we can't have () around the last %s
         classDeclaration = 'class %s%s:\n' % (name, parents)
 
@@ -1828,42 +1877,55 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             print >> outfile, '    """\n    """'
 
-        print >> outfile, utils.indent('security = ClassSecurityInfo()',1)
-
+        if not element.hasStereoType(self.extender_stereotypes,umlprofile=self.uml_profile):
+            print >> outfile, utils.indent('security = ClassSecurityInfo()',1)
+            
+        print >> outfile, self.generateAdapts(element)
         print >> outfile, self.generateImplements(element, parentnames)
 
         archetype_name = element.getTaggedValue('archetype_name') or \
                        element.getTaggedValue('label')
 
-        if not element.isAbstract():
-            print >> outfile, CLASS_META_TYPE % name
+        if not element.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile):
+            if not element.isAbstract():
+                print >> outfile, CLASS_META_TYPE % name
+    
+            # Let's see if we have to set use_folder_tabs to 0.
+            if utils.isTGVTrue(element.getTaggedValue('hide_folder_tabs', False)):
+                print >> outfile, CLASS_FOLDER_TABS % 0
+    
+            # allowed_interfaces
+            parentAggregatedInterfaces = ''
+            if utils.isTGVTrue(element.getTaggedValue('inherit_allowed_types', \
+                                                      True)) and element.getGenParents():
+                pattern = "getattr(%s, 'allowed_interfaces', [])"
+                extras = ' + '.join([pattern % p.getCleanName()
+                                     for p in element.getGenParents()])
+                parentAggregatedInterfaces = '+ ' + extras
+    
+            if aggregatedInterfaces or baseaggregatedInterfaces:
+                print >> outfile, CLASS_ALLOWED_CONTENT_INTERFACES % \
+                      (','.join(aggregatedInterfaces), parentAggregatedInterfaces)
+    
+            # _at_rename_after_creation
+            rename_after_creation = self.getOption('rename_after_creation',
+                                                   element, default=True)
+            if rename_after_creation:
+                print >> outfile, CLASS_RENAME_AFTER_CREATION % \
+                      (utils.isTGVTrue(rename_after_creation) and 'True' or 'False')
 
-        # Let's see if we have to set use_folder_tabs to 0.
-        if utils.isTGVTrue(element.getTaggedValue('hide_folder_tabs', False)):
-            print >> outfile, CLASS_FOLDER_TABS % 0
-
-        # allowed_interfaces
-        parentAggregatedInterfaces = ''
-        if utils.isTGVTrue(element.getTaggedValue('inherit_allowed_types', \
-                                                  True)) and element.getGenParents():
-            pattern = "getattr(%s, 'allowed_interfaces', [])"
-            extras = ' + '.join([pattern % p.getCleanName()
-                                 for p in element.getGenParents()])
-            parentAggregatedInterfaces = '+ ' + extras
-
-        if aggregatedInterfaces or baseaggregatedInterfaces:
-            print >> outfile, CLASS_ALLOWED_CONTENT_INTERFACES % \
-                  (','.join(aggregatedInterfaces), parentAggregatedInterfaces)
-
-        # _at_rename_after_creation
-        rename_after_creation = self.getOption('rename_after_creation',
-                                               element, default=True)
-        if rename_after_creation:
-            print >> outfile, CLASS_RENAME_AFTER_CREATION % \
-                  (utils.isTGVTrue(rename_after_creation) and 'True' or 'False')
-
-        # schema attribute
-        wrt(utils.indent('schema = %s' % schemaName, 1) + '\n\n')
+        if element.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile):
+            wrt(utils.indent('def __init__(self, context):',1) + '\n')
+            wrt(utils.indent('self.context = context',2) + '\n\n')
+            # with schema extenders, fields are preferably stored *in* the class, not as a separate variable
+            if element.hasStereoType(self.extender_stereotypes,umlprofile=self.uml_profile):
+                # in schema extenders, fields are just given as a list, not as an instance of Schema
+                self.generateArcheSchema(element, field_specs, baseschema, outfile)
+                wrt(utils.indent('def getFields(self):',1) + '\n')
+                wrt(utils.indent('return self.schema',2) + '\n\n')
+        else:
+            # schema attribute
+            wrt(utils.indent('schema = %s' % schemaName, 1) + '\n\n')
 
         # Set base_archetype for remember
         if element.hasStereoType(self.remember_stereotype, umlprofile=self.uml_profile):
@@ -1896,9 +1958,10 @@ class ArchetypesGenerator(BaseGenerator):
         if not element.isAbstract():
             print >> outfile, self.generateModifyFti(element)
 
-        # [optilude] Don't register type for abstract classes or tools
-        if not (element.isAbstract() or element.hasStereoType('mixin',
-                                                              umlprofile=self.uml_profile)):
+        # [optilude] Don't register type for abstract classes or tools or for schema extenders
+        if not element.isAbstract() and \
+           not element.hasStereoType('mixin',umlprofile=self.uml_profile) and \
+           not element.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile):
             wrt(REGISTER_ARCHTYPE % name)
 
         # ATVocabularyManager: registration of class
@@ -1935,50 +1998,76 @@ class ArchetypesGenerator(BaseGenerator):
                 self.creation_permissions.append([element.getCleanName(),
                                                   creation_permission,
                                                   creation_roles])
+        if element.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile):
+            package = element.getPackage()
+            adapter = {'packageName':element.getCleanName(),
+                       'adapterName':element.getCleanName(),
+                       'isExtender':element.hasStereoType(self.extender_stereotypes,umlprofile=self.uml_profile),
+                       'isNamed':element.hasStereoType(self.extender_stereotypes,umlprofile=self.uml_profile)
+                                 or element.hasStereoType(self.named_adapter_stereotypes,umlprofile=self.uml_profile)
+                       }
+            adaptersList = package.getAnnotation('generatedAdapters',None)
+            if not adaptersList:
+                package.annotate('generatedAdapters',[adapter])
+            else:
+                adaptersList.append(adapter)
         return outfile.getvalue()
     
-    def getFlavorImplementers(self,element,includeHidden=True):
-        if not element.hasStereoType(self.flavor_stereotypes,umlprofile=self.uml_profile):
+    def getImplementers(self,element,includeHidden=True):
+        """ returns the list of qualified path to classes implementing this interface element or flavor """
+        if not element.isInterface() \
+           and not element.hasStereoType(self.flavor_stereotypes,umlprofile=self.uml_profile):
             return None
         implementers = []
         for implementer in element.getRealizationChildren(recursive=True):
             # TODO: filter out those implementers whose stereotype makes the following declaration useless
-            # if not implementer.hasStereotype(self.some_stereotypes_I_dont_know_which_ones):
+            # if not implementer.hasStereoType(self.some_stereotypes_I_dont_know_which_ones):
             qualifiedImplementerClass = None
-            if implementer.hasStereoType(self.flavor_stereotypes,umlprofile=self.uml_profile):
-                implementers += self.getFlavorImplementers(implementer)
+            if implementer.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile) \
+               or implementer.hasStereoType(self.flavor_stereotypes,umlprofile=self.uml_profile):
+                implementers += self.getImplementers(implementer)
             else:
-                if includeHidden == True or not implementer.hasStereoType('hidden', umlprofile=self.uml_profile):
-                    if implementer.hasStereoType(self.stub_stereotypes):
-                        # In principle, don't do a thing, but...
-                        if implementer.getTaggedValue('import_from', None):
-                            qualifiedImplementerClass = implementer.getTaggedValue('import_from') + "." + implementer.getName()
-                    else:
-                        qualifiedImplementerClass = implementer.getQualifiedModuleName(None,forcePluginRoot=self.force_plugin_root,includeRoot=0,) + "." + implementer.getName()
+                # ignore hidden implementers unless asked otherwise
+                if includeHidden == False and implementer.hasStereoType('hidden', umlprofile=self.uml_profile):
+                    continue
+                if implementer.hasStereoType(self.stub_stereotypes):
+                    # In principle, don't do a thing, but...
+                    if implementer.getTaggedValue('import_from', None):
+                        qualifiedImplementerClass = implementer.getTaggedValue('import_from') + "." + implementer.getName()
+                else:
+                    qualifiedImplementerClass = implementer.getQualifiedModuleName(None,forcePluginRoot=self.force_plugin_root,includeRoot=0,) + "." + implementer.getName()
                 if qualifiedImplementerClass:
                     implementers.append(qualifiedImplementerClass)
         return implementers
 
-    def declareFlavorImplementers(self, element):
-        """ Declares, as an update to a package annotation, the list of classes implementing the given flavor """
-        # add this new flavor to a list annotated to the package of the current element
+    def declareImplementers(self, element):
+        """ Declares, as an update to a package annotation, the list of classes implementing the given element. """
 
+        # get package annotation
         package = element.getPackage()
-        if not package.getAnnotation('declaredFlavorImplementers',None):
-            package.annotate('declaredFlavorImplementers',[])
-        implementers = package.getAnnotation('declaredFlavorImplementers',None)
-
-        qualifiedFlavorName = None
-        if element.hasStereoType(self.stub_stereotypes):
-            if element.getTaggedValue('import_from', None):
-                qualifiedFlavorName = element.getTaggedValue('import_from') + "." + element.getName()
-        else:
-            qualifiedFlavorName = element.getQualifiedModuleName(None,forcePluginRoot=self.force_plugin_root,includeRoot=0,) + "." + element.getName()        
+        if not package.getAnnotation('declaredImplementers',None):
+            package.annotate('declaredImplementers',[])
+        implementers = package.getAnnotation('declaredImplementers',None)
         
-        for qualifiedImplementerClass in self.getFlavorImplementers(element):
+        # what is the full name (i.e. with path included) of this interface ?
+        qualifiedInterfaceName = None
+        if element.hasStereoType(self.stub_stereotypes):
+            if not element.isInterface():
+                return # it's not an interface and it's a stub !
+            if element.getTaggedValue('import_from', None):
+                qualifiedInterfaceName = element.getTaggedValue('import_from') + "." + element.getName()
+        else: # not a stub
+            qualifiedInterfaceName = element.getQualifiedModuleName(None,forcePluginRoot=self.force_plugin_root,includeRoot=0,) + "."
+            if not element.isInterface() and not element.hasStereoType(self.flavor_stereotypes,umlprofile=self.uml_profile): # trying to implement a non-interface element??
+                qualifiedInterfaceName += 'interfaces.I'
+                log.warn("Instead of implementing the class %s (it is not an interface), its marker interface has been considered being implemented." % element.getName())
+            qualifiedInterfaceName += element.getName()       
+
+        # now get the classes that implement this interface and append to annotation
+        for qualifiedImplementerClass in self.getImplementers(element):
             implementer = {}
             implementer['class'] = qualifiedImplementerClass
-            implementer['qualifiedFlavorName'] = qualifiedFlavorName
+            implementer['qualifiedInterfaceName'] = qualifiedInterfaceName
             implementers.append(implementer)
 
     def generateFlavor(self, element, **kw):
@@ -2133,10 +2222,10 @@ class ArchetypesGenerator(BaseGenerator):
         if not element.isComplex():
             print "I: stop complex: ", element.getName()
             return outfile.getvalue()
-        if element.getType() in AlreadyGenerated:
+        if element.getType() in alreadyGenerated:
             print "I: stop already generated:", element.getName()
             return outfile.getvalue()
-        AlreadyGenerated.append(element.getType())
+        alreadyGenerated.append(element.getType())
 
         # [optilude] It's possible parents may become empty now...
         if parents:
@@ -2211,7 +2300,7 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             flavorsList.append(flavor)
 
-        self.declareFlavorImplementers(element)
+        self.declareImplementers(element)
         
         return outfile.getvalue()
 
@@ -2239,7 +2328,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         aggregatedClasses = element.getRefs() + element.getSubtypeNames(recursive=1)
 
-        AlreadyGenerated.append(element.getType())
+        alreadyGenerated.append(element.getType())
         name = element.getCleanName()
 
         wrt('\n')
@@ -2317,7 +2406,13 @@ class ArchetypesGenerator(BaseGenerator):
             self.generatePackageInitPy(package)
         # Generate a flavors.zcml
         self.generatePackageFlavorsZcml(package)
+        # Generate an adapters.zcml
+        self.generatePackageAdaptersZcml(package)
+        # Generate an includes.zcml
+        self.generatePackageIncludesZcml(package)
         self.generateBrowserZCML(package,'browser.zcml')
+        # Generate an implements.zcml
+        self.generatePackageImplementsZcml(package)
 
     def updateVersionForProduct(self, package):
         """Increment the build number in version.txt,"""
@@ -2509,6 +2604,26 @@ class ArchetypesGenerator(BaseGenerator):
         of.close()
         return
 
+    def subPackagesWithAdapters(self,package):
+        """ returns the (possibly empty) list of direct sub-packages which (recursively) contain at least one adapter """
+        sp = []
+        for subPackage in package.getAnnotation('generatedPackages') or []:
+            if subPackage.getAnnotation('generatedAdapters'):
+                sp.append(subPackage)
+            elif self.subPackagesWithAdapters(subPackage) != []:
+                sp.append(subPackage)
+        return sp
+
+    def subPackagesWithImplements(self,package):
+        """ returns the (possibly empty) list of direct sub-packages which (recursively) contain at least one implements """
+        sp = []
+        for subPackage in package.getAnnotation('generatedPackages') or []:
+            if subPackage.getAnnotation('declaredImplementers'):
+                sp.append(subPackage)
+            elif self.subPackagesWithImplements(subPackage) != []:
+                sp.append(subPackage)
+        return sp
+
     def subPackagesWithFlavors(self,package):
         """ returns the (possibly empty) list of direct sub-packages which (recursively) contain at least one flavor """
         sp = []
@@ -2520,21 +2635,30 @@ class ArchetypesGenerator(BaseGenerator):
                     sp.append(subPackage)
         return sp
 
+    def subPackagesWithZcml(self,package):
+        """ returns the (possibly empty) list of direct sub-packages
+        which (recursively) contain at least one element requires a
+        ZCML declaration file """
+        sp = []
+        for subPackage in package.getAnnotation('generatedPackages') or []:
+            if subPackage.getAnnotation('generatedAdapters') \
+               or subPackage.getAnnotation('generatedFlavors') \
+               or subPackage.getAnnotation('declaredImplementers') \
+               or self.subPackagesWithZcml(subPackage) != []:
+                sp.append(subPackage)
+        return sp
+
     def generatePackageFlavorsZcml(self,package):
         """ Generate flavors.zcml for packages if it contains flavors """
 
         generatedFlavors = package.getAnnotation('generatedFlavors') or []
-        declaredFlavorImplementers = package.getAnnotation('declaredFlavorImplementers') or []
-        subPackagesWithFlavors = [m.getModuleName() for m in self.subPackagesWithFlavors(package)]
 
-        if generatedFlavors != [] or declaredFlavorImplementers != [] or subPackagesWithFlavors != []:
+        if generatedFlavors != []:
             ppath = package.getFilePath()
             handleSectionedFile(['flavors.zcml'],
                                 os.path.join(ppath, 'flavors.zcml'),
                                 sectionnames=['HEAD','FOOT'],
-                                templateparams={'flavors': generatedFlavors,
-                                                'implementers': declaredFlavorImplementers,
-                                                'subPackagesWithFlavors': subPackagesWithFlavors})
+                                templateparams={'flavors': generatedFlavors})
 
     def generateStdFilesForProduct(self, package):
         """Generate __init__.py,  various support files and and the skins
@@ -2596,6 +2720,10 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateGSMembraneToolXML(package)
         # Generate flavors.zcml
         self.generatePackageFlavorsZcml(package)
+        # generate adapters
+        self.generatePackageAdaptersZcml(package)
+        # generate five:implements directive when needed
+        self.generatePackageImplementsZcml(package)
         # Generate the dcworkflow patch.
         self.generateDCWorkflowPatch(package)
         # generate subscribers
@@ -2629,20 +2757,18 @@ class ArchetypesGenerator(BaseGenerator):
                                                                       umlprofile=self.uml_profile))
                        ]
 
-        generatedFlavors = package.getAnnotation('generatedFlavors') or []
-        packagesWithFlavors = [m.getModuleName() for m in self.subPackagesWithFlavors(package)]
-        containsFlavors = generatedFlavors != [] or packagesWithFlavors != []
         hasSubscribers = bool(package.getAnnotation('subscribers'))
         hasBrowserViews = self.getViewClasses(package,recursive=False)
+        hasSubPackagesWithZcml = self.subPackagesWithZcml(package) != None
         handleSectionedFile(['configure.zcml'],
                             os.path.join(ppath, 'configure.zcml'),
                             sectionnames=['configure.zcml'],
                             templateparams={'packages': packageIncludes,
                                             'package': package,
                                             'generator':self,
-                                            'containsFlavors': containsFlavors,
                                             'hasSubscribers': hasSubscribers,
-                                            'hasBrowserViews' : hasBrowserViews,})
+                                            'hasBrowserViews' : hasBrowserViews,
+                                            'hasSubPackagesWithZcml': hasSubPackagesWithZcml})
 
 
     def generateBrowserZCML(self, package,fname="generatedbrowser.zcml"):
@@ -2672,6 +2798,54 @@ class ArchetypesGenerator(BaseGenerator):
                             os.path.join(ppath, fname),
                             sectionnames=['BROWSER'],
                             templateparams={'browserViews': browserViews})
+
+    def generatePackageIncludesZcml(self, package):
+        """generates the includes.zcml of the package"""
+        subPackagesWithZcml = [m.getModuleName() for m in self.subPackagesWithZcml(package)]
+        hasFlavors = bool(package.getAnnotation('generatedFlavors'))
+        hasAdapters = bool(package.getAnnotation('generatedAdapters'))
+        hasImplementers = bool(package.getAnnotation('declaredImplementers'))
+        log.debug("%s: Generating includes zcml" % self.infoind)
+        ppath = package.getFilePath()
+        handleSectionedFile(['includes.zcml'],
+                            os.path.join(ppath, 'includes.zcml'),
+                            sectionnames=['includes.zcml'],
+                            templateparams={'subPackagesWithZcml':subPackagesWithZcml,
+                                            'hasFlavors':hasFlavors,
+                                            'hasAdapters':hasAdapters,
+                                            'hasImplementers':hasImplementers})
+
+    def generatePackageAdaptersZcml(self, package):
+        """generates the adapters.zcml"""
+        generatedAdapters = package.getAnnotation('generatedAdapters')
+        if not generatedAdapters:
+            return
+        # is any of these adapters also a schema extender?
+        hasExtender = False
+        for adapter in generatedAdapters:
+            if adapter['isExtender'] == True:
+                hasExtender = True
+                break
+        log.debug("%s: Generating adapters zcml" % self.infoind)
+        ppath = package.getFilePath()
+        handleSectionedFile(['adapters.zcml'],
+                            os.path.join(ppath, 'adapters.zcml'),
+                            sectionnames=['HEAD','FOOT'],
+                            templateparams={'generatedAdapters': generatedAdapters,
+                                            'hasExtender': hasExtender})
+
+    def generatePackageImplementsZcml(self, package):
+        """generates the implements.zcml file for declaring interface
+        implementations by stub classes """
+        declaredImplementers = package.getAnnotation('declaredImplementers')
+        if not declaredImplementers:
+            return
+        log.debug("%s: Generating implements.zcml" % self.infoind)
+        ppath = package.getFilePath()
+        handleSectionedFile(['implements.zcml'],
+                            os.path.join(ppath, 'implements.zcml'),
+                            sectionnames=['HEAD','FOOT'],
+                            templateparams={'implementers':declaredImplementers})
 
     def generateSubscribersZCML(self, package):
         """generates the subscribers.zcml"""
@@ -2855,9 +3029,9 @@ class ArchetypesGenerator(BaseGenerator):
                 # new sytle AGX2x index declaration
                 metadata = self.getOption('catalog:metadata', attribute, '0')
                 metadata = self.getOption('collection:metadata', attribute, metadata)
-                metadata = utils.isTGVTrue(self.processExpression(metadata))
+                metadata = utils.isTGVTrue(metadata)
                 index = self.getOption('catalog:index', attribute, '0')
-                index = utils.isTGVTrue(self.processExpression(index))
+                index = utils.isTGVTrue(index)
                 if not (index or metadata):
                     continue
                 catalogname = self.getOption('catalog:name', attribute,
@@ -3002,6 +3176,8 @@ class ArchetypesGenerator(BaseGenerator):
         factorytypes = []
         for klass in klasses:
             if klass.hasStereoType(['tool', 'portal_tool']):
+                continue
+            if klass.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile):
                 continue
             factoryopt = self.getOption('use_portal_factory', klass, True)
             if utils.isTGVTrue(factoryopt) \
@@ -3294,13 +3470,13 @@ class ArchetypesGenerator(BaseGenerator):
 
             if element.hasStereoType(self.stub_stereotypes,
                                      umlprofile=self.uml_profile):
-                if not element.hasStereoType(self.flavor_stereotypes,umlprofile=self.uml_profile):
-                    log.debug("Ignoring stub class '%s'.",
-                             element.getName())
+                if element.hasStereoType(self.flavor_stereotypes,umlprofile=self.uml_profile):
+                    log.debug("Enumerating implementers for stub flavor '%s' then ignoring that flavor.", element.getName())
+                    self.declareImplementers(element)
                     continue
                 else:
-                    log.debug("Enumerating implementers for stub flavor '%s' then ignoring that flavor.", element.getName())
-                    self.declareFlavorImplementers(element)
+                    log.debug("Enumerating implementers for stub class '%s' then ignoring that adapter.", element.getName())
+                    self.declareImplementers(element)
                     continue
 
             module = element.getModuleName()
@@ -3847,7 +4023,7 @@ class ArchetypesGenerator(BaseGenerator):
         # append with flavor implementers when some aggregated class is a flavor
         for e in element.getAggregatedClasses(recursive=0,filter=['class','associationclass']):
             if e.hasStereoType(self.flavor_stereotypes,umlprofile=self.uml_profile):
-                for imp in self.getFlavorImplementers(e,includeHidden=False):
+                for imp in self.getImplementers(e,includeHidden=False): #getFlavorImplementers
                     aggregatedClasses.append(imp.split('.')[-1])
 
         if element.getTaggedValue('allowed_content_types'):
@@ -3902,11 +4078,9 @@ class ArchetypesGenerator(BaseGenerator):
             if not self._isContentClass(pclass) or pclass.isAbstract():
                 continue
 
-            if pclass.hasStereoType(self.flavor_stereotypes,
-                                    umlprofile=self.uml_profile):
-                continue
-
-            if pclass.hasStereoType(['interface']):
+            if pclass.hasStereoType(self.flavor_stereotypes,umlprofile=self.uml_profile) \
+               or pclass.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile) \
+               or pclass.hasStereoType(['interface']):
                 continue
 
             fti = self._getFTI(pclass)

@@ -276,6 +276,18 @@ at_uml_profile.addStereoType(
                 'deriving from the VariableSchema mixin class.')
 
 at_uml_profile.addStereoType(
+    'extender', ['XMIClass'],
+    description='Is a schema extender supported by archetypes.schemaextender.')
+
+at_uml_profile.addStereoType(
+    'named_adapter', ['XMIClass'],
+    description='Is a named adapter.')
+
+at_uml_profile.addStereoType(
+    'adapter', ['XMIClass'],
+    description='Is a (non-named) adapter.')
+
+at_uml_profile.addStereoType(
     'view', ['XMIMethod', 'XMIOperation'],
     description="Generate an action like with the '<<action>>' stereotype, "
                 'but also copy an empty page template to the skins '
