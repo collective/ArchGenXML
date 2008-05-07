@@ -2759,7 +2759,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         hasSubscribers = bool(package.getAnnotation('subscribers'))
         hasBrowserViews = self.getViewClasses(package,recursive=False)
-        hasSubPackagesWithZcml = self.subPackagesWithZcml(package) != None
+        hasSubPackagesWithZcml = self.subPackagesWithZcml(package) != []
         handleSectionedFile(['configure.zcml'],
                             os.path.join(ppath, 'configure.zcml'),
                             sectionnames=['configure.zcml'],
@@ -2805,15 +2805,19 @@ class ArchetypesGenerator(BaseGenerator):
         hasFlavors = bool(package.getAnnotation('generatedFlavors'))
         hasAdapters = bool(package.getAnnotation('generatedAdapters'))
         hasImplementers = bool(package.getAnnotation('declaredImplementers'))
-        log.debug("%s: Generating includes zcml" % self.infoind)
-        ppath = package.getFilePath()
-        handleSectionedFile(['includes.zcml'],
-                            os.path.join(ppath, 'includes.zcml'),
-                            sectionnames=['includes.zcml'],
-                            templateparams={'subPackagesWithZcml':subPackagesWithZcml,
-                                            'hasFlavors':hasFlavors,
-                                            'hasAdapters':hasAdapters,
-                                            'hasImplementers':hasImplementers})
+        if subPackagesWithZcml != [] \
+           or hasFlavors \
+           or hasAdapters \
+           or hasImplementers:
+            log.debug("%s: Generating includes zcml" % self.infoind)
+            ppath = package.getFilePath()
+            handleSectionedFile(['includes.zcml'],
+                                os.path.join(ppath, 'includes.zcml'),
+                                sectionnames=['includes.zcml'],
+                                templateparams={'subPackagesWithZcml':subPackagesWithZcml,
+                                                'hasFlavors':hasFlavors,
+                                                'hasAdapters':hasAdapters,
+                                                'hasImplementers':hasImplementers})
 
     def generatePackageAdaptersZcml(self, package):
         """generates the adapters.zcml"""
@@ -4018,13 +4022,29 @@ class ArchetypesGenerator(BaseGenerator):
         aggregatedClasses = element.getRefs() + \
             [o.getName()
              for o in element.getAggregatedClasses(recursive=recursive, filter=['class','associationclass'])
-             if not o.hasStereoType('hidden', umlprofile=self.uml_profile)]
+             if not o.hasStereoType('hidden', umlprofile=self.uml_profile)
+                and not o.hasStereoType(self.flavor_stereotypes,umlprofile=self.uml_profile)
+                and not o.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile)]
 
         # append with flavor implementers when some aggregated class is a flavor
         for e in element.getAggregatedClasses(recursive=0,filter=['class','associationclass']):
             if e.hasStereoType(self.flavor_stereotypes,umlprofile=self.uml_profile):
-                for imp in self.getImplementers(e,includeHidden=False): #getFlavorImplementers
+                for imp in self.getImplementers(e,includeHidden=False):
                     aggregatedClasses.append(imp.split('.')[-1])
+
+        # append with adapted classes when some aggregated class is an adapter
+        for e in element.getAggregatedClasses(recursive=0,filter=['class','associationclass']):
+            if e.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile):
+                # what is adapted ?
+                for adapted in e.getAdaptationParents(recursive=True):
+                    if adapted.isInterface():
+                        # it's an interface, get its implementers
+                        for imp in self.getImplementers(e,includeHidden=False):
+                            aggregatedClasses.append(imp.split('.')[-1])
+                    else:
+                        # it's a class, is it hidden? if not allow this subtype
+                        if not adapted.hasStereoType('hidden', umlprofile=self.uml_profile):
+                            aggregatedClasses.append(adapted.getName())
 
         if element.getTaggedValue('allowed_content_types'):
             #aggregatedClasses = [e for e in aggregatedClasses] # hae?
@@ -4097,7 +4117,7 @@ class ArchetypesGenerator(BaseGenerator):
 
             subs = self._getSubtypes(pclass)
             
-            allowed_types = subs['aggregated_classes'] 
+            allowed_types = subs['aggregated_classes']
             typedef['allowed_content_types'] = allowed_types
 
             # check if allow_discussion has to be set to None as default
