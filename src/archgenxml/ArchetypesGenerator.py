@@ -332,6 +332,11 @@ class ArchetypesGenerator(BaseGenerator):
                 print >>out, 'from Products.Archetypes.AllowedTypesByIface' + \
                       ' import AllowedTypesByIfaceMixin'
                 start_marker = False
+            if 'archetype' in iface.getStereoTypes() and iface.isInterface():
+                print >>out, 'from %s import %s' % ( \
+                    'Products.ATContentTypes.interfaces',
+                    iface.getCleanName())
+                continue
             print >>out, 'from %s import %s' % ( \
                 iface.getQualifiedModuleName(forcePluginRoot=True),
                 iface.getCleanName())
