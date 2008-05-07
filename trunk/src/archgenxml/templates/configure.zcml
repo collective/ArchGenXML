@@ -16,9 +16,7 @@
 </dtml-if>
 </dtml-let>
 </dtml-in>
-<dtml-if "hasSubPackagesWithZcml">
-  <include file="includes.zcml"/>
-</dtml-if>
+<dtml-if "hasSubPackagesWithZcml">  <include file="includes.zcml"/></dtml-if>
 
   <!-- ##code-section configure.zcml -->
   <!-- ##/code-section configure.zcml -->
