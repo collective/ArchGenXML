@@ -322,7 +322,8 @@ class XMI1_0(object):
         for ab in abs:
             if not self.getId(ab):continue
             abstraction = XMIAbstraction(ab)
-            if not abstraction.hasStereoType('realize'):
+            if not abstraction.hasStereoType('realize') and \
+               not abstraction.hasStereoType('adapts'):
                 log.debug("Skipping dep: %s", abstraction.getStereoType())
                 continue
             try:
@@ -332,7 +333,7 @@ class XMI1_0(object):
                     sub = getSubElement(par0, ignoremult=1)
                     par = objects[sub.getAttribute('xmi.idref')]
                 except (KeyError, IndexError):
-                    log.warn("Parent Object not found for realization "
+                    log.warn("Parent Object not found for realization or adaptation "
                              "relation:%s, parent %s.",
                              XMI.getId(ab), XMI.getName(par0))
                     continue
@@ -344,12 +345,16 @@ class XMI1_0(object):
                     child_xmid = sub.getAttribute('xmi.idref')
                     child = objects[child_xmid]
                 except (KeyError, IndexError):
-                    log.warn("Child element for realization relation not found. "
+                    log.warn("Child element for realization or adaptation relation not found. "
                              "Parent name = '%s' relation xmi_id = '%s'.",
                              par.getName(), XMI.getId(ab))
 
-                par.addRealizationChild(child)
-                child.addRealizationParent(par)
+                if abstraction.hasStereoType('realize'):
+                    par.addRealizationChild(child)
+                    child.addRealizationParent(par)
+                if abstraction.hasStereoType('adapts'):
+                    par.addAdaptationChild(child)
+                    child.addAdaptationParent(par)
             except IndexError:
                 log.error("ab: index error for dependencies; %s",
                           self.getId(ab))
@@ -1536,6 +1541,8 @@ class XMIClass(XMIElement, StateMachineContainer):
         self.genParents = []
         self.realizationChildren = []
         self.realizationParents = []
+        self.adaptationChildren = []
+        self.adaptationParents = []
         self.internalOnly = 0
         self.type = self.name
 
@@ -1560,7 +1567,9 @@ class XMIClass(XMIElement, StateMachineContainer):
             not self.genChildren and \
             not self.genParents and \
             not self.realizationChildren and \
-            not self.realizationParents
+            not self.realizationParents and \
+            not self.adaptationChildren and \
+            not self.adaptationParents
 
     def getVisibility(self):
         return self.visibility
@@ -1755,6 +1764,12 @@ class XMIClass(XMIElement, StateMachineContainer):
     def addRealizationParent(self, c):
         self.realizationParents.append(c)
 
+    def addAdaptationChild(self, c):
+        self.adaptationChildren.append(c)
+
+    def addAdaptationParent(self, c):
+        self.adaptationParents.append(c)
+
     def getRealizationChildren(self, recursive=0):
         """ Returns the list of realizations of this element
         
@@ -1780,6 +1795,33 @@ class XMIClass(XMIElement, StateMachineContainer):
         log.debug("Looking for this class's realization parents...")
         res = self.realizationParents
         log.debug("Realization parents found %r" % res)
+        return res
+
+    def getAdaptationParents(self, recursive=0):
+        """ Returns the list of classes adapted by this adapter
+        
+        @param recursive: recursively or not
+        
+        NB: here, recursively does not mean that it will also return the 
+        classes adapted by classes adapted by this adapter element ; it
+        rather means that it will also return the subclasses of the classes
+        adapted by this adapter element.
+        """
+        res = [c for c in self.adaptationParents]
+        if recursive:
+            for r in res:
+                res.extend(r.getGenChildren(1))
+        return res
+
+    def getAdaptationParentNames(self, recursive=0):
+        """Returns the names of the adapters of this element."""
+        return [o.getName() for o in
+                self.getAdaptationParents(recursive=recursive)]
+
+    def getAdaptationChildren(self):
+        log.debug("Looking for the adapters of this class...")
+        res = self.adaptationChildren
+        log.debug("Adapters found %r" % res)
         return res
 
     def getQualifiedModulePath(self, ref, pluginRoot='Products',
