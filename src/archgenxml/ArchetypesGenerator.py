@@ -1204,7 +1204,7 @@ class ArchetypesGenerator(BaseGenerator):
         print >> outfile
 
     def generateMethods(self, outfile, element, mode='class'):
-        print >> outfile,'    # Methods'
+        print >> outfile, u'    # Methods'
 
         generatedMethods = []
         allmethnames = [m.getName() for m in element.getMethodDefs(recursive=1)]
@@ -1227,7 +1227,7 @@ class ArchetypesGenerator(BaseGenerator):
             # We don't want to extra generate methods
             # that are already defined in the class
             if meths:
-                print >> outfile, '\n    # Methods from Interface %s' % \
+                print >> outfile, u'\n    # Methods from Interface %s' % \
                       interface.getName()
                 for m in meths:
                     self.generateMethod(outfile, m, element, mode=mode)
