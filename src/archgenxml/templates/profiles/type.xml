@@ -27,6 +27,9 @@
  </property>
 </dtml-if>
  <property name="default_view_fallback">False</property>
+<dtml-in "[k for k in ctype.keys() if k.startswith('fti:')]">
+ <property name="<dtml-var "_['sequence-item'][4:]">"><dtml-var "ctype[_['sequence-item']]"></property>
+</dtml-in>
 <dtml-in "ctype['type_aliases']">
  <alias from="<dtml-var "_['sequence-item']['from']">" to="<dtml-var "_['sequence-item']['to']">"/>
 </dtml-in>

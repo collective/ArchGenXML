@@ -3302,7 +3302,6 @@ class ArchetypesGenerator(BaseGenerator):
         if not os.path.isdir(typesdir):
             raise Exception('types is not a directory')
 
-
         for typedef in defs:
             filename = '%s.xml' % typedef['name']
             handleSectionedFile(['profiles', 'type.xml'],
@@ -4114,6 +4113,11 @@ class ArchetypesGenerator(BaseGenerator):
             typedef['content_meta_type'] = pclass.getCleanName()
             typedef['product_name'] = package.getProductName()
             typedef['factory'] = 'add%s' % pclass.getCleanName()
+            
+                
+            for tgv in pclass.getTaggedValues():
+                if tgv.startswith('fti:'):
+                    typedef[tgv]=pclass.getTaggedValue(tgv)
 
             subs = self._getSubtypes(pclass)
             
