@@ -1812,7 +1812,10 @@ class ArchetypesGenerator(BaseGenerator):
                 schema = parent_schema
             else:
                 # [optilude] Ignore baseschema in abstract mixin classes
-                if element.isAbstract():
+                # [jensens] But only if it does not have stereotype archetypes
+                if element.isAbstract() \
+                   and not element.hasStereoType(self.archetype_stereotype,
+                                                 umlprofile=self.uml_profile):
                     schema = parent_schema
                 else:
                     schema = [baseschema] + parent_schema
