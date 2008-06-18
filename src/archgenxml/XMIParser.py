@@ -1328,7 +1328,7 @@ class XMIPackage(XMIElement, StateMachineContainer):
                      self.getName())
             return
 
-        events = getElementsByTagName(ownedElement, XMI.EVENT)
+        events = getElementsByTagName(ownedElement, XMI.EVENT, recursive=1)
 
         for ev in events:
             xe = XMIEvent(ev)
@@ -2490,9 +2490,9 @@ class XMIStateTransition(XMIElement):
     def getTriggerEvent(self):
         el = getElementsByTagName(self.domElement, XMI.EVENT, recursive=1)
         if not len(el) == 1:
-            return
+            return None
         else:
-            return allObjects[XMI.getIdRef(el[0])]
+            return allObjects.get(XMI.getIdRef(el[0]),None)
 
 
 class XMIAction(XMIElement):
