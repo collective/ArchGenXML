@@ -574,7 +574,7 @@ group.add_option("--default-creation-roles",
 group.add_option("--detailed-creation-permissions",
                  type="yesno",
                  help="Separate creation permissions per class (defaults to no)",
-                 default=0,
+                 default=1,
                  section="CLASSES",
                  dest="detailed_creation_permissions",
                  )
