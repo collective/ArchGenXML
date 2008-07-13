@@ -31,7 +31,7 @@ fear of losing your hand-written code.
 Supported Plone Versions
 ========================
 
-We support Plone Versions 2.5.x and 3.0.x. But if you have code generated 
+We support Plone Versions 2.5.x and 3.x. But if you have code generated 
 with some ArchGenXML version below 2 you will need to adjust the generated 
 model and code manually. There is no smooth migration. If you dont need to make 
 your code run on Plone 3 stick to an older version of ArchGenXML.
