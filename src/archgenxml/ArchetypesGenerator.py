@@ -2734,12 +2734,19 @@ class ArchetypesGenerator(BaseGenerator):
         # generate browser views
         if self.getViewClasses(package,recursive=True):
             self.generateBrowserZCML(package)
+        #generate portlets
+        self.generatePortletsXML(package)
         
     def getViewClasses(self,package,recursive=0):
         klasses=[k for k in package.getClasses(recursive=recursive) if k.hasStereoType(self.view_class_stereotype)]
         
         return klasses
     
+    def getClassesWithStereotype(self,package,st,recursive=False):
+        klasses=[k for k in package.getClasses(recursive=recursive) if k.hasStereoType(st)]
+        
+        return klasses
+        
     def generateConfigureAndProfilesZCML(self, package):
         """Generate configure.zcml and profiles.zcml if type registration or
         skin registration is set to 'genericsetup'
@@ -2761,7 +2768,8 @@ class ArchetypesGenerator(BaseGenerator):
                        ]
 
         hasSubscribers = bool(package.getAnnotation('subscribers'))
-        hasBrowserViews = self.getViewClasses(package,recursive=False)
+        hasBrowserViews = self.getViewClasses(package,recursive=False) or \
+            self.getClassesWithStereotype(package,self.portlet_class_stereotype,recursive=False)
         hasSubPackagesWithZcml = self.subPackagesWithZcml(package) != []
         handleSectionedFile(['configure.zcml'],
                             os.path.join(ppath, 'configure.zcml'),
@@ -2777,11 +2785,12 @@ class ArchetypesGenerator(BaseGenerator):
     def generateBrowserZCML(self, package,fname="generatedbrowser.zcml"):
         """generates the generatedbrowser.zcml"""
         browserViews = self.getViewClasses(package)
-        if not browserViews:
+        portletViews = self.getClassesWithStereotype(package,self.portlet_class_stereotype)
+        if not (browserViews or portletViews):
             return
         
         templdir=os.path.join(package.getFilePath(),'templates')
-        if browserViews:
+        if browserViews or portletViews:
             self.makeDir(templdir)
         #create the vanilla templates
         for view in browserViews:
@@ -2794,13 +2803,23 @@ class ArchetypesGenerator(BaseGenerator):
                                 overwrite=False,
                                 templateparams={})
 
+        for view in portletViews:
+            if not view.getTaggedValue('template_name'):
+                view.setTaggedValue('template_name','%s.pt' % view.getName())
+
+            if not view.hasStereoType('stub'):
+                handleSectionedFile(['portlet_template.pt'],
+                                os.path.join(templdir, view.getTaggedValue('template_name')),
+                                overwrite=False,
+                                templateparams={'generator':self,'klass':view})
+
             
         log.debug("%s: Generating browser zcml" % self.infoind)
         ppath = package.getFilePath()
         handleSectionedFile(['browser.zcml'],
                             os.path.join(ppath, fname),
                             sectionnames=['BROWSER'],
-                            templateparams={'browserViews': browserViews})
+                            templateparams={'browserViews': browserViews,'portletViews':portletViews})
 
     def generatePackageIncludesZcml(self, package):
         """generates the includes.zcml of the package"""
@@ -3338,7 +3357,7 @@ class ArchetypesGenerator(BaseGenerator):
                                                              klass, True))]
         memberclasses =  [klass for klass in allclasses \
                                if klass.hasStereoType(self.remember_stereotype)]
-
+                               
         templateparams = {
             'generator': self,
             'package': package,
@@ -3348,7 +3367,7 @@ class ArchetypesGenerator(BaseGenerator):
             'alltools': alltools,
             'toolnames': toolnames,
             'catalogmultiplexed': catalogmultiplexed,
-            'hasrelations': package.num_generated_relations > 0,
+            'hasrelations': package.num_generated_relations,
             'hasvocabularies': package.getProductName() in self.vocabularymap.keys(),
             'notsearchabletypes': notsearchabletypes,
             'hidemetatypes': hidemetatypes,
@@ -3382,6 +3401,17 @@ class ArchetypesGenerator(BaseGenerator):
                             os.path.join(profiledir, 'membrane_tool.xml'),
                             sectionnames=('INDEXMAP',),
                             templateparams={'membrane_types': types}
+                        )
+
+    def generatePortletsXML(self, package):
+        portlets = self.getClassesWithStereotype(package,self.portlet_class_stereotype,recursive=True)
+        if not portlets:
+            return
+        profiledir = os.path.join(package.getFilePath(), 'profiles', 'default')
+        handleSectionedFile(['profiles', 'portlets.xml'],
+                            os.path.join(profiledir, 'portlets.xml'),
+                            sectionnames=('PORTLETS',),
+                            templateparams={'generator':self,'portlets': portlets}
                         )
 
     def shouldPatchDCWorkflow(self, package):

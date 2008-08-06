@@ -145,7 +145,7 @@ Evaluating expressions without rendering results
    without rendering the result.
 
 
-$Id: dt_var.py,v 1.2 2004/07/27 18:08:51 zworkb Exp $
+$Id$
 """
 from dt_util import parse_params, name_param, html_quote
 import re, sys

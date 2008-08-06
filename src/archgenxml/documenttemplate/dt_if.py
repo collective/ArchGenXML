@@ -75,7 +75,7 @@
          is used inside the tag, including in enclosed tags, the
          variable is not reevaluated.
 
-$Id: dt_if.py,v 1.2 2004/07/27 18:08:51 zworkb Exp $
+$Id$
 """
 from dt_util import ParseError, parse_params, name_param
 

@@ -79,7 +79,7 @@ Document Templates may be created 2 ways by default:
         string using HTML server-side-include rather than
         python-format-string syntax.
 
-$Id: documenttemplate.py,v 1.2 2004/07/27 18:08:51 zworkb Exp $
+$Id$
 '''
 
 ParseError='Document Template Parse Error'

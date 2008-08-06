@@ -99,6 +99,8 @@
  </import-step>
 
 </dtml-if>
+
+
  <import-step 
     id="<dtml-var "product_name">-Update-RoleMappings" 
     handler="Products.<dtml-var "product_name">.setuphandlers.updateRoleMappings"

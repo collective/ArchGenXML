@@ -12,7 +12,7 @@
 ##############################################################################
 """Document Template Tests
 
-$Id: testdt_in.py,v 1.1 2004/07/27 02:46:44 zworkb Exp $
+$Id$
 """
 
 import unittest

@@ -13,7 +13,7 @@
 ##############################################################################
 """HTML formated DocumentTemplates
 
-$Id: dt_html.py,v 1.2 2004/07/27 18:08:51 zworkb Exp $
+$Id$
 """
 import re
 from dt_string import String

@@ -12,7 +12,7 @@
 ##############################################################################
 """Document Template Tests
 
-$Id: testdt_var.py,v 1.1 2004/07/27 02:46:44 zworkb Exp $
+$Id$
 """
 
 # XXX Don't normalize whitespace in this file -- the tests depend on the

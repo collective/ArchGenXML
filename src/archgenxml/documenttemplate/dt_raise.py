@@ -23,7 +23,7 @@
        </dtml-raise>
     </dtml-if>
 
-$Id: dt_raise.py,v 1.2 2004/07/27 18:08:51 zworkb Exp $
+$Id$
 '''
 from dt_util \
      import parse_params, name_param, render_blocks

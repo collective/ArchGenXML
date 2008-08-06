@@ -55,6 +55,13 @@ base_uml_profile.addStereoType('view_class', ['XMIClass'],
     description='Generate this class as a zope3 view class '
                 'instead of as an Archetypes class.')
 
+base_uml_profile.addStereoType('portlet_class', ['XMIClass'],
+    dispatching=1,
+    generator='generatePortletClass',
+    template='portlet_class.pydtml',
+    description='Generate this class as a zope3 portlet class '
+                'instead of as an Archetypes class.')
+
 
 base_uml_profile.addStereoType('zope_class', ['XMIClass'],
     dispatching=1,
@@ -72,6 +79,7 @@ class BaseGenerator:
     default_class_type = 'python_class'
     default_interface_type = 'z3'
     view_class_stereotype = ['view_class', 'view']
+    portlet_class_stereotype = ['portlet_class','portlet']
     # indent helper for log output:
     infoind = 0
 
@@ -384,9 +392,47 @@ class BaseGenerator:
         res = HTML(templ, d)()
         return res
 
+    def generateClassBody(self, element, template='class_body.pydtml', nolog=False, **kw):
+        if not nolog:
+            log.info("%sGenerating python class '%s'.",
+                     ' '*4*self.infoind,
+                     element.getName())
+
+        templ = self.readTemplate([template])
+        d = {
+            'klass': element,
+            'generator': self,
+            'parsed_class': element.parsed_class,
+            'builtins': __builtins__,
+            'utils': utils,
+        }
+        d.update(__builtins__)
+        d.update(kw)
+        res = HTML(templ, d)()
+        return res
+
     def generateViewClass(self, element, template, nolog=False, **kw):
         if not nolog:
             log.info("%sGenerating view class '%s'.",
+                     ' '*4*self.infoind,
+                     element.getName())
+
+        templ = self.readTemplate(template)
+        d = {
+            'klass': element,
+            'generator': self,
+            'parsed_class': element.parsed_class,
+            'builtins': __builtins__,
+            'utils': utils,
+        }
+        d.update(__builtins__)
+        d.update(kw)
+        res = HTML(templ, d)()
+        return res
+
+    def generatePortletClass(self, element, template, nolog=False, **kw):
+        if not nolog:
+            log.info("%sGenerating portlet class '%s'.",
                      ' '*4*self.infoind,
                      element.getName())
 

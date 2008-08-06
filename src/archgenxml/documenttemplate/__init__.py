@@ -16,7 +16,7 @@
 This wrapper allows the (now many) document template modules to be
 segregated in a separate package.
 
-$Id: __init__.py,v 1.2 2004/07/27 18:08:51 zworkb Exp $
+$Id$
 """
 
 from documenttemplate import String, HTML
