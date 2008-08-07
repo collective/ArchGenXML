@@ -6,9 +6,9 @@
 def <dtml-var "subscriber['method']">(obj, event):
     """generated workflow subscriber."""
     # do only change the code section inside this function.
-    if (not event.transition \
-        or event.transition.id not in <dtml-var "str(list(subscriber['transitions']))">) \
-       and obj != event.object:
+    if not event.transition \
+       or event.transition.id not in <dtml-var "str(list(subscriber['transitions']))"> \
+       or obj != event.object:
         return
 <dtml-var "generator.getProtectedSection(parsed_module, subscriber['method'], 1)">
 
