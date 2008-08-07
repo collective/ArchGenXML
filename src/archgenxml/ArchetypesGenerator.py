@@ -2417,30 +2417,6 @@ class ArchetypesGenerator(BaseGenerator):
         # Generate an implements.zcml
         self.generatePackageImplementsZcml(package)
 
-    def updateVersionForProduct(self, package):
-        """Increment the build number in version.txt,"""
-
-        build = 1
-        versionbase='1.0-alpha'
-        fp=os.path.join(package.getFilePath(),'version.txt')
-        vertext=self.readFile(fp)
-        if vertext:
-            versionbase=vertext=vertext.strip()
-            parsed = vertext.split(' ')
-            if parsed.count('build'):
-                ind = parsed.index('build')
-                try:
-                    build = int(parsed[ind+1]) + 1
-                except:
-                    build = 1
-
-                versionbase = ' '.join(parsed[:ind])
-
-        version = '%s build %d\n' % (versionbase, build)
-        of = self.makeFile(fp)
-        print >>of, version,
-        of.close()
-
     def generateInstallPy(self, package):
         """Generate Extensions/Install.py from the DTML template"""
         if self.getOption('plone_target_version', package, '3.0') == '3.0':
@@ -2685,16 +2661,18 @@ class ArchetypesGenerator(BaseGenerator):
         # Generate a refresh.txt for the product
         of=self.makeFile(os.path.join(package.getFilePath(),'refresh.txt'))
         of.close()
-        # Increment version.txt build number
-        self.updateVersionForProduct(package)
         # Generate product root __init__.py
         self.generateProductInitPy(package)
         # Generate config.py from template
         self.generateConfigPy(package)
         # Generate Extensions/Install.py (2.5 only)
         self.generateInstallPy(package)
+        # Increment version.txt build number
+        self.updateVersionForProduct(package)
         # Generate generic setup profile
         self.generateGSDirectory(package)
+        # Generate GS metadata.xml file
+        self.generateGSMetadataXMLFile(package)
         # Generate GS skins.xml file
         self.generateGSSkinsXMLFile(package)
         # Generate GS types.xml file
@@ -2896,7 +2874,90 @@ class ArchetypesGenerator(BaseGenerator):
                             os.path.join(profileDefaultDir,
                                          ('%s_marker.txt' % pname) ),
                             templateparams={'product_name': pname})
+    
+    def updateVersionForProduct(self, package):
+        """Increment the build number in version.txt,"""
+        if self.getOption('plone_target_version', package, 3.0) == 3.0:
+            return
+        build = 1
+        versionbase='1.0-alpha'
+        fp=os.path.join(package.getFilePath(),'version.txt')
+        vertext=self.readFile(fp)
+        if vertext:
+            versionbase=vertext=vertext.strip()
+            parsed = vertext.split(' ')
+            if parsed.count('build'):
+                ind = parsed.index('build')
+                try:
+                    build = int(parsed[ind+1]) + 1
+                except:
+                    build = 1
+
+                versionbase = ' '.join(parsed[:ind])
+
+        version = '%s build %d' % (versionbase, build)
+        of = self.makeFile(fp)
+        print >>of, version,
+        of.close()
+    
+    def generateGSMetadataXMLFile(self, package):
+        """Generate genericsetup metadata.xml file.
+        """
+        if self.getOption('plone_target_version', package, 3.0) == 2.5:
+            return
         
+        # check for old version.txt, read and use it if present.
+        fp = os.path.join(package.getFilePath(), 'version.txt')
+        if os.path.exists(fp):
+            version = self._generateVersionString(self.readFile(fp))
+        
+        # metadata.xml rules anyway.
+        mdfile = os.path.join(package.getFilePath(), 'profiles',
+                              'default', 'metadata.xml')
+        if os.path.exists(mdfile):
+            metadata = minidom.parse(mdfile)
+            assert metadata.documentElement.tagName == "metadata"
+            elem = metadata.getElementsByTagName("version")[0]
+            version = self._generateVersionString(elem.childNodes[0].data)
+        
+        # product_description
+        product_description = package.getTaggedValue('product_description', '')
+        
+        # dependend_profiles
+        dependend_profiles = package.getTaggedValue('dependend_profiles', '')
+        dependend_profiles = [dp.strip() for dp in dependend_profiles.split(',')\
+                              if dp.strip()]
+        
+        handleSectionedFile(['profiles', 'metadata.xml'],
+                            mdfile,
+                            sectionnames=('METADATA',),
+                            templateparams={
+                                'version': version,
+                                'description': product_description,
+                                'dependencies': dependend_profiles,
+                            })
+    
+    def _generateVersionString(self, oldstring):
+        build = 1
+        versionbase='1.0.0'
+        vertext = oldstring.strip()
+        if vertext:
+            versionbase = vertext
+        parsed = vertext.split(' ')
+        if parsed.count('build'):
+            ind = parsed.index('build')
+            try:
+                build = int(parsed[ind + 1]) + 1
+            except:
+                build = 1
+            versionbase = ' '.join(parsed[:ind])
+        else:
+            parsed = vertext.split('.')
+            try:
+                build = int(parsed[2]) + 1
+            except:
+                build = 1
+        return '%s.%s.%d' % (parsed[0], parsed[1], build)
 
     def generateGSToolsetXML(self, package):
         """Generate the factorytool.xml.
@@ -3333,9 +3394,6 @@ class ArchetypesGenerator(BaseGenerator):
     def generateGSsetuphandlers(self, package):
         """generates setuphandlers.py and import_steps.xml"""
         # generate setuphandlers
-        dependend_profiles = package.getTaggedValue('dependend_profiles', '')
-        dependend_profiles = [dp.strip() for dp in dependend_profiles.split(',')\
-                              if dp.strip()]
         alltools = self.getGeneratedTools(package)
         toolnames = [t.getTaggedValue('tool_instance_name') or \
                      'portal_%s' % t.getName().lower() for t in alltools]
@@ -3363,7 +3421,6 @@ class ArchetypesGenerator(BaseGenerator):
             'package': package,
             'product_name': package.getProductModuleName(),
             'now': datetime.datetime.isoformat(datetime.datetime.now()),
-            'dependend_profiles': dependend_profiles,
             'alltools': alltools,
             'toolnames': toolnames,
             'catalogmultiplexed': catalogmultiplexed,
