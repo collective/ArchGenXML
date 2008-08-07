@@ -4343,7 +4343,7 @@ class ArchetypesGenerator(BaseGenerator):
         if utils.isTGVTrue(tgvglobalallow):
             fti['global_allow'] = True
 
-        fti['content_icon'] = cclass.getTaggedValue('content_icon')
+        fti['content_icon'] = self.getOption('content_icon', cclass, None)
         if not fti['content_icon']:
             # If an icon file with the default name exists in the skin, do not
             # comment out the icon definition
