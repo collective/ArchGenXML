@@ -3961,14 +3961,16 @@ class ArchetypesGenerator(BaseGenerator):
         dirMode=0
         outfile=None
 
-        if self.generate_packages and root.getCleanName() not in self.generate_packages:
+        if self.generate_packages and \
+           root.getCleanName() not in self.generate_packages:
             log.info("%sSkipping package '%s'.",
                      '    '*self.infoind,
                      root.getCleanName())
             return
 
         dirMode=1
-        if root.hasStereoType(self.stub_stereotypes, umlprofile=self.uml_profile):
+        if root.hasStereoType(self.stub_stereotypes, 
+                              umlprofile=self.uml_profile):
             log.debug("Skipping stub Product '%s'.",
                       root.getName())
             return
@@ -4051,11 +4053,13 @@ class ArchetypesGenerator(BaseGenerator):
         elif suff.lower() in ('.zargo','.zuml','.zip'):
             log.debug("Opening %s ..." % suff.lower())
             zf=ZipFile(self.xschemaFileName)
-            xmis=[n for n in zf.namelist() if os.path.splitext(n)[1].lower()in ['.xmi','.xml']]
+            xmis=[n for n in zf.namelist() 
+                  if os.path.splitext(n)[1].lower()in ['.xmi','.xml']]
             assert(len(xmis)==1)
             buf=zf.read(xmis[0])
             self.root=root=XMIParser.parse(xschema=buf,
-                                           packages=self.generate_packages, generator=self,
+                                           packages=self.generate_packages, 
+                                           generator=self,
                                            generate_datatypes=self.generate_datatypes)
         else:
             raise TypeError,'input file not of type .xmi, .xml, .zargo, .zuml'
@@ -4089,9 +4093,11 @@ class ArchetypesGenerator(BaseGenerator):
                  self.outfilename)
         log.info('Generating...')
         if self.build_msgcatalog and not has_i18ndude:
-            log.warn("Can't build i18n message catalog. Module 'i18ndude' not found.")
+            log.warn("Can't build i18n message catalog. "
+                     "Module 'i18ndude' not found.")
         if not XMIParser.has_stripogram:
-            log.warn("Can't strip html from doc-strings. Module 'stripogram' not found.")
+            log.warn("Can't strip html from doc-strings. "
+                     "Module 'stripogram' not found.")
         self.generateProduct(root)
 
     def _getSubtypes(self, element):
@@ -4108,32 +4114,53 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             recursive = 1
 
-        aggregatedClasses = element.getRefs() + \
-            [o.getName()
-             for o in element.getAggregatedClasses(recursive=recursive, filter=['class','associationclass'])
-             if not o.hasStereoType('hidden', umlprofile=self.uml_profile)
-                and not o.hasStereoType(self.flavor_stereotypes,umlprofile=self.uml_profile)
-                and not o.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile)]
-
+        aggregatedClasses = []
+        aggregatedTypes = []
+        for klass in element.getChildren():
+            if not klass.getRef():
+                continue
+            aggregatedClasses.append(str(klass.getRef()))
+            aggregatedType.append(klass.getRef().getTaggedValue('portal_type'),
+                                  str(klass.getRef()))
+            
+        for o in element.getAggregatedClasses(recursive=recursive, 
+                                              filter=['class', 'associationclass']):
+            if o.hasStereoType('hidden', umlprofile=self.uml_profile) \
+               or o.hasStereoType(self.flavor_stereotypes, umlprofile=self.uml_profile) \
+               or o.hasStereoType(self.adapter_stereotypes, umlprofile=self.uml_profile):            
+                continue
+            aggregatedClasses.append(o.getCleanName())
+            aggregatedTypes.append(o.getTaggedValue('portal_type', 
+                                                    o.getCleanName()))
+                
         # append with flavor implementers when some aggregated class is a flavor
-        for e in element.getAggregatedClasses(recursive=0,filter=['class','associationclass']):
-            if e.hasStereoType(self.flavor_stereotypes,umlprofile=self.uml_profile):
+        for e in element.getAggregatedClasses(recursive=0, 
+                                              filter=['class', 'associationclass']):
+            if e.hasStereoType(self.flavor_stereotypes,
+                               umlprofile=self.uml_profile):
                 for imp in self.getImplementers(e,includeHidden=False):
                     aggregatedClasses.append(imp.split('.')[-1])
+                    aggregatedTypes.append(imp.split('.')[-1])
 
         # append with adapted classes when some aggregated class is an adapter
-        for e in element.getAggregatedClasses(recursive=0,filter=['class','associationclass']):
-            if e.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile):
+        for e in element.getAggregatedClasses(recursive=0,
+                                              filter=['class',
+                                                      'associationclass']):
+            if e.hasStereoType(self.adapter_stereotypes,
+                               umlprofile=self.uml_profile):
                 # what is adapted ?
                 for adapted in e.getAdaptationParents(recursive=True):
                     if adapted.isInterface():
                         # it's an interface, get its implementers
                         for imp in self.getImplementers(e,includeHidden=False):
                             aggregatedClasses.append(imp.split('.')[-1])
+                            aggregatedTypes.append(imp.split('.')[-1])
                     else:
                         # it's a class, is it hidden? if not allow this subtype
-                        if not adapted.hasStereoType('hidden', umlprofile=self.uml_profile):
+                        if not adapted.hasStereoType('hidden', 
+                                                     umlprofile=self.uml_profile):
                             aggregatedClasses.append(adapted.getName())
+                            aggregatedTypes.append(adapted.getName())
 
         if element.getTaggedValue('allowed_content_types'):
             #aggregatedClasses = [e for e in aggregatedClasses] # hae?
@@ -4141,6 +4168,7 @@ class ArchetypesGenerator(BaseGenerator):
                 e = e.strip()
                 if e not in aggregatedClasses:
                     aggregatedClasses.append(e)
+                    aggregatedTypes.append(e)
 
         # also check if the parent classes can have subobjects
         baseaggregatedClasses = []
@@ -4152,12 +4180,15 @@ class ArchetypesGenerator(BaseGenerator):
         parentAggregates = []
 
         if utils.isTGVTrue(element.getTaggedValue('inherit_allowed_types', \
-                                                  True)) and element.getGenParents():
+                                                  True)) \
+           and element.getGenParents():
             for gp in element.getGenParents():
                 if gp.hasStereoType(self.python_stereotype,
                                     umlprofile=self.uml_profile):
                     continue
-                aggregatedClasses.extend(self._getSubtypes(gp)['aggregated_classes'])
+                sub = self._getSubtypes(gp)
+                aggregatedClasses.extend(sub['aggregated_classes'])
+                aggregatedTypes.extend(sub['aggregated_types'])
                 pt = gp.getTaggedValue('portal_type', None)
                 if pt is not None:
                     parentAggregates.append(pt)
@@ -4167,6 +4198,7 @@ class ArchetypesGenerator(BaseGenerator):
         ret = {
             'parent_types': parentAggregates,
             'aggregated_classes': aggregatedClasses,
+            'aggregated_types': aggregatedTypes
         }
         return ret
     
@@ -4205,22 +4237,17 @@ class ArchetypesGenerator(BaseGenerator):
             typedef['product_name'] = package.getProductName()
             typedef['factory'] = 'add%s' % pclass.getCleanName()
             
-                
             for tgv in pclass.getTaggedValues():
                 if tgv.startswith('fti:'):
                     typedef[tgv]=pclass.getTaggedValue(tgv)
 
-            subs = self._getSubtypes(pclass)
-            
-            allowed_types = subs['aggregated_classes']
-            typedef['allowed_content_types'] = allowed_types
+            subs = self._getSubtypes(pclass)            
+            typedef['allowed_content_types'] = subs['aggregated_types']
 
             # check if allow_discussion has to be set to None as default
             # further check for boolean wrapper
             typedef['allow_discussion'] = pclass.getTaggedValue( \
                 'allow_discussion', 'False')
-
-
 
             typedef['suppl_views'] = eval(typedef['suppl_views'])
             if not typedef['suppl_views']: #  and folderish:
