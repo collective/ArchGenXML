@@ -4195,7 +4195,8 @@ class ArchetypesGenerator(BaseGenerator):
             fti = self._getFTI(pclass)
             typedef = dict()
             typedef.update(fti)
-            typedef['name'] = pclass.getCleanName()
+            typedef['name'] = pclass.getTaggedValue('portal_type') or \
+                                  pclass.getCleanName()
 
             typedef['meta_type'] = 'Factory-based Type Information ' + \
                    'with dynamic views'
