@@ -5,7 +5,7 @@ from zope import component
 
 from archgenxml.interfaces import IOptions
 from archgenxml.plone.interfaces import IConfigPyView
-from archgenxml.uml.interfaces import *
+from xmiparser.interfaces import IPackage
 from archgenxml import utils
 from archgenxml.documenttemplate.documenttemplate import HTML
 
@@ -13,7 +13,7 @@ from archgenxml.documenttemplate.documenttemplate import HTML
 class ConfigPyView(object):
     """A view for the toplevel config.py file
 
-      >>> from archgenxml.XMIParser import XMIPackage
+      >>> from archgenxml.xmiparser import XMIPackage
       >>> package = XMIPackage(None)
       >>> adapter = IConfigPyView(package)
       >>> from archgenxml.plone.config_py import ConfigPyView

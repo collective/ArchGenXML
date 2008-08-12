@@ -26,8 +26,9 @@ from zipfile import ZipFile
 from cStringIO import StringIO
 
 # AGX-specific imports
+from xmiparser import xmiparser
+from xmiparser.interfaces import IPackage
 import PyParser
-import XMIParser
 import atmaps
 from archgenxml.interfaces import IOptions
 
@@ -44,7 +45,6 @@ from zope import interface
 from zope import component
 
 from archgenxml.plone.interfaces import IConfigPyView
-from archgenxml.uml.interfaces import *
 
 _marker = []
 log = logging.getLogger('generator')
@@ -4045,7 +4045,7 @@ class ArchetypesGenerator(BaseGenerator):
         log.info("Parsing...")
         if suff.lower() in ('.xmi','.xml', '.uml'):
             log.debug("Opening xmi...")
-            self.root = root= XMIParser.parse(self.xschemaFileName,
+            self.root = root= xmiparser.parse(self.xschemaFileName,
                                               packages=self.generate_packages,
                                               generator=self,
                                               generate_datatypes=self.generate_datatypes)
@@ -4057,7 +4057,7 @@ class ArchetypesGenerator(BaseGenerator):
                   if os.path.splitext(n)[1].lower()in ['.xmi','.xml']]
             assert(len(xmis)==1)
             buf=zf.read(xmis[0])
-            self.root=root=XMIParser.parse(xschema=buf,
+            self.root=root=xmiparser.parse(xschema=buf,
                                            packages=self.generate_packages, 
                                            generator=self,
                                            generate_datatypes=self.generate_datatypes)
@@ -4095,7 +4095,7 @@ class ArchetypesGenerator(BaseGenerator):
         if self.build_msgcatalog and not has_i18ndude:
             log.warn("Can't build i18n message catalog. "
                      "Module 'i18ndude' not found.")
-        if not XMIParser.has_stripogram:
+        if not xmiparser.has_stripogram:
             log.warn("Can't strip html from doc-strings. "
                      "Module 'stripogram' not found.")
         self.generateProduct(root)

@@ -27,7 +27,8 @@ from documenttemplate.documenttemplate import HTML
 import utils
 from codesnippets import *
 
-import XMIParser, PyParser
+from xmiparser import xmiparser
+import PyParser
 from UMLProfile import UMLProfile
 
 log = logging.getLogger("basegenerator")
@@ -580,7 +581,7 @@ class BaseGenerator:
         if utils.isTGVTrue(self.getOption('version_info', element, True)):
             log.debug("We want version info in every file.")
             versiontext = utils.version()
-        elif element.__class__ == XMIParser.XMIModel:
+        elif element.__class__ == xmiparser.XMIModel:
             log.debug("We don't want version info in all files, "
                       "but we do want them in the config and Install.")
             versiontext = utils.version()

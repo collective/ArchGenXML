@@ -17,7 +17,6 @@
 import loginitializer
 loginitializer.initLog('archgenxml.log')
 loginitializer.addConsoleLogging()
-import zopeimportfixer
 # End of the stuff that needs to be handled first.
 
 import archgenxml
@@ -28,20 +27,19 @@ import os
 from time import time
 
 from zope import component
-from zope.configuration import xmlconfig
 
 from OptionParser import parser
 from pkg_resources import resource_filename
 
 log = logging.getLogger('main')
 
-##try:
-##    # speedup: ~15%
-##    import psyco
-##    psyco.full()
-##    log.debug("Running with Psyco.")
-##except ImportError:
-##    log.debug("Running without Psyco.")
+#try:
+#    # speedup: ~15%
+#    import psyco
+#    psyco.full()
+#    log.debug("Running with Psyco.")
+#except ImportError:
+#    log.debug("Running without Psyco.")
 
 def main():
     starttime = time()
@@ -49,10 +47,6 @@ def main():
     # directory into the import path. Just depending on a zope in the
     # normal import path can easily mess up existing zope sites.
     
-    #zcmlConfigFile = resource_filename(__name__, 'configure.zcml')
-    zcmlConfigFile = resource_filename('archgenxml', 'configure.zcml')
-    xmlconfig.file(zcmlConfigFile, package=archgenxml)
-    log.debug("Finished initializing zope3 machinery.")
 
     log.debug("Reading command line options first.")
     (settings, args) = parser.parse_args()

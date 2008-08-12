@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import logging
-import zopeimportfixer
 import textwrap
 log = logging.getLogger('umlprofile')
 
@@ -175,8 +174,8 @@ class UMLProfile:
     def findStereoTypes(self, entities=[], **kw):
         log.debug("Finding stereotypes for entities %r.",
                   entities)
-        entities = [entity.replace('archgenxml.XMIParser.', '').replace('XMIParser.', '') for entity in entities]
-        log.debug("Stripped off 'XMIParser.': %r.",
+        entities = [entity.replace('archgenxml.xmiparser.', '').replace('xmiparser.', '') for entity in entities]
+        log.debug("Stripped off 'xmiparser.': %r.",
                   entities)
         list = self.getAllStereoTypes()
         return self.filterObjects(list, entities, **kw)

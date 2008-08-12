@@ -42,7 +42,6 @@ setup(name='archgenxml',
           'zope.interface',
           'zope.component',
           'zope.testing',
-          'zope.configuration',
       ],
       
       )
