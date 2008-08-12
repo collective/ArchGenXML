@@ -35,20 +35,14 @@ setup(name='archgenxml',
         },
       test_suite='archgenxml.tests.runalltests.suite',
       zip_safe=False,
-      # The stuff below messes up zope instances running on the same
-      # python...
-      #install_requires="""
-      #zope.interface
-      #zope.component
-      #zope.testing
-      #zope.configuration
-      #""",
-      #dependency_links = [
-      #  'http://download.zope.org/distribution/'
-      #  ],
       install_requires=[
           'setuptools',
           # -*- Extra requirements: -*-
+          'xmiparser',
+          'zope.interface',
+          'zope.component',
+          'zope.testing',
+          'zope.configuration',
       ],
       
       )
