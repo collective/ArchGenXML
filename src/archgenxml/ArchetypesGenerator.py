@@ -2906,6 +2906,8 @@ class ArchetypesGenerator(BaseGenerator):
         if self.getOption('plone_target_version', package, 3.0) == 2.5:
             return
         
+        version = '1.0'
+        
         # check for old version.txt, read and use it if present.
         fp = os.path.join(package.getFilePath(), 'version.txt')
         if os.path.exists(fp):
