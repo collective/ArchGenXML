@@ -3417,7 +3417,7 @@ class ArchetypesGenerator(BaseGenerator):
                                                              klass, True))]
         memberclasses =  [klass for klass in allclasses \
                                if klass.hasStereoType(self.remember_stereotype)]
-        newstyleatvm = self.getOption('atvm', package, '1.4') == '1.5'
+        newstyleatvm = self.getOption('atvm', package, 1.4) > 1.4
         templateparams = {
             'generator': self,
             'package': package,
@@ -3426,8 +3426,9 @@ class ArchetypesGenerator(BaseGenerator):
             'alltools': alltools,
             'toolnames': toolnames,
             'catalogmultiplexed': catalogmultiplexed,
-            'hasrelations': package.num_generated_relations and newstyleatvm,
-            'hasvocabularies': package.getProductName() in self.vocabularymap.keys(),
+            'hasrelations': package.num_generated_relations,
+            'hasvocabularies': package.getProductName() in self.vocabularymap.keys()\
+                               and not newstyleatvm,
             'notsearchabletypes': notsearchabletypes,
             'hidemetatypes': hidemetatypes,
             'memberclasses' : memberclasses,
