@@ -3417,7 +3417,7 @@ class ArchetypesGenerator(BaseGenerator):
                                                              klass, True))]
         memberclasses =  [klass for klass in allclasses \
                                if klass.hasStereoType(self.remember_stereotype)]
-        newstyleatvm = self.getOption('atvm', klass, '1.4') == '1.5'
+        newstyleatvm = self.getOption('atvm', package, '1.4') == '1.5'
         templateparams = {
             'generator': self,
             'package': package,
