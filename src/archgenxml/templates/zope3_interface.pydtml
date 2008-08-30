@@ -1,4 +1,5 @@
 <dtml-let assocs="klass.getFromAssociations(aggtypes=['none','aggregation','composite'])" atts="klass.getAttributeDefs()" vars="atts+[a.toEnd for a in assocs]" >
+<dtml-var "generator.generateDependentImports(klass)">
 from zope.interface import Interface
 
 class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-var "','.join([p.getCleanName() for p in klass.getGenParents()])">)</dtml-if><dtml-if "not klass.getGenParents() and klass.isInterface()">(Interface)</dtml-if>:

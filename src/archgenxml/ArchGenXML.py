@@ -33,13 +33,13 @@ from pkg_resources import resource_filename
 
 log = logging.getLogger('main')
 
-#try:
-#    # speedup: ~15%
-#    import psyco
-#    psyco.full()
-#    log.debug("Running with Psyco.")
-#except ImportError:
-#    log.debug("Running without Psyco.")
+try:
+    # speedup: ~15%
+    import psyco
+    psyco.full()
+    log.debug("Running with Psyco.")
+except ImportError:
+    log.debug("Running without Psyco.")
 
 def main():
     starttime = time()
