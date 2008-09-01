@@ -305,3 +305,28 @@ ARRAYFIELD = u"""    ArrayField(
 REFERENCEBROWSERWIDGET_IMPORT = u"""\
 from Products.ATReferenceBrowserWidget.ATReferenceBrowserWidget import ReferenceBrowserWidget
 """
+
+EXTENDFIELDS_FUNCTION = u"""\
+from new import classobj
+from copy import deepcopy
+def extendFields(parentClass,excludedFields=[]):
+    ''' returns a list of AT fields which copy those fields from
+    parentClass whose names are not present in excludedFields '''
+    parentSchema = parentClass.schema
+    result = []
+    # iterate over the fields of parent class
+    for parentField in parentSchema.fields():
+        if parentField.getName() in excludedFields:
+            continue # skip this one, the adapted class already has it
+        parentFieldClass = parentField.__class__
+        parentFieldClassName = parentFieldClass.__name__
+        # for schema extenders, fields must inherit from ExtensionField, too
+        fieldClassName = 'Extended' + parentFieldClassName
+        # here is the python magic: let's instantiate a new class !
+        fieldClass = classobj(fieldClassName,(ExtensionField,parentFieldClass),{})
+        field=fieldClass()
+        field.__dict__ = deepcopy(parentField.__dict__) # a bit wild, isn't it ?
+        result.append(field)
+    return result
+
+"""
