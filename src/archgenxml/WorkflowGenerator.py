@@ -409,7 +409,7 @@ class WorkflowInfo(object):
                    "&review_state=".join(worklistStates))
             wl['url'] = url
             wl['guardPermission'] = self._getWorklistGuardPermission(name)
-            wl['guardRole'] = self._getWorklistGuardRole(name)
+            wl['guardRoles'] = self._getWorklistGuardRoles(name)
             wl['states'] = worklistStates
             worklists.append(wl)
         return worklists
@@ -474,9 +474,9 @@ class WorkflowInfo(object):
                   "following states: %r.", worklistname, results)
         return results
 
-    def _getWorklistGuardRole(self, worklistname):
-        """Returns the guard role associated with the worklistname."""
-        log.debug("Getting the guard role for the worklist...")
+    def _getWorklistGuardRoles(self, worklistname):
+        """Returns the guard roles associated with the worklistname."""
+        log.debug("Getting the guard roles for the worklist...")
         default = ''
         results = [s.getTaggedValue('worklist:guard_roles')
                    for s in self.sm.getStates(no_duplicates = 1)
@@ -486,9 +486,14 @@ class WorkflowInfo(object):
             log.debug("No tagged value found, returning the default: '%s'.",
                       default)
             return default
+        guardRoles = results[0]
         log.debug("Tagged value(s) found, taking the first (or only) "
-                  "one: '%s'.", results[0])
-        return results[0]
+                  "one: '%s'.", guardRoles)
+        if guardRoles:
+            guardRoles = guardRoles.split(',')
+        else:
+            guardRoles = []
+        return [p.strip() for p in guardRoles]
 
     def _getWorklistGuardPermission(self, worklistname):
         """Returns the guard permission associated with the worklistname."""

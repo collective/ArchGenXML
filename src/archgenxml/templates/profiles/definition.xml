@@ -55,9 +55,9 @@
 <dtml-if "worklist['guardPermission']">
    <guard-permission><dtml-var "worklist['guardPermission']"></guard-permission>
 </dtml-if>
-<dtml-if "worklist['guardRole']">
-   <guard-role><dtml-var "worklist['guardRole']"></guard-role>
-</dtml-if>
+<dtml-in "worklist['guardRoles']">
+   <guard-role><dtml-var "_['sequence-item']"></guard-role>
+</dtml-in>
   </guard>
 <dtml-in "worklist['states']">
   <match name="review_state" 
