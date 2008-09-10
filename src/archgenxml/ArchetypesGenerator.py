@@ -1851,6 +1851,9 @@ class ArchetypesGenerator(BaseGenerator):
                 for fieldType in fieldTypes.keys():
                     wrt('class Extended'+fieldType+'(ExtensionField, '+fieldType+'):\n')
                     wrt(utils.indent('"""An extended subclass of '+fieldType+' """\n\n',1))
+                # add the extendFields function if the extender has some parent in the model
+                if element.getGenParents() != []:
+                    wrt(EXTENDFIELDS_FUNCTION)
             # for all adapters, parents is nothing but object
             parents = '(object)'
         
@@ -1924,6 +1927,8 @@ class ArchetypesGenerator(BaseGenerator):
             if element.hasStereoType(self.extender_stereotypes,umlprofile=self.uml_profile):
                 # in schema extenders, fields are just given as a list, not as an instance of Schema
                 self.generateArcheSchema(element, field_specs, baseschema, outfile)
+                for parent in element.getGenParents():
+                    wrt(utils.indent('schema += extendFields(%s,excludedFields=[])\n\n' % parent.getName(), 1))
                 wrt(utils.indent('def getFields(self):',1) + '\n')
                 wrt(utils.indent('return self.schema',2) + '\n\n')
         else:
