@@ -1,14 +1,12 @@
 from zope.interface import Interface
 from zope.interface import Attribute
 from zope.interface import implements
-
 from zope.event import notify
 from zope.app.event.interfaces import IObjectEvent
 from zope.app.event.objectevent import ObjectEvent
-
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-
+from Products.CMFCore.WorkflowCore import ObjectMoved 
 from Products.DCWorkflow.DCWorkflow import DCWorkflowDefinition
 from Products.DCWorkflow.Expression import StateChangeInfo
 from Products.DCWorkflow.Expression import createExprContext
