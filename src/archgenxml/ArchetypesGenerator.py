@@ -3196,7 +3196,6 @@ class ArchetypesGenerator(BaseGenerator):
             if not self._isContentClass(klass):
                 continue
 
-            print 'class:',klass.getName()
             for attribute in klass.getAttributeDefs():
                 # find accessor
                 accessor = attribute.getTaggedValue('accessor', '')
@@ -3224,7 +3223,6 @@ class ArchetypesGenerator(BaseGenerator):
                 # metadata, column?
                 metadata = self.getOption('collection:metadata', attribute, '0')
                 metadata = utils.isTGVTrue(metadata)
-                print attribute.getName(),metadata
                 if metadata:
                     mdef = {}
                     mdef['name'] = self.getOption('catalog:metadata_accessor',
