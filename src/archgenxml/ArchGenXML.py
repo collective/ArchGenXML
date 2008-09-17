@@ -43,6 +43,7 @@ if not DEBUG:
         log.debug("Running with Psyco.")
     except ImportError:
         log.debug("Running without Psyco.")
+        
 
 def main():
     starttime = time()

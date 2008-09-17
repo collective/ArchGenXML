@@ -170,6 +170,7 @@ def processExpression(value, asString=True):
         return value            
 
 def isTGVTrue(tgv):
+    tgv=getExpression(tgv)
     if isinstance(tgv, (str, unicode)):
         tgv = tgv.lower()
     else:
@@ -183,6 +184,7 @@ def isTGVFalse(tgv):
     A 'None' value is undefined and _not_ False, so it's something
     different than (not toBoolean(tgv)).
     """
+    tgv=getExpression(tgv)
     if isinstance(tgv, (str, unicode)):
         tgv = tgv.lower()
     else:
