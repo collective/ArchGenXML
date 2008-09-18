@@ -183,7 +183,7 @@ TYPE_MAP = {
     'image': {
         'field': u'ImageField',
         'map': {
-            u'storage': u'AttributeStorage()', # XXX
+            u'storage': u'AnnotationStorage()', 
         },
         'index': None,
     },

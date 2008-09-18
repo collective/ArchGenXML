@@ -2682,8 +2682,10 @@ class ArchetypesGenerator(BaseGenerator):
         self.generateGSSkinsXMLFile(package)
         # Generate GS types.xml file
         self.generateGSTypesXMLFile(package)
-        # Generate GS types folder and tape.xml files
+        # Generate GS types folder and type.xml files
         self.generateGSTypesFolderAndXMLFiles(package)
+        # Generate GS vocabularies folder and vocabularies.xml files
+        self.generateGSVocabulariesFolderAndXMLFile(package)
         # Generate configure.zcml and profiles.zcml
         self.generateConfigureAndProfilesZCML(package)
         # Generate setuphandlers.py and import_steps.xml
@@ -3397,6 +3399,35 @@ class ArchetypesGenerator(BaseGenerator):
             handleSectionedFile(['profiles', 'type.xml'],
                                 os.path.join(typesdir, filename),
                                 templateparams={ 'ctype': typedef })
+
+    def generateGSVocabulariesFolderAndXMLFile(self, package):
+        """Create the types folder and the corresponding xml files for the
+        portal types inside it if type_registrarion tagged value is set
+        to genericsetup.
+        """
+        if not self.getOption('atvm', package, 1.4) > 1.4 \
+           or package.getProductName() not in self.vocabularymap.keys():
+            return
+
+        profiledir = os.path.join(package.getFilePath(), 'profiles', 'default')
+        vdir = os.path.join(profiledir, 'vocabularies')
+
+        if not 'vocabularies' in os.listdir(profiledir):
+            os.mkdir(os.path.join(vdir))
+
+        if not os.path.isdir(vdir):
+            raise Exception('vocabularies is not a directory')
+        
+        submap = self.vocabularymap[package.getProductName()]
+        vdefs = ['%s.vdex' % k for k in submap.keys() \
+                 if submap[k][0] == 'VdexFileVocabulary']
+        handleSectionedFile(['profiles', 'vocabularies.xml'],
+            os.path.join(profiledir, 'vocabularies.xml'),  
+            sectionnames=('vocabularies.xml',),          
+            templateparams={ 
+                'vdefs': vdefs
+            }
+        )
 
     def generateGSsetuphandlers(self, package):
         """generates setuphandlers.py and import_steps.xml"""

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<object name="portal_vocabularies" meta_type="ATVocabularyManager">
+<dtml-in "vdefs">
+	<object name="<dtml-var "_['sequence-item']">" />
+</dtml-in>
+    <!-- ##code-section vocabularies.xml -->
+    <!-- ##/code-section vocabularies.xml -->	
+</object>

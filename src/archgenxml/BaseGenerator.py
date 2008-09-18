@@ -52,7 +52,7 @@ base_uml_profile.addStereoType('python_class', ['XMIClass'],
 base_uml_profile.addStereoType('view_class', ['XMIClass'],
     dispatching=1,
     generator='generateViewClass',
-    template='view_class.pydtml',
+    template=['view_class.pydtml'],
     description='Generate this class as a zope3 view class '
                 'instead of as an Archetypes class.')
 
