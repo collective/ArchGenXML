@@ -12,7 +12,7 @@
          directory="<dtml-var "_['sequence-item']['directory']">"/>
 </dtml-in>
  
- <skin-path name="Plone Default">
+ <skin-path name="*">
 <dtml-in "skinDirs">
   <layer insert-after="custom" 
          name="<dtml-var "_['sequence-item']['name']">"/>
