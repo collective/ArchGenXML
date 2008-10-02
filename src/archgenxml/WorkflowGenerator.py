@@ -510,10 +510,10 @@ class WorkflowInfo(object):
         # There might be more than one guard_permissions tgv, take the first
         result = results[0]
         log.debug("Tagged value(s) found, taking the first (or only) one: '%s'.",
-                  results[0])
+                  result)
         if utils.isTGVFalse(result):
             return None
-        return results[0]
+        return result
 
     def _getWorklistGuardExpression(self, worklistname):
         """Returns the guard expression associated with the worklistname."""

@@ -11,8 +11,8 @@
     <indexed_attr value="<dtml-var "_['sequence-item']">"/>
 </dtml-in>
 <dtml-else>
-</dtml-if>
     <indexed_attr value="<dtml-var "_['sequence-item']['name']">"/>
+</dtml-if>    
 </dtml-let>
 <dtml-let extras="_['sequence-item']['extras']">
 <dtml-in "extras">
