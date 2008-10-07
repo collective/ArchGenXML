@@ -11,7 +11,7 @@ parentDir = testDir[:-6] # Strips off '/tests'
 # Appends the parent dir to the module search path
 sys.path.append(parentDir)
 from TaggedValueSupport import * # includes tgvRegistry
-from xmiparser import XMIElement
+from xmiparser.xmiparser import XMIElement
 
 
 class TestTaggedValueRegistry(unittest.TestCase):

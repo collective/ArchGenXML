@@ -5,7 +5,7 @@ import logging
 from sets import Set
 from PyParser import PyModule
 from BaseGenerator import BaseGenerator
-from archgenxml.documenttemplate.documenttemplate import HTML
+from zope.documenttemplate import HTML
 from archgenxml.TaggedValueSupport import STATE_PERMISSION_MAPPING
 from TaggedValueSupport import tgvRegistry
 log = logging.getLogger('workflow')

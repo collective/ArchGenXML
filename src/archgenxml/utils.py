@@ -108,7 +108,7 @@ def indent(s, indent, prepend='',
     'indent' is the level of indentation. 0 gives 0 spaces, 1 gives 4
     spaces, and so on.
     """
-    if s == None:
+    if s is None:
         return ''
     rows = s.split('\n')
     if skipFirstRow:
@@ -170,7 +170,6 @@ def processExpression(value, asString=True):
         return value            
 
 def isTGVTrue(tgv):
-    tgv=getExpression(tgv)
     if isinstance(tgv, (str, unicode)):
         tgv = tgv.lower()
     else:
@@ -184,7 +183,6 @@ def isTGVFalse(tgv):
     A 'None' value is undefined and _not_ False, so it's something
     different than (not toBoolean(tgv)).
     """
-    tgv=getExpression(tgv)
     if isinstance(tgv, (str, unicode)):
         tgv = tgv.lower()
     else:

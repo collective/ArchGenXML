@@ -11,7 +11,6 @@ modules = [
     ]
 
 textfiles = [
-    'uml/README.txt',
     ]
 
 def test_suite():

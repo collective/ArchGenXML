@@ -11,7 +11,6 @@
 # First things first.
 from archgenxml import loginitializer
 loginitializer.initLog('runalltests.log')
-import archgenxml.zopeimportfixer
 # End of stuff that needs to be done Right Now.
 
 import logging
@@ -22,6 +21,8 @@ testDir = os.path.dirname(os.path.abspath(__file__))
 parentDir = testDir[:-6] # Strips off '/tests'
 # Appends the parent dir to the module search path
 sys.path.append(parentDir)
+# Add testDir to sys.path, needed if the tests are executed with 'python setup.py test', else the __import__ fails
+sys.path.append(testDir)
 
 testDir = os.path.dirname(os.path.abspath(__file__))
 TestRunner = unittest.TextTestRunner

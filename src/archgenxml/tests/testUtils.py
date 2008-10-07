@@ -49,7 +49,7 @@ class TestUtils(unittest.TestCase):
         """
         input = 'line1\nline2\n'
         result = indent(input, 1)
-        expected = '    line1\n    line2\n    '
+        expected = '    line1\n    line2\n'
         # No, we don't want an \n at the end (just like in the rest)
         self.assertEquals(result, expected)
 
@@ -63,7 +63,7 @@ class TestUtils(unittest.TestCase):
         """ Don't barf on an empty string
         """
         result = indent('', 1)
-        self.assertEquals(result, '    ')
+        self.assertEquals(result, '')
 
     def test_indentDontBarfOnNone(self):
         """ Don't barf on a None value

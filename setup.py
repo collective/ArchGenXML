@@ -41,7 +41,10 @@ setup(name='archgenxml',
           'xmiparser',
           'zope.interface',
           'zope.component',
-          'zope.testing',
+          'zope.documenttemplate',
       ],
+      extras_require = dict(
+          i18n=['i18ndude']
+      ),
       
       )

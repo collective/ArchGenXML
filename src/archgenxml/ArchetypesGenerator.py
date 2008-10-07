@@ -39,7 +39,7 @@ from WorkflowGenerator import WorkflowGenerator
 
 from CodeSectionHandler import handleSectionedFile
 
-from documenttemplate.documenttemplate import HTML
+from zope.documenttemplate import HTML
 
 from zope import interface
 from zope import component

@@ -22,7 +22,7 @@ from pkg_resources import resource_filename
 from pkg_resources import resource_string
 from pkg_resources import Requirement
 
-from documenttemplate.documenttemplate import HTML
+from zope.documenttemplate import HTML
 
 import utils
 from codesnippets import *

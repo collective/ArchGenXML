@@ -19,7 +19,7 @@ import os
 import logging
 from StringIO import StringIO
 from pkg_resources import resource_string, resource_stream
-from archgenxml.documenttemplate import HTML
+from zope.documenttemplate import HTML
 from PyParser import PyModule
 
 log = logging.getLogger('CodeSectionHandler')

@@ -30,7 +30,7 @@ categoryFromClassMap = {
 
 
 class ChainedDict(dict):
-    ''' chained dict class allows to conatenate dictionaries '''
+    ''' chained dict class allows to concatenate dictionaries '''
 
     parent_chain = []
 
@@ -142,11 +142,11 @@ class UMLProfile:
                      name)
         self.stereoTypes[name] = stereotype
 
-    def filterObjects(self,list,entities,**kw):
+    def filterObjects(self, list, entities, **kw):
         res = []
         for item in list:
 
-            #if one of the entities aplies, its ok
+            #if one of the entities applies, its ok
             if entities:
                 ok = 0
                 for e in entities:
