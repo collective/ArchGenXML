@@ -51,6 +51,7 @@ class WorkflowGenerator(BaseGenerator):
 
         for sm in statemachines:
             d['info'] = WorkflowInfo(sm)
+            d['target_version'] = self.getOption('plone_target_version', self.package, '3.0')
 
             # start BBB warning
             smName = utils.cleanName(sm.getName())

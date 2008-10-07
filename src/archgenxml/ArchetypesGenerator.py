@@ -2764,7 +2764,12 @@ class ArchetypesGenerator(BaseGenerator):
                                             'generator':self,
                                             'hasSubscribers': hasSubscribers,
                                             'hasBrowserViews' : hasBrowserViews,
-                                            'hasSubPackagesWithZcml': hasSubPackagesWithZcml})
+                                            'hasSubPackagesWithZcml': hasSubPackagesWithZcml,
+                                            'i18ndomain': package.getProductName()})
+        
+        # create locales directory
+        localesDir = os.path.join(package.getFilePath(), 'locales')
+        self.makeDir(localesDir)
 
 
     def generateBrowserZCML(self, package,fname="generatedbrowser.zcml"):
@@ -2804,7 +2809,9 @@ class ArchetypesGenerator(BaseGenerator):
         handleSectionedFile(['browser.zcml'],
                             os.path.join(ppath, fname),
                             sectionnames=['BROWSER'],
-                            templateparams={'browserViews': browserViews,'portletViews':portletViews})
+                            templateparams={'browserViews': browserViews,
+                                            'portletViews': portletViews,
+                                            'i18ndomain': package.getProductName()})
 
     def generatePackageIncludesZcml(self, package):
         """generates the includes.zcml of the package"""
@@ -3049,7 +3056,7 @@ class ArchetypesGenerator(BaseGenerator):
                             sectionnames=['controlpanel.xml'],
                             templateparams={
                                 'configlets': configlets,
-                                'i18ndomain':  package.getProductName()
+                                'i18ndomain': package.getProductName()
                             }
         )
 
@@ -3398,7 +3405,9 @@ class ArchetypesGenerator(BaseGenerator):
             filename = '%s.xml' % typedef['name']
             handleSectionedFile(['profiles', 'type.xml'],
                                 os.path.join(typesdir, filename),
-                                templateparams={ 'ctype': typedef })
+                                templateparams={'ctype': typedef,
+                                                'target_version': self.getOption('plone_target_version',
+                                                                                  package, '3.0')})
 
     def generateGSVocabulariesFolderAndXMLFile(self, package):
         """Create the types folder and the corresponding xml files for the
