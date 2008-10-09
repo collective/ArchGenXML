@@ -90,15 +90,6 @@ DEFAULT_ACTIONS_3_0 = [
         'permissions': ['Modify portal content'],
         'visible': 'True',
     },
-    {
-        'name': 'Properties',
-        'id': 'metadata',
-        'category': 'object',
-        'condition': '',
-        'action': 'string:${object_url}/properties',
-        'permissions': ['Modify portal content'],
-        'visible': 'True',
-    },
 ]
 
 """
