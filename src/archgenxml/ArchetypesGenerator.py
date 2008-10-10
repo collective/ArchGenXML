@@ -363,7 +363,7 @@ class ArchetypesGenerator(BaseGenerator):
         log.debug("Generating method actions dict...")
         log.debug("First finding our methods.")
 
-        ret = {}
+        ret = []
         klasses = [element] + element.getGenParents(recursive=1)
         for klass in klasses:
             for m in klass.getMethodDefs():
@@ -371,7 +371,7 @@ class ArchetypesGenerator(BaseGenerator):
                                        umlprofile=self.uml_profile):
                     continue
                 if m.hasStereoType(['view', 'form']):
-                    log.warn('Deprated usage of stereotype view or form!')
+                    log.warn('Deprecated usage of stereotype view or form!')
                 log.debug("Method has stereotype action/view/form.")
                 method_name = m.getName()
                 code = utils.indent(m.getTaggedValue('code', ''), 1)
@@ -402,7 +402,7 @@ class ArchetypesGenerator(BaseGenerator):
                 dict['visible'] = m.getTaggedValue('visible', 'True')
                 condition = m.getTaggedValue('condition') or '1'
                 dict['condition']='python:%s' % condition
-                ret[dict['id']] = dict
+                ret.append(dict)
         return ret
 
     def _getDisabledMethodActions(self, element):
@@ -4310,12 +4310,11 @@ class ArchetypesGenerator(BaseGenerator):
             allactions = []
             disabled = self._getDisabledMethodActions(pclass)
             newactions = self._getMethodActions(pclass)
-            for i in range(0, len(actions)):
-                if actions[i]['id'] not in disabled and \
-                   actions[i]['id'] not in newactions.keys():
-                    allactions.append(actions[i].copy())
-            for key in newactions.keys():
-                allactions.append(newactions[key])
+            for action in actions:
+                if action['id'] not in disabled and \
+                   action['id'] not in [a['id'] for a in newactions]:
+                    allactions.append(action.copy())
+            allactions.extend(newactions)
             typedef['type_actions'] = allactions
 
             defs.append(typedef)
