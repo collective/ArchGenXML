@@ -459,7 +459,7 @@ explanation = """A description of the configlet."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'configlet:condition'
-explanation = """A TALES expresson defining a condition which will be
+explanation = """A TALES expression defining a condition which will be
 evaluated to determine whether the configlet should be displayed."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
@@ -527,7 +527,7 @@ explanation = """The label of the action - displayed to the user."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'condition'
-explanation = """A TALES expresson defining a condition which will be
+explanation = """A TALES expression defining a condition which will be
 evaluated to determine whether the action should be displayed."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
