@@ -3341,7 +3341,7 @@ class ArchetypesGenerator(BaseGenerator):
                             templateparams={ 'scripts': [script] })
 
     def generateGSSkinsXMLFile(self, package):
-        """Create the skins.xml file if skin_registrarion tagged value is set
+        """Create the skins.xml file if skin_registration tagged value is set
         to genericsetup.
 
         Reads all directories from productname/skins and generates and uses
@@ -3351,6 +3351,7 @@ class ArchetypesGenerator(BaseGenerator):
             return
         skinbase = os.path.join(package.getFilePath(), 'skins')
         dirs = os.listdir(skinbase)
+        dirs.sort()
         pname = package.getProductName()
         skindirs = []
         for dir in dirs:
