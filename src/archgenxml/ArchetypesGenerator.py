@@ -511,11 +511,13 @@ class ArchetypesGenerator(BaseGenerator):
         
         return ctype
 
-    def getFieldAttributes(self,element):
+    def getFieldAttributes(self, element, ignorewidget=True):
         """ converts the tagged values of a field into extended attributes for
         the archetypes field """
         noparams = ['documentation','element.uuid','transient','volatile',
-                    'widget','copy_from','source_name', 'index']
+                    'copy_from','source_name', 'index']
+        if ignorewidget:
+            noparams.append('widget')        
         convtostring = ['expression']
         map = {}
         tgv = element.getTaggedValues()
@@ -1125,7 +1127,7 @@ class ArchetypesGenerator(BaseGenerator):
                 print >> outfile, "copied_fields['%s'] = %s['%s'].copy(%s)" % \
                       (attr.getName(), copyfrom, name, name!=attr.getName() \
                        and ("name='%s'" % attr.getName()) or '')
-                map = self.getFieldAttributes(attr)
+                map = self.getFieldAttributes(attr, ignorewidget=False)
                 for key in map:
                     if key.startswith('move:'):
                         continue
@@ -1794,7 +1796,8 @@ class ArchetypesGenerator(BaseGenerator):
         # generate local Schema from local field specifications
         field_specs = self.getLocalFieldSpecs(element)
 
-        if not element.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile):
+        if not element.hasStereoType(self.adapter_stereotypes,
+                                     umlprofile=self.uml_profile):
             self.generateArcheSchema(element, field_specs, baseschema, outfile)
             # protected section
             self.generateProtectedSection(outfile, element, 'after-local-schema')
@@ -1820,7 +1823,8 @@ class ArchetypesGenerator(BaseGenerator):
                 else:
                     schema = [baseschema] + parent_schema
     
-            if element.hasStereoType(self.remember_stereotype, umlprofile=self.uml_profile):
+            if element.hasStereoType(self.remember_stereotype, 
+                                     umlprofile=self.uml_profile):
                 schema.append('BaseMember.schema')
                 schema.append('ExtensibleMetadata.schema')
     
@@ -1828,7 +1832,9 @@ class ArchetypesGenerator(BaseGenerator):
             schema += ['schema']
     
             schemaName = '%s_schema' % name
-            print >> outfile, utils.indent(schemaName + ' = ' + ' + \\\n    '.join(['%s.copy()' % s for s in schema]), 0)
+            print >> outfile, utils.indent(schemaName + ' = ' + \
+                                           ' + \\\n    '.join(['%s.copy()' % s\
+                                                               for s in schema]), 0)
 
             # move fields based on move: tagged values
             self.generateFieldMoves(outfile, schemaName, field_specs)
@@ -1843,7 +1849,8 @@ class ArchetypesGenerator(BaseGenerator):
             else:
                 parents = ''
         else: # adapters, including schema extenders
-            if element.hasStereoType(self.extender_stereotypes,umlprofile=self.uml_profile):
+            if element.hasStereoType(self.extender_stereotypes,
+                                     umlprofile=self.uml_profile):
                 # for schema extenders, declare extended fields
                 fieldTypes = {}
                 for fieldSpec in field_specs:
