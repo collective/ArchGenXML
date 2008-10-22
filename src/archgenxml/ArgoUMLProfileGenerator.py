@@ -26,20 +26,34 @@ __docformat__ = 'restructuredtext'
 
 import sys
 import os.path
+from datetime import datetime
 from archgenxml.TaggedValueSupport import tgvRegistry
 from archgenxml import loginitializer
 loginitializer.addConsoleLogging()
 import logging
 log = logging.getLogger("argouml")
 
-outfile = sys.argv[1:] or 'argouml_profile.xmi'
+outfile = sys.argv[1:] or 'archgenxml_profile.xmi'
 
-## Base file construction for ArgoUMl profile
+try:
+    import uuid
+except ImportError:
+    import uuidfrompy252 as uuid
+
+# This uuid was generated initially by uuid.uuid4()
+NAMESPACE_AGX = uuid.UUID('{342db3ca-4022-4992-a166-c38c7db692f8}')
+
+def new_uuid(s):
+    """Return always the same string uuid for the given string 's'
+    """
+    return str(uuid.uuid5(NAMESPACE_AGX, s))
+
+## Base file construction for ArgoUML profile
 ## variable: {stereotypes, datatypes, definitions}
 BASE_FILE = """<?xml version="1.0" encoding="utf-8"?>
 
 <!-- ArchGenXML Old logs
-     version 0.1 2006/02/24 Pander inintial version
+     version 0.1 2006/02/24 Pander initial version
      version 0.2 2006/03/03 Pander completed stereotypes and data types
      version 0.3 2006/03/03 Pander completed tag definitions
      version 0.4 2006/03/06 Pander improved data types
@@ -61,16 +75,16 @@ BASE_FILE = """<?xml version="1.0" encoding="utf-8"?>
      version 1.10 2007/04/06 Encolpe fixed renaming allowed_content_types into allowable_content_types: they are not used in the same semantic
      Now this profile is generated with ArgoUMLProfileGenerator.py script
 -->
-<XMI xmlns:UML="org.omg.xmi.namespace.UML" xmi.version="1.2" timestamp="Fri Sep 02 22:10:50 CEST 2005">
+<XMI xmlns:UML="org.omg.xmi.namespace.UML" xmi.version="1.2" timestamp="%(timestamp)s">
   <XMI.header>
     <XMI.documentation>
-      <XMI.exporter>UML 1.3 to UML 1.4 stylesheets</XMI.exporter>
-      <XMI.exporterVersion>0.3</XMI.exporterVersion>
+      <XMI.exporter>ArgoUMLProfileGenerator.py</XMI.exporter>
+      <XMI.exporterVersion>0.4</XMI.exporterVersion>
     </XMI.documentation>
-    
+    <XMI.metamodel xmi.name="UML" xmi.version="1.4"/>
   </XMI.header>
   <XMI.content>
-    <UML:Model isSpecification="false" isRoot="false" isLeaf="false" isAbstract="false" name="default" xmi.id="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff">
+    <UML:Model isSpecification="false" isRoot="false" isLeaf="false" isAbstract="false" name="AGXProfile" xmi.id="342db3ca-4022-4992-a166-c38c7db692f8">
       <UML:Namespace.ownedElement>
 
 	<!-- Stereotypes for ArchGenXML -->
@@ -93,10 +107,10 @@ BASE_FILE = """<?xml version="1.0" encoding="utf-8"?>
 ## type is a string between: Model, Package, Interface, Class or Operation
 ## name is a string
 ## index is an integer
-STEREOTYPE_GENERIC = """        <UML:Stereotype isSpecification="false" isRoot="false" isLeaf="false" isAbstract="false" name="%(name)s" xmi.id="xmi.%(index)d">
+STEREOTYPE_GENERIC = """        <UML:Stereotype isSpecification="false" isRoot="false" isLeaf="false" isAbstract="false" name="%(name)s" xmi.id="%(uuid)s">
           <UML:Stereotype.baseClass>%(type)s</UML:Stereotype.baseClass>
           <UML:ModelElement.namespace>
-            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
+            <UML:Namespace xmi.idref="342db3ca-4022-4992-a166-c38c7db692f8"/>
           </UML:ModelElement.namespace>
         </UML:Stereotype>"""
 
@@ -105,24 +119,17 @@ STEREOTYPE_GENERIC = """        <UML:Stereotype isSpecification="false" isRoot="
 ## variables: {name, index}
 ## name is a string
 ## index is an integer
-DATATYPE = """        <UML:DataType isSpecification="false" isRoot="false" isLeaf="false" isAbstract="false" name="%(name)s" xmi.id="xmi.%(index)d">
-          <UML:ModelElement.namespace>
-            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
-          </UML:ModelElement.namespace>
-        </UML:DataType>"""
+DATATYPE = """        <UML:DataType isSpecification="false" isRoot="false" isLeaf="false" isAbstract="false" name="%(name)s" xmi.id="%(uuid)s"/>"""
 
 ## Tag definition
 ## variables: {name, index}
 ## name is a string
 ## index is an integer
-DEFINITION = """        <UML:TagDefinition xmi.id = 'xmi.%(index)d' name = '%(name)s' isSpecification = 'false' tagType = 'String'>
-          <UML:ModelElement.namespace>
-            <UML:Namespace xmi.idref="-6x--88-11--16-e9dbfe:e2d71a1c1e:-7fff"/>
-          </UML:ModelElement.namespace>
+DEFINITION = """        <UML:TagDefinition xmi.id="%(uuid)s" name="%(name)s" isSpecification="false" tagType="String">
           <UML:TagDefinition.multiplicity>
-            <UML:Multiplicity xmi.id = 'xmi.%(index)d.1'>
+            <UML:Multiplicity xmi.id="%(uuid1)s">
               <UML:Multiplicity.range>
-                <UML:MultiplicityRange xmi.id = 'xmi.%(index)d.2' lower = '0' upper = '1'/>
+                <UML:MultiplicityRange xmi.id="%(uuid2)s" lower="0" upper="1"/>
               </UML:Multiplicity.range>
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
@@ -132,15 +139,12 @@ DEFINITION = """        <UML:TagDefinition xmi.id = 'xmi.%(index)d' name = '%(na
 def main():
     """
     """
-    #datatype_categories = ('datatype',)
 
     log.info("Starting to generate '%s'." % outfile)
 
-    from archgenxml import zopeimportfixer
     from archgenxml.ArchetypesGenerator import at_uml_profile
     stereotype_categories = at_uml_profile.getCategories()
     stereotypes = []
-    index = 300
     for category in stereotype_categories:
         type_ = category
         type_ = type_.capitalize() 
@@ -150,9 +154,8 @@ def main():
             stereotypes.append(STEREOTYPE_GENERIC % {
                 'type': type_,
                 'name': name,
-                'index': index,
+                'uuid': new_uuid(type_ + name),
                 })
-            index = index + 1
 
     datatype_names = [
         'backreference',
@@ -181,36 +184,32 @@ def main():
         'void',
         ]
     datatypes = []
-    index = 360
     for datatype_name in datatype_names:
         datatypes.append(DATATYPE % {
                         'name': datatype_name,
-                        'index': index,
+                        'uuid': new_uuid(datatype_name),
                         })
-        index = index + 1
 
     taggedvalue_categories = tgvRegistry.getCategories()
     definitions = []
-    index = 400
     for category in taggedvalue_categories:
         for name in tgvRegistry.getCategoryElements(category):
             definitions.append(DEFINITION % {
                 'name': name,
-                'index': index,
+                'uuid': new_uuid(category + name),
+                'uuid1': new_uuid(category + name + '.1'),
+                'uuid2': new_uuid(category + name + '.2'),
                 })
-            index = index + 1
     ## One for rules them all
     f = file(outfile, 'w')
     f.write(BASE_FILE % {
-        'logs': '',
+        'timestamp': datetime.now().ctime(),
         'stereotypes': '\n'.join(stereotypes),
         'datatypes': '\n'.join(datatypes),
         'definitions': '\n'.join(definitions),
         })
     f.flush()
-    f.readlines
     f.close()
-
 
 
 if __name__ == '__main__':
