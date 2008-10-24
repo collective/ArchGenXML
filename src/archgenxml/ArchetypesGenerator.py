@@ -701,9 +701,13 @@ class ArchetypesGenerator(BaseGenerator):
         # unicode it all!
         for key in  wdef['options']:
             value =  wdef['options'][key]
-            if (type(value) != types.UnicodeType
-                and type(value) in StringTypes):
-                wdef['options'][key] = value.decode('utf-8')
+            if type(value) != types.UnicodeType:
+                if type(value) in StringTypes:
+                    wdef['options'][key] = value.decode('utf-8')
+                elif isinstance(value, int):
+                    # If value is an int, it's the case for example if you used widget:visible=0 in the model,
+                    # we convert it to unicode, so the split('\n') in widgetdef.pysnippet works.
+                    wdef['options'][key] = unicode(value)
 
         return wdef
 
