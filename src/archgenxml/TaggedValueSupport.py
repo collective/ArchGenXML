@@ -198,9 +198,8 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 
 tagname = 'skin_directories'
 explanation = """A comma seperated list of subdirectories to be generated
-inside the products skins directory. each of this directories is prefixed with
-productname in lowercase. the default value is the productname as is without a
-prefix.
+inside the product skins directory. Each of this directories is prefixed with
+productname in lowercase. The default value is "'templates', 'styles', 'images'".
 """
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 

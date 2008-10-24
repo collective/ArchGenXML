@@ -16,7 +16,6 @@ import os.path
 import logging
 import datetime
 from types import StringTypes
-from sets import Set
 import utils
 from odict import odict
 from codesnippets import *
@@ -3970,27 +3969,27 @@ class ArchetypesGenerator(BaseGenerator):
             of.close()
 
     def generateSkinsDirectories(self, root):
-        """create the skins directories if needed"""
-        # create skins directories
-        # in agx 2.0 we keep the oldschool single directory with Products name
-        # if it already exists (bbb). if skins is empty we create by default the
-        # templates, images and styles directories prefixes with a lowercase
-        # product name and _. this can get an override by a tagged value
-        # skin_directories, which is a comma separated list of alternatives
-        # for templates, images and styles, but they will get prefixed too, to
-        # not expose namesapce conflicts.
-        # [jensens]
+        """Create skins directories if needed.
+        
+        In agx >= 2.0 we keep the oldschool single directory with product name
+        if it already exists (bbb). If skins directory is empty we create by default the
+        templates, images and styles directories prefixed with a lowercase
+        product name and _. This can get an override by a tagged value
+        skin_directories, which is a comma separated list of alternatives
+        for templates, images and styles, but they will get prefixed too, to
+        not expose namespace conflicts.        
+        """
 
         skindirstgv=root.getTaggedValue('skin_directories','').strip()
         if skindirstgv.strip() == 'no':
             log.debug("Do not create skinsdir")
             return
 
-        defaultdirs = Set(['templates', 'styles', 'images'])
-        skindirs = skindirstgv and Set(skindirstgv.split(',')) or defaultdirs
+        defaultdirs = set(['templates', 'styles', 'images'])
+        skindirs = skindirstgv and set(skindirstgv.split(',')) or defaultdirs
 
 
-        #create the directories
+        # create the directories
         self.makeDir(root.getFilePath())
         self.makeDir(os.path.join(root.getFilePath(),'skins'))
 
@@ -4001,18 +4000,19 @@ class ArchetypesGenerator(BaseGenerator):
         if not os.path.exists(oldschooldir):
             skindirs = [sd.strip() for sd in skindirs]
             for skindir in skindirs:
+                # FIXME: this condition is really useful?
+                # The sd variable is not initialized the first time -- 2008/10/24 vincentfretin
                 if not sd:
                     continue
                 sd = "%s_%s" % (root.getName().lower(), skindir)
-                sdpath = os.path.join(root.getFilePath(),'skins', sd)
+                sdpath = os.path.join(root.getFilePath(), 'skins', sd)
                 self.makeDir(sdpath)
                 self._skin_dirs[skindir]=os.path.join('skins', sd)
-                log.debug("Keeping/ creating skinsdir at: %s" % sdpath)
+                log.debug("Keeping/creating skindirs at: %s" % sdpath)
         else:
             self._skin_dirs['root']=(os.path.join('skins', root.getProductModuleName()))
             log.info("Keeping old school skindir at: '%s'.", oldschooldir)
 
-        
     def generateProduct(self, root):
         dirMode=0
         outfile=None
