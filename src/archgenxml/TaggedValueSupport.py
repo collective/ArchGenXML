@@ -197,7 +197,7 @@ explanation = """default type of interfaces (z2 or z3)."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'skin_directories'
-explanation = """A comma seperated list of subdirectories to be generated
+explanation = """A comma separated list of subdirectories to be generated
 inside the product skins directory. Each of this directories is prefixed with
 productname in lowercase. The default value is "'templates', 'styles', 'images'".
 """
@@ -769,7 +769,7 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
  
 tagname = 'collection:criteria'
 explanation = """Add the index to the Collection (aka Smart Folder) Indexes 
-available for defining Criteria. Provide a comma seprated list of criteria 
+available for defining Criteria. Provide a comma separated list of criteria 
 that will be available by default.
 Available criterias are: ATBooleanCriterion, 
 ATDateCriteria, ATDateRangeCriterion, ATListCriterion, ATPortalTypeCriterion, 
