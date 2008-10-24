@@ -211,8 +211,8 @@ tag inside the metadata.xml file of the product's profile
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'dependency_step_qi'
-explanation = """Generate Quickinstaller dependeny installation for your product.
-Booelan (1 or 0), default off. Dependencies can be declared in AppConfig.py in a
+explanation = """Generate Quickinstaller dependency installation for your product.
+Boolean (1 or 0), default 0 (off). Dependencies can be declared in AppConfig.py in a
 variable DEPENDENCIES.
 """
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
