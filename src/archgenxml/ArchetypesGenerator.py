@@ -3120,8 +3120,6 @@ class ArchetypesGenerator(BaseGenerator):
                     indexdef['extras'] = []
                     indexdef['properties'] = []
 
-                    if not catalogname in defs.keys():
-                        defs[catalogname] = dict()
                     if index:
                         defs[catalogname]['indexes'].append(indexdef)
 
