@@ -2433,9 +2433,10 @@ class ArchetypesGenerator(BaseGenerator):
         self.generatePackageImplementsZcml(package)
 
     def generateInstallPy(self, package):
-        """Generate Extensions/Install.py from the DTML template"""
-        if self.getOption('plone_target_version', package, '3.0') == '3.0':
-            # dont generate it for 3.0
+        """Generate Extensions/Install.py from the DTML template.
+        """
+        if self.getOption('plone_target_version', package, 3.0) == 3.0:
+            # don't generate it for 3.0
             return
 
         # create Extension directory
@@ -2443,30 +2444,22 @@ class ArchetypesGenerator(BaseGenerator):
         self.makeDir(extDir)
 
         # make __init__.py
-        ipy=self.makeFile(os.path.join(extDir,'__init__.py'))
+        ipy = self.makeFile(os.path.join(extDir, '__init__.py'))
         ipy.write('# make me a python module\n')
         ipy.close()
 
-        # prepare (d)TML varibles
-        d={'package'    : package,
-           'generator'  : self,
-           'product_name': package.getProductName(),
-           'target_version': self.getOption('plone_target_version',
-                                            package, '3.0'),
-           'builtins'   : __builtins__,
-           'utils'       :utils,
+        # prepare (d)TML variables
+        d = {'package': package,
+             'generator': self,
         }
-        d.update(__builtins__)
 
-        templ=self.readTemplate(['Install.pydtml'])
-        dtml=HTML(templ,d)
-        res=dtml()
+        templ = self.readTemplate(['Install.pydtml'])
+        dtml = HTML(templ, d)
+        res = dtml()
 
-        of=self.makeFile(os.path.join(extDir,'Install.py'))
+        of = self.makeFile(os.path.join(extDir, 'Install.py'))
         of.write(res)
         of.close()
-
-        return
 
     def generateConfigPy(self, package):
         """Generate config.py."""
@@ -3418,11 +3411,11 @@ class ArchetypesGenerator(BaseGenerator):
                                 os.path.join(typesdir, filename),
                                 templateparams={'ctype': typedef,
                                                 'target_version': self.getOption('plone_target_version',
-                                                                                  package, '3.0')})
+                                                                                  package, 3.0)})
 
     def generateGSVocabulariesFolderAndXMLFile(self, package):
         """Create the types folder and the corresponding xml files for the
-        portal types inside it if type_registrarion tagged value is set
+        portal types inside it if type_registration tagged value is set
         to genericsetup.
         """
         if not self.getOption('atvm', package, 1.4) > 1.4 \
@@ -4313,7 +4306,7 @@ class ArchetypesGenerator(BaseGenerator):
             if not typedef['suppl_views']: #  and folderish:
                 typedef['suppl_views'] = (typedef['immediate_view'],)
 
-            if self.getOption('plone_target_version', pclass, '3.0') == '3.0':
+            if self.getOption('plone_target_version', pclass, 3.0) == 3.0:
                 actions = atmaps.DEFAULT_ACTIONS_3_0
             else:
                 actions = atmaps.DEFAULT_ACTIONS_2_5
