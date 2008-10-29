@@ -23,7 +23,7 @@
      version 1.10 2007/04/06 Encolpe fixed renaming allowed_content_types into allowable_content_types: they are not used in the same semantic
      Now this profile is generated with ArgoUMLProfileGenerator.py script
 -->
-<XMI xmlns:UML="org.omg.xmi.namespace.UML" xmi.version="1.2" timestamp="Wed Oct 22 13:00:20 2008">
+<XMI xmlns:UML="org.omg.xmi.namespace.UML" xmi.version="1.2" timestamp="Wed Oct 29 15:43:31 2008">
   <XMI.header>
     <XMI.documentation>
       <XMI.exporter>ArgoUMLProfileGenerator.py</XMI.exporter>
@@ -332,6 +332,30 @@
         </UML:Stereotype>
         <UML:Stereotype isSpecification="false" isRoot="false" isLeaf="false" isAbstract="false" name="stub" xmi.id="772edf7b-c472-5f19-8cc2-eb36739b1543">
           <UML:Stereotype.baseClass>Model</UML:Stereotype.baseClass>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="342db3ca-4022-4992-a166-c38c7db692f8"/>
+          </UML:ModelElement.namespace>
+        </UML:Stereotype>
+        <UML:Stereotype isSpecification="false" isRoot="false" isLeaf="false" isAbstract="false" name="action" xmi.id="339d4b64-3e9f-5715-ad1b-75b061229e6e">
+          <UML:Stereotype.baseClass>Operation</UML:Stereotype.baseClass>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="342db3ca-4022-4992-a166-c38c7db692f8"/>
+          </UML:ModelElement.namespace>
+        </UML:Stereotype>
+        <UML:Stereotype isSpecification="false" isRoot="false" isLeaf="false" isAbstract="false" name="form" xmi.id="f828f38c-5cdc-5631-801d-b7873f55ff19">
+          <UML:Stereotype.baseClass>Operation</UML:Stereotype.baseClass>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="342db3ca-4022-4992-a166-c38c7db692f8"/>
+          </UML:ModelElement.namespace>
+        </UML:Stereotype>
+        <UML:Stereotype isSpecification="false" isRoot="false" isLeaf="false" isAbstract="false" name="noaction" xmi.id="b4d56506-ecdd-5a0d-a1db-b9ad3a720cdc">
+          <UML:Stereotype.baseClass>Operation</UML:Stereotype.baseClass>
+          <UML:ModelElement.namespace>
+            <UML:Namespace xmi.idref="342db3ca-4022-4992-a166-c38c7db692f8"/>
+          </UML:ModelElement.namespace>
+        </UML:Stereotype>
+        <UML:Stereotype isSpecification="false" isRoot="false" isLeaf="false" isAbstract="false" name="view" xmi.id="389af8ce-2003-544a-8a7e-1ea152bd002b">
+          <UML:Stereotype.baseClass>Operation</UML:Stereotype.baseClass>
           <UML:ModelElement.namespace>
             <UML:Namespace xmi.idref="342db3ca-4022-4992-a166-c38c7db692f8"/>
           </UML:ModelElement.namespace>

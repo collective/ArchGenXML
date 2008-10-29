@@ -11,7 +11,7 @@ categoryFromClassMap = {
     'XMIClass': 'class',
     'XMIInterface': 'interface',
     #'XMIMethodParameter': ,
-    'XMIOperation': 'method',
+    'XMIOperation': 'operation',
     'XMIMethod': 'method',
     'XMIAttribute': 'attribute',
     #'XMIAssocEnd': ,
