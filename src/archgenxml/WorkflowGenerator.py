@@ -407,7 +407,7 @@ class WorkflowInfo(object):
             wl['id'] = name
             worklistStates = self._getWorklistStateNames(name)
             url = ("%(portal_url)s/search?review_state=" +
-                   "&review_state=".join(worklistStates))
+                   "&amp;review_state=".join(worklistStates))
             wl['url'] = url
             wl['guardPermission'] = self._getWorklistGuardPermission(name)
             wl['guardRoles'] = self._getWorklistGuardRoles(name)
