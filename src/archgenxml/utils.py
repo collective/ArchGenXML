@@ -9,14 +9,13 @@
 from pkg_resources import resource_string
 import logging
 import os.path
-import sys
-import types
 
 from zope import component
 
 from archgenxml.interfaces import IOptions
 from archgenxml import PyParser
 
+from xmiparser.utils import toBoolean, normalize, wrap
 
 
 log = logging.getLogger('utils')
@@ -26,20 +25,9 @@ NameTable = {
     'import': 'emport'
     }
     
-specialrpl = {
-    u'ö': u'oe',
-    u'ü': u'ue',
-    u'ä': u'ae',
-    u'Ö': u'Oe',
-    u'Ü': u'Ue',
-    u'Ä': u'Ae',
-    u'ß': u'ss',
-    # add more for other language here
-}
-
 def capitalize(s):
     '''alternative to standard capitalize() method that does not set the trailing
-    chars to lowercase as string.capitzlize() does'''
+    chars to lowercase as string.capitalize() does'''
     if not s:
         return s
     
@@ -193,35 +181,9 @@ def isTGVFalse(tgv):
     
     return tgv in (0, '0', 'false')
 
-def toBoolean(v):
-    if isinstance(v, (str, unicode)):
-        v = v.lower().strip()
-    if v in (0, '0', 'false', False):
-        return False
-    if v in (1, '1', 'true', True):
-        return True
-    if v:
-        return True
-    return False
-
 def cleanName(name):
     return name.replace(' ','_').replace('.','_').replace('/','_')
 
-# http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/148061
-def wrap(text, width):
-    """
-    A word-wrap function that preserves existing line breaks
-    and most spaces in the text. Expects that existing line
-    breaks are posix newlines (\n).
-    """
-    return reduce(lambda line, word, width=width: '%s%s%s' %
-                  (line,
-                   ' \n'[(len(line[line.rfind('\n')+1:])
-                         + len(word.split('\n',1)[0]
-                              ) >= width)],
-                   word),
-                  text.split(' ')
-                 )
 
 ARCHGENXML_VERSION_LINE = """\
 ArchGenXML %s
@@ -231,40 +193,6 @@ ArchGenXML %s
 def version():
     ver = resource_string(__name__, 'version.txt').strip()
     return "Version " + str(ver)
-
-def normalize(data, doReplace=False):
-    """Converts a unicode to string, stripping blank spaces."""
-    log.debug("Normalizing %r.", data)
-    if type(data) not in types.StringTypes:
-        log.debug("Not string, returning as-is.")
-        return data
-    try:
-        data = int(data)
-        log.debug("Converted to integer, returning %r.",
-                  data)
-        return data
-    except ValueError:
-        pass
-    try:
-        data = float(data)
-        log.debug("Converted to float, returning %r.",
-                  data)
-        return data
-    except ValueError:
-        pass
-    if type(data) is types.StringType:
-        # make unicode
-        data = data.decode('utf-8')
-    if type(data) is types.UnicodeType:
-        data = data.strip()
-        if doReplace:
-            for key in specialrpl:
-                data = data.replace(key, specialrpl[key])    
-    if not data is None:
-        log.debug("Normalized, returning %r.", data)
-        return data.encode('utf-8')
-    else:
-        return None
 
 def parsePythonModule(targetRoot, packagePath, fileName):
     """Parse a python module and return the module object.
