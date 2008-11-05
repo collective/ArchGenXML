@@ -68,13 +68,13 @@ def setupHideMetaTypesFromNavigations(context):
     # XXX use https://svn.plone.org/svn/collective/DIYPloneStyle/trunk/profiles/default/properties.xml
     site = context.getSite()
     portalProperties = getToolByName(site, 'portal_properties')
-    siteProperties = getattr(portalProperties, 'site_properties')
+    navtreeProperties = getattr(portalProperties, 'navtree_properties')
     for klass in <dtml-var "repr(hidemetatypes)">:
         propertyid = 'metaTypesNotToList'
-        lines = list(siteProperties.getProperty(propertyid) or [])
+        lines = list(navtreeProperties.getProperty(propertyid) or [])
         if klass not in lines:
             lines.append(klass)
-            siteProperties.manage_changeProperties(**{propertyid: lines})
+            navtreeProperties.manage_changeProperties(**{propertyid: lines})
 
 </dtml-if>
 <dtml-if "toolnames">
