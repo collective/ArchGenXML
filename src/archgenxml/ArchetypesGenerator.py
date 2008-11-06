@@ -4345,10 +4345,18 @@ class ArchetypesGenerator(BaseGenerator):
     def _getFTI(self, cclass):
         """Return the FTI information of the content class
         """
+        default_view = 'base_view'
+        suppl_views = '()'
+        if self.getOption('plone_target_version', cclass, 3.0) >= 3.0:
+            folderish = self.elementIsFolderish(cclass)
+            if folderish:
+                default_view = 'folder_listing'
+                suppl_views = str(atmaps.DEFAULT_FOLDERISH_SUPPL_VIEWS)
+
         fti = dict()
         fti['immediate_view'] = self.getTGVofGenParents(cclass,
                                                         'immediate_view',
-                                                        default='base_view',
+                                                        default=default_view,
                                                         useoption=True)
 
         fti['default_view'] =self.getTGVofGenParents(cclass,
@@ -4358,7 +4366,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         fti['suppl_views'] = self.getTGVofGenParents(cclass,
                                                      'suppl_views',
-                                                     default='()',
+                                                     default=suppl_views,
                                                      useoption=True)
 
         fti['global_allow'] = True
@@ -4450,9 +4458,15 @@ class ArchetypesGenerator(BaseGenerator):
         
         folderish = self.elementIsFolderish(cclass)
         if folderish:
-            fti['type_aliases'] = atmaps.DEFAULT_FOLDERISH_ALIASES
+            if self.getOption('plone_target_version', cclass, 3.0) == 2.5:
+                fti['type_aliases'] = atmaps.DEFAULT_FOLDERISH_ALIASES_2_5
+            else:
+                fti['type_aliases'] = atmaps.DEFAULT_FOLDERISH_ALIASES_3_0
         else:
-            fti['type_aliases'] = atmaps.DEFAULT_ALIASES      
+            if self.getOption('plone_target_version', cclass, 3.0) == 2.5:
+                fti['type_aliases'] = atmaps.DEFAULT_ALIASES_2_5
+            else:
+                fti['type_aliases'] = atmaps.DEFAULT_ALIASES_3_0
         # alias = fromvalue, tovalue
         aliases = self.getTGVofGenParents(cclass, 'alias', default=None, 
                                         useoption=True)

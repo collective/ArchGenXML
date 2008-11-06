@@ -25,7 +25,7 @@ ACTION_STEREOTYPES = [
     'form'
 ]
 
-DEFAULT_ALIASES = [
+DEFAULT_ALIASES_2_5 = [
     {'from': '(Default)', 'to': '(dynamic view)'},
     {'from': 'index.html', 'to': '(dynamic view)'},
     {'from': 'view', 'to': '(selected layout)'},
@@ -33,12 +33,34 @@ DEFAULT_ALIASES = [
     {'from': 'properties', 'to': 'base_metadata'},
 ]
 
-DEFAULT_FOLDERISH_ALIASES = [
+DEFAULT_ALIASES_3_0 = [
+    {'from': '(Default)', 'to': '(dynamic view)'},
+    {'from': 'index.html', 'to': '(dynamic view)'},
+    {'from': 'view', 'to': '(selected layout)'},
+    {'from': 'edit', 'to': 'base_edit'},
+]
+
+DEFAULT_FOLDERISH_ALIASES_2_5 = [
     {'from': '(Default)', 'to': '(dynamic view)'},
     {'from': 'view', 'to': '(selected layout)'},
     {'from': 'edit', 'to': 'base_edit'},
     {'from': 'properties', 'to': 'base_metadata'},
     {'from': 'sharing', 'to': 'folder_localrole_form'},
+]
+
+DEFAULT_FOLDERISH_ALIASES_3_0 = [
+    {'from': '(Default)', 'to': '(dynamic view)'},
+    {'from': 'view', 'to': '(selected layout)'},
+    {'from': 'edit', 'to': 'base_edit'},
+    {'from': 'sharing', 'to': '@@sharing'},
+]
+
+# only for Plone >= 3.0
+DEFAULT_FOLDERISH_SUPPL_VIEWS = [
+    'folder_summary_view',
+    'folder_tabular_view',
+    'atct_album_view',
+    'folder_listing',
 ]
 
 DEFAULT_ACTIONS_2_5 = [
