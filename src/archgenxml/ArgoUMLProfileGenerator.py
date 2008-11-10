@@ -79,7 +79,7 @@ BASE_FILE = """<?xml version="1.0" encoding="utf-8"?>
   <XMI.header>
     <XMI.documentation>
       <XMI.exporter>ArgoUMLProfileGenerator.py</XMI.exporter>
-      <XMI.exporterVersion>0.4</XMI.exporterVersion>
+      <XMI.exporterVersion>0.5</XMI.exporterVersion>
     </XMI.documentation>
     <XMI.metamodel xmi.name="UML" xmi.version="1.4"/>
   </XMI.header>
@@ -191,22 +191,24 @@ def main():
                         })
 
     taggedvalue_categories = tgvRegistry.getCategories()
-    definitions = []
+    definitions = {}
     for category in taggedvalue_categories:
         for name in tgvRegistry.getCategoryElements(category):
-            definitions.append(DEFINITION % {
+            if name in definitions:
+                continue
+            definitions[name] = DEFINITION % {
                 'name': name,
-                'uuid': new_uuid(category + name),
-                'uuid1': new_uuid(category + name + '.1'),
-                'uuid2': new_uuid(category + name + '.2'),
-                })
+                'uuid': new_uuid(name),
+                'uuid1': new_uuid(name + '.1'),
+                'uuid2': new_uuid(name + '.2'),
+                }
     ## One for rules them all
     f = file(outfile, 'w')
     f.write(BASE_FILE % {
         'timestamp': datetime.now().ctime(),
         'stereotypes': '\n'.join(stereotypes),
         'datatypes': '\n'.join(datatypes),
-        'definitions': '\n'.join(definitions),
+        'definitions': '\n'.join(definitions.values()),
         })
     f.flush()
     f.close()
