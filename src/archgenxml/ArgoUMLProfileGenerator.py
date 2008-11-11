@@ -50,7 +50,7 @@ def new_uuid(s):
 
 ## Base file construction for ArgoUML profile
 ## variable: {stereotypes, datatypes, definitions}
-BASE_FILE = """<?xml version="1.0" encoding="utf-8"?>
+BASE_FILE = """<?xml version = '1.0' encoding = 'UTF-8' ?>
 
 <!-- ArchGenXML Old logs
      version 0.1 2006/02/24 Pander initial version
@@ -75,7 +75,7 @@ BASE_FILE = """<?xml version="1.0" encoding="utf-8"?>
      version 1.10 2007/04/06 Encolpe fixed renaming allowed_content_types into allowable_content_types: they are not used in the same semantic
      Now this profile is generated with ArgoUMLProfileGenerator.py script
 -->
-<XMI xmlns:UML="org.omg.xmi.namespace.UML" xmi.version="1.2" timestamp="%(timestamp)s">
+<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = '%(timestamp)s'>
   <XMI.header>
     <XMI.documentation>
       <XMI.exporter>ArgoUMLProfileGenerator.py</XMI.exporter>
@@ -84,7 +84,8 @@ BASE_FILE = """<?xml version="1.0" encoding="utf-8"?>
     <XMI.metamodel xmi.name="UML" xmi.version="1.4"/>
   </XMI.header>
   <XMI.content>
-    <UML:Model isSpecification="false" isRoot="false" isLeaf="false" isAbstract="false" name="AGXProfile" xmi.id="342db3ca-4022-4992-a166-c38c7db692f8">
+    <UML:Model xmi.id = '342db3ca-4022-4992-a166-c38c7db692f8' name = 'AGXProfile'
+      isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
       <UML:Namespace.ownedElement>
 
 	<!-- Stereotypes for ArchGenXML -->
@@ -107,11 +108,9 @@ BASE_FILE = """<?xml version="1.0" encoding="utf-8"?>
 ## type is a string between: Model, Package, Interface, Class or Operation
 ## name is a string
 ## index is an integer
-STEREOTYPE_GENERIC = """        <UML:Stereotype isSpecification="false" isRoot="false" isLeaf="false" isAbstract="false" name="%(name)s" xmi.id="%(uuid)s">
+STEREOTYPE_GENERIC = """        <UML:Stereotype xmi.id = '%(uuid)s' name = '%(name)s'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
           <UML:Stereotype.baseClass>%(type)s</UML:Stereotype.baseClass>
-          <UML:ModelElement.namespace>
-            <UML:Namespace xmi.idref="342db3ca-4022-4992-a166-c38c7db692f8"/>
-          </UML:ModelElement.namespace>
         </UML:Stereotype>"""
 
 
@@ -119,17 +118,20 @@ STEREOTYPE_GENERIC = """        <UML:Stereotype isSpecification="false" isRoot="
 ## variables: {name, index}
 ## name is a string
 ## index is an integer
-DATATYPE = """        <UML:DataType isSpecification="false" isRoot="false" isLeaf="false" isAbstract="false" name="%(name)s" xmi.id="%(uuid)s"/>"""
+DATATYPE = """        <UML:DataType xmi.id = '%(uuid)s' name = '%(name)s'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>"""
 
 ## Tag definition
 ## variables: {name, index}
 ## name is a string
 ## index is an integer
-DEFINITION = """        <UML:TagDefinition xmi.id="%(uuid)s" name="%(name)s" isSpecification="false" tagType="String">
+DEFINITION = """        <UML:TagDefinition xmi.id = '%(uuid)s' name = '%(name)s'
+          isSpecification = 'false' tagType = 'String'>
           <UML:TagDefinition.multiplicity>
-            <UML:Multiplicity xmi.id="%(uuid1)s">
+            <UML:Multiplicity xmi.id = '%(uuid1)s'>
               <UML:Multiplicity.range>
-                <UML:MultiplicityRange xmi.id="%(uuid2)s" lower="0" upper="1"/>
+                <UML:MultiplicityRange xmi.id = '%(uuid2)s' lower = '0'
+                  upper = '1'/>
               </UML:Multiplicity.range>
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
