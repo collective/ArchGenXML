@@ -4301,8 +4301,10 @@ class ArchetypesGenerator(BaseGenerator):
                 'allow_discussion', 'False')
 
             typedef['suppl_views'] = eval(typedef['suppl_views'])
-            if not typedef['suppl_views']: #  and folderish:
-                typedef['suppl_views'] = (typedef['immediate_view'],)
+            if not typedef['immediate_view'] in typedef['suppl_views']:
+                typedef['suppl_views'].append(typedef['immediate_view'])
+            if not typedef['default_view'] in typedef['suppl_views']:
+                typedef['suppl_views'].append(typedef['default_view'])
 
             if self.getOption('plone_target_version', pclass, 3.0) == 3.0:
                 actions = atmaps.DEFAULT_ACTIONS_3_0
@@ -4346,7 +4348,7 @@ class ArchetypesGenerator(BaseGenerator):
         """Return the FTI information of the content class
         """
         default_view = 'base_view'
-        suppl_views = '()'
+        suppl_views = '[]'
         if self.getOption('plone_target_version', cclass, 3.0) >= 3.0:
             folderish = self.elementIsFolderish(cclass)
             if folderish:
