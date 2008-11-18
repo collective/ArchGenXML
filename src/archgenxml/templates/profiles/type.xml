@@ -6,7 +6,7 @@
         i18n:domain="plone"</dtml-if>>
    
  <property name="title"<dtml-if "target_version == 3.0"> i18n:translate=""</dtml-if>><dtml-var "ctype['type_name']"></property>
- <property name="description"></property>
+ <property name="description"<dtml-if "target_version == 3.0"> i18n:translate=""</dtml-if>><dtml-var "ctype['type_description']"></property>
  <property name="content_icon"><dtml-var "ctype['content_icon']"></property>
  <property name="content_meta_type"><dtml-var "ctype['content_meta_type']"></property>
  <property name="product"><dtml-var "ctype['product_name']"></property>

@@ -4263,7 +4263,7 @@ class ArchetypesGenerator(BaseGenerator):
         return default
 
     def _getTypeDefinitions(self, defs, package):
-        """Iterate recursice through package and create class definitions
+        """Iterate recursive through package and create class definitions
         """
         classes = package.getClasses(recursive=1)
         for pclass in classes:
@@ -4452,11 +4452,9 @@ class ArchetypesGenerator(BaseGenerator):
         # Set a type name and description.
         fti['type_name'] = cclass.getTaggedValue('archetype_name') or \
            cclass.getTaggedValue('label') or \
-           cclass.getName ()
-        fti['type_name_lc'] = fti['type_name'].lower()
-        fti['type_description'] = utils.getExpression( \
-            cclass.getTaggedValue('typeDescription',
-                                  fti['type_name']))
+           cclass.getName()
+        fti['type_description'] = cclass.getTaggedValue('description') or \
+            cclass.getTaggedValue('typeDescription')
         
         folderish = self.elementIsFolderish(cclass)
         if folderish:
