@@ -400,7 +400,12 @@ class ArchetypesGenerator(BaseGenerator):
                 dict['permissions'] = perms
                 dict['visible'] = m.getTaggedValue('visible', 'True')
                 condition = m.getTaggedValue('condition') or '1'
-                dict['condition']='python:%s' % condition
+                if condition.startswith('not:') or \
+                   condition.startswith('string:') or \
+                   condition.startswith('path:'):
+                    dict['condition'] = condition
+                else:
+                    dict['condition'] = 'python:%s' % condition
                 ret.append(dict)
         return ret
 
