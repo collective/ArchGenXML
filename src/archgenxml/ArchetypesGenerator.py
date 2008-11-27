@@ -15,6 +15,7 @@ import types
 import os.path
 import logging
 import datetime
+from copy import deepcopy
 from types import StringTypes
 import utils
 from odict import odict
@@ -4476,6 +4477,7 @@ class ArchetypesGenerator(BaseGenerator):
         aliases = self.getTGVofGenParents(cclass, 'alias', default=None, 
                                         useoption=True)
         if aliases:
+            fti['type_aliases'] = deepcopy(fti['type_aliases'])
             aliases = aliases.split('\n')
             for alias in aliases:
                 fromvalue, tovalue = alias.split(',')
