@@ -322,8 +322,8 @@ HIDE_CLASSES += list(TYPE_MAP.keys())+list(COERCE_MAP.keys())
 NONSTRING_TGVS = [
     'columns',
     'widget',
-    'provideNullValue', # FIXME: should not be widget:provideNullValue?
-    'allow_brightness', # FIXME: should not be widget:allow_brightness?
+    'widget:provideNullValue',
+    'widget:allow_brightness',
     'languageIndependent',
     'vocabulary',
     'required',
@@ -338,10 +338,10 @@ NONSTRING_TGVS = [
     'original_size',
     'max_size',
     'searchable',
-    'show_hm', # FIXME: should not be widget:show_hm?
-    'move:pos',
-    'move:top',
-    'move:bottom',
+    'widget:show_hm',
+    'move:pos', # FIXME: not in TaggedValueSupport
+    'move:top', # FIXME: not in TaggedValueSupport
+    'move:bottom', # FIXME: not in TaggedValueSupport
     'primary', # FIXME: not in TaggedValueSupport
     'array:widget',
     'array:size', # FIXME: not in TaggedValueSupport

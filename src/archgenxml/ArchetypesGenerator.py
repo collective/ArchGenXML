@@ -661,7 +661,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         # Permit python: if people forget they don't have to 
         for key in wdef['options']:
-            if key not in self.nonstring_tgvs:
+            if tgvprefix+key not in self.nonstring_tgvs:
                 wdef['options'][key] = utils.getExpression(wdef['options'][key])
             elif type(wdef['options'][key]) in StringTypes and \
                  wdef['options'][key].startswith('python:'):
