@@ -3285,7 +3285,7 @@ class ArchetypesGenerator(BaseGenerator):
         klasses = self.getGeneratedClasses(package)
         factorytypes = []
         for klass in klasses:
-            if klass.hasStereoType(['tool', 'portal_tool']):
+            if klass.hasStereoType(['tool', 'portal_tool', 'python_class', 'view_class']):
                 continue
             if klass.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile):
                 continue
