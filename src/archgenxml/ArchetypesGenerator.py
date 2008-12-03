@@ -131,7 +131,7 @@ class ArchetypesGenerator(BaseGenerator):
     vocabulary_item_stereotype = ['vocabulary_term']
     vocabulary_container_stereotype = ['vocabulary']
     remember_stereotype = ['remember']
-    python_stereotype = ['python', 'python_class', 'view', 'view_class']
+    python_stereotype = ['python', 'python_class'] + BaseGenerator.view_class_stereotype + BaseGenerator.portlet_class_stereotype
     folder_stereotype = ['atfolder', 'folder', 'ordered', 'large', 'btree']
     atct_stereotype = ['atfolder', 'atfile', 'atdocument', 'atevent', 'atimage',
                        'atnewsitem', 'atlink']
@@ -3285,15 +3285,16 @@ class ArchetypesGenerator(BaseGenerator):
         klasses = self.getGeneratedClasses(package)
         factorytypes = []
         for klass in klasses:
-            if klass.hasStereoType(['tool', 'portal_tool', 'python_class', 'view_class']):
+            if klass.hasStereoType(self.portal_tools, umlprofile=self.uml_profile):
                 continue
-            if klass.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile):
+            if klass.hasStereoType(self.noncontentstereotype, umlprofile=self.uml_profile):
+                continue
+            if klass.hasStereoType(self.adapter_stereotypes, umlprofile=self.uml_profile):
+                continue
+            if klass.getPackage().hasStereoType('tests', umlprofile=self.uml_profile):
                 continue
             factoryopt = self.getOption('use_portal_factory', klass, True)
-            if utils.isTGVTrue(factoryopt) \
-               and not (klass.getPackage().hasStereoType('tests') \
-                        or klass.isAbstract() \
-                        or klass.hasStereoType(['widget', 'field', 'stub'])):
+            if utils.isTGVTrue(factoryopt) and not klass.isAbstract():
                 klassname = klass.getTaggedValue('portal_type') \
                           or klass.getCleanName()
                 factorytypes.append(klassname)
