@@ -1,12 +1,20 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
-      lang="en"
-      metal:use-macro="here/main_template/macros/master"
-      i18n:domain="plone">
-<body>
+<dl class="portlet portletExamplePortlet"
+    i18n:domain="collective.portlet.example">
 
-<div metal:fill-slot="main">
+    <dt class="portletHeader">
+        <span class="portletTopLeft"></span>
+        Header
+        <span class="portletTopRight"></span>
+    </dt>
 
-</div>
+    <dd class="portletItem odd">
+        Body text
+    </dd>
 
-</body>
-</html>
+    <dd class="portletFooter">
+        <span class="portletBottomLeft"></span>
+        Footer
+        <span class="portletBottomRight"></span>
+    </dd>
+
+</dl>
