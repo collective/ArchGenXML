@@ -1,5 +1,5 @@
-<dl class="portlet portletExamplePortlet"
-    i18n:domain="collective.portlet.example">
+<dl class="portlet portlet<dtml-var "klass.getName()">"
+    i18n:domain="<dtml-var "klass.getPackage().getProductName()">">
 
     <dt class="portletHeader">
         <span class="portletTopLeft"></span>
