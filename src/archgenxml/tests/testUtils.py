@@ -113,6 +113,12 @@ class TestUtils(unittest.TestCase):
         """
         self.assertEquals(False, isTGVFalse(None))
 
+    def test_getExpressionWithPythonExpression(self):
+        # this is what you want
+        self.assertEquals("{'view': True, 'edit': False}", getExpression("python:{'view': True, 'edit': False}"))
+        # you surely don't want that
+        self.assertEquals('"{\'view\': True, \'edit\': False}"', getExpression("{'view': True, 'edit': False}"))
+
 
 
 def test_suite():
