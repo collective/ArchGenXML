@@ -66,10 +66,8 @@
    <guard-role><dtml-var "_['sequence-item']"></guard-role>
 </dtml-in>
   </guard>
-<dtml-in "worklist['states']">
   <match name="review_state" 
-         values="<dtml-var "_['sequence-item']">"/>
-</dtml-in>
+         values="<dtml-var "worklist['states']">"/>
  </worklist>
 </dtml-let>
 </dtml-in>

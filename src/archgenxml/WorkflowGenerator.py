@@ -411,7 +411,7 @@ class WorkflowInfo(object):
             wl['url'] = url
             wl['guardPermission'] = self._getWorklistGuardPermission(name)
             wl['guardRoles'] = self._getWorklistGuardRoles(name)
-            wl['states'] = worklistStates
+            wl['states'] = "; ".join(worklistStates)
             worklists.append(wl)
         return worklists
 
