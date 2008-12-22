@@ -400,7 +400,7 @@ class ArchetypesGenerator(BaseGenerator):
                 perms = [p.strip() for p in perms.split(',') if p.strip()]
                 dict['permissions'] = perms
                 dict['visible'] = m.getTaggedValue('visible', 'True')
-                condition = m.getTaggedValue('condition') or '1'
+                condition = str(m.getTaggedValue('condition')) or '1'
                 if condition.startswith('not:') or \
                    condition.startswith('string:') or \
                    condition.startswith('path:'):
