@@ -157,9 +157,6 @@ class ArchetypesGenerator(BaseGenerator):
     # Contains the parsed sources by class names (for preserving method codes)
     parsed_class_sources = {}
 
-    # Contains the parsed sources (for preserving method codes)
-    parsed_sources = []
-
     # TaggedValues that are not strings, e.g. widget or vocabulary
     nonstring_tgvs = atmaps.NONSTRING_TGVS
 
@@ -3637,9 +3634,7 @@ class ArchetypesGenerator(BaseGenerator):
             mod = utils.parsePythonModule(self.targetRoot,
                                           package.getFilePath(),
                                           modulefile)
-            self.parsed_sources.append(mod)
             if mod:
-                self.parsed_sources.append(mod)
                 for c in mod.classes.values():
                     self.parsed_class_sources[package.getFilePath()+'/'+c.name] = c
 
