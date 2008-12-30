@@ -437,11 +437,19 @@ class BaseGenerator:
                      ' '*4*self.infoind,
                      element.getName())
 
+        # You can't use element.parsed_class here because it's None,
+        # you don't have a Python class in the generated module with the same name as the UML class.
+        # So here we pick up the Renderer class, but we could have picked up another class of the module.
+        # An important thing to understand is that PyParser.PyClass.getProtectedSection(section)
+        # do a search on the module [return self.module.getProtectedSection(section)]
+        filebasepath = element.getPackage().getFilePath()
+        parsed_class = self.parsed_class_sources.get('%s/%s'%(filebasepath, 'Renderer'),
+                                                     None)
         templ = self.readTemplate([template])
         d = {
             'klass': element,
             'generator': self,
-            'parsed_class': element.parsed_class,
+            'parsed_class': parsed_class,
             'builtins': __builtins__,
             'utils': utils,
         }
