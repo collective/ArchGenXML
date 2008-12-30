@@ -20,7 +20,6 @@ import types
 from StringIO import StringIO
 from pkg_resources import resource_filename
 from pkg_resources import resource_string
-from pkg_resources import Requirement
 
 from zope.documenttemplate import HTML
 

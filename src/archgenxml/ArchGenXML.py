@@ -29,7 +29,6 @@ from time import time
 from zope import component
 
 from OptionParser import parser
-from pkg_resources import resource_filename
 
 log = logging.getLogger('main')
 
