@@ -3484,7 +3484,10 @@ class ArchetypesGenerator(BaseGenerator):
             'memberclasses' : memberclasses,
             'qidependencystep': utils.isTGVTrue(
                                 self.getOption('dependency_step_qi',
-                                               package, '0'))
+                                               package, '0')),
+            'fixtools': utils.isTGVTrue(
+                                self.getOption('fixtools',
+                                               package, '0')),
 
         }
         handleSectionedFile(['profiles', 'setuphandlers.pydtml'],

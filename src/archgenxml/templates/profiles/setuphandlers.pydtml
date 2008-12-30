@@ -98,6 +98,7 @@ def setupHideToolsFromNavigation(context):
                 kwargs = {'idsNotToList': current}
                 navtreeProperties.manage_changeProperties(**kwargs)
 
+<dtml-if "fixtools">
 def fixTools(context):
     """do post-processing on auto-installed tool instances"""
     if isNot<dtml-var "product_name">Profile(context): return 
@@ -108,6 +109,7 @@ def fixTools(context):
 	        tool=site[tool_id]
 	        tool.initializeArchetype()
 
+</dtml-if>
 </dtml-if>
 <dtml-if "catalogmultiplexed">
 def setupCatalogMultiplex(context):

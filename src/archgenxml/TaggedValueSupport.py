@@ -217,6 +217,13 @@ variable DEPENDENCIES.
 """
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'fixtools'
+explanation = """Generate fixTools function in setuphandlers.py.
+It calls initializeArchetypes for generated tools, thus reset existing data in the tools.
+Boolean (1 or 0), default 0 (off).
+"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 
 # Package level tagged values
 category = 'package'
