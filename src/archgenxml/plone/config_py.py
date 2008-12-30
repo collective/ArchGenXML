@@ -19,7 +19,6 @@ class ConfigPyView(object):
       >>> from archgenxml.plone.config_py import ConfigPyView
       >>> isinstance(adapter, ConfigPyView)
       True
-
     """
     
     component.adapts(IPackage)
@@ -52,23 +51,23 @@ class ConfigPyView(object):
                 roles.append(perm[1])
                 creation_roles.append( (perm[1], perm[2]) )
 
-        # prepare (d)TML varibles
-        d={'package': self.package,
-           'generator': generator,
-           'builtins': __builtins__,
-           'utils': utils,
-           'default_creation_permission': default_creation_permission,
-           'creation_permissions': generator.creation_permissions,
-           'creation_roles': creation_roles,
-           'parsed_config': parsed_config,
-           }
+        # prepare (d)TML variables
+        d = {'package': self.package,
+             'generator': generator,
+             'builtins': __builtins__,
+             'utils': utils,
+             'default_creation_permission': default_creation_permission,
+             'creation_permissions': generator.creation_permissions,
+             'creation_roles': creation_roles,
+             'parsed_config': parsed_config,
+             }
         d.update(__builtins__)
 
         templ = generator.readTemplate(['config.pydtml'])
         dtml = HTML(templ,d)
         res = dtml()
 
-        of=generator.makeFile(configpath)
+        of = generator.makeFile(configpath)
         of.write(res)
         of.close()
 
