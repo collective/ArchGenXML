@@ -195,8 +195,8 @@ class BaseGenerator:
         with the protected code-section to be included in the generated module.
         """
 
-        outstring = utils.indent(PyParser.PROTECTED_BEGIN, ind) + ' ' + \
-                            section +u' #fill in your manual code here\n'
+        outstring = utils.indent(PyParser.PROTECTED_BEGIN, ind) + u' ' + \
+                            section + u' #fill in your manual code here\n'
         if parsed:
             sectioncode = parsed.getProtectedSection(section)
             if sectioncode:
@@ -437,7 +437,7 @@ class BaseGenerator:
                      ' '*4*self.infoind,
                      element.getName())
 
-        templ = self.readTemplate(template)
+        templ = self.readTemplate([template])
         d = {
             'klass': element,
             'generator': self,
