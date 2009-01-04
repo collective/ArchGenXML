@@ -253,7 +253,9 @@ class WorkflowGenerator(BaseGenerator):
         for sm in statemachines:
             workflowId = sm.getCleanName()
             for klass in sm.getClasses():
-                if not self.atgenerator._isContentClass(klass):
+                # We allow to bound a workflow to a <<stub>>
+                if not self.atgenerator._isContentClass(klass) and \
+                   not klass.hasStereoType(self.atgenerator.stub_stereotypes):
                     continue
                 name = klass.getCleanName()
                 classes[name] = workflowId
@@ -267,10 +269,13 @@ class WorkflowGenerator(BaseGenerator):
             item['workflowId'] = classes[id_]
             result.append(item)
 
+        # no need to check use_workflow, it's already done by xmiparser.XMIModel.associateClassesToStateMachines,
+        # so the sm.getClasses() already returns classes which uses use_workflow tgv.
+        # if you uncomment thoses lines, you will have the bound-workflow twice
         #handle the use_workflow tgvs
-        for klass in self.package.getProduct().getClasses(recursive=True):
-            if klass.hasTaggedValue('use_workflow'):
-                result.append(dict(id=klass.getCleanName(),workflowId=klass.getTaggedValue('use_workflow')))
+        #for klass in self.package.getProduct().getClasses(recursive=True):
+        #    if klass.hasTaggedValue('use_workflow'):
+        #        result.append(dict(id=klass.getCleanName(),workflowId=klass.getTaggedValue('use_workflow')))
         # remember special case
         remembertypes = []
         self.atgenerator.getRememberTypes(remembertypes, self.package)
