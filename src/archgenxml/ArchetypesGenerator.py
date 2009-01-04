@@ -1039,7 +1039,6 @@ class ArchetypesGenerator(BaseGenerator):
             'rawType': reftype,
             'indent_level': indent_level
         }
-        print res
         return res
 
     def getReferenceFieldSpecs(self,element,field_specs=None,checkOnly=False, indent_level=0):
