@@ -3380,6 +3380,7 @@ class ArchetypesGenerator(BaseGenerator):
         ppath = os.path.join(package.getFilePath(), 'profiles', 'default')
         handleSectionedFile(['profiles', 'types.xml'],
                             os.path.join(ppath, 'types.xml'),
+                            sectionnames=('TYPES',),
                             templateparams={ 'portalTypes': defs })
 
 
