@@ -3057,7 +3057,6 @@ class ArchetypesGenerator(BaseGenerator):
                             sectionnames=['controlpanel.xml'],
                             templateparams={
                                 'configlets': configlets,
-                                'i18ndomain': package.getProductName()
                             }
         )
 

@@ -2,7 +2,7 @@
 <object name="portal_controlpanel" 
         meta_type="Plone Control Panel Tool"
         xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-        i18n:domain="<dtml-var "i18ndomain">">
+        i18n:domain="plone">
 
 <dtml-in "configlets">
 <dtml-let configlet="_['sequence-item']">
