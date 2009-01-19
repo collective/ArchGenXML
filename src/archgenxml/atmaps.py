@@ -248,6 +248,7 @@ TYPE_MAP = {
         'index': None,
     },
 }
+TYPE_MAP['rich'] = TYPE_MAP['richtext'] 
 
 WIDGET_MAP = { # only deal with special cases, such as combined field-widgets
     'text': u'TextAreaWidget',

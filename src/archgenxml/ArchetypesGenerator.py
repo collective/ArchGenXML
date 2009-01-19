@@ -335,9 +335,11 @@ class ArchetypesGenerator(BaseGenerator):
                 iface.getQualifiedModuleName(forcePluginRoot=True),
                 iface.getCleanName())
 
-        if self.backreferences_support:
+        if self.backreferences_support or \
+           utils.isTGVTrue(self.getOption('backreferences_support', element, 
+                                          False)):            
             print >>out, 'from Products.ATBackRef.BackReferenceField ' + \
-                  'import BackReferenceField, BackReferenceWidget'
+                  'import BackReferenceField, \\\n    BackReferenceWidget'
 
         return out.getvalue()
 
