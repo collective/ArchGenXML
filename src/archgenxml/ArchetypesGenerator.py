@@ -963,13 +963,12 @@ class ArchetypesGenerator(BaseGenerator):
 
         if obj.isAbstract():
             allowed_types= tuple(obj.getGenChildrenNames())
+        elif obj.hasStereoType(self.flavor_stereotypes,umlprofile=self.uml_profile):
+            allowed_types = tuple(obj.getRealizationChildrenNames(recursive=True))
+        elif obj.hasStereoType(self.extender_stereotypes,umlprofile=self.uml_profile):
+            allowed_types = tuple(obj.getAdaptationParentNames(recursive=True))
         else:
-            if obj.hasStereoType(self.flavor_stereotypes,umlprofile=self.uml_profile):
-                allowed_types=tuple(obj.getRealizationChildrenNames(recursive=True))
-            elif obj.hasStereoType(self.extender_stereotypes,umlprofile=self.uml_profile):
-                allowed_types=tuple(obj.getAdaptationParentNames(recursive=True))
-            else:
-                allowed_types=(obj.getName(),) + tuple(obj.getGenChildrenNames())
+            allowed_types = (obj.getName(),) + tuple(obj.getGenChildrenNames())
 
         if int(relside.mult[1]) == -1:
             multiValued = 1
@@ -1026,13 +1025,12 @@ class ArchetypesGenerator(BaseGenerator):
                                              % rel.getName()
         # common map settings
         map['multiValued'] = multiValued
-        relationship = back and rel.getInverseName() or relname
-        map['relationship'] = "'%s'" % relationship
+        map['relationship'] = "'%s'" % relname
         map.update(self.getFieldAttributes(relside))
         map['widget'] = self.getWidget(relside, relside.getName(), reftype) 
                                       #element, fieldname,         fieldtype
 
-        doc=rel.getDocumentation(striphtml=self.strip_html)
+        doc = rel.getDocumentation(striphtml=self.strip_html)
         res = {
             'name': name,
             'fieldtype': field,
