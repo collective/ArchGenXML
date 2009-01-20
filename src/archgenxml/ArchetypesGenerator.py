@@ -338,8 +338,12 @@ class ArchetypesGenerator(BaseGenerator):
         if self.backreferences_support or \
            utils.isTGVTrue(self.getOption('backreferences_support', element, 
                                           False)):            
-            print >>out, 'from Products.ATBackRef.BackReferenceField ' + \
-                  'import BackReferenceField, \\\n    BackReferenceWidget'
+            if self.getOption('plone_target_version', element, 3.0) == 3.0:
+                print >>out, 'from Products.ATBackRef import BackReferenceField'
+                print >>out, 'from Products.ATBackRef import BackReferenceWidget'
+            else:
+                print >>out, 'from Products.ATBackRef.BackReferenceField ' + \
+                      'import BackReferenceField, \\\n    BackReferenceWidget'
 
         return out.getvalue()
 
