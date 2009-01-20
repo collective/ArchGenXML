@@ -7,6 +7,7 @@ from PyParser import PyModule
 from BaseGenerator import BaseGenerator
 from zope.documenttemplate import HTML
 from archgenxml.TaggedValueSupport import STATE_PERMISSION_MAPPING
+from CodeSectionHandler import handleSectionedFile
 from TaggedValueSupport import tgvRegistry
 log = logging.getLogger('workflow')
 
@@ -93,14 +94,12 @@ class WorkflowGenerator(BaseGenerator):
         d['workflowNames'] = self.workflowNames()
         d['workflowless'] = self.workflowLessTypes()
         d['typeMapping'] = self.typeMapping()
-        d['defaultId'] = self.findDefaultWorkflowId()
-        templ = self.readTemplate(['profiles', 'workflows.xml'])
-        scriptpath = os.path.join(profileDir, 'workflows.xml')
-        dtml = HTML(templ, d)
-        res = dtml()
-        of = self.atgenerator.makeFile(scriptpath)
-        of.write(res)
-        of.close()
+        d['defaultId'] = self.findDefaultWorkflowId()        
+        handleSectionedFile(['profiles', 'workflows.xml'],
+                            os.path.join(profileDir, 'workflows.xml'),
+                            sectionnames=['workflowobjects', 
+                                          'workflowbindings'],
+                            templateparams=d)        
 
         if len(self.extraRoles()) == 0:
             log.debug("Skipping creation of rolemap.xml file.")
