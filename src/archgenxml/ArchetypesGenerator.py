@@ -1694,7 +1694,11 @@ class ArchetypesGenerator(BaseGenerator):
             creation_permission = "'%s: Add %s'" % (product, klass)
         else:
             creation_permission = None
-        creation_roles = "('Manager', 'Owner')"
+
+        if self.getOption('plone_target_version', element, 3.0) == 3.0:        
+            creation_roles = "('Manager', 'Owner', 'Contributor')"
+        else:
+            creation_roles = "('Manager', 'Owner')"
         cpfromoption = self.getOption('creation_permission', element, None)
         if cpfromoption:
             creation_permission = self.processExpression(cpfromoption)

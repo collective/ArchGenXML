@@ -187,7 +187,7 @@ def cleanName(name):
 
 ARCHGENXML_VERSION_LINE = """\
 ArchGenXML %s
-(c) 2003-2008 BlueDynamics Alliance, Austria, GPL 2.0 or later\
+(c) 2003-2009 BlueDynamics Alliance, Austria, GPL 2.0 or later\
 """
 
 def version():
