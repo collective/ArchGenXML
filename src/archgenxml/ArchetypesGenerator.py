@@ -2750,7 +2750,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         handleSectionedFile(['profiles', 'profiles.zcml'],
                             os.path.join(ppath, 'profiles.zcml'),
-                            sectionnames=['profiles.zcml-top', 'profiles.zcml'],
+                            sectionnames=['profiles.zcml-top', 'profiles.zcml-bottom'],
                             templateparams={'product_name': pname})
 
         packageIncludes = [m.getModuleName() for m in
