@@ -24,7 +24,7 @@ setup(name='archgenxml',
             'Framework :: Plone',
       ], # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
       keywords="zope plone UML generator",
-      author='Phil Auersperg, Jens Klein',
+      author='Phil Auersperg, Jens Klein, et al',
       author_email='dev@bluedynamics.com',
       url='http://plone.org/products/archgenxml',
       packages=find_packages('src'),
@@ -43,7 +43,7 @@ setup(name='archgenxml',
       install_requires=[
           'setuptools',
           # -*- Extra requirements: -*-
-          'xmiparser',
+          'xmiparser>=1.2',
           'zope.interface',
           'zope.component',
           'zope.documenttemplate',
