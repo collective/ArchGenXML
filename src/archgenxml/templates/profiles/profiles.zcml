@@ -16,7 +16,7 @@
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
   
-  <!-- ##code-section profiles.zcml #fill in your manual code here -->
-  <!-- ##/code-section profiles.zcml -->
+  <!-- ##code-section profiles.zcml-bottom #fill in your manual code here -->
+  <!-- ##/code-section profiles.zcml-bottom -->
 
 </configure>
