@@ -53,7 +53,7 @@ Requirements & Optional
 
     - Plone 2.5.x
 
-    - Plone 3.0.x (prefered)
+    - Plone >3.1.x <4 (prefered)
 
   Optional:
 
@@ -96,10 +96,10 @@ Requirements & Optional
     - ATBackRef
 
       A field type for backreferences in Archetypes. You can download
-      from http://svn.plone.org/svn/archetypes/MoreFieldsAndWidgets/ATBackRef/trunk/
+      from http://pypi.python.org/pypi/Products.ATBackRef
       Required to use backreferences feature.
 
-    - ATVocabularyManager 1.3+
+    - ATVocabularyManager 1.4+ or better trunk
     
       Dynamic ttw vocabularies:
 

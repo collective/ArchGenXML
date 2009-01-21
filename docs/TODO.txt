@@ -13,22 +13,10 @@ TODO's for ArchGenXML
 
 * sync docs/manual with online manual (=master) at plone.org
 
-* importGSDependencies - some more research on how to filter the import steps
-  by profile and how to define an import step as the very first executed one.
-  (After Plone Conference and talking with several people this might be solved 
-  in a future release of GS)
-
 * refactor generateFieldMoves machinery. does not consider copied fields atm!
   (no one used this until now??)
 
-* move STATE_PERMISSION_MAPPING out of TaggedValueSupport and
-  move the conversion of permission-short cuts over to the 
-  WorkflowGenerator.
-
 * write an import step adding inherited allowed types
-
-* tgv "hide_actions" need to get respect in types.xml (deprecated: use stereotype
-  <<noaction>>
 
 * BUG: Method that end with a comma-newline-value lose that value. For example:
 
@@ -53,7 +41,7 @@ TODO's for ArchGenXML
   base_view, metadata and maybe references) on classes with stereotype
   'portal_tool'. Must be possible to explicitly enable them again.
 
-* Also group together the generateable documentation in one script so
+* group together the generateable documentation in one script so
   that it is easy to update the documentation area on plone.org to
   keep it current.
 
@@ -61,7 +49,4 @@ TODO's for ArchGenXML
 
 * Allow python package products instead of zope products.
 
-* Support plone 3.0 portlets.
-
 * Support plone 3.0 viewlets (replacement of many included macros).
-

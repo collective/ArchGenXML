@@ -17,7 +17,7 @@ Authors
 
     Reinout did lots of cleanup and added documentation features. He
     started the 1.6 development branch (now trunk) and moved
-    archgenxml to setuptools. He is the co release manager.
+    archgenxml to setuptools. He was for a while co release manager.
 
   Martin Aspeli (optilude)
 
@@ -53,6 +53,13 @@ Authors
   
     Lots of good work and help with AGX 2.0, including documentation and
     argouml support.
+    
+  Vincent Fretin
+  
+    Helped a lot after separation of xmiparser and also fixed and cleaned code
+    he blogged about it at 
+    http://vincentfretin.ecreall.com/articles/whats-up-on-archgenxml-these-days
+    
 
 Sponsors:
 
