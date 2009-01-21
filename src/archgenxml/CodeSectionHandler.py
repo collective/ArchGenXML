@@ -50,9 +50,10 @@ def handleSectionedFile(templatepath, outputpath,
     # reflect existing python constructs
     
     if os.path.splitext(outputpath)[-1] in ('.py','.cpy'):
-        parsedModule=PyModule(existentbuffer and ''.join(existentbuffer)+'\n' or '', mode='string')
+        parsedModule = PyModule(existentbuffer and ''.join(existentbuffer) + 
+                                '\n' or '', mode='string')
         if templateparams:
-            templateparams['parsedModule']=parsedModule
+            templateparams['parsedModule'] = parsedModule
 
     templatepath = ['templates'] + templatepath
     if templateparams:
