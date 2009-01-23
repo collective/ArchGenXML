@@ -50,5 +50,5 @@ party documentations in several languages. Just use Google_ to find more on
 this topic.
 
 .. _Manual: http://plone.org/documentation/manual/archgenxml2
-.. _Google: http://http://www.google.com/search?q=archgenxml
+.. _Google: http://www.google.com/search?q=archgenxml
 
