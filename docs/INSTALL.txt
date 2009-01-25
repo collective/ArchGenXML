@@ -19,10 +19,9 @@ new file `buildout.cfg`::
         archgenxml
         
     [archgenxml]
-    recipe = zc.recipe.egg:scripts
+    recipe = repoze.recipe.egg:scripts
     eggs =
         archgenxml [i18n]
-        i18ndude
 
 .. _bootstrap.py: http://svn.zope.org/*checkout*/zc.buildout/trunk/bootstrap/bootstrap.py
         
