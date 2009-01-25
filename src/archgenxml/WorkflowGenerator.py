@@ -495,6 +495,7 @@ class WorkflowInfo(object):
         log.debug("Tagged value(s) found, taking the first (or only) "
                   "one: '%s'.", guardRoles)
         if guardRoles:
+            guardRoles = guardRoles.replace(';', ',')
             guardRoles = guardRoles.split(',')
         else:
             guardRoles = []
