@@ -16,7 +16,7 @@ categoryFromClassMap = {
     'XMIAttribute': 'attribute',
     #'XMIAssocEnd': ,
     'XMIAssociation': 'association',
-    #'XMIAbstraction': ,
+    'XMIAbstraction': 'abstraction',
     'XMIDependency': 'dependency',
     #'XMIStateContainer': ,
     #'XMIStateMachine': ,

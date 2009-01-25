@@ -280,6 +280,14 @@ at_uml_profile.addStereoType(
     description='Is a schema extender supported by archetypes.schemaextender.')
 
 at_uml_profile.addStereoType(
+    'adapts', ['XMIAbstraction'],
+    description='On a realization, specify a class (<<adapter>>, <<named_adapter>>, <<extender>>) adapts another class (<<stub>>, <<interface>>).')
+
+at_uml_profile.addStereoType(
+    'interface', ['XMIClass'],
+    description='Is an interface.')
+
+at_uml_profile.addStereoType(
     'named_adapter', ['XMIClass'],
     description='Is a named adapter.')
 

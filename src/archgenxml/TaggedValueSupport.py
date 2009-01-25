@@ -423,6 +423,26 @@ tagname = 'register'
 explanation = """CMFMember related. Set as default member type."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+# Portlet
+category = 'portlet'
+
+# for classes with the stereotype <<portlet_class>>
+
+tagname = 'template_name'
+explanation = """Specify a template for the portlet (without .pt).
+Default is the class name. (on classes with the stereotype <<portlet_class>>)"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+# View
+category = 'view'
+
+# for classes with the stereotype <<view_class>>
+
+tagname = 'name'
+explanation = """Specify a name for the zope3 view..
+Default is the class name. (on classes with the stereotype <<view_class>>)"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 # Tool
 category = 'tool'
 
@@ -822,6 +842,30 @@ If not given the widget:label is taken if provided.
 """
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)   
 
+tagname = 'move:pos'
+explanation = """Move the current field at the given position (an int).
+"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)   
+
+tagname = 'move:top'
+explanation = """Move the current field to the top (put 1 for the value).
+"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)   
+
+tagname = 'move:bottom'
+explanation = """Move the current field to the bottom (put 1 for the value).
+"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)   
+
+tagname = 'move:after'
+explanation = """Move the current field after the given field (put the field name between quote).
+"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)   
+
+tagname = 'move:before'
+explanation = """Move the current field before the given field (put the field name between quote).
+"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)   
 
 for category in ['model', 'package', 'class', 'attribute']:
     tagname = 'catalog:metadata'

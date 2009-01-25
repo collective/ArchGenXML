@@ -340,9 +340,9 @@ NONSTRING_TGVS = [
     'max_size',
     'searchable',
     'widget:show_hm',
-    'move:pos', # FIXME: not in TaggedValueSupport
-    'move:top', # FIXME: not in TaggedValueSupport
-    'move:bottom', # FIXME: not in TaggedValueSupport
+    'move:pos',
+    'move:top',
+    'move:bottom'
     'primary', # FIXME: not in TaggedValueSupport
     'array:widget',
     'array:size', # FIXME: not in TaggedValueSupport

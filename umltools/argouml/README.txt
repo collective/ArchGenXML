@@ -1,10 +1,18 @@
-This file should be fed to the ArgoUML profile settings to make it aware of the Plone-related stereotypes, tagged values, etc.
+The archgenxml_profile.xmi file should be fed to the ArgoUML profile settings to make it aware of the Plone-related stereotypes, tagged values, etc.
 
-Put the path to this file in this location in ArgoUML:
+For ArgoUML 0.24, to start with this profile::
 
-Edit -> Settings -> Preferences -> Profile File
+    java -Dargo.defaultModel=archgenxml_profile.xmi -jar argouml.jar
 
-argouml_profle.xmi is the old profile used with archgenxml <= 1.5.2.
+For ArgoUML >= 0.26.2, add the profile via:
 
-Please use archgenxml_profile.xmi to have the latest stereotypes and tagged-values.
-You should use this one if you use ArgoUML >= 0.26 if you don't want to have problems updating the profile in the future.
+    Edit -> Settings -> Preferences -> Profile File
+
+Remove the UML 1.4 profile for your created project to be sure to not use stereotypes or tagged values from it.
+To generate your product, use the --profile-dir/-p option to specify the directory where xmiparser can find the profile::
+
+    archgenxml -p /path/to/src/archgenxml/umltools/argouml/ MyProject.zargo
+
+Don't use an old argouml_profle.xmi with ArgoUML >= 0.26.2.
+Be sure to use the archgenxml_profile.xmi file
+or you will have problems updating your models with a newer profile in the future.
