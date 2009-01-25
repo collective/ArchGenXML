@@ -319,6 +319,15 @@ parser.add_option("-o",
                   default='',
                   )
 
+parser.add_option("-p",
+                  "--profile-dir",
+                  dest="profile_dir",
+                  help="Directory where xmi profiles are stored. Use this option if you use ArgoUML >= 0.26.2 with the archgenxml_profile.xmi.",
+                  section="GENERAL",
+                  type="string",
+                  default='',
+                  )
+
 #----------------------------------------------------------------------------
 # Config File options
 

@@ -4100,28 +4100,11 @@ class ArchetypesGenerator(BaseGenerator):
         # and now start off with the class files
         self.generatedModules=[]
 
-        suff = os.path.splitext(self.xschemaFileName)[1].lower()
-        log.info("Parsing...")
-        if suff in ('.xmi','.xml', '.uml'):
-            log.debug("Opening xmi...")
-            self.root = root= xmiparser.parse(self.xschemaFileName,
-                                              packages=self.generate_packages,
-                                              generator=self,
-                                              generate_datatypes=self.generate_datatypes)
-            log.debug("Created a root XMI parser.")
-        elif suff in ('.zargo','.zuml','.zip'):
-            log.debug("Opening %s ..." % suff)
-            zf=ZipFile(self.xschemaFileName)
-            xmis=[n for n in zf.namelist() 
-                  if os.path.splitext(n)[1].lower()in ['.xmi','.xml']]
-            assert(len(xmis)==1)
-            buf=zf.read(xmis[0])
-            self.root=root=xmiparser.parse(xschema=buf,
-                                           packages=self.generate_packages, 
-                                           generator=self,
-                                           generate_datatypes=self.generate_datatypes)
-        else:
-            raise TypeError,'input file not of type .xmi, .xml, .zargo, .zuml'
+        root = xmiparser.parse(self.xschemaFileName,
+                               packages=self.generate_packages,
+                               generator=self,
+                               generate_datatypes=self.generate_datatypes,
+                               profile_dir=self.options.option('profile_dir'))
 
         if self.outfilename:
             log.debug("We've got an self.outfilename: %s.",
