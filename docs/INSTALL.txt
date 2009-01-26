@@ -1,13 +1,6 @@
 Installing archgenxml 
 =====================
 
-From the cheeseshop
--------------------
-
-``easy_install archgenxml``, so the usual. 
-
-Attention, your pythons site-packages are polluted with zope3-stuff. 
-
 Using buildout
 --------------
 
@@ -32,27 +25,13 @@ and run::
 
 archgenxml is now available in `./bin/archgenxml` 
 
+From the cheeseshop
+-------------------
 
-From tgz
---------
+``easy_install archgenxml``, so the usual. 
 
-To install it use the --no-compile option for now. We need to figure out how
-to exclude dtml-files ending with .py from byte-compiling at install time.::
-
-  $ python setup.py install --no-compile
-
-
-At Debian based systems
------------------------
-
-*untested* with 2.2 release!
-
-To build a Debian Package run::
-
-  $ fakeroot debian/rules binary
-  
-and install the *.deb file as usal.
-
+Attention, your pythons site-packages are polluted with zope3-stuff. See below:
+`Zope Dependencies`
 
 
 SVN directories - what is stable, what is not?
@@ -65,16 +44,6 @@ As usual, the goal is to keep trunk workable. Some of the developers
 work and develop on the edge: trunk. 
 
 If you need stability, use the latest release.
-
-Major changes in 2.0
---------------------
-
-We updated ArchGenXML and changed tons of things to get modernized generated
-code.
-
-As a warning: Using an old model with ArchGenXML 2.0 creates some work. This
-specially if you ave lots of logic in AppInstall.py or custom workflow scripts. 
-You need to migrate such code manually.
 
 
 Installing trunk
