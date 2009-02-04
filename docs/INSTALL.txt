@@ -21,7 +21,7 @@ new file `buildout.cfg`::
 and run::
 
     $ python bootstrap.py 
-    $./bin/buildout    
+    $ ./bin/buildout    
 
 archgenxml is now available in `./bin/archgenxml` 
 
@@ -31,7 +31,14 @@ From the cheeseshop
 ``easy_install archgenxml``, so the usual. 
 
 Attention, your pythons site-packages are polluted with zope3-stuff. See below:
-`Zope Dependencies`
+`Zope Dependencies`.
+
+You should install it in a virtualenv like this::
+
+    $ virtualenv agx
+    $ cd agx/
+    $ source bin/activate
+    $ easy_install archgenxml
 
 
 SVN directories - what is stable, what is not?
@@ -60,5 +67,10 @@ Zope Dependencies
 ArchGenXML has a dependency on some zope3 machinery. That messes up other 
 zopes that use the same python version. So using buildout is recommended!
 
-Dependencies are: zope.interface, zope.component and zope.configuration.
+Dependencies are: xmiparser, zope.interface, zope.component and zope.documenttemplate.
 
+On Windows
+----------
+On Windows, you have to install and configure the `mingw32 compiler`_ to install zope.proxy.
+
+.. _`mingw32 compiler`: http://plone.org/documentation/how-to/using-buildout-on-windows
