@@ -35,7 +35,7 @@ Attention, your pythons site-packages are polluted with zope3-stuff. See below:
 
 You should install it in a virtualenv like this::
 
-    $ virtualenv agx
+    $ virtualenv --no-site-packages agx
     $ cd agx/
     $ source bin/activate
     $ easy_install archgenxml
