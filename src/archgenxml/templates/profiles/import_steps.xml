@@ -90,6 +90,16 @@
 
 </dtml-if>
 
+<dtml-if "catalogmultiplexed">
+ <import-step 
+    id="<dtml-var "product_name">-Setup-Catalog-Multiplex" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.setupCatalogMultiplex"
+    title="setup catalog multiplex for <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   <dependency step="toolset"/>
+   setup catalog multiplex for <dtml-var "product_name">
+ </import-step>
+</dtml-if>
 
  <import-step 
     id="<dtml-var "product_name">-Update-RoleMappings" 
