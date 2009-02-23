@@ -623,20 +623,20 @@ class StateInfo(object):
 
         has_access = 0
         has_view = 0
-        v = {}
+        view = {}
         for permission_definition in permission_definitions:
             if (permission_definition.get('permission', None) ==
                 STATE_PERMISSION_MAPPING['access']):
                 has_access = 1
             if (permission_definition.get('permission', None) ==
                 STATE_PERMISSION_MAPPING['view']):
-                v = permission_definition
+                view = permission_definition
                 has_view = 1
         if has_view and not has_access:
             permission = STATE_PERMISSION_MAPPING['access']
             permission_definitions.append({'permission': permission,
-                                           'roles': v['roles'],
-                                           'acquisition': v['acquisition']})
+                                           'roles': view['roles'],
+                                           'acquisition': view['acquisition']})
         return permission_definitions
 
 

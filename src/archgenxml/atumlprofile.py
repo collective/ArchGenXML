@@ -226,6 +226,13 @@ at_uml_profile.addStereoType(
     )
 
 at_uml_profile.addStereoType(
+    'atblob', ['XMIClass'],
+    description='Turns the class into an plone.app.blob.content.ATBlob subclass.',
+    imports=['from plone.app.blob.content import ATBlob',
+             'from plone.app.blob.content import ATBlobSchema',]
+    )
+
+at_uml_profile.addStereoType(
     'atdocument', ['XMIClass'],
     description='Turns the class into an Atdocument subclass.',
     imports=['from Products.ATContentTypes.content.document import ATDocument',

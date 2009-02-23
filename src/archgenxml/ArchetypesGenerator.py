@@ -134,7 +134,7 @@ class ArchetypesGenerator(BaseGenerator):
     python_stereotype = ['python', 'python_class'] + BaseGenerator.view_class_stereotype + BaseGenerator.portlet_class_stereotype
     folder_stereotype = ['atfolder', 'folder', 'ordered', 'large', 'btree']
     atct_stereotype = ['atfolder', 'atfile', 'atdocument', 'atevent', 'atimage',
-                       'atnewsitem', 'atlink']
+                       'atnewsitem', 'atlink', 'atblob']
     teststereotype = ['testcase', 'plone_testcase', 'plonefunctional_testcase',
                       'functional_testcase', 'doc_testcase', 'functional_doc_testcase',
                       'setup_testcase', 'doc_testcase', 'interface_testcase']
@@ -1619,6 +1619,10 @@ class ArchetypesGenerator(BaseGenerator):
                                        umlprofile=self.uml_profile):
                 baseclass ='ATDocument'
                 baseschema ='ATDocumentSchema'
+            elif element.hasStereoType(['atblob'],
+                                       umlprofile=self.uml_profile):
+                baseclass ='ATBlob'
+                baseschema ='ATBlobSchema'
             else:
                 baseclass = 'BaseContent'
                 baseschema = 'BaseSchema'
