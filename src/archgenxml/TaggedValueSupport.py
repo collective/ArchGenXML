@@ -305,7 +305,7 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 tagname = 'parentclasses_first'
 explanation = """if this tgv is set to true generalization parents are used before the standard
 base classes (e.g. BaseContent) this option is sometimes necessary when inheriting from some special
-parents (e.g. CMFMember or ReMember style classes)."""
+parents (e.g. 'remember' style classes)."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 tgvRegistry.addTaggedValue(category=category, tagname='parentclass_first', explanation=explanation)
 
@@ -420,7 +420,7 @@ tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=expla
 # Optilude is right on this one. It *does* need support for default values.
 
 tagname = 'register'
-explanation = """CMFMember related. Set as default member type."""
+explanation = """'Remember' related. Set as default member type."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 # Portlet
