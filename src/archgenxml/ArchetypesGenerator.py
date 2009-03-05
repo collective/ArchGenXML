@@ -4141,9 +4141,7 @@ class ArchetypesGenerator(BaseGenerator):
         if self.build_msgcatalog and not has_i18ndude:
             log.warn("Can't build i18n message catalog. "
                      "Module 'i18ndude' not found.")
-        if not xmiparser.has_stripogram:
-            log.warn("Can't strip html from doc-strings. "
-                     "Module 'stripogram' not found.")
+
         self.generateProduct(root)
 
     def _getSubtypes(self, element):

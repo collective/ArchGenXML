@@ -47,6 +47,7 @@ setup(name='archgenxml',
           'zope.interface',
           'zope.component',
           'zope.documenttemplate',
+          'stripogram',
       ],
       extras_require = dict(
           i18n=['i18ndude']
