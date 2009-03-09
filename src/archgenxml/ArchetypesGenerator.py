@@ -1671,7 +1671,7 @@ class ArchetypesGenerator(BaseGenerator):
             else:
                 # this way base_class is used before anything else
                 parentnames = baseclasses + parentnames
-		# deduplicate parentnames while preserving their order:
+                # deduplicate parentnames while preserving their order:
         dedupedParentNames = []
         for parent in parentnames:
             if not parent in dedupedParentNames:
