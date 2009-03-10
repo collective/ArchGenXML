@@ -43,7 +43,7 @@ setup(name='archgenxml',
       install_requires=[
           'setuptools',
           # -*- Extra requirements: -*-
-          'xmiparser >= 1.3',
+          'xmiparser<1.9999',
           'zope.interface',
           'zope.component',
           'zope.documenttemplate',
