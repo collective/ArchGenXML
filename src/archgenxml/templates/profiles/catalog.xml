@@ -17,7 +17,7 @@
 <dtml-in "_['sequence-item']['extras']">
 <dtml-let extra="_['sequence-item']">
     <extra name="<dtml-var "extra['name']">"
-           value="<dtml-var "extra['value']">">
+           value="<dtml-var "extra['value']">" />
 </dtml-let>
 </dtml-in>
 <dtml-let properties="_['sequence-item']['properties']">
