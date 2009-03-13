@@ -3186,9 +3186,11 @@ class ArchetypesGenerator(BaseGenerator):
                             indexdef['meta_type'] = 'FieldIndex'
 
                     indexdef['indexed_attributes'] = attributes
-                    extras = attribute.getTaggedValue('index:extras', [])
-                    if ',' in extras:
-                        extras = [e.strip() for e in extras.split(',')]
+                    extras = attribute.getTaggedValue('index:extras', '')
+                    extras = extras.split('\n')
+                    extras = [dict(name=e.split('=')[0].strip(), 
+                                   value=e.split('=')[1].strip()) \
+                               for e in extras if e]                                        
                     indexdef['extras'] = extras
                     props = attribute.getTaggedValue('index:properties', [])
                     if ',' in props:
