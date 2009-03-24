@@ -1123,60 +1123,65 @@ class ArchetypesGenerator(BaseGenerator):
         # first copy fields from other schemas if neccessary.
         startmarker = True
         for attr in element.getAttributeDefs():
-            if attr.type.lower() == 'copy':
-                if startmarker:
-                    startmarker=False
-                    print >> outfile, 'copied_fields = {}'
-                copyfrom = attr.getTaggedValue('copy_from', base_schema)
-                name = attr.getTaggedValue('source_name',attr.getName())
-                print >> outfile, "copied_fields['%s'] = %s['%s'].copy(%s)" % \
-                      (attr.getName(), copyfrom, name, name!=attr.getName() \
-                       and ("name='%s'" % attr.getName()) or '')
-                map = self.getFieldAttributes(attr, ignorewidget=False)
-                for key in map:
-                    if key.startswith('move:'):
-                        continue
-                    print >>outfile, "copied_fields['%s'].%s = %s" % \
-                          (attr.getName(), key, map[key])
-                tgv = attr.getTaggedValues()
-                for key in tgv.keys():
-                    if not key.startswith('widget:'):
-                        continue
-                    if key not in self.nonstring_tgvs:
-                        tgv[key]=utils.getExpression(tgv[key])
-                    print >>outfile, "copied_fields['%s'].widget.%s = %s" % \
-                          (attr.getName(), key[7:], tgv[key])
-                    # add pot msgid if necessary
-                    widgetkey = key[7:]
-                    widgetvalue = tgv[key]
-                    fieldname = attr.getName()
-                    if widgetkey=='label_msgid':
-                        self.addMsgid(widgetvalue.strip("'").strip('"'),
-                                      tgv.has_key('widget:label') and
-                                      tgv['widget:label'].strip("'").strip('"')
-                                      or fieldname, element, fieldname)
-                    if widgetkey=='description_msgid':
-                        self.addMsgid(widgetvalue.strip("'").strip('"'),
-                                      tgv.has_key('widget:description') and
-                                      tgv['widget:description'].strip("'").strip('"')
-                                      or fieldname, element, fieldname)
+            if attr.type.lower() != 'copy':
+                continue
+            if startmarker:
+                startmarker = False
+                print >> outfile, 'copied_fields = {}'
+            copyfrom = attr.getTaggedValue('copy_from', base_schema)
+            name = attr.getTaggedValue('source_name', attr.getName())
+            print >> outfile, "copied_fields['%s'] = %s['%s'].copy(%s)" % \
+                  (attr.getName(), copyfrom, name, name!=attr.getName() \
+                  and ("name='%s'" % attr.getName()) or '')
+            map = self.getFieldAttributes(attr, ignorewidget=False)
+            for key in map:
+                if key.startswith('move:'):
+                    continue
+                print >>outfile, "copied_fields['%s'].%s = %s" % \
+                      (attr.getName(), key, map[key])
+            tgv = attr.getTaggedValues()
+            for key in tgv.keys():
+                if not key.startswith('widget:'):
+                    continue
+                if key not in self.nonstring_tgvs:
+                    tgv[key]=utils.getExpression(tgv[key])
+                print >>outfile, "copied_fields['%s'].widget.%s = %s" % \
+                      (attr.getName(), key[7:], tgv[key])
+                # add pot msgid if necessary
+                widgetkey = key[7:]
+                widgetvalue = tgv[key]
+                fieldname = attr.getName()
+                if widgetkey=='label_msgid':
+                    self.addMsgid(widgetvalue.strip("'").strip('"'),
+                                  tgv.has_key('widget:label') and
+                                  tgv['widget:label'].strip("'").strip('"')
+                                  or fieldname, element, fieldname)
+                if widgetkey=='description_msgid':
+                    self.addMsgid(widgetvalue.strip("'").strip('"'),
+                                  tgv.has_key('widget:description') and
+                                  tgv['widget:description'].strip("'").strip('"')
+                                  or fieldname, element, fieldname)
 
-        # schemaextender requires custom fields; their names will start with 'Extended'
-        if element.hasStereoType(self.extender_stereotypes,umlprofile=self.uml_profile):
+        # schemaextender requires custom fields; their names will start with 
+        # 'Extended'
+        if element.hasStereoType(self.extender_stereotypes,
+                                 umlprofile=self.uml_profile):
             for field_spec in field_specs:
                 field_spec['fieldtype'] = 'Extended' + field_spec['fieldtype']
         fieldsformatted = self.getFieldsFormatted(field_specs)
-        if element.hasStereoType(self.extender_stereotypes,umlprofile=self.uml_profile):
+        if element.hasStereoType(self.extender_stereotypes,
+                                 umlprofile=self.uml_profile):
             print >> outfile, EXTENDER_SCHEMA_START
         else:
             print >> outfile, SCHEMA_START
         print >> outfile, fieldsformatted.encode('utf8')
 
-        marshaller=element.getTaggedValue('marshaller')
+        marshaller = element.getTaggedValue('marshaller')
         # deprecated tgv 'marschall' here, that's a duplicate
         if marshaller:
             print >> outfile, 'marshall='+marshaller
-        if element.hasStereoType(self.extender_stereotypes,umlprofile=self.uml_profile):
+        if element.hasStereoType(self.extender_stereotypes,
+                                 umlprofile=self.uml_profile):
             print >> outfile, '    ]\n'
         else:
             print >> outfile, '),\n)\n'
@@ -1628,7 +1633,8 @@ class ArchetypesGenerator(BaseGenerator):
 
         # we want to mixin folderish behavior in contenthish baseclass? 
         if folderish and fbaseclass != baseclass:
-            parentnames.append(fbaseclass)
+            baseclass = '%s,%s' % (fbaseclass, baseclass)
+            baseschema = '%s + %s' % (fbaseschema, baseschema)
             
         # use CMFDynamicViewFTI?
         if not parent_is_archetype and \
@@ -1641,8 +1647,6 @@ class ArchetypesGenerator(BaseGenerator):
         if parent_is_archetype:
             baseclass = None
         
-            
-
         # remember support
         if element.hasStereoType(self.remember_stereotype,
                                  umlprofile=self.uml_profile):
@@ -1792,8 +1796,9 @@ class ArchetypesGenerator(BaseGenerator):
             parentnames = additionalParents.split(',') + list(parentnames)
 
         # find base
-        baseclass, baseschema, parentnames = self.getArchetypesBase(element, parentnames, parent_is_archetype)
-
+        baseclass, baseschema, parentnames = self.getArchetypesBase(element, 
+                                                        parentnames, 
+                                                        parent_is_archetype)
         # variableschema support.
         if element.hasStereoType(self.variable_schema,
                                  umlprofile=self.uml_profile):
@@ -1944,15 +1949,20 @@ class ArchetypesGenerator(BaseGenerator):
                                                    element, default=True)
             if rename_after_creation:
                 print >> outfile, CLASS_RENAME_AFTER_CREATION % \
-                      (utils.isTGVTrue(rename_after_creation) and 'True' or 'False')
+                                  str(utils.isTGVTrue(rename_after_creation))
 
-        if element.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile):
+        if element.hasStereoType(self.adapter_stereotypes,
+                                 umlprofile=self.uml_profile):
             wrt(utils.indent('def __init__(self, context):',1) + '\n')
             wrt(utils.indent('self.context = context',2) + '\n\n')
-            # with schema extenders, fields are preferably stored *in* the class, not as a separate variable
-            if element.hasStereoType(self.extender_stereotypes,umlprofile=self.uml_profile):
-                # in schema extenders, fields are just given as a list, not as an instance of Schema
-                self.generateArcheSchema(element, field_specs, baseschema, outfile)
+            # with schema extenders, fields are preferably stored *in* the 
+            # class, not as a separate variable
+            if element.hasStereoType(self.extender_stereotypes,
+                                     umlprofile=self.uml_profile):
+                # in schema extenders, fields are just given as a list, 
+                # not as an instance of Schema
+                self.generateArcheSchema(element, field_specs, baseschema, 
+                                         outfile)
                 for parent in element.getGenParents():
                     wrt(utils.indent('schema += extendFields(%s,excludedFields=[])\n\n' % parent.getName(), 1))
                 wrt(utils.indent('def getFields(self):',1) + '\n')
@@ -1962,7 +1972,8 @@ class ArchetypesGenerator(BaseGenerator):
             wrt(utils.indent('schema = %s' % schemaName, 1) + '\n\n')
 
         # Set base_archetype for remember
-        if element.hasStereoType(self.remember_stereotype, umlprofile=self.uml_profile):
+        if element.hasStereoType(self.remember_stereotype, 
+                                 umlprofile=self.uml_profile):
             wrt(utils.indent("base_archetype = %s" % baseclass, 1) + '\n\n')
 
         self.generateProtectedSection(outfile, element, 'class-header', 1)
@@ -2199,9 +2210,6 @@ class ArchetypesGenerator(BaseGenerator):
         additionalParents = element.getTaggedValue('additional_parents')
         if additionalParents:
             parentnames = additionalParents.split(',') + list(parentnames)
-
-        # find base
-        #baseclass, baseschema, parentnames = self.getArchetypesBase(element, parentnames, parent_is_archetype)
 
         # Interface aggregation
         if self.getAggregatedInterfaces(element):
