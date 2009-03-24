@@ -1575,58 +1575,61 @@ class ArchetypesGenerator(BaseGenerator):
             Normally a one of the Archetypes base classes are set.
             if you dont want it set the TGV to zero '0'
         """
-        if self.elementIsFolderish(element):
+        baseclass = 'BaseContent'
+        baseschema = 'BaseSchema'
+        folderish = self.elementIsFolderish(element)
+        if folderish:
             # folderish
-
             if element.hasStereoType('ordered', umlprofile=self.uml_profile):
-                baseclass ='OrderedBaseFolder'
-                baseschema ='OrderedBaseFolderSchema'
+                baseclass = 'OrderedBaseFolder'
+                baseschema = 'OrderedBaseFolderSchema'
             elif element.hasStereoType(['large','btree'],
                                        umlprofile=self.uml_profile):
-                baseclass ='BaseBTreeFolder'
-                baseschema ='BaseBTreeFolderSchema'
+                baseclass = 'BaseBTreeFolder'
+                baseschema = 'BaseBTreeFolderSchema'
             elif element.hasStereoType(['atfolder'],
                                        umlprofile=self.uml_profile):
-                baseclass ='ATFolder'
-                baseschema ='ATFolderSchema'
+                baseclass = 'ATFolder'
+                baseschema = 'ATFolderSchema'
             else:
-                baseclass ='BaseFolder'
-                baseschema ='BaseFolderSchema'
+                baseclass = 'BaseFolder'
+                baseschema = 'BaseFolderSchema'
+        fbaseclass, fbaseschema = baseclass, baseschema
+        
+        # contentish
+        if element.hasStereoType(['atfile'],
+                                 umlprofile=self.uml_profile):
+            baseclass ='ATFile'
+            baseschema ='ATFileSchema'
+        elif element.hasStereoType(['atimage'],
+                                   umlprofile=self.uml_profile):
+            baseclass ='ATImage'
+            baseschema ='ATImageSchema'
+        elif element.hasStereoType(['atevent'],
+                                   umlprofile=self.uml_profile):
+            baseclass ='ATEvent'
+            baseschema ='ATEventSchema'
+        elif element.hasStereoType(['atnewsitem'],
+                                   umlprofile=self.uml_profile):
+            baseclass ='ATNewsItem'
+            baseschema ='ATNewsItemSchema'
+        elif element.hasStereoType(['atlink'],
+                                   umlprofile=self.uml_profile):
+            baseclass ='ATLink'
+            baseschema ='ATLinkSchema'
+        elif element.hasStereoType(['atdocument'],
+                                   umlprofile=self.uml_profile):
+            baseclass ='ATDocument'
+            baseschema ='ATDocumentSchema'
+        elif element.hasStereoType(['atblob'],
+                                   umlprofile=self.uml_profile):
+            baseclass ='ATBlob'
+            baseschema ='ATBlobSchema'
 
-        else:
-            # contentish
-            if element.hasStereoType(['atfile'],
-                                     umlprofile=self.uml_profile):
-                baseclass ='ATFile'
-                baseschema ='ATFileSchema'
-            elif element.hasStereoType(['atimage'],
-                                       umlprofile=self.uml_profile):
-                baseclass ='ATImage'
-                baseschema ='ATImageSchema'
-            elif element.hasStereoType(['atevent'],
-                                       umlprofile=self.uml_profile):
-                baseclass ='ATEvent'
-                baseschema ='ATEventSchema'
-            elif element.hasStereoType(['atnewsitem'],
-                                       umlprofile=self.uml_profile):
-                baseclass ='ATNewsItem'
-                baseschema ='ATNewsItemSchema'
-            elif element.hasStereoType(['atlink'],
-                                       umlprofile=self.uml_profile):
-                baseclass ='ATLink'
-                baseschema ='ATLinkSchema'
-            elif element.hasStereoType(['atdocument'],
-                                       umlprofile=self.uml_profile):
-                baseclass ='ATDocument'
-                baseschema ='ATDocumentSchema'
-            elif element.hasStereoType(['atblob'],
-                                       umlprofile=self.uml_profile):
-                baseclass ='ATBlob'
-                baseschema ='ATBlobSchema'
-            else:
-                baseclass = 'BaseContent'
-                baseschema = 'BaseSchema'
-
+        # we want to mixin folderish behavior in contenthish baseclass? 
+        if folderish and fbaseclass != baseclass:
+            parentnames.append(fbaseclass)
+            
         # use CMFDynamicViewFTI?
         if not parent_is_archetype and \
            self.getOption('use_dynamic_view', element, True) and \
@@ -1637,6 +1640,8 @@ class ArchetypesGenerator(BaseGenerator):
         # if a parent is already an archetype we dont need a baseschema!
         if parent_is_archetype:
             baseclass = None
+        
+            
 
         # remember support
         if element.hasStereoType(self.remember_stereotype,
@@ -1660,9 +1665,10 @@ class ArchetypesGenerator(BaseGenerator):
             utils.isTGVFalse(element.getTaggedValue('base_class',1)) and not
             element.hasStereoType('mixin', umlprofile=self.uml_profile)):
             baseclasses = baseclass.split(',')
-            if (utils.isTGVTrue(element.getTaggedValue('parentclass_first')) or
-                utils.isTGVTrue(element.getTaggedValue('parentclasses_first')) or
-                element.hasStereoType(self.remember_stereotype, umlprofile=self.uml_profile)):
+            if (utils.isTGVTrue(element.getTaggedValue('parentclass_first')) 
+                or utils.isTGVTrue(element.getTaggedValue('parentclasses_first'))
+                or element.hasStereoType(self.remember_stereotype, 
+                                      umlprofile=self.uml_profile)):
                 # In case of remember, BaseMember needs to come first, to
                 # ensure that BaseMember.validate_roles overrides
                 # RoleManager.validate_roles
@@ -1671,11 +1677,11 @@ class ArchetypesGenerator(BaseGenerator):
             else:
                 # this way base_class is used before anything else
                 parentnames = baseclasses + parentnames
-                # deduplicate parentnames while preserving their order:
+
+        # deduplicate parentnames while preserving their order:
         dedupedParentNames = []
-        for parent in parentnames:
-            if not parent in dedupedParentNames:
-                dedupedParentNames.append(parent)
+        [dedupedParentNames.append(parent) for parent in parentnames \
+                                           if not parent in dedupedParentNames]
         return baseclass, baseschema, dedupedParentNames
 
     def generateArchetypesClass(self, element, **kw):
