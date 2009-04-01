@@ -67,7 +67,7 @@ Zope Dependencies
 ArchGenXML has a dependency on some zope3 machinery. That messes up other 
 zopes that use the same python version. So using buildout is recommended!
 
-Dependencies are: xmiparser, zope.interface, zope.component and zope.documenttemplate.
+Dependencies are: xmiparser, zope.interface, zope.component and zope.documenttemplate, stripogram.
 
 On Windows
 ----------

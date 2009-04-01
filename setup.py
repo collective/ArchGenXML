@@ -1,20 +1,30 @@
 #!/usr/bin/env python
-import re
 import os
 import sys
 from setuptools import setup
 from setuptools import find_packages
 
+def read(*rnames):
+    return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
+
 version = open(os.path.join(os.path.dirname(__file__), 'src', 'archgenxml', 
                             'version.txt')).read()
 shortdesc = 'UML to code generator for Plone'
-longdesc = open(os.path.join(os.path.dirname(__file__), 'README.txt')).read()
+
+long_description = (
+    read('README.txt')
+    + '\n' +
+    read('CHANGES.txt')
+    + '\n' +
+    'Download\n'
+    '========\n'
+    )
 
 setup(name='archgenxml',
       version=version,
       license='GPL',
       description=shortdesc,
-      long_description=longdesc,
+      long_description=long_description,
       classifiers=[
             'Programming Language :: Python',
             'License :: OSI Approved :: GNU General Public License (GPL)',

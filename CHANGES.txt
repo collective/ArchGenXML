@@ -1,0 +1,15 @@
+Changelog
+=========
+
+2.4 - 2009-04-01
+----------------
+
+- Fix use of index:extras tagged-value
+  [jensens]
+- Enable easy plone.app.content.ATBlob subclassing.
+  Add atblob stereotype to the profile.
+  [jensens]
+- Add stripogram (available as egg) as dependency.
+  [jensens]
+- Fix catalog assignment when catalogmultiples tagged valued is used.
+  [erico_andrei]

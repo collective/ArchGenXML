@@ -2,6 +2,8 @@
 ArchGenXML - UML to code generator for Plone
 ============================================
 
+.. contents::
+
 Overview
 ========
 
@@ -51,4 +53,3 @@ this topic.
 
 .. _Manual: http://plone.org/documentation/manual/archgenxml2
 .. _Google: http://www.google.com/search?q=archgenxml
-
