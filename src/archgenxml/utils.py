@@ -2,11 +2,12 @@
 #---------------------------------------------------------------
 # Author:      Philipp Auersperg
 #
-# Copyright:   (c) 2003-2006 BlueDynamics
+# Copyright:   (c) 2003-2009 BlueDynamics
 # Licence:     GPL
 #---------------------------------------------------------------
  
 from pkg_resources import resource_string
+from pkg_resources import get_distribution
 import logging
 import os.path
 
@@ -191,7 +192,8 @@ ArchGenXML %s
 """
 
 def version():
-    ver = resource_string(__name__, 'version.txt').strip()
+    dist = get_distribution('archgenxml')
+    ver = dist.version
     return "Version " + str(ver)
 
 def parsePythonModule(targetRoot, packagePath, fileName):
