@@ -191,10 +191,12 @@ ArchGenXML %s
 (c) 2003-2009 BlueDynamics Alliance, Austria, GPL 2.0 or later\
 """
 
-def version():
+def version(stripsvn=True):
     dist = get_distribution('archgenxml')
     ver = dist.version
-    return "Version " + str(ver)
+    if stripsvn:
+        ver = ver[:ver.find('.dev-')+4] 
+    return "Version %s" % ver 
 
 def parsePythonModule(targetRoot, packagePath, fileName):
     """Parse a python module and return the module object.

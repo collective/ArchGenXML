@@ -64,7 +64,7 @@ def main():
         log.critical("Hey, we need to be passed a UML file as an argument!")
         parser.print_help()
         sys.exit(2)
-    log.info(utils.ARCHGENXML_VERSION_LINE, str(utils.version()))
+    log.info(utils.ARCHGENXML_VERSION_LINE, str(utils.version(stripsvn=False)))
     # This is a little bit hacky. Probably should read optparse's doc
     # better. [Reinout]
     log.debug("Figuring out the settings we're passing to the "
