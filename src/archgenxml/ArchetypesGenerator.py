@@ -4309,7 +4309,7 @@ class ArchetypesGenerator(BaseGenerator):
             typedef['allow_discussion'] = pclass.getTaggedValue( \
                 'allow_discussion', 'False')
 
-            typedef['suppl_views'] = eval(typedef['suppl_views'])
+            typedef['suppl_views'] = list(eval(typedef['suppl_views']))
             if not typedef['immediate_view'] in typedef['suppl_views']:
                 typedef['suppl_views'].append(typedef['immediate_view'])
             if not typedef['default_view'] in typedef['suppl_views']:
