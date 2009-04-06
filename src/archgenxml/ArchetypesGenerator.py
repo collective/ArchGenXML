@@ -3658,20 +3658,20 @@ class ArchetypesGenerator(BaseGenerator):
                                        element.getPackage().getFilePath()+'/'+\
                                        element.name,
                                        None)
-                buf = self.generateModuleInfoHeader(element) + u'\n'
-                buf += self.dispatchXMIClass(element)
-                if isinstance(buf, unicode):
-                    buf = buf.encode('utf-8')
-
+                buf = self.generateModuleInfoHeader(element) 
                 if not element.isInterface():
+                    buf += self.dispatchXMIClass(element)
                     generated_classes = package.getAnnotation('generatedClasses') or []
                     generated_classes.append(element)
                     package.annotate('generatedClasses', generated_classes)
                 else:
+                    buf += self.dispatchXMIInterface(element)
                     generated_interfaces = package.getAnnotation('generatedInterfaces') or []
                     generated_interfaces.append(element)
                     package.annotate('generatedInterfaces', generated_interfaces)
 
+                if isinstance(buf, unicode):
+                    buf = buf.encode('utf-8')
 
                 log.debug("The outfile is ready to be written to disk now. "
                           "Loading it with the pyparser just to be sure we're "
