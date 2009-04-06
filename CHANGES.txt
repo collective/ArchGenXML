@@ -1,6 +1,12 @@
 Changelog
 =========
 
+We have SVN+Trac -> so a good commit message should be enough. Using a 
+CHANGES.txt isnt neccessary, but we can generate one from svn log if one
+prefers it in a text file. Any takers?
+
+-- Jensens
+
 2.5 - unreleased
 ----------------
 
