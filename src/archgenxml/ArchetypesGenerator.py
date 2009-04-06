@@ -587,19 +587,6 @@ class ArchetypesGenerator(BaseGenerator):
         @param tgvprefix:   prefix to fetch options from (such as widget:label,
                             widget:type, etc.)
         """
-        # XXX remove start in archgenxml 2.1
-        tgv = element.getTaggedValues()
-        if 0 and 'widget' in tgv.keys():
-            # Custom widget defined in attributes
-            # really ugly, we deprectae it (jensens)
-            log.warn('Deprecated: old style definiton in %s' % element)
-            formatted = u''
-            for line in tgv['widget'].split(u'\n'):
-                if formatted:
-                    line = utils.indent(line.strip(), 1)
-                formatted += u"%s\n" % line
-            return formatted
-        # remove end
         widgetdef = self._getWidgetDefinition(element, fieldname, fieldtype, 
                                               tgvprefix)
         widget = self.renderWidget(widgetdef)
@@ -612,7 +599,7 @@ class ArchetypesGenerator(BaseGenerator):
         widgetdef.update(__builtins__)
         dtml = HTML(templ, widgetdef)
         res = dtml()
-        return res.decode('utf8')
+        return res
 
     def _getWidgetDefinition(self, element, fieldname, ctype, tgvprefix):
         """a widget definition dictionary, 
@@ -643,8 +630,8 @@ class ArchetypesGenerator(BaseGenerator):
         # as a tagged value on the package or model
 
         # try to find a default widget defined in the model
-        option1 = 'default:widget:%s' % fieldname
-        option2 = 'default:widget:%s' % wdef['type']
+        option1 = u'default:widget:%s' % fieldname
+        option2 = u'default:widget:%s' % wdef['type']
         default = self.getOption(option1, element, None) or \
                   self.getOption(option2, element, None) 
         
@@ -746,7 +733,7 @@ class ArchetypesGenerator(BaseGenerator):
                 
         if not arraydefs:
             res = utils.indent(res, indent_level)
-            return res.decode('utf8')
+            return res
 
         adef = odict()
         adef.update(__builtins__)
@@ -761,7 +748,7 @@ class ArchetypesGenerator(BaseGenerator):
         dtml = HTML(templ, adef)
         res = dtml()
         res = utils.indent(res, indent_level)
-        return res.decode('utf8')        
+        return res
     
     
     def _getArrayFieldSpec(self, element):
@@ -1095,7 +1082,7 @@ class ArchetypesGenerator(BaseGenerator):
             mappedName = utils.mapName(name)
 
             field_specs.append(self.getFieldSpecFromAttribute(attrDef, element,
-                                                              indent_level=indent_level+1))
+                                                   indent_level=indent_level+1))
 
         for child in element.getChildren():
             name = child.getCleanName()
@@ -1107,7 +1094,7 @@ class ArchetypesGenerator(BaseGenerator):
 
             if child.isIntrinsicType():
                 field_specs.append(self.getFieldSpec(child, element,
-                                                     indent_level=indent_level+1))
+                                                   indent_level=indent_level+1))
 
         field_specs.extend(self.getReferenceFieldSpecs(element, indent_level=indent_level))
         return field_specs
@@ -1167,7 +1154,7 @@ class ArchetypesGenerator(BaseGenerator):
         if element.hasStereoType(self.extender_stereotypes,
                                  umlprofile=self.uml_profile):
             for field_spec in field_specs:
-                field_spec['fieldtype'] = 'Extended' + field_spec['fieldtype']
+                field_spec['fieldtype'] = u'Extended' + field_spec['fieldtype']
         fieldsformatted = self.getFieldsFormatted(field_specs)
         if element.hasStereoType(self.extender_stereotypes,
                                  umlprofile=self.uml_profile):
@@ -2056,7 +2043,7 @@ class ArchetypesGenerator(BaseGenerator):
                 package.annotate('generatedAdapters',[adapter])
             else:
                 adaptersList.append(adapter)
-        return outfile.getvalue()
+        return outfile.getvalue().decode('utf8')
     
     def getImplementers(self,element,includeHidden=True):
         """ returns the list of qualified path to classes implementing this interface element or flavor """
@@ -3667,21 +3654,24 @@ class ArchetypesGenerator(BaseGenerator):
 
             # generate class
             try:
-                outfile = StringIO()
-                element.parsed_class = self.parsed_class_sources.get(element.getPackage().getFilePath()+'/'+element.name,None)
-                outfile.write(self.generateModuleInfoHeader(element))
+                element.parsed_class = self.parsed_class_sources.get(
+                                       element.getPackage().getFilePath()+'/'+\
+                                       element.name,
+                                       None)
+                buf = self.generateModuleInfoHeader(element) + u'\n'
+                buf += self.dispatchXMIClass(element)
+                if isinstance(buf, unicode):
+                    buf = buf.encode('utf-8')
+
                 if not element.isInterface():
-                    print >>outfile, self.dispatchXMIClass(element)
                     generated_classes = package.getAnnotation('generatedClasses') or []
                     generated_classes.append(element)
                     package.annotate('generatedClasses', generated_classes)
                 else:
-                    print >>outfile, self.dispatchXMIInterface(element)
                     generated_interfaces = package.getAnnotation('generatedInterfaces') or []
                     generated_interfaces.append(element)
                     package.annotate('generatedInterfaces', generated_interfaces)
 
-                buf = outfile.getvalue()
 
                 log.debug("The outfile is ready to be written to disk now. "
                           "Loading it with the pyparser just to be sure we're "
@@ -3700,10 +3690,7 @@ class ArchetypesGenerator(BaseGenerator):
                                  outfilepath)
                     raise
                 classfile = self.makeFile(outfilepath)
-                # TBD perhaps check if the file is parseable
-                if type(buf) == types.UnicodeType:
-                    buf = buf.encode('utf-8')
-                print >> classfile, buf
+                classfile.write(buf)
                 classfile.close()
             except:
                 #roll back the changes
