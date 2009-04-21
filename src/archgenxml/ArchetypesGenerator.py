@@ -616,6 +616,9 @@ class ArchetypesGenerator(BaseGenerator):
         
         # process the widgets prefixed options 
         for key, value in element.getTaggedValues().items():
+            if key is None:
+                log.warn('Empty tagged value found!')
+                continue # happens sometimes in argouml
             if not key.startswith(tgvprefix):
                 continue
             if key[len(tgvprefix):] == 'type':
@@ -4106,12 +4109,12 @@ class ArchetypesGenerator(BaseGenerator):
 
         # and now start off with the class files
         self.generatedModules=[]
-
+        profile_dir = self.options.option('profile_dir')
         root = xmiparser.parse(self.xschemaFileName,
                                packages=self.generate_packages,
                                generator=self,
                                generate_datatypes=self.generate_datatypes,
-                               profile_dir=self.options.option('profile_dir'))
+                               profile_dir=profile_dir)
 
         if self.outfilename:
             log.debug("We've got an self.outfilename: %s.",
