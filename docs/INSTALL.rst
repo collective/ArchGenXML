@@ -1,14 +1,15 @@
-=====================
-Installing ArchGenXML 
-=====================
+============
+Installation 
+============
 
 ArchGenXML has a dependency on some zope 3 eggs. To not mess up your global site-packages directory, using buildout or virtualenv is recommended.
 
 Note: In an older version of AGX, a Zope 3 installation could be configured in a *~/.agx_zope_path* file. This case is not supported anymore. You can delete this file if you have it.
 
-On Windows, I assume you installed Python 2.4.4 from the "msi" installer and installed it in the default location. If you have not already done, configure the Path environment variable to include your python path and scripts directory.
+On Windows, I assume you installed Python 2.4.4 from the `msi installer`_ and installed it in the default location. If you have not already done, configure the Path environment variable to include your python path and scripts directory.
 For this, got to Control Panel, Advanced, Environment Variables, edit Path, append ``;C:\\Python24;C:\\Python24\Scripts`` to the existing string.
 
+.. _`msi installer`: http://www.python.org/download/releases/2.4.4/
 
 Installing stable version
 =========================
@@ -17,9 +18,10 @@ Plone 3.x buildout is shipped with old Zope 3.3. ArchGenXML depends on latest ve
 
 If you want to install archgenxml via buildout (recommended), read *Using buildout* and skip the *Using easy_install in a virtualenv* part.
 
+It can happen ArchGenXML version on plone.org is older than Pypi because the release manager forgot to upload it on plone.org or for another reason. easy_install and buildout will get by default the latest ArchGenXML version on Pypi, so it's fine.
+
 Using buildout
 --------------
-
 Create a fresh directory and go into it::
 
     $ mkdir archgenxml_buildout
@@ -93,7 +95,6 @@ I call below *<path to archgenxml>* the path to the virtualenv agx directory.
 
 Installing development version
 ==============================
-
 ArchGenXML's svn trunk is for the 2.x development version. 
 
 As usual, the goal is to keep trunk workable. Some of the developers
@@ -140,11 +141,14 @@ On Windows, you may have to install and configure the `mingw32 compiler`_ to com
 
 Support
 =======
-For any questions, problems please ask on the `archetypes-users mailing-list`_.
+For any questions or problems, please ask on the `archetypes-users mailing-list`_.
 Please don't use comments on the manual pages. Not everybody is alerted when a comment is added.
+
+If you want to contribute to this documentation, please post on the `plone-docs mailing-list`_.
 
 .. _`mingw32 compiler`: http://plone.org/documentation/how-to/using-buildout-on-windows
 .. _`archetypes-users mailing-list`: http://plone.org/support/forums/archetypes
+.. _`plone-docs mailing-list`: http://plone.org/support/forums/docs
 
 
 ===============================================
@@ -174,7 +178,19 @@ Assumptions
 ===========
 These are my assumptions:
 
-* You already have latest sun java JRE installed
+* You already have latest sun java JRE installed.
+  You can get it on Ubuntu with::
+  
+    apt-get install sun-java6-jdk
+
+  If::
+   
+    update-alternatives --list java
+  
+  don't give you */usr/lib/jvm/java-6-sun/jre/bin/java*, you can set java sun as the default java implementation like this::
+  
+    update-alternatives --set java /usr/lib/jvm/java-6-sun/jre/bin/java
+
 * You have copied archgenxml_profile.xmi in the *<path to archgenxml>/profiles* directory like described in the previous section.
 
 Install ArgoUML
