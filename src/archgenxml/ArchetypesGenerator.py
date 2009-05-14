@@ -4288,7 +4288,7 @@ class ArchetypesGenerator(BaseGenerator):
             typedef['factory'] = 'add%s' % pclass.getCleanName()
             
             for tgv in pclass.getTaggedValues():
-                if tgv.startswith('fti:'):
+                if tgv and tgv.startswith('fti:'):
                     typedef[tgv]=pclass.getTaggedValue(tgv)
 
             subs = self._getSubtypes(pclass)            
