@@ -176,6 +176,7 @@ def main():
         'int',
         'lines',
         'multiselection',
+        'keywords',
         'photo',
         'reference',
         'relation',

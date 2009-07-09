@@ -144,6 +144,14 @@ TYPE_MAP = {
         },
         'index': 'KeywordIndex',
     },
+    'keywords': {
+        'field': u'LinesField',
+        'map': {
+            u'enforceVocabulary': u'False',
+            u'multiValued': u'1',
+        },
+        'index': 'KeywordIndex',
+    },
     'text':  {
         'field': u'TextField',
         'map': {},
@@ -256,6 +264,7 @@ WIDGET_MAP = { # only deal with special cases, such as combined field-widgets
     'richtext': u'RichWidget',
     'selection': u'SelectionWidget',
     'multiselection': u'MultiSelectionWidget',
+    'keywords': u'KeywordWidget',
     'reference': u'ReferenceBrowserWidget',
     'backreference': u'BackReferenceWidget',
     'BackReference': u'BackReferenceWidget', # deprecated
