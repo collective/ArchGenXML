@@ -2958,6 +2958,7 @@ class ArchetypesGenerator(BaseGenerator):
         
         # dependend_profiles
         dependend_profiles = package.getTaggedValue('dependend_profiles', '')
+        dependend_profiles = ','.join(dependend_profiles.split('\n')) 
         dependend_profiles = [dp.strip() for dp in dependend_profiles.split(',')\
                               if dp.strip()]
         
