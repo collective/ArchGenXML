@@ -85,7 +85,6 @@ class TestArchetypesGenerator(unittest.TestCase):
         generator = ArchetypesGenerator('/dev/null', **self.options)
         headerinfo = generator.getHeaderInfo(self.model)
 
-        print headerinfo['copyright']
         self.failUnless(headerinfo['copyright'] == expected)
 
 
