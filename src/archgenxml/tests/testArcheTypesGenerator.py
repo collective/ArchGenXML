@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import unittest
 import time
 
@@ -71,7 +73,20 @@ class TestArchetypesGenerator(unittest.TestCase):
         headerinfo = generator.getHeaderInfo(self.model)
 
         self.failUnless(headerinfo['copyright'] == expected)
-        
+
+    def test_copyright_info_unicode(self):
+        """Test that non-ASCII characters are processed correctly."""
+        self.options.update(author='Äöü€')
+
+        year = time.localtime()[0]
+        expected = 'Copyright (c) %s by Äöü€ <%s>' % (year,
+                                                      self.options['email'])
+
+        generator = ArchetypesGenerator('/dev/null', **self.options)
+        headerinfo = generator.getHeaderInfo(self.model)
+
+        print headerinfo['copyright']
+        self.failUnless(headerinfo['copyright'] == expected)
 
 
 def test_suite():

@@ -565,8 +565,11 @@ class BaseGenerator:
     def getHeaderInfo(self, element, name=None, all=0):
         log.debug("Getting info for the header...")
 
+        encoding = self.getOption('encoding', element, 'utf-8')
+        log.debug("Encoding for python files is set to %s" % encoding)
+        
         authorline = self.getAuthors(element)[2]
-        copyright = COPYRIGHT % \
+        copyright = COPYRIGHT.encode(encoding) % \
             (str(time.localtime()[0]),
              self.getOption('copyright', element, self.copyright) or
                  authorline)
@@ -598,9 +601,6 @@ class BaseGenerator:
             log.debug("We don't want version info in this file.")
             versiontext = ''
             
-        encoding = self.getOption('encoding', element, 'utf-8')
-        log.debug("Encoding for python files is set to %s" % encoding)
-        
         moduleinfo = {
             'authors': ', '.join(authors),
             'emails': ', '.join(emails),
@@ -621,11 +621,12 @@ class BaseGenerator:
         optional.
         """
 
-        result = ''
+        encoding = self.getOption('encoding', element, 'utf-8')
+
         fileheaderinfo = self.getHeaderInfo(element, name=name, all=all)
-        result = ENCODING_HEADER % fileheaderinfo
+        result = ENCODING_HEADER.encode(encoding) % fileheaderinfo
         if all or self.module_info_header:
-            result += MODULE_INFO_HEADER % fileheaderinfo
+            result += MODULE_INFO_HEADER.encode(encoding) % fileheaderinfo
         return result
 
     def getAuthors(self, element):
