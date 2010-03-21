@@ -4,6 +4,9 @@ Changelog
 2.5 (unreleased)
 ----------------
 
+- Removed DeprecationWarning about the sets module.
+  [vincentfretin]
+
 - Header info: use better formatting for author.
   Encode module header strings so we don't choke on non-ASCII chars.
   [moldy]

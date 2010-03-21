@@ -4,9 +4,6 @@ logger = logging.getLogger('<dtml-var "product_name">: setuphandlers')
 from Products.<dtml-var "product_name">.config import PROJECTNAME
 from Products.<dtml-var "product_name">.config import DEPENDENCIES
 import os
-<dtml-if "catalogmultiplexed">
-from sets import Set
-</dtml-if>
 <dtml-if "hasvocabularies or hasrelations">
 from config import product_globals
 from Globals import package_home
@@ -141,7 +138,7 @@ def setupCatalogMultiplex(context):
 </dtml-in>
     for meta_type in catalogmap:
         submap = catalogmap[meta_type]
-        current_catalogs = Set([c.id for c in atool.getCatalogsByType(meta_type)])
+        current_catalogs = set([c.id for c in atool.getCatalogsByType(meta_type)])
         if 'white' in submap:
             for catalog in submap['white']:
                 if getToolByName(site, catalog, None) is None:

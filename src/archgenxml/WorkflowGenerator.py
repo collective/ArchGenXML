@@ -2,7 +2,6 @@ from operator import itemgetter
 import os.path
 import utils
 import logging
-from sets import Set
 from PyParser import PyModule
 from BaseGenerator import BaseGenerator
 from zope.documenttemplate import HTML
@@ -161,7 +160,7 @@ class WorkflowGenerator(BaseGenerator):
             subscribers[id]['type'] = 'workflow'
             subscribers[id]['payload'] = info
             if 'transitions' not in subscribers[id]:
-                subscribers[id]['transitions'] = Set()
+                subscribers[id]['transitions'] = set()
             subscribers[id]['transitions'].update([info['transition']])
             subscribers[id]['for'] = [
                 info['objinterface'],
