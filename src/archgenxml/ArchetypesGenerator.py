@@ -95,6 +95,9 @@ class DummyModel:
     def getParent(self, *a, **kw):
         return None
 
+    def getModuleName(self):
+        return ''
+
     getCleanName = getName
     getFilePath = getName
     getModuleFilePath = getName
