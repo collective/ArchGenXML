@@ -568,7 +568,7 @@ class BaseGenerator:
         encoding = self.getOption('encoding', element, 'utf-8')
         log.debug("Encoding for python files is set to %s" % encoding)
         
-        authorline = self.getAuthors(element)[2]
+        authors, emails, authorline = self.getAuthors(element)
         copyright = COPYRIGHT.encode(encoding) % \
             (str(time.localtime()[0]),
              self.getOption('copyright', element, self.copyright) or
@@ -576,7 +576,6 @@ class BaseGenerator:
         log.debug("Copyright = %r.", copyright)
 
         license = self.getLicenseInfo(element, all=all)
-        authors, emails, authorline = self.getAuthors(element)
 
         if self.getOption('rcs_id', element, False):
             log.debug("Using id keyword.")
