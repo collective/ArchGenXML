@@ -565,9 +565,11 @@ class BaseGenerator:
     def getHeaderInfo(self, element, name=None, all=0):
         log.debug("Getting info for the header...")
 
+        authorline = self.getAuthors(element)[2]
         copyright = COPYRIGHT % \
             (str(time.localtime()[0]),
-             self.getOption('copyright', element, self.copyright) or self.author)
+             self.getOption('copyright', element, self.copyright) or
+                 authorline)
         log.debug("Copyright = %r.", copyright)
 
         license = self.getLicenseInfo(element, all=all)
