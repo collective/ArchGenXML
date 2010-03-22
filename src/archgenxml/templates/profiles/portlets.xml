@@ -1,0 +1,16 @@
+<portlets>
+<dtml-in "portlets">
+<dtml-let klass="_['sequence-item']">
+ <portlet
+   addview="Products.<dtml-var "klass.getQualifiedName(includeRoot=True)">"
+   title="<dtml-var "klass.getTaggedValue('name') or klass.getName()">"
+   description="<dtml-var "klass.getTaggedValue('description')">"
+ />
+</dtml-let>
+</dtml-in>
+
+<!-- ##code-section PORTLETS -->
+<!-- ##/code-section PORTLETS -->
+
+</portlets>
+ 

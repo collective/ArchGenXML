@@ -1,0 +1,15 @@
+<dtml-if "not widgetclass">
+<dtml-var "fieldclass">._properties['widget'](
+<dtml-else>
+<dtml-var "widgetclass">(
+</dtml-if>
+<dtml-in "options.keys()">
+<dtml-let key="_['sequence-item']">
+<dtml-if "len(options[key].split('\n'))>1">
+    <dtml-var "key">=<dtml-var "indent(options[key], 1, skipFirstRow=True)">,
+<dtml-else>
+    <dtml-var "key">=<dtml-var "options[key]">,
+</dtml-if>
+</dtml-let>
+</dtml-in>
+)

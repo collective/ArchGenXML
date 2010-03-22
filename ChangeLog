@@ -1,0 +1,126 @@
+2007-11-23  Encolpe Degoute <encolpe.degoute@free.fr>
+    * Fix  #265 — generation crash on widget stereotype
+	Add a very basic skin directories retriever for template generation
+
+2007-11-05 Encolpe Degoute <encolpe.degoute@free.fr>
+    * Fix  #133 — Workflows crash on generate with Poseidon zuml files
+
+2007-10-15 Encolpe Degoute <encolpe.degoute@free.fr>
+    * Add a workflow generation sample for ArgoUML.
+
+2007-10-13 Encolpe Degoute <encolpe.degoute@ingeniweb.com>
+    * Fix class generation that try to import IClassName when ClassName is an
+	interface.
+
+2007-10-13 Encolpe Degoute <encolpe.degoute@free.fr>
+    * autoinstallOnly name was removed from getTools parameters but not into
+	its code.
+
+2007-09-06 Jens Klein <jens@bluedynamics.com> and 
+           Robert Niederreiter <robertnqbluedynamics.com>
+	* tons of refactorings toward Genericsetup usage.
+	get rid of Install.py!
+
+2007-09-05 Jens Klein <jens@bluedynamics.com> and 
+           Robert Niederreiter <robertnqbluedynamics.com>
+
+	* change the handling of skins directories and its registration.
+	generate/ use GS-profile for skin registration. use directory
+	structure like in DIYPloneStyle as default. keep BBB. make it
+	configureable. see documentation of tgv skin_registration and 
+	skin_directories.
+	* change the type registration: use a GS-profile.
+	* removed all references to CMFMember, it will no longer work with 
+	Plone >=2.5
+	* marked some parts for the portlet-support as outdated. 
+
+2007-08-20  Maurits van Rees  <maurits@vanrees.org>
+
+	* src/archgenxml/WorkflowGenerator.py
+	(WorkflowGenerator.generateWorkflows): Only write out the
+	rolemap.xml when we have extra roles to define there.  Might need
+	to be done in the template itself with a dtml-if or something.
+	This might fix http://plone.org/products/archgenxml/issues/135
+	
+2007-08-08  Reinout van Rees  <reinout@zestsoftware.nl>
+
+	* setup.py: Making it a 1.6 beta 1.
+
+2007-08-06  Reinout van Rees  <reinout@zestsoftware.nl>
+
+	* src/archgenxml/WorkflowGenerator.py: Switched over to generic
+	setup workflow generation. The old files (in Extensions/*) have
+	been removed, everything is now in profiles/default.
+
+2007-08-01  Maurits van Rees  <m.van.rees@zestsoftware.nl>
+
+	* src/archgenxml/zopeimportfixer.py (prepareZopeImport): Add
+	descriptive error message when we cannot import zope.component but
+	_can_ import zope itself due to a messed up PYTHONPATH.
+
+2007-07-19  Reinout van Rees  <reinout@zestsoftware.nl>
+
+	* src/archgenxml/ArchetypesGenerator.py: Added <<atfile>>,
+	<<atevent>> and <<atdocument>> stereotypes in addition to the
+	already existing <<atfolder>>.
+
+2007-05-30  Reinout van Rees  <reinout@zestsoftware.nl>
+
+	* src/archgenxml/zopeimportfixer.py: Moved the zope import fixer
+	and the logfile initializer to separate modules to clean up
+	utils.py. (utils.py can now import zope stuff, too).
+
+	* various files: Cleanup.
+
+2007-05-22  Reinout van Rees  <reinout@zestsoftware.nl>
+
+	* src/archgenxml/ArchGenXML.py: Added first view (for generating a
+	config.py). Still primitive, but I've at least moved off some code
+	to a view. Also added a still-empty profiles/default genericsetup
+	directory including registering it in the __init__.py and applying
+	it in the install.py. Onwards to the next thing!
+
+2007-03-06  Reinout van Rees  <reinout@vanrees.org>
+
+	* src/archgenxml/ArchetypesGenerator.py: Pander added support for
+	datagridwidget, atcolorpicker widget and atcountry widget. If you
+	use them, you'll need to have those widgets available as they're
+	not stock archetypes widgets.
+
+2007-02-11  Reinout van Rees  <reinout@vanrees.org>
+
+	* README.txt, INSTALL.txt and others: Updated readme for new 1.6
+	development. Added INSTALL.txt installation instructions.
+
+2006-10-02  Reinout van Rees  <reinout@vanrees.org>
+
+	* All files: Jens Klein moved the 1.6 branch to trunk, what was
+	trunk is now the 1.5 branch. The 1.6 branch has been removed. This
+	is now finally the new full-speed archgenxml dev target again!
+
+2006-10-02  Reinout van Rees  <reinout@vanrees.org>
+
+	* numerous files: Backported changes from svn trunk (1.5
+	maintenance branch)
+
+2006-09-05  Reinout van Rees  <reinout@zestsoftware.nl>
+
+	* src/archgenxml/templates/view_class.py: Added zope3 viewclass
+	template and stereotype <<view_class>>.
+
+2006-09-04  Reinout van Rees  <reinout@zestsoftware.nl>
+
+	* src/archgenxml/: Zapped
+	functionality belonging to zapped tgv's
+
+2006-08-30  Reinout van Rees  <reinout@vanrees.org>
+
+	* Moved reinout-cleanup branch to archgenxml16 branch.
+
+	* Included fixes made in the meantime on trunk.
+
+	* Started a changelog, please be dilligent in keeping it up to
+	date! (oh, and please use real tabs to indent the messages, emacs'
+	changelog mode will do that just fine for you, if you have it).
+	
+

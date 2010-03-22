@@ -1,0 +1,11 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+<dtml-in "subscribers.keys()">
+<dtml-let info="subscribers[_['sequence-item']]">
+  <subscriber
+      for="<dtml-var "info['for'][0]">
+           <dtml-var "info['for'][1]">"
+      handler="<dtml-var "info['handler']">"
+  />
+</dtml-let>
+</dtml-in>  
+</configure>

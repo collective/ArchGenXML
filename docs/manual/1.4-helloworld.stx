@@ -1,0 +1,70 @@
+title: Hello World
+description: Create your first content type with ArchGenXML
+Content-Type: text/structured
+
+Open the UML tool of your choice. Make a new UML model and give it a name 
+'HelloWorld'. Then add a class diagram (most UML tools do this automatically). 
+
+Choose the tool for class creation and add a class to the diagram. Give it a 
+name such as "HelloType" and add an attribute 'HelloText' with type 
+'String'. The "helloworld.zargo":helloworld.zargo was created with ArgoUML 
+and contains the type as described above.
+
+"Example: HelloWorld with HelloType in UML":img:helloworld.png 
+
+Generating the product
+
+ Save/export your model as an XMI file with the name MyFirstExample.xmi (or in 
+ an XMI-container format like .uml, .zargo or .zuml). Then go to the command line 
+ and execute::
+
+  $ archgenxml helloworld.zargo
+
+ ArchGenXML will begin code generation. When it completes, you will have a new 
+ folder 'HelloWorld' on your file system. Its contents looks like::
+
+  HelloWorld/
+  |-- Extensions
+  |   |-- Install.py
+  |   `-- __init__.py
+  |-- __init__.py
+  |-- config.py
+  |-- configure.zcml
+  |-- hellotype.py
+  |-- interfaces.py
+  |-- profiles
+  |   `-- default
+  |       |-- cssregistry.xml
+  |       |-- factorytool.xml
+  |       |-- import_steps.xml
+  |       |-- jsregistry.xml
+  |       |-- membrane_tool.xml
+  |       |-- skins.xml
+  |       |-- toolset.xml
+  |       |-- types
+  |       |   `-- HelloType.xml
+  |       `-- types.xml
+  |-- profiles.zcml
+  |-- refresh.txt
+  |-- setuphandlers.py
+  |-- skins
+  |   |-- helloworld_images
+  |   |-- helloworld_styles
+  |   `-- helloworld_templates
+  `-- version.txt
+
+
+Installing and using the generated product
+
+ Move the whole folder 'HelloWorld' to your Zope/Plone 3 instance's 'Products' 
+ folder. Restart  Zope, open Plone in a browser and log in as Manager. Choose 
+ 'Plone Setup' from the personal bar and choose 'Add/Remove Products'. A new 
+ product 'HelloWordl' should now appear in the list of products
+ available for install. Choose it and click 'install'. Go to your personal 
+ folder. In the list of addable items you'll find the new product as an 
+ addable content type. Add a test instance to see if it works.
+
+ "Plone: HelloType in action":img:helloworld-plone-shot.png
+
+ Thats the trick. By the way: The title is always part of the schema. But you can
+ hide it or recycle it later, don't worry

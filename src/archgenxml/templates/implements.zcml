@@ -1,0 +1,20 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:five="http://namespaces.zope.org/five">
+
+  <!-- ##code-section HEAD -->
+  <!-- ##/code-section HEAD -->
+  
+<dtml-in "implementers">
+ <dtml-let implementer="_['sequence-item']">
+ <five:implements
+    class="<dtml-var "implementer['class']">"
+    interface="<dtml-var "implementer['qualifiedInterfaceName']">"
+   />
+ </dtml-let>
+</dtml-in>
+
+
+ <!-- ##code-section FOOT -->
+  <!-- ##/code-section FOOT -->
+
+</configure>

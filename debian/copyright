@@ -1,0 +1,12 @@
+This package was debianized by Jens W. Klein <jens@bluedynamics.com> on
+Fri,  7 Sep 2007 14:44:09 +0200.
+
+It is hosted at http://svn.plone.org/svn/archetypes/ArchGenXML/ and its website 
+is http://plone.org/products/archgenxml
+
+Copyright: 2003-2007 BlueDynamics Alliance, Austria, Author Philipp Auersperg 
+
+License: GPL
+
+The Debian packaging is (C) 2007, Jens W. Klein <jens@bluedynamics.com> and
+is licensed under the GPL, see `/usr/share/common-licenses/GPL'.

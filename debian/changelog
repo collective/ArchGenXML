@@ -1,0 +1,5 @@
+archgenxml (2.0) alpha; urgency=low
+
+  * Initial trial to build a debian package
+
+ -- Jens Klein <jens@bluedynamics.com>  Thu, 07 Sep 2007 16:06:00 +0200

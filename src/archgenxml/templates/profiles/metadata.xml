@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<metadata>
+<dtml-if "description">
+  <description><dtml-var "description"></description>
+</dtml-if>
+  <version><dtml-var "version"></version>
+<dtml-if "dependencies">
+  <dependencies>
+<dtml-in "dependencies">
+    <dependency><dtml-var "_['sequence-item']"></dependency>
+</dtml-in>
+  </dependencies>
+</dtml-if>
+  <!-- ##code-section METADATA -->
+  <!-- ##/code-section METADATA -->
+</metadata>

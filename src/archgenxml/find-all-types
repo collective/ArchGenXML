@@ -1,0 +1,34 @@
+#!/usr/bin/python
+
+#
+# Use the typeMap defined in ArchetypesGenerator.ArchetypesGenerator to print
+# a list of of the types natively supported by ArchGenXML
+#
+
+import ArchetypesGenerator
+
+typeMap = ArchetypesGenerator.ArchetypesGenerator.typeMap
+widgetMap = ArchetypesGenerator.ArchetypesGenerator.widgetMap
+
+keys = typeMap.keys ()
+keys.sort ()
+
+for type in keys:
+   
+    widget = widgetMap.get (type, '')
+    
+    print "%s (%s) -- " % (type, typeMap[type]['field'])
+    
+    if widget:
+        print
+        print "  o Uses widget:", widget
+        
+    if typeMap[type]['map']:
+        print
+        print "  o Sets attributes:"
+    
+        for (prop, value) in typeMap[type]['map'].items ():
+            print
+            print "    o ", prop, '=', value
+
+    print

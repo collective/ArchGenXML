@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+<import-steps>
+
+<dtml-if "qidependencystep">
+ <import-step 
+    id="<dtml-var "product_name">-QI-dependencies" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.installQIDependencies"
+    title="Dependend QI installables for <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   Install quickinstaller dependencies for <dtml-var "product_name">
+ </import-step>
+ 
+</dtml-if> 
+<dtml-if "notsearchabletypes">
+ <import-step 
+    id="<dtml-var "product_name">-Hide-Types-From-Search" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.setupHideTypesFromSearch"
+    title="Hide types from search for <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   <dependency step="<dtml-var "product_name">-QI-dependencies"/>
+   Hides types from the search form for <dtml-var "product_name">
+ </import-step>
+ 
+</dtml-if>
+<dtml-if "hidemetatypes">
+ <import-step 
+    id="<dtml-var "product_name">-Hide-Types-From-Navigation" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.setupHideMetaTypesFromNavigations"
+    title="Hide types from navigation for <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   <dependency step="<dtml-var "product_name">-QI-dependencies"/>
+   Hides types from the navigation tree for <dtml-var "product_name">
+ </import-step>
+ 
+</dtml-if>
+<dtml-if "toolnames">
+ <import-step 
+    id="<dtml-var "product_name">-Hide-Tools-From-Navigation" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.setupHideToolsFromNavigation"
+    title="Hide Custom tools from Navigation for <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   <dependency step="<dtml-var "product_name">-QI-dependencies"/>
+   Hides custom tools from navigation tree for <dtml-var "product_name">
+ </import-step>
+
+<dtml-if "fixtools">
+ <import-step 
+    id="<dtml-var "product_name">-Fix-Tools" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.fixTools"
+    title="Fix tools for <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   <dependency step="<dtml-var "product_name">-QI-dependencies"/>
+   call initializeArchetypes for tools in <dtml-var "product_name">
+ </import-step>
+ 
+</dtml-if>
+</dtml-if>
+<dtml-if "hasrelations">
+ <import-step 
+    id="<dtml-var "product_name">-Import-Relations" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.installRelations"
+    title="Install Relations for <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   <dependency step="<dtml-var "product_name">-QI-dependencies"/>
+   Installs the relations.xml file into relations library for <dtml-var "product_name">
+ </import-step>
+ 
+</dtml-if>
+ 
+<dtml-if "hasvocabularies">
+ <import-step 
+    id="<dtml-var "product_name">-Install-Vocabularies" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.installVocabularies"
+    title="Install Vocabularies for <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   <dependency step="<dtml-var "product_name">-QI-dependencies"/>
+   Installs the vocabulary files into vocabulary library for <dtml-var "product_name">
+ </import-step>
+
+</dtml-if>
+<dtml-if "memberclasses">
+ <import-step 
+    id="<dtml-var "product_name">-Setup-Member-Types" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.setupMemberTypes"
+    title="setup Remember(Membrane) types for <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   <dependency step="<dtml-var "product_name">-QI-dependencies"/>
+   setup Remember(Membrane) types for <dtml-var "product_name">
+ </import-step>
+
+</dtml-if>
+
+<dtml-if "catalogmultiplexed">
+ <import-step 
+    id="<dtml-var "product_name">-Setup-Catalog-Multiplex" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.setupCatalogMultiplex"
+    title="setup catalog multiplex for <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   <dependency step="toolset"/>
+   setup catalog multiplex for <dtml-var "product_name">
+ </import-step>
+</dtml-if>
+
+ <import-step 
+    id="<dtml-var "product_name">-Update-RoleMappings" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.updateRoleMappings"
+    title="Update Workflow role mappings for <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   <dependency step="<dtml-var "product_name">-QI-dependencies"/>
+   updates the workflow role mappings for <dtml-var "product_name">
+ </import-step>
+
+ <import-step 
+    id="<dtml-var "product_name">-postInstall" 
+    handler="Products.<dtml-var "product_name">.setuphandlers.postInstall"
+    title="manual coded post-install for <dtml-var "product_name">"
+    version="<dtml-var "now">">
+   <dependency step="<dtml-var "product_name">-QI-dependencies"/>
+   manual coded post-install for <dtml-var "product_name">
+ </import-step>
+
+<!-- ##code-section ADDITIONALSTEPS -->
+<!-- ##/code-section ADDITIONALSTEPS -->
+
+</import-steps>
+ 

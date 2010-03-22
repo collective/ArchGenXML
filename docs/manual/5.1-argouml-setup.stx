@@ -1,0 +1,79 @@
+title: Make ArgoUML provide tagged values and stereotypes in dropdown menus
+description: ArgoUML can load a "definition" file with predefined tagged values 
+and stereotypes. So you have all the custom tagged values and stereotypes used 
+by a ArchGenXML available in dropdown menus.
+Content-Type: text/structured
+
+Background and Notes
+
+ The screenshot below shows ArgoUML with the custom tags from the definition 
+ file. Having many of the possible options available from a menu has the 
+ following benefits:
+
+ * saves time - sometimes clicking is faster  than typing
+
+ * reduces errors - no more mispelled tags*
+
+ * presents a learning opportunity - seeing new tags and stereotypes provides a 
+   springboard for further investigation
+
+ "screenshot argouml with profile":img:stereotypes-argouml.png
+
+ This walks you through how a setup of ArgoUML on an Ubuntu desktop system. The 
+ methodology should be easily adjusted to other platforms.
+
+Assumptions
+
+ These are my assumptions:
+
+ * You already have java (sun j2re 1.5) installed
+
+Getting ArgoUML and the definition file
+
+ This instructions are tested with ArgoUML v0.24
+
+ Download and unpack the file "argouml.tigris.org":argouml.tigris.org 
+
+ A good location to unpack is '/opt/ArgoUML'. It is handy to symlink 
+ 'argouml.sh' to '/usr/local/bin/argouml'.
+
+ Download the definition file and put it into /opt/ArgoUML . If you used 
+ easy_install it is not included. The tarball and the debian packages (XXX TODO)
+ does include it. The tarball in the 'umltools/argouml' directory, the debian 
+ package place in under '/usr/share/archgenxml' (XXX TODO) directory.
+
+ The file can also be generated - useful for those using svn trunk and an 
+ outdated. XXX TODO How does it work?
+
+Launching ArgoUML with definition file
+
+ To launch the file change to the '/opt/ArgoUML' directory and run::
+
+  /PATH/TO/java -Dargo.defaultModel=archgenxml_profile.xmi -jar argouml-mdr.jar
+  
+ To simplify your life just put the line with absolute pathes into a shell 
+ script 'agxargo' and run it instead. 
+
+ User on windows OS might prefer the line (can someone test and report?)::
+ 
+  %_JAVACMD% %ARGOUML_OPTS% -jar "%ARGO_HOME%argouml-mdr.jar" % to %_JAVACMD% -Dargo.defaultModel=ArchGenXMLprofile.xmi -jar %ARGO_HOME%argouml-mdr.jar" %
+
+
+Why ArgoUML?
+
+ Just a few notes on why using ArgoUML.
+
+ * Mature - it supports the important stuff (at least as far as ArchGenXML
+   goes), state diagrams, tagged-values, stereotypes.
+
+ * It is pretty lightweight, which is important when your laptop only has
+   256 MB of RAM and a PIII 700 Mhz processor. Poseidon Community Edition,
+   though nice, is just too memory hungry.
+
+ * Price is good (free and open source)
+
+ Why Not ArgoUML ?
+
+ * It supports only UML 1.4 (UML 2.0 is needed to use adatpers)
+
+ * It doesn't support Undo

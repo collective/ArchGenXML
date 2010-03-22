@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<object name="portal_css" meta_type="Stylesheets Registry">
+<dtml-in "css">
+ <!-- EXAMPLE DEFINITION
+ <stylesheet title="<dtml-var "_['sequence-item']['title']">"
+             cacheable="<dtml-var "_['sequence-item']['cacheable']">"
+             compression="<dtml-var "_['sequence-item']['compression']">"
+             cookable="<dtml-var "_['sequence-item']['cookable']">"
+             enabled="<dtml-var "_['sequence-item']['enabled']">"
+             expression="<dtml-var "_['sequence-item']['expression']">"
+             id="<dtml-var "_['sequence-item']['id']">"
+             media="<dtml-var "_['sequence-item']['media']">"
+             rel="<dtml-var "_['sequence-item']['rel']">"
+             rendering="<dtml-var "_['sequence-item']['rendering']">"/>
+ -->
+</dtml-in>
+
+ <!-- ##code-section cssregistry.xml -->
+ <!-- ##/code-section cssregistry.xml -->
+</object>

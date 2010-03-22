@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<object name="membrane_tool" meta_type="MembraneTool">
+<dtml-in "membrane_types">
+ <membrane-type name="<dtml-var "_['sequence-item']['portal_type']">">
+<dtml-in "_['sequence-item']['active_states']">
+  <active-workflow-state name="<dtml-var "_['sequence-item']">"/>
+</dtml-in>
+ </membrane-type>
+</dtml-in>
+
+<!-- ##code-section INDEXMAP -->
+<!-- ##/code-section INDEXMAP -->
+
+</object>

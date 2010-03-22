@@ -1,0 +1,93 @@
+Authors
+
+  Philipp Auersperg (phil@bluedynamics.com)
+
+    Phil was the original author of the product. He says he had to
+    start this project because he is too lazy for coding. He added
+    tons of features and core functionality. He is the l'éminence grise 
+    maintainer.
+
+  Jens Klein (jens@bluedynamics.com)
+
+    Jens hates copy and paste and loves code generation. He is ArchGenXML
+    developer from the beginning, did much of the documentation, refactored
+    several parts and added tons of features. He is the release manager.
+
+  Reinout van Rees
+
+    Reinout did lots of cleanup and added documentation features. He
+    started the 1.6 development branch (now trunk) and moved
+    archgenxml to setuptools. He was for a while co release manager.
+
+  Martin Aspeli (optilude)
+
+    Improvements and important cleanups, documentation.
+
+  Fabiano Weimar dos Santos (xiru)
+
+    Fabiano brought in some good ideas from his project (UML2AT). He
+    did lots of testing and bug fixing and more bugfixing. Fabiano is
+    our workflow hero: He wrote several code generation improvements
+    for workflow definition.
+
+  Joel Burton (joel@joelburton.com)
+
+    Joel rewrote the option handling system to use optparse, and
+    worked on the product documentation.
+
+  Dorneles Tremea (deo)
+
+    Dorneles cleaned up the license/licence mess and killed the
+    undesired whitespaces generation.
+
+  Jean Rodrigo Ferri (ferri)
+
+    Bug killer and some tricks with workflow, portal tools, install,
+    etc.
+    
+  Robert Niederreiter (rnix)
+  
+    Generic Setup profile generation and cleanup for AGX 2.0. 
+    
+  Encolpe Degoute (encolpe)
+  
+    Lots of good work and help with AGX 2.0, including documentation and
+    argouml support.
+    
+  Vincent Fretin
+  
+    Helped a lot after separation of xmiparser and also fixed and cleaned code
+    he blogged about it at 
+    http://vincentfretin.ecreall.com/articles/whats-up-on-archgenxml-these-days
+    
+
+Sponsors:
+
+  Bibliotheca Hertziana, Max Planck Institute for Art History
+
+    Special thanks goes to Dr. Martin Raspe and Dr. Georg Schelbert.
+    Lots of features in this code was created for and sponsored by the
+    ZUCCARO project.  ZUCCARO (Zope-based Universally Configurable Classes
+    for Academic Research Online) is a database framework for the Humanities.
+    For further information: "zuccaro.biblhertz.it":http://zuccaro.biblhertz.it/
+
+  BlueDynamics Alliance, Austria
+  
+    Phil invented ArchGenXML and Jens pushed it together with him. 
+
+  Zest Software, Netherlands
+
+    Work by Reinout and Maurits van Rees
+
+  Xiru.org, Brazil (Fabiano Weimar dos Santos)
+      sponsors a valuable amount of money into workflow support.
+
+  PilotSystems, Paris, France (David Sapiro)
+
+  OpenSource.ag, Innsbruck, Austria (Georg Pleger)
+
+  Telesis.at, Austria (Jodok Batlogg)
+
+  and others.
+
+  This tool was inspired by David Kuhlman's GenerateDS

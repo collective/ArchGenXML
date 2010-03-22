@@ -1,0 +1,25 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+
+  <!-- ##code-section HEAD -->
+  <!-- ##/code-section HEAD -->
+  
+<dtml-if "hasExtender">
+ <include package="archetypes.schemaextender" />
+</dtml-if>
+<dtml-in "generatedAdapters">
+ <dtml-let adapter="_['sequence-item']">
+
+ <adapter
+    factory=".<dtml-var "adapter['packageName']">.<dtml-var "adapter['adapterName']">"
+    <dtml-if "adapter['isNamed']">name="<dtml-var "adapter['adapterName']">"
+    </dtml-if>
+/>
+
+ </dtml-let>
+</dtml-in>
+
+
+ <!-- ##code-section FOOT -->
+  <!-- ##/code-section FOOT -->
+
+</configure>

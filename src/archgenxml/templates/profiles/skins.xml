@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<object name="portal_skins"
+        meta_type="Plone Skins Tool"
+        allow_any="False"
+        cookie_persistence="False"
+        request_varname="plone_skin">
+
+<dtml-in "skinDirs">
+ <object name="<dtml-var "_['sequence-item']['name']">"
+         meta_type="Filesystem Directory View"
+         directory="<dtml-var "_['sequence-item']['directory']">"/>
+</dtml-in>
+ 
+ <skin-path name="*">
+<dtml-in "skinDirs">
+  <layer insert-after="custom" 
+         name="<dtml-var "_['sequence-item']['name']">"/>
+</dtml-in>
+ </skin-path>
+
+</object>

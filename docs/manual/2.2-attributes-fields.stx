@@ -1,0 +1,47 @@
+title: Basics: Attributes / Fields
+description: How to control the fields of your schema.
+Content-Type: text/structured
+
+Archetypes are using 'schemas' with 'fields' to define the form-fields on your content. The schema and its fields of your content types is generated from the 'attributes' of your classes in your model and their tagged values. Each field has a type and a widget. 
+
+The "Archetypes documentation":/documentation/manual/archetypes-developer-manual/ and the quick reference at the end of this document describes which fields are available and what parameters they take as configuration.
+
+usage of tagged values 
+
+ If you set a tagged value on an attribute of your class, in general that tagged value will be passed through as a parameter to the generated Archetypes field. Hence, if you set a tagged value 'enforceVocabulary' to the value '1' on an attribute, you will get 'enforceVocabulary=1' for that field in the generated schema. Similarly, you can set a field's widget properties by prefixing the tagged value with 'widget:'. 'widget:label' sets the label of a widget, for instance.
+
+non-string tagged values
+
+ As before, when reading tagged values, ArchGenXML will generally treat them as strings, with a few exceptions where only non-string values are permitted, such as the 'required' tagged value. If you do not wish your value to be quoted as a string, prefix it with 'python:'. For example, if you set the tagged value 'default' to 'python:["high", "low"]' on a 'lines' attribute, you will get 'default=["high", "low"]' in a LinesField in your schema.
+
+field recycling - copy from parents schema and modify
+
+ You may need a 'Description' field it is usally defined in your parent classes (BaseContent, BaseFolder) Schema, but it appears under properties-tab, not in your base_edit form. To make it show up there, you just need to change one property of the field: 'schemata = "default"'.
+
+ Solution: copy the field definition. In UML add an attribute to you class, give it the "type" 'copy' and a tagged value 'schemata' with value 'default'. Setting values on copied-fields and their widgets is at some details different from a new field definition, so attention here.
+
+index and metadata in catalogs
+
+ ArchgenXML can create configuration files to create an index and/or metadata entries in the catalog such as portal_catalog. 
+
+ Available are the following tagged values: 
+
+ 'catalog:index' -- add the field to the index. Boolean, 1 or 0. Default is 0. If set, you may need to provide 'index:*' tagged values too.
+
+ 'catalog:metadata' -- add the field to the metadata record on the query result? Boolean, 1 or 0. If you do not provide 'index:attributes', the name of the accessor of the field is the default. If 'catalog:attributes' is given for each attribute one field at the record will be created.
+
+ 'catalog:attributes' -- the attributes to use for index or metadata (string or comma separated list of strings). This are the methods called at indexing time. Normally it is enough to provide one index method, but for some specific use cases you might need to provide alternatives. If you don not provide this tagged value, the name of the accessor of the field is the default.
+
+ 'catalog:name' -- sometimes you need to add an index to a other catalog than 'portal_catalog' and its XML-File 'catalog.xml'. Provide a tuple of comma separated strings, id of the catalog and the filename of its configuration file. default is "portal_catalog, Plone Catalog Tool'.
+
+ 'index:type' -- the type of index used as (string), for example 'FieldIndex', 'KeywordIndex', 'DateIndex' or any available index in your portal. For known types a default is guessed, such as FieldIndex for StringFields or DateIndex for DateFields. If no guess is possible, we assume a FieldIndex.
+
+ 'index:name' -- the name of the index used (string). Use this name in your queries. If you do not provide a name, the name of the accessor of the field is the default.
+
+
+ 'index:extras' -- some indexes are using so called 'extras' on installation as configuration. If the index need extras you'll need to declare them here. provide a comma separated list.
+
+ 'index:properties' -- some indexes are using 'properties' on installation as configuration. If the index need properties you'll need to declare them here. Provide a comma separated list.
+
+ *DEPRECATED* For backward compatibility reasons we support a sub part of the old style in ArchGenxML Version 1.6 and earlier using the tagged value 'index'. This is deprecated and will be removed in one of the next version of ArchGenXML. A tagged value 'index' with value like 'index:type' above creates an index with the accessor.  To include the index in catalog metadata (and have the attribute ready to use  in the brain objects), append ':brains' (same as older ':schema'), (e.g. 'FieldIndex:brains'). ArchGenXML does not longer provide the ability to define multiple indexes using the old declaration style. 
+

@@ -1,0 +1,30 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:or="http://namespaces.objectrealms.net/plone">
+>
+
+  <!-- ##code-section HEAD -->
+  <!-- ##/code-section HEAD -->
+  
+<dtml-in "flavors">
+ <dtml-let flavor="_['sequence-item']">
+
+   <!-- <dtml-var "flavor['name']"> flavor -->
+    <or:flavor
+     archetype_schema=".<dtml-var "flavor['packageName']">.<dtml-var "flavor['schemaName']">"
+     description="<dtml-var "flavor['description']">"
+     marker=".<dtml-var "flavor['packageName']">.<dtml-var "flavor['markerName']">"
+     name="<dtml-var "flavor['fullName']">"
+     title="<dtml-var "flavor['title']">"
+    />
+    <!-- Subscriber to let new items receive the <dtml-var "flavor['name']"> flavor -->
+    <subscriber
+     for=".<dtml-var "flavor['packageName']">.<dtml-var "flavor['name']"> zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+     handler=".<dtml-var "flavor['packageName']">.<dtml-var "flavor['handlerName']">"
+    />
+ </dtml-let>
+</dtml-in>
+  
+  <!-- ##code-section FOOT -->
+  <!-- ##/code-section FOOT -->
+
+</configure>

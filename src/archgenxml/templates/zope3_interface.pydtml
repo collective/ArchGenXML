@@ -1,0 +1,17 @@
+<dtml-let assocs="klass.getFromAssociations(aggtypes=['none','aggregation','composite'])" atts="klass.getAttributeDefs()" vars="atts+[a.toEnd for a in assocs]" >
+<dtml-var "generator.generateDependentImports(klass)">
+from zope.interface import Interface
+
+class <dtml-var "klass.getCleanName()"><dtml-if "klass.getGenParents()">(<dtml-var "','.join([p.getCleanName() for p in klass.getGenParents()])">)</dtml-if><dtml-if "not klass.getGenParents() and klass.isInterface()">(Interface)</dtml-if>:
+    """<dtml-var "utils.indent(klass.getDocumentation(), 1, skipFirstRow=True, stripBlank=True)">
+    """
+<dtml-var "generator.getProtectedSection(parsed_class,'class-header_'+klass.getCleanName(),1)">    
+<dtml-in "generator.getMethodsToGenerate(klass)[0]">
+<dtml-let m="_['sequence-item']">
+    def <dtml-var "m.getName()">(<dtml-var "', '.join(m.getParamNames())">):
+        """
+        """
+    
+</dtml-let>
+</dtml-in>
+</dtml-let>

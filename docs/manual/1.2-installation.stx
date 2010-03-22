@@ -1,0 +1,181 @@
+title: Installation
+description: How to install ArchGenXML and get up and running.
+Content-Type: text/structured
+
+Preconditions
+
+  * You need a working Python interpreter, version 2.4+.
+
+  * You need Plone 2.5.3+ or Plone 3.0.1+ installed (choose the latest stable release) and its 
+    dependencies to see your generated code in action. Plone 3 is supported by the 
+    subversion-trunk.
+    
+  * You need the libraries of Zope 2.10 (or Zope 3.3) available in your system.
+    ArchGenXML needs them to run, not the generated code.
+
+  * We also recommend to upgrade Archetypes to the latest stable release, 
+    preferrably latest 1.4.x, 1.5.x or later.    
+
+Download & Installation
+
+ The trunk is planned to be always stable, because developement is done on 
+ branches. 
+  
+ using easy_install
+  
+   with "easy_install":http://peak.telecommunity.com/DevCenter/EasyInstall 
+   configured, you can download and install ArchGenXML using the Python 
+   Cheeseshop.
+   
+   Just type 'easy_install archgenxml'.   
+   
+   ArchGenXML will be installed in your Pythons library directory, a symlink to 
+   the executablewill be placed into the directory your system normally would 
+   expect user executeable binaries.
+ 
+ from the tarball (*.tgz) or subversion
+
+   You need to download the release tarball of ArchGenXML from 
+   "plone.org's products section":http://plone.org/products/archgenxml. Choose 
+   the most recent version or use the bleeding edge development version - best 
+   choice with latest Plone Versions - from the 
+   "Subversion repository":https://svn.plone.org/svn/archetypes/ArchGenXML/trunk/.
+ 
+   * untar 'tar xzf ArchGenXML-2.xy.tgz' to a directory of your choice.
+   
+   * change into the directory 'cd ArchGenXML'
+   
+   * start 'python setup.py install' *or*
+   
+   * on Debian based systems you can build your debian package with
+     'fakeroot debian/rules binary' and install the package with for example
+     'dpkg -i archgenxml_2.0_i386.deb' - and remove it later - without any 
+     garbage left *or*
+   
+   * ArchGenXML will be installed in your Pythons library directory, a symlink to 
+   the executablewill be placed into the directory your system normally would 
+   expect user executeable binaries.   
+   
+  on Debian based systems such as Debian or Ubuntu
+  
+   * add 'XX TODO' to your package sources, for example edit '/etc/apt/sources'
+   
+   * 'apt-get update'
+   
+   * 'apt-get install archgenxml' 
+   
+   * you can use for above tasks the paket-manager of your choice (such as 
+     Synaptic).
+     
+ after installation configuration
+
+  You need to tell ArchGenXML where to find Zope 3.3 or Zope 2.10 (which includes 
+  Zope 3.3.). You can include the path to your Zope into the 'PYTHONPATH'. This has
+  one major disadvantage: A Zope instance running on your system might get confused 
+  by it, which might result in fancy behaviour of Zope. 
+
+  A better solution is to provide a file '.agx_zope_path' in your users HOME-directory.
+  Put one single line with the full '/PATH/TO/zope2.10/lib/python' in here. ArchGenXML
+  will add it to its internal python library search pyth and will find the zope modules.
+
+Additional software
+
+  To get all the features of ArchGenXML, you may need some of the following.
+
+  For code generation:
+
+   i18ndude -- Without this, the generation of translatable user interface 
+   strings is disabled. "Instructions/ download":http://plone.org/products/i18ndude 
+
+   Stripogram -- Some UML tools produce HTML in the documentation elements in 
+   XMI. Stripogram converts them into plain text. Without having Stripogram 
+   installed this feature is disabled. Download and install stripogram from the 
+   "squishdot":http://sourceforge.net/project/showfiles.php?group_id=1083&package_id=34645 
+   project on sourceforge.net.
+
+  For running the generated code (optional)
+
+   ATVocabularyManager -- Enables usage of custom dynamic vocabularies. 
+   "Download and install the product":http://plone.org/products/atvocabularymanager
+
+   Relations -- enables complex references. 
+   "Download and install the product":http://plone.org/products/relations
+
+   CompoundField -- enables usage of multiplicity on fields an definition of 
+   fields as a compund of other fields. 
+   "Download and install the product":http://plone.org/products/compundfield
+   
+   Remember -- enables contentish custom member objects. "Download and install 
+   the product":http://plone.org/products/remember
+
+UML Tools
+
+ ArchGenXML processes models stored in 
+ "XMI":http://www.omg.org/technology/documents/formal/xmi.htm. This XML format 
+ isn't intended to be written in a plain text editor nor in a tree based XML 
+ editor, so you will almost certainly use a UML design tool. Below is a more or 
+ less complete list of such tools. If you know about any others tools missing 
+ from this list, have more detailed information or have experience with a tool 
+ in combination with ArchGenXML, please write the author a short e-mail.
+
+ArgoUML -- Website and download: "argouml.tigris.org":http://argouml.tigris.org/
+
+ Read "Using ArgoUML with ArchGenXML":http://plone.org/products/archgenxml/documentation/how-to/using-argouml-model-with-archgenxml-data-types-stereotypes-and-tagged-values.
+
+ * Free software 
+
+ * Written in Java
+
+ * Runs on most platforms
+
+ * Stores the model natively as XMI + diagram information in .xmi, .uml. or 
+   .zargo files (ziped .uml files).
+
+ * No 'undo' (planned for future)
+
+ * Some known, but non-critical bugs
+
+Poseidon (by Gentleware) -- "Website and download":http://www.gentleware.com/, 
+ 
+ * Commercial software - so called Community Editionfor low-cost license 
+   available, supports XMI version 1.2
+
+ * Written in Java, runs on most platforms
+
+ * commercial fork of ArgoUML (theres no synchronisation between projects)
+
+ * Stores the model natively as XMI + diagram information in .zuml files (zip files)
+
+ * Is very slow and needs lots of memory and a fast CPU
+
+ObjectDomain -- Website and download: "objectdomain.com":http://objectdomain.com/
+
+ * Commercial, free time-limited demo for <= 30 classes
+
+ * Written in Java
+
+ * Runs on most platforms
+
+ * Need to export model from proprietary .odm format to .xmi
+
+Powerdesigner (by Sybase) -- Website and download: "sybase.com":http://www.sybase.com/
+
+ * XMI version 1.1
+
+ * Need to export model to xmi
+
+Umbrello (KDE) -- Website and download: "uml.sourceforge.net":http://uml.sourceforge.net/
+
+ * Free software
+
+ * Runs under Linux/KDE
+
+ * Stores the model natively as XMI
+
+ * At the time of testing (somewhere in the first half of 2004), Umbrello wasn't 
+ complete and the XMI not 100% standards compliant. Umbrello 
+ "promises":http://uml.sourceforge.net/feature.php to support XMI correctly on 
+ version 1.4, which will be shipped with KDE 3.4. (please report your experience).
+
+An almost complete list of UML tools can be found at 
+"www.jeckle.de/umltools.htm":http://www.jeckle.de/umltools.htm.

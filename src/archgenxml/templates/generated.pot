@@ -1,0 +1,17 @@
+# archgenxml generated POT File
+# %(author)s <%(email)s>, %(year)s.
+msgid ""
+msgstr ""
+"Project-Id-Version: %(package)s\n"
+"POT-Creation-Date: %(datetime)s\n"
+"PO-Revision-Date: %(datetime)s\n"
+"Last-Translator: %(author)s <%(email)s>\n"
+"Language-Team: %(author)s <%(email)s>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=%(charset)s\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"Language-Code: en\n"
+"Language-Name: English\n"
+"Preferred-Encodings: latin1 utf-8\n"
+"Domain: %(package)s\n"

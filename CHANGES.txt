@@ -1,0 +1,48 @@
+Changelog
+=========
+
+2.5 (unreleased)
+----------------
+
+- Removed DeprecationWarning about the sets module.
+  [vincentfretin]
+
+- Header info: use better formatting for author.
+  Encode module header strings so we don't choke on non-ASCII chars.
+  [moldy]
+
+- Make "dependend_profiles" alternative as multi-tgv available
+  (avoid ultra-long tgvs).
+  [jensens]
+
+- Added virtual field type "keywords" which results in a LinesField with
+  KeywordWidget (this needs a tgv catalog:index=1).
+  [jensens]
+
+- Prevent error on empty tgv.
+  [hpeteragitator]
+
+
+2.4.1 (2009-04-01)
+------------------
+
+- Fix wrong version '2.4-'.
+  '2.4-' version was not fully uploaded.
+  [vincentfretin]
+
+
+2.4 (2009-04-01)
+----------------
+
+- Fix use of index:extras tagged-value
+  [jensens]
+
+- Enable easy plone.app.content.ATBlob subclassing.
+  Add atblob stereotype to the profile.
+  [jensens]
+
+- Add stripogram (available as egg) as dependency.
+  [jensens]
+
+- Fix catalog assignment when catalogmultiples tagged valued is used.
+  [erico_andrei]

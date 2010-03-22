@@ -1,0 +1,45 @@
+<dtml-let assocs="klass.getFromAssociations(aggtypes=['none','aggregation','composite'])"
+          atts="klass.getAttributeDefs()"
+          dependentImports="generator.generateDependentImports(klass)"
+          additionalImports="generator.generateAdditionalImports(klass)"
+          taggedImports="generator.getImportsByTaggedValues(klass)"
+          vars="atts+[a.toEnd for a in assocs]">
+<dtml-var "generator.getProtectedSection(parsed_class, 'module-header')">
+
+from zope.interface import implements
+
+from plone.portlets.interfaces import IPortletDataProvider
+from plone.app.portlets.portlets import base
+
+from Products.CMFPlone import PloneMessageFactory as _
+
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
+class I<dtml-var "klass.getName()">(IPortletDataProvider):
+    """A portlet which renders the cart.
+    """
+
+class Assignment(base.Assignment):
+    
+    implements(I<dtml-var "klass.getName()">)
+    
+    title = _(u'<dtml-var "klass.getTaggedValue('label',klass.getName())">')
+
+<dtml-var "generator.getProtectedSection(parsed_class,'assignment-body',ind=1)">
+
+
+class Renderer(base.Renderer):
+    
+    render = ViewPageTemplateFile('templates/<dtml-var "klass.getTaggedValue('template_name',klass.getName())">.pt')
+
+<dtml-var "generator.getProtectedSection(parsed_class,'renderer-body',ind=1)">
+
+
+class AddForm(base.NullAddForm):
+
+    def create(self):
+        return Assignment()
+
+<dtml-var "generator.getProtectedSection(parsed_class,'addform-body',ind=1)">
+
+<dtml-var "generator.getProtectedSection(parsed_class,'module-footer')"></dtml-let>

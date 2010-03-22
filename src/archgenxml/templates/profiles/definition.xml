@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<dc-workflow workflow_id="<dtml-var "info.id">"
+             title="<dtml-var "info.id">"
+             state_variable="review_state"
+             initial_state="<dtml-var "info.initialstate">"<dtml-if "target_version == 3.0">
+
+             xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+             i18n:domain="plone"</dtml-if>>
+<dtml-in "info.permissionNames">
+ <permission><dtml-var "_['sequence-item']"></permission>
+</dtml-in>
+<dtml-in "info.states">
+ <state state_id="<dtml-var "_['sequence-item']['id']">"
+        title="<dtml-var "_['sequence-item']['title']">"<dtml-if "target_version == 3.0">
+
+        i18n:attributes="title"</dtml-if>>
+<dtml-in "_['sequence-item']['exit-transitions']">
+  <exit-transition transition_id="<dtml-var "_['sequence-item']">"/>
+</dtml-in>
+<dtml-in "_['sequence-item']['permissions']">
+  <permission-map name="<dtml-var "_['sequence-item']['permission']">"
+                  acquired="<dtml-var "_['sequence-item']['acquisition'] and 'True' or 'False'">">
+<dtml-in "_['sequence-item']['roles']">
+   <permission-role><dtml-var "_['sequence-item']"></permission-role>
+</dtml-in>
+  </permission-map>
+</dtml-in>
+ </state>
+</dtml-in>
+<dtml-in "info.transitions">
+<dtml-let transition="_['sequence-item']">
+ <transition transition_id="<dtml-var "transition.getName()">"
+             title="<dtml-var "transition.getTaggedValue('label') or transition.getName()">"
+             new_state="<dtml-var "transition.getTargetStateName()">"
+             trigger="<dtml-var "transition.getTriggerType()">"
+             before_script=""
+             after_script=""<dtml-if "target_version == 3.0">
+
+             i18n:attributes="title"</dtml-if>>
+  <action url="<dtml-var "transition.getTaggedValue('url')">" category="workflow"<dtml-if "target_version == 3.0"> i18n:translate=""</dtml-if>><dtml-var "transition.getTaggedValue('label') or transition.getName()"></action>
+  <guard>
+<dtml-in "transition.guardPermissions">
+    <guard-permission><dtml-var "_['sequence-item']"></guard-permission>
+</dtml-in>
+<dtml-in "transition.guardRoles">
+    <guard-role><dtml-var "_['sequence-item']"></guard-role>
+</dtml-in>
+<dtml-if "transition.guardExpression">
+    <guard-expression><dtml-var "transition.guardExpression"></guard-expression>
+</dtml-if>
+  </guard>
+ </transition>
+</dtml-let>
+</dtml-in>
+<dtml-in "info.worklists">
+<dtml-let worklist="_['sequence-item']">
+ <worklist worklist_id="<dtml-var "worklist['id']">" 
+           title="<dtml-var "worklist['id']">">
+  <action url="<dtml-var "worklist['url']">"
+          category="global">Pending <dtml-var "worklist['id']"></action>
+  <guard>
+<dtml-if "worklist['guardPermission']">
+   <guard-permission><dtml-var "worklist['guardPermission']"></guard-permission>
+</dtml-if>
+<dtml-in "worklist['guardRoles']">
+   <guard-role><dtml-var "_['sequence-item']"></guard-role>
+</dtml-in>
+  </guard>
+<dtml-if "worklist['states']">
+  <match name="review_state" 
+         values="<dtml-var "worklist['states']">"/>
+</dtml-if>
+ </worklist>
+</dtml-let>
+</dtml-in>
+ <variable variable_id="action" for_catalog="False"
+           for_status="True" update_always="True">
+  <description>The last transition</description>
+  <default>
+   <expression>transition/getId|nothing</expression>
+  </default>
+  <guard>
+  </guard>
+ </variable>
+ <variable variable_id="actor" for_catalog="False"
+           for_status="True" update_always="True">
+  <description>The ID of the user who performed the last transition</description>
+  <default>
+   <expression>user/getId</expression>
+  </default>
+  <guard>
+  </guard>
+ </variable>
+ <variable variable_id="comments" for_catalog="False"
+           for_status="True" update_always="True">
+  <description>Comments about the last transition</description>
+  <default>
+   <expression>python:state_change.kwargs.get('comment', '')</expression>
+  </default>
+  <guard>
+  </guard>
+ </variable>
+ <variable variable_id="review_history" for_catalog="False"
+           for_status="False" update_always="False">
+  <description>Provides access to workflow history</description>
+  <default>
+   <expression>state_change/getHistory</expression>
+  </default>
+  <guard>
+   <guard-permission>Request review</guard-permission>
+   <guard-permission>Review portal content</guard-permission>
+  </guard>
+ </variable>
+ <variable variable_id="time" for_catalog="False"
+           for_status="True" update_always="True">
+  <description>Time of the last transition</description>
+  <default>
+   <expression>state_change/getDateTime</expression>
+  </default>
+  <guard>
+  </guard>
+ </variable>
+ <!-- We dont use workflow scripts any more, we use subscribers -->
+</dc-workflow>

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<rolemap>
+  <roles>
+<dtml-in "extraRoles">
+    <role name="<dtml-var "_['sequence-item']">"/>
+</dtml-in>
+  </roles>
+  <permissions>
+  </permissions>
+</rolemap>

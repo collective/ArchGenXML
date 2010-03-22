@@ -1,0 +1,52 @@
+TODO's for ArchGenXML
+---------------------
+
+* add worklist and workflow trigger support (missing).
+
+* generate pot file into "locales", instead i18n, keep some BBB, so if 
+  folder i18n exists take it. offer a sync script.
+
+* make setuptools or at least debian copy umltools/argouml/argouml_profile.xmi
+  to /usr/share/archgenxml
+
+* update docs/manual/*registry* and check quickref
+
+* sync docs/manual with online manual (=master) at plone.org
+
+* refactor generateFieldMoves machinery. does not consider copied fields atm!
+  (no one used this until now??)
+
+* write an import step adding inherited allowed types
+
+* BUG: Method that end with a comma-newline-value lose that value. For example:
+
+            return (value1,
+                    value2)
+  If this is the end of a method, the line with "value2)" is lost.
+  There is a (failing) unittest for this.
+  Workaround: add a 'pass' as last statement in method.
+
+* When generating docstrings, be more clever about linebreaks and whitespace.
+
+    - Poseidon does not wrap, so we need to support funny linebreaks.
+
+* Move remainder of templates in templates/ to DTML
+
+* Move class, interface generation to DTML. There are too many
+  conditionals and strings being generated in the current code. :-)
+  Having DTML conditionals and loops would make it much clearer and
+  easier to manipulate.
+
+* Tool support: automagically disable uneccessary tabs (like
+  base_view, metadata and maybe references) on classes with stereotype
+  'portal_tool'. Must be possible to explicitly enable them again.
+
+* group together the generateable documentation in one script so
+  that it is easy to update the documentation area on plone.org to
+  keep it current.
+
+* Longer term: add defaults to the tagged values.
+
+* Allow python package products instead of zope products.
+
+* Support plone 3.0 viewlets (replacement of many included macros).

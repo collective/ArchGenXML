@@ -1,0 +1,20 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+  
+<dtml-in "subPackagesWithZcml">
+ <include file="includes.zcml" package=".<dtml-var "_['sequence-item']">"/>
+</dtml-in>
+
+<dtml-if "hasFlavors">
+ <include file="flavors.zcml"/>
+</dtml-if>
+<dtml-if "hasAdapters">
+ <include file="adapters.zcml"/>
+</dtml-if>
+<dtml-if "hasImplementers">
+ <include file="implements.zcml"/>
+</dtml-if>
+
+  <!-- ##code-section includes.zcml -->
+  <!-- ##/code-section includes.zcml -->
+
+</configure>

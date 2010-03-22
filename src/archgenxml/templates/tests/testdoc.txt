@@ -1,0 +1,34 @@
+This is a sample for a doctest file
+Here you can simply write python expressions
+and compare the output results like this:
+
+>>> i=1
+>>> print i
+1
+
+Lets import the necessary modules
+>>> from Products.<dtml-var "klass.getPackage().getProduct().getCleanName()"> import config
+
+<dtml-in "klass.getRealizationParents() + klass.getClientDependencyClasses()">
+>>> from <dtml-var "_['sequence-item'].getQualifiedModuleName(forcePluginRoot=1)"> import <dtml-var "_['sequence-item'].getCleanName()">
+</dtml-in>
+
+every line that starts with '>>>' will be interpreted
+as python statement.
+By writing the expected output after the python
+prompt lines you can compare that with the result
+from the above python statements. If the outputs
+differ you the test fails.
+
+<dtml-if "klass.getRealizationParents()">
+You can also instanciate your classes that you want
+to test like this:
+</dtml-if>
+
+<dtml-in "klass.getRealizationParents()">
+>>> res=self.folder.invokeFactory('<dtml-var "_['sequence-item'].getCleanName()">','myobj')
+>>> print self.folder.myobj.getId()
+myobj
+</dtml-in>
+
+Now you can continue with the further tests of your classes here
