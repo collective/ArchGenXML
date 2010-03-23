@@ -623,7 +623,10 @@ class BaseGenerator:
         encoding = self.getOption('encoding', element, 'utf-8')
 
         fileheaderinfo = self.getHeaderInfo(element, name=name, all=all)
-        result = ENCODING_HEADER.encode(encoding) % fileheaderinfo
+        for k, v in fileheaderinfo.items():
+            fileheaderinfo[k] = v.decode(encoding)
+
+        result = ENCODING_HEADER % fileheaderinfo
         if all or self.module_info_header:
             result += MODULE_INFO_HEADER.encode(encoding) % fileheaderinfo
         return result

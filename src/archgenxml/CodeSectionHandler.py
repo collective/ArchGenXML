@@ -62,7 +62,7 @@ def handleSectionedFile(templatepath, outputpath,
         templateparams.update(__builtins__)
         template = HTML(template, templateparams)
         try:
-            template = template()
+            template = template().encode('utf-8')
         except:
             msg = "Problem rendering %s\n" % os.path.join(*templatepath)
             msg+= "params = %s" % origparams

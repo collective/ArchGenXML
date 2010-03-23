@@ -48,7 +48,7 @@ class TestArchetypesGenerator(unittest.TestCase):
         optionsHolder.storeOptions(self.options)
         self.model = DummyModel('test')
 
-    def test_copyright_info(self):
+    def test_getHeaderInfo_copyright_info_simple(self):
         """Test the copyright info output."""
         year = time.localtime()[0]
         expected = 'Copyright (c) %s by %s <%s>' % (year, 
@@ -60,32 +60,33 @@ class TestArchetypesGenerator(unittest.TestCase):
 
         self.failUnless(headerinfo['copyright'] == expected)
 
-    def test_copyright_info_list(self):
+    def test_getHeaderInfo_copyright_info_list(self):
         """Test for multiple authors."""
         self.options.update(author='Example1, Example2')
         self.options.update(email='one@example.org, two@example.org')
-
         year = time.localtime()[0]
         expected = 'Copyright (c) %s by Example1 <one@example.org>, ' \
                    'Example2 <two@example.org>' % (year)
-
         generator = ArchetypesGenerator('/dev/null', **self.options)
         headerinfo = generator.getHeaderInfo(self.model)
 
         self.failUnless(headerinfo['copyright'] == expected)
 
-    def test_copyright_info_unicode(self):
+    def test_getHeaderInfo_copyright_info_unicode(self):
         """Test that non-ASCII characters are processed correctly."""
         self.options.update(author='Äöü€')
-
         year = time.localtime()[0]
         expected = 'Copyright (c) %s by Äöü€ <%s>' % (year,
                                                       self.options['email'])
-
         generator = ArchetypesGenerator('/dev/null', **self.options)
         headerinfo = generator.getHeaderInfo(self.model)
-
         self.failUnless(headerinfo['copyright'] == expected)
+
+    def test_generateModuleInfoHeader(self):
+        self.options.update(author='Äöü€')
+        generator = ArchetypesGenerator('/dev/null', **self.options)
+        result = generator.generateModuleInfoHeader(self.model)        
+        assert u'Copyright (c) 2010 by Äöü€ <author@example.org>' in result
 
 
 def test_suite():
