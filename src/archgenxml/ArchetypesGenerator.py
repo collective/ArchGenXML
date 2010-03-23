@@ -2561,7 +2561,7 @@ class ArchetypesGenerator(BaseGenerator):
         res=dtml()
 
         of=self.makeFile(os.path.join(package.getFilePath(),'__init__.py'))
-        of.write(res)
+        of.write(res.encode('utf-8'))
         of.close()
 
         return

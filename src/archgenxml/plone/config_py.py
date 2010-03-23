@@ -68,7 +68,7 @@ class ConfigPyView(object):
         res = dtml()
 
         of = generator.makeFile(configpath)
-        of.write(res)
+        of.write(res.encode('utf-8'))
         of.close()
 
 
