@@ -7,7 +7,7 @@ import pprint
 import sys
 import types
 import logging
-from odict import odict
+from ordereddict import OrderedDict
 log = logging.getLogger('pyparser')
 
 PROTECTED_BEGIN = '##code-section'
@@ -27,9 +27,9 @@ class PyModule:
     ast = None
     code = None
     src = None
-    classes = odict()
-    functions = odict()
-    protectedSections = odict()
+    classes = OrderedDict()
+    functions = OrderedDict()
+    protectedSections = OrderedDict()
 
     def __init__(self, file, mode='file'):
         """Start dividing 'file' in chunks.
@@ -42,9 +42,9 @@ class PyModule:
         log.debug("Initialising module parser for file '%s'.",
                   file)
         # Dictionary inits
-        self.classes = odict()
-        self.functions = odict()
-        self.protectedSections = odict()
+        self.classes = OrderedDict()
+        self.functions = OrderedDict()
+        self.protectedSections = OrderedDict()
         self.protectionDeclarations = []
         # Read and mangle the file
         self.filebuf = self.readFile(file, mode)

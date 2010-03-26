@@ -58,5 +58,6 @@ setup(name='archgenxml',
           'zope.documenttemplate',
           'stripogram',
           'i18ndude',
+          'ordereddict==1.1',
       ],
       )

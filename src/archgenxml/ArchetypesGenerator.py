@@ -18,7 +18,7 @@ import datetime
 from copy import deepcopy
 from types import StringTypes
 import utils
-from odict import odict
+from ordereddict import OrderedDict
 from codesnippets import *
 
 from xml.dom import minidom
@@ -609,8 +609,8 @@ class ArchetypesGenerator(BaseGenerator):
         
         parameters see "getWidget" method
         """
-        wdef = odict()
-        wdef['options'] = odict()
+        wdef = OrderedDict()
+        wdef['options'] = OrderedDict()
         wdef['type'] = None
         wdef['fetchfromfield'] = False
         wdef['fieldclass'] = None
@@ -663,7 +663,7 @@ class ArchetypesGenerator(BaseGenerator):
         ## before update the widget mapping, try to make a
         ## better description based on the given label
         modulename = element.getPackage().getProductName()
-        check_map = odict()
+        check_map = OrderedDict()
         check_map['label'] = u"'%s'" % fieldname.capitalize().decode('utf8')
         check_map['label_msgid'] = u"'%s_label_%s'" % (modulename,
                                                        utils.normalize(fieldname, 1))
@@ -715,12 +715,12 @@ class ArchetypesGenerator(BaseGenerator):
         """
         log.debug("Trying to get formatted field. name='%s', fieldtype='%s', "
                   "doc='%s', rawType='%s'.", name, fieldtype, doc, rawType)
-        fdef = odict()
+        fdef = OrderedDict()
         fdef.update(__builtins__)
         fdef['indent'] = utils.indent
         fdef['doc'] = doc
         fdef['fieldclass'] = fieldtype or rawType
-        fdef['options'] = odict()
+        fdef['options'] = OrderedDict()
         fdef['options']['name'] = "'%s'" % utils.normalize(name, 1)
         for key in map:
             if ':' in key:
@@ -741,7 +741,7 @@ class ArchetypesGenerator(BaseGenerator):
             res = utils.indent(res, indent_level)
             return res
 
-        adef = odict()
+        adef = OrderedDict()
         adef.update(__builtins__)
         adef['indent'] = utils.indent
         adef['basefield'] = utils.indent(res, indent_level)
@@ -764,7 +764,7 @@ class ArchetypesGenerator(BaseGenerator):
             return {}
 
         fieldname = "array:%s" % element.getCleanName()
-        defs = odict()
+        defs = OrderedDict()
         defs['widget'] = self.getWidget(element, fieldname, 'array', 
                                         tgvprefix='array:widget:')
         tgvs = element.getTaggedValues()
