@@ -4,6 +4,9 @@ Changelog
 2.5 (unreleased)
 ----------------
 
+- Added roles and permissions protected sections in rolemap.xml.
+  [vincentfretin]
+
 - Removed DeprecationWarning about the sets module.
   [vincentfretin]
 

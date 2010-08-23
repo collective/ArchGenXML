@@ -105,13 +105,12 @@ class WorkflowGenerator(BaseGenerator):
             return
         log.debug("Creating rolemap.xml file.")
         d['extraRoles'] = self.extraRoles()
-        templ = self.readTemplate(['profiles', 'rolemap.xml'])
-        scriptpath = os.path.join(profileDir, 'rolemap.xml')
-        dtml = HTML(templ, d)
-        res = dtml()
-        of = self.atgenerator.makeFile(scriptpath)
-        of.write(res)
-        of.close()
+
+        handleSectionedFile(['profiles', 'rolemap.xml'],
+                            os.path.join(profileDir, 'rolemap.xml'),
+                            sectionnames=['roles',
+                                          'permissions'],
+                            templateparams=d)
 
     def _generateWorkflowSubscribers(self):
         product = self.package.getProduct()
