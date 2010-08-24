@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <object name="portal_workflow" meta_type="Plone Workflow Tool">
 <dtml-in "workflowNames">
- <object name="<dtml-var "_['sequence-item']">" meta_type="Workflow"/>
+ <object name="<dtml-var "_['sequence-item']['name']">" meta_type="<dtml-var "_['sequence-item']['meta_type']">"/>
 </dtml-in>
 <!-- ##code-section workflowobjects -->
 <!-- ##/code-section workflowobjects -->   

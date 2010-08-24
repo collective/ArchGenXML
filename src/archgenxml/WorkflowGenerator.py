@@ -225,10 +225,19 @@ class WorkflowGenerator(BaseGenerator):
 
     def workflowNames(self):
         statemachines = self.package.getStateMachines()
-        names = [utils.cleanName(sm.getName()) for sm in
-                 statemachines]
-        names.sort()
-        return names
+        workflows = [(utils.cleanName(sm.getName()),
+                      sm.getTaggedValue('meta_type', 'Workflow'))
+                     for sm in statemachines]
+        workflows.sort()
+        
+        result = []
+        for name, meta_type in workflows:
+            item = {}
+            item['name'] = name
+            item['meta_type'] = meta_type
+            result.append(item)
+        
+        return result
 
     def workflowLessTypes(self):
         """Return workflow-less types (like tools).
