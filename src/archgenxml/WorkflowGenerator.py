@@ -362,6 +362,10 @@ class WorkflowInfo(object):
         return self.sm.getCleanName()
 
     @property
+    def state_var(self):
+        return self.sm.getTaggedValue('state_var', 'review_state')
+
+    @property
     def initialstate(self):
         return self.sm.getInitialState().getName()
 

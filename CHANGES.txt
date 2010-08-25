@@ -4,8 +4,9 @@ Changelog
 2.5 (unreleased)
 ----------------
 
-- You can now set meta_type="Subtractive Workflow" on a worklfow
-  to use it with collective.subtractiveworkflow.
+- You can now set meta_type="Subtractive Workflow" (default is "Workflow")
+  and state_var="confidential_state" for example (default is "review_state")
+  on a workflow to use it with collective.subtractiveworkflow.
   [vincentfretin]
 
 - Added roles and permissions protected sections in rolemap.xml.

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <dc-workflow workflow_id="<dtml-var "info.id">"
              title="<dtml-var "info.id">"
-             state_variable="review_state"
+             state_variable="<dtml-var "info.state_var">"
              initial_state="<dtml-var "info.initialstate">"<dtml-if "target_version == 3.0">
 
              xmlns:i18n="http://xml.zope.org/namespaces/i18n"
