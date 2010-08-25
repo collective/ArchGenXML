@@ -990,6 +990,16 @@ tagname = 'default'
 explanation = """A workflow id to be set as the default workflow."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'state_var'
+explanation = """The workflow state variable to use, the default is "review_state".
+This can be used when you use a second workflow with collective.subtractiveworkflow."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'meta_type'
+explanation = """The workflow meta_type. The default is "Workflow". You can
+change it to "Subtractive Workflow" to use it with collective.subtractiveworkflow."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 # Category 'associations'
 category = 'association'
 
