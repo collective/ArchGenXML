@@ -4,7 +4,7 @@
  <object name="<dtml-var "_['sequence-item']['name']">" meta_type="<dtml-var "_['sequence-item']['meta_type']">"/>
 </dtml-in>
 <!-- ##code-section workflowobjects -->
-<!-- ##/code-section workflowobjects -->   
+<!-- ##/code-section workflowobjects -->
  <bindings>
 <dtml-if "defaultId">
   <default>
@@ -20,6 +20,6 @@
   </type>
 </dtml-in>
 <!-- ##code-section workflowbindings -->
-<!-- ##/code-section workflowbindings -->   
+<!-- ##/code-section workflowbindings -->
  </bindings>
 </object>
