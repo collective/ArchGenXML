@@ -342,7 +342,7 @@ class ArchetypesGenerator(BaseGenerator):
         if self.backreferences_support or \
            utils.isTGVTrue(self.getOption('backreferences_support', element, 
                                           False)):            
-            if self.getOption('plone_target_version', element, 3.0) == 3.0:
+            if self.getOption('plone_target_version', element, 3.0) >= 3.0:
                 print >>out, 'from Products.ATBackRef import BackReferenceField'
                 print >>out, 'from Products.ATBackRef import BackReferenceWidget'
             else:
@@ -1703,7 +1703,7 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             creation_permission = None
 
-        if self.getOption('plone_target_version', element, 3.0) == 3.0:        
+        if self.getOption('plone_target_version', element, 3.0) >= 3.0:
             creation_roles = "('Manager', 'Owner', 'Contributor')"
         else:
             creation_roles = "('Manager', 'Owner')"
@@ -2453,7 +2453,7 @@ class ArchetypesGenerator(BaseGenerator):
     def generateInstallPy(self, package):
         """Generate Extensions/Install.py from the DTML template.
         """
-        if self.getOption('plone_target_version', package, 3.0) == 3.0:
+        if self.getOption('plone_target_version', package, 3.0) >= 3.0:
             # don't generate it for 3.0
             return
 
@@ -2912,7 +2912,7 @@ class ArchetypesGenerator(BaseGenerator):
     
     def updateVersionForProduct(self, package):
         """Increment the build number in version.txt,"""
-        if self.getOption('plone_target_version', package, 3.0) == 3.0:
+        if self.getOption('plone_target_version', package, 3.0) >= 3.0:
             return
         build = 1
         versionbase='1.0-alpha'
@@ -4310,7 +4310,7 @@ class ArchetypesGenerator(BaseGenerator):
             if not typedef['default_view'] in typedef['suppl_views']:
                 typedef['suppl_views'].append(typedef['default_view'])
 
-            if self.getOption('plone_target_version', pclass, 3.0) == 3.0:
+            if self.getOption('plone_target_version', pclass, 3.0) >= 3.0:
                 actions = atmaps.DEFAULT_ACTIONS_3_0
             else:
                 actions = atmaps.DEFAULT_ACTIONS_2_5
