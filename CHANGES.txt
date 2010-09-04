@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.5 (unreleased)
+2.5 (2010-09-04)
 ----------------
 
 - Extender doesn't generate interfaces twice anymore.
