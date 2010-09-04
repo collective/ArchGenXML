@@ -147,7 +147,7 @@ class ArchetypesGenerator(BaseGenerator):
     named_adapter_stereotypes = ['named_adapter']
     adapter_stereotypes = ['adapter'] + named_adapter_stereotypes + extender_stereotypes
     noncontentstereotype = stub_stereotypes + python_stereotype + \
-                           teststereotype + widgetfieldstereotype + \ 
+                           teststereotype + widgetfieldstereotype + \
                            extender_stereotypes
 
     generate_datatypes = ['field', 'compound_field']
