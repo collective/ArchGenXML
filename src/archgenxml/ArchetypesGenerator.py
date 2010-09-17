@@ -9,7 +9,6 @@
 # Licence:     GPL
 #-----------------------------------------------------------------------------
 
-import sys
 import time
 import types
 import os.path
@@ -22,7 +21,6 @@ from ordereddict import OrderedDict
 from codesnippets import *
 
 from xml.dom import minidom
-from zipfile import ZipFile
 from cStringIO import StringIO
 
 # AGX-specific imports
@@ -64,7 +62,6 @@ from pprint import pprint
 #
 
 alreadyGenerated = []
-
 
 class DummyModel:
 
@@ -276,10 +273,9 @@ class ArchetypesGenerator(BaseGenerator):
 
         # Check for necessity to import ReferenceBrowserWidget
         if self.getReferenceFieldSpecs(element):
-                import_reference = True
-                print >>out, \
-                      'from Products.ATReferenceBrowserWidget.ATReferenceBrowserWidget'+\
-                             ' import \\\n    ReferenceBrowserWidget'
+            print >>out, \
+                  'from Products.ATReferenceBrowserWidget.ATReferenceBrowserWidget'+\
+                         ' import \\\n    ReferenceBrowserWidget'
 
         # Check for necessity to import DataGridField and DataGridWidget
         import_datagrid = False
@@ -381,7 +377,6 @@ class ArchetypesGenerator(BaseGenerator):
                     log.warn('Deprecated usage of stereotype view or form!')
                 log.debug("Method has stereotype action/view/form.")
                 method_name = m.getName()
-                code = utils.indent(m.getTaggedValue('code', ''), 1)
                 action_name = m.getTaggedValue('action','').strip()
                 if not action_name:
                     log.debug("No tagged value 'action', trying '%s' with a "
@@ -530,7 +525,6 @@ class ArchetypesGenerator(BaseGenerator):
                     'copy_from','source_name', 'index']
         if ignorewidget:
             noparams.append('widget')        
-        convtostring = ['expression']
         map = {}
         tgv = element.getTaggedValues()
 
@@ -1039,21 +1033,17 @@ class ArchetypesGenerator(BaseGenerator):
         }
         return res
 
-    def getReferenceFieldSpecs(self,element,field_specs=None,checkOnly=False, indent_level=0):
+    def getReferenceFieldSpecs(self, element, field_specs=None, checkOnly=False, 
+                               indent_level=0):
         # only add reference fields if tgv generate_reference_fields
         # checkOnly parameter is for testing in order to generate the necessary imports
         if field_specs is None:
-            field_specs=[]
-            
+            field_specs=[]            
         if utils.toBoolean(
             self.getOption('generate_reference_fields', element, True) ):
-            #print 'rels:',element.getName(),element.getFromAssociations()
             # and now the associations
             for rel in element.getFromAssociations():
                 name = rel.fromEnd.getName()
-                end = rel.fromEnd
-
-                #print 'generating from assoc'
                 if name in self.reservedAtts:
                     continue
                 field_specs.append(self._getFieldSpecFromAssoc(rel, element,
@@ -1074,20 +1064,14 @@ class ArchetypesGenerator(BaseGenerator):
                     if not fc:
                         continue
                     field_specs.append(fc)
-
         return field_specs
     
     def getLocalFieldSpecs(self, element, indent_level=0):
         """aggregates the different field specifications."""
         field_specs = []
         aggregatedClasses = []
-
         for attrDef in element.getAttributeDefs():
             name = attrDef.getName()
-            #if name in self.reservedAtts:
-            #    continue
-            mappedName = utils.mapName(name)
-
             field_specs.append(self.getFieldSpecFromAttribute(attrDef, element,
                                                    indent_level=indent_level+1))
 
@@ -1095,15 +1079,14 @@ class ArchetypesGenerator(BaseGenerator):
             name = child.getCleanName()
             if name in self.reservedAtts:
                 continue
-            unmappedName = child.getUnmappedCleanName()
             if child.getRef():
                 aggregatedClasses.append(str(child.getRef()))
 
             if child.isIntrinsicType():
                 field_specs.append(self.getFieldSpec(child, element,
                                                    indent_level=indent_level+1))
-
-        field_specs.extend(self.getReferenceFieldSpecs(element, indent_level=indent_level))
+        field_specs.extend(self.getReferenceFieldSpecs(element, 
+                                                     indent_level=indent_level))
         return field_specs
 
     # Generate get/set/add member functions.
@@ -2340,62 +2323,6 @@ class ArchetypesGenerator(BaseGenerator):
         
         return outfile.getvalue()
 
-    def generateZope2Interface(self, element, **kw):
-        outfile = StringIO()
-        log.info("%sGenerating zope2 interface '%s'.",
-                 '    '*self.infoind, element.getName())
-
-        wrt = outfile.write
-
-        dependentImports = self.generateDependentImports(element).strip()
-        if dependentImports:
-            print >> outfile, dependentImports
-
-        additionalImports = self.generateAdditionalImports(element)
-        if additionalImports:
-            print >> outfile, additionalImports
-
-        print >> outfile, IMPORT_INTERFACE
-
-        additionalImports = element.getTaggedValue('imports')
-        if additionalImports:
-            wrt(additionalImports)
-        print >> outfile
-
-        aggregatedClasses = element.getRefs() + element.getSubtypeNames(recursive=1)
-
-        alreadyGenerated.append(element.getType())
-        name = element.getCleanName()
-
-        wrt('\n')
-
-        parentnames = [p.getCleanName() for p in element.getGenParents()]
-        additionalParents = element.getTaggedValue('additional_parents')
-        if additionalParents:
-            parentnames = additionalParents.split(',') + list(parentnames)
-
-        if not [c for c in element.getGenParents() if c.isInterface()]:
-            parentnames.insert(0, 'Base')
-        parents = ', '.join(parentnames)
-
-        s1 = 'class %s%s(%s):\n' % (self.prefix, name, parents)
-
-        wrt(s1)
-        doc = element.getDocumentation(striphtml=self.strip_html)
-        print >> outfile, utils.indent('"""%s\n"""' % doc, 1,
-                                       stripBlank=True)
-
-        header = element.getTaggedValue('class_header')
-        if header:
-            print >> outfile, utils.indent(header, 1)
-
-        wrt('\n')
-        self.generateMethods(outfile, element, mode='interface')
-        wrt('\n# end of class %s' % name)
-
-        return outfile.getvalue()
-
-
     def generateHeader(self, element):
         outfile = StringIO()
         i18ncontent = self.getOption('i18ncontent', element,
@@ -2977,10 +2904,7 @@ class ArchetypesGenerator(BaseGenerator):
     
     def _generateVersionString(self, oldstring):
         build = 1
-        versionbase='1.0.0'
         vertext = oldstring.strip()
-        if vertext:
-            versionbase = vertext
         parsed = vertext.split(' ')
         if parsed.count('build'):
             ind = parsed.index('build')
@@ -2988,7 +2912,6 @@ class ArchetypesGenerator(BaseGenerator):
                 build = int(parsed[ind + 1]) + 1
             except:
                 build = 1
-            versionbase = ' '.join(parsed[:ind])
         else:
             parsed = vertext.split('.')
             try:
@@ -3051,7 +2974,6 @@ class ArchetypesGenerator(BaseGenerator):
             title = klass.getTaggedValue('configlet:title', title)
             condition = klass.getTaggedValue('configlet:condition', '')
             view = klass.getTaggedValue('configlet:view', 'view')
-            description = klass.getTaggedValue('configlet:description', '')
             section = klass.getTaggedValue('configlet:section', 'Products')
             action_id = utils.cleanName(title)
             permission = klass.getTaggedValue('configlet:permission',
@@ -3855,8 +3777,6 @@ class ArchetypesGenerator(BaseGenerator):
         # Initializing some stuff as I got an error report.
         sourceinterface = None
         targetinterface = None
-        sourcecardinality = None
-        targetcardinality = None
         assocclassname = None
 
         doc = minidom.Document()
@@ -4032,9 +3952,6 @@ class ArchetypesGenerator(BaseGenerator):
             log.info("Keeping old school skindir at: '%s'.", oldschooldir)
 
     def generateProduct(self, root):
-        dirMode=0
-        outfile=None
-
         if self.generate_packages and \
            root.getCleanName() not in self.generate_packages:
             log.info("%sSkipping package '%s'.",
@@ -4042,7 +3959,6 @@ class ArchetypesGenerator(BaseGenerator):
                      root.getCleanName())
             return
 
-        dirMode=1
         if root.hasStereoType(self.stub_stereotypes, 
                               umlprofile=self.uml_profile):
             log.debug("Skipping stub Product '%s'.",
@@ -4175,8 +4091,8 @@ class ArchetypesGenerator(BaseGenerator):
             if not klass.getRef():
                 continue
             aggregatedClasses.append(str(klass.getRef()))
-            aggregatedType.append(klass.getRef().getTaggedValue('portal_type'),
-                                  str(klass.getRef()))
+            aggregatedTypes.append(klass.getRef().getTaggedValue('portal_type'),
+                                   str(klass.getRef()))
             
         for o in element.getAggregatedClasses(recursive=recursive, 
                                               filter=['class', 'associationclass']):
