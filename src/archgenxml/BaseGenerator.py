@@ -212,18 +212,13 @@ class BaseGenerator:
 
     def generateDependentImports(self, element):
         outfile = StringIO()
-        package = element.getPackage()
-
         # Imports for stub-association classes
         importLines = []
-
         parents = element.getGenParents()
         parents += element.getRealizationParents()
         parents += element.getClientDependencyClasses(includeParents=True)
         parents += element.getAdaptationParents()
-
         for p in parents:
-
             if p.hasStereoType(self.stub_stereotypes):
                 # In principle, don't do a thing, but...
                 if p.getTaggedValue('import_from', None):
