@@ -931,6 +931,14 @@ tagname = 'widget:i18n_domain'
 explanation = """Set the i18n domain. Defaults to the product name."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'widget:i18n_domain'
+explanation = """Set the i18n domain. Defaults to the product name."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'widget:macro'
+explanation = """Set an alternate macro for the widget"""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 # Package level tagged values
 category = 'state'
 
