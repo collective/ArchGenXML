@@ -23,7 +23,7 @@
      version 1.10 2007/04/06 Encolpe fixed renaming allowed_content_types into allowable_content_types: they are not used in the same semantic
      Now this profile is generated with ArgoUMLProfileGenerator.py script
 -->
-<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Wed Aug 25 15:38:16 2010'>
+<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Tue Oct 19 16:20:33 2010'>
   <XMI.header>
     <XMI.documentation>
       <XMI.exporter>ArgoUMLProfileGenerator.py</XMI.exporter>
@@ -491,17 +491,6 @@
             <UML:Multiplicity xmi.id = '5078c1d9-aee1-5124-9788-6244d6d8a4c0'>
               <UML:Multiplicity.range>
                 <UML:MultiplicityRange xmi.id = 'f7691267-7283-5440-813f-cb044e70fb6e' lower = '0'
-                  upper = '1'/>
-              </UML:Multiplicity.range>
-            </UML:Multiplicity>
-          </UML:TagDefinition.multiplicity>
-        </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'f5e6947c-ae9e-5d3b-b16f-d5e4d03ce635' name = 'relation_field'
-          isSpecification = 'false' tagType = 'String'>
-          <UML:TagDefinition.multiplicity>
-            <UML:Multiplicity xmi.id = '92b1dc01-4d6e-5fbd-aeee-5887fcc78416'>
-              <UML:Multiplicity.range>
-                <UML:MultiplicityRange xmi.id = '2bd4a2c4-b0b4-5244-9d32-1444a448d613' lower = '0'
                   upper = '1'/>
               </UML:Multiplicity.range>
             </UML:Multiplicity>
@@ -1057,6 +1046,17 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'fe0656de-7a1f-59e4-855d-6051d39f381a' name = 'widget:show_review_state'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '64b10187-7116-580c-b280-ed0a81f78c5e'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '51b036e0-e5b5-5007-a0b9-97774dc99c86' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
         <UML:TagDefinition xmi.id = '4b41939b-8bfc-5fbe-8dda-679b48e679eb' name = 'widget:rows'
           isSpecification = 'false' tagType = 'String'>
           <UML:TagDefinition.multiplicity>
@@ -1162,6 +1162,17 @@
             <UML:Multiplicity xmi.id = '1a339815-0cbe-571a-b39c-987d3fdcf97d'>
               <UML:Multiplicity.range>
                 <UML:MultiplicityRange xmi.id = '6e2f387a-ec6c-5d60-90e5-dcf3a31b9acd' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'f5e6947c-ae9e-5d3b-b16f-d5e4d03ce635' name = 'relation_field'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '92b1dc01-4d6e-5fbd-aeee-5887fcc78416'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '2bd4a2c4-b0b4-5244-9d32-1444a448d613' lower = '0'
                   upper = '1'/>
               </UML:Multiplicity.range>
             </UML:Multiplicity>
@@ -1739,12 +1750,12 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'fe0656de-7a1f-59e4-855d-6051d39f381a' name = 'widget:show_review_state'
+        <UML:TagDefinition xmi.id = '046b88f5-302c-5c26-a124-acf3437a1055' name = 'widget:macro'
           isSpecification = 'false' tagType = 'String'>
           <UML:TagDefinition.multiplicity>
-            <UML:Multiplicity xmi.id = '64b10187-7116-580c-b280-ed0a81f78c5e'>
+            <UML:Multiplicity xmi.id = 'cd9957b5-a7a0-59bc-8f79-e7b5458d7b9b'>
               <UML:Multiplicity.range>
-                <UML:MultiplicityRange xmi.id = '51b036e0-e5b5-5007-a0b9-97774dc99c86' lower = '0'
+                <UML:MultiplicityRange xmi.id = '0245a5c1-58f6-5724-b26e-f971a17e2667' lower = '0'
                   upper = '1'/>
               </UML:Multiplicity.range>
             </UML:Multiplicity>
