@@ -80,7 +80,7 @@ def setupHideMetaTypesFromNavigations(context):
 <dtml-if "toolnames">
 def setupHideToolsFromNavigation(context):
     """hide tools"""
-    if isNot<dtml-var "product_name">Profile(context): return 
+    if isNot<dtml-var "product_name">Profile(context): return
     # uncatalog tools
     site = context.getSite()
     toolnames = <dtml-var "repr(toolnames)">
@@ -101,7 +101,7 @@ def setupHideToolsFromNavigation(context):
 <dtml-if "fixtools">
 def fixTools(context):
     """do post-processing on auto-installed tool instances"""
-    if isNot<dtml-var "product_name">Profile(context): return 
+    if isNot<dtml-var "product_name">Profile(context): return
     site = context.getSite()
     tool_ids=<dtml-var "[t.getTaggedValue('tool_instance_name','portal_%s' % t.getCleanName().lower()) for t in alltools]">
     for tool_id in tool_ids:
