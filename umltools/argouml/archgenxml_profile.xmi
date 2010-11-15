@@ -23,7 +23,7 @@
      version 1.10 2007/04/06 Encolpe fixed renaming allowed_content_types into allowable_content_types: they are not used in the same semantic
      Now this profile is generated with ArgoUMLProfileGenerator.py script
 -->
-<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Tue Oct 19 16:20:33 2010'>
+<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Mon Nov 15 19:30:08 2010'>
   <XMI.header>
     <XMI.documentation>
       <XMI.exporter>ArgoUMLProfileGenerator.py</XMI.exporter>
@@ -491,6 +491,17 @@
             <UML:Multiplicity xmi.id = '5078c1d9-aee1-5124-9788-6244d6d8a4c0'>
               <UML:Multiplicity.range>
                 <UML:MultiplicityRange xmi.id = 'f7691267-7283-5440-813f-cb044e70fb6e' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'f5e6947c-ae9e-5d3b-b16f-d5e4d03ce635' name = 'relation_field'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '92b1dc01-4d6e-5fbd-aeee-5887fcc78416'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '2bd4a2c4-b0b4-5244-9d32-1444a448d613' lower = '0'
                   upper = '1'/>
               </UML:Multiplicity.range>
             </UML:Multiplicity>
@@ -1167,17 +1178,6 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'f5e6947c-ae9e-5d3b-b16f-d5e4d03ce635' name = 'relation_field'
-          isSpecification = 'false' tagType = 'String'>
-          <UML:TagDefinition.multiplicity>
-            <UML:Multiplicity xmi.id = '92b1dc01-4d6e-5fbd-aeee-5887fcc78416'>
-              <UML:Multiplicity.range>
-                <UML:MultiplicityRange xmi.id = '2bd4a2c4-b0b4-5244-9d32-1444a448d613' lower = '0'
-                  upper = '1'/>
-              </UML:Multiplicity.range>
-            </UML:Multiplicity>
-          </UML:TagDefinition.multiplicity>
-        </UML:TagDefinition>
         <UML:TagDefinition xmi.id = '74dc46a1-d0fe-586b-9f75-e861291811e4' name = 'category'
           isSpecification = 'false' tagType = 'String'>
           <UML:TagDefinition.multiplicity>
@@ -1393,6 +1393,17 @@
             <UML:Multiplicity xmi.id = '9f953c74-5c3b-5553-bc54-8f79c4fea7de'>
               <UML:Multiplicity.range>
                 <UML:MultiplicityRange xmi.id = '64d6e07f-b3b2-5be4-b964-10e9729b4559' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '7b92cbee-0e2c-5154-aaec-cee6b5df64eb' name = 'worklist:guard_expressions'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '568877c0-d149-5ef3-8c22-6f1a82618d87'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '7605a0e4-1a21-5a8c-a097-865af5052291' lower = '0'
                   upper = '1'/>
               </UML:Multiplicity.range>
             </UML:Multiplicity>

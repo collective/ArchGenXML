@@ -968,6 +968,11 @@ explanation = """Sets the roles needed to be allowed to view the
 worklist. No default value"""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'worklist:guard_expressions'
+explanation = """Sets the expressions needed to be allowed to view the
+worklist. No default value."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 for (tagname, permissionname) in STATE_PERMISSION_MAPPING.items():
     explanation = "Shortcut for '%s'." % permissionname
     tgvRegistry.addTaggedValue(category=category, tagname=tagname,

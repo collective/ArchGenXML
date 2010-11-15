@@ -426,6 +426,7 @@ class WorkflowInfo(object):
             wl['url'] = url
             wl['guardPermission'] = self._getWorklistGuardPermission(name)
             wl['guardRoles'] = self._getWorklistGuardRoles(name)
+            wl['guardExpression'] = self._getWorklistGuardExpression(name)
             wl['states'] = "; ".join(worklistStates)
             worklists.append(wl)
         return worklists
@@ -544,7 +545,7 @@ class WorkflowInfo(object):
             log.debug("No tagged value found, returning the default: '%s'.",
                       default)
             return default
-        # There might be more than one guard_permissions tgv, take the first
+        # There might be more than one guard_expressions tgv, take the first
         log.debug("Tagged value(s) found, taking the first (or only) one: '%s'.",
                   results[0])
         return results[0]
@@ -558,6 +559,7 @@ class StateInfo(object):
         'label', 'description', 'worklist',
         'worklist:guard_permissions',
         'worklist:guard_roles',
+        'worklist:guard_expressions',
     ]
 
     def __init__(self, state):
