@@ -23,7 +23,7 @@
      version 1.10 2007/04/06 Encolpe fixed renaming allowed_content_types into allowable_content_types: they are not used in the same semantic
      Now this profile is generated with ArgoUMLProfileGenerator.py script
 -->
-<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Mon Nov 15 19:30:08 2010'>
+<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Tue Nov 16 13:33:35 2010'>
   <XMI.header>
     <XMI.documentation>
       <XMI.exporter>ArgoUMLProfileGenerator.py</XMI.exporter>
@@ -496,17 +496,6 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'f5e6947c-ae9e-5d3b-b16f-d5e4d03ce635' name = 'relation_field'
-          isSpecification = 'false' tagType = 'String'>
-          <UML:TagDefinition.multiplicity>
-            <UML:Multiplicity xmi.id = '92b1dc01-4d6e-5fbd-aeee-5887fcc78416'>
-              <UML:Multiplicity.range>
-                <UML:MultiplicityRange xmi.id = '2bd4a2c4-b0b4-5244-9d32-1444a448d613' lower = '0'
-                  upper = '1'/>
-              </UML:Multiplicity.range>
-            </UML:Multiplicity>
-          </UML:TagDefinition.multiplicity>
-        </UML:TagDefinition>
         <UML:TagDefinition xmi.id = '2702c361-c18b-5873-8da1-b167f3d86e20' name = 'widget:allow_sorting'
           isSpecification = 'false' tagType = 'String'>
           <UML:TagDefinition.multiplicity>
@@ -744,6 +733,17 @@
             <UML:Multiplicity xmi.id = 'd0c71646-bd1d-5d87-a148-16dd5e58d548'>
               <UML:Multiplicity.range>
                 <UML:MultiplicityRange xmi.id = 'c0c90707-4610-586f-a2e0-72fe2ffbcf18' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'e04a5407-6063-5a5e-a684-defb389e79be' name = 'widget:leafsOnly'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'b04446b9-fbfa-5b4a-b417-7827f2d4cef6'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '167a2c2e-2071-51f7-9bb7-9432f97c4654' lower = '0'
                   upper = '1'/>
               </UML:Multiplicity.range>
             </UML:Multiplicity>
@@ -1024,12 +1024,12 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = '9dffeca4-6244-5958-a1b6-4abe61f4d8b2' name = 'widget:only_for_review_states'
+        <UML:TagDefinition xmi.id = '3c031935-3b50-50cf-b980-3603305e491b' name = 'widget:minExpandLevel'
           isSpecification = 'false' tagType = 'String'>
           <UML:TagDefinition.multiplicity>
-            <UML:Multiplicity xmi.id = 'c0f15d11-6756-57c4-a263-83ba8223db6c'>
+            <UML:Multiplicity xmi.id = '89011be5-f82e-559d-9d45-2b0c842badf9'>
               <UML:Multiplicity.range>
-                <UML:MultiplicityRange xmi.id = 'cc50c4cf-a1af-5141-9f4f-00a9bd1d10c1' lower = '0'
+                <UML:MultiplicityRange xmi.id = '48defc6b-d135-5663-b361-bb0cb78ec5d5' lower = '0'
                   upper = '1'/>
               </UML:Multiplicity.range>
             </UML:Multiplicity>
@@ -1134,6 +1134,17 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '9dffeca4-6244-5958-a1b6-4abe61f4d8b2' name = 'widget:only_for_review_states'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'c0f15d11-6756-57c4-a263-83ba8223db6c'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'cc50c4cf-a1af-5141-9f4f-00a9bd1d10c1' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
         <UML:TagDefinition xmi.id = '20d45118-2ede-5070-ae40-c46077d66d6d' name = 'allow_discussion'
           isSpecification = 'false' tagType = 'String'>
           <UML:TagDefinition.multiplicity>
@@ -1173,6 +1184,17 @@
             <UML:Multiplicity xmi.id = '1a339815-0cbe-571a-b39c-987d3fdcf97d'>
               <UML:Multiplicity.range>
                 <UML:MultiplicityRange xmi.id = '6e2f387a-ec6c-5d60-90e5-dcf3a31b9acd' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'f5e6947c-ae9e-5d3b-b16f-d5e4d03ce635' name = 'relation_field'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '92b1dc01-4d6e-5fbd-aeee-5887fcc78416'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '2bd4a2c4-b0b4-5244-9d32-1444a448d613' lower = '0'
                   upper = '1'/>
               </UML:Multiplicity.range>
             </UML:Multiplicity>
@@ -2685,12 +2707,34 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'd40a862c-53c9-585d-b3a5-b7cd76d167d5' name = 'widget:selectMode'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'bb9f6847-e418-5156-8df4-00be03b2e5d6'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'e6a4997c-bf31-5439-8901-f5f97358607f' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
         <UML:TagDefinition xmi.id = 'a31a0693-c6e7-581b-a9fb-0b107bacd90c' name = 'allowed_types'
           isSpecification = 'false' tagType = 'String'>
           <UML:TagDefinition.multiplicity>
             <UML:Multiplicity xmi.id = 'ef3829df-d498-5301-82b8-57dad015efd2'>
               <UML:Multiplicity.range>
                 <UML:MultiplicityRange xmi.id = '4ceb01db-dfb1-5d91-9e0c-557300461ac3' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '05a31135-291f-5d14-a64a-93856bbdb2d0' name = 'widget:rootVisible'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'b738d5e3-f49d-54e2-bbd8-4dcf2dd5435f'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '5d0992d5-00d2-5ee5-8249-b38b1bf659a5' lower = '0'
                   upper = '1'/>
               </UML:Multiplicity.range>
             </UML:Multiplicity>

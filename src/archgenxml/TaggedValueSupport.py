@@ -1315,6 +1315,11 @@ undocumented_tags = [
     'widget:image_method',
     'widget:history_length',
     'widget:restrict_browsing_to_startup_directory',
+    ## tags for DynatreeWidget
+    'widget:selectMode',
+    'widget:rootVisible',
+    'widget:minExpandLevel',
+    'widget:leafsOnly',
 ]
 category = 'unknown'
 explanation = ''
