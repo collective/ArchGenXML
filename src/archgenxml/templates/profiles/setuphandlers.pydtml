@@ -22,7 +22,7 @@ def isNot<dtml-var "product_name">Profile(context):
 <dtml-if "qidependencystep">
 def installQIDependencies(context):
     """This is for old-style products using QuickInstaller"""
-    if isNot<dtml-var "product_name">Profile(context): return 
+    if isNot<dtml-var "product_name">Profile(context): return
     logger.info("installQIDependencies starting")
     site = context.getSite()
     qi = getToolByName(site, 'portal_quickinstaller')
@@ -105,9 +105,9 @@ def fixTools(context):
     site = context.getSite()
     tool_ids=<dtml-var "[t.getTaggedValue('tool_instance_name','portal_%s' % t.getCleanName().lower()) for t in alltools]">
     for tool_id in tool_ids:
-	    if hasattr(site, tool_id):
-	        tool=site[tool_id]
-	        tool.initializeArchetype()
+        if hasattr(site, tool_id):
+            tool=site[tool_id]
+            tool.initializeArchetype()
 
 </dtml-if>
 </dtml-if>
@@ -154,7 +154,7 @@ def setupCatalogMultiplex(context):
 <dtml-if "hasrelations">
 def installRelations(context):
     """imports the relations.xml file"""
-    if isNot<dtml-var "product_name">Profile(context): return 
+    if isNot<dtml-var "product_name">Profile(context): return
     site = context.getSite()
     qi = getToolByName(site, 'portal_quickinstaller')
     if not qi.isProductInstalled('Relations'):
@@ -173,7 +173,7 @@ def installRelations(context):
 <dtml-if "hasvocabularies">
 def installVocabularies(context):
     """creates/imports the atvm vocabs."""
-    if isNot<dtml-var "product_name">Profile(context): return 
+    if isNot<dtml-var "product_name">Profile(context): return
     site = context.getSite()
     # Create vocabularies in vocabulary lib
     atvm = getToolByName(site, ATVOCABULARYTOOL)
@@ -223,7 +223,7 @@ def setupMemberTypes(context):
 <dtml-let mtype="_['sequence-item']">
 <dtml-if "generator.getOption('plone_target_version', package, 3.0) == 2.5">
 <dtml-if "mtype.getTaggedValue('active_workflow_states','private,public')">
-    
+
     membrane_tool.registerMembraneType('<dtml-var "_['sequence-item'].getCleanName()">')
     cat_map = ICategoryMapper(membrane_tool)
 
@@ -234,11 +234,11 @@ def setupMemberTypes(context):
                                        states)
 </dtml-if>
 </dtml-if>
-    
+
 <dtml-if "mtype.hasStereoType(['default_member_type','default'])">
-    
+
     adder = getAdderUtility(site)
-    adder.default_member_type='<dtml-var "mtype.getCleanName()">' 
+    adder.default_member_type='<dtml-var "mtype.getCleanName()">'
 </dtml-if>
 </dtml-let>
 </dtml-in>
