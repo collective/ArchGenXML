@@ -247,7 +247,7 @@ def setupMemberTypes(context):
 def updateRoleMappings(context):
     """after workflow changed update the roles mapping. this is like pressing
     the button 'Update Security Setting' and portal_workflow"""
-    if isNot<dtml-var "product_name">Profile(context): return 
+    if isNot<dtml-var "product_name">Profile(context): return
     wft = getToolByName(context.getSite(), 'portal_workflow')
     wft.updateRoleMappings()
 
