@@ -1,11 +1,15 @@
 Changelog
 =========
 
-2.6 (unreleased)
+2.6 (Unreleased)
 ----------------
 
 - Added worklist:guard_expressions tag definition.
   [vincentfretin]
+
+- Fixed UnicodeEncodeError when writing the code of existing methods
+  back to the files and the code is in the unicode format.
+  [deo]
 
 
 2.5 (2010-09-04)
