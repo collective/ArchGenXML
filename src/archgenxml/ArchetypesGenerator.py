@@ -1275,7 +1275,10 @@ class ArchetypesGenerator(BaseGenerator):
                 declaration = cl.getProtectionDeclaration(mt.getName())
                 if declaration:
                     print >> outfile, declaration
-                print >> outfile, mt.src
+                source = mt.src
+                if isinstance(source, unicode):
+                    source = source.encode('utf-8')
+                print >> outfile, source
             print >> outfile
 
     def generateMethod(self, outfile, m, klass, mode='class'):
