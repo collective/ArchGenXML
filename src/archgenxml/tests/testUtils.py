@@ -58,7 +58,7 @@ class TestUtils(unittest.TestCase):
         """
         result = indent('', 0)
         self.assertEquals(result, '')
-    
+
     def test_indentDontBarfOnEmptyStringWhenIndenting(self):
         """ Don't barf on an empty string
         """
@@ -73,7 +73,7 @@ class TestUtils(unittest.TestCase):
         """
         result = indent(None, 0)
         self.assertEquals(result, '')
-    
+
     def test_IsTGVTrue1(self):
         """ Test if the correct True values are recognised
 

@@ -23,7 +23,7 @@ class TestTaggedValueRegistry(unittest.TestCase):
         """
         localRegistry = TaggedValueRegistry()
         self.assertEquals(len(localRegistry._registry), 0)
-        
+
     def test_addTaggedValue1(self):
         """ Add a simple value, should be placed in the registry
         """
@@ -51,7 +51,7 @@ class TestTaggedValueRegistry(unittest.TestCase):
         """ Return False for unregistered value
         """
         self.assertEquals(False,
-                          self.registry.isRegistered(category='bogus', 
+                          self.registry.isRegistered(category='bogus',
                                                      tagname='beer'))
 
     def test_isRegistered2(self):

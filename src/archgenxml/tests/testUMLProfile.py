@@ -32,10 +32,10 @@ class TestUMLProfile(unittest.TestCase):
         baseprofile.addStereoType('portal_type', ['XMIClass'], murf=1)
         baseprofile.addStereoType('view', ['XMIMethod'])
         self.assertEquals(3, len(baseprofile.getAllStereoTypes()))
-        
+
         archprofile=UMLProfile(baseprofile)
         archprofile.addStereoType('remember', ['XMIClass'])
-    
+
         self.assert_(archprofile.findStereoTypes(entities=['XMIClass']))
         self.assert_(archprofile.findStereoTypes(entities=['XMIMethod']))
         self.assert_(archprofile.findStereoTypes(entities=['XMIClass'], murf=1))
