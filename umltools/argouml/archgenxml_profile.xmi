@@ -1,0 +1,2900 @@
+<?xml version = '1.0' encoding = 'UTF-8' ?>
+
+<!-- ArchGenXML Old logs
+     version 0.1 2006/02/24 Pander initial version
+     version 0.2 2006/03/03 Pander completed stereotypes and data types
+     version 0.3 2006/03/03 Pander completed tag definitions
+     version 0.4 2006/03/06 Pander improved data types
+     version 0.5 2006/03/17 Pander added tag definition i18ncontent
+     version 0.6 2006/03/25 Pander fixed duplicate id for tag definition i18ncontent
+     version 0.7 2006/03/25 Pander added default:widget:Reference, widget:size
+     version 0.8 2006/08/02 Pander added widget:maxlength
+     version 0.9 2006/08/28 Pander added for widget: rows, cols, divider, append_only, format, future_years, starting_year, ending_year, show_ymd, show_hm, thousands_commas, whole_dollars, dollars_and_cents, addable, allow_file_upload
+     version 1.0 2006/08/28 Pander added languageIndependent
+     version 1.1 2006/0?/?? Pander added storage
+     version 1.2 2007/01/22 Pander added widget:visible
+     version 1.3 2007/02/19 Xiru added access, Modify
+     version 1.4 2007/02/19 Pander renamed allowed_content_types into allowable_content_types, added default_content_type and default_output_type
+     version 1.5 2007/03/01 Pander added columns, allow_empty_rows, widget:auto_insert, widget:columns
+     version 1.6 2007/03/05 Pander added data type datagrid, country and color and tagged values widget:provideNullValue, widget:nullValueTitle, widget:omitCountries and allow_brightness
+     version 1.7 2007/03/14 Encolpe added allowed_types for ReferenceField
+     version 1.8 2007/03/23 Encolpe added relationship for ReferenceField
+     version 1.9 2007/03/28 Pander added default_page_type
+     version 1.10 2007/04/06 Encolpe fixed renaming allowed_content_types into allowable_content_types: they are not used in the same semantic
+     Now this profile is generated with ArgoUMLProfileGenerator.py script
+-->
+<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Mon Jan 17 20:07:02 2011'>
+  <XMI.header>
+    <XMI.documentation>
+      <XMI.exporter>ArgoUMLProfileGenerator.py</XMI.exporter>
+      <XMI.exporterVersion>0.5</XMI.exporterVersion>
+    </XMI.documentation>
+    <XMI.metamodel xmi.name="UML" xmi.version="1.4"/>
+  </XMI.header>
+  <XMI.content>
+    <UML:Model xmi.id = '342db3ca-4022-4992-a166-c38c7db692f8' name = 'AGXProfile'
+      isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+      <UML:Namespace.ownedElement>
+
+	<!-- Stereotypes for ArchGenXML -->
+        <UML:Stereotype xmi.id = '815c5002-46ef-5ab7-a761-18304e6ee7dc' name = 'adapts'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Abstraction</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'f4be9689-9f2c-516a-8d5c-7f4103158756' name = 'adapter'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '794641fc-e702-5d69-bec3-688d4cf55b6f' name = 'archetype'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'b859967b-7bf9-523a-a731-ed690adc0c85' name = 'atblob'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '7f5cf2b3-6c44-570a-856b-9a387f71ea88' name = 'atdocument'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '6f953447-016e-5f32-8bce-0508ac83d510' name = 'atevent'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'b460e255-58cc-5971-817b-c714181f2b5e' name = 'atfile'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '2bdf00c7-1986-5989-8f8c-7a7b1fd50a31' name = 'atfolder'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'fb5a28b0-170a-5760-b5c5-e1deb66b4619' name = 'atimage'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '18104f9c-82f8-59d0-ae78-80394c9a9ea6' name = 'atlink'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'af0f6f8c-f813-5ff4-93af-b9ca3e7fe9aa' name = 'atnewsitem'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'fe8e9ab7-55a1-51ed-af3c-2d0d10cc85c9' name = 'btree'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '62582eaf-57a9-5a96-9de4-daadb35c7e51' name = 'content_class'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '7082f226-d80f-5951-a942-4e8b17e54c14' name = 'doc_testcase'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'fa433af0-08c6-5184-8d7c-c779f41be190' name = 'extender'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'f18f5997-d20e-525c-a324-7dfe0a0804e1' name = 'field'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'c327b5d6-d7b2-596c-b44f-30a2cfd701cc' name = 'flavor'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'a9b9f26b-1fa5-5cde-a18b-8b92c30f77da' name = 'folder'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '648d058e-0b6b-53c8-ae0f-2b0ee931dcf1' name = 'functional_doc_testcase'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '85ad6692-26cd-50d8-a627-980516f1f846' name = 'functional_testcase'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'aaa29975-43ff-538b-b94a-01c6bd742fad' name = 'hidden'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '9c36b936-9c8b-5cd2-804d-d51cf53d67dd' name = 'interface'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'c93b254f-12ae-55d7-bdf4-3dfddcf4e401' name = 'interface_testcase'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '85d8e4d1-296b-54de-aaab-d36a2e59de72' name = 'large'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '23b92e37-7446-5c53-9de6-d444bea730f8' name = 'mixin'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '1db05a5f-b8d7-52c0-a1e5-34ba184e3296' name = 'named_adapter'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '02cd58d5-f742-5c16-83d4-56821ecabf8d' name = 'odStub'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '4f75cbdd-4248-59c4-bbf4-566e5b91322f' name = 'ordered'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '0176c446-cf16-5fa9-940f-c37606e3043d' name = 'plone_testcase'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '3b44fb74-90ab-530d-8a4b-f5d261909ad4' name = 'plonefunctional_testcase'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'c98385da-c914-5f7d-af64-d0e14a5ea536' name = 'portal_tool'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'ca972a9e-e25b-5044-bc07-86a54f74833d' name = 'portlet_class'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '0ce0ad1b-d5c4-504a-afb4-36941f29d09e' name = 'python_class'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '908e85a4-e01d-543b-8591-16292edad356' name = 'remember'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '7947039d-a269-5618-9cf4-716d2d14eb83' name = 'setup_testcase'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '508d47ca-82bd-5405-9b12-6f14165f75a0' name = 'stub'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'b7d7fb60-41fb-54c1-b091-0fd7ea9860b0' name = 'testcase'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '5d6b1dca-45fc-569e-b7bd-aab2ca3acc72' name = 'tool'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'a32337c8-a530-56b6-9000-4cba3f228018' name = 'variable_schema'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '7ac0a7b2-d0ea-51ed-85b9-b1b296e5dabd' name = 'view_class'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'e0c63b92-4335-51fc-95c7-4c2a200a993e' name = 'vocabulary'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '4482ddb4-a141-544b-a5c8-9dc462de0d7e' name = 'vocabulary_term'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'f3cfc299-0394-51cd-817c-43547ebb1e23' name = 'widget'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'b9bff7fe-9b27-5a40-921d-1e60019fe939' name = 'zope_class'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'ce92257d-7a56-5427-b27c-7d03547b96db' name = 'value_class'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Dependency</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '1a5140a7-f7b8-5974-8263-ce13727a1b47' name = 'stub'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Interface</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '883ddef1-247b-52a8-adfe-7c4f9856344a' name = 'z3'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Interface</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'c6895e0a-676d-59a9-906b-e293aead5818' name = 'action'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Method</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'f5d50f28-3cdb-598c-91cc-a10fde267751' name = 'form'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Method</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '732c7be7-3050-51ad-8bd2-ca8933a0d95e' name = 'noaction'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Method</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'dd733522-4ab3-5702-82e1-b49eb8f4f9bb' name = 'view'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Method</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'c7592e7f-d95a-5b8f-bbec-bb42714ad758' name = 'odStub'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Model</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '772edf7b-c472-5f19-8cc2-eb36739b1543' name = 'stub'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Model</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '339d4b64-3e9f-5715-ad1b-75b061229e6e' name = 'action'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Operation</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'f828f38c-5cdc-5631-801d-b7873f55ff19' name = 'form'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Operation</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'b4d56506-ecdd-5a0d-a1db-b9ad3a720cdc' name = 'noaction'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Operation</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '389af8ce-2003-544a-8a7e-1ea152bd002b' name = 'view'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Operation</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'df8dc5f5-1962-54d8-bf99-912398db75cf' name = 'odStub'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Package</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = '281033a5-7d51-5c48-98e3-29a6a26ff77b' name = 'stub'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Package</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+        <UML:Stereotype xmi.id = 'ffe3524b-0117-5949-a2e8-f94b2f6ea8e0' name = 'tests'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Stereotype.baseClass>Package</UML:Stereotype.baseClass>
+        </UML:Stereotype>
+
+	<!-- Data types for ArchGenXML -->
+        <UML:DataType xmi.id = '4fb9b4e6-b8c5-5e1c-9f1c-fc4fcccee146' name = 'backreference'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = '16a8d020-4c0a-58ce-993f-e6306abf0bbf' name = 'boolean'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = '1a07cf7b-de3f-597d-8d47-0404df3249c2' name = 'color'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = '45219def-824b-5c73-9ffa-3e2afdb28391' name = 'computed'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = 'dc39989d-e77b-5cc7-882c-a83544db1c3d' name = 'country'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = '7b5efa82-7182-5a2e-adb2-1adb8217c620' name = 'copy'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = '8ca0b5a3-9f38-56a8-b9e6-8c65a791ba48' name = 'datagrid'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = '569bcc03-24c5-54fa-a0ad-92ebe7789d0b' name = 'date'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = 'eda3a594-9aef-59f3-b7f2-012d98428eb5' name = 'file'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = '2e1ca0d0-4d69-5a13-bf03-c10dad6dd736' name = 'fixedpoint'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = '0c72976a-1b6c-5c07-b701-eeea57c507a1' name = 'float'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = '8e56fbdd-4198-5756-bc0d-25ae8b6065e1' name = 'generic'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = '2ee26b4f-54e2-55f2-8f63-7bdc8ea88fe7' name = 'image'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = 'e12f147a-d786-5cd7-a838-1bd9f02fdbf4' name = 'int'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = '9eff47dd-3c78-5076-817e-4148cf8df47c' name = 'lines'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = '6d47d517-07de-5e5b-afb9-ac0619f6238d' name = 'multiselection'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = 'f6c19640-1af0-512c-9c9a-1830eacba98e' name = 'keywords'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = '6d9433e4-bb8a-50e5-93a5-6f2442b83668' name = 'photo'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = 'e85df323-29b1-5d10-98de-7c2a1c60f9da' name = 'reference'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = 'ed02b431-a881-58d3-8d1f-dd7c7712913c' name = 'relation'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = 'd0f71035-281f-5042-ac7f-403420ef39ba' name = 'richtext'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = '7f483640-4f03-5751-8ce5-25aa35240577' name = 'selection'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = '9627e80f-cde2-5780-9619-55e71d92d8ea' name = 'string'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = '86c40523-9b62-53b1-ba94-fd82874a99c2' name = 'text'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = '6f996b25-1707-5d42-85b1-2b473c9ed6f3' name = 'void'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+
+	<!-- Tag definitions for ArchGenXML -->
+        <UML:TagDefinition xmi.id = '639e6f38-6223-57af-935a-d79bcef64a57' name = 'pil_quality'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '33715993-7dcf-5eae-90df-437181656c64'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '7be4d064-a44d-5b44-a1a9-a6ca9557efbe' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '473c949b-7935-57a0-850d-22bbe98f25d2' name = 'code'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '3165a8a7-275f-56b3-b6dc-a4756fb8067b'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '048b5f6a-7e51-5169-99a1-556c4da49c4f' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '2b918278-5d22-5e33-9413-b10b87282e53' name = 'searchable'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '89c5e734-75b5-54dc-acea-64323e35b549'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '15460b93-1b6c-57dd-a2e8-d4faaa000df2' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '26d6c215-1c55-57c8-bbec-9aeee1fec572' name = 'plone_target_version'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'cd4b2768-80f4-5bde-96e5-a5048af28d1a'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '0152a6e7-df93-547b-adf7-50d1023ced6e' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '6e4cc022-2c3f-5b02-b888-a765fced631e' name = 'widget:destination_types'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '8fc8ba19-8824-5396-804b-4b17c3348224'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '48886868-a551-5a7b-9165-76a891d5798b' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '4c016ed1-1bfa-58d7-807a-00f2a512cc8b' name = 'index:attributes'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'a24b33b5-1436-5c43-a151-e004648ca183'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '2b7043dd-9533-534b-871b-bfff6f1dbb27' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'fb5b6558-271e-5cb3-88b2-f43e298915b8' name = 'widget:auto_insert'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'cc1280a3-cabe-59c0-9af5-ae3afcaf6342'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'd08aa9a9-defc-5d9d-be35-20bf4011f85c' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'be97de9c-6df7-5f57-a4c4-a86b3fa06eeb' name = 'marshaller'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '6e8f97cf-15c8-56f0-ba09-a8058f7d19ad'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'e1c8225f-bad5-5be8-85c5-01b2ddc69a71' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '38f1d8e0-f856-54b2-8a21-63acb019fc71' name = 'inactive'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '272cc58c-8570-5a12-a59e-e2eb31c73759'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '0832a462-94f9-5fe3-a769-7206a13e4203' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '7cce99e6-30d6-502b-9116-ee0a4c3c3e86' name = 'widget:show_path'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '228499b6-4442-5226-abac-0dd0811ea256'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '8cf6cb5b-59b9-5456-a446-1241b570a86f' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '9ff9d961-0527-54ab-b159-cb62f6c0a0af' name = 'validators'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '38ed39f5-c8d7-5282-bb16-5460855f1b84'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '8740d5da-e8e7-52fb-97b3-426fe8bc79c8' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'bb71fdfc-42f7-5d69-96a3-aaa4f4e7b587' name = 'widget:history_length'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '1401cbd9-92e7-5079-8a2f-d403b3eaeff4'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '42c558e3-9555-528c-86d2-093fb7433123' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '668a112b-2623-5693-bddd-5d2eb1dd5a8b' name = 'inverse_relation_name'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'c3a1eda8-0093-55bb-904d-ba43087e2eb5'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'b6b2e38d-8145-51a6-b838-36323059c43e' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'b47800a6-0585-5ee9-8dbe-06e7f8d1817b' name = 'configlet:permission'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'a2ffb232-5421-5787-8bf2-79b1137fd086'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'ce92967b-164b-50e8-a37d-e43f39cede2f' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '2fad565d-5285-5094-aa10-b6823f2c0af5' name = 'parentclasses_first'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '5078c1d9-aee1-5124-9788-6244d6d8a4c0'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'f7691267-7283-5440-813f-cb044e70fb6e' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '2702c361-c18b-5873-8da1-b167f3d86e20' name = 'widget:allow_sorting'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '62567267-2a1a-52d3-bb88-4636437225f8'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '45774bab-0865-5746-ada2-aeb2e8545d75' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'b431c1a2-7646-51be-8730-31bac2cc5440' name = 'widget:dollars_and_cents'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '23615e96-073b-5615-8d1e-02a017c6bcf3'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '3a4b208c-33d7-51ea-866e-f78fbca3fd29' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'e14a5cda-77c4-5e17-80f0-3ed5c7774d5e' name = 'widget:label'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '1cb83e7d-a2c4-595c-b11f-f6a1e51fa61b'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '81361486-fbc9-5b61-aaf6-612d94467743' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'ca359989-fb3f-568c-9257-3c25dee62a8b' name = 'collection:criteria_description'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '5439cf87-4e63-5d6e-bf0c-62d5a5a3e9b9'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '047fe016-3a45-5705-8883-df3489fc3abd' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'a0737f21-82cd-512b-b712-885adda4a8b0' name = 'copyright'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '0979146f-3ec5-5a88-9d27-0452abca50ee'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '7d59dee1-38c7-59c5-8e1d-d98888444a24' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '24310729-5e9d-56b5-8a42-db03c6d7d467' name = 'title'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'b239cfba-ecd2-568d-a491-def31bd64dd8'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '0c579638-eaa3-58cb-985b-2a057ccf2b38' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '85736d59-eb43-526f-af11-6a19784237ef' name = 'catalog:name'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'c97fbc0b-95eb-51c8-a53f-da19ad216fa7'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '6e58bfe7-a34e-5730-a0eb-1674e177fd78' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '01a4a639-6620-52e1-b926-14cf8e16197a' name = 'Modify'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '3c049052-99ae-5547-b99e-e13b6a751bb2'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'ed16cde4-3f1a-52f2-9482-c79bede4299b' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'c0c74f6c-629a-54be-bcca-9156023120a1' name = 'widget:addable'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '0f727e23-9fce-5cb5-9415-7646194ce1bb'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'c8b2f99d-c6b1-5ae7-84a5-8d1a01607b43' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'cd278987-e14a-560a-9199-d70c99ed3a9a' name = 'hide_folder_tabs'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '7df8f5a1-4711-5495-8599-5415e8835dea'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'be078268-8299-5a27-a9f9-22722dfcc437' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '6a4b867d-5108-59f4-a129-f1bd8752f870' name = 'move:before'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'cfd4f1ea-24f9-570b-b8cd-3c7ecc36d915'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'e034e28a-749c-5041-b23e-9863366ea71e' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '63f91ec8-7920-5d3a-b484-c5c9fb57e997' name = 'add'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '04f507b3-83e7-5c80-ac6b-1a2576dd8c24'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '6ee85d41-0c4b-5f76-aca8-92e66de36507' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'fd6a69a4-ed07-555f-9f99-bebd5690c59b' name = 'languageIndependent'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '8aa554df-afba-560f-b03d-27a08a052b95'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '1bb55942-0a7d-5148-9d66-0338b55705ec' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '6e6f3a02-3cde-5ba8-b049-9756adbae1be' name = 'widget:maxlength'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '96b758b7-8367-54cd-825f-60f88c1ea70d'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '586f460a-1867-568a-93ed-9e4a85423d01' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '6e15131e-c8de-5154-86bd-7a15e4d16d1c' name = 'collection:metadata_description'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '7c958c89-e320-5b98-801e-82c19813ab8e'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'e875778d-6526-5181-a007-007d5069395d' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '3e607dbd-5271-5659-ae88-15cfcaf2b3c9' name = 'immediate_view'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '172a4ddc-2f07-571d-a2de-aec6a0e442ff'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '424c6b9f-df61-5adf-b8d9-42e8915f2597' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '5a1a1ffa-a4de-5348-a276-3714d029d18a' name = 'configlet:description'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '3cb1ba54-b9cd-55cc-992c-8cf85da40952'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'b5e70459-c81a-5c2f-a8bf-64e0209cc3e4' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'bcdb7936-7947-5334-a6a5-ed192738399a' name = 'columns'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '40b8aa9f-20ff-540f-a938-e7c582fb7cdb'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '0c6b1ff7-ad34-53f9-9492-85f0159703b3' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '35a0cfa0-1384-5fad-bdf3-ab7abdb97268' name = 'widget:cols'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '3ff08a8c-dddd-586e-a4bd-6f260241fbe1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '1713a9f3-fb41-5a41-a1ef-6e674b486123' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '0f651f37-01d5-5348-b704-40aa86a79f29' name = 'widget:visible'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '25bd4791-d46c-515f-9ce9-6d15eca91d40'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '4c0269c5-9127-5c4a-806c-8bd49e00e0ea' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'dc15b52a-c47f-5598-b7f3-0ffbaaabd6e9' name = 'widget:append_only'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '45233cdc-c9f7-5ce3-ab4c-f5974a350dcc'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'f439453e-3dc3-5514-b04b-dea289b5bf0d' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '469f57b0-3df9-56d5-8c28-66ead11b57ba' name = 'widget:future_years'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'd0c71646-bd1d-5d87-a148-16dd5e58d548'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'c0c90707-4610-586f-a2e0-72fe2ffbcf18' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'e04a5407-6063-5a5e-a684-defb389e79be' name = 'widget:leafsOnly'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'b04446b9-fbfa-5b4a-b417-7827f2d4cef6'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '167a2c2e-2071-51f7-9bb7-9432f97c4654' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '20745075-72d1-5e15-afb4-76f960ad3f4e' name = 'move:top'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '623ca407-6866-5d2e-a852-a6703dc6a6c7'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'f1897afd-5877-5365-81f3-5453d51dcd2d' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'f0884cd6-0431-5a5d-9cf1-00a9e715bebb' name = 'back_reference_field'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '23301e0f-987d-5669-b841-c2834ad6ab1c'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '14ca944c-3c3a-5b30-ace6-0487610968c7' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'f124540b-6c1d-550e-b638-99e1fe7edbe4' name = 'collection:criteria_label'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'eaf3acce-d4b6-53e0-96df-fc3d8a8f51c3'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'b0fec6d5-22ab-5b67-8375-1385d954853a' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '878dec86-6800-54c7-9a1a-9c5b3827b948' name = 'vocabulary:term_type'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'a7663424-d6a0-5de6-ac11-064b6d714a6f'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '6c92ccf1-4565-59f0-b55c-dea5650f3e13' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '13a3b152-e84b-5560-9075-70f1a5737ecd' name = 'widget:ending_year'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'd2ee2f28-4fff-57f5-a7a8-6eab13fd5a17'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '8cc5fef8-a6f4-5229-937b-790c5aeacc94' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '94123a8d-f29e-595c-9ddb-6f94eb7cd16c' name = 'widget:restrict_browsing_to_startup_directory'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '7d967850-a1bc-54d0-b227-58b300d04268'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'ec0e8a55-f67b-507f-9475-d70157d21186' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '5576c8f8-0d81-5672-854b-4fb7968d3cf0' name = 'archetype_name'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'a1707eae-a25b-5e5c-9087-9d5e02558b83'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '32edb949-d4a3-5256-8c72-84a577e0d820' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'b6fa07cb-4d1d-5162-94a5-da8f91009b7a' name = 'write_permission'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'c77cb2aa-b356-591c-8174-0c1a81eb17ae'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '54c51a81-9803-521e-aa32-208df2d6c8c5' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '90ce056c-6ba4-5536-8773-02baa12412b7' name = 'condition'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '624fb116-e251-5b38-acf5-de7eb4f7942d'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '097d8dfe-7a68-5969-976e-51d79d92e63f' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'e2893533-5172-5c3a-848e-28c8b7625ee3' name = 'i18ncontent'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'b54b3d82-975c-5b6a-9160-3616023d4640'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'c16acb50-7d1f-56cb-a245-727bb5def567' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '2976e4f0-96f5-5709-ae3a-d7b782f965b0' name = 'autoinstall'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '6a84eb93-c0ea-55f5-98aa-11be796e9c5c'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'a6114271-a59f-501a-bf3b-c725e40bb6c1' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'd34437cc-4d02-58d9-9517-6bd964a89afe' name = 'name'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '1ede0672-b3b9-5d43-a110-d967a9c105e4'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '7e0150fc-b284-5131-9069-c0d34bb7d9e7' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '370ea141-de64-5fc8-af83-51827aecdc4d' name = 'sizes'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '25717831-746b-5bc1-8dec-3f995de9de9a'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'cc783127-13d8-5f25-bf35-4686465b3c99' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'e887f34e-72c8-55c7-9948-507ee5eb34a0' name = 'catalog:index'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'cd79bc48-084f-5b75-b854-1d23557cbd1f'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '14bb0ff6-dfab-54a4-8db5-6cba0d7d2646' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '75255d3d-3635-54b1-a923-c47d45dfc306' name = 'array:widget'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'cf2e10bf-9b2a-5b3b-8a0c-c36d21f79e8e'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'c07d46c5-1455-57e8-b647-2c71af09b1cf' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '8bec5d7c-ae2e-5fd8-b932-bd35351f7dd7' name = 'list'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '7134bc03-fdf3-5af4-9ff6-c7ed3c4bae4c'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '5fd63e2a-bed8-5e01-bf0e-705f6ac62561' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'a9c138a6-7cdd-5876-959f-432613b7dc63' name = 'collection:metadata'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '18d86fe5-7bda-5e71-bc69-7a76614f5ea8'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '9606398b-7f4c-523f-96be-a893caaed4cd' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '086e2d39-c74f-53e5-9053-4a316dbafa9c' name = 'used_for'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'fee7fa23-f8c6-5b45-a6eb-582a879e1f0b'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '5b66995d-78d5-5b71-8aa0-9c80ef71704d' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '2daac1c6-7028-5d58-9d0e-55811521fcf1' name = 'widget:show_indexes'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '959c6e24-88c7-5171-b8cc-822006d747b8'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '28bbff68-11a2-5b42-ac36-93e1373fa357' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '43137585-4089-5a4d-b933-163b0db39e76' name = 'creation_permission'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'c706e678-e3a3-5c94-9778-3433fea2022b'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '40af1bb7-970a-5c37-a48c-eae67d579978' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '73830cb0-4763-5b54-8f66-efef4cefb648' name = 'mode'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '210f268a-3522-5a7b-a263-f3f873bd4e91'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'f5d023c1-9831-5f46-906f-58d4c0478c6d' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '7ed928fa-6f61-5c1e-b0b0-d7822369c04b' name = 'disable_polymorphing'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'dd33450e-d5f2-54e4-99c1-2a17332857c1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '34994aa1-46ab-5187-b9a1-2fa21fce1646' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'bf34265e-c9e0-55c6-ab79-2d5e7ef693b2' name = 'module_name'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'e17be796-a152-5f60-8aa2-6ac235806d8d'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '134115f5-ae20-5f86-86fc-9670990abefa' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '92b9861a-ac27-5e98-885e-0577495e56e8' name = 'default_output_type'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '0f7673ce-0806-5ad3-97ad-c13def8b851e'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'e773aabb-b0ac-5c9f-860c-800722c76aa9' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '246e5a05-2ce1-529f-92d9-b0f5a331b3e4' name = 'configlet:title'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'b6ef3f1d-0ac5-58a7-9038-ceb027ba1609'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '80833440-dfc7-56e1-80da-4b21a3eb0056' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '3c031935-3b50-50cf-b980-3603305e491b' name = 'widget:minExpandLevel'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '89011be5-f82e-559d-9d45-2b0c842badf9'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '48defc6b-d135-5663-b361-bb0cb78ec5d5' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'd7e6e689-1bf4-59a3-9970-e9ddc7a32a73' name = 'base_class'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'ddfb5301-c373-528c-bacf-6eb8b98a53bf'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '5991816b-d546-5af3-946d-0dc14e77dd1e' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'a0553daa-6736-5593-8ce8-e3689fecd4e4' name = 'move:pos'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '39392fe4-1d60-5736-8fe2-74ef87c6f3ff'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '9c34d01a-4a92-519f-8de8-46a114fee54b' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'fe0656de-7a1f-59e4-855d-6051d39f381a' name = 'widget:show_review_state'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '64b10187-7116-580c-b280-ed0a81f78c5e'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '51b036e0-e5b5-5007-a0b9-97774dc99c86' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '4b41939b-8bfc-5fbe-8dda-679b48e679eb' name = 'widget:rows'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '0da01d84-cc78-5916-b43b-97db551aeea7'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '11713a03-5341-5866-a80b-4f1390158405' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '611fbe84-d9da-541e-8763-aed67c27806f' name = 'display_in_navigation'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '46bbf61c-8133-57a0-b938-e5a518fc6b1f'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'ff660c68-4980-56bb-8f67-d4f2dd31d561' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'b38c18c2-c3d9-588b-847a-381fa6f3bf91' name = 'widget:allow_browse'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '496d1bcd-497d-553c-8cda-6aaa6c3d992a'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'aedfdb11-bbb8-5f90-bfe1-c8474eb05d73' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'b8540f20-cbb9-5404-9eec-84f750d4b94a' name = 'module'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '1a439473-67e4-543b-97bf-6ea60ad1813b'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'c97f78c9-d335-5b4f-a7eb-8ffff23f5414' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'cb8ad36d-4525-511d-8ee5-6c0ef7bc7734' name = 'mutator'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'facc8263-4a89-595a-8108-e3ce518ac11f'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '180c9879-6fe1-5fd7-bc04-6cd2243ff51d' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'e39220c9-905c-5148-919f-58cfc0663ffd' name = 'configlet:condition'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'c117c5c6-b567-5039-900c-a80286a23f1b'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '6f5f003c-b0ea-5b94-99af-b46684f5b7a9' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '9dffeca4-6244-5958-a1b6-4abe61f4d8b2' name = 'widget:only_for_review_states'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'c0f15d11-6756-57c4-a263-83ba8223db6c'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'cc50c4cf-a1af-5141-9f4f-00a9bd1d10c1' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '20d45118-2ede-5070-ae40-c46077d66d6d' name = 'allow_discussion'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'b945a994-0e31-5382-a190-72f4148eb519'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'e9f90a19-c059-5118-b389-f9b77d80874d' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'c722f2fb-72e9-5101-9e96-fac8d16c96eb' name = 'configlet:view'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'd4f8e0d6-829e-5063-88ae-d91fd80d5fe8'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'ff27a8ff-8bcc-5807-90a7-c0a1e390d387' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '4e542de9-fc40-5683-956e-50bd26387ade' name = 'widget:startup_directory'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'db37914b-4598-5cbd-899b-e263749921cf'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'cefee211-0d66-52d6-8fb0-420ad75171eb' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'f4dc819a-d47e-532f-ac98-d456cfc280d4' name = 'import_from'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '1a339815-0cbe-571a-b39c-987d3fdcf97d'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '6e2f387a-ec6c-5d60-90e5-dcf3a31b9acd' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'f5e6947c-ae9e-5d3b-b16f-d5e4d03ce635' name = 'relation_field'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '92b1dc01-4d6e-5fbd-aeee-5887fcc78416'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '2bd4a2c4-b0b4-5244-9d32-1444a448d613' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '74dc46a1-d0fe-586b-9f75-e861291811e4' name = 'category'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '93d35045-8e58-53cb-9f6a-7c054fccdad9'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '3e21b17a-85d5-55d5-badf-79cbd0664800' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '861f9a53-ee8e-5adb-952b-3af46f683ddc' name = 'index'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'e65b44ee-9c8c-5c04-8c71-8fc2065623d0'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'cc50104e-f265-52d2-aeb4-ed3294679768' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '5d3564a2-e09f-57ff-99cf-a5e22260969f' name = 'vocabulary:name'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'b542a199-a50e-5d00-93e1-1997cd60e869'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '9dca34ae-40fc-5570-8b50-4838dfa5ab03' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '44267677-ac2c-56b9-be42-4e545c520229' name = 'widget:provideNullValue'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '739f99be-85d0-5cf4-9a7e-93a7245478a2'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '3b9436e6-62f8-5028-9183-d88981ded6b6' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '6ce3fd0e-88d4-5a85-bd19-20348354ef83' name = 'global_allow'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'f3ae9b24-4da9-5565-83a5-258f4d112d3a'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '1e49c544-9263-5837-b399-33d657cb3d4a' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'c236ba83-9d6e-5fe0-9931-c13de08f3485' name = 'move:after'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '09c56cb1-6a34-5823-8edc-e15817b912a7'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'bcce4f84-02c0-5add-99d6-3ac0965a8d25' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '6a144cf1-0cef-5f92-a510-3354ed00672f' name = 'review'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '361603c7-f51b-51d2-b465-8b7da70dd223'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '55853487-6a3d-5c94-94d1-ef786584359b' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '51a494e5-1680-57f5-8a5d-46c6420d8171' name = 'label'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '90be2004-feac-5a33-a2d6-6c20dd73754a'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '8cb82509-f09a-5741-888e-ce75a938341a' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'f4b0dc8d-c356-549e-9e52-f9707bc63456' name = 'access'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'e1aa8a98-bf71-5fdc-98d2-029c958e6397'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '51ca0955-f340-58ba-a2d5-6041dbac54f3' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '306f5105-77da-52f6-a23c-2932fb03c0ca' name = 'meta_type'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'fa1afdaf-9f0e-5e91-ab78-e9b330f00e21'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '2ef52179-de1e-5b3d-8850-d4b4651f842a' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'bfbad8b4-f122-5ad7-b6b8-ac32d82e56b9' name = 'default_method'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '48a957fa-0ba3-5d42-b347-bfd7c05944f1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '40ad41df-4408-50da-bc31-6e870fdec264' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '05fc75f5-5623-5c96-9d59-5134959899f6' name = 'email'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '7dbd36cd-aa0c-56f2-b7de-dba7582e948a'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '7d776fec-6a78-5daf-b699-7ebb3dc5390d' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'bd931b29-3859-52dd-b6b6-87c48de7ab6e' name = 'dependend_profiles'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '8653aab7-fd06-5779-b79c-0f6050895d71'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '1ebb4435-eb82-5e38-a5ea-690760e64287' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '42d9d25e-b6eb-50d5-9ff2-9f75169bd390' name = 'widget'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'a19a02ee-9eed-5d26-bf97-04f712ea31b3'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '9db32454-42f8-558b-bba2-c95c0a4d1397' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '37a77bae-49e2-54f2-ab79-5a8d77352ec9' name = 'default_page_type'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'ae76ad3f-7a0d-569b-8914-07f26fc4c126'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '1eef33d5-94ad-5ca8-96de-188a8d07bec4' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'd2fe37c0-3a81-59cb-b8cb-f99ffd259814' name = 'hide_actions'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '3bbaae33-31aa-5b6b-b54f-8d9dc2c5a52c'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'e123d02c-d8df-525b-ace1-48a5edc4afd8' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'af9e17d2-0048-540a-bf87-5413f4a555c4' name = 'before:binding'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'dcd9a8c7-36d9-5f74-8a96-76db111cf18b'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'eaa6b8d3-d322-5c20-85d6-ecb1e80ff366' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'd44755dd-3562-5da2-a853-ecccfb4931d7' name = 'view'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '8f71f754-b325-5660-978a-86d3b8066803'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'd2e1cb38-4e32-5456-8291-162a2368dafa' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '174da344-26dc-595c-803b-ca3ca428307c' name = 'modify'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'bce8c181-df9e-5d98-9d16-394b1b898123'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '65d4cfe7-719b-506f-acae-b9eaee25cd71' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '00277d40-2026-573a-956e-e5728e81ea01' name = 'widget:checkbox_bound'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '9f953c74-5c3b-5553-bc54-8f79c4fea7de'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '64d6e07f-b3b2-5be4-b964-10e9729b4559' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '7b92cbee-0e2c-5154-aaec-cee6b5df64eb' name = 'worklist:guard_expressions'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '568877c0-d149-5ef3-8c22-6f1a82618d87'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '7605a0e4-1a21-5a8c-a097-865af5052291' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '720d9d78-4d5d-5154-ad92-a5c038eecd2e' name = 'delete'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '121733c5-8243-5648-9620-96d51ac7845a'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '3e027091-00d5-5bff-94fd-c34252d0d319' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'b6665739-0a83-5305-a84a-1139426f2f0d' name = 'default_interface_type'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '1d871fd6-5f8b-5431-ba3d-ef3d01d755e2'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '6bd8fb9d-4fbb-5da0-ac7f-27c09224ebbc' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'c1915316-4eda-5f2d-b60d-cb3fa54d4c6c' name = 'original_size'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '84ec9258-a76a-56cd-8b56-f235687a5a34'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'c03f2ff3-2843-5fa2-adb9-55a8dd68147b' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '7a919159-6c60-5240-8fed-744fffda854a' name = 'use_workflow'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'fc2b0f17-fbf3-58e3-9748-aafc542bacb8'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '6b8ca799-010a-519e-a374-1c99462bf189' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '17e2c99e-483d-57d3-8728-ece0b191165d' name = 'catalogmultiplex:white'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'adce180d-1a04-50cf-af00-98531d66609d'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '22309b6b-32eb-5698-8031-16591c4e671a' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '5db9b1f3-41fe-516b-8f9d-eb2675f419a3' name = 'widget:whole_dollars'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '945bd0a3-95b5-50d4-91e7-6b5bb7d3de42'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '9b7850c4-cf04-5fcd-808d-4a4286cdd3bc' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '9d67d3ee-f3bb-5cd9-832c-47d7eef3829c' name = 'accessor'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '1da6a5f2-4ed6-56e2-a159-1daeb420a1b1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '73cf386c-7233-5d28-a496-86299d526c43' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'ee40e3b3-e685-5dcb-a9fc-4691bb346007' name = 'catalogmultiplex:black'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '07168efc-ab73-5d0f-bba2-1903e9565c3e'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'e58e7e23-8d90-52eb-b7b5-96b3dc8b88fe' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '882cf2bc-f76d-5bd6-9d84-4299d88745c1' name = 'widget:image_method'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '06fecf40-df6c-5aab-83ab-18a44c29d11d'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '44b90408-5997-5712-ac18-f274d6a6902b' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '8d48d08a-e13f-58f9-9056-5a27c8475d0b' name = 'license'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'a57159bd-f7ae-5910-b459-9a822b45c932'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'bcf0b58e-9d5b-5f9c-8264-2756c30432f4' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'a0e72628-8aa0-519b-8aa9-45e2bd39e2c8' name = 'pil_resize_algo'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'fd1622d1-dea9-53e4-926e-8f6205110184'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'ed9d4047-d3e0-5ebf-98cb-b3fc58d8d06d' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'bb5215e9-b244-5f8f-98bb-df487919cc65' name = 'generate_reference_fields'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'd9078f86-4fc9-56f8-a648-9b3509754b8b'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'eb03dc80-d5ec-5472-b0a2-91ad71f20886' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '2b2a0416-a967-5fd5-b124-d147cc19c523' name = 'trigger_type'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'a8fe7e57-fca5-5455-a4a8-6e1443ea8685'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'e7446bbd-bcca-52cb-a343-d04f1e124cc7' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'ee8ad8e0-91f6-5b22-b02e-bfa0eba7c212' name = 'swallowResizeExceptions'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'dc47d71d-5b96-5385-b99f-ef343f430fe0'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '2a7e0ed5-624b-562a-8741-0dc0fd81cef7' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '77ad1eb6-ea0d-5f53-9211-3f5f587aee4c' name = 'allow_empty_rows'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '27ed1fa8-6699-5714-9007-d49be638ddd4'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '4a41158b-cbae-537d-a451-da6ec3822d2f' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '3a7980ee-8fec-58d6-b071-ec423fdd534c' name = 'allowable_content_types'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '45e42929-c492-5c77-888b-f32e259b53c0'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '0d983700-1963-50dd-b944-4a8e580a1e59' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'd72c55a3-54f0-5ba2-8a48-3cd59e4118d9' name = 'schemata'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '7e97308c-e021-5243-a477-63da499a27bf'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '0029010a-2d62-5d8a-828a-85d001f68676' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'fa16a6f2-05e5-522d-8448-829f68752224' name = 'after:binding'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'd472dea8-caac-5ef6-bc6b-ef8aef7d64f7'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'cdf4f115-a1e0-52aa-8fbe-fe07770fe12b' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '030283eb-76b5-5246-b47a-bfe095a178de' name = 'widget:label_msgid'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '9285951a-b016-5278-8291-d653ddf3cc94'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'acbd6473-a3b0-5626-87fc-0cf146d14a22' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '07212beb-609a-5dd6-8be3-213b7d6772f5' name = 'action'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'd7826fad-ce96-507c-9ad2-8f0bdc6792e8'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '50abe16d-62a7-592e-b460-0233a7ec6574' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'eaeff797-e13b-5c9b-a593-5ff6a79ed924' name = 'widget:available_indexes'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'd20c68d3-6392-5e0e-8233-7ed33039c214'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '4bdc0372-cb01-5e8b-84b6-d9c124607dac' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '18b3fe28-cbf2-5d70-b479-db4fd50c18e0' name = 'base_actions'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'b9e15f3c-a289-5bf3-b4c8-f1948a054ee1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '383b2cb6-381b-5d4c-b82a-cf5bbc3bd4f9' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'c13ea080-bc7d-5c26-9740-74a83335bbbf' name = 'expression'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'a2b981fb-9386-5f7f-a724-111b7629b407'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'a43e1d86-46aa-5ee9-b8b7-9ef1198c43f8' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'f41e0899-3d7a-5014-bace-b038ea82655b' name = 'state_var'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'eab1e1db-3681-5fd6-885c-bd3741b90b74'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'b6dd54ba-825a-5afb-9492-f95d811ca0f3' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '17884719-07a9-5c86-aa04-c303bbcb1cff' name = 'widget:allow_file_upload'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'ad0404be-f3eb-5015-b98a-763a94e759ae'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '6466c03c-9dab-5b79-b1df-9edebcd76edc' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'c2bc4364-5926-56da-85bf-1ad51ce6bb0d' name = 'source_name'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '72726dc6-a78a-52cf-9e22-5699ebebb855'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '6452895f-b2e2-53b2-b60f-2ca9a7c85de7' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'd99f8af6-d2e0-5e64-871b-9291867684f1' name = 'configlet:section'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'dfaf107a-9742-54df-ab01-084f828c884b'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '811707e6-0d86-5bde-bce1-f54a43eb17b3' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'a682dd4d-9a86-5b4f-be59-820b2629543d' name = 'active_workflow_states'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'b67502c2-f60c-51ae-aa45-e0a124cdd1e5'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '2cc47af0-b540-5d24-a81b-5effb1d5cc0f' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '5f71e710-7921-566b-ba5a-5d199ad0354e' name = 'widget:force_close_on_insert'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '42b74cd2-179a-5618-aaf6-e8bf99ada1cf'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'aa44d233-5b44-5a11-8978-d481810538e5' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '81a3693c-496f-5581-a588-1efa949590c3' name = 'visible'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '1f01d7db-e495-5f36-94b1-dccb73536dd3'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '581d389e-6f50-55cb-896a-9fb8d3f93b62' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'aa59fe2f-5712-5afd-bd60-2c663257820d' name = 'widget:description'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'c4537b5c-5ec7-50ee-8344-a4eb0f066314'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'cae70847-315b-5ea2-881d-db4a68641ff7' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '303bb85d-3046-5ffa-8a57-7e4fb9335e91' name = 'widget:description_msgid'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '34401601-93c7-5bb2-a909-d1c84c5101c5'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '39ece485-d55f-55f8-a615-54cdf74ffae3' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'e48a2452-ac56-57d6-a1ff-1aa96c300920' name = 'toolicon'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '9d8d56ab-07b0-5629-abca-89de625249d9'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '49e4c5ee-215a-55a1-bb62-01ad394d4cf0' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '046b88f5-302c-5c26-a124-acf3437a1055' name = 'widget:macro'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'cd9957b5-a7a0-59bc-8f79-e7b5458d7b9b'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '0245a5c1-58f6-5724-b26e-f971a17e2667' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'ede16204-9e64-53ac-a643-f2873f220044' name = 'bindings'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '9f6bb70e-4a57-511f-bcd9-6f7d7034132a'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'e78aa59e-118a-509a-b77f-0a3d70612cb4' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'c068d08e-218c-546d-8a63-94538bce18b5' name = 'content_icon'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'a5a1d6e8-9f08-554e-b28e-d9830afd34e7'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '931eed6c-b4dd-5950-8414-ff2710f31ec0' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '56dbc2ca-5320-557d-955c-c1a8bc4ca890' name = 'worklist:guard_permissions'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '24dbded3-090a-5f45-b697-f72b5aca2b9f'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'c926cca7-70de-5ca0-8306-b120ce3f326c' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '04c42ee2-5347-5e6d-8ed4-6ddd1c70d720' name = 'widget:show_hm'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '8a311c51-f536-5619-b493-d418d56b7860'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '8d8d4c65-951a-5eff-b5ed-dbdf68320b4b' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '5ee9111f-67f7-5055-b275-e25372bd2dc4' name = 'default_content_type'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '956f8df9-c089-5e9c-9043-c186dcf86b10'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '974f1136-3407-58a5-b620-1d5577128f83' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '6f466054-3689-5fc7-b100-f0610e03a0e7' name = 'rename_after_creation'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'c1d07910-fdb5-5d5b-89bf-f8e0e8d28155'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '6264177a-18b2-5c7c-abe0-5a1c37737305' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'ebfb169c-520d-5b83-acbe-56668312dc45' name = 'widget:thousands_commas'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'c446f02c-0dbf-5083-8c97-f031afae1394'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '60223e92-bf14-5d26-ad2c-2a0349ca1c2a' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'fd666520-de6b-56fb-abee-64682c683e9d' name = 'association_class'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'fdfd1a87-929a-513f-a85a-577f70bacb59'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'b4ffde90-ff0d-5b1b-ac16-e1a02652ef99' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '74d2a42e-853c-5819-8769-feae9ca4e8ae' name = 'doctest_name'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '98cdfb65-1ea7-5c69-83ab-a5505522a1a5'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '5c3c99bf-4b4c-5073-a195-ce1e65974cb5' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '14bc6f6b-a1f9-5bad-a8da-621b71523a8e' name = 'widget:type'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '9c606fb3-e439-5a28-8e38-01f9787b91cb'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '557a2b93-349d-5b56-ad24-39437cbe2706' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'e7978ee8-6126-5424-8650-0ad4d90a2ace' name = 'strict'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'a9d1d0c9-93bc-5bc4-9a03-87a256377064'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'ae522f07-4d2e-5b15-a406-52c67c3352dd' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '6b152650-c6e1-5840-830a-840765f7d70f' name = 'validation_expression_errormsg'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '7ff3087b-c1df-56f1-aaf9-c217fe851e3a'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '35eb39a9-b309-5f20-8be5-8c762403190e' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '817f6869-b0dd-5cf5-9bb3-aa42c9290b52' name = 'index:properties'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '9cb6761a-f723-542b-8aa5-74b2285a49c5'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'dee70977-df56-5af7-9c2b-ff5802e75a7f' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '7fbcc0f1-2d3c-513e-9dd5-3032e2da1bd1' name = 'imports'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '2f6d2ddc-3685-5105-b472-4735fe2d8741'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '485f1067-7e04-5b50-a7f8-e1e9a14fca8d' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'd6039eb0-6501-58d2-8ec0-f66a6dcc5e2e' name = 'association_vocabulary'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '0b5f8c77-cee3-5384-ba28-c9a2cbb9bc26'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '766b34b8-eaf6-556a-8311-9df3f22c946e' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '9d8a6170-0631-5007-b5d8-e989b76fb478' name = 'initial_state'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '66ef42a4-5d7c-5515-8d94-4cb5aaeda551'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'e7e8d2ac-34ee-5b5b-ba11-186024cccabe' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'b89177a6-c702-55d3-8311-23cda4134c02' name = 'fixtools'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '72564d84-b7b5-57dd-bdaa-1cbf9d008de0'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '1455637f-12e9-524d-a24a-564a046f22d4' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'cda961cd-5b63-5854-b65f-c54d8c91d975' name = 'multiValued'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '559979f6-8664-5bb6-a221-9af5fe7a7718'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '9e6499c4-81d4-520d-a2cb-57d1bcd00c72' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '486c6a3a-9d77-5dbc-abf5-b410826beb69' name = 'widget:image_portal_types'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'beb82ec7-a654-5664-a32c-46d700fd0d5d'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '6c8041b5-e675-553b-a3e5-b5fa4d917a28' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '91693508-9bac-585b-81a9-2c8bb44840e7' name = 'widget:search_catalog'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '4e95e802-f30c-53b0-80bc-30dc4231560e'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'b14d8609-4ccc-5012-8be3-a6d64ee4b36d' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '9e8fcc3b-31c8-5b41-bb29-d42bf896ac3f' name = 'use_dynamic_view'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '9ef6fd69-2ade-564e-a81d-e41e6f516d72'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '25527c5e-d422-5ac0-b3b3-957ab6bf4106' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'd8173c3e-2367-5adf-9fee-a5f97447736b' name = 'relationship'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '63abb15d-f1d6-50c1-8628-a665217244d5'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '36659313-999e-5aec-83b7-09cfb3806570' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '4adf2793-0980-5762-992c-e7895703d23c' name = 'widget:nullValueTitle'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '1c212b56-65ff-5e88-ac14-160bd915abfd'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '6f3fc433-8b14-5b86-abdc-046b108b9cbd' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '06cc251a-3b6d-543c-a12a-e15a44b4a9bb' name = 'documentation'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '839fb5ed-5260-5d68-b801-8323015c9b5a'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '6abad521-7a05-5a7c-b876-bcd0e3719aaa' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'e8e1aadf-c865-5a48-aa18-c90bf0295ace' name = 'index:type'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'd84d3cb0-51c8-5028-973d-5abf57c3b033'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'fdae4b2d-fc26-5d74-8383-4b4c92974689' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '496ac402-2ff5-54fd-a8d5-6dede157a428' name = 'portal_type'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '44012d46-47dd-52d5-a72d-443407036f49'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '5240fb99-2c84-5335-9746-1d19b33bf3d9' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'aa9bb691-859d-583b-ba1f-71d950b8a3d1' name = 'enforceVocabulary'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '60af5ef4-b0cc-5075-84ba-0861aed67fd7'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'e78ca29b-dca3-5dd5-b215-eea1531b044f' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '3ed3a2c8-4802-5a4e-946d-64a71b0399f1' name = 'widget:destination'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '6ec91108-a1e6-52cc-8cc2-8c9bf9b67271'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '9ba92597-ac79-5076-beec-0e613de289ca' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'f7432197-0987-55bf-a942-739b44cbf51f' name = 'allowed_content_types'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '0f5faad1-e435-5d44-a9cb-140aacd3aef8'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '60ca8de4-a977-5ebc-9be1-31cb864bb12f' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '3beea9db-1b91-5f03-af20-dd7554be75ac' name = 'reference_field'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '5bd19ef0-bb7f-511f-8199-933d45b176d5'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '8f6b48bc-3b0d-53d7-831a-5ec0f37072c2' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '3fdf549a-0bca-5ae1-a5ae-a990bca21e97' name = 'searchable_type'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'b1a76cf2-b57e-5b3a-ad24-dc0cb6a5e65a'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '186ddbbf-1695-5554-a5d5-6337a76c1575' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'd6dc1113-b617-518b-85c7-7e640d854744' name = 'default:widget:Reference'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'e5a96157-dd1c-515a-8c68-7a32ec009d0c'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'e0bc9cb3-208d-5655-83bd-ae54a408bad2' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'b7f4dba4-c1ab-5667-a0e2-1778ce6503a9' name = 'widget:i18n_domain'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '66d46bb2-21d1-5ca4-acf2-c4715025447f'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '3bf9ed44-84d6-5a94-96a3-b9035c4e9503' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '6597ec56-1230-598a-8bab-d58fecd8e65a' name = 'relation_implementation'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '1693e4c3-bccd-5c15-b09b-af6bba0aeb81'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'ae3ae5b4-0053-561a-8569-aa1455ae6e25' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '44c70026-0fc9-538a-8f5f-497861c76eb3' name = 'vocabulary:vocabulary_type'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '3d9df3c2-0ce5-596c-8e85-cf6c96f542dc'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'e51186b2-7f01-54f4-b731-13c212958854' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'c2cf5417-a40e-5934-a99f-34013ff90e40' name = 'default'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '345b6ac8-e64f-54cf-acb8-b75ea3a89e14'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '3d876baf-9306-553b-a8fd-5faadfdc9180' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '416270b8-916b-5b76-aca9-07303df9f8a3' name = 'product_description'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '51193c0b-3a52-51a8-9e6e-0eaccb09ddb1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'a4de89bc-befb-585b-95d9-e7544599c424' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '536a7694-3417-5ee6-84ca-19fed3c2e8b1' name = 'widget:starting_year'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'cbc7d902-194d-5b7f-8054-10c2013f873a'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '6c07bd9f-a86e-5262-a055-427aa85642bf' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'c45695b8-0f66-587a-942b-e9817e266709' name = 'folder_base_class'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'f1d7207f-848e-5989-9d8c-0f8a3ac70c94'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '2f15a5fc-a460-5b83-866c-18a52a248757' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'a8f6d914-e448-5a2d-905a-4bff9c25cdac' name = 'widget:show_ymd'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'd70e1a2a-6074-584f-a048-c4f10cda8f63'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'b8530949-288a-5bd9-bf1e-21875b65f45f' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'd2558c78-8aad-5af8-ab11-6979bc21e721' name = 'tool_instance_name'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'c95e6681-d169-5750-94c3-dde71c488a95'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '5a64da82-8374-562c-a0a4-c264239b0ac5' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '27068c01-f5b2-5321-aa51-d9f81fbe5bc3' name = 'index_method'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '69aca6ba-f154-5334-87ec-39cd80681e7c'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'c5da41d3-555a-52c1-bedd-dea9ab3ef536' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'f805afc2-4c72-569f-b874-f31211cc9047' name = 'widget:showKey'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '178abba9-02c4-565b-9939-592be4d04b6b'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '7e172586-7461-5e05-8ec5-f225a127ad0d' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'b09615e4-106a-5880-bd69-999e82eb1a1a' name = 'worklist'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '16948697-7b9a-558d-87dd-91ab340374d7'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '8a0b9e06-566e-558a-9680-dce0927b2463' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'c0699cc5-0809-59bf-aa5a-af4253ce927d' name = 'widget:omitCountries'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '1bd07a9b-d782-5c94-ae54-bb8c57468710'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '77c85ed2-39a9-502d-96e9-ad7fcf91ccbb' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '45a21062-3747-5a26-9b08-bc17180e61da' name = 'typeDescription'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'a593c361-a7cf-5672-82f8-91edf5891ea8'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'e9b36547-3214-555d-af82-89b43d1551df' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '46e3324f-1fb3-58fd-9047-24f11f66a2e9' name = 'detailed_creation_permissions'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '1af18d4b-3914-5b93-b508-25f9aa0a5a26'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'a9a00f01-afde-5e06-acb4-ef615af80057' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '93e7eab5-7575-517e-957e-9acfc6ae9052' name = 'register'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'eae2f069-d418-5c95-9aba-b36b86a01556'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '2d6567e9-98b6-5711-9b05-1a67465b7686' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '3029f192-8de4-56b4-8688-756f38d3cd75' name = 'read_permission'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '74e42ecb-0f38-5c42-a5ba-a98d3040de63'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '28b1a189-eeb1-5236-9c29-7993351e3127' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '4a26cde9-4164-59a8-bcbb-1f648c6f04d5' name = 'validation_expression'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'e68712f3-f6c5-52be-88de-f187834be835'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'fee09267-0ae3-5f06-bc3f-6f39da58819e' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '01bb7b25-4234-58c9-84ab-5a03aafb152e' name = 'template_name'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '4d2ff9c9-2f04-53f9-b69d-1d1eabe6bd81'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '2455dc51-4b8e-5d93-9fa4-76555e85b745' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'd72da562-4242-5b93-b77a-0da42b66d475' name = 'widget:columns'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '1d501709-f23b-526b-b068-39892ae826f1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '55152e98-3daa-5ab7-9ae9-d31cb238e959' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'ad2c2ac6-06d2-57bd-a89f-6112ecfb0dc0' name = 'suppl_views'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '6ff7eb5d-b60e-51a2-9db5-9e979bd66a6c'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '1ea28604-ed16-5308-a779-ec303c1976f2' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '4b7ce282-03c6-50fa-8511-1e9f8353c0ae' name = 'use_portal_factory'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'bf3dd3ac-6b70-54fa-9184-b42dda6c1951'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '77cdbe8d-3d4b-5e30-8b9b-5160dc21f102' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'bc7602f7-f4b9-5e90-a5f7-d2d0d1b9f581' name = 'widget:allow_brightness'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '18d0005b-d647-51c9-af55-8c327865e76d'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '2d0ebbff-17de-55a7-b609-357612acedbb' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '324e8104-364b-5faa-a5f9-2e4501b3da19' name = 'catalog:metadata'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '7a6bd559-e227-5a55-b7e6-de3e45f6cb27'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '42744551-f57a-57fe-a71d-71e588471a76' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '8d1f5824-df2e-53f3-b6a0-6750f14548cf' name = 'collection:metadata_label'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '6c3dad9e-3a6c-5a9f-97c9-868c3416dbab'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '8a93201a-0092-5e18-8cf4-163210f92d5d' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '9d808f7b-e0d7-54e8-99e3-453e1792c791' name = 'configlet:icon'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'f41928fb-c2a7-5baf-b035-801004930be6'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '5c6de36d-4fd7-5d18-84c4-333df9c5156e' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'c56c67b4-8ab3-5037-be4e-08827c7e8194' name = 'id'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'a0db00fd-9bbb-5164-9f5a-641187eb49bf'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'feea9ee8-7b75-5bd0-8cdf-49a1d1637ced' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '66052937-c6e4-5266-99b3-fed444e92222' name = 'move:bottom'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '59736c9f-4d08-5965-92fa-55cab244da96'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'b2483693-6fcd-5ac5-96b7-49645f43b475' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '609988a1-ad1c-5c18-861f-c9152f24d433' name = 'default_view'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '4fa506e7-375a-5f20-ba34-c4b0f2a25f30'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '98844a2e-dd63-5b08-b2a9-5ebb081bfc4e' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '034d44ad-e12f-551d-8de5-66d104a96980' name = 'collection:criteria'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '24ba6065-9d8c-5b1e-817f-4393a31856f0'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'dd06309c-f5c5-5d07-804c-9de17f2d5c69' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '5c04fd9f-05e0-568a-b8d5-d0d3ba9214a2' name = 'dependency_step_qi'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '397859bf-7929-5df4-aa6c-c803c3824f2a'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'a869596c-7762-5060-9cfd-cefacace8f62' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'ce28df5f-b43a-551c-b3e3-3198069769f7' name = 'author'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'fdf621c5-c6ea-59f4-9ea9-a4d621420c85'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '18a742e8-5b4a-5533-ac01-cd6e83067ab2' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'a03374c1-e2bc-57f2-9abc-738323aec4f7' name = 'index:name'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '8101d363-495c-5926-968d-008d0ed8620c'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '4229d7fa-1a83-5286-87b3-12c28593a860' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'd7746893-0119-5ff0-b5cb-5d45766f57e5' name = 'permission'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '91d0e082-4abf-5d66-98b8-8b02afe244b1'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '0257eeb8-590f-5358-b314-defc881e358c' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '23520dde-c621-5901-821e-9c13b641f21f' name = 'storage'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'b522cf16-290a-5412-bbee-0a4f83b6ff35'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'ad01c3c8-cbf8-5d64-8d33-e5922598c178' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'c4b63ac7-6f41-5fa3-bbb2-6b33cf46ea83' name = 'inherit_allowed_types'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '8bf427b5-0ab0-579a-8d21-2797b84e8169'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'cbeaa972-340f-5298-b33d-f452b7482fef' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'df0df528-c0af-5be7-b70b-422b97a75a35' name = 'field'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '94cc18ad-b76f-5fc2-bfd4-9860eba972d2'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '79b4e911-b7ec-5502-8d69-8d65a43e8031' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '4f43ca3b-465d-5884-8dee-83cb1e284511' name = 'widget:format'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'c4f04e57-bddf-5e54-b41e-5af95c5197aa'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'c3859002-414b-5b4a-8126-0e57222dd699' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '915c7b9e-99f0-5505-b1aa-8d47131a48c2' name = 'role'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'a928d152-f9bf-531e-b8fa-02b53fbbad4f'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'e7437d21-5ffa-58e1-b3a5-224cc5056256' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '4bfcb635-5489-5bef-b4b2-72383b9c3753' name = 'additional_parents'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'f48df773-072b-5c69-8169-809d4b9a9241'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '6300dcf0-ded9-53a3-9330-13918f8e915a' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'f336c54c-31c2-5760-a2dc-5de411fbe491' name = 'filter_content_types'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'da95e16f-ce6e-5dd6-b8bc-749fa1e59c51'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'babd0c9e-42d7-53cf-891f-a941ebd44c54' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '21ee2d72-4aab-5046-9942-0d8671213b84' name = 'widget:divider'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'b881a90b-4350-5d24-a7ff-4d68a1b0cab4'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '2fca9f34-663e-5f76-9e3f-d31046926fda' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '7516c4a4-be49-5b65-915b-821de7a9827e' name = 'description'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'c4d040d4-8de6-5d57-8cbe-764017750169'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'fe56dc87-6b3f-5a88-b34c-0dc4d6549bfb' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '3c7af3f0-c1bf-5ece-a762-55e168c95bf1' name = 'vocabulary'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'ecf546c9-63a9-564b-a60a-3df94f034fd8'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'edd50126-1374-5da7-ba48-b7ce2c325395' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '2190ee2d-b506-517d-bd8b-b049cee62ea9' name = 'version_info'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '6003afc4-ddde-5924-b981-04eb0e67edf8'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '785d040b-2940-5ac4-9a97-ae1d0e84ee38' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'cd597777-7e8c-554e-9fab-113c6de9ae25' name = 'parentclass_first'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '87130c67-593d-57e6-b782-aa9be8afe329'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '2f2212c0-aa12-552e-9174-fe951819a183' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'acce4e33-c2f9-5c0a-9f49-5897d4f6a196' name = 'indexMethod'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'a989dae8-7094-51cb-8aec-3659df56c9ed'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'ec6b335d-dccd-5419-b5f2-0f4a7031db44' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'ab2412f2-3e02-57d0-bc45-97eeb27c3997' name = 'vocabulary:type'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'b8dadec2-08dc-5af4-9caf-3d8ebbc99238'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '0774b8aa-4cbd-592c-91e4-577a56f7e1e2' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '32b95d13-66c5-5cd5-af5c-06ec2faf3b7a' name = 'configlet'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'b7c1e41d-8046-5217-8cbc-5a54479a7fbb'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '2c3cdd54-daf8-51d1-8d1d-c821bd46e74f' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'c3edbfbc-20b3-56fd-840d-bd42b9ff5e4f' name = 'widget:allow_search'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '7bd1ff3f-7ce2-5373-b783-b9229617cf55'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'f53ba0e9-812c-5b62-aae2-d8171fab99b0' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '7e04bfd6-74e2-57ca-bb7e-1fbccca627b6' name = 'base_schema'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '3195cdb3-3fdc-5751-9921-c839a215871a'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'de9c6d19-5618-5e03-89ed-7cef755484e4' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'd40a862c-53c9-585d-b3a5-b7cd76d167d5' name = 'widget:selectMode'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'bb9f6847-e418-5156-8df4-00be03b2e5d6'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'e6a4997c-bf31-5439-8901-f5f97358607f' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'a31a0693-c6e7-581b-a9fb-0b107bacd90c' name = 'allowed_types'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'ef3829df-d498-5301-82b8-57dad015efd2'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '4ceb01db-dfb1-5d91-9e0c-557300461ac3' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '05a31135-291f-5d14-a64a-93856bbdb2d0' name = 'widget:rootVisible'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'b738d5e3-f49d-54e2-bbd8-4dcf2dd5435f'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '5d0992d5-00d2-5ee5-8249-b38b1bf659a5' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '8241ba8a-fbd8-5f83-aec0-d28f93b68764' name = 'max_size'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'd89e4832-4ff2-5a7a-8da5-421b08a23322'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'c2470e19-9fee-59b4-a19b-49c1f9641ae0' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'dca4f059-d84d-5803-aee3-04149f531155' name = 'skin_directories'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'dc2d6b33-c00a-52c0-8492-69ef68d84369'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '02193434-7c2f-5a96-8ded-21233ee10616' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'ca24a83b-6d7b-53a4-9d83-1a222c4359f4' name = 'worklist:guard_roles'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'be611a77-c84e-5114-a9ef-bc4a5331c40a'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'bac019b7-410d-57bd-858a-cbb85d4c01ad' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '68cf4007-2425-520e-b6fd-a58bf5517dc3' name = 'url'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'bb7e7172-9706-563a-917e-7c3f09a65767'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'a8a84030-4537-5893-be9d-1fb0d3c050b3' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '1c49733f-42f8-5c21-8f64-4909c8a95b0f' name = 'macro'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '00c484e6-7413-5180-8277-fbd5d9b03e65'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '4e64f86e-d178-5418-b1fc-7ef14c360c69' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '41bc8e09-4974-52a2-977c-be8ecb5185c6' name = 'required'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '734dc646-51c9-5a81-b223-e31e659b3c68'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'c2dd24a8-6191-5d6e-ad91-cb610b682f26' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'e790fa3e-0647-56f9-b6ce-54359888ba7e' name = 'widget:base_query'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'bf692f81-91a8-5a02-970a-dc7ab011db45'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '1b499695-2b95-5a87-92f1-00e8afe49fc9' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '4077e6ba-ac25-50bc-85f5-2b5eb0b5b3d5' name = 'copy_from'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '7a4a7911-e84c-575a-a528-429a96c8fa4e'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '28c8366c-933b-5d49-abaa-cf232da3fbe7' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'a3bbc2d8-d795-5e06-a4bb-aeceda138b37' name = 'alias'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '457e4450-a903-5c4a-8664-3267adf9761f'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '3b773c8b-ff58-59ee-be20-480544be1ac3' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '3650cc00-5142-5f0d-bc7a-ca455d10f740' name = 'widget:size'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '8d66a333-09af-56bd-932b-c9f836a4f9f9'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = 'a445a6d2-7976-58e4-b325-ba3b390fc7b2' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'f05074fb-4c93-5c60-b6a9-6f477ef207c9' name = 'creation_roles'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '1d18d673-1ea6-5e99-b5b2-67d1009def5a'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '0cad5a90-c47b-555d-ba4f-184a67464570' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '98c10c8a-f55c-50d4-b7f7-79098bd0c6f6' name = 'widget:default_search_index'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'd023dc3d-b4f4-5e47-98e3-fd75ceea7de9'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '990f8124-878a-5f2d-bcc2-b59e991ace2d' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '72d83f44-c48f-5334-9ed0-9de51acc50ac' name = 'index:extras'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '3db86f75-05a4-5195-89f5-0e980e4d6023'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '0c3c67d8-3995-5aac-a755-c47841f9b6cf' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+      </UML:Namespace.ownedElement>
+    </UML:Model>
+  </XMI.content>
+</XMI>
