@@ -1320,6 +1320,7 @@ undocumented_tags = [
     'widget:rootVisible',
     'widget:minExpandLevel',
     'widget:leafsOnly',
+    'widget:showKey',
 ]
 category = 'unknown'
 explanation = ''
