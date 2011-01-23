@@ -762,6 +762,8 @@ class ArchetypesGenerator(BaseGenerator):
         defs = OrderedDict()
         defs['widget'] = self.getWidget(element, fieldname, 'array',
                                         tgvprefix='array:widget:')
+        if element.getUpperBound() !=-1:
+            defs['size']=element.getUpperBound()
         tgvs = element.getTaggedValues()
         for key in tgvs:
             if not key.startswith('array:') or key.startswith('array:widget'):
@@ -3349,7 +3351,6 @@ class ArchetypesGenerator(BaseGenerator):
 
         if not os.path.isdir(typesdir):
             raise Exception('types is not a directory')
-
         for typedef in defs:
             filename = '%s.xml' % typedef['name']
             handleSectionedFile(['profiles', 'type.xml'],
@@ -4241,7 +4242,10 @@ class ArchetypesGenerator(BaseGenerator):
             for action in actions:
                 if action['id'] not in disabled and \
                    action['id'] not in [a['id'] for a in newactions]:
-                    allactions.append(action.copy())
+                        _action=action.copy()
+                        if _action['id']=='view' and pclass.hasTaggedValue('default_view'):
+                            _action['action']='string:${object_url}/'+pclass.getTaggedValue('default_view')
+                        allactions.append(_action)
             allactions.extend(newactions)
             typedef['type_actions'] = allactions
 
@@ -4271,6 +4275,7 @@ class ArchetypesGenerator(BaseGenerator):
         """Return the FTI information of the content class
         """
         default_view = 'base_view'
+
         suppl_views = '[]'
         if self.getOption('plone_target_version', cclass, 3.0) >= 3.0:
             folderish = self.elementIsFolderish(cclass)
