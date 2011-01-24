@@ -2745,6 +2745,14 @@ class ArchetypesGenerator(BaseGenerator):
                                 os.path.join(templdir, view.getTaggedValue('template_name')),
                                 overwrite=False,
                                 templateparams={})
+            #handle template names specified in the dep relationship
+            for dep in view.getClientDependencies():
+                if dep.hasTaggedValue('template_name'):
+                    if not view.hasStereoType('stub'):
+                        handleSectionedFile(['view_template.pt'],
+                                        os.path.join(templdir, dep.getTaggedValue('template_name')),
+                                        overwrite=False,
+                                        templateparams={})
 
         for view in portletViews:
             if not view.getTaggedValue('template_name'):
