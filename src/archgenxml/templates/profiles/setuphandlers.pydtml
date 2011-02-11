@@ -206,8 +206,6 @@ def installVocabularies(context):
 </dtml-if>
 
 <dtml-if "memberclasses">
-from Products.membrane.interfaces import ICategoryMapper
-from Products.membrane.utils import generateCategorySetIdForType
 from Products.remember.utils import getAdderUtility
 
 def setupMemberTypes(context):
