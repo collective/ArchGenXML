@@ -4,6 +4,10 @@ Changelog
 2.6 (Unreleased)
 ----------------
 
+- Use portal_type tagged-value if available instead of class name when
+  generating workflows.xml.
+  [vincentfretin]
+
 - Added worklist:guard_expressions tag definition.
   [vincentfretin]
 

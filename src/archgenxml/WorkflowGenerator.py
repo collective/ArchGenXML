@@ -263,7 +263,8 @@ class WorkflowGenerator(BaseGenerator):
                 if not self.atgenerator._isContentClass(klass) and \
                    not klass.hasStereoType(self.atgenerator.stub_stereotypes):
                     continue
-                name = klass.getCleanName()
+                name = klass.getTaggedValue('portal_type') or \
+                       klass.getCleanName()
                 classes[name] = workflowId
 
         classNames = classes.keys()
