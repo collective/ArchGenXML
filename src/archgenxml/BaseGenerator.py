@@ -24,7 +24,12 @@ from pkg_resources import resource_string
 from zope.documenttemplate import HTML
 
 import utils
-from codesnippets import *
+from codesnippets import (
+    ENCODING_HEADER,
+    LICENSES,
+    COPYRIGHT,
+    MODULE_INFO_HEADER,
+)
 
 from xmiparser import xmiparser
 import PyParser
@@ -118,7 +123,7 @@ class BaseGenerator:
         return self.getUMLProfile().getStereoType(self.default_class_type)
 
     def getDefaultInterfaceType(self):
-        return 'z2'
+        return 'z3'
 
     def processExpression(self, value, asString=True):
         """Process the string returned by tagged values.
