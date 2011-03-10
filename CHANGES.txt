@@ -4,6 +4,10 @@ Changelog
 2.6 (2011-03-10)
 ----------------
 
+- make z3 interfaces the default interface and dont accept any longer zope2 
+  interfaces
+  [jensens]
+
 - Use portal_type tagged-value if available instead of class name when
   generating workflows.xml.
   [vincentfretin]
