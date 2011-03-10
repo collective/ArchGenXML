@@ -1,12 +1,25 @@
 Changelog
 =========
 
-2.6 (Unreleased)
+2.6 (2011-03-10)
 ----------------
 
 - Use portal_type tagged-value if available instead of class name when
   generating workflows.xml.
   [vincentfretin]
+
+- remove unneccessary imports for remember/membrane, 
+  view permissions can now additionally be specified in the dependency 
+  association to the content class,
+  name of the view template can now additionally be specified in the
+  dependency relation between view class and content class,
+  pass fixed size parameter to arrayfield (i.e. 4 generates size-4) ,
+  browser views: name on dpendency determines name of view,
+  remove old generator i18n support.
+  [zworkb]
+
+- tgv for dynatree widget
+  [hpeteragitator]
 
 - Added worklist:guard_expressions tag definition.
   [vincentfretin]

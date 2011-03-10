@@ -118,8 +118,7 @@ class BaseGenerator:
         return self.getUMLProfile().getStereoType(self.default_class_type)
 
     def getDefaultInterfaceType(self):
-        log.debug("Default interface type is %r.", self.default_interface_type)
-        return self.getUMLProfile().getStereoType(self.default_interface_type)
+        return 'z2'
 
     def processExpression(self, value, asString=True):
         """Process the string returned by tagged values.
@@ -182,7 +181,8 @@ class BaseGenerator:
                       default)
             return default
         else:
-            message = "option '%s' is mandatory for element '%s'" % (option, element and element.getName())
+            message = "option '%s' is mandatory for element '%s'" % \
+                      (option, element and element.getName())
             log.error(message)
             raise ValueError, message
 
@@ -261,21 +261,17 @@ class BaseGenerator:
         return outfile.getvalue().strip()
     
     def getInterfaceType(self,element):
-        if element.hasStereoType('z3'):
-            return 'z3'
-        elif element.hasStereoType('z2'):
-            log.warning('Zope 2 interfaces are used! Get rid of them!')
-            return 'z2'
-        else:
-            return self.getOption('default_interface_type', element, 'z3')
+        if element.hasStereoType('z2'):
+            log.error('Zope 2 interfaces are used! Get rid of them!')
+            exit(1)
+        return 'z3'
 
     def generateImplements(self, element, parentnames):
         outfile = StringIO()
         if element.hasStereoType('extender'):
             z3reparentnames = ['ISchemaExtender']
         else:
-            reparents = element.getRealizationParents()
-            
+            reparents = element.getRealizationParents()            
             # Zope 3 interfaces
             z3reparentnames = [p.getName() for p in reparents 
                                if (self.getInterfaceType(p) == 'z3'
@@ -350,8 +346,8 @@ class BaseGenerator:
 
     def dispatchXMIInterface(self, element):
         log.debug("Finding suitable dispatching stereotype for element...")
-        dispatching_stereotypes = self.getUMLProfile().findStereoTypes(entities=['XMIInterface'],
-                                                                       dispatching=1)
+        dispatching_stereotypes = self.getUMLProfile().findStereoTypes(
+                                      entities=['XMIInterface'], dispatching=1)
         log.debug("Dispatching stereotypes found in our UML profile: %r.",
                   dispatching_stereotypes)
         dispatching_stereotype = None
