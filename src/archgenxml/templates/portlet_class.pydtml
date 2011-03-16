@@ -32,7 +32,37 @@ class Renderer(base.Renderer):
     
     render = ViewPageTemplateFile('templates/<dtml-var "klass.getTaggedValue('template_name',klass.getName())">')
 
-<dtml-var "generator.getProtectedSection(parsed_class,'renderer-body',ind=1)">
+	def __init__(self, *args):
+        base.Renderer.__init__(self, *args)
+<dtml-var "generator.getProtectedSection(parsed_class,'__init__ method',2)">
+
+
+<dtml-var "generator.generateImplements(klass,[p.getCleanName() for p in klass.getGenParents()])">
+<dtml-var "generator.getProtectedSection(parsed_class,'class-header_Renderer',1)">
+<dtml-in "generator.getMethodsToGenerate(klass)[0]">
+<dtml-let m="_['sequence-item']">
+<dtml-if "m.getParent().__class__.__name__=='XMIInterface'">
+    #from Interface <dtml-var "m.getParent().getName()">:
+</dtml-if>
+<dtml-if "parsed_class and m.getCleanName() in parsed_class.methods.keys()">
+<dtml-var "parsed_class.methods[m.getCleanName()].getSrc()">
+<dtml-else>
+<dtml-let param="', '.join(m.getParamNames())">
+    def <dtml-var "m.getName()">(self<dtml-if param>, <dtml-var param></dtml-if>):
+</dtml-let>
+        pass
+
+</dtml-if>
+<dtml-if "m.isStatic()">
+<dtml-var "m.getName()"> = staticmethod(<dtml-var "m.getName()">)
+</dtml-if>
+</dtml-let>
+</dtml-in>
+
+<dtml-in "[m for m in generator.getMethodsToGenerate(klass)[1]]">
+
+<dtml-var "_['sequence-item'].getSrc()">
+</dtml-in>
 
 
 class AddForm(base.NullAddForm):
