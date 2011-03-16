@@ -30,7 +30,7 @@ class Assignment(base.Assignment):
 
 class Renderer(base.Renderer):
     
-    render = ViewPageTemplateFile('templates/<dtml-var "klass.getTaggedValue('template_name',klass.getName())">.pt')
+    render = ViewPageTemplateFile('templates/<dtml-var "klass.getTaggedValue('template_name',klass.getName())">')
 
 <dtml-var "generator.getProtectedSection(parsed_class,'renderer-body',ind=1)">
 
