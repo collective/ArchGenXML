@@ -4,7 +4,9 @@ Changelog
 2.7 (unreleased)
 ----------------
 
-- 
+- Fixed inconstancy between template name and portlet class by removing .pt in the generation
+- Added method generation for portlet class.
+  The portlet class will look like the classic portlet.
 
 
 2.6 (2011-03-10)
