@@ -5,8 +5,10 @@ Changelog
 ----------------
 
 - Fixed inconstancy between template name and portlet class by removing .pt in the generation
+  [jihaisse]
 - Added method generation for portlet class.
   The portlet class will look like the classic portlet.
+  [jihaisse]
 
 
 2.6 (2011-03-10)
