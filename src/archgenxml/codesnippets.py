@@ -89,6 +89,7 @@ SCHEMA_TOOL = u"""\
 
 TEMPL_TOOL_HEADER=u"""
 from Products.CMFCore.utils import UniqueObject
+from OFS.SimpleItem import SimpleItem
 
     """
 
@@ -257,13 +258,15 @@ TEMPL_CONSTR_TOOL = u"""
     # tool-constructors have no id argument, the id is fixed
     def __init__(self, id=None):
         %s.__init__(self,'%s')
-        self.setTitle('%s')
+        #There is no more title
+        #self.setTitle('%s')
         """
 
 TEMPL_POST_EDIT_METHOD_TOOL = u"""
     # tool should not appear in portal_catalog
     def at_post_edit_script(self):
-        self.unindexObject()
+        # Not needed anymore
+        #self.unindexObject()
         """
 
 TEMPLATE_HEADER = u"""\
