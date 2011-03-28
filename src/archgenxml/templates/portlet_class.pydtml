@@ -32,7 +32,7 @@ class Renderer(base.Renderer):
     
     render = ViewPageTemplateFile('templates/<dtml-var "klass.getTaggedValue('template_name',klass.getName())">')
 
-	def __init__(self, *args):
+    def __init__(self, *args):
         base.Renderer.__init__(self, *args)
 <dtml-var "generator.getProtectedSection(parsed_class,'__init__ method',2)">
 
