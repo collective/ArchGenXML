@@ -260,8 +260,7 @@ class ArchetypesGenerator(BaseGenerator):
         res = BaseGenerator.generateDependentImports(self, element)
         print >> out, res
 
-        if not element.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile) and \
-            not element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile):
+        if not element.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile):
             print >> out, TEMPLATE_CMFDYNAMICVIEWFTI_IMPORT
 
         generate_expression_validator = False
@@ -1153,8 +1152,7 @@ class ArchetypesGenerator(BaseGenerator):
                                  umlprofile=self.uml_profile):
             print >> outfile, EXTENDER_SCHEMA_START
         else:
-            if not element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile):
-                print >> outfile, SCHEMA_START
+            print >> outfile, SCHEMA_START
         print >> outfile, fieldsformatted.encode('utf8')
 
         marshaller = element.getTaggedValue('marshaller')
@@ -1165,8 +1163,7 @@ class ArchetypesGenerator(BaseGenerator):
                                  umlprofile=self.uml_profile):
             print >> outfile, '    ]\n'
         else:
-            if not element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile):
-                print >> outfile, '),\n)\n'
+            print >> outfile, '),\n)\n'
 
         if asString:
             return outfile.getvalue()
@@ -1625,15 +1622,13 @@ class ArchetypesGenerator(BaseGenerator):
         if not parent_is_archetype and \
            self.getOption('use_dynamic_view', element, True) and \
            not element.hasStereoType(self.atct_stereotype,
-                                     umlprofile=self.uml_profile) and \
-           not element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile):
+                                     umlprofile=self.uml_profile):
             parentnames.append('BrowserDefaultMixin')
 
         # if a parent is already an archetype we dont need a baseschema!
         if parent_is_archetype:
             baseclass = None
-        if element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile):
-            baseclass = None
+
         # remember support
         if element.hasStereoType(self.remember_stereotype,
                                  umlprofile=self.uml_profile):
@@ -1799,7 +1794,7 @@ class ArchetypesGenerator(BaseGenerator):
         # a tool needs to be a unique object
         if element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile):
             print >> outfile, TEMPL_TOOL_HEADER
-            parentnames.insert(0, 'UniqueObject, SimpleItem')
+            parentnames.insert(0, 'UniqueObject')
 
         # protected section
         self.generateProtectedSection(outfile, element, 'module-header')
@@ -1843,16 +1838,15 @@ class ArchetypesGenerator(BaseGenerator):
             schema += ['schema']
 
             schemaName = '%s_schema' % name
-            if not element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile):
-                print >> outfile, utils.indent(schemaName + ' = ' + \
+            print >> outfile, utils.indent(schemaName + ' = ' + \
                                            ' + \\\n    '.join(['%s.copy()' % s\
                                                                for s in schema]), 0)
 
-                # move fields based on move: tagged values
-                self.generateFieldMoves(outfile, schemaName, field_specs)
+            # move fields based on move: tagged values
+            self.generateFieldMoves(outfile, schemaName, field_specs)
 
-                # protected section
-                self.generateProtectedSection(outfile, element, 'after-schema')
+            # protected section
+            self.generateProtectedSection(outfile, element, 'after-schema')
 
             # [optilude] It's possible parents may become empty now...
             parents = ', '.join(parentnames)
@@ -1957,8 +1951,7 @@ class ArchetypesGenerator(BaseGenerator):
                 wrt(utils.indent('return self.schema',2) + '\n\n')
         else:
             # schema attribute
-            if not element.hasStereoType(self.portal_tools, umlprofile=self.uml_profile):
-                wrt(utils.indent('schema = %s' % schemaName, 1) + '\n\n')
+            wrt(utils.indent('schema = %s' % schemaName, 1) + '\n\n')
 
         # Set base_archetype for remember
         if element.hasStereoType(self.remember_stereotype,
@@ -1995,8 +1988,7 @@ class ArchetypesGenerator(BaseGenerator):
         # [optilude] Don't register type for abstract classes or tools or for schema extenders
         if not element.isAbstract() and \
            not element.hasStereoType('mixin',umlprofile=self.uml_profile) and \
-           not element.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile) and \
-           not element.hasStereoType(self.portal_tools,umlprofile=self.uml_profile):
+           not element.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile):
             wrt(REGISTER_ARCHTYPE % name)
 
         # ATVocabularyManager: registration of class
@@ -4212,7 +4204,6 @@ class ArchetypesGenerator(BaseGenerator):
 
             if pclass.hasStereoType(self.flavor_stereotypes,umlprofile=self.uml_profile) \
                or pclass.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile) \
-               or pclass.hasStereoType(self.portal_tools,umlprofile=self.uml_profile) \
                or pclass.hasStereoType(['interface']):
                 continue
 

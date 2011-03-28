@@ -4,9 +4,6 @@ Changelog
 2.7 (unreleased)
 ----------------
 
-- portal_tool depends now form UniqueObject and SimpleItem. A tool is not anymore a content type,
-  so it not appear in the portal_catalog.
-  [jihaisse]
 - Fixed inconstancy between template name and portlet class by removing .pt in the generation
   [jihaisse]
 - Added method generation for portlet class.
