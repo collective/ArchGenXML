@@ -27,9 +27,9 @@ from Products.validation.validators import ExpressionValidator
 </dtml-if>
 <dtml-if "parentname=='CompoundField'">
 from Products.CompoundField.CompoundField import CompoundField
+</dtml-if>
 ######<dtml-var parentname>
 <dtml-var "generator.generateArcheSchema(klass, generator.getLocalFieldSpecs(klass))" >
-</dtml-if>
 
 
 class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-var "', '.join([p.getCleanName() for p in klass.getGenParents()])"><dtml-else><dtml-var parentname></dtml-if>):
@@ -63,7 +63,6 @@ class <dtml-var "klass.getCleanName()">(<dtml-if "klass.getGenParents()"><dtml-v
 
     security.declarePrivate('set')
     security.declarePrivate('get')
-
 
 <dtml-if "not parsed_class">
     def get(self, instance, **kwargs):

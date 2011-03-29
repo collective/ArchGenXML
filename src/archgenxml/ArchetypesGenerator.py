@@ -557,7 +557,10 @@ class ArchetypesGenerator(BaseGenerator):
 
         # set attributes from tgv
         for k in tgv.keys():
-            if k not in noparams and not k.startswith('widget:'):
+            if not k:
+                log.warn(u"Empty tagged value name for tag '%s' in field '%s'.",
+                             k, element.getName())
+            if k and k not in noparams and not k.startswith('widget:'):
                 v = tgv[k]
                 if v is None:
                     log.warn(u"Empty tagged value for tag '%s' in field '%s'.",
@@ -816,6 +819,10 @@ class ArchetypesGenerator(BaseGenerator):
         # ATVocabularyManager: Add NamedVocabulary to field.
         vocaboptions = {}
         for t in attr.getTaggedValues().items():
+            if not t[0]:
+                log.warn(u"Empty tagged value name for tag '%s' in field '%s'.",
+                             t, element.getName())
+
             if t[0].startswith('vocabulary:'):
                 vocaboptions[t[0][11:]] = t[1]
         if vocaboptions:
@@ -1345,7 +1352,6 @@ class ArchetypesGenerator(BaseGenerator):
     # @param template The template file to use in generating the output.
     def generateBaseFunctionalTestcaseClass(self,element,template):
         log.debug('write testFunctional.py, only if needed.')
-
         if not os.path.exists(os.path.join(self.targetRoot,
                                            element.getPackage().getFilePath(),
                                            'testFunctional.py')):

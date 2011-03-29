@@ -1,4 +1,6 @@
 import os, sys
+from Products.PloneTestCase import PloneTestCase
+
 try:
     from Products.PloneTestCase.PloneTestCase import USELAYER
     from Products.PloneTestCase.layer import PloneSite
@@ -13,6 +15,7 @@ if __name__ == '__main__':
 #
 
 from Testing import ZopeTestCase
+from Products.Five.testbrowser import Browser
 <dtml-if "parent is not None">
 from <dtml-var "parent.getQualifiedModuleName(None,forcePluginRoot=1)"> import <dtml-var "parent.getCleanName()">
 <dtml-else>
@@ -25,7 +28,7 @@ from <dtml-var "_['sequence-item'].getQualifiedModuleName(None, forcePluginRoot=
 </dtml-in>
 
 
-class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCleanName()">)<dtml-else>(PloneTestCase)</dtml-if>:
+class <dtml-var "klass.getCleanName()"><dtml-if parent>(PloneTestCase.FunctionalTestCase,<dtml-var "parent.getCleanName()">)<dtml-else>(PloneTestCase.FunctionalTestCase)</dtml-if>:
 <dtml-if "parsed_class and parsed_class.getDocumentation()">    """<dtml-var "parsed_class.getDocumentation()">"""
 <dtml-else>    """Test-cases for class(es) <dtml-var "', '.join([p.getName() for p in klass.getRealizationParents()])">."""
 </dtml-if>
@@ -35,9 +38,63 @@ class <dtml-var "klass.getCleanName()"><dtml-if parent>(<dtml-var "parent.getCle
     def afterSetUp(self):
         """
         """
+        PloneTestCase.FunctionalTestCase.afterSetUp(self)
         <dtml-if parent><dtml-var "parent.getCleanName()">.afterSetUp(self)<dtml-else>pass</dtml-if>
+        
+        self.browser = Browser()
+        
 <dtml-else>
 <dtml-var "parsed_class.methods['afterSetUp'].getSrc()"></dtml-if>
+
+<dtml-if "not parsed_class or 'getError' not in parsed_class.methods.keys()">
+    def getError(self, error_index=0):
+        """
+        Error access utility method.
+        
+        Get the error msg as text, by default the last one.
+        @param self The object pointer.
+        @param error_index The index of the error of interest.  If not passed in, 
+            an index of 0 is used.
+        """
+        error_log = self.portal.error_log
+        try:
+            id = error_log.getLogEntries()[0]['id']
+        except IndexError:
+            # no errors
+            return ''
+        else:
+            return error_log.getLogEntryAsText(id)
+</dtml-if>
+
+<dtml-if "not parsed_class or 'printError' not in parsed_class.methods.keys()">
+    def printError(self, error_index=0):
+        """
+        Error printing utility method.
+        
+        Prints an error. Useful for debugging sessions.  By default, the
+        last error is printed.
+        
+        @param self The object pointer.
+        @param error_index The index of the error of interest.  If not passed in, 
+             an index of 0 is used.
+        """
+        print '='*70
+        print self.get_error(error_index)
+        print '-'*70
+</dtml-if>
+
+<dtml-if "not parsed_class or 'Session' not in parsed_class.methods.keys()">
+    class Session(dict):
+        def set(self, key, value):
+            self[key] = value
+
+</dtml-if>
+
+<dtml-if "not parsed_class or '_setup' not in parsed_class.methods.keys()">
+    def _setup(self):
+        PloneTestCase.FunctionalTestCase._setup(self)
+        self.app.REQUEST['SESSION'] = self.Session()
+</dtml-if>
 
     # Manually created methods
 <dtml-if parsed_class>

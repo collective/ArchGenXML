@@ -90,7 +90,7 @@ at_uml_profile.addStereoType(
 at_uml_profile.addStereoType(
     'functional_doc_testcase', ['XMIClass'],
     dispatching=1,
-    template='tests/DocTestcase.pydtml',
+    template='tests/FuncDocTestcase.pydtml',
     generator='generateDocTestcaseClass',
     description='Turns a class into a functional doctest class. It must subclass a '
     "'<<plone_testcase>>'.")
