@@ -4,8 +4,12 @@ Changelog
 2.7 (unreleased)
 ----------------
 
+- Avoid deprecated import warning under Zope 2.13+.
+  [thomasdesvenain]
+
 - Fixed inconstancy between template name and portlet class by removing .pt in the generation
   [jihaisse]
+
 - Added method generation for portlet class.
   The portlet class will look like the classic portlet.
   [jihaisse]

@@ -13,7 +13,12 @@ logger.debug('Installing Product')
 
 import os
 import os.path
+<dtml-if "generator.getOption('plone_target_version', package, 3.0) < 4.0">
 from Globals import package_home
+</dtml-if>
+<dtml-if "generator.getOption('plone_target_version', package, 3.0) >= 4.0">
+from App.Common import package_home
+</dtml-if>
 import Products.CMFPlone.interfaces
 from Products.Archetypes import listTypes
 from Products.Archetypes.atapi import *
