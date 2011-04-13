@@ -160,11 +160,11 @@ def processExpression(value, asString=True):
 
 def isTGVTrue(tgv):
     if isinstance(tgv, (str, unicode)):
-        tgv = tgv.lower()
+        tgv = tgv.lower().strip()
     else:
         return bool(tgv)
     
-    return tgv in (1, '1', 'true')
+    return tgv in (1, '1', 'true','python:true')
 
 def isTGVFalse(tgv):
     """Checks if a tgv is _explicitly_ False.
@@ -173,14 +173,14 @@ def isTGVFalse(tgv):
     different than (not toBoolean(tgv)).
     """
     if isinstance(tgv, (str, unicode)):
-        tgv = tgv.lower()
+        tgv = tgv.lower().strip()
     else:
         if not tgv is None:
             return not bool(tgv)
         else:
             return False
     
-    return tgv in (0, '0', 'false')
+    return tgv in (0, '0', 'false','python:false')
 
 def cleanName(name):
     return name.replace(' ','_').replace('.','_').replace('/','_')

@@ -8,6 +8,7 @@ from zope.documenttemplate import HTML
 from archgenxml.TaggedValueSupport import STATE_PERMISSION_MAPPING
 from CodeSectionHandler import handleSectionedFile
 from TaggedValueSupport import tgvRegistry
+from xmiparser.xmiparser import XMIClass
 log = logging.getLogger('workflow')
 
 
@@ -197,7 +198,7 @@ class WorkflowGenerator(BaseGenerator):
             res['effectname'] = action.getAfterActionName()
             res['wfinterface'] = 'Products.DCWorkflow.interfaces.IAfterTransitionEvent'
         klass = res['sourcestate'].getParent().getParent()
-        if klass.hasStereoType(self.atgenerator.noncontentstereotype,
+        if not isinstance(klass,XMIClass) or klass.hasStereoType(self.atgenerator.noncontentstereotype,
                                umlprofile=self.atgenerator.uml_profile):
             defaultbinding = '*'
         else:

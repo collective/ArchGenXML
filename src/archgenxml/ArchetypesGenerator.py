@@ -3042,7 +3042,7 @@ class ArchetypesGenerator(BaseGenerator):
         """
         klasses = package.getClasses(recursive=1)
         for klass in klasses:
-
+                
             if not self._isContentClass(klass):
                 continue
 
@@ -3097,6 +3097,7 @@ class ArchetypesGenerator(BaseGenerator):
                 index = utils.isTGVTrue(index)
                 if not (index or metadata):
                     continue
+                
                 catalogname = self.getOption('catalog:name', attribute,
                                              'portal_catalog, Plone Catalog Tool')
                 catalogid, catalogmetatype = [a.strip()
