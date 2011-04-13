@@ -361,10 +361,11 @@ class BaseGenerator:
                 dispatching_stereotype = stereotype
         log.debug("Dispatching interface stereotype is %r.", dispatching_stereotype)
         if not dispatching_stereotype:
-            dispatching_stereotype = self.getDefaultInterfaceType()
+            dispatching_stereotype = self.getUMLProfile().findStereoTypes(name=self.getDefaultInterfaceType())[0]
             log.debug("Grabbed default interface stereotype, %r.", dispatching_stereotype)
 
         generator = dispatching_stereotype.generator
+        
         return getattr(self,generator)(element,
                                        template=getattr(dispatching_stereotype,
                                                         'template', None))
