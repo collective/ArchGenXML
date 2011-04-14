@@ -273,7 +273,11 @@ class ArchetypesGenerator(BaseGenerator):
 
         # Check for necessity to import ReferenceBrowserWidget
         if self.getReferenceFieldSpecs(element):
-            print >>out, \
+            if self.getOption('plone_target_version', element.getPackage(), 3.0) >= 4.0:
+                print >>out, 'from archetypes.referencebrowserwidget.widget' + \
+                         ' import ReferenceBrowserWidget'
+            else:
+                print >>out, \
                   'from Products.ATReferenceBrowserWidget.ATReferenceBrowserWidget'+\
                          ' import \\\n    ReferenceBrowserWidget'
 
