@@ -86,7 +86,8 @@ class TestArchetypesGenerator(unittest.TestCase):
         self.options.update(author='Äöü€')
         generator = ArchetypesGenerator('/dev/null', **self.options)
         result = generator.generateModuleInfoHeader(self.model)
-        assert u'Copyright (c) 2010 by Äöü€ <author@example.org>' in result
+        assert u'Copyright (c) 20' in result
+        assert u'by Äöü€ <author@example.org>' in result
 
 
 def test_suite():
