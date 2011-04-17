@@ -222,7 +222,7 @@ class BaseGenerator:
         parents = element.getGenParents()
         parents += element.getRealizationParents()
         parents += element.getClientDependencyClasses(includeParents=True)
-        parents += element.getAdaptationParents()
+        #parents += element.getAdaptationParents() not necessary, cause adaptation is done in .zcml
         for p in parents:
             if p.hasStereoType(self.stub_stereotypes):
                 # In principle, don't do a thing, but...
