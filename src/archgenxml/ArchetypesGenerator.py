@@ -1909,7 +1909,7 @@ class ArchetypesGenerator(BaseGenerator):
         if not element.hasStereoType(self.extender_stereotypes,umlprofile=self.uml_profile):
             print >> outfile, utils.indent('security = ClassSecurityInfo()',1)
 
-        print >> outfile, self.generateAdapts(element)
+        #print >> outfile, self.generateAdapts(element) #no mor needed, is gernerated into .zcml
         print >> outfile, self.generateImplements(element, parentnames)
 
         archetype_name = element.getTaggedValue('archetype_name') or \
@@ -2038,10 +2038,16 @@ class ArchetypesGenerator(BaseGenerator):
         if element.hasStereoType(self.adapter_stereotypes,umlprofile=self.uml_profile):
             package = element.getPackage()
             adapter = {'packageName':element.getCleanName(),
-                       'adapterName':element.getCleanName(),
+                       'className':element.getCleanName(),
+                       'qualifiedName':element.getQualifiedName(forcePluginRoot=True),
+                       'adapterName':element.getTaggedValue('name') or element.getCleanName(),
                        'isExtender':element.hasStereoType(self.extender_stereotypes,umlprofile=self.uml_profile),
                        'isNamed':element.hasStereoType(self.extender_stereotypes,umlprofile=self.uml_profile)
-                                 or element.hasStereoType(self.named_adapter_stereotypes,umlprofile=self.uml_profile)
+                                 or element.hasStereoType(self.named_adapter_stereotypes,umlprofile=self.uml_profile),
+                        'provides':[iface.getQualifiedName(forcePluginRoot=True) for iface in element.getRealizationParents()],
+                        'for': [iface.getQualifiedName(forcePluginRoot=True) for iface in element.getAdaptationParents()]
+#                        'provides':[iface.getQualifiedName(ref=package,includeRoot=False,forcePluginRoot=True) for iface in element.getRealizationParents()],
+#                        'for': [iface.getQualifiedName(ref=package,includeRoot=False,forcePluginRoot=True) for iface in element.getAdaptationParents()]
                        }
             adaptersList = package.getAnnotation('generatedAdapters',None)
             if not adaptersList:
@@ -2795,6 +2801,7 @@ class ArchetypesGenerator(BaseGenerator):
            or hasAdapters \
            or hasImplementers:
             log.debug("%s: Generating includes zcml" % self.infoind)
+            package.annotate('needsIncludesZcml',1)
             ppath = package.getFilePath()
             handleSectionedFile(['includes.zcml'],
                                 os.path.join(ppath, 'includes.zcml'),

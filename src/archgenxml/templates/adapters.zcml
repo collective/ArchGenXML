@@ -8,13 +8,20 @@
 </dtml-if>
 <dtml-in "generatedAdapters">
  <dtml-let adapter="_['sequence-item']">
-
- <adapter
-    factory=".<dtml-var "adapter['packageName']">.<dtml-var "adapter['adapterName']">"
-    <dtml-if "adapter['isNamed']">name="<dtml-var "adapter['adapterName']">"
-    </dtml-if>
-/>
-
+ 
+	<dtml-in "adapter['for']">
+	<dtml-let adaptee="_['sequence-item']">
+	
+	 <adapter
+	    factory="<dtml-var "adapter['qualifiedName']">"
+	    <dtml-if "adapter['isNamed']">name="<dtml-var "adapter['adapterName']">"
+	    </dtml-if>
+	    <dtml-if "adapter['provides']">provides="<dtml-var "adapter['provides'][0]">"
+	    </dtml-if>
+	    for="<dtml-var "adaptee">"
+	/>
+	</dtml-let>
+</dtml-in>
  </dtml-let>
 </dtml-in>
 
