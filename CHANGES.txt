@@ -4,6 +4,9 @@ Changelog
 2.7 (unreleased)
 ----------------
 
+- Add vocabulary_factory tagged value.
+  [thomasdesvenain]
+
 - Avoid deprecated import warning under Zope 2.13+.
   [thomasdesvenain]
 

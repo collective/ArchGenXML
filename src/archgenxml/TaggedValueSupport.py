@@ -711,6 +711,12 @@ explanation = """Set to a python list, a DisplayList or a method name (quoted)
 which provides the vocabulary for a selection widget."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'vocabulary_factory'
+explanation = """Set the name of the vocabulary factory
+which provides the vocabulary for a selection widget."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+
 tagname = 'enforceVocabulary'
 explanation = """Set to true (1) to ensure that only items from the vocabulary
 are permitted."""
