@@ -4,7 +4,7 @@
         xmlns:i18n="http://xml.zope.org/namespaces/i18n"<dtml-if "target_version >= 3.0">
 
         i18n:domain="plone"</dtml-if>>
-   
+
  <property name="title"<dtml-if "target_version >= 3.0"> i18n:translate=""</dtml-if>><dtml-var "ctype['type_name']"></property>
  <property name="description"<dtml-if "target_version >= 3.0"> i18n:translate=""</dtml-if>><dtml-var "ctype['type_description']"></property>
  <property name="content_icon"><dtml-var "ctype['content_icon']"></property>
@@ -36,12 +36,12 @@
  <alias from="<dtml-var "_['sequence-item']['from']">" to="<dtml-var "_['sequence-item']['to']">"/>
 </dtml-in>
 <dtml-in "ctype['type_actions']">
- <action title="<dtml-var "_['sequence-item']['name']">" 
+ <action title="<dtml-var "_['sequence-item']['name']">"
          <dtml-if "target_version >= 3.0 and _['sequence-item']['name'] not in ('Edit', 'View')">i18n:attributes="title"
          </dtml-if>action_id="<dtml-var "_['sequence-item']['id']">"
-         category="<dtml-var "_['sequence-item']['category']">" 
+         category="<dtml-var "_['sequence-item']['category']">"
          condition_expr="<dtml-var "_['sequence-item']['condition']">"
-         url_expr="<dtml-var "_['sequence-item']['action']">" 
+         url_expr="<dtml-var "_['sequence-item']['action']">"
          visible="<dtml-var "_['sequence-item']['visible']">">
 <dtml-in "_['sequence-item']['permissions']">
   <permission value="<dtml-var "_['sequence-item']">"/>
