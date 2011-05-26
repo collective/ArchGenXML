@@ -4,6 +4,9 @@ Changelog
 2.7 (unreleased)
 ----------------
 
+- Add a protected FOOT section in type.xml.
+  [vincentfretin]
+
 - Add vocabulary_factory tagged value.
   [thomasdesvenain]
 

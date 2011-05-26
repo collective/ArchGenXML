@@ -3381,6 +3381,7 @@ class ArchetypesGenerator(BaseGenerator):
             filename = '%s.xml' % typedef['name']
             handleSectionedFile(['profiles', 'type.xml'],
                                 os.path.join(typesdir, filename),
+                                sectionnames=['FOOT'],
                                 templateparams={'ctype': typedef,
                                                 'target_version': self.getOption('plone_target_version',
                                                                                   package, 3.0)})
