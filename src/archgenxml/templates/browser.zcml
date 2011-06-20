@@ -21,7 +21,9 @@
      for="Products.<dtml-if "target.isInterface()"><dtml-var "target.getQualifiedName(includeRoot=True)"><dtml-else><dtml-var "target.getPackage().getQualifiedName(None,includeRoot=True)">.interfaces.I<dtml-var "target.getName()"></dtml-if>"
      name="<dtml-var "(not dep.getName()[0].isdigit() and dep.getName()) or klass.getTaggedValue('name') or klass.getName()">"
      class="Products.<dtml-var "klass.getQualifiedName(includeRoot=True)">"
+<dtml-if "klass.getTaggedValue('template_name').lower() != 'none'">
      template="templates/<dtml-var "dep.getTaggedValue('template_name') or klass.getTaggedValue('template_name')">"
+</dtml-if>
      permission="<dtml-var "dep.getTaggedValue('permission') or klass.getTaggedValue('permission') or 'zope2.View'">"
      />
 

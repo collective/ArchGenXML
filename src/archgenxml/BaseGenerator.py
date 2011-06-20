@@ -413,7 +413,6 @@ class BaseGenerator:
             log.info("%sGenerating view class '%s'.",
                      ' '*4*self.infoind,
                      element.getName())
-
         templ = self.readTemplate(template)
         d = {
             'klass': element,

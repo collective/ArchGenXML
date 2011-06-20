@@ -2756,7 +2756,7 @@ class ArchetypesGenerator(BaseGenerator):
             if not view.getTaggedValue('template_name'):
                 view.setTaggedValue('template_name','%s.pt' % view.getName())
 
-            if not view.hasStereoType('stub'):
+            if not view.hasStereoType('stub') and view.getTaggedValue('template_name').lower() != 'none':
                 handleSectionedFile(['view_template.pt'],
                                 os.path.join(templdir, view.getTaggedValue('template_name')),
                                 overwrite=False,
