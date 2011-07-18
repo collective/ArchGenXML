@@ -20,16 +20,16 @@ class I<dtml-var "klass.getName()">(IPortletDataProvider):
     """
 
 class Assignment(base.Assignment):
-    
+
     implements(I<dtml-var "klass.getName()">)
-    
+
     title = _(u'<dtml-var "klass.getTaggedValue('label',klass.getName())">')
 
 <dtml-var "generator.getProtectedSection(parsed_class,'assignment-body',ind=1)">
 
 
 class Renderer(base.Renderer):
-    
+
     render = ViewPageTemplateFile('templates/<dtml-var "klass.getTaggedValue('template_name',klass.getName())">')
 
     def __init__(self, *args):

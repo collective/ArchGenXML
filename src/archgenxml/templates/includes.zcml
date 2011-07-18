@@ -1,5 +1,5 @@
 <configure xmlns="http://namespaces.zope.org/zope">
-  
+
 <dtml-in "subPackagesWithZcml">
  <include file="includes.zcml" package=".<dtml-var "_['sequence-item']">"/>
 </dtml-in>

@@ -4,7 +4,7 @@
 
   <!-- ##code-section HEAD -->
   <!-- ##/code-section HEAD -->
-  
+
 <dtml-in "flavors">
  <dtml-let flavor="_['sequence-item']">
 
@@ -23,7 +23,7 @@
     />
  </dtml-let>
 </dtml-in>
-  
+
   <!-- ##code-section FOOT -->
   <!-- ##/code-section FOOT -->
 

@@ -2,16 +2,16 @@
 
   <!-- ##code-section HEAD -->
   <!-- ##/code-section HEAD -->
-  
+
 <dtml-if "hasExtender">
  <include package="archetypes.schemaextender" />
 </dtml-if>
 <dtml-in "generatedAdapters">
  <dtml-let adapter="_['sequence-item']">
- 
+
 	<dtml-in "adapter['for']">
 	<dtml-let adaptee="_['sequence-item']">
-	
+
 	 <adapter
 	    factory="<dtml-var "adapter['qualifiedName']">"
 	    <dtml-if "adapter['isNamed']">name="<dtml-var "adapter['adapterName']">"

@@ -12,7 +12,7 @@
 <dtml-if portletViews>
   <include package="plone.app.portlets" />
 </dtml-if>
- 
+
 <dtml-in browserViews>
 <dtml-let klass="_['sequence-item']">
 <dtml-in "klass.getClientDependencies()">
@@ -65,9 +65,9 @@
 </dtml-let>
 </dtml-in>
 
- 
 
-  
+
+
 <!-- ##code-section BROWSER #fill in your manual code here -->
 <!-- ##/code-section BROWSER -->
 
