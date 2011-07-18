@@ -211,7 +211,7 @@ ZPLTEXT = u"""\
 # FOR A PARTICULAR PURPOSE."""
 
 DFSLTEXT = u"""\
-# This Program may be used by anyone in accordance with the terms of the 
+# This Program may be used by anyone in accordance with the terms of the
 # German Free Software License
 # The License may be obtained under <http://www.d-fsl.org>."""
 
@@ -258,13 +258,13 @@ TEMPL_CONSTR_TOOL = u"""
     def __init__(self, id=None):
         %s.__init__(self,'%s')
         self.setTitle('%s')
-        """
+"""
 
 TEMPL_POST_EDIT_METHOD_TOOL = u"""
     # tool should not appear in portal_catalog
     def at_post_edit_script(self):
         self.unindexObject()
-        """
+"""
 
 TEMPLATE_HEADER = u"""\
 from AccessControl import ClassSecurityInfo
@@ -275,7 +275,7 @@ TEMPLATE_HEADER_I18N_I18N_AT = TEMPLATE_HEADER + u"""\
 
 from Products.I18NArchetypes.public import *
 
-    """
+"""
 
 TEMPLATE_HEADER_I18N_LINGUAPLONE = TEMPLATE_HEADER + u"""\
 
