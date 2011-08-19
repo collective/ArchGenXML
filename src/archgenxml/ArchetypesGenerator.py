@@ -3391,7 +3391,7 @@ class ArchetypesGenerator(BaseGenerator):
         portal types inside it if type_registration tagged value is set
         to genericsetup.
         """
-        if not self.getOption('atvm', package, 1.4) > 1.4 \
+        if self.getOption('atvm', package, 1.6) < 1.6 \
            or package.getProductName() not in self.vocabularymap.keys():
             return
 
@@ -3439,7 +3439,7 @@ class ArchetypesGenerator(BaseGenerator):
                                                              klass, True))]
         memberclasses =  [klass for klass in allclasses \
                                if klass.hasStereoType(self.remember_stereotype)]
-        newstyleatvm = self.getOption('atvm', package, 1.4) > 1.4
+        newstyleatvm = self.getOption('atvm', package, 1.6) > 1.4
         templateparams = {
             'generator': self,
             'package': package,
