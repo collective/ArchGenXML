@@ -30,7 +30,7 @@
 </dtml-if>
      permission="<dtml-var "dep.getTaggedValue('permission') or klass.getTaggedValue('permission') or 'zope2.View'">"
 <dtml-if "klass.getTaggedValue('attribute') or dep.getTaggedValue('attribute')">
-     attribute="templates/<dtml-var "klass.getTaggedValue('attribute') or dep.getTaggedValue('attribute')">"
+     attribute="<dtml-var "klass.getTaggedValue('attribute') or dep.getTaggedValue('attribute')">"
 </dtml-if>
      />
 
