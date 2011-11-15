@@ -2944,11 +2944,29 @@ class ArchetypesGenerator(BaseGenerator):
                 build = 1
         else:
             parsed = vertext.split('.')
-            try:
-                build = int(parsed[2]) + 1
-            except:
-                build = 1
-        return '%s.%s.%d' % (parsed[0], parsed[1], build)
+            if len(parsed) >= 3:
+                try:
+                    build = int(parsed[2]) + 1
+                except:
+                    build = 1
+
+                return '%s.%s.%d' % (parsed[0], parsed[1], build)
+            elif len(parsed) == 2:
+                try:
+                    build = int(parsed[1]) + 1
+                except:
+                    build = 1
+                
+                return '%s.%d' % (parsed[0], build)
+            elif len(parsed) == 1:
+                try:
+                    build = int(parsed[0]) + 1
+                except:
+                    build = 1
+
+                return str(build)
+            else:
+                return '1'
 
     def generateGSToolsetXML(self, package):
         """Generate the factorytool.xml.

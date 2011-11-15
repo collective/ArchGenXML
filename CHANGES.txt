@@ -4,6 +4,10 @@ Changelog
 2.7 (unreleased)
 ----------------
 
+- Now, manage formats of generic setup version number as n, n1.n2,
+  and not only n1.n2.n3.
+  [thomasdesvenain]
+
 - If plone_target_version tagged-value is set to 4.0 or 4.1, then generate
   icon_expr instead of content_icon for FTIs.
   [vincentfretin]
