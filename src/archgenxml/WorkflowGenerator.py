@@ -53,7 +53,7 @@ class WorkflowGenerator(BaseGenerator):
 
         for sm in statemachines:
             d['info'] = WorkflowInfo(sm)
-            d['target_version'] = self.getOption('plone_target_version', 
+            d['target_version'] = self.getOption('plone_target_version',
                                           self.package, DEFAULT_TARGET_VERSION)
 
             # start BBB warning
@@ -71,13 +71,10 @@ class WorkflowGenerator(BaseGenerator):
 
             # Generate workflow xml
             log.info("Generating workflow '%s'.", smName)
-            templ = self.readTemplate(['profiles', 'definition.xml'])
-            scriptpath = os.path.join(smDir, 'definition.xml')
-            dtml = HTML(templ, d)
-            res = dtml()
-            of = self.atgenerator.makeFile(scriptpath)
-            of.write(res)
-            of.close()
+            handleSectionedFile(['profiles', 'definition.xml'],
+                            os.path.join(smDir, 'definition.xml'),
+                            sectionnames=['FOOT'],
+                            templateparams=d)
 
             self._collectSubscribers(sm)
 
@@ -96,12 +93,12 @@ class WorkflowGenerator(BaseGenerator):
         d['workflowNames'] = self.workflowNames()
         d['workflowless'] = self.workflowLessTypes()
         d['typeMapping'] = self.typeMapping()
-        d['defaultId'] = self.findDefaultWorkflowId()        
+        d['defaultId'] = self.findDefaultWorkflowId()
         handleSectionedFile(['profiles', 'workflows.xml'],
                             os.path.join(profileDir, 'workflows.xml'),
-                            sectionnames=['workflowobjects', 
+                            sectionnames=['workflowobjects',
                                           'workflowbindings'],
-                            templateparams=d)        
+                            templateparams=d)
 
         if len(self.extraRoles()) == 0:
             log.debug("Skipping creation of rolemap.xml file.")
@@ -232,14 +229,14 @@ class WorkflowGenerator(BaseGenerator):
                       sm.getTaggedValue('meta_type', 'Workflow'))
                      for sm in statemachines]
         workflows.sort()
-        
+
         result = []
         for name, meta_type in workflows:
             item = {}
             item['name'] = name
             item['meta_type'] = meta_type
             result.append(item)
-        
+
         return result
 
     def workflowLessTypes(self):
@@ -256,7 +253,6 @@ class WorkflowGenerator(BaseGenerator):
     def typeMapping(self):
         """Return list of {id, workflowId} dicts.
         """
-
         statemachines = self.package.getStateMachines()
         classes = {}
         for sm in statemachines:
@@ -325,7 +321,7 @@ class WorkflowGenerator(BaseGenerator):
                 'Contributor',
                 'Editor',
                 'Reader']
-        if self.getOption('plone_target_version', 
+        if self.getOption('plone_target_version',
                        self.package, DEFAULT_TARGET_VERSION) >= 4.1:
             ignore.append('Site Administrator')
 

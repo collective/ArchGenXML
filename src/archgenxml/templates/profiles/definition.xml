@@ -123,5 +123,7 @@
   <guard>
   </guard>
  </variable>
+<!-- ##code-section FOOT -->
+<!-- ##/code-section FOOT -->
  <!-- We dont use workflow scripts any more, we use subscribers -->
 </dc-workflow>
