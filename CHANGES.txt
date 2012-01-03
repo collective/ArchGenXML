@@ -4,6 +4,12 @@ Changelog
 2.7 (unreleased)
 ----------------
 
+- Import Column classes with DataGridField.
+  [thomasdesvenain]
+
+- Added a protected section in workflows definition.xml.
+  [thomasdesvenain]
+
 - View action is always ${object_url}/view, otherwise select layout doesn't
   work anymore.
   [thomasdesvenain]
@@ -49,7 +55,7 @@ Changelog
 2.6 (2011-03-10)
 ----------------
 
-- make z3 interfaces the default interface and dont accept any longer zope2 
+- make z3 interfaces the default interface and dont accept any longer zope2
   interfaces
   [jensens]
 
@@ -57,8 +63,8 @@ Changelog
   generating workflows.xml.
   [vincentfretin]
 
-- remove unneccessary imports for remember/membrane, 
-  view permissions can now additionally be specified in the dependency 
+- remove unneccessary imports for remember/membrane,
+  view permissions can now additionally be specified in the dependency
   association to the content class,
   name of the view template can now additionally be specified in the
   dependency relation between view class and content class,

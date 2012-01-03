@@ -275,7 +275,7 @@ class ArchetypesGenerator(BaseGenerator):
 
         # Check for necessity to import ReferenceBrowserWidget
         if self.getReferenceFieldSpecs(element):
-            if self.getOption('plone_target_version', 
+            if self.getOption('plone_target_version',
                               element.getPackage(),
                               DEFAULT_TARGET_VERSION) >= 4.0:
                 print >>out, 'from archetypes.referencebrowserwidget.widget' + \
@@ -286,15 +286,19 @@ class ArchetypesGenerator(BaseGenerator):
                          ' import \\\n    ReferenceBrowserWidget'
 
         # Check for necessity to import DataGridField and DataGridWidget
-        import_datagrid = False
         for att in element.getAttributeDefs():
             if att.getType() == 'datagrid':
                 import_datagrid = True
                 break
+        else:
+            import_datagrid = False
+
 
         if import_datagrid:
-            print >>out, 'from Products.DataGridField import ' + \
-                  'DataGridField, DataGridWidget'
+            print >>out, (
+            "from Products.DataGridField import DataGridField, DataGridWidget\n"
+            "from Products.DataGridField.Column import Column\n"
+            "from Products.DataGridField.SelectColumn import SelectColumn\n")
 
         # Check for necessity to import ATColorPickerWidget
         import_color = False
@@ -346,7 +350,7 @@ class ArchetypesGenerator(BaseGenerator):
         if self.backreferences_support or \
            utils.isTGVTrue(self.getOption('backreferences_support', element,
                                           False)):
-            if self.getOption('plone_target_version', element, 
+            if self.getOption('plone_target_version', element,
                               DEFAULT_TARGET_VERSION) >= 3.0:
                 print >>out, 'from Products.ATBackRef import BackReferenceField'
                 print >>out, 'from Products.ATBackRef import BackReferenceWidget'
@@ -1706,7 +1710,7 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             creation_permission = None
 
-        if self.getOption('plone_target_version', element, 
+        if self.getOption('plone_target_version', element,
                           DEFAULT_TARGET_VERSION) >= 3.0:
             creation_roles = "('Manager', 'Owner', 'Contributor')"
         else:
@@ -2407,7 +2411,7 @@ class ArchetypesGenerator(BaseGenerator):
     def generateInstallPy(self, package):
         """Generate Extensions/Install.py from the DTML template.
         """
-        if self.getOption('plone_target_version', package, 
+        if self.getOption('plone_target_version', package,
                           DEFAULT_TARGET_VERSION) >= 3.0:
             # don't generate it for 3.0
             return
@@ -2737,9 +2741,9 @@ class ArchetypesGenerator(BaseGenerator):
                             sectionnames=['configure.zcml.header', 'configure.zcml.core'],
                             templateparams={'packages': packageIncludes,
                                             'package': package,
-                                            'generator':self,
+                                            'generator': self,
                                             'hasSubscribers': hasSubscribers,
-                                            'hasBrowserViews' : hasBrowserViews,
+                                            'hasBrowserViews': hasBrowserViews,
                                             'hasSubPackagesWithZcml': hasSubPackagesWithZcml,
                                             'i18ndomain': package.getProductName()})
 
@@ -2876,7 +2880,7 @@ class ArchetypesGenerator(BaseGenerator):
 
     def updateVersionForProduct(self, package):
         """Increment the build number in version.txt,"""
-        if self.getOption('plone_target_version', package, 
+        if self.getOption('plone_target_version', package,
                           DEFAULT_TARGET_VERSION) >= 3.0:
             return
         build = 1
@@ -2903,7 +2907,7 @@ class ArchetypesGenerator(BaseGenerator):
     def generateGSMetadataXMLFile(self, package):
         """Generate genericsetup metadata.xml file.
         """
-        if self.getOption('plone_target_version', package, 
+        if self.getOption('plone_target_version', package,
                           DEFAULT_TARGET_VERSION) == 2.5:
             return
 
@@ -2965,7 +2969,7 @@ class ArchetypesGenerator(BaseGenerator):
                     build = int(parsed[1]) + 1
                 except:
                     build = 1
-                
+
                 return '%s.%d' % (parsed[0], build)
             elif len(parsed) == 1:
                 try:
@@ -3080,7 +3084,7 @@ class ArchetypesGenerator(BaseGenerator):
         """
         klasses = package.getClasses(recursive=1)
         for klass in klasses:
-                
+
             if not self._isContentClass(klass):
                 continue
 
@@ -3135,7 +3139,7 @@ class ArchetypesGenerator(BaseGenerator):
                 index = utils.isTGVTrue(index)
                 if not (index or metadata):
                     continue
-                
+
                 catalogname = self.getOption('catalog:name', attribute,
                                              'portal_catalog, Plone Catalog Tool')
                 catalogid, catalogmetatype = [a.strip()
@@ -3534,7 +3538,7 @@ class ArchetypesGenerator(BaseGenerator):
         transition events.
         """
         # We need Plone 2.5 compatibility, and there are subscribers:
-        return self.getOption('plone_target_version', package, 
+        return self.getOption('plone_target_version', package,
                               DEFAULT_TARGET_VERSION) == 2.5 and \
                package.getAnnotation('subscribers')
 
@@ -4288,7 +4292,7 @@ class ArchetypesGenerator(BaseGenerator):
             if not typedef['default_view'] in typedef['suppl_views']:
                 typedef['suppl_views'].append(typedef['default_view'])
 
-            if self.getOption('plone_target_version', pclass, 
+            if self.getOption('plone_target_version', pclass,
                               DEFAULT_TARGET_VERSION) >= 3.0:
                 actions = atmaps.DEFAULT_ACTIONS_3_0
             else:
@@ -4334,7 +4338,7 @@ class ArchetypesGenerator(BaseGenerator):
         default_view = 'base_view'
 
         suppl_views = '[]'
-        if self.getOption('plone_target_version', cclass, 
+        if self.getOption('plone_target_version', cclass,
                           DEFAULT_TARGET_VERSION) >= 3.0:
             folderish = self.elementIsFolderish(cclass)
             if folderish:
@@ -4445,13 +4449,13 @@ class ArchetypesGenerator(BaseGenerator):
 
         folderish = self.elementIsFolderish(cclass)
         if folderish:
-            if self.getOption('plone_target_version', cclass, 
+            if self.getOption('plone_target_version', cclass,
                               DEFAULT_TARGET_VERSION) == 2.5:
                 fti['type_aliases'] = atmaps.DEFAULT_FOLDERISH_ALIASES_2_5
             else:
                 fti['type_aliases'] = atmaps.DEFAULT_FOLDERISH_ALIASES_3_0
         else:
-            if self.getOption('plone_target_version', cclass, 
+            if self.getOption('plone_target_version', cclass,
                               DEFAULT_TARGET_VERSION) == 2.5:
                 fti['type_aliases'] = atmaps.DEFAULT_ALIASES_2_5
             else:
