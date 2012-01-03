@@ -35,6 +35,8 @@ from xmiparser import xmiparser
 import PyParser
 from UMLProfile import UMLProfile
 
+from archgenxml import DEFAULT_TARGET_VERSION
+
 log = logging.getLogger("basegenerator")
 
 
@@ -87,6 +89,8 @@ class BaseGenerator:
     portlet_class_stereotype = ['portlet_class','portlet']
     # indent helper for log output:
     infoind = 0
+
+    default_target_version = DEFAULT_TARGET_VERSION
 
     def __init__(self):
         # Set egg-friendly template dir

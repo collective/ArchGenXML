@@ -7,11 +7,14 @@
 
  <property name="title"<dtml-if "target_version >= 3.0"> i18n:translate=""</dtml-if>><dtml-var "ctype['type_name']"></property>
  <property name="description"<dtml-if "target_version >= 3.0"> i18n:translate=""</dtml-if>><dtml-var "ctype['type_description']"></property>
-<dtml-if "target_version < 4.0">
+<dtml-if "target_version < 4.0 and ctype['content_icon']">
  <property name="content_icon"><dtml-var "ctype['content_icon']"></property>
 </dtml-if>
-<dtml-if "target_version >= 4.0">
+<dtml-if "target_version >= 4.0 and ctype['content_icon']">
  <property name="icon_expr">string:${portal_url}/<dtml-var "ctype['content_icon']"></property>
+</dtml-if>
+<dtml-if "target_version >= 4.0 and not ctype['content_icon']">
+ <property name="icon_expr"></property>
 </dtml-if>
  <property name="content_meta_type"><dtml-var "ctype['content_meta_type']"></property>
  <property name="product"><dtml-var "ctype['product_name']"></property>

@@ -219,7 +219,7 @@ def setupMemberTypes(context):
     membrane_tool = getToolByName(site, 'membrane_tool')
 <dtml-in "memberclasses">
 <dtml-let mtype="_['sequence-item']">
-<dtml-if "generator.getOption('plone_target_version', package, 3.0) == 2.5">
+<dtml-if "generator.getOption('plone_target_version', package, generator.default_target_version) == 2.5">
 <dtml-if "mtype.getTaggedValue('active_workflow_states','private,public')">
 
     membrane_tool.registerMembraneType('<dtml-var "_['sequence-item'].getCleanName()">')

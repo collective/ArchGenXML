@@ -6,6 +6,7 @@ from PyParser import PyModule
 from BaseGenerator import BaseGenerator
 from zope.documenttemplate import HTML
 from archgenxml.TaggedValueSupport import STATE_PERMISSION_MAPPING
+from archgenxml import DEFAULT_TARGET_VERSION
 from CodeSectionHandler import handleSectionedFile
 from TaggedValueSupport import tgvRegistry
 from xmiparser.xmiparser import XMIClass
@@ -52,7 +53,8 @@ class WorkflowGenerator(BaseGenerator):
 
         for sm in statemachines:
             d['info'] = WorkflowInfo(sm)
-            d['target_version'] = self.getOption('plone_target_version', self.package, 3.0)
+            d['target_version'] = self.getOption('plone_target_version', 
+                                          self.package, DEFAULT_TARGET_VERSION)
 
             # start BBB warning
             smName = utils.cleanName(sm.getName())
@@ -314,18 +316,22 @@ class WorkflowGenerator(BaseGenerator):
     def extraRoles(self):
         statemachines = self.package.getStateMachines()
         extra = []
+        ignore=['Owner',
+                'Manager',
+                'Member',
+                'Reviewer',
+                'Authenticated',
+                'Anonymous',
+                'Contributor',
+                'Editor',
+                'Reader']
+        if self.getOption('plone_target_version', 
+                       self.package, DEFAULT_TARGET_VERSION) >= 4.1:
+            ignore.append('Site Administrator')
+
         for sm in statemachines:
             wi = WorkflowInfo(sm)
-            unknown = wi.allRoles(
-                        ignore=['Owner',
-                                'Manager',
-                                'Member',
-                                'Reviewer',
-                                'Authenticated',
-                                'Anonymous',
-                                'Contributor',
-                                'Editor',
-                                'Reader'])
+            unknown = wi.allRoles(ignore=ignore)
             for item in unknown:
                 if item not in extra:
                     extra.append(item)
@@ -337,6 +343,7 @@ class WorkflowGenerator(BaseGenerator):
         for sm in statemachines:
             if utils.isTGVTrue(sm.getTaggedValue('default', '0')):
                 return sm.getCleanName()
+
         return None
 
     def getPermissionsDefinitions(self, state):

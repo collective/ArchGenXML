@@ -4,6 +4,23 @@ Changelog
 2.7 (unreleased)
 ----------------
 
+- View action is always ${object_url}/view, otherwise select layout doesn't
+  work anymore.
+  [thomasdesvenain]
+
+- When we add content_icon with null value on a class, icon expr is empty.
+  [thomasdesvenain]
+
+- Add Site Administrator to ignored extra roles if plone >= 4.1.
+  [thomasdesvenain]
+
+- Default plone target version is 4.1.
+  It's easier to change default version.
+  [thomasdesvenain]
+
+- Fixed configure.zcml core section protection.
+  [thomasdesvenain]
+
 - Now, manage formats of generic setup version number as n, n1.n2,
   and not only n1.n2.n3.
   [thomasdesvenain]

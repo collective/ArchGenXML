@@ -43,6 +43,7 @@ from zope import interface
 from zope import component
 
 from archgenxml.plone.interfaces import IConfigPyView
+from archgenxml import DEFAULT_TARGET_VERSION
 
 _marker = []
 log = logging.getLogger('generator')
@@ -60,6 +61,7 @@ from pprint import pprint
 #
 # Global variables etc.
 #
+
 
 alreadyGenerated = []
 
@@ -273,7 +275,9 @@ class ArchetypesGenerator(BaseGenerator):
 
         # Check for necessity to import ReferenceBrowserWidget
         if self.getReferenceFieldSpecs(element):
-            if self.getOption('plone_target_version', element.getPackage(), 3.0) >= 4.0:
+            if self.getOption('plone_target_version', 
+                              element.getPackage(),
+                              DEFAULT_TARGET_VERSION) >= 4.0:
                 print >>out, 'from archetypes.referencebrowserwidget.widget' + \
                          ' import ReferenceBrowserWidget'
             else:
@@ -342,7 +346,8 @@ class ArchetypesGenerator(BaseGenerator):
         if self.backreferences_support or \
            utils.isTGVTrue(self.getOption('backreferences_support', element,
                                           False)):
-            if self.getOption('plone_target_version', element, 3.0) >= 3.0:
+            if self.getOption('plone_target_version', element, 
+                              DEFAULT_TARGET_VERSION) >= 3.0:
                 print >>out, 'from Products.ATBackRef import BackReferenceField'
                 print >>out, 'from Products.ATBackRef import BackReferenceWidget'
             else:
@@ -1701,7 +1706,8 @@ class ArchetypesGenerator(BaseGenerator):
         else:
             creation_permission = None
 
-        if self.getOption('plone_target_version', element, 3.0) >= 3.0:
+        if self.getOption('plone_target_version', element, 
+                          DEFAULT_TARGET_VERSION) >= 3.0:
             creation_roles = "('Manager', 'Owner', 'Contributor')"
         else:
             creation_roles = "('Manager', 'Owner')"
@@ -2401,7 +2407,8 @@ class ArchetypesGenerator(BaseGenerator):
     def generateInstallPy(self, package):
         """Generate Extensions/Install.py from the DTML template.
         """
-        if self.getOption('plone_target_version', package, 3.0) >= 3.0:
+        if self.getOption('plone_target_version', package, 
+                          DEFAULT_TARGET_VERSION) >= 3.0:
             # don't generate it for 3.0
             return
 
@@ -2727,7 +2734,7 @@ class ArchetypesGenerator(BaseGenerator):
         hasSubPackagesWithZcml = self.subPackagesWithZcml(package) != []
         handleSectionedFile(['configure.zcml'],
                             os.path.join(ppath, 'configure.zcml'),
-                            sectionnames=['configure.zcml'],
+                            sectionnames=['configure.zcml.header', 'configure.zcml.core'],
                             templateparams={'packages': packageIncludes,
                                             'package': package,
                                             'generator':self,
@@ -2869,7 +2876,8 @@ class ArchetypesGenerator(BaseGenerator):
 
     def updateVersionForProduct(self, package):
         """Increment the build number in version.txt,"""
-        if self.getOption('plone_target_version', package, 3.0) >= 3.0:
+        if self.getOption('plone_target_version', package, 
+                          DEFAULT_TARGET_VERSION) >= 3.0:
             return
         build = 1
         versionbase='1.0-alpha'
@@ -2895,7 +2903,8 @@ class ArchetypesGenerator(BaseGenerator):
     def generateGSMetadataXMLFile(self, package):
         """Generate genericsetup metadata.xml file.
         """
-        if self.getOption('plone_target_version', package, 3.0) == 2.5:
+        if self.getOption('plone_target_version', package, 
+                          DEFAULT_TARGET_VERSION) == 2.5:
             return
 
         version = '1.0'
@@ -3395,14 +3404,17 @@ class ArchetypesGenerator(BaseGenerator):
 
         if not os.path.isdir(typesdir):
             raise Exception('types is not a directory')
+
         for typedef in defs:
             filename = '%s.xml' % typedef['name']
-            handleSectionedFile(['profiles', 'type.xml'],
-                                os.path.join(typesdir, filename),
-                                sectionnames=['FOOT'],
-                                templateparams={'ctype': typedef,
-                                                'target_version': self.getOption('plone_target_version',
-                                                                                  package, 3.0)})
+            handleSectionedFile(
+              ['profiles', 'type.xml'],
+              os.path.join(typesdir, filename),
+              sectionnames=['FOOT'],
+              templateparams={
+                         'ctype': typedef,
+                         'target_version': self.getOption('plone_target_version',
+                                           package, DEFAULT_TARGET_VERSION)})
 
     def generateGSVocabulariesFolderAndXMLFile(self, package):
         """Create the types folder and the corresponding xml files for the
@@ -3522,7 +3534,8 @@ class ArchetypesGenerator(BaseGenerator):
         transition events.
         """
         # We need Plone 2.5 compatibility, and there are subscribers:
-        return self.getOption('plone_target_version', package, 3.0) == 2.5 and \
+        return self.getOption('plone_target_version', package, 
+                              DEFAULT_TARGET_VERSION) == 2.5 and \
                package.getAnnotation('subscribers')
 
     def generateDCWorkflowPatch(self, package):
@@ -4275,7 +4288,8 @@ class ArchetypesGenerator(BaseGenerator):
             if not typedef['default_view'] in typedef['suppl_views']:
                 typedef['suppl_views'].append(typedef['default_view'])
 
-            if self.getOption('plone_target_version', pclass, 3.0) >= 3.0:
+            if self.getOption('plone_target_version', pclass, 
+                              DEFAULT_TARGET_VERSION) >= 3.0:
                 actions = atmaps.DEFAULT_ACTIONS_3_0
             else:
                 actions = atmaps.DEFAULT_ACTIONS_2_5
@@ -4288,8 +4302,6 @@ class ArchetypesGenerator(BaseGenerator):
                 if action['id'] not in disabled and \
                    action['id'] not in [a['id'] for a in newactions]:
                         _action=action.copy()
-                        if _action['id']=='view' and pclass.hasTaggedValue('default_view'):
-                            _action['action']='string:${object_url}/'+pclass.getTaggedValue('default_view')
                         allactions.append(_action)
             allactions.extend(newactions)
             typedef['type_actions'] = allactions
@@ -4322,7 +4334,8 @@ class ArchetypesGenerator(BaseGenerator):
         default_view = 'base_view'
 
         suppl_views = '[]'
-        if self.getOption('plone_target_version', cclass, 3.0) >= 3.0:
+        if self.getOption('plone_target_version', cclass, 
+                          DEFAULT_TARGET_VERSION) >= 3.0:
             folderish = self.elementIsFolderish(cclass)
             if folderish:
                 default_view = 'folder_listing'
@@ -4376,12 +4389,13 @@ class ArchetypesGenerator(BaseGenerator):
         if utils.isTGVTrue(tgvglobalallow):
             fti['global_allow'] = True
 
-        fti['content_icon'] = self.getOption('content_icon', cclass, None)
-        if not fti['content_icon']:
+        fti['content_icon'] = self.getOption('content_icon', cclass, '--None--')
+        if fti['content_icon'] is '--None--':
             # If an icon file with the default name exists in the skin, do not
             # comment out the icon definition
             fti['content_icon'] = cclass.getCleanName() + '.gif'
-
+        elif not fti['content_icon']:
+            fti['content_icon'] = ''
 
         if not cclass.isAbstract():
             #copy the default icons
@@ -4431,12 +4445,14 @@ class ArchetypesGenerator(BaseGenerator):
 
         folderish = self.elementIsFolderish(cclass)
         if folderish:
-            if self.getOption('plone_target_version', cclass, 3.0) == 2.5:
+            if self.getOption('plone_target_version', cclass, 
+                              DEFAULT_TARGET_VERSION) == 2.5:
                 fti['type_aliases'] = atmaps.DEFAULT_FOLDERISH_ALIASES_2_5
             else:
                 fti['type_aliases'] = atmaps.DEFAULT_FOLDERISH_ALIASES_3_0
         else:
-            if self.getOption('plone_target_version', cclass, 3.0) == 2.5:
+            if self.getOption('plone_target_version', cclass, 
+                              DEFAULT_TARGET_VERSION) == 2.5:
                 fti['type_aliases'] = atmaps.DEFAULT_ALIASES_2_5
             else:
                 fti['type_aliases'] = atmaps.DEFAULT_ALIASES_3_0
