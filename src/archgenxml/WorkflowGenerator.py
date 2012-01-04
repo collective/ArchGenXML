@@ -266,7 +266,7 @@ class WorkflowGenerator(BaseGenerator):
                     continue
                 name = klass.getTaggedValue('portal_type') or \
                        klass.getCleanName()
-                classes[name] = workflowId
+                classes.setdefault(name, []).append(workflowId)
 
         classNames = classes.keys()
         classNames.sort()
@@ -274,7 +274,7 @@ class WorkflowGenerator(BaseGenerator):
         for id_ in classNames:
             item = {}
             item['id'] = id_ # portal type
-            item['workflowId'] = classes[id_]
+            item['workflowIds'] = classes[id_]
             result.append(item)
 
         # no need to check use_workflow, it's already done by xmiparser.XMIModel.associateClassesToStateMachines,
@@ -296,17 +296,17 @@ class WorkflowGenerator(BaseGenerator):
                 continue
             additionaltype = dict()
             additionaltype['id'] = remembertype['portal_type']
-            additionaltype['workflowId'] = remembertype['workflow']
+            additionaltype['workflowIds'] = [remembertype['workflow']]
             result.append(additionaltype)
 
-        # take tgv on state maschine itself into account
+        # take tgv on state machine itself into account
         for sm in statemachines:
             bindings = sm.getTaggedValue('bindings', '')
             bindings = [b.strip() for b in bindings.split(', ') if b.strip()]
             for binding in bindings:
                 item = {}
                 item['id'] = binding
-                item['workflowId'] = sm.getCleanName()
+                item['workflowIds'] = [sm.getCleanName()]
                 result.append(item)
 
         return result

@@ -16,7 +16,9 @@
 </dtml-in>
 <dtml-in "typeMapping">
   <type type_id="<dtml-var "_['sequence-item']['id']">">
-   <bound-workflow workflow_id="<dtml-var "_['sequence-item']['workflowId']">" />
+<dtml-in "_['sequence-item']['workflowIds']">
+     <bound-workflow workflow_id="<dtml-var "_['sequence-item']">" />
+</dtml-in>
   </type>
 </dtml-in>
 <!-- ##code-section workflowbindings -->

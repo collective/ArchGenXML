@@ -4,6 +4,11 @@ Changelog
 2.7 (unreleased)
 ----------------
 
+- Allow multiple worlkflows.
+  If many workflows are embedded with class, each workflow is binded in workflows.xml.
+  'use_workflow' attribute adds a workflow to embedded workflows.
+  [thomasdesvenain]
+
 - Abstract class have no workflow binding.
   [thomasdesvenain]
 
