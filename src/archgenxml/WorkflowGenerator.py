@@ -259,7 +259,9 @@ class WorkflowGenerator(BaseGenerator):
             workflowId = sm.getCleanName()
             for klass in sm.getClasses():
                 # We allow to bound a workflow to a <<stub>>
-                if not self.atgenerator._isContentClass(klass) and \
+                if klass.isabstract:
+                    continue
+                elif not self.atgenerator._isContentClass(klass) and \
                    not klass.hasStereoType(self.atgenerator.stub_stereotypes):
                     continue
                 name = klass.getTaggedValue('portal_type') or \

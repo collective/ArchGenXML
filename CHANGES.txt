@@ -4,6 +4,9 @@ Changelog
 2.7 (unreleased)
 ----------------
 
+- Abstract class have no workflow binding.
+  [thomasdesvenain]
+
 - Import Column classes with DataGridField.
   [thomasdesvenain]
 
