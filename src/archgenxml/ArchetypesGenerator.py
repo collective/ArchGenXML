@@ -4422,6 +4422,21 @@ class ArchetypesGenerator(BaseGenerator):
                 except:
                     pass
 
+                # copy the metadata file
+                metadataSourcePath = os.path.join(self.templateDir,
+                                            'icon.png.metadata')
+                metadataTargetPath = os.path.join(self.getSkinPath(cclass, part='images'),
+                                            fti['content_icon'] + '.metadata', )
+                metadatafile = open(metadataSourcePath, 'rb').read()
+                try:
+                    of = self.makeFile(metadataTargetPath, False, False)
+                    if of:
+                        of.write(metadatafile)
+                        of.close()
+                except:
+                    pass
+
+
         # If we are generating a tool, include the template which sets
         # a tool icon
         if cclass.hasStereoType(self.portal_tools,

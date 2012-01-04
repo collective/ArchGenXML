@@ -4,6 +4,9 @@ Changelog
 2.7 (unreleased)
 ----------------
 
+- Add icons metadata files.
+  [thomasdesvenain]
+
 - Use png as default icons.
   If folder_icon or document_icon is set as content_icon, do not copy it.
   [thomasdesvenain]
