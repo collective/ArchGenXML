@@ -4,6 +4,10 @@ Changelog
 2.7 (unreleased)
 ----------------
 
+- Use png as default icons.
+  If folder_icon or document_icon is set as content_icon, do not copy it.
+  [thomasdesvenain]
+
 - Allow multiple worlkflows.
   If many workflows are embedded with class, each workflow is binded in workflows.xml.
   'use_workflow' attribute adds a workflow to embedded workflows.

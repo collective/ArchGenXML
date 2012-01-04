@@ -4397,26 +4397,30 @@ class ArchetypesGenerator(BaseGenerator):
         if fti['content_icon'] is '--None--':
             # If an icon file with the default name exists in the skin, do not
             # comment out the icon definition
-            fti['content_icon'] = cclass.getCleanName() + '.gif'
+            fti['content_icon'] = cclass.getCleanName() + '.png'
         elif not fti['content_icon']:
             fti['content_icon'] = ''
 
         if not cclass.isAbstract():
-            #copy the default icons
-            default_icon_name = self.elementIsFolderish(cclass) and \
-                'folder_icon.gif' or \
-                'document_icon.gif'
-            gifSourcePath = os.path.join(self.templateDir, default_icon_name)
-            toolgif = open(gifSourcePath, 'rb').read()
-            gifTargetPath = os.path.join(self.getSkinPath(cclass, part='images'),
-                                         fti['content_icon'])
-            try:
-                of = self.makeFile(gifTargetPath, False, False)
-                if of:
-                    of.write(toolgif)
-                    of.close()
-            except:
-                pass
+            if fti['content_icon'] not in ('folder_icon.gif',
+                                           'document_icon.gif',
+                                           'folder_icon.png',
+                                           'document_icon.png'):
+                #copy the default icons
+                default_icon_name = self.elementIsFolderish(cclass) and \
+                    'folder_icon.png' or \
+                    'document_icon.png'
+                gifSourcePath = os.path.join(self.templateDir, default_icon_name)
+                toolgif = open(gifSourcePath, 'rb').read()
+                gifTargetPath = os.path.join(self.getSkinPath(cclass, part='images'),
+                                             fti['content_icon'])
+                try:
+                    of = self.makeFile(gifTargetPath, False, False)
+                    if of:
+                        of.write(toolgif)
+                        of.close()
+                except:
+                    pass
 
         # If we are generating a tool, include the template which sets
         # a tool icon
