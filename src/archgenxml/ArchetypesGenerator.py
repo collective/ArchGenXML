@@ -2910,6 +2910,10 @@ class ArchetypesGenerator(BaseGenerator):
         if self.getOption('plone_target_version', package,
                           DEFAULT_TARGET_VERSION) == 2.5:
             return
+        
+        if self.getOption('disable_increment_profile_vernum', package,
+                          False) == True:
+            return
 
         version = '1.0'
 

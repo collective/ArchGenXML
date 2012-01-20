@@ -183,8 +183,11 @@ tgvRegistry = TaggedValueRegistry()
 category = 'model'
 
 tagname = 'plone_target_version'
-explanation = """The target version of Plone. Defaults to 3.0 Possible values 
-are 2.5 and 3.0"""
+explanation = """The target version of Plone. Defaults to 4.1. Possible values are from 2.5."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
+tagname = 'disable_increment_profile_vernum'
+explanation = """If True, profile version in metadata.xml won't be updated at each generation"""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
 tagname = 'product_description'
