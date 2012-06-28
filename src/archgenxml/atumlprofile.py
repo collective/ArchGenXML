@@ -241,6 +241,14 @@ at_uml_profile.addStereoType(
     )
 
 at_uml_profile.addStereoType(
+    'atcontent', ['XMIClass'],
+    description='Turns the class into an ATContent subclass.',
+    imports=['from Products.ATContentTypes.content.base import ATCTContent',
+             'from Products.ATContentTypes.content.base ' + \
+             'import ATContentTypeSchema',]
+    )
+
+at_uml_profile.addStereoType(
     'ordered', ['XMIClass'],
     description='For folderish types, include folder ordering support. '
                 'This will allow the user to re-order items in the folder '
