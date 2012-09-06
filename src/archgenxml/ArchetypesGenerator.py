@@ -822,8 +822,9 @@ class ArchetypesGenerator(BaseGenerator):
         typename = element.type
         ctype = self.coerceType(typename)
         map = typeMap[ctype]['map'].copy()
+        fieldspec=self.typeMap[ctype]['field'].copy()
         res = {'name': element.getCleanName(),
-              'fieldtype': self.typeMap[ctype]['field'].copy(),
+              'fieldtype': fieldspec,
               'map': map,
               'indent_level': indent_level}
         return res
@@ -964,15 +965,16 @@ class ArchetypesGenerator(BaseGenerator):
         log.info("Getting the field string from an association.")
         if back:
             relside = rel.fromEnd
+            relname=rel.getInverseName()
             if not rel.fromEnd.isNavigable:
                 return None
         else:
+            relname = rel.getName()
             relside = rel.toEnd
 
         multiValued = 0
         obj = relside.obj
         name = relside.getName()
-        relname = rel.getName()
         log.debug("Endpoint name: '%s'.", name)
         log.debug("Relationship name: '%s'.", relname)
 
