@@ -1697,6 +1697,7 @@ class ArchetypesGenerator(BaseGenerator):
                                            if not parent in dedupedParentNames]
         return baseclass, baseschema, dedupedParentNames
 
+        
     def generateArchetypesClass(self, element, **kw):
         """this is the all singing all dancing core generator logic for a
            full featured Archetypes class
@@ -1786,7 +1787,7 @@ class ArchetypesGenerator(BaseGenerator):
         parent_is_archetype = False
         for p in element.getGenParents():
             parent_is_archetype = parent_is_archetype or \
-                                p.hasStereoType(self.archetype_stereotype,
+                                self.hasStereoType(p,self.archetype_stereotype,
                                                 umlprofile=self.uml_profile)
 
         # also check if the parent classes can have subobjects

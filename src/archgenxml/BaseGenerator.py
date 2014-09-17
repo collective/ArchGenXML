@@ -659,3 +659,16 @@ class BaseGenerator:
         authorline = utils.wrap(", ".join(authoremail), 77)
 
         return authors, emails, authorline
+
+    
+    def hasStereoType(self, element, stereotype, umlprofile, recursive=True):
+        '''checks wether a parent class has a certain stereotype'''
+        hasit=element.hasStereoType(stereotype, umlprofile=umlprofile)
+        if hasit:
+            return True
+
+        if recursive:
+            for par in element.getGenParents():
+                if self.hasStereoType(par, stereotype, umlprofile, recursive=True):
+                    return True
+
