@@ -555,6 +555,10 @@ tagname = 'label'
 explanation = """The label of the action - displayed to the user."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+tagname = 'icon'
+explanation = """The icon URL of the action - displayed to the user."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 tagname = 'condition'
 explanation = """A TALES expression defining a condition which will be
 evaluated to determine whether the action should be displayed."""

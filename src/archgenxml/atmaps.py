@@ -99,6 +99,7 @@ DEFAULT_ACTIONS_3_0 = [
         'id': 'view',
         'category': 'object',
         'condition': '',
+        'icon': '',
         'action': 'string:${object_url}/view',
         'permissions': ['View'],
         'visible': 'True',
@@ -108,6 +109,7 @@ DEFAULT_ACTIONS_3_0 = [
         'id': 'edit',
         'category': 'object',
         'condition': 'not:object/@@plone_lock_info/is_locked_for_current_user',
+        'icon': '',
         'action': 'string:${object_url}/edit',
         'permissions': ['Modify portal content'],
         'visible': 'True',
@@ -204,7 +206,7 @@ TYPE_MAP = {
     'image': {
         'field': u'ImageField',
         'map': {
-            u'storage': u'AnnotationStorage()', 
+            u'storage': u'AnnotationStorage()',
         },
         'index': None,
     },
@@ -249,14 +251,14 @@ TYPE_MAP = {
         'field': None,
         'map': {},
         'index': None,
-    },    
+    },
     'copy': {
         'field': 'copy',
         'map': {},
         'index': None,
     },
 }
-TYPE_MAP['rich'] = TYPE_MAP['richtext'] 
+TYPE_MAP['rich'] = TYPE_MAP['richtext']
 
 WIDGET_MAP = { # only deal with special cases, such as combined field-widgets
     'text': u'TextAreaWidget',

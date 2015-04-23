@@ -410,6 +410,7 @@ class ArchetypesGenerator(BaseGenerator):
                 dict['action'] = action_target
                 dict['category'] = m.getTaggedValue('category', 'object')
                 dict['id'] = m.getTaggedValue('id', method_name)
+                dict['icon'] = m.getTaggedValue('icon', '')
                 dict['name'] = m.getTaggedValue('label', method_name)
                 perms = m.getTaggedValue('permission', 'View')
                 perms = [p.strip() for p in perms.split(',') if p.strip()]
@@ -932,7 +933,7 @@ class ArchetypesGenerator(BaseGenerator):
                 if errormsgs and errormsgs != ['']:
                     return ", '" + errormsgs[ind] + "'"
                 return ""
-            expval = ["""ExpressionValidator('''python:%s'''%s)""" % 
+            expval = ["""ExpressionValidator('''python:%s'''%s)""" %
                       (expression, corresponding_error(errormsgs, exp_index))
                       for exp_index, expression in enumerate(expressions)]
 
@@ -1325,7 +1326,7 @@ class ArchetypesGenerator(BaseGenerator):
             if declaration:
                 print >> outfile, declaration
 
-        cls = self.parsed_class_sources.get(klass.getPackage().getFilePath() + 
+        cls = self.parsed_class_sources.get(klass.getPackage().getFilePath() +
                                             '/' + klass.getName(), None)
         if cls:
             method_code = cls.methods.get(m.getName())
@@ -1697,7 +1698,7 @@ class ArchetypesGenerator(BaseGenerator):
                                            if not parent in dedupedParentNames]
         return baseclass, baseschema, dedupedParentNames
 
-        
+
     def generateArchetypesClass(self, element, **kw):
         """this is the all singing all dancing core generator logic for a
            full featured Archetypes class
@@ -2919,7 +2920,7 @@ class ArchetypesGenerator(BaseGenerator):
         if self.getOption('plone_target_version', package,
                           DEFAULT_TARGET_VERSION) == 2.5:
             return
-        
+
         if self.getOption('disable_increment_profile_vernum', package,
                           False) == True:
             return
@@ -3047,6 +3048,7 @@ class ArchetypesGenerator(BaseGenerator):
             title = klass.getTaggedValue('archetype_name', klass.getCleanName())
             title = klass.getTaggedValue('configlet:title', title)
             condition = klass.getTaggedValue('configlet:condition', '')
+            icon = klass.getTaggedValue('configlet:icon', '')
             view = klass.getTaggedValue('configlet:view', 'view')
             section = klass.getTaggedValue('configlet:section', 'Products')
             action_id = utils.cleanName(title)
@@ -3060,6 +3062,7 @@ class ArchetypesGenerator(BaseGenerator):
                     'title': title,
                     'action_id': action_id,
                     'condition': condition,
+                    'icon': icon,
                     'permission': permission,
                     'app_id': appid,
                     'url': url,

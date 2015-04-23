@@ -3,6 +3,9 @@ Changelog
 
 2.7 (unreleased)
 ----------------
+- Added possibility to use tagged value 'icon' on actions to manage the icon_expr.
+  [gbastien]
+
 - Added Tagged value 'icon' available for workflow transition.
   [gbastien]
 
