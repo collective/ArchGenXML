@@ -1263,6 +1263,12 @@ explanation = """Action URL, need 'PloneWorkflowTransitions'
 to see it in Plone."""
 tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
 
+category = 'state transition'
+tagname = 'icon'
+explanation = """Action icon URL, need 'PloneWorkflowTransitions'
+to see it in Plone."""
+tgvRegistry.addTaggedValue(category=category, tagname=tagname, explanation=explanation)
+
 category = 'state action'
 tagname = 'before:binding'
 explanation = """Interface to bind the before effect to."""

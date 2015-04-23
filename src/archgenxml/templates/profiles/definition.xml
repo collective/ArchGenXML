@@ -37,7 +37,7 @@
              after_script=""<dtml-if "target_version >= 3.0">
 
              i18n:attributes="title"</dtml-if>>
-  <action url="<dtml-var "transition.getTaggedValue('url')">" category="workflow"<dtml-if "target_version >= 3.0"> i18n:translate=""</dtml-if>><dtml-var "transition.getTaggedValue('label') or transition.getName()"></action>
+  <action url="<dtml-var "transition.getTaggedValue('url')">"<dtml-if "target_version >= 3.0"> icon="<dtml-var "transition.getTaggedValue('icon')">"</dtml-if> category="workflow"<dtml-if "target_version >= 3.0"> i18n:translate=""</dtml-if>><dtml-var "transition.getTaggedValue('label') or transition.getName()"></action>
   <guard>
 <dtml-in "transition.guardPermissions">
     <guard-permission><dtml-var "_['sequence-item']"></guard-permission>

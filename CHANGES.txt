@@ -3,6 +3,8 @@ Changelog
 
 2.7 (unreleased)
 ----------------
+- Added Tagged value 'icon' available for workflow transition.
+  [gbastien]
 
 - Added a disable_increment_profile_vernum tagged value.
   If it is True, version number in metadata.xml is not upgraded at each generation.
