@@ -1,14 +1,42 @@
 <?xml version = '1.0' encoding = 'UTF-8' ?>
-<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Thu Apr 23 10:44:46 CEST 2015'>
-  <XMI.header>    <XMI.documentation>
-      <XMI.exporter>ArgoUML (using Netbeans XMI Writer version 1.0)</XMI.exporter>
-      <XMI.exporterVersion>0.34(6) revised on $Date: 2010-01-11 22:20:14 +0100 (Mon, 11 Jan 2010) $ </XMI.exporterVersion>
+
+<!-- ArchGenXML Old logs
+     version 0.1 2006/02/24 Pander initial version
+     version 0.2 2006/03/03 Pander completed stereotypes and data types
+     version 0.3 2006/03/03 Pander completed tag definitions
+     version 0.4 2006/03/06 Pander improved data types
+     version 0.5 2006/03/17 Pander added tag definition i18ncontent
+     version 0.6 2006/03/25 Pander fixed duplicate id for tag definition i18ncontent
+     version 0.7 2006/03/25 Pander added default:widget:Reference, widget:size
+     version 0.8 2006/08/02 Pander added widget:maxlength
+     version 0.9 2006/08/28 Pander added for widget: rows, cols, divider, append_only, format, future_years, starting_year, ending_year, show_ymd, show_hm, thousands_commas, whole_dollars, dollars_and_cents, addable, allow_file_upload
+     version 1.0 2006/08/28 Pander added languageIndependent
+     version 1.1 2006/0?/?? Pander added storage
+     version 1.2 2007/01/22 Pander added widget:visible
+     version 1.3 2007/02/19 Xiru added access, Modify
+     version 1.4 2007/02/19 Pander renamed allowed_content_types into allowable_content_types, added default_content_type and default_output_type
+     version 1.5 2007/03/01 Pander added columns, allow_empty_rows, widget:auto_insert, widget:columns
+     version 1.6 2007/03/05 Pander added data type datagrid, country and color and tagged values widget:provideNullValue, widget:nullValueTitle, widget:omitCountries and allow_brightness
+     version 1.7 2007/03/14 Encolpe added allowed_types for ReferenceField
+     version 1.8 2007/03/23 Encolpe added relationship for ReferenceField
+     version 1.9 2007/03/28 Pander added default_page_type
+     version 1.10 2007/04/06 Encolpe fixed renaming allowed_content_types into allowable_content_types: they are not used in the same semantic
+     Now this profile is generated with ArgoUMLProfileGenerator.py script
+-->
+<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Thu Apr 23 11:02:35 2015'>
+  <XMI.header>
+    <XMI.documentation>
+      <XMI.exporter>ArgoUMLProfileGenerator.py</XMI.exporter>
+      <XMI.exporterVersion>0.5</XMI.exporterVersion>
     </XMI.documentation>
-    <XMI.metamodel xmi.name="UML" xmi.version="1.4"/></XMI.header>
+    <XMI.metamodel xmi.name="UML" xmi.version="1.4"/>
+  </XMI.header>
   <XMI.content>
     <UML:Model xmi.id = '342db3ca-4022-4992-a166-c38c7db692f8' name = 'AGXProfile'
       isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
       <UML:Namespace.ownedElement>
+
+	<!-- Stereotypes for ArchGenXML -->
         <UML:Stereotype xmi.id = '815c5002-46ef-5ab7-a761-18304e6ee7dc' name = 'adapts'
           isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
           <UML:Stereotype.baseClass>Abstraction</UML:Stereotype.baseClass>
@@ -25,13 +53,12 @@
           isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
           <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
         </UML:Stereotype>
-        <UML:Stereotype xmi.id = '7f5cf2b3-6c44-570a-856b-9a387f71ea88' name = 'atdocument'
+        <UML:Stereotype xmi.id = 'a627e83c-7b29-5e93-b315-333ed77cd250' name = 'atcontent'
           isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
           <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
         </UML:Stereotype>
-        <UML:Stereotype xmi.id = '-64--88-1-5--291cae25:1382d35514b:-8000:000000000000242D'
-          name = 'atcontent' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
-          isAbstract = 'false'>
+        <UML:Stereotype xmi.id = '7f5cf2b3-6c44-570a-856b-9a387f71ea88' name = 'atdocument'
+          isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
           <UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
         </UML:Stereotype>
         <UML:Stereotype xmi.id = '6f953447-016e-5f32-8bce-0508ac83d510' name = 'atevent'
@@ -254,6 +281,8 @@
           isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
           <UML:Stereotype.baseClass>Package</UML:Stereotype.baseClass>
         </UML:Stereotype>
+
+	<!-- Data types for ArchGenXML -->
         <UML:DataType xmi.id = '4fb9b4e6-b8c5-5e1c-9f1c-fc4fcccee146' name = 'backreference'
           isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
         <UML:DataType xmi.id = '16a8d020-4c0a-58ce-993f-e6306abf0bbf' name = 'boolean'
@@ -304,6 +333,8 @@
           isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
         <UML:DataType xmi.id = '6f996b25-1707-5d42-85b1-2b473c9ed6f3' name = 'void'
           isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+
+	<!-- Tag definitions for ArchGenXML -->
         <UML:TagDefinition xmi.id = '639e6f38-6223-57af-935a-d79bcef64a57' name = 'pil_quality'
           isSpecification = 'false' tagType = 'String'>
           <UML:TagDefinition.multiplicity>
@@ -464,17 +495,6 @@
             <UML:Multiplicity xmi.id = '5078c1d9-aee1-5124-9788-6244d6d8a4c0'>
               <UML:Multiplicity.range>
                 <UML:MultiplicityRange xmi.id = 'f7691267-7283-5440-813f-cb044e70fb6e' lower = '0'
-                  upper = '1'/>
-              </UML:Multiplicity.range>
-            </UML:Multiplicity>
-          </UML:TagDefinition.multiplicity>
-        </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'f5e6947c-ae9e-5d3b-b16f-d5e4d03ce635' name = 'relation_field'
-          isSpecification = 'false' tagType = 'String'>
-          <UML:TagDefinition.multiplicity>
-            <UML:Multiplicity xmi.id = '92b1dc01-4d6e-5fbd-aeee-5887fcc78416'>
-              <UML:Multiplicity.range>
-                <UML:MultiplicityRange xmi.id = '2bd4a2c4-b0b4-5244-9d32-1444a448d613' lower = '0'
                   upper = '1'/>
               </UML:Multiplicity.range>
             </UML:Multiplicity>
@@ -717,6 +737,17 @@
             <UML:Multiplicity xmi.id = 'd0c71646-bd1d-5d87-a148-16dd5e58d548'>
               <UML:Multiplicity.range>
                 <UML:MultiplicityRange xmi.id = 'c0c90707-4610-586f-a2e0-72fe2ffbcf18' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'dca4f059-d84d-5803-aee3-04149f531155' name = 'skin_directories'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = 'dc2d6b33-c00a-52c0-8492-69ef68d84369'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '02193434-7c2f-5a96-8ded-21233ee10616' lower = '0'
                   upper = '1'/>
               </UML:Multiplicity.range>
             </UML:Multiplicity>
@@ -1173,6 +1204,17 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = 'f5e6947c-ae9e-5d3b-b16f-d5e4d03ce635' name = 'relation_field'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '92b1dc01-4d6e-5fbd-aeee-5887fcc78416'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '2bd4a2c4-b0b4-5244-9d32-1444a448d613' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
         <UML:TagDefinition xmi.id = '74dc46a1-d0fe-586b-9f75-e861291811e4' name = 'category'
           isSpecification = 'false' tagType = 'String'>
           <UML:TagDefinition.multiplicity>
@@ -1399,6 +1441,17 @@
             <UML:Multiplicity xmi.id = '568877c0-d149-5ef3-8c22-6f1a82618d87'>
               <UML:Multiplicity.range>
                 <UML:MultiplicityRange xmi.id = '7605a0e4-1a21-5a8c-a097-865af5052291' lower = '0'
+                  upper = '1'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '720d9d78-4d5d-5154-ad92-a5c038eecd2e' name = 'delete'
+          isSpecification = 'false' tagType = 'String'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '121733c5-8243-5648-9620-96d51ac7845a'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '3e027091-00d5-5bff-94fd-c34252d0d319' lower = '0'
                   upper = '1'/>
               </UML:Multiplicity.range>
             </UML:Multiplicity>
@@ -2108,17 +2161,6 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = '720d9d78-4d5d-5154-ad92-a5c038eecd2e' name = 'delete'
-          isSpecification = 'false' tagType = 'String'>
-          <UML:TagDefinition.multiplicity>
-            <UML:Multiplicity xmi.id = '121733c5-8243-5648-9620-96d51ac7845a'>
-              <UML:Multiplicity.range>
-                <UML:MultiplicityRange xmi.id = '3e027091-00d5-5bff-94fd-c34252d0d319' lower = '0'
-                  upper = '1'/>
-              </UML:Multiplicity.range>
-            </UML:Multiplicity>
-          </UML:TagDefinition.multiplicity>
-        </UML:TagDefinition>
         <UML:TagDefinition xmi.id = '3beea9db-1b91-5f03-af20-dd7554be75ac' name = 'reference_field'
           isSpecification = 'false' tagType = 'String'>
           <UML:TagDefinition.multiplicity>
@@ -2757,12 +2799,12 @@
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
         </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = 'dca4f059-d84d-5803-aee3-04149f531155' name = 'skin_directories'
+        <UML:TagDefinition xmi.id = '193db458-2520-5e4f-a323-8a618631c544' name = 'icon'
           isSpecification = 'false' tagType = 'String'>
           <UML:TagDefinition.multiplicity>
-            <UML:Multiplicity xmi.id = 'dc2d6b33-c00a-52c0-8492-69ef68d84369'>
+            <UML:Multiplicity xmi.id = '0d622fb6-da69-586a-b2e5-cf2b869001b7'>
               <UML:Multiplicity.range>
-                <UML:MultiplicityRange xmi.id = '02193434-7c2f-5a96-8ded-21233ee10616' lower = '0'
+                <UML:MultiplicityRange xmi.id = '5daf4949-a542-5a4a-a954-c8aaed215c40' lower = '0'
                   upper = '1'/>
               </UML:Multiplicity.range>
             </UML:Multiplicity>
@@ -2885,28 +2927,6 @@
               <UML:Multiplicity.range>
                 <UML:MultiplicityRange xmi.id = '0c3c67d8-3995-5aac-a755-c47841f9b6cf' lower = '0'
                   upper = '1'/>
-              </UML:Multiplicity.range>
-            </UML:Multiplicity>
-          </UML:TagDefinition.multiplicity>
-        </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = '-64--88-1-5-117eda15:135ffdb975c:-8000:0000000000001407'
-          name = 'no_default_aliases' visibility = 'public' isSpecification = 'false'>
-          <UML:TagDefinition.multiplicity>
-            <UML:Multiplicity xmi.id = '-64--88-1-5-117eda15:135ffdb975c:-8000:0000000000001409'>
-              <UML:Multiplicity.range>
-                <UML:MultiplicityRange xmi.id = '-64--88-1-5-117eda15:135ffdb975c:-8000:0000000000001408'
-                  lower = '0' upper = '0'/>
-              </UML:Multiplicity.range>
-            </UML:Multiplicity>
-          </UML:TagDefinition.multiplicity>
-        </UML:TagDefinition>
-        <UML:TagDefinition xmi.id = '127-0-1-1-245db034:14ce5528ec5:-8000:000000000000149B'
-          name = 'icon' isSpecification = 'false' tagType = 'String'>
-          <UML:TagDefinition.multiplicity>
-            <UML:Multiplicity xmi.id = '127-0-1-1-245db034:14ce5528ec5:-8000:000000000000149F'>
-              <UML:Multiplicity.range>
-                <UML:MultiplicityRange xmi.id = '127-0-1-1-245db034:14ce5528ec5:-8000:000000000000149E'
-                  lower = '0' upper = '1'/>
               </UML:Multiplicity.range>
             </UML:Multiplicity>
           </UML:TagDefinition.multiplicity>
