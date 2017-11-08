@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.8 (unreleased)
+----------------
+
+- Nothing changed yet.
+
+
 2.7 (2017-11-08)
 ----------------
 - Added possibility to use tagged value 'icon' on actions to manage the icon_expr.

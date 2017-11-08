@@ -7,7 +7,7 @@ from setuptools import find_packages
 def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
-version = '2.7'
+version = '2.8.dev0'
 shortdesc = 'UML to code generator for Plone'
 
 long_description = (
