@@ -1,0 +1,28 @@
+include *.txt
+include ChangeLog
+recursive-include debian *.Debian
+recursive-include docs *.jpg
+recursive-include docs *.png
+recursive-include docs *.rst
+recursive-include docs *.stx
+recursive-include docs *.svg
+recursive-include docs *.txt
+recursive-include docs *.vdex
+recursive-include docs *.xmi
+recursive-include docs *.zargo
+recursive-include docs *.zuml
+recursive-include src *.gif
+recursive-include src *.metadata
+recursive-include src *.png
+recursive-include src *.pot
+recursive-include src *.pt
+recursive-include src *.py
+recursive-include src *.pydtml
+recursive-include src *.pysnippet
+recursive-include src *.txt
+recursive-include src *.xmi
+recursive-include src *.xml
+recursive-include src *.zargo
+recursive-include src *.zcml
+recursive-include src *.zuml
+recursive-include umltools *.xmi
