@@ -1,6 +1,6 @@
 include *.txt
 include ChangeLog
-recursive-include debian *.Debian
+graft debian
 recursive-include docs *.jpg
 recursive-include docs *.png
 recursive-include docs *.rst
@@ -11,6 +11,7 @@ recursive-include docs *.vdex
 recursive-include docs *.xmi
 recursive-include docs *.zargo
 recursive-include docs *.zuml
+recursive-include src find-all-types
 recursive-include src *.gif
 recursive-include src *.metadata
 recursive-include src *.png
