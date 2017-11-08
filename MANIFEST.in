@@ -1,5 +1,5 @@
+include old_ChangeLog
 include *.txt
-include ChangeLog
 graft debian
 recursive-include docs *.jpg
 recursive-include docs *.png
